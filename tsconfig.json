@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["**/*.ts"],
+  "ts-node": {
+    "compilerOptions": {
+      "skipLibCheck": true,
+      "target": "ES6",
+      "module": "CommonJS"
+    }
+  }
+}
