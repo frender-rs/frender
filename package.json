@@ -1,34 +1,19 @@
 {
-  "name": "@tlib/package-template",
-  "version": "1.2.1",
-  "description": "an example package published from template for typescript libraries",
+  "private": true,
+  "description": "react in rust",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/es/index.js",
-  "types": "dist/index.d.ts",
   "keywords": [
-    "tlib",
-    "typescript",
-    "semantic-release",
-    "codegen",
-    "template"
+    "rust",
+    "ui",
+    "frontend",
+    "react"
   ],
-  "author": {
-    "name": "EqualMa",
-    "email": "equalma@outlook.com",
-    "url": "https://github.com/EqualMa"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tlibjs/package-template.git"
-  },
+  "author": "EqualMa <equalma@outlook.com> (https://github.com/EqualMa)",
+  "repository": "https://github.com/frender-rs/frender.git",
   "scripts": {
     "test": "jest",
-    "test-ts-node": "ts-node scripts/test-ts-node.ts -s --help ./src/some.ts",
-    "precommit": "lint-staged",
     "lint:fix": "eslint --cache --max-warnings 0 --fix",
     "ensure-linted": "eslint --max-warnings 0 .",
-    "semantic-release": "semantic-release",
     "build": "yarn run clean && rollup -c",
     "clean": "rimraf dist",
     "prepare": "husky install"
@@ -36,10 +21,10 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/preset-env": "^7.16.0",
+    "@google/semantic-release-replace-plugin": "^1.1.0",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/exec": "^6.0.2",
     "@semantic-release/git": "^10.0.1",
-    "@tlib/scripts": "^1.0.0",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
@@ -52,8 +37,6 @@
     "lint-staged": "^11.2.6",
     "prettier": "2.4.1",
     "rimraf": "^3.0.2",
-    "rollup": "^2.59.0",
-    "rollup-plugin-dts": "^4.0.0",
     "semantic-release": "^18.0.0",
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
@@ -62,11 +45,5 @@
   "dependencies": {
     "core-js": "^3.19.0",
     "tslib": "^2.3.1"
-  },
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
   }
 }
