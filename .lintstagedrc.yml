@@ -1,2 +1,2 @@
-"*.{js,ts}": "yarn run lint:fix"
+"!(.yarn)/**/*.{js,ts}": "yarn run lint:fix"
 "*.{md,html,css,yml,yaml,json}": "prettier --write"

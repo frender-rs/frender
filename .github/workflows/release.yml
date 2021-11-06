@@ -11,25 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Prevent releasing if the repo is generated from the template and pkg.name not changed
-        run: |
-          set -e
-          repo="$GITHUB_REPOSITORY"
-          pkg=$(node -p 'require("./package.json").name')
-          if [ "$pkg" == "@tlib/package-template" ] && [ "$repo" != 'tlibjs/package-template' ]; then
-            echo 'Please modify "name" field in package.json' >&2
-            exit 1
-          else
-            echo "Start releasing package $pkg in repo $repo"
-          fi
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: "16"
       # https://github.com/actions/cache/blob/master/examples.md#node---yarn
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+        run: echo "::set-output name=dir::$(./.yarn/cache)"
       - uses: actions/cache@v2
         id: yarn-cache
         with:
@@ -38,24 +27,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Ensure linted
         run: yarn run ensure-linted
-      - name: Test
-        run: yarn test
-      - name: Build
-        run: yarn build
+      - name: Rust Build & Test
+        run: cargo build --verbose && cargo test --verbose
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
           if [ -z "$GITHUB_TOKEN" ]; then
             echo 'Unexpected empty GITHUB_TOKEN' >&2
             exit 1
           fi
-          if [ -z "$NPM_TOKEN" ]; then
-            echo 'Please set secrets.NPM_TOKEN' >&2
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo 'Please set secrets.CARGO_REGISTRY_TOKEN' >&2
             exit 1
           fi
           yarn run semantic-release
