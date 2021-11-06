@@ -5,6 +5,14 @@
 [![GitHub license](https://img.shields.io/github/license/frender-rs/frender?style=for-the-badge)](https://github.com/frender-rs/frender/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/frender-rs/frender?style=for-the-badge)](https://github.com/frender-rs/frender/stargazers)
 
+<div style="text-align:center;margin:16px">
+
+![frender logo](./frender/logo.svg)
+
+Functional Rendering: `React` in `Rust`
+
+</div>
+
 _Working in progress_
 
 Development is at [alpha](https://github.com/frender-rs/frender/tree/alpha#readme) branch.
