@@ -1,4 +1,5 @@
-use std::rc::Rc;
+use once_cell::unsync::OnceCell;
+use std::{cell::RefCell, rc::Rc};
 
 use wasm_bindgen::prelude::*;
 
@@ -46,7 +47,6 @@ impl<F: FnOnce() -> R, R: CleanFnOrNone> ReactEffectFn for F {
 
 thread_local! {
    static CLOSURE_NEVER_CALLED: Closure<dyn FnMut() -> JsValue> = Closure::once(|| {
-       #[cfg(debug_assertions)]
        panic!("CLOSURE_NEVER_CALLED should never be called")
    })
 }
@@ -54,7 +54,6 @@ thread_local! {
 /// `React.useEffect(effect, [])`
 pub fn use_effect_on_mounted<F: 'static + ReactEffectFn>(effect: F) {
     let ref_effect_closure_key = react_sys::use_ref_usize(0);
-    let ref_clean_closure_key = react_sys::use_ref_usize(0);
 
     let closure = if ref_effect_closure_key.current() != 0 {
         None
@@ -63,15 +62,19 @@ pub fn use_effect_on_mounted<F: 'static + ReactEffectFn>(effect: F) {
             let ref_effect_closure_key = ref_effect_closure_key.clone();
             Closure::once(move || {
                 let clean = effect().into_optional_clean_fn();
+
+                let cell_clean_closure_key = OnceCell::<usize>::new();
                 let real_clean = {
-                    let ref_clean_closure_key = ref_clean_closure_key.clone();
+                    let cell_clean_closure_key = cell_clean_closure_key.clone();
                     Closure::once(move || {
                         if let Some(clean) = clean {
                             clean();
                         }
 
-                        unsafe { forgotten::try_free_with_usize(ref_effect_closure_key.current()) };
-                        unsafe { forgotten::try_free_with_usize(ref_clean_closure_key.current()) };
+                        let effect_closure_key = ref_effect_closure_key.current();
+                        let clean_closure_key = *cell_clean_closure_key.get().unwrap();
+                        unsafe { forgotten::try_free_with_usize(effect_closure_key) };
+                        unsafe { forgotten::try_free_with_usize(clean_closure_key) };
                     })
                 };
 
@@ -79,7 +82,7 @@ pub fn use_effect_on_mounted<F: 'static + ReactEffectFn>(effect: F) {
 
                 let k = k.into_shared();
                 let k = k.as_usize();
-                ref_clean_closure_key.set_current(*k);
+                cell_clean_closure_key.set(*k).unwrap();
 
                 let v = real_clean.as_ref().as_ref();
 
@@ -107,6 +110,78 @@ pub fn use_effect_on_mounted<F: 'static + ReactEffectFn>(effect: F) {
     });
 }
 
-pub fn use_effect_one<D, C: CleanFnOrNone, RD: IntoRc<D>, F: FnOnce(&Rc<D>) -> C>(func: F, dep: D) {
-    todo!()
+pub fn use_effect_one<
+    D: 'static + PartialEq,
+    C: CleanFnOrNone,
+    RD: IntoRc<D>,
+    F: 'static + FnOnce(Rc<D>) -> C,
+>(
+    func: F,
+    dep: D,
+) {
+    let mut dep_changed = false;
+    let memo_effect_key = super::use_memo_one(
+        |dep| {
+            dep_changed = true;
+
+            let dep = Rc::clone(dep);
+
+            let cell_effect_closure_key = OnceCell::<usize>::new();
+
+            let effect_key = {
+                let cell_effect_closure_key = cell_effect_closure_key.clone();
+
+                forgotten::forget(Closure::once(move || {
+                    let clean = func(dep).into_optional_clean_fn();
+                    let cell_clean_closure_key = OnceCell::<usize>::new();
+
+                    let real_clean = {
+                        let cell_clean_closure_key = cell_clean_closure_key.clone();
+                        Closure::once(move || {
+                            if let Some(clean) = clean {
+                                clean();
+                            }
+
+                            let effect_closure_key = cell_effect_closure_key.get().unwrap();
+                            let clean_closure_key = cell_clean_closure_key.get().unwrap();
+
+                            unsafe { forgotten::try_free_with_usize(*effect_closure_key) };
+                            unsafe { forgotten::try_free_with_usize(*clean_closure_key) };
+                        })
+                    };
+
+                    let (clean_key, real_clean) = forgotten::forget_and_get(real_clean);
+
+                    let clean_key = clean_key.into_shared();
+                    let clean_key = clean_key.as_usize();
+                    cell_clean_closure_key.set(*clean_key).unwrap();
+
+                    let v = real_clean.as_ref().as_ref();
+
+                    v.clone()
+                }))
+            };
+
+            let effect_key = effect_key.into_shared();
+
+            cell_effect_closure_key.set(*effect_key.as_usize()).unwrap();
+            effect_key
+        },
+        dep,
+    );
+
+    let effect_key_usize = *memo_effect_key.as_usize();
+
+    CLOSURE_NEVER_CALLED.with(|never_called| {
+        let new_closure = if dep_changed {
+            let closure = forgotten::try_get(&memo_effect_key).unwrap();
+            Some(closure)
+        } else {
+            None
+        };
+        react_sys::use_effect_with_clean(
+            new_closure.as_ref().map_or(never_called, |c| c.as_ref()),
+            Some(Box::new([effect_key_usize.into()])),
+        );
+    });
 }

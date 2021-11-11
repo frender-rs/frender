@@ -61,7 +61,16 @@ pub fn use_memo_one<
 
 #[macro_export]
 macro_rules! use_memo {
-    ( $(<$t:ty>)? | $($dep:ident),* | $e:expr ) => {{
-        $crate::react::use_memo()
-    }};
+    ( <$t:ty> $(move)? || $e:expr ) => {
+        $crate::react::use_memo_no_dep::<$t, _, _>($(move)? || $e)
+    };
+    ( <$t:ty> $(move)? | $($dep:ident),+ $(,)? | $e:expr ) => {
+        $crate::react::use_memo_one::<_, $t, _, _>($(move)? |($($dep:ident),+)| $e , ($($dep:ident),+))
+    };
+    ( $(move)? || $e:expr ) => {
+        $crate::react::use_memo_no_dep(|| $e)
+    };
+    ( $(move)? | $($dep:ident),+ $(,)? | $e:expr ) => {
+        $crate::react::use_memo_one($(move)? |($($dep:ident),+)| $e , ($($dep:ident),+))
+    };
 }

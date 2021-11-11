@@ -1,14 +1,7 @@
 use frender::{forgotten, react, react_sys};
 use wasm_bindgen::{prelude::*, JsCast};
 
-use std::{
-    borrow::Borrow,
-    cell::{Ref, RefCell},
-    collections::HashMap,
-    iter::FromIterator,
-    mem::ManuallyDrop,
-    rc::Rc,
-};
+use std::iter::FromIterator;
 
 #[derive(Debug)]
 pub struct CounterState {
