@@ -2,6 +2,7 @@
 
 members = [
     "frender",
+    "crates/*",
     "examples/*",
 ]
 

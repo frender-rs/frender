@@ -1,4 +1,4 @@
-pub mod react;
+pub use react;
+pub use react::react_sys;
 
 pub use forgotten;
-pub use react_sys;
