@@ -95,8 +95,6 @@ pub fn use_state<T: Any, R: IntoRc<T>, F: FnOnce() -> R>(
 
     let state = ret.value();
 
-    web_sys::console::log_1(&format!("use_state k = {}", state).into());
-
     let state = unsafe { forgotten::SharedForgottenKey::<T>::from_usize(state) };
     let state = forgotten::try_get::<T>(&state).unwrap();
 

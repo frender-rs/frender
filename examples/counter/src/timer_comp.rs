@@ -9,16 +9,10 @@ pub struct CounterState {
 }
 
 #[wasm_bindgen]
-pub fn Counter() -> react_sys::Element {
+pub fn Timer() -> react_sys::Element {
     let (state, setter) = react::use_state(|| CounterState { value: 1 });
 
-    web_sys::console::log_1(&JsValue::from(format!(
-        "[rust] Counter render: state.value = {:?}",
-        state.value,
-    )));
-
     react::use_effect_on_mounted(move || {
-        web_sys::console::log_1(&"Counter use_effect_once".into());
         let window = web_sys::window().unwrap();
 
         let (k, handler) = forgotten::forget_and_get(Closure::wrap(Box::new(move || {
@@ -47,7 +41,7 @@ pub fn Counter() -> react_sys::Element {
             JsValue::from_str("Counter value = "),
             JsValue::from(state.value.to_string()),
             JsValue::from_str(" time = "),
-            JsValue::from((js_sys::Date::now() / 1000f64).to_string()),
+            JsValue::from((js_sys::Date::now() / 1000f64).round().to_string()),
         ]),
     );
 
@@ -55,6 +49,6 @@ pub fn Counter() -> react_sys::Element {
 }
 
 thread_local! {
-    pub static CounterJs: JsValue =
-       Closure::wrap(Box::new(Counter) as Box<dyn Fn() -> react_sys::Element>).into_js_value();
+    pub static TimerJs: JsValue =
+       Closure::wrap(Box::new(Timer) as Box<dyn Fn() -> react_sys::Element>).into_js_value();
 }
