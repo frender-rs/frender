@@ -1,5 +1,5 @@
 use once_cell::unsync::OnceCell;
-use std::{cell::RefCell, rc::Rc};
+use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
 
