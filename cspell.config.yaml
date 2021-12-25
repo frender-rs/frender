@@ -3,6 +3,7 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
+  - draggable
   - Frender
 ignoreWords: []
 import: []

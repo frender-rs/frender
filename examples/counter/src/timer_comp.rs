@@ -1,4 +1,4 @@
-use frender::{forgotten, react, react_sys};
+use frender::{forgotten, react};
 use wasm_bindgen::{prelude::*, JsCast};
 
 use std::iter::FromIterator;
@@ -9,7 +9,7 @@ pub struct CounterState {
 }
 
 #[wasm_bindgen]
-pub fn Timer() -> react_sys::Element {
+pub fn Timer(props: js_sys::Object) -> react::sys::Element {
     let (state, setter) = react::use_state(|| CounterState { value: 1 });
 
     react::use_effect_on_mounted(move || {
@@ -34,10 +34,10 @@ pub fn Timer() -> react_sys::Element {
         }
     });
 
-    let react_el = react_sys::create_element(
+    let react_el = react::sys::create_element(
         &"h2".into(),
-        JsValue::NULL,
-        js_sys::Array::from_iter([
+        &JsValue::NULL,
+        &js_sys::Array::from_iter([
             JsValue::from_str("Counter value = "),
             JsValue::from(state.value.to_string()),
             JsValue::from_str(" time = "),
@@ -50,5 +50,10 @@ pub fn Timer() -> react_sys::Element {
 
 thread_local! {
     pub static TimerJs: JsValue =
-       Closure::wrap(Box::new(Timer) as Box<dyn Fn() -> react_sys::Element>).into_js_value();
+        Closure::wrap(Box::new(Timer) as Box<dyn Fn(js_sys::Object) -> react::sys::Element>).into_js_value();
+}
+
+thread_local! {
+    pub static TimerClosure: Closure<dyn Fn(js_sys::Object) -> react::sys::Element> =
+        Closure::wrap(Box::new(Timer) as Box<dyn Fn(js_sys::Object) -> react::sys::Element>);
 }
