@@ -6,6 +6,6 @@ pub trait Element: Node {
 
 impl Element for react_sys::Element {
     fn as_react_element(&self) -> react_sys::Element {
-        *self
+        self.clone()
     }
 }

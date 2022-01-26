@@ -46,6 +46,8 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
         ..
     } = sig;
 
+    todo!();
+
     let tokens = quote! {
         #vis struct #{ident}Props #generics {
         }

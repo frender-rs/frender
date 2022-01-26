@@ -1,23 +1,11 @@
+mod any_attrs;
 mod aria;
+mod as_attr;
 mod attrs;
 mod css;
+mod data_types;
 mod dom;
 
-#[allow(non_camel_case_types)]
-pub struct div {}
+pub mod common;
 
-pub struct DivProps {}
-
-pub struct DivElement {}
-
-// impl HtmlElement for DivElement {}
-
-impl crate::Component for div {
-    type ElementType = DivElement;
-
-    type Props;
-
-    fn render(props: Self::Props) -> Self::ElementType {
-        todo!()
-    }
-}
+pub use data_types::*;

@@ -31,17 +31,20 @@ impl super::Element for IntrinsicElement {
 
         if let Some(key) = &self.key {
             let props = props.get_or_insert_with(|| js_sys::Object::new());
-            js_sys::Reflect::set(props, "key", key);
+            js_sys::Reflect::set(props, &JsValue::from_str("key"), key);
         }
 
         if let Some(ref_el) = &self.ref_el {
             let props = props.get_or_insert_with(|| js_sys::Object::new());
-            js_sys::Reflect::set(props, "ref", ref_el);
+            js_sys::Reflect::set(props, &JsValue::from_str("ref"), ref_el);
         }
 
         react_sys::create_element_intrinsic(
             &self.tag,
-            props.unwrap_or(&JsValue::NULL),
+            props
+                .as_ref()
+                .map(|obj| obj.as_ref())
+                .unwrap_or(&JsValue::NULL),
             if let Some(children_args) = self.children_args {
                 &children_args
             } else {

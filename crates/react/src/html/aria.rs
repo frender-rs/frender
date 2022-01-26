@@ -1,17 +1,25 @@
+use convert_js::ToJs;
+
 /// 'none' | 'inline' | 'list' | 'both'
-pub enum AriaAutoComplete {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum AutoComplete {
     None,
     Inline,
     List,
     Both,
 }
 
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
 pub enum MixedBool {
     Bool(bool),
     Mixed,
 }
 
-pub enum AriaCurrent {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Current {
     Bool(bool),
     Page,
     Step,
@@ -21,7 +29,9 @@ pub enum AriaCurrent {
 }
 
 /// 'none' | 'copy' | 'execute' | 'link' | 'move' | 'popup'
-pub enum AriaDropEffect {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum DropEffect {
     None,
     Copy,
     Execute,
@@ -31,7 +41,9 @@ pub enum AriaDropEffect {
 }
 
 /// boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined
-pub enum AriaHasPopup {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum HasPopup {
     Bool(bool),
     Menu,
     ListBox,
@@ -40,48 +52,66 @@ pub enum AriaHasPopup {
     Dialog,
 }
 
-pub enum AriaInvalid {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Invalid {
     Bool(bool),
     Grammar,
     Spelling,
 }
 
 /// 'off' | 'assertive' | 'polite'
-pub enum AriaLive {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Live {
     Off,
     Assertive,
     Polite,
 }
 
 /// 'horizontal' | 'vertical'
-pub enum AriaOrientation {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Orientation {
     Horizontal,
     Vertical,
 }
 
 /// 'additions' | 'additions removals' | 'additions text' | 'all' | 'removals' | 'removals additions' | 'removals text' | 'text' | 'text additions' | 'text removals'
-pub enum AriaRelevant {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Relevant {
     Additions,
+    #[convert_js(rename = "additions removals")]
     AdditionsRemovals,
+    #[convert_js(rename = "additions text")]
     AdditionsText,
     All,
     Removals,
+    #[convert_js(rename = "removals additions")]
     RemovalsAdditions,
+    #[convert_js(rename = "removals text")]
     RemovalsText,
     Text,
+    #[convert_js(rename = "text additions")]
     TextAdditions,
+    #[convert_js(rename = "text removals")]
     TextRemovals,
 }
 
 /// 'none' | 'ascending' | 'descending' | 'other'
-pub enum AriaSort {
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Sort {
     None,
     Ascending,
     Descending,
     Other,
 }
 
-pub enum AriaRole {
+#[derive(Debug, Clone, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Role {
     Alert,
     AlertDialog,
     Application,
@@ -155,7 +185,8 @@ pub enum AriaRole {
 }
 
 /// All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
-pub struct AriaAttributes {
+#[derive(Debug, Clone, ToJs)]
+pub struct Attributes {
     /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
     activedescendant: Option<String>,
     /** Indicates whether assistive technologies will present all, or only parts of, the changed region based on the change notifications defined by the aria-relevant attribute. */
@@ -164,7 +195,7 @@ pub struct AriaAttributes {
      * Indicates whether inputting text could trigger display of one or more predictions of the user's intended value for an input and specifies how predictions would be
      * presented if they are made.
      */
-    autocomplete: Option<AriaAutoComplete>,
+    autocomplete: Option<AutoComplete>,
     /** Indicates an element is being modified and that assistive technologies MAY want to wait until the modifications are complete before exposing them to the user. */
     busy: Option<bool>,
     /**
@@ -193,7 +224,7 @@ pub struct AriaAttributes {
      */
     controls: Option<String>,
     /** Indicates the element that represents the current item within a container or set of related elements. */
-    current: Option<AriaCurrent>,
+    current: Option<Current>,
     /**
      * Identifies the element (or elements) that describes the object.
      * @see aria-labelledby
@@ -213,7 +244,7 @@ pub struct AriaAttributes {
      * Indicates what functions can be performed when a dragged object is released on the drop target.
      * @deprecated in ARIA 1.1
      */
-    dropeffect: Option<AriaDropEffect>,
+    dropeffect: Option<DropEffect>,
     /**
      * Identifies the element that provides an error message for the object.
      * @see aria-invalid @see aria-describedby.
@@ -232,7 +263,7 @@ pub struct AriaAttributes {
      */
     grabbed: Option<bool>,
     /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-    haspopup: Option<AriaHasPopup>,
+    haspopup: Option<HasPopup>,
     /**
      * Indicates whether the element is exposed to an accessibility API.
      * @see aria-disabled.
@@ -242,7 +273,7 @@ pub struct AriaAttributes {
      * Indicates the entered value does not conform to the format expected by the application.
      * @see aria-errormessage.
      */
-    invalid: Option<AriaInvalid>,
+    invalid: Option<Invalid>,
     /** Indicates keyboard shortcuts that an author has implemented to activate or give focus to an element. */
     keyshortcuts: Option<String>,
     /**
@@ -258,7 +289,7 @@ pub struct AriaAttributes {
     /** Defines the hierarchical level of an element within a structure. */
     level: Option<i32>,
     /** Indicates that an element will be updated, and describes the types of updates the user agents, assistive technologies, and user can expect from the live region. */
-    live: Option<AriaLive>,
+    live: Option<Live>,
     /** Indicates whether an element is modal when displayed. */
     modal: Option<bool>,
     /** Indicates whether a text box accepts multiple lines of input or only a single line. */
@@ -266,7 +297,7 @@ pub struct AriaAttributes {
     /** Indicates that the user may select more than one item from the current selectable descendants. */
     multiselectable: Option<bool>,
     /** Indicates whether the element's orientation is horizontal, vertical, or unknown/ambiguous. */
-    orientation: Option<AriaOrientation>,
+    orientation: Option<Orientation>,
     /**
      * Identifies an element (or elements) in order to define a visual, functional, or contextual parent/child relationship
      * between DOM elements where the DOM hierarchy cannot be used to represent the relationship.
@@ -297,7 +328,7 @@ pub struct AriaAttributes {
      * Indicates what notifications the user agent will trigger when the accessibility tree within a live region is modified.
      * @see aria-atomic.
      */
-    relevant: Option<AriaRelevant>,
+    relevant: Option<Relevant>,
     /** Indicates that user input is required on the element before a form may be submitted. */
     required: Option<bool>,
     /** Defines a human-readable, author-localized description for the role of an element. */
@@ -328,7 +359,7 @@ pub struct AriaAttributes {
      */
     setsize: Option<i32>,
     /** Indicates if items in a table or grid are sorted in ascending or descending order. */
-    sort: Option<AriaSort>,
+    sort: Option<Sort>,
     /** Defines the maximum allowed value for a range widget. */
     valuemax: Option<f64>,
     /** Defines the minimum allowed value for a range widget. */

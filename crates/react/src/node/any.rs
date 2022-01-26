@@ -15,3 +15,11 @@ impl Node for AnyNode {
         self.0.as_react_node_js()
     }
 }
+
+pub struct AnyNodeRef<'a>(pub &'a dyn Node);
+
+impl<'a> Node for AnyNodeRef<'a> {
+    fn as_react_node_js(&self) -> JsValue {
+        self.0.as_react_node_js()
+    }
+}
