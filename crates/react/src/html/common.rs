@@ -1,208 +1,332 @@
-macro_rules! def_attrs_traits {
-    (
-        generics { $($generics:tt)* }
-        where { $($where:tt)* }
-        $(extends { $extend_as:path , $extend_as_mut:path  })?
-        attrs {
-            $($k:ident : $v_ty:ty),* $(,)?
-        }
-    ) => {
-        pub trait AsAttributes <$($generics)*> $(: $extend_as)? $($where)* {
-            $(fn $k(&'a self) -> &'a $v_ty;)*
-        }
-        pub trait AsMutAttributes <$($generics)*> $(: $extend_as_mut)? $($where)* {
-            $(fn $k(&mut self, v: $v_ty);)*
-        }
+use convert_js::ToJs;
+use frender_macros::ident_snake_to_camel;
+use std::any::Any;
+use std::collections::HashMap;
+use std::marker::PhantomData;
+use std::rc::Rc;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use wasm_bindgen::JsValue;
 
-        impl<$($generics)* , TExtends: AsRef<dyn AsAttributes <$($generics)*> + 'a> $(+ $extend_as)? > AsAttributes <$($generics)*>  for TExtends $($where)* {
-            $(
-                fn $k(&'a self) -> &'a $v_ty {
-                    let v = self.as_ref();
-                    &v.$k()
-                }
-            )*
-        }
+use crate::IntoJsRuntime;
+use crate::PassToJsRuntimeValue;
+use crate::TryIntoJsRuntime;
+use crate::{AsNullableElement, IntrinsicElement};
 
-        impl<$($generics)* , TExtends: AsMut<dyn AsMutAttributes <$($generics)*> + 'a> $(+ $extend_as_mut)? > AsMutAttributes <$($generics)*>  for TExtends $($where)* {
-            $(
-                fn $k(&mut self, v: $v_ty) {
-                    self.as_mut().$k(v);
-                }
-            )*
-        }
-    };
-}
-
-pub(crate) use def_attrs_traits;
-
-macro_rules! def_attrs {
-    (@ __impl_get_k @ $k_js:literal $k:ident ) => {
+macro_rules! js_prop_name {
+    ($k_js:literal $k:ident ) => {
         $k_js
     };
-    (@ __impl_get_k @ $k:ident ) => {
-        // TODO: camelCase
-        stringify!($k)
+    ($k:ident) => {
+        ident_snake_to_camel!($k)
+    };
+}
+
+macro_rules! impl_attr_default {
+    (
+        $k:ident { $k_js:expr } [ $($fn_generics:tt)* ] : $v_ty:ty : { pass_to_js_runtime_default $impl_expr:expr }
+    ) => {
+        fn $k $($fn_generics)* (&mut self, v: $v_ty) -> &mut Self {
+            if let Some(v) = v {
+                let js = $crate::try_into_js_runtime_or_else(v, $impl_expr);
+                self.__set_static_prop($k_js, js)
+            } else {
+                self.__set_static_prop(
+                    $k_js,
+                    $crate::PassToJsRuntimeValue {
+                        js_value: JsValue::UNDEFINED,
+                        to_persist: None,
+                    },
+                )
+            }
+        }
     };
     (
-        generics { $($generics:tt)* }
-        generics_for_any { $($generics_for_any:tt)* }
-        where { $($where:tt)* }
-        struct {
-            $($k:ident $(@ $k_js:literal)? : $v_ty:ty),* $(,)?
+        $k:ident { $k_js:expr } [ $($fn_generics:tt)* ] : $v_ty:ty : { impl |$impl_this:ident, $impl_v:ident| $impl_expr:expr }
+    ) => {
+        fn $k $($fn_generics)* (&mut self, $impl_v: $v_ty) -> &mut Self {
+            let $impl_this = self;
+            $impl_expr
         }
-        any {
-            $($any_k:ident $(@ $any_k_js:literal)? : $any_v_ty:ty),* $(,)?
+    };
+    (
+        $k:ident { $k_js:expr } [ $($fn_generics:tt)* ] : $v_ty:ty
+    ) => {
+        // convert value to JsValue with ::convert_js::ToJs::to_js
+        fn $k $($fn_generics)* (&mut self, v: $v_ty) -> &mut Self {
+            let js_value = ::convert_js::ToJs::to_js(&v);
+            self.__set_static_prop(
+                $k_js,
+                $crate::PassToJsRuntimeValue {
+                    js_value,
+                    to_persist: None,
+                }
+            )
+        }
+    };
+}
+
+macro_rules! def_attrs_traits {
+    (
+        struct { $struct_name:ident }
+        generics { $($generics:tt)* }
+        $(where { $($where:tt)+ })?
+        $(extends { $($extend_trait:tt)+ })?
+        attrs {
+            $($k:ident $(@ $k_js:literal)? $([$($fn_generics:tt)*])? : $v_ty:ty $({$($impl_tt:tt)*})? ),* $(,)?
         }
     ) => {
-        def_attrs_traits! {
-            generics { $($generics)* }
-            where { $($where)* }
-            attrs {
-                $($k : $v_ty ,)*
-                $($any_k : $any_v_ty ,)*
+        pub trait AsAttributesBuilder <$($generics)*> $(: $($extend_trait)+)? $(where $($where)+)? {
+            fn __set_js_children(
+                &mut self,
+                js_children: Option<&dyn $crate::Node>,
+            ) -> &mut Self;
+
+            fn __set_static_prop(
+                &mut self,
+                prop_name: &'static str,
+                js: $crate::PassToJsRuntimeValue,
+            ) -> &mut Self;
+
+            $(
+                impl_attr_default! {
+                    $k
+                    { js_prop_name! ($($k_js)? $k) }
+                    [$(<$($fn_generics)*>)?]
+                    :
+                    $v_ty
+                    $(: {$($impl_tt)*})?
+                }
+            )*
+        }
+
+        impl<$($generics)* , TExtends: AsMut<$struct_name<$($generics)*>> $(+ $($extend_trait)+)?> AsAttributesBuilder <$($generics)*>  for TExtends $(where $($where)+)? {
+            fn __set_js_children(
+                &mut self,
+                js_children: Option<&dyn $crate::Node>,
+            ) -> &mut Self {
+                self.as_mut().__set_js_children(js_children);
+                self
             }
-        }
 
-        #[allow(non_camel_case_types)]
-        #[derive(Clone, Copy, Hash, PartialEq, Eq)]
-        enum AttributeKey {
-            $(
-                $any_k
-            ),+
-        }
-
-        #[allow(non_camel_case_types)]
-        enum Attribute < $($generics_for_any)* > {
-            $(
-                $any_k($any_v_ty)
-            ),+
-        }
-
-        impl < $($generics_for_any)* > $crate::html::any_attrs::AnyAttributeValue for Attribute < $($generics_for_any)* > {
-            type Key = AttributeKey;
-
-            fn as_attribute_key(&self) -> Self::Key {
-                match self {
-                    $(
-                        Self::$any_k(_) => AttributeKey::$any_k,
-                    )+
-                }
+            fn __set_static_prop(
+                &mut self,
+                prop_name: &'static str,
+                js: $crate::PassToJsRuntimeValue,
+            ) -> &mut Self {
+                self.as_mut().__set_static_prop(prop_name, js);
+                self
             }
-        }
-
-        pub struct Attributes <$($generics)*> $($where)* {
-            _any: $crate::html::any_attrs::AnyAttributes<Attribute < $($generics_for_any)* >>,
-            $(
-                $k: $v_ty,
-            )+
-        }
-
-        impl <$($generics)*> AsAttributes <$($generics)*> for Attributes <$($generics)*> $($where)* {
-            $(
-                fn $k(&self) -> &$v_ty {
-                    &self.$k
-                }
-            )*
 
             $(
-                fn $any_k(&self) -> &$any_v_ty {
-                    let v = &self._any.get(&AttributeKey::$any_k);
-                    match v {
-                        Some(Attribute::$any_k(v)) => v,
-                        None => &None,
-                        _ => {
-                            panic! ("attribute name should be {} in ::react::html::common::Attributes", stringify!($any_k));
-                        }
-                    }
-                }
-            )*
-        }
-
-        impl <$($generics)*> AsMutAttributes <$($generics)*> for Attributes <$($generics)*> $($where)* {
-            $(
-                fn $k(&mut self, v: $v_ty) {
-                    self.$k = v;
-                }
-            )*
-
-            $(
-                fn $any_k(&mut self, v: $any_v_ty) {
-                    self._any.set(
-                        Attribute::$any_k(v)
-                    );
+                fn $k $(<$($fn_generics)*>)? (&mut self, v: $v_ty) -> &mut Self {
+                    self.as_mut().$k(v);
+                    self
                 }
             )*
         }
     };
 }
 
-def_attrs! {
-    generics { 'a, V }
-    generics_for_any { 'a }
-    where { where V: 'a }
+def_attrs_traits! {
+    struct { ComponentProps }
+    generics { TElement, TValue }
+    where { TElement: 'static + JsCast, TValue: convert_js::ToJs }
 
-    struct {
-        children: Option<&'a dyn crate::Node>,
+    extends { crate::IntoJsAdapterComponentProps + crate::Props }
+    attrs {
+        children: Option<&dyn crate::Node> {
+            impl |this, v| this.__set_js_children(v)
+        },
+        ref_el[TWriteRef: 'static + crate::WriteRef<TElement> + crate::TryIntoJsRuntime]: Option<TWriteRef> {
+            pass_to_js_runtime_default pass_any_write_ref
+        },
         default_checked: Option<bool>,
-        default_value: Option<V>,
-        class@"className": Option<&'a str>,
+        default_value: Option<TValue>,
+        class@"className": Option<&str>,
         draggable: Option<bool>,
         hidden: Option<bool>,
-        id: Option<&'a str>,
-        lang: Option<&'a str>,
-        placeholder: Option<&'a str>,
-        style: Option<&'a crate::html::css::CssProperties>,
+        id: Option<&str>,
+        lang: Option<&str>,
+        placeholder: Option<&str>,
+        style: Option<&crate::html::css::CssProperties> {
+            impl |this, v| { todo!() }
+        },
         tab_index: Option<i32>,
-        title: Option<&'a str>,
-        on_click: &'a dyn FnMut(wasm_bindgen::JsValue),
-    }
+        title: Option<&str>,
 
-    any {
         // React-specific Attributes
         suppress_content_editable_warning: Option<bool>,
         suppress_hydration_warning: Option<bool>,
 
         // Standard HTML Attributes
-        access_key: Option<&'a str>,
+        access_key: Option<&str>,
         content_editable: Option<crate::html::Inheritable<bool>>,
-        context_menu: Option<&'a str>,
-        dir: Option<&'a str>,
-        slot: Option<&'a str>,
+        context_menu: Option<&str>,
+        dir: Option<&str>,
+        slot: Option<&str>,
         spell_check: Option<bool>,
-        translate: Option<&'a str>, // TODO: ser: yes | no
+        translate: Option<&str>, // TODO: ser: yes | no
 
         // Unknown
-        radio_group: Option<&'a str>, // <command>, <menuitem>
+        radio_group: Option<&str>, // <command>, <menuitem>
 
         // WAI-ARIA
         role: Option<crate::html::aria::Role>,
 
         // RDFa Attributes
-        about: Option<&'a str>,
-        datatype: Option<&'a str>,
-        inlist: Option<&'a wasm_bindgen::JsValue>,
-        prefix: Option<&'a str>,
-        property: Option<&'a str>,
-        resource: Option<&'a str>,
-        type_of@"typeof": Option<&'a str>,
-        vocab: Option<&'a str>,
+        about: Option<&str>,
+        datatype: Option<&str>,
+        inlist: Option<&wasm_bindgen::JsValue>,
+        prefix: Option<&str>,
+        property: Option<&str>,
+        resource: Option<&str>,
+        type_of@"typeof": Option<&str>,
+        vocab: Option<&str>,
 
         // Non-standard Attributes
-        auto_capitalize: Option<&'a str>,
-        auto_correct: Option<&'a str>,
-        auto_save: Option<&'a str>,
-        color: Option<&'a str>,
-        item_prop: Option<&'a str>,
+        auto_capitalize: Option<&str>,
+        auto_correct: Option<&str>,
+        auto_save: Option<&str>,
+        color: Option<&str>,
+        item_prop: Option<&str>,
         item_scope: Option<bool>,
-        item_type: Option<&'a str>,
-        item_id: Option<&'a str>,
-        item_ref: Option<&'a str>,
+        item_type: Option<&str>,
+        item_id: Option<&str>,
+        item_ref: Option<&str>,
         results: Option<i32>,
-        security: Option<&'a str>,
-        unselectable: Option<&'a str>, // TODO: ser: 'on' | 'off' | undefined;
+        security: Option<&str>,
+        unselectable: Option<&str>, // TODO: ser: 'on' | 'off' | undefined;
 
         // Living Standard
         input_mode: Option<crate::html::HtmlInputMode>,
-        is: Option<&'a str>,
+        is: Option<&str>,
+
+        // events
+        // TODO: def all events
+        on_click: Option<Closure<dyn FnMut(wasm_bindgen::JsValue)>> {
+            pass_to_js_runtime_default |_| {
+                panic!("on_click should be able to passed to js runtime")
+            }
+        },
     }
 }
+
+fn pass_any_write_ref<
+    TElement: 'static + JsCast,
+    TWriteRef: 'static + crate::WriteRef<TElement> + TryIntoJsRuntime,
+>(
+    wr: TWriteRef,
+) -> PassToJsRuntimeValue {
+    wasm_bindgen::closure::Closure::wrap(Box::new(move |js_value: JsValue| {
+        use convert_js::FromJs;
+        let el = convert_js::WrapJsCast::<TElement>::from_js(js_value)
+            .unwrap()
+            .0;
+        wr.set_current(el);
+    }) as Box<dyn Fn(JsValue)>)
+    .into_js_runtime()
+}
+
+pub struct ComponentProps<TElement, TValue> {
+    _phantom: PhantomData<(TElement, TValue)>,
+    js_children: Option<js_sys::Array>,
+    js_props: Option<js_sys::Object>,
+    js_component: Option<JsValue>,
+    to_persist: Option<HashMap<&'static str, Rc<dyn Any>>>,
+}
+
+impl<TElement, TValue> crate::Props for ComponentProps<TElement, TValue> {
+    type InitialBuilder = Self;
+
+    fn init_builder() -> Self::InitialBuilder {
+        Self {
+            _phantom: PhantomData,
+            js_children: None,
+            js_props: None,
+            js_component: None,
+            to_persist: None,
+        }
+    }
+}
+
+impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TElement, TValue> {
+    fn into_js_adapter_props(self) -> crate::JsAdapterComponentProps {
+        crate::JsAdapterComponentProps {
+            js_component: self.js_component.unwrap(),
+            js_props: self.js_props,
+            js_children: self.js_children,
+            to_persist: self.to_persist.map(|v| Rc::new(v) as Rc<dyn Any>),
+        }
+    }
+}
+
+impl<TElement: 'static + JsCast, TValue: ToJs> AsAttributesBuilder<TElement, TValue>
+    for ComponentProps<TElement, TValue>
+{
+    fn __set_static_prop(
+        &mut self,
+        prop_name: &'static str,
+        js: PassToJsRuntimeValue,
+    ) -> &mut Self {
+        let obj = self.js_props.get_or_insert_with(|| js_sys::Object::new());
+        js_sys::Reflect::set(obj.as_ref(), &JsValue::from_str(prop_name), &js.js_value).unwrap();
+
+        let map = self.to_persist.get_or_insert_with(Default::default);
+        if let Some(to_persist) = js.to_persist {
+            map.insert(prop_name, to_persist);
+        } else {
+            map.remove(prop_name);
+        }
+
+        self
+    }
+
+    fn __set_js_children(&mut self, js_children: Option<&dyn crate::Node>) -> &mut Self {
+        self.js_children = js_children.and_then(crate::Node::as_react_children_js);
+        self
+    }
+}
+
+pub struct Component<
+    TProps: AsAttributesBuilder<TElement, TValue>,
+    TElement: 'static + JsCast,
+    TValue: ToJs,
+> {
+    pub props: TProps,
+    _el: PhantomData<TElement>,
+    _value: PhantomData<TValue>,
+}
+
+impl<TProps: AsAttributesBuilder<TElement, TValue>, TElement: 'static + JsCast, TValue: ToJs>
+    crate::Component for Component<TProps, TElement, TValue>
+{
+    type Props = TProps;
+    type ElementType = react_sys::Element;
+
+    fn use_render(self) -> Self::ElementType
+    where
+        Self: Sized,
+    {
+        self.call_create_element(None)
+    }
+
+    fn new_with_props(props: Self::Props) -> Self {
+        Self {
+            props,
+            _el: PhantomData,
+            _value: PhantomData,
+        }
+    }
+
+    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element
+    where
+        Self: Sized,
+    {
+        let props = self.props.into_js_adapter_props();
+        crate::JsAdapterComponent::new_with_props(props).call_create_element(key)
+    }
+}
+
+pub(crate) use def_attrs_traits;
+pub(crate) use js_prop_name;

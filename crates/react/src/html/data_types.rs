@@ -1,5 +1,7 @@
 use convert_js::ToJs;
 
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "camelCase")]
 pub enum Inheritable<T> {
     Value(T),
     Inherit,
@@ -10,6 +12,8 @@ pub enum Inheritable<T> {
 /// @see https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
 ///
 /// 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "camelCase")]
 pub enum HtmlInputMode {
     None,
     Text,

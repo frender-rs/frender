@@ -10,10 +10,10 @@ use crate::AnyNode;
 pub trait Node {
     fn as_react_node_js(&self) -> JsValue;
 
-    // #[inline]
-    // fn as_children_js(&self) -> js_sys::Array {
-    //     js_sys::Array::of1(self.as_react_node_js())
-    // }
+    #[inline]
+    fn as_react_children_js(&self) -> Option<js_sys::Array> {
+        Some(js_sys::Array::of1(&self.as_react_node_js()))
+    }
 
     #[inline]
     fn into_any_node(self) -> AnyNode
@@ -29,6 +29,11 @@ impl Node for () {
     fn as_react_node_js(&self) -> JsValue {
         JsValue::UNDEFINED
     }
+
+    #[inline]
+    fn as_react_children_js(&self) -> Option<js_sys::Array> {
+        None
+    }
 }
 
 impl<T: Node> Node for Option<T> {
@@ -39,6 +44,11 @@ impl<T: Node> Node for Option<T> {
         } else {
             JsValue::NULL
         }
+    }
+
+    #[inline]
+    fn as_react_children_js(&self) -> Option<js_sys::Array> {
+        self.as_ref().and_then(Node::as_react_children_js)
     }
 }
 

@@ -16,17 +16,17 @@ impl<T> IntoRc<T> for T {
     }
 }
 
-pub trait TakeRc<T> {
+pub trait TakeRc<T: ?Sized> {
     fn take_rc(self) -> Rc<T>;
 }
 
-impl<T, R: IntoRc<T>, F: FnOnce() -> R> TakeRc<T> for F {
+impl<T: ?Sized, R: IntoRc<T>, F: FnOnce() -> R> TakeRc<T> for F {
     fn take_rc(self) -> Rc<T> {
         self().into_rc()
     }
 }
 
-impl<T> TakeRc<T> for Rc<T> {
+impl<T: ?Sized> TakeRc<T> for Rc<T> {
     fn take_rc(self) -> Rc<T> {
         self
     }
