@@ -1,6 +1,6 @@
 [package]
 name = "frender-macros"
-version = "0.1.0" # replace version
+version = "1.0.0-alpha.1" # replace version
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

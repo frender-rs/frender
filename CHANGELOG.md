@@ -1,3 +1,10 @@
+# 1.0.0-alpha.1 (2022-01-28)
+
+
+### Features
+
+* **react:** Node and Nodes ([6042a12](https://github.com/frender-rs/frender/commit/6042a1206ad5b07fc51563e1ece6dcd072267985))
+
 ## [1.2.1](https://github.com/tlibjs/package-template/compare/v1.2.0...v1.2.1) (2021-07-21)
 
 ### Bug Fixes
