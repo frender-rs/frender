@@ -5,6 +5,10 @@ on:
       - main
       - alpha
       - beta
+
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   release:
     name: Release
@@ -15,6 +19,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "16"
+      - name: Setup wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       # https://github.com/actions/cache/blob/master/examples.md#node---yarn
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -32,6 +38,12 @@ jobs:
         run: yarn run ensure-linted
       - name: Rust Build & Test
         run: cargo build --verbose && cargo test --verbose
+      - name: Test
+        run: |
+          set -e
+          cargo check --verbose
+          cargo test --verbose
+          wasm-pack test --node frender
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

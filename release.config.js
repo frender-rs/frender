@@ -1,9 +1,9 @@
 const CARGO_PROJECTS = [
   //
-  "frender",
-];
-
-const CARGO_FILES = CARGO_PROJECTS.map((dir) => `${dir}/Cargo.toml`);
+  { dir: "crates/frender-macros", replace: 1, ensure: true },
+  { dir: "crates/react", replace: 2, ensure: true },
+  { dir: "frender", replace: 2 },
+].map((pro) => ({ ...pro, file: `${pro.dir}/Cargo.toml` }));
 
 module.exports = {
   branches: [
@@ -23,14 +23,14 @@ module.exports = {
       {
         replacements: [
           {
-            files: CARGO_FILES,
+            files: CARGO_PROJECTS.map((pro) => pro.file),
             from: 'version = ".*" # replace version',
             to: 'version = "${nextRelease.version}" # replace version',
-            results: CARGO_FILES.map((file) => ({
-              file,
+            results: CARGO_PROJECTS.map((pro) => ({
+              file: pro.file,
               hasChanged: true,
-              numMatches: 1,
-              numReplacements: 1,
+              numMatches: pro.replace,
+              numReplacements: pro.replace,
             })),
             countMatches: true,
           },
@@ -40,11 +40,28 @@ module.exports = {
     ["@semantic-release/exec", { prepareCmd: "cargo check" }],
     ...CARGO_PROJECTS.map((pro) => [
       "@semantic-release/exec",
-      { publishCmd: "cargo publish", execCwd: pro },
+      {
+        publishCmd: pro.ensure
+          ? `cargo publish && node ${require("path").posix.relative(
+              pro.dir,
+              require("path").posix.resolve(
+                __dirname,
+                "./scripts/ensure-crate.js",
+              ),
+            )} \${nextRelease.version}`
+          : "cargo publish",
+        execCwd: pro.dir,
+      },
     ]),
     [
       "@semantic-release/git",
-      { assets: ["CHANGELOG.md", "Cargo.lock", ...CARGO_FILES] },
+      {
+        assets: [
+          "CHANGELOG.md",
+          "Cargo.lock",
+          ...CARGO_PROJECTS.map((pro) => pro.file),
+        ],
+      },
     ],
     "@semantic-release/github",
   ],
