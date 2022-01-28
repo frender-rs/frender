@@ -1,7 +1,7 @@
 const INTERVAL = 2000;
 const MAX_RETRY = 10;
 
-const { spawn, exec } = require("child_process");
+const { exec } = require("child_process");
 const { promisify } = require("util");
 const execAsync = promisify(exec);
 
@@ -26,7 +26,7 @@ async function ensureCrate(pkgName, version) {
       await execAsync("cargo init --vcs none", { cwd: dir });
       await fsp.appendFile(
         path.join(dir, "Cargo.toml"),
-        `\n${pkgName} = "=${version}"\n`
+        `\n${pkgName} = "=${version}"\n`,
       );
       await execAsync("cargo check", { cwd: dir });
     });
