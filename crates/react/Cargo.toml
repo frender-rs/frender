@@ -2,6 +2,8 @@
 name = "react-rs"
 version = "1.0.0-alpha.1" # replace version
 edition = "2021"
+description = "react runtime for frender"
+license = "MIT"
 
 [lib]
 name = "react"
