@@ -1,3 +1,10 @@
+# [1.0.0-alpha.2](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-01-28)
+
+
+### Features
+
+* add package metadata ([a67602e](https://github.com/frender-rs/frender/commit/a67602e803bf1a453b728d9260a0da6584bbaefc))
+
 # 1.0.0-alpha.1 (2022-01-28)
 
 

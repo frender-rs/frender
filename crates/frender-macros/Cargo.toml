@@ -1,6 +1,6 @@
 [package]
 name = "frender-macros"
-version = "1.0.0-alpha.1" # replace version
+version = "1.0.0-alpha.2" # replace version
 edition = "2021"
 description = "macros for frender"
 license = "MIT"
