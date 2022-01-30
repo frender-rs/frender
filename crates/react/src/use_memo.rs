@@ -1,21 +1,33 @@
 use std::{any::Any, cell::RefCell, rc::Rc};
 
+use wasm_bindgen::UnwrapThrowExt;
+
 use super::IntoRc;
 
 pub fn use_memo_no_dep<T: Any, R: IntoRc<T>, F: FnOnce() -> R>(func: F) -> Rc<T> {
-    let mut func = super::utils::fn_once_in_runtime(move || {
-        let rc = func().into_rc();
-        let k = forgotten::forget_rc(rc).into_shared();
-        let k = k.as_usize();
-        *k
-    });
-
-    let obj = react_sys::use_ref_usize_with(&mut func);
+    let obj = react_sys::use_ref_optional_usize(None);
 
     let k = obj.current();
 
+    let k = if let Some(k) = k {
+        k
+    } else {
+        web_sys::console::log_1(&wasm_bindgen::JsValue::from_str("into rc"));
+        let rc = func().into_rc();
+        let k = forgotten::forget_rc(rc).into_shared();
+        let k = k.as_usize();
+        let k = *k;
+        obj.set_current(Some(k));
+        k
+    };
+
+    web_sys::console::log_2(
+        &wasm_bindgen::JsValue::from_str("use memo ptr = "),
+        &wasm_bindgen::JsValue::from(k),
+    );
+
     let v = forgotten::try_get(&unsafe { forgotten::SharedForgottenKey::<T>::from_usize(k) })
-        .expect("use memo ptr should not be freed before element unmounted");
+        .expect_throw("use memo ptr should not be freed before element unmounted");
 
     super::use_effect_on_mounted(move || {
         move || {
