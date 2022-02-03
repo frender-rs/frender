@@ -1,5 +1,4 @@
 use convert_js::ToJs;
-use frender_macros::ident_snake_to_camel;
 use std::any::Any;
 use std::collections::HashMap;
 use std::marker::PhantomData;
@@ -7,22 +6,25 @@ use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
+use wasm_bindgen::UnwrapThrowExt;
 
 use crate::IntoJsRuntime;
 use crate::PassToJsRuntimeValue;
 use crate::TryIntoJsRuntime;
 use crate::{AsNullableElement, IntrinsicElement};
 
+pub(crate) use frender_macros::ident_snake_to_camel;
+
 macro_rules! js_prop_name {
     ($k_js:literal $k:ident ) => {
         $k_js
     };
     ($k:ident) => {
-        ident_snake_to_camel!($k)
+        $crate::html::common::ident_snake_to_camel!($k)
     };
 }
 
-macro_rules! impl_attr_default {
+macro_rules! __impl_attr_default {
     (
         $k:ident { $k_js:expr } [ $($fn_generics:tt)* ] : $v_ty:ty : { pass_to_js_runtime_default $impl_expr:expr }
     ) => {
@@ -66,32 +68,52 @@ macro_rules! impl_attr_default {
     };
 }
 
-macro_rules! def_attrs_traits {
+macro_rules! extend_html_props {
     (
-        struct { $struct_name:ident }
-        generics { $($generics:tt)* }
+        struct   { $struct_name:ident : $extend_struct:path  }
+        $(generics { $($generics:tt)+ })?
+        trait    { $trait_name:ident  : $($extend_trait:tt)+ }
         $(where { $($where:tt)+ })?
-        $(extends { $($extend_trait:tt)+ })?
         attrs {
             $($k:ident $(@ $k_js:literal)? $([$($fn_generics:tt)*])? : $v_ty:ty $({$($impl_tt:tt)*})? ),* $(,)?
         }
     ) => {
-        pub trait AsAttributesBuilder <$($generics)*> $(: $($extend_trait)+)? $(where $($where)+)? {
-            fn __set_js_children(
-                &mut self,
-                js_children: Option<&dyn $crate::Node>,
-            ) -> &mut Self;
+        pub struct $struct_name<$($($generics)+)?>($extend_struct);
 
-            fn __set_static_prop(
-                &mut self,
-                prop_name: &'static str,
-                js: $crate::PassToJsRuntimeValue,
-            ) -> &mut Self;
+        impl $trait_name <$($($generics)+)?> for $struct_name<$($($generics)+)?> $(where $($where)+)? {
+        }
 
+        impl <$($($generics)+)?> $crate::Props for $struct_name<$($($generics)+)?> $(where $($where)+)? {
+            type InitialBuilder = Self;
+
+            fn init_builder() -> Self::InitialBuilder {
+                Self(<$extend_struct>::init_builder())
+            }
+        }
+
+        impl <$($($generics)+)?> $crate::PropsBuilder<Self> for $struct_name<$($($generics)+)?> $(where $($where)+)? {
+            fn build(self) -> Self {
+                self
+            }
+        }
+
+        impl <$($($generics)+)?> $crate::PropsBuilder<$struct_name<$($($generics)+)?>> for &mut $struct_name<$($($generics)+)?> $(where $($where)+)? {
+            fn build(self) -> $struct_name<$($($generics)+)?> {
+                $struct_name((&mut self.0).build())
+            }
+        }
+
+        impl<$($($generics)+)?> $crate::IntoJsAdapterComponentProps for $struct_name<$($($generics)+)?> $(where $($where)+)? {
+            fn into_js_adapter_props(self) -> $crate::JsAdapterComponentProps {
+                self.0.into_js_adapter_props()
+            }
+        }
+
+        pub trait $trait_name <$($($generics)+)?> : $($extend_trait)+ $(where $($where)+)? {
             $(
-                impl_attr_default! {
+                $crate::html::common::__impl_attr_default! {
                     $k
-                    { js_prop_name! ($($k_js)? $k) }
+                    { $crate::html::common::js_prop_name! ($($k_js)? $k) }
                     [$(<$($fn_generics)*>)?]
                     :
                     $v_ty
@@ -100,10 +122,68 @@ macro_rules! def_attrs_traits {
             )*
         }
 
-        impl<$($generics)* , TExtends: AsMut<$struct_name<$($generics)*>> $(+ $($extend_trait)+)?> AsAttributesBuilder <$($generics)*>  for TExtends $(where $($where)+)? {
-            fn __set_js_children(
+        impl<$($($generics)+,)? TExtends: AsMut<$struct_name<$($($generics)+)?>> + $($extend_trait)+ > $trait_name <$($($generics)+)?>  for TExtends $(where $($where)+)? {
+            $(
+                fn $k $(<$($fn_generics)*>)? (&mut self, v: $v_ty) -> &mut Self {
+                    self.as_mut().$k(v);
+                    self
+                }
+            )*
+        }
+
+        impl AsMut<$extend_struct> for $struct_name <$($($generics)+)?> $(where $($where)+)? {
+            fn as_mut(
                 &mut self,
-                js_children: Option<&dyn $crate::Node>,
+            ) -> &mut $extend_struct {
+                &mut self.0
+            }
+        }
+    };
+}
+
+macro_rules! def_attrs_traits {
+    (
+        struct { $struct_name:ident }
+        $(generics { $($generics:tt)+ })?
+        $(where { $($where:tt)+ })?
+        $(extends { $($extend_trait:tt)+ })?
+        attrs {
+            $($k:ident $(@ $k_js:literal)? $([$($fn_generics:tt)*])? : $v_ty:ty $({$($impl_tt:tt)*})? ),* $(,)?
+        }
+    ) => {
+        pub trait AsPropsBuilder <$($($generics)+)?> $(: $($extend_trait)+)? $(where $($where)+)? {
+            fn __set_js_children<TNode: $crate::Node>(
+                &mut self,
+                js_children: Option<TNode>,
+            ) -> &mut Self;
+
+            fn __set_static_prop(
+                &mut self,
+                prop_name: &'static str,
+                js: $crate::PassToJsRuntimeValue,
+            ) -> &mut Self;
+
+            fn __set_intrinsic_component(
+                &mut self,
+                component: &str,
+            ) -> &mut Self;
+
+            $(
+                $crate::html::common::__impl_attr_default! {
+                    $k
+                    { $crate::html::common::js_prop_name! ($($k_js)? $k) }
+                    [$(<$($fn_generics)*>)?]
+                    :
+                    $v_ty
+                    $(: {$($impl_tt)*})?
+                }
+            )*
+        }
+
+        impl<$($($generics)+,)? TExtends: AsMut<$struct_name<$($($generics)+)?>> $(+ $($extend_trait)+)?> AsPropsBuilder <$($($generics)+)?>  for TExtends $(where $($where)+)? {
+            fn __set_js_children<TNode: $crate::Node>(
+                &mut self,
+                js_children: Option<TNode>,
             ) -> &mut Self {
                 self.as_mut().__set_js_children(js_children);
                 self
@@ -115,6 +195,14 @@ macro_rules! def_attrs_traits {
                 js: $crate::PassToJsRuntimeValue,
             ) -> &mut Self {
                 self.as_mut().__set_static_prop(prop_name, js);
+                self
+            }
+
+            fn __set_intrinsic_component(
+                &mut self,
+                component: &str,
+            ) -> &mut Self {
+                self.as_mut().__set_intrinsic_component(component);
                 self
             }
 
@@ -135,7 +223,7 @@ def_attrs_traits! {
 
     extends { crate::IntoJsAdapterComponentProps + crate::Props }
     attrs {
-        children: Option<&dyn crate::Node> {
+        children[TNode: crate::Node]: Option<TNode> {
             impl |this, v| this.__set_js_children(v)
         },
         ref_el[TWriteRef: 'static + crate::WriteRef<TElement> + crate::TryIntoJsRuntime]: Option<TWriteRef> {
@@ -253,7 +341,9 @@ impl<TElement, TValue> crate::Props for ComponentProps<TElement, TValue> {
 impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TElement, TValue> {
     fn into_js_adapter_props(self) -> crate::JsAdapterComponentProps {
         crate::JsAdapterComponentProps {
-            js_component: self.js_component.unwrap(),
+            js_component: self
+                .js_component
+                .expect_throw("__set_intrinsic_component should be called"),
             js_props: self.js_props,
             js_children: self.js_children,
             to_persist: self.to_persist.map(|v| Rc::new(v) as Rc<dyn Any>),
@@ -261,7 +351,7 @@ impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TEl
     }
 }
 
-impl<TElement: 'static + JsCast, TValue: ToJs> AsAttributesBuilder<TElement, TValue>
+impl<TElement: 'static + JsCast, TValue: ToJs> AsPropsBuilder<TElement, TValue>
     for ComponentProps<TElement, TValue>
 {
     fn __set_static_prop(
@@ -282,41 +372,38 @@ impl<TElement: 'static + JsCast, TValue: ToJs> AsAttributesBuilder<TElement, TVa
         self
     }
 
-    fn __set_js_children(&mut self, js_children: Option<&dyn crate::Node>) -> &mut Self {
-        self.js_children = js_children.and_then(crate::Node::as_react_children_js);
+    fn __set_js_children<TNode: crate::Node>(&mut self, js_children: Option<TNode>) -> &mut Self {
+        self.js_children = js_children
+            .as_ref()
+            .and_then(crate::Node::as_react_children_js);
+        self
+    }
+
+    fn __set_intrinsic_component(&mut self, component: &str) -> &mut Self {
+        self.js_component = Some(JsValue::from_str(component));
         self
     }
 }
 
-pub struct Component<
-    TProps: AsAttributesBuilder<TElement, TValue>,
-    TElement: 'static + JsCast,
-    TValue: ToJs,
-> {
+pub struct Component<TProps: crate::IntoJsAdapterComponentProps + crate::Props> {
     pub props: TProps,
-    _el: PhantomData<TElement>,
-    _value: PhantomData<TValue>,
 }
 
-impl<TProps: AsAttributesBuilder<TElement, TValue>, TElement: 'static + JsCast, TValue: ToJs>
-    crate::Component for Component<TProps, TElement, TValue>
+impl<TProps: crate::IntoJsAdapterComponentProps + crate::Props> crate::Component
+    for Component<TProps>
 {
     type Props = TProps;
     type ElementType = react_sys::Element;
 
-    fn use_render(self) -> Self::ElementType
+    fn use_render(&self) -> Self::ElementType
     where
         Self: Sized,
     {
-        self.call_create_element(None)
+        panic!("frender::html components use_render should not be called directly")
     }
 
     fn new_with_props(props: Self::Props) -> Self {
-        Self {
-            props,
-            _el: PhantomData,
-            _value: PhantomData,
-        }
+        Self { props }
     }
 
     fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element
@@ -328,5 +415,46 @@ impl<TProps: AsAttributesBuilder<TElement, TValue>, TElement: 'static + JsCast, 
     }
 }
 
+impl<TElement: 'static + JsCast, TValue: ToJs> crate::PropsBuilder<Self>
+    for ComponentProps<TElement, TValue>
+{
+    fn build(self) -> Self {
+        self
+    }
+}
+
+impl<TElement: 'static + JsCast, TValue: ToJs> crate::PropsBuilder<ComponentProps<TElement, TValue>>
+    for &mut ComponentProps<TElement, TValue>
+{
+    fn build(self) -> ComponentProps<TElement, TValue> {
+        ComponentProps {
+            _phantom: PhantomData,
+            js_children: self.js_children.take(),
+            js_props: self.js_props.take(),
+            js_component: self.js_component.take(),
+            to_persist: self.to_persist.take(),
+        }
+    }
+}
+
+pub(crate) use __impl_attr_default;
 pub(crate) use def_attrs_traits;
+pub(crate) use extend_html_props;
 pub(crate) use js_prop_name;
+
+#[cfg(test)]
+mod tests {
+    fn compose_html_props() {
+        use crate::html::common::AsPropsBuilder;
+
+        type Component = super::Component<super::ComponentProps<web_sys::Element, ()>>;
+
+        let el = crate::Component::call_create_element(
+            <Component as crate::Component>::new_with_props(crate::PropsBuilder::build(
+                <<Component as crate::Component>::Props as crate::Props>::init_builder()
+                    .title(Some("title")),
+            )),
+            None,
+        );
+    }
+}

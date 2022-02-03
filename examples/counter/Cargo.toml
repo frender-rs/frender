@@ -11,7 +11,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2.63"
+wasm-bindgen = "0.2.74"
 js-sys = "0.3"
 frender = { path = "../../frender" }
 
@@ -39,3 +39,10 @@ features = [
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false
+[package.metadata.wasm-pack.profile.profiling]
+wasm-opt = false

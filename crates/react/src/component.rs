@@ -22,13 +22,11 @@ pub trait Component {
     type Props: Props;
     type ElementType: crate::AsNullableElement;
 
-    fn use_render(self) -> Self::ElementType;
+    fn use_render(&self) -> Self::ElementType;
 
     fn new_with_props(props: Self::Props) -> Self
     where
         Self: Sized;
 
-    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element
-    where
-        Self: Sized;
+    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element;
 }

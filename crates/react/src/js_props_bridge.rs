@@ -4,20 +4,20 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 pub struct PropsBridge {
     component_name: Cow<'static, str>,
-    render_fn: Box<dyn FnOnce() -> Option<react_sys::Element>>,
+    render_fn: Box<dyn Fn() -> Option<react_sys::Element>>,
 }
 
 impl PropsBridge {
-    pub fn new<F: 'static + FnOnce() -> Option<react_sys::Element>>(
+    pub fn new<F: 'static + Fn() -> Option<react_sys::Element>>(
         func: F,
         component_name: Cow<'static, str>,
     ) -> Self {
         Self {
             component_name,
-            render_fn: Box::new(func) as Box<dyn FnOnce() -> Option<react_sys::Element>>,
+            render_fn: Box::new(func) as Box<dyn Fn() -> Option<react_sys::Element>>,
         }
     }
-    pub fn new_anonymous<F: 'static + FnOnce() -> Option<react_sys::Element>>(func: F) -> Self {
+    pub fn new_anonymous<F: 'static + Fn() -> Option<react_sys::Element>>(func: F) -> Self {
         Self::new(func, Cow::Borrowed("Anonymous Component"))
     }
 }
@@ -39,8 +39,8 @@ impl Debug for PropsBridge {
 }
 
 impl PropsBridge {
-    pub fn render(self) -> Option<react_sys::Element> {
-        (self.render_fn)()
+    pub fn render(&self) -> Option<react_sys::Element> {
+        (&self.render_fn)()
     }
 }
 
@@ -49,16 +49,16 @@ extern "C" {
     pub type JsProps;
     pub type NodeFromJs;
 
-    #[wasm_bindgen(method, getter, js_name = "__frenderPropsBridge")]
-    pub fn props_bridge(this: &JsProps) -> Option<PropsBridge>;
+    #[wasm_bindgen(structural, method, getter, js_name = "__frenderPropsBridge")]
+    pub fn props_bridge(this: &JsProps) -> Option<usize>;
 
-    #[wasm_bindgen(method, setter, js_name = "__frenderPropsBridge")]
-    pub fn set_props_bridge(this: &JsProps, v: Option<PropsBridge>);
+    #[wasm_bindgen(structural, method, setter, js_name = "__frenderPropsBridge")]
+    pub fn set_props_bridge(this: &JsProps, v: Option<usize>);
 
-    #[wasm_bindgen(method, setter, js_name = "key")]
+    #[wasm_bindgen(structural, method, setter, js_name = "key")]
     fn _set_key(this: &JsProps, v: JsValue);
 
-    #[wasm_bindgen(method, getter)]
+    #[wasm_bindgen(structural, method, getter)]
     pub fn children(this: &JsProps) -> Option<NodeFromJs>;
 }
 
@@ -88,9 +88,18 @@ fn impl_bridge_rust_only_props(js_props: crate::JsProps) -> JsValue {
         panic!("rust only component should not accept children from js");
     }
 
-    let bridge = js_props.props_bridge();
+    web_sys::console::log_2(&JsValue::from_str("get props bridge"), js_props.as_ref());
+    // JsValue::NULL
 
-    let el = bridge.unwrap().render();
+    let bridge = js_props.props_bridge().unwrap();
+
+    let render = unsafe {
+        forgotten::try_get_with_usize::<Box<dyn Fn() -> Option<react_sys::Element>>>(&bridge)
+    };
+
+    let render = render.expect_throw("invalid props bridge");
+
+    let el = render();
 
     if let Some(el) = el {
         el.into()

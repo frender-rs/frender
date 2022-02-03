@@ -2,13 +2,13 @@ use std::{cell::RefCell, rc::Rc};
 
 use crate::{IntoRc, ReadRef, SimpleTake, TakeRc, WriteRef};
 
-pub fn use_ref_value<T: 'static + ?Sized, D: IntoRc<T>>(initial_value: D) -> MutableRefRc<T> {
-    let rc = crate::use_ref_cell_value(initial_value.into_rc());
+pub fn use_ref<T: 'static + ?Sized, D: IntoRc<T>>(initial_value: D) -> MutableRefRc<T> {
+    let rc = crate::use_ref_cell(initial_value.into_rc());
     MutableRefRc(rc)
 }
 
-pub fn use_ref<T: 'static + ?Sized, F: TakeRc<T>>(get_initial_value: F) -> MutableRefRc<T> {
-    let rc = crate::use_ref_cell(|| get_initial_value.take_rc());
+pub fn use_ref_with<T: 'static + ?Sized, F: TakeRc<T>>(get_initial_value: F) -> MutableRefRc<T> {
+    let rc = crate::use_ref_cell_with(|| get_initial_value.take_rc());
     MutableRefRc(rc)
 }
 

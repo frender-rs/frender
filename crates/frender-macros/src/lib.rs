@@ -1,4 +1,5 @@
 mod case;
+mod props;
 
 use darling::FromMeta;
 use lazy_static::lazy_static;

@@ -5,6 +5,7 @@
     <title>Hello World</title>
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="0">
   </head>
   <body>
     <div>
@@ -16,15 +17,4 @@
       <div id="root-js"></div>
     </div>
   </body>
-  <script type="module">
-    import * as comps from "./pkg/counter.js";
-
-    comps
-      .default() // init wasm
-      .then(() => {
-        const el = React.createElement(comps.Timer);
-        ReactDOM.render(el, document.getElementById("root-js"));
-      })
-      .catch((err) => console.error("counter.init failed", err));
-  </script>
 </html>

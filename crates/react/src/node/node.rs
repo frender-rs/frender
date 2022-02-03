@@ -72,6 +72,7 @@ macro_rules! into_js_node {
 }
 
 into_js_node! {
+    str
     react_sys::Element
     String
     js_sys::JsString
@@ -150,5 +151,24 @@ impl<N: Node> Node for Box<N> {
         N: 'static,
     {
         AnyNode(self)
+    }
+}
+
+impl<N: Node> Node for &N {
+    #[inline]
+    fn as_react_node_js(&self) -> JsValue {
+        (*self).as_react_node_js()
+    }
+
+    #[inline]
+    fn as_react_children_js(&self) -> Option<js_sys::Array> {
+        (*self).as_react_children_js()
+    }
+
+    fn into_any_node(self) -> AnyNode
+    where
+        Self: Sized + 'static,
+    {
+        AnyNode::wrap(self)
     }
 }

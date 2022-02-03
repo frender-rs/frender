@@ -3,7 +3,7 @@
 members = [
     "frender",
     "crates/*",
-    # "examples/*",
+    "examples/*",
 ]
 
 [profile.release]

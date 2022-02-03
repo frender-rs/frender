@@ -26,12 +26,12 @@ impl crate::Component for JsAdapterComponent {
     type Props = JsAdapterComponentProps;
     type ElementType = react_sys::Element;
 
-    fn use_render(self) -> Self::ElementType {
-        let props = self.0;
+    fn use_render(&self) -> Self::ElementType {
+        let props = &self.0;
 
-        let a = crate::use_ref::<dyn Any, _>(|| (Rc::new(()) as Rc<dyn Any>));
-        if let Some(to_persist) = props.to_persist {
-            a.set_current(to_persist);
+        let a = crate::use_ref_with::<dyn Any, _>(|| (Rc::new(()) as Rc<dyn Any>));
+        if let Some(to_persist) = &props.to_persist {
+            a.set_current(Rc::clone(to_persist));
         }
 
         let null = JsValue::NULL;
@@ -57,10 +57,7 @@ impl crate::Component for JsAdapterComponent {
         Self(props)
     }
 
-    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element
-    where
-        Self: Sized,
-    {
+    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element {
         thread_local! {
             static ADAPTER_FN: crate::ClosureBridgeRustOnlyComponent = crate::closure_to_bridge_rust_only_component();
         }
@@ -70,14 +67,19 @@ impl crate::Component for JsAdapterComponent {
             use wasm_bindgen::JsCast;
 
             let obj = js_sys::Object::new();
-            let props: &crate::JsProps = obj.dyn_ref().unwrap();
+            let props: &crate::JsProps = obj.unchecked_ref();
 
             props.set_key(key);
 
-            props.set_props_bridge(Some(crate::PropsBridge::new(
-                move || self.use_render().as_nullable_element(),
-                "CommonHtmlComponent".into(),
-            )));
+            web_sys::console::log_1(&JsValue::from_str("set props bridge"));
+
+            let k = forgotten::forget(Box::new(move || self.use_render().as_nullable_element())
+                as Box<dyn Fn() -> Option<react_sys::Element>>);
+
+            let k = k.into_shared();
+            let k = k.as_usize();
+
+            props.set_props_bridge(Some(*k));
 
             react_sys::create_element_no_children(comp_fn.as_ref(), props.as_ref())
         })

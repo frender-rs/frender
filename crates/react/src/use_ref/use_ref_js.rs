@@ -4,15 +4,8 @@ use wasm_bindgen::{JsCast, JsValue};
 
 use crate::SimpleTake;
 
-pub fn use_ref_js_value<T: ToJs + FromJs>(initial_value: T) -> MutableRefJs<T> {
+pub fn use_ref_js<T: ToJs + FromJs>(initial_value: T) -> MutableRefJs<T> {
     let obj = react_sys::use_ref(&initial_value.to_js());
-    MutableRefJs(obj, PhantomData)
-}
-
-pub fn use_ref_js<T: ToJs + FromJs, F: FnOnce() -> T>(get_initial_value: F) -> MutableRefJs<T> {
-    let mut get_initial_value =
-        crate::utils::fn_once_in_runtime(move || get_initial_value().to_js());
-    let obj = react_sys::use_ref_with(&mut get_initial_value);
     MutableRefJs(obj, PhantomData)
 }
 
