@@ -1,3 +1,10 @@
+# [1.0.0-alpha.3](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2022-02-03)
+
+
+### Bug Fixes
+
+* use_memo fails because React.useRef doesn't accept function as initializer ([cd76127](https://github.com/frender-rs/frender/commit/cd76127ba3e96cf72ab7266a1095466df84e3271))
+
 # [1.0.0-alpha.2](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-01-28)
 
 
