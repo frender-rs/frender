@@ -6,7 +6,7 @@ use wasm_bindgen::JsValue;
 pub struct JsAdapterComponentProps {
     pub js_component: JsValue,
     pub js_props: Option<js_sys::Object>,
-    pub js_children: Option<js_sys::Array>,
+    pub js_children: Option<crate::Children>,
     pub to_persist: Option<Rc<dyn Any>>,
 }
 
@@ -42,7 +42,16 @@ impl crate::Component for JsAdapterComponent {
             .unwrap_or(&null);
 
         let el = if let Some(children_args) = &props.js_children {
-            react_sys::create_element(&props.js_component, js_props, children_args)
+            match children_args {
+                crate::Children::Single(v) => react_sys::create_element(
+                    &props.js_component,
+                    js_props,
+                    &js_sys::Array::of1(v.as_ref()),
+                ),
+                crate::Children::StaticMultiple(children_args) => {
+                    react_sys::create_element(&props.js_component, js_props, children_args)
+                }
+            }
         } else {
             react_sys::create_element_no_children(&props.js_component, js_props)
         };

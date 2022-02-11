@@ -24,13 +24,6 @@ impl Node for AnyNode {
     }
 
     #[inline]
-    fn as_react_children_js(&self) -> Option<crate::Children> {
-        Some(crate::Children::from_js_array(js_sys::Array::of1(
-            &self.as_react_node_js().0,
-        )))
-    }
-
-    #[inline]
     fn into_react_node_js(self) -> AnyNode
     where
         Self: Sized,

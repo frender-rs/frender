@@ -12,9 +12,7 @@ pub trait Node {
 
     #[inline]
     fn as_react_children_js(&self) -> Option<Children> {
-        Some(Children::from_js_array(js_sys::Array::of1(
-            &self.as_react_node_js().0,
-        )))
+        Some(Children::Single(self.as_react_node_js()))
     }
 
     #[inline]
@@ -115,7 +113,7 @@ macro_rules! impl_node_for_tuple {
             fn as_react_node_js(&self) -> AnyNode {
                 #![allow(non_snake_case)]
                 let ($($t),+ ,) = self;
-                let v = Children::from_iter([
+                let v = Children::from_static_nodes([
                     $($t.as_react_node_js()),+
                 ]);
                 v.as_react_node_js()
@@ -124,7 +122,7 @@ macro_rules! impl_node_for_tuple {
             fn as_react_children_js(&self) -> Option<Children> {
                 #![allow(non_snake_case)]
                 let ($($t),+ ,) = self;
-                let v = Children::from_iter([
+                let v = Children::from_static_nodes([
                     $($t.as_react_node_js()),+
                 ]);
                 Some(v)

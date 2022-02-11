@@ -345,7 +345,7 @@ impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TEl
                 .js_component
                 .expect_throw("__set_intrinsic_component should be called"),
             js_props: self.js_props,
-            js_children: self.children.map(Into::into),
+            js_children: self.children,
             to_persist: self.to_persist.map(|v| Rc::new(v) as Rc<dyn Any>),
         }
     }
