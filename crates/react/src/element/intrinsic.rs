@@ -1,6 +1,6 @@
 use wasm_bindgen::JsValue;
 
-use crate::AsNullableElement;
+use crate::{AnyNode, AsNullableElement};
 
 /// Corresponding to [`ReactHTMLElement`]
 ///
@@ -15,8 +15,9 @@ pub struct IntrinsicElement {
 
 impl crate::Node for IntrinsicElement {
     #[inline]
-    fn as_react_node_js(&self) -> JsValue {
-        self.as_nullable_element().into()
+    fn as_react_node_js(&self) -> AnyNode {
+        self.as_nullable_element()
+            .map_or_else(AnyNode::null, crate::Node::into_react_node_js)
     }
 }
 

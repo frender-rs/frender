@@ -1,5 +1,7 @@
 mod case;
 mod props;
+mod rsx_data;
+mod rsx_to_tokens;
 
 use darling::FromMeta;
 use lazy_static::lazy_static;
@@ -90,4 +92,11 @@ pub fn ident_snake_to_camel(input: TokenStream) -> TokenStream {
     let ident = parse_macro_input!(input as syn::Ident);
     let lit = case::snake_to_camel_lit_str(&ident.to_string(), ident.span());
     lit.to_token_stream().into()
+}
+
+#[proc_macro]
+pub fn rsx(input: TokenStream) -> TokenStream {
+    let value = parse_macro_input!(input as rsx_data::RsxChild);
+
+    value.to_token_stream().into()
 }

@@ -37,3 +37,25 @@ pub mod html;
 mod utils;
 
 pub use react_sys as sys;
+
+/// A shorthand to create tuple of react children.
+///
+/// If there is no children nodes, then it will be interpreted as `()`.
+///
+/// If there is only one expression, then it will be interpreted as
+/// the value it self (not wrapped in a single element tuple).
+///
+/// If there are multiple expressions separated by `,`,
+/// then it represents a tuple of these expressions.
+///
+/// Note that if a tuple contains more than 17 elements,
+/// then `react::Node` is NOT implemented for it!
+#[macro_export]
+macro_rules! children {
+    () => {()};
+    ($($e:expr),+ $(,)?) => {
+        (
+            $($e),*
+        )
+    };
+}

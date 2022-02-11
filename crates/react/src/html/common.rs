@@ -318,7 +318,7 @@ fn pass_any_write_ref<
 
 pub struct ComponentProps<TElement, TValue> {
     _phantom: PhantomData<(TElement, TValue)>,
-    js_children: Option<js_sys::Array>,
+    children: Option<crate::Children>,
     js_props: Option<js_sys::Object>,
     js_component: Option<JsValue>,
     to_persist: Option<HashMap<&'static str, Rc<dyn Any>>>,
@@ -330,7 +330,7 @@ impl<TElement, TValue> crate::Props for ComponentProps<TElement, TValue> {
     fn init_builder() -> Self::InitialBuilder {
         Self {
             _phantom: PhantomData,
-            js_children: None,
+            children: None,
             js_props: None,
             js_component: None,
             to_persist: None,
@@ -345,7 +345,7 @@ impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TEl
                 .js_component
                 .expect_throw("__set_intrinsic_component should be called"),
             js_props: self.js_props,
-            js_children: self.js_children,
+            js_children: self.children.map(Into::into),
             to_persist: self.to_persist.map(|v| Rc::new(v) as Rc<dyn Any>),
         }
     }
@@ -372,8 +372,8 @@ impl<TElement: 'static + JsCast, TValue: ToJs> AsPropsBuilder<TElement, TValue>
         self
     }
 
-    fn __set_js_children<TNode: crate::Node>(&mut self, js_children: Option<TNode>) -> &mut Self {
-        self.js_children = js_children
+    fn __set_js_children<TNode: crate::Node>(&mut self, children: Option<TNode>) -> &mut Self {
+        self.children = children
             .as_ref()
             .and_then(crate::Node::as_react_children_js);
         self
@@ -429,7 +429,7 @@ impl<TElement: 'static + JsCast, TValue: ToJs> crate::PropsBuilder<ComponentProp
     fn build(self) -> ComponentProps<TElement, TValue> {
         ComponentProps {
             _phantom: PhantomData,
-            js_children: self.js_children.take(),
+            children: self.children.take(),
             js_props: self.js_props.take(),
             js_component: self.js_component.take(),
             to_persist: self.to_persist.take(),

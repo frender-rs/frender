@@ -1,44 +1,3 @@
-macro_rules! macro_component_type {
-    ($($tag:ident)+) => {
-        #[macro_export]
-        macro_rules! component_type {
-            $(
-                ($tag) => {
-                    $crate::intrinsic::$tag::Component
-                };
-            )+
-            ($ty_comp:ty) => {
-                $ty_comp
-            };
-        }
-
-        #[macro_export]
-        macro_rules! __impl_component_auto_import {
-            $(
-                ($tag) => {
-                    #[allow(unused_imports)]
-                    use $crate::intrinsic::$tag::AsPropsBuilder;
-                    #[allow(unused_imports)]
-                    use $crate::react::html::common::AsPropsBuilder as AsCommonPropsBuilder;
-                };
-            )+
-            ($ty_comp:ty) => {};
-        }
-
-        #[macro_export]
-        macro_rules! __impl_component_props_pre_build {
-            $(
-                ({$v:ident} $tag) => {
-                    $v.__set_intrinsic_component(stringify!($tag))
-                };
-            )+
-            ({$v:ident} $ty_comp:ty) => {
-                $v
-            };
-        }
-    };
-}
-
 macro_rules! intrinsic_component_tag {
     ($tag:ident) => {
         pub use $crate::react::html::$tag;
@@ -48,15 +7,18 @@ macro_rules! intrinsic_component_tag {
             pub type Component = $crate::react::html::common::Component<
                 $crate::react::html::common::ComponentProps<web_sys::HtmlElement, ()>,
             >;
+            pub mod prelude {
+                #[allow(unused_imports)]
+                pub use $crate::react::html::common::AsPropsBuilder as AsCommonPropsBuilder;
+                #[allow(unused_imports)]
+                pub use $crate::react::html::common::ComponentProps;
+            }
         }
     };
 }
 
 macro_rules! all_intrinsic_component_tags {
     ($($tag:ident $(: $option:tt)?),+ $(,)?) => {
-        macro_component_type! {
-            $($tag)+
-        }
         $(
             intrinsic_component_tag! {
                 $tag

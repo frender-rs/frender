@@ -1,5 +1,4 @@
-use frender::node;
-use frender::react::{self, Component};
+use frender::prelude::*;
 use wasm_bindgen::UnwrapThrowExt;
 
 fn component_strict_mode() -> wasm_bindgen::JsValue {
@@ -14,11 +13,20 @@ fn main() {
     let el = document.get_element_by_id("root-rust").unwrap();
 
     let value = 1;
-    let react_element = node!(
-        a[href="https://example.com"]{
+
+    let strong = rsx!(
+        <strong>
+            "strong"
+        </strong>
+    );
+
+    let react_element = rsx!(
+        <a href="https://example.com">
             "example anchor"
-            value
-        }
+            {value}
+            {strong}
+            <i>"iii"</i>
+        </a>
     );
 
     let comp = component_strict_mode();

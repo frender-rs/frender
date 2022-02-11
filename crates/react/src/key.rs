@@ -11,10 +11,17 @@ impl AsKey for String {
     }
 }
 
-impl<'a> AsKey for &'a str {
+impl AsKey for str {
     #[inline]
     fn as_key(&self) -> JsValue {
         JsValue::from_str(self)
+    }
+}
+
+impl<T: AsKey> AsKey for &T {
+    #[inline]
+    fn as_key(&self) -> JsValue {
+        (*self).as_key()
     }
 }
 

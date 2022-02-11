@@ -71,8 +71,8 @@ impl JsProps {
 }
 
 impl crate::Node for NodeFromJs {
-    fn as_react_node_js(&self) -> JsValue {
-        AsRef::<JsValue>::as_ref(self).clone()
+    fn as_react_node_js(&self) -> crate::AnyNode {
+        crate::AnyNode(AsRef::<JsValue>::as_ref(self).clone())
     }
 }
 

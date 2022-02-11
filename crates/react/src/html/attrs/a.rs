@@ -19,3 +19,9 @@ extend_html_props! {
 }
 
 pub type Component = crate::html::common::Component<ComponentProps>;
+
+pub mod prelude {
+    pub use super::AsPropsBuilder;
+    pub use super::ComponentProps;
+    pub use crate::html::common::AsPropsBuilder as AsCommonPropsBuilder;
+}

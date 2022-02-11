@@ -28,5 +28,5 @@ pub trait Component {
     where
         Self: Sized;
 
-    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element;
+    fn call_create_element(self, key: Option<JsValue>) -> Self::ElementType;
 }
