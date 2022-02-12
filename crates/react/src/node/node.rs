@@ -22,6 +22,14 @@ pub trait Node {
     {
         AnyNode::wrap(self)
     }
+
+    #[inline]
+    fn into_react_children_js(self) -> Option<Children>
+    where
+        Self: Sized,
+    {
+        self.as_react_children_js()
+    }
 }
 
 impl Node for () {

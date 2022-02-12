@@ -16,6 +16,8 @@ pub mod prelude {
     pub use super::rsx_runtime_impl_rsx_prop;
 
     pub mod rsx_runtime {
+        pub use react::Fragment;
+
         #[inline]
         pub fn init_props_builder<TComp: react::Component>(
         ) -> <TComp::Props as react::Props>::InitialBuilder {

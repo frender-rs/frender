@@ -2,6 +2,7 @@
 mod take_rc;
 // mod use_closure;
 mod closure;
+mod common_props;
 mod component;
 mod element;
 mod fragment;
@@ -11,13 +12,17 @@ mod js_runtime;
 mod key;
 mod node;
 mod simple_take;
+mod strict_mode;
 mod use_effect;
 mod use_memo;
 mod use_ref;
 mod use_ref_cell;
 mod use_state;
 
+mod create_element_js;
+
 pub use closure::*;
+pub use common_props::*;
 pub use component::*;
 pub use element::*;
 pub use fragment::*;
@@ -27,6 +32,7 @@ pub use js_runtime::*;
 pub use key::*;
 pub use node::*;
 pub use simple_take::*;
+pub use strict_mode::*;
 pub use take_rc::*;
 pub use use_effect::*;
 pub use use_memo::*;

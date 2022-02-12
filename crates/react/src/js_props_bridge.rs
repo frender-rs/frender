@@ -76,11 +76,6 @@ impl crate::Node for NodeFromJs {
     }
 }
 
-fn create_element_with_bridge<C: crate::Component>(c: C) -> react_sys::Element {
-    // react_sys::
-    todo!()
-}
-
 fn impl_bridge_rust_only_props(js_props: crate::JsProps) -> JsValue {
     let children = js_props.children();
 
@@ -88,16 +83,25 @@ fn impl_bridge_rust_only_props(js_props: crate::JsProps) -> JsValue {
         panic!("rust only component should not accept children from js");
     }
 
-    web_sys::console::log_2(&JsValue::from_str("get props bridge"), js_props.as_ref());
-    // JsValue::NULL
-
     let bridge = js_props.props_bridge().unwrap();
+
+    let ref_bridge = react_sys::use_ref_usize(bridge);
+
+    let old_bridge = ref_bridge.current();
+    if old_bridge != bridge {
+        let _valid = unsafe { forgotten::try_free_with_usize(old_bridge) };
+
+        #[cfg(debug_assertions)]
+        assert!(_valid, "invalid js props bridge: failed to free");
+
+        ref_bridge.set_current(bridge);
+    }
 
     let render = unsafe {
         forgotten::try_get_with_usize::<Box<dyn Fn() -> Option<react_sys::Element>>>(&bridge)
     };
 
-    let render = render.expect_throw("invalid props bridge");
+    let render = render.expect_throw("invalid js props bridge: failed to get");
 
     let el = render();
 

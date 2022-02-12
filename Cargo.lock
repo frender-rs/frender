@@ -259,9 +259,9 @@ dependencies = [
 
 [[package]]
 name = "react-sys"
-version = "1.0.0-alpha.20"
+version = "1.0.0-alpha.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "672a4f0026c6a77ef2018d8090d22f08fde91abf94505dd76cdd1112f2f86f9d"
+checksum = "8e948b0e40d16ea5fd260eee52240698a3f1cf918d1506b755755f129b0d149f"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
