@@ -34,27 +34,12 @@ impl crate::Component for JsAdapterComponent {
             a.set_current(Rc::clone(to_persist));
         }
 
-        let null = JsValue::NULL;
-        let js_props = props
-            .js_props
-            .as_ref()
-            .map(|obj| obj.as_ref())
-            .unwrap_or(&null);
-
-        let el = if let Some(children_args) = &props.js_children {
-            match children_args {
-                crate::Children::Single(v) => react_sys::create_element(
-                    &props.js_component,
-                    js_props,
-                    &js_sys::Array::of1(v.as_ref()),
-                ),
-                crate::Children::StaticMultiple(children_args) => {
-                    react_sys::create_element(&props.js_component, js_props, children_args)
-                }
-            }
-        } else {
-            react_sys::create_element_no_children(&props.js_component, js_props)
-        };
+        let el = crate::create_element_js::create_element_with_js_value(
+            &props.js_component,
+            props.js_props.as_ref(),
+            props.js_children.as_ref(),
+            None,
+        );
 
         el
     }
@@ -79,8 +64,6 @@ impl crate::Component for JsAdapterComponent {
             let props: &crate::JsProps = obj.unchecked_ref();
 
             props.set_key(key);
-
-            web_sys::console::log_1(&JsValue::from_str("set props bridge"));
 
             let k = forgotten::forget(Box::new(move || self.use_render().as_nullable_element())
                 as Box<dyn Fn() -> Option<react_sys::Element>>);
