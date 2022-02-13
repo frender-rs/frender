@@ -1,83 +1,31 @@
 mod case;
-mod props;
+mod component_data;
+mod component_to_tokens;
+mod err;
+mod props_data;
+mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
 
-use darling::FromMeta;
-use lazy_static::lazy_static;
 use proc_macro::TokenStream;
-use quote::{quote, quote_spanned, ToTokens};
-use syn::{parse_macro_input, spanned::Spanned, AttributeArgs, ItemFn, Signature};
-
-#[derive(Debug, FromMeta)]
-struct ComponentOptions {
-    #[darling(default)]
-    display_name: Option<String>,
-    path: String,
-}
+use quote::{ToTokens, TokenStreamExt};
+use syn::parse_macro_input;
 
 #[proc_macro_attribute]
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
-    let attr_args = parse_macro_input!(args as AttributeArgs);
-    let input_fn = parse_macro_input!(input as ItemFn);
+    use component_data::*;
+    let attr_args = parse_macro_input!(args as syn::AttributeArgs);
+    let input_fn = parse_macro_input!(input as syn::ItemFn);
 
-    let opts = match ComponentOptions::from_list(&attr_args) {
-        Ok(v) => v,
-        Err(e) => {
-            return TokenStream::from(e.write_errors());
-        }
-    };
+    let (comp, error) = ComponentDefinition::try_from_attrs_and_fn(attr_args, input_fn)
+        .map_or_else(|(comp, err)| (comp, Some(err)), |comp| (comp, None));
 
-    let ItemFn {
-        vis, sig, block, ..
-    } = input_fn;
+    let mut t = comp.into_token_stream();
+    if let Some(error) = error {
+        t.append_all(error.write_errors());
+    }
 
-    if sig.constness.is_some()
-        || sig.asyncness.is_some()
-        || sig.unsafety.is_some()
-        || sig.abi.is_some()
-    {
-        return quote_spanned! {
-            sig.span() =>
-              compiler_error!("frender component doesn't support `const` / `async` / `unsafe` / `extern` fn")
-        }
-        .into();
-    };
-
-    let Signature {
-        generics,
-        ident,
-        output,
-        inputs,
-        ..
-    } = sig;
-
-    todo!();
-
-    // let tokens = quote! {
-    //     #vis struct #{ident}Props #generics {
-    //     }
-
-    //     #vis struct #ident #generics {
-    //         props: #{ident}Props,
-    //     }
-
-    //     impl #generics serde::Serialize for SerializeWith #generics #where_clause {
-    //         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    //         where
-    //             S: serde::Serializer,
-    //         {
-    //             #path(self.value, serializer)
-    //         }
-    //     }
-
-    //     SerializeWith {
-    //         value: #value,
-    //         phantom: core::marker::PhantomData::<#item_ty>,
-    //     }
-    // };
-
-    // tokens.into()
+    t.into()
 }
 
 #[proc_macro]
@@ -98,5 +46,11 @@ pub fn ident_snake_to_camel(input: TokenStream) -> TokenStream {
 pub fn rsx(input: TokenStream) -> TokenStream {
     let value = parse_macro_input!(input as rsx_data::RsxChild);
 
+    value.to_token_stream().into()
+}
+
+#[proc_macro]
+pub fn def_props(input: TokenStream) -> TokenStream {
+    let value = parse_macro_input!(input as props_data::PropsDefinition);
     value.to_token_stream().into()
 }

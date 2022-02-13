@@ -12,10 +12,20 @@ pub trait Props {
 
 pub struct NoProps;
 
-impl Props for NoProps {
-    type InitialBuilder = ();
+impl PropsBuilder<NoProps> for NoProps {
+    #[inline]
+    fn build(self) -> NoProps {
+        self
+    }
+}
 
-    fn init_builder() -> Self::InitialBuilder {}
+impl Props for NoProps {
+    type InitialBuilder = NoProps;
+
+    #[inline]
+    fn init_builder() -> Self::InitialBuilder {
+        NoProps
+    }
 }
 
 pub trait Component {

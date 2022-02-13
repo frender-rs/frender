@@ -7,13 +7,12 @@ pub use forgotten;
 pub use react;
 // pub use react::{children, AsKey, Children, Component, Node, Props, PropsBuilder};
 
-pub use frender_macros::rsx;
+pub use frender_macros::{def_props, rsx};
 
 pub mod prelude {
     pub use super::intrinsic_components;
     pub use super::react;
-    pub use super::rsx;
-    pub use super::rsx_runtime_impl_rsx_prop;
+    pub use super::{def_props, rsx, rsx_runtime_impl_rsx_prop};
 
     pub mod rsx_runtime {
         pub use react::Fragment;

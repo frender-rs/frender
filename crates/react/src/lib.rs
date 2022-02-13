@@ -40,6 +40,7 @@ pub use use_ref::*;
 pub use use_ref_cell::*;
 pub use use_state::*;
 
+pub mod __private;
 pub mod html;
 
 mod utils;
