@@ -8,17 +8,24 @@ use syn::{
     spanned::Spanned,
 };
 
+use crate::err::OutputError;
+
 use super::props_data::*;
 
-impl ToTokens for PropsDefinition {
-    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+impl PropsDefinitionWithOptions {
+    pub fn into_tokens(self, tokens: &mut proc_macro2::TokenStream) {
         let Self {
-            vis,
-            attrs,
-            struct_token,
-            ident,
-            generics,
-            fields,
+            errors,
+            options: PropsOptions { no_debug },
+            definition:
+                PropsDefinition {
+                    vis,
+                    attrs,
+                    struct_token,
+                    ident,
+                    generics,
+                    fields,
+                },
         } = self;
 
         let span = ident.span();
@@ -29,6 +36,20 @@ impl ToTokens for PropsDefinition {
         let fields = match fields.to_fields_impl() {
             Ok(v) => v,
             Err(err) => return tokens.append_all(err.into_compile_error()),
+        };
+
+        let t_debug = if no_debug.is_none() {
+            // impl DebugProps
+            let t_debug = quote_spanned! {span=>
+                impl #impl_generics ::frender::DebugProps for #ident #type_generics #where_clause {
+                    fn as_debug_props(&self) -> Option<::frender::react::__private::JsValue> {
+                        Some(format! ("{:#?}", self).into())
+                    }
+                }
+            };
+            Some(t_debug)
+        } else {
+            None
         };
 
         // struct MyProps { ... }
@@ -45,7 +66,7 @@ impl ToTokens for PropsDefinition {
             }
         };
 
-        let info = fields.iter().map(|f| f.to_info(ident)).collect::<Vec<_>>();
+        let info = fields.iter().map(|f| f.to_info(&ident)).collect::<Vec<_>>();
         let (required, optional) = info
             .iter()
             .partition::<Vec<_>, _>(|v| v.builder_type_param.is_some());
@@ -53,7 +74,7 @@ impl ToTokens for PropsDefinition {
         let fields_all_optional = required.len() == 0;
 
         let builder_ident = if fields_all_optional {
-            Cow::Borrowed(ident)
+            Cow::Borrowed(&ident)
         } else {
             Cow::Owned(quote::format_ident!("{}Builder", ident))
         };
@@ -283,13 +304,13 @@ impl ToTokens for PropsDefinition {
         };
 
         tokens.append_all(t_struct_props);
+        tokens.append_all(t_debug);
         tokens.append_all(t_impl_props);
-        // tokens.append_all(quote! {
-        //     fn ttt () {
-        //         stringify! {#t_impl_builder}
-        //     }
-        // });
         tokens.append_all(t_impl_builder);
+
+        if let Some(error) = errors.output_error() {
+            tokens.append_all(error.write_errors());
+        }
     }
 }
 

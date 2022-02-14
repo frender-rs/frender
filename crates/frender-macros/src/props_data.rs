@@ -1,9 +1,19 @@
+use darling::{FromAttributes, FromMeta};
 use proc_macro2::Span;
 use syn::{
     parse::Parse,
     punctuated::{Pair, Punctuated},
     spanned::Spanned,
 };
+
+use crate::err::{OutputError, RecordError, ValueResult};
+
+#[derive(FromAttributes, Default)]
+#[darling(attributes(props))]
+pub struct PropsOptions {
+    #[darling(default)]
+    pub no_debug: darling::util::Flag,
+}
 
 pub struct PropsDefinition {
     pub attrs: Vec<syn::Attribute>,
@@ -13,6 +23,47 @@ pub struct PropsDefinition {
     pub generics: syn::Generics,
     pub fields: PropsFields,
     // pub semi_token: Option<Token![;]>,
+}
+
+pub struct PropsDefinitionWithOptions {
+    pub errors: Vec<darling::Error>,
+    pub options: PropsOptions,
+    pub definition: PropsDefinition,
+}
+
+impl PropsOptions {
+    pub fn parse_inner_attrs_record<R: RecordError<darling::Error>>(
+        input: syn::parse::ParseStream,
+        recorder: &mut R,
+    ) -> Self {
+        match syn::Attribute::parse_inner(&input) {
+            Ok(attrs) => {
+                for attr in &attrs {
+                    let ident = attr.path.get_ident().map(syn::Ident::to_string);
+                    let ident = ident.as_ref().map_or("", |s| s.as_str());
+                    if ident != "props" {
+                        recorder.record_error(
+                            darling::Error::custom(
+                                "def_props inner attribute must be `props(options)`",
+                            )
+                            .with_span(&attr.bracket_token.span),
+                        );
+                    }
+                }
+                match PropsOptions::from_attributes(&attrs) {
+                    Ok(v) => v,
+                    Err(error) => {
+                        recorder.record_error(error);
+                        Default::default()
+                    }
+                }
+            }
+            Err(error) => {
+                recorder.record_error(error.into());
+                PropsOptions::default()
+            }
+        }
+    }
 }
 
 impl Parse for PropsDefinition {
@@ -230,6 +281,23 @@ impl Parse for PropsFieldTypeAndBuilderExplicit {
                 arrow,
                 fn_block,
             },
+        })
+    }
+}
+
+impl PropsDefinitionWithOptions {
+    /// def_props! { ... }
+    pub fn parse_proc_macro_input(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let mut errors = vec![];
+
+        let options = PropsOptions::parse_inner_attrs_record(input, &mut errors);
+
+        // TODO: recoverable
+        let definition: PropsDefinition = input.parse()?;
+        Ok(Self {
+            errors,
+            options,
+            definition,
         })
     }
 }

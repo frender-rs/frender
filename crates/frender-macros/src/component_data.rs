@@ -10,6 +10,8 @@ use crate::err::{
 pub struct ComponentOptions {
     #[darling(default)]
     pub display_name: Option<String>,
+    #[darling(default)]
+    pub no_debug_props: darling::util::Flag,
     // path: String,
 }
 
@@ -56,6 +58,13 @@ pub struct ComponentItemFnSignature {
     pub paren_token: syn::token::Paren,
     pub props_arg: Option<Pair<syn::PatType, syn::Token![,]>>,
     pub output: syn::ReturnType,
+}
+
+impl ComponentItemFnSignature {
+    #[inline]
+    pub fn props_ty(&self) -> Option<&syn::Type> {
+        self.props_arg.as_ref().map(|p| p.value().ty.as_ref())
+    }
 }
 
 impl ComponentItemFn {

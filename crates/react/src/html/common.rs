@@ -340,10 +340,13 @@ impl<TElement, TValue> crate::Props for ComponentProps<TElement, TValue> {
 
 impl<TElement, TValue> crate::IntoJsAdapterComponentProps for ComponentProps<TElement, TValue> {
     fn into_js_adapter_props(self) -> crate::JsAdapterComponentProps {
+        let js_component = self
+            .js_component
+            .expect_throw("__set_intrinsic_component should be called");
         crate::JsAdapterComponentProps {
-            js_component: self
-                .js_component
-                .expect_throw("__set_intrinsic_component should be called"),
+            debug_component_name: Some(js_component.clone()),
+            debug_props: self.js_props.as_ref().map(JsValue::from),
+            js_component,
             js_props: self.js_props,
             js_children: self.children,
             to_persist: self.to_persist.map(|v| Rc::new(v) as Rc<dyn Any>),
@@ -406,7 +409,7 @@ impl<TProps: crate::IntoJsAdapterComponentProps + crate::Props> crate::Component
         Self { props }
     }
 
-    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element
+    fn call_create_element(self, key: Option<&JsValue>) -> react_sys::Element
     where
         Self: Sized,
     {
@@ -441,20 +444,3 @@ pub(crate) use __impl_attr_default;
 pub(crate) use def_attrs_traits;
 pub(crate) use extend_html_props;
 pub(crate) use js_prop_name;
-
-#[cfg(test)]
-mod tests {
-    fn compose_html_props() {
-        use crate::html::common::AsPropsBuilder;
-
-        type Component = super::Component<super::ComponentProps<web_sys::Element, ()>>;
-
-        let el = crate::Component::call_create_element(
-            <Component as crate::Component>::new_with_props(crate::PropsBuilder::build(
-                <<Component as crate::Component>::Props as crate::Props>::init_builder()
-                    .title(Some("title")),
-            )),
-            None,
-        );
-    }
-}

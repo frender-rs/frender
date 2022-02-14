@@ -7,6 +7,7 @@ mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
 
+use err::{ResultUnwrapValueAndErrorExt, ResultUnwrapValueExt};
 use proc_macro::TokenStream;
 use quote::{ToTokens, TokenStreamExt};
 use syn::parse_macro_input;
@@ -51,6 +52,9 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn def_props(input: TokenStream) -> TokenStream {
-    let value = parse_macro_input!(input as props_data::PropsDefinition);
-    value.to_token_stream().into()
+    use props_data::PropsDefinitionWithOptions;
+    let value = parse_macro_input!(input with PropsDefinitionWithOptions::parse_proc_macro_input);
+    let mut ts = proc_macro2::TokenStream::new();
+    value.into_tokens(&mut ts);
+    ts.into()
 }

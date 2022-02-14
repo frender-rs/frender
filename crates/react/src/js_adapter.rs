@@ -1,9 +1,10 @@
-use crate::WriteRef;
-use std::{any::Any, rc::Rc};
+use std::{any::Any, borrow::Cow, rc::Rc};
 use wasm_bindgen::JsValue;
 
 #[derive(Debug, Clone)]
 pub struct JsAdapterComponentProps {
+    pub debug_component_name: Option<JsValue>,
+    pub debug_props: Option<JsValue>,
     pub js_component: JsValue,
     pub js_props: Option<js_sys::Object>,
     pub js_children: Option<crate::Children>,
@@ -14,7 +15,7 @@ pub trait IntoJsAdapterComponentProps {
     fn into_js_adapter_props(self) -> JsAdapterComponentProps;
 }
 
-pub struct JsAdapterComponent(JsAdapterComponentProps);
+pub struct JsAdapterComponent(pub JsAdapterComponentProps);
 
 impl crate::Props for JsAdapterComponentProps {
     type InitialBuilder = ();
@@ -29,10 +30,11 @@ impl crate::Component for JsAdapterComponent {
     fn use_render(&self) -> Self::ElementType {
         let props = &self.0;
 
-        let a = crate::use_ref_with::<dyn Any, _>(|| (Rc::new(()) as Rc<dyn Any>));
-        if let Some(to_persist) = &props.to_persist {
-            a.set_current(Rc::clone(to_persist));
-        }
+        // TODO: check if required to use_ref
+        // let a = crate::use_ref_with::<dyn Any, _>(|| (Rc::new(()) as Rc<dyn Any>));
+        // if let Some(to_persist) = &props.to_persist {
+        //     a.set_current(Rc::clone(to_persist));
+        // }
 
         let el = crate::create_element_js::create_element_with_js_value(
             &props.js_component,
@@ -51,29 +53,14 @@ impl crate::Component for JsAdapterComponent {
         Self(props)
     }
 
-    fn call_create_element(self, key: Option<JsValue>) -> react_sys::Element {
-        thread_local! {
-            static ADAPTER_FN: crate::ClosureBridgeRustOnlyComponent = crate::closure_to_bridge_rust_only_component();
-        }
-
-        ADAPTER_FN.with(|comp_fn| {
-            use crate::AsNullableElement;
-            use wasm_bindgen::JsCast;
-
-            let obj = js_sys::Object::new();
-            let props: &crate::JsProps = obj.unchecked_ref();
-
-            props.set_key(key);
-
-            let k = forgotten::forget(Box::new(move || self.use_render().as_nullable_element())
-                as Box<dyn Fn() -> Option<react_sys::Element>>);
-
-            let k = k.into_shared();
-            let k = k.as_usize();
-
-            props.set_props_bridge(Some(*k));
-
-            react_sys::create_element_no_children(comp_fn.as_ref(), props.as_ref())
-        })
+    fn call_create_element(mut self, key: Option<&JsValue>) -> react_sys::Element {
+        let debug_component_name = self.0.debug_component_name.take();
+        let debug_props = self.0.debug_props.take();
+        crate::bridge_rust_only_component(
+            move || self.use_render(),
+            key,
+            debug_component_name.as_ref(),
+            debug_props.as_ref(),
+        )
     }
 }

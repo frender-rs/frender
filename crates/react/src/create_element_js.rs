@@ -8,7 +8,7 @@ pub(crate) fn create_element_with_js_value(
     component_type: &JsValue,
     props_without_children: Option<&js_sys::Object>,
     children: Option<&Children>,
-    key: Option<JsValue>,
+    key: Option<&JsValue>,
 ) -> react_sys::Element {
     let mut props_without_children = props_without_children.map(Cow::Borrowed);
 

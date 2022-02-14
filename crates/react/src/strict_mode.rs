@@ -22,7 +22,7 @@ impl crate::Component for StrictMode {
         Self(props)
     }
 
-    fn call_create_element(self, key: Option<JsValue>) -> Self::ElementType {
+    fn call_create_element(self, key: Option<&JsValue>) -> Self::ElementType {
         crate::create_element_js::create_element_with_js_value(
             &react_sys::StrictMode,
             None,

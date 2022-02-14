@@ -55,15 +55,27 @@ extern "C" {
     #[wasm_bindgen(structural, method, setter, js_name = "__frenderPropsBridge")]
     pub fn set_props_bridge(this: &JsProps, v: Option<usize>);
 
+    #[wasm_bindgen(structural, method, getter, js_name = "__frenderDebugComponentName")]
+    pub fn debug_component_name(this: &JsProps) -> JsValue;
+
+    #[wasm_bindgen(structural, method, setter, js_name = "__frenderDebugComponentName")]
+    pub fn set_debug_component_name(this: &JsProps, v: &JsValue);
+
+    #[wasm_bindgen(structural, method, getter, js_name = "__frenderDebugProps")]
+    pub fn debug_props(this: &JsProps) -> JsValue;
+
+    #[wasm_bindgen(structural, method, setter, js_name = "__frenderDebugProps")]
+    pub fn set_debug_props(this: &JsProps, v: &JsValue);
+
     #[wasm_bindgen(structural, method, setter, js_name = "key")]
-    fn _set_key(this: &JsProps, v: JsValue);
+    fn _set_key(this: &JsProps, v: &JsValue);
 
     #[wasm_bindgen(structural, method, getter)]
     pub fn children(this: &JsProps) -> Option<NodeFromJs>;
 }
 
 impl JsProps {
-    pub fn set_key(&self, v: Option<JsValue>) {
+    pub fn set_key(&self, v: Option<&JsValue>) {
         if let Some(v) = v {
             self._set_key(v);
         }
@@ -112,8 +124,48 @@ fn impl_bridge_rust_only_props(js_props: crate::JsProps) -> JsValue {
     }
 }
 
-pub type ClosureBridgeRustOnlyComponent = Closure<dyn Fn(JsProps) -> JsValue>;
+type ClosureBridgeRustOnlyComponent = Closure<dyn Fn(JsProps) -> JsValue>;
 
-pub fn closure_to_bridge_rust_only_component() -> ClosureBridgeRustOnlyComponent {
+fn closure_to_bridge_rust_only_component() -> ClosureBridgeRustOnlyComponent {
     Closure::wrap(Box::new(impl_bridge_rust_only_props) as Box<dyn Fn(crate::JsProps) -> JsValue>)
+}
+
+pub fn bridge_rust_only_component<E: crate::AsNullableElement, F: 'static + Fn() -> E>(
+    use_render: F,
+    key: Option<&JsValue>,
+    debug_component_name: Option<&JsValue>,
+    debug_props: Option<&JsValue>,
+) -> react_sys::Element {
+    thread_local! {
+        static ADAPTER_FN: ClosureBridgeRustOnlyComponent = closure_to_bridge_rust_only_component();
+    }
+
+    ADAPTER_FN.with(|comp_fn| {
+        use wasm_bindgen::JsCast;
+
+        let obj = js_sys::Object::new();
+        let props: &crate::JsProps = obj.unchecked_ref();
+
+        props.set_key(key);
+
+        #[cfg(debug_assertions)]
+        if let Some(debug_component_name) = debug_component_name {
+            props.set_debug_component_name(debug_component_name);
+        }
+
+        #[cfg(debug_assertions)]
+        if let Some(debug_props) = debug_props {
+            props.set_debug_props(debug_props);
+        }
+
+        let k = forgotten::forget(Box::new(move || use_render().as_nullable_element())
+            as Box<dyn Fn() -> Option<react_sys::Element>>);
+
+        let k = k.into_shared();
+        let k = k.as_usize();
+
+        props.set_props_bridge(Some(*k));
+
+        react_sys::create_element_no_children(comp_fn.as_ref(), props.as_ref())
+    })
 }

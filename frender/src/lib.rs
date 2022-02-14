@@ -1,3 +1,6 @@
+mod debug;
+pub use debug::*;
+
 pub mod intrinsic_components;
 
 pub mod into_prop_value;
@@ -7,12 +10,12 @@ pub use forgotten;
 pub use react;
 // pub use react::{children, AsKey, Children, Component, Node, Props, PropsBuilder};
 
-pub use frender_macros::{def_props, rsx};
+pub use frender_macros::{component, def_props, rsx};
 
 pub mod prelude {
     pub use super::intrinsic_components;
     pub use super::react;
-    pub use super::{def_props, rsx, rsx_runtime_impl_rsx_prop};
+    pub use super::{component, def_props, rsx, rsx_runtime_impl_rsx_prop};
 
     pub mod rsx_runtime {
         pub use react::Fragment;
@@ -26,8 +29,8 @@ pub mod prelude {
         #[inline]
         pub fn impl_rsx<TComp: react::Component, TBuilder: react::PropsBuilder<TComp::Props>>(
             props_builder: TBuilder,
-            key: Option<wasm_bindgen::JsValue>,
-        ) -> TComp::ElementType {
+            key: Option<&wasm_bindgen::JsValue>,
+        ) -> react::sys::Element {
             let props = react::PropsBuilder::build(props_builder);
             let comp = TComp::new_with_props(props);
             comp.call_create_element(key)
