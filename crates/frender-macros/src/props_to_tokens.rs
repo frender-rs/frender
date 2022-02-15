@@ -16,7 +16,7 @@ impl PropsDefinitionWithOptions {
     pub fn into_tokens(self, tokens: &mut proc_macro2::TokenStream) {
         let Self {
             errors,
-            options: PropsOptions { no_debug },
+            options: PropsOptions {},
             definition:
                 PropsDefinition {
                     vis,
@@ -36,20 +36,6 @@ impl PropsDefinitionWithOptions {
         let fields = match fields.to_fields_impl() {
             Ok(v) => v,
             Err(err) => return tokens.append_all(err.into_compile_error()),
-        };
-
-        let t_debug = if no_debug.is_none() {
-            // impl DebugProps
-            let t_debug = quote_spanned! {span=>
-                impl #impl_generics ::frender::DebugProps for #ident #type_generics #where_clause {
-                    fn as_debug_props(&self) -> Option<::frender::react::__private::JsValue> {
-                        Some(format! ("{:#?}", self).into())
-                    }
-                }
-            };
-            Some(t_debug)
-        } else {
-            None
         };
 
         // struct MyProps { ... }
@@ -304,7 +290,6 @@ impl PropsDefinitionWithOptions {
         };
 
         tokens.append_all(t_struct_props);
-        tokens.append_all(t_debug);
         tokens.append_all(t_impl_props);
         tokens.append_all(t_impl_builder);
 

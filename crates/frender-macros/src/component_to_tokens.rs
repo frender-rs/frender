@@ -54,7 +54,7 @@ impl ToTokens for ComponentDefinition {
         let debugs = quote_spanned! {span=>
             let debug_component_name = JsValue::from_str( #display_name );
             let debug_component_name = Some(&debug_component_name);
-            let debug_props = ::frender::DebugProps::as_debug_props(&self.0);
+            let debug_props = ::frender::auto_debug_props!(self.0);
             let debug_props = debug_props.as_ref();
         };
         #[cfg(not(debug_assertions))]

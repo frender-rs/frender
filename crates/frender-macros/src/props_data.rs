@@ -11,8 +11,7 @@ use crate::err::{OutputError, RecordError, ValueResult};
 #[derive(FromAttributes, Default)]
 #[darling(attributes(props))]
 pub struct PropsOptions {
-    #[darling(default)]
-    pub no_debug: darling::util::Flag,
+    //
 }
 
 pub struct PropsDefinition {
