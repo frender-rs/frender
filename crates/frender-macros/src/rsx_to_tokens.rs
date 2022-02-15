@@ -96,7 +96,8 @@ impl ToTokens for RsxElement {
                 value.to_token_stream()
             } else {
                 quote_spanned!(span=>
-                    true)
+                    ::frender::IntoPropValue::into_prop_value(true)
+                )
             };
             quote! {
                 let #builder_ident = self::rsx_runtime_impl_rsx_prop!( #builder_ident . #name ( #value )  );
