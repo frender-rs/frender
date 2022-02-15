@@ -1,4 +1,5 @@
 use quote::{quote, quote_spanned, ToTokens, TokenStreamExt};
+use syn::spanned::Spanned;
 
 use super::component_data::*;
 
@@ -24,6 +25,7 @@ impl ToTokens for ComponentDefinition {
             generics,
             ident,
             output,
+            props_arg,
             ..
         } = sig;
 
@@ -31,12 +33,20 @@ impl ToTokens for ComponentDefinition {
         let component_name = ident.to_string();
         let display_name = display_name.as_ref().unwrap_or(&component_name);
 
-        let props_ty = sig.props_ty();
         let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
 
-        let (component_struct_data, component_init) = props_ty.map_or((None, None), |props_ty| {
-            (Some(quote!( (#props_ty) )), Some(quote!((props))))
-        });
+        let (props_ty, props_pat_stmt, component_struct_data, component_init) =
+            props_arg.as_ref().map_or((None, None, None, None), |p| {
+                let pat_type = p.value();
+                let props_ty = &pat_type.ty;
+                let props_pat = &pat_type.pat;
+                (
+                    Some(props_ty),
+                    Some(quote!( let #props_pat = &self.0; )),
+                    Some(quote!( (#props_ty) )),
+                    Some(quote!((props))),
+                )
+            });
 
         let props_ty = props_ty.map_or_else(
             || quote!(::frender::react::NoProps),
@@ -50,17 +60,29 @@ impl ToTokens for ComponentDefinition {
             syn::ReturnType::Type(arrow, ty) => (arrow.clone(), ty.to_token_stream()),
         };
 
-        #[cfg(debug_assertions)]
-        let debugs = quote_spanned! {span=>
-            let debug_component_name = JsValue::from_str( #display_name );
-            let debug_component_name = Some(&debug_component_name);
-            let debug_props = ::frender::auto_debug_props!(self.0);
-            let debug_props = debug_props.as_ref();
+        let debugs = if cfg!(debug_assertions) && no_debug_props.is_none() {
+            quote_spanned! {span=>
+                let debug_component_name = JsValue::from_str( #display_name );
+                let debug_component_name = Some(&debug_component_name);
+                let debug_props = ::frender::auto_debug_props!(self.0);
+                let debug_props = debug_props.as_ref();
+            }
+        } else {
+            quote_spanned! {span=>
+                let debug_component_name = None;
+                let debug_props = None;
+            }
         };
-        #[cfg(not(debug_assertions))]
-        let debugs = quote_spanned! {span=>
-            let debug_component_name = None;
-            let debug_props = None;
+
+        let block = if let Some(props_pat_stmt) = props_pat_stmt {
+            quote_spanned! {block.span() =>
+                {
+                    #props_pat_stmt
+                    #block
+                }
+            }
+        } else {
+            block.to_token_stream()
         };
 
         tokens.append_all( quote_spanned! {span=>

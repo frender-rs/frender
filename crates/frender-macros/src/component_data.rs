@@ -60,13 +60,6 @@ pub struct ComponentItemFnSignature {
     pub output: syn::ReturnType,
 }
 
-impl ComponentItemFnSignature {
-    #[inline]
-    pub fn props_ty(&self) -> Option<&syn::Type> {
-        self.props_arg.as_ref().map(|p| p.value().ty.as_ref())
-    }
-}
-
 impl ComponentItemFn {
     pub fn try_from_input_fn(input_fn: syn::ItemFn) -> Result<Self, (Self, syn::Error)> {
         let syn::ItemFn {
@@ -152,7 +145,7 @@ impl ComponentItemFnSignature {
                     for attr in &v.attrs {
                         error.combine_or_replace(syn::Error::new(
                             attr.span(),
-                            "`self` argument is not allowed in frender component fn",
+                            "attributes are not allowed for arguments of frender component fn",
                         ));
                     }
                     Some(Pair::new(v, comma))
