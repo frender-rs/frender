@@ -25,6 +25,9 @@ features = [
     "Element",
     "HtmlElement",
     "HtmlAnchorElement",
+    "HtmlButtonElement",
+    "UiEvent",
+    "MouseEvent",
     # "HtmlAbbrElement",
 ]
 # ""

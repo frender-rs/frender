@@ -1,6 +1,6 @@
 use wasm_bindgen::JsValue;
 
-use crate::{AnyNode, Children};
+use crate::{AnyNode, AnyNodeValue, Children, IntoElement, Keyed, KeyedElement};
 
 /// Corresponding to `ReactNode` in typescript
 ///
@@ -12,7 +12,7 @@ pub trait Node {
 
     #[inline]
     fn as_react_children_js(&self) -> Option<Children> {
-        Some(Children::Single(self.as_react_node_js()))
+        Some(Children::from_single(self.as_react_node_js()))
     }
 
     #[inline]
@@ -20,7 +20,7 @@ pub trait Node {
     where
         Self: Sized,
     {
-        AnyNode::wrap(self)
+        self.as_react_node_js()
     }
 
     #[inline]
@@ -35,7 +35,7 @@ pub trait Node {
 impl Node for () {
     #[inline]
     fn as_react_node_js(&self) -> AnyNode {
-        AnyNode(JsValue::UNDEFINED)
+        AnyNode::Null
     }
 
     #[inline]
@@ -50,13 +50,23 @@ impl<T: Node> Node for Option<T> {
         if let Some(node) = self {
             node.as_react_node_js()
         } else {
-            AnyNode(JsValue::NULL)
+            AnyNode::Null
         }
     }
 
     #[inline]
     fn as_react_children_js(&self) -> Option<Children> {
         self.as_ref().and_then(Node::as_react_children_js)
+    }
+
+    #[inline]
+    fn into_react_node_js(self) -> AnyNode {
+        self.map(Node::into_react_node_js).unwrap_or(AnyNode::Null)
+    }
+
+    #[inline]
+    fn into_react_children_js(self) -> Option<Children> {
+        self.and_then(Node::into_react_children_js)
     }
 }
 
@@ -65,7 +75,7 @@ macro_rules! into_js_node {
         impl Node for $n {
             #[inline]
             fn as_react_node_js(&self) -> AnyNode {
-                AnyNode(JsValue::from(*self))
+                AnyNode::Value(AnyNodeValue::unsafe_from_js_react_node(JsValue::from(*self)))
             }
         }
     )*);
@@ -73,7 +83,7 @@ macro_rules! into_js_node {
         impl Node for $n {
             #[inline]
             fn as_react_node_js(&self) -> AnyNode {
-                AnyNode(JsValue::from(self))
+                AnyNode::Value(AnyNodeValue::unsafe_from_js_react_node(JsValue::from(self)))
             }
         }
     )*);
@@ -91,7 +101,6 @@ into_js_node! {
 
 into_js_node! {
     deref:
-    &str
     // numbers https://docs.rs/wasm-bindgen/0.2.78/src/wasm_bindgen/lib.rs.html#849
     i8 u8 i16 u16 i32 u32 f32 f64
     // big_numbers https://docs.rs/wasm-bindgen/0.2.78/src/wasm_bindgen/lib.rs.html#869
@@ -99,20 +108,80 @@ into_js_node! {
     bool
 }
 
+#[inline]
+fn into_keyed_element<E: IntoElement>(el: Keyed<E>) -> Keyed<crate::Element> {
+    Keyed(el.0.into_element())
+}
+
+#[inline]
+fn option_into_keyed_element<E: IntoElement>(
+    el: Option<Keyed<E>>,
+) -> Option<Keyed<crate::Element>> {
+    el.map(into_keyed_element)
+}
+
 macro_rules! impl_node_for_iter {
-    ($($t:tt)+) => {
+    (impl into_react_children_js) => {
+        #[inline]
+        fn into_react_children_js(self) -> Option<Children> {
+            Some(Children::from_single(self.into_react_node_js()))
+        }
+    };
+    (impl sized) => {
+        #[inline]
+        fn into_react_node_js(self) -> AnyNode {
+            AnyNode::Multiple(std::rc::Rc::new(self.into_iter().map(into_keyed_element).collect()))
+        }
+
+        impl_node_for_iter! { impl into_react_children_js }
+    };
+    (impl sized opt) => {
+        #[inline]
+        fn into_react_node_js(self) -> AnyNode {
+            AnyNode::Multiple(std::rc::Rc::new(
+                self.into_iter()
+                    .filter_map(option_into_keyed_element)
+                    .collect()
+            ))
+        }
+
+        impl_node_for_iter! { impl into_react_children_js }
+
+    };
+    ( $($sized:ident)? {$($t:tt)+} {$($t_opt:tt)+}) => {
         $($t)+ {
             #[inline]
             fn as_react_node_js(&self) -> AnyNode {
-                AnyNode(js_sys::Array::from_iter(self.iter().map(|node| node.as_react_node_js())).into())
+                self.to_vec().into_react_node_js()
             }
+
+            $( impl_node_for_iter! { impl $sized } )?
+        }
+        $($t_opt)+ {
+            #[inline]
+            fn as_react_node_js(&self) -> AnyNode {
+                self.iter().filter_map(Clone::clone).collect::<Vec<_>>().into_react_node_js()
+            }
+
+            $( impl_node_for_iter! { impl $sized opt } )?
         }
     };
 }
 
-impl_node_for_iter! { impl<T: Node> Node for Vec<T> }
-impl_node_for_iter! { impl<T: Node> Node for &[T] }
-impl_node_for_iter! { impl<N: Node, const S: usize> Node for [N; S] }
+impl_node_for_iter! {
+    sized
+    { impl<E: IntoElement + Clone> Node for Vec<Keyed<E>> }
+    { impl<E: IntoElement + Clone> Node for Vec<Option<Keyed<E>>> }
+}
+impl_node_for_iter! {
+    { impl<E: IntoElement + Clone> Node for [Keyed<E>] }
+    { impl<E: IntoElement + Clone> Node for [Option<Keyed<E>>] }
+}
+impl_node_for_iter! {
+    sized
+    { impl<E: IntoElement + Clone, const S: usize> Node for [Keyed<E>; S] }
+    { impl<E: IntoElement + Clone, const S: usize> Node for [Option<Keyed<E>>; S] }
+}
 
 macro_rules! impl_node_for_tuple {
     (@impl ( $($t:ident),+ $(,)? )) => {
@@ -134,6 +203,23 @@ macro_rules! impl_node_for_tuple {
                     $($t.as_react_node_js()),+
                 ]);
                 Some(v)
+            }
+            #[inline]
+            fn into_react_node_js(self) -> AnyNode {
+                #![allow(non_snake_case)]
+                let ($($t),+ ,) = self;
+                let v = Children::from_static_nodes([
+                    $($t.into_react_node_js()),+
+                ]);
+                v.into_react_node_js()
+            }
+            #[inline]
+            fn into_react_children_js(self) -> Option<Children> {
+                #![allow(non_snake_case)]
+                let ($($t),+ ,) = self;
+                Some(Children::from_static_nodes([
+                    $($t.into_react_node_js()),+
+                ]))
             }
         }
     };
@@ -169,9 +255,21 @@ impl<N: Node> Node for Box<N> {
     fn as_react_node_js(&self) -> AnyNode {
         self.as_ref().as_react_node_js()
     }
+    #[inline]
+    fn as_react_children_js(&self) -> Option<Children> {
+        self.as_ref().as_react_children_js()
+    }
+    #[inline]
+    fn into_react_node_js(self) -> AnyNode {
+        (*self).into_react_node_js()
+    }
+    #[inline]
+    fn into_react_children_js(self) -> Option<Children> {
+        (*self).into_react_children_js()
+    }
 }
 
-impl<N: Node> Node for &N {
+impl<N: ?Sized + Node> Node for &N {
     #[inline]
     fn as_react_node_js(&self) -> AnyNode {
         (*self).as_react_node_js()
@@ -180,13 +278,5 @@ impl<N: Node> Node for &N {
     #[inline]
     fn as_react_children_js(&self) -> Option<Children> {
         (*self).as_react_children_js()
-    }
-
-    #[inline]
-    fn into_react_node_js(self) -> AnyNode
-    where
-        Self: Sized,
-    {
-        self.as_react_node_js()
     }
 }

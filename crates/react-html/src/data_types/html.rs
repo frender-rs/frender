@@ -53,3 +53,19 @@ pub enum ReferrerPolicy {
     StrictOriginWhenCrossOrigin,
     UnsafeUrl,
 }
+
+#[derive(Debug, Clone, ToJs)]
+#[convert_js(union)]
+pub enum ButtonValue {
+    String(String),
+    Number(f64),
+    Strings(Vec<String>),
+}
+
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum ButtonType {
+    Submit,
+    Reset,
+    Button,
+}

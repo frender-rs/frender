@@ -20,47 +20,37 @@ impl ToTokens for RsxPropValue {
         } else {
             let span = colon.span();
             tokens.append_all(quote_spanned! {span=>
-                ::frender::IntoPropValue::into_prop_value( #value )
+                ::frender::react::IntoPropValue::into_prop_value( #value )
             })
         }
     }
 }
 
 impl RsxComponentType {
+    /// `(component_ty, use_prelude)`
     pub fn type_to_token_stream(
         &self,
         span_for_fragment: Option<Span>,
-    ) -> proc_macro2::TokenStream {
+    ) -> (proc_macro2::TokenStream, Option<proc_macro2::TokenStream>) {
         match self {
             RsxComponentType::Fragment(_) => {
                 let span = span_for_fragment.unwrap_or_else(Span::call_site);
-                quote_spanned!(span=>
-                    self::rsx_runtime::Fragment)
+                (
+                    quote_spanned!(span=>
+                        self::rsx_runtime::Fragment ),
+                    None,
+                )
             }
             RsxComponentType::Intrinsic(tag) => {
                 let span = tag.span();
-                quote_spanned!(span=>
-                    self::intrinsic_components::#tag::Component)
+                (
+                    quote_spanned!(span=>
+                        self::intrinsic_components::#tag::prelude::Component ),
+                    Some(quote_spanned!(span=>
+                        use self::intrinsic_components::#tag::prelude::*; )),
+                )
             }
-            RsxComponentType::TypePath(tp) => tp.to_token_stream(),
-        }
-    }
-
-    pub fn intrinsic_pre_build_token_stream(
-        &self,
-        builder_ident: &syn::Ident,
-    ) -> Option<proc_macro2::TokenStream> {
-        match self {
-            RsxComponentType::Fragment(_) => None,
-            RsxComponentType::Intrinsic(tag) => {
-                let span = tag.span();
-                let value = tag.to_string();
-                Some(quote_spanned! {span=>
-                    use self::intrinsic_components::#tag::prelude::*;
-                    let #builder_ident = self::rsx_runtime_impl_rsx_prop!( #builder_ident .__set_intrinsic_component( #value )  );
-                })
-            }
-            RsxComponentType::TypePath(_) => None,
+            RsxComponentType::TypePath(tp) => (tp.to_token_stream(), None),
         }
     }
 }
@@ -81,10 +71,10 @@ impl ToTokens for RsxElement {
 
         let builder_ident = syn::Ident::new("__rsx_props_builder", Span::call_site());
 
-        let pre_build = component_type.intrinsic_pre_build_token_stream(&builder_ident);
-        let component_type = component_type.type_to_token_stream(Some(component_type_span));
+        let (component_type, use_prelude) =
+            component_type.type_to_token_stream(Some(component_type_span));
 
-        let prop_init = quote! {
+        let prop_init = quote_spanned! {component_type_span=>
             let mut #builder_ident = self::rsx_runtime::init_props_builder::< #component_type >();
         };
         let props_chain = props.iter().map(|prop| {
@@ -96,19 +86,20 @@ impl ToTokens for RsxElement {
                 value.to_token_stream()
             } else {
                 quote_spanned!(span=>
-                    ::frender::IntoPropValue::into_prop_value(true)
+                    ::frender::react::IntoPropValue::into_prop_value(true)
                 )
             };
-            quote! {
-                let #builder_ident = self::rsx_runtime_impl_rsx_prop!( #builder_ident . #name ( #value )  );
+            quote_spanned! {span=>
+                let #builder_ident = self::rsx_runtime::impl_rsx_prop!( #builder_ident . #name ( #value )  );
             }
         });
 
         let key_value = if let Some(key) = key {
+            let span = key.name.span();
             let value = &key.value;
-            quote!(Some(::frender::AsKey::as_key(&#value)))
+            quote_spanned!(span=> Some(::frender::AsKey::as_key(&#value)))
         } else {
-            quote!(None)
+            quote_spanned!(component_type_span=> None)
         };
 
         let children_span_and_value = match children {
@@ -123,11 +114,11 @@ impl ToTokens for RsxElement {
                     let values = children.iter();
                     let value = if values.len() == 1 {
                         quote_spanned! {span=>
-                            ::frender::IntoPropValue::into_prop_value(#(#values),*)
+                            ::frender::react::IntoPropValue::into_prop_value(#(#values),*)
                         }
                     } else {
                         quote_spanned! {span=>
-                            ::frender::IntoPropValue::into_prop_value( (#(#values),*) )
+                            ::frender::react::IntoPropValue::into_prop_value( (#(#values),*) )
                         }
                     };
                     Some((span, value))
@@ -137,18 +128,19 @@ impl ToTokens for RsxElement {
 
         let props_children = if let Some((span, value)) = children_span_and_value {
             Some(quote_spanned! {span=>
-                let #builder_ident = self::rsx_runtime_impl_rsx_prop!( #builder_ident . children ( #value )  );
+                let #builder_ident = self::rsx_runtime::impl_rsx_prop!( #builder_ident . children ( #value )  );
             })
         } else {
             None
         };
 
-        tokens.append_all(quote_spanned! {component_type_span=>
+        let mut el_expr = quote_spanned! {component_type_span=>
             {
+                #use_prelude
                 #prop_init
-                self::rsx_runtime::impl_rsx::< #component_type, _ >(
+                self::rsx_runtime::impl_rsx_static::< #component_type, _ >(
+                    #[allow(unused_braces)]
                     {
-                        #pre_build
                         #(#props_chain)*
                         #props_children
                         #builder_ident
@@ -156,7 +148,15 @@ impl ToTokens for RsxElement {
                     #key_value,
                 )
             }
-        });
+        };
+
+        if key.is_some() {
+            el_expr = quote_spanned! {component_type_span=>
+                ::frender::react::Keyed(#el_expr)
+            }
+        }
+
+        tokens.append_all(el_expr);
     }
 }
 

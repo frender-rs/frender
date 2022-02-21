@@ -10,6 +10,12 @@ impl<T: ?Sized> IntoRc<T> for Rc<T> {
     }
 }
 
+impl<T: ?Sized> IntoRc<T> for &Rc<T> {
+    fn into_rc(self) -> Rc<T> {
+        Rc::clone(self)
+    }
+}
+
 impl<T> IntoRc<T> for T {
     fn into_rc(self) -> Rc<T> {
         Rc::new(self)

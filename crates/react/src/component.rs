@@ -1,4 +1,4 @@
-use wasm_bindgen::JsValue;
+use crate::Keyed;
 
 pub trait PropsBuilder<T> {
     fn build(self) -> T;
@@ -28,15 +28,61 @@ impl Props for NoProps {
     }
 }
 
+pub trait UseRender {
+    type RenderArg: Props;
+    /// This allows implementor type to specify
+    /// a custom type as the return type of the methods.
+    ///
+    /// With this associated type param, some special components
+    /// can return special elements with special traits.
+    /// For example, [`table`](crate::html::table) component
+    /// returns
+    type RenderOutput;
+    fn use_render(&self, props: &Self::RenderArg) -> Self::RenderOutput;
+}
+
 pub trait Component {
     type Props: Props;
-    type ElementType: crate::AsNullableElement;
+    /// Output of `create_element`.
+    /// Many components may return `Option<Element>` in [`UseRender::use_render`]
+    /// while return `Element` in create_element.
+    /// Thus this type parameter exists.
+    type Element;
 
-    fn use_render(&self) -> Self::ElementType;
+    fn create_element(self, props: Self::Props, key: Option<crate::Key>) -> Self::Element;
+}
 
-    fn new_with_props(props: Self::Props) -> Self
-    where
-        Self: Sized;
+pub trait UseRenderStatic {
+    type RenderArg: Props;
+    /// See [`UseRender::Output`]
+    type RenderOutput;
+    fn use_render(props: &Self::RenderArg) -> Self::RenderOutput;
+}
 
-    fn call_create_element(self, key: Option<&JsValue>) -> react_sys::Element;
+pub trait ComponentStatic {
+    type Props: Props;
+    /// See [`Component::Element`]
+    type Element;
+
+    fn create_element(props: Self::Props, key: Option<crate::Key>) -> Self::Element;
+}
+
+impl<T: UseRenderStatic> UseRender for T {
+    type RenderArg = <T as UseRenderStatic>::RenderArg;
+    type RenderOutput = <T as UseRenderStatic>::RenderOutput;
+
+    #[inline]
+    fn use_render(&self, props: &Self::RenderArg) -> Self::RenderOutput {
+        T::use_render(props)
+    }
+}
+
+impl<T: ComponentStatic> Component for T {
+    type Props = <T as ComponentStatic>::Props;
+    type Element = <T as ComponentStatic>::Element;
+
+    #[inline]
+    fn create_element(self, props: Self::Props, key: Option<crate::Key>) -> Self::Element {
+        T::create_element(props, key)
+    }
 }

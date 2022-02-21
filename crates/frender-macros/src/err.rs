@@ -72,6 +72,25 @@ pub trait OutputError {
     {
         maybe_with_error(v, self.output_error())
     }
+
+    #[inline]
+    fn into_option_value_result<T>(self, v: T) -> Result<T, (Option<T>, Self::OutputError)>
+    where
+        Self: Sized,
+    {
+        match self.output_error() {
+            Some(error) => Err((Some(v), error)),
+            None => Ok(v),
+        }
+    }
+
+    fn record_and_output<E>(mut self, error: E) -> Self::OutputError
+    where
+        Self: Sized + RecordError<E>,
+    {
+        self.record_error(error);
+        self.output_error().unwrap()
+    }
 }
 
 impl<E: Combine<E>> RecordError<E> for Option<E> {

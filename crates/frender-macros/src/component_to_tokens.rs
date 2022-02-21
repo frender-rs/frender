@@ -1,11 +1,14 @@
-use quote::{quote, quote_spanned, ToTokens, TokenStreamExt};
+use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
+
+use crate::err::OutputError;
 
 use super::component_data::*;
 
-impl ToTokens for ComponentDefinition {
-    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+impl ComponentDefinition {
+    pub fn into_ts(self) -> proc_macro2::TokenStream {
         let Self {
+            errors,
             options:
                 ComponentOptions {
                     //
@@ -35,37 +38,38 @@ impl ToTokens for ComponentDefinition {
 
         let (impl_generics, type_generics, where_clause) = generics.split_for_impl();
 
-        let (props_ty, props_pat_stmt, component_struct_data, component_init) =
-            props_arg.as_ref().map_or((None, None, None, None), |p| {
-                let pat_type = p.value();
-                let props_ty = &pat_type.ty;
-                let props_pat = &pat_type.pat;
-                (
-                    Some(props_ty),
-                    Some(quote!( let #props_pat = &self.0; )),
-                    Some(quote!( (#props_ty) )),
-                    Some(quote!((props))),
-                )
-            });
+        let (props_ty, use_render_arg) = if let Some(props_arg) = props_arg {
+            let use_render_arg = props_arg.to_token_stream();
+            let pat_type = props_arg.into_value();
+            let ty = *pat_type.ty;
+            let ty = match ty {
+                syn::Type::Reference(ty_ref) => {
+                    let syn::TypeReference { elem, .. } = ty_ref;
+                    *elem
+                }
+                _ => ty,
+            };
+            (ty.into_token_stream(), use_render_arg)
+        } else {
+            (quote!(::frender::react::NoProps), quote!(_: &Self::Props))
+        };
 
-        let props_ty = props_ty.map_or_else(
-            || quote!(::frender::react::NoProps),
-            ToTokens::to_token_stream,
-        );
-
-        let (arrow, element_ty) = match output {
+        let (arrow, render_output_ty, custom_element_ty) = match output {
             syn::ReturnType::Default => {
-                (Default::default(), quote!(::frender::react::sys::Element))
+                let ty: syn::Type = syn::parse_quote_spanned!(span=> ::frender::react::Element);
+                (Default::default(), ty.clone(), ty)
             }
-            syn::ReturnType::Type(arrow, ty) => (arrow.clone(), ty.to_token_stream()),
+            syn::ReturnType::Type(arrow, ty) => {
+                let render_output_ty = *ty;
+                let ty = infer_custom_element_ty(&render_output_ty);
+                (arrow, render_output_ty, ty)
+            }
         };
 
         let debugs = if cfg!(debug_assertions) && no_debug_props.is_none() {
             quote_spanned! {span=>
-                let debug_component_name = JsValue::from_str( #display_name );
-                let debug_component_name = Some(&debug_component_name);
-                let debug_props = ::frender::auto_debug_props!(self.0);
-                let debug_props = debug_props.as_ref();
+                let debug_component_name = Some(JsValue::from_str( #display_name ));
+                let debug_props = ::frender::auto_debug_props!(props);
             }
         } else {
             quote_spanned! {span=>
@@ -74,41 +78,100 @@ impl ToTokens for ComponentDefinition {
             }
         };
 
-        let block = if let Some(props_pat_stmt) = props_pat_stmt {
-            quote_spanned! {block.span() =>
-                {
-                    #props_pat_stmt
-                    #block
-                }
+        let component_struct = if generics.params.is_empty() {
+            quote_spanned! {span=>
+                #[derive(Debug, Clone, Copy)]
+                #vis struct #ident #impl_generics #where_clause;
             }
         } else {
-            block.to_token_stream()
-        };
+            let (debug_arg1, debug_arg2) = {
+                let debug_arg1 = "{}, ".repeat(generics.params.len());
+                let debug_arg1 = format!("<{}>", debug_arg1);
 
-        tokens.append_all( quote_spanned! {span=>
-            #vis struct #ident #impl_generics #component_struct_data #where_clause;
+                let tps = generics.params.iter();
+                let debug_arg2 = quote_spanned!(span=> #( ::std::any::type_name::<#tps>() ),* );
+                (debug_arg1, debug_arg2)
+            };
 
-            impl #impl_generics ::frender::react::Component for MyComponent #type_generics {
-                type Props = #props_ty;
-                type ElementType = #element_ty;
-
-                fn use_render(&self) #arrow #element_ty #block
-
-                fn new_with_props(props: Self::Props) -> Self {
-                    Self #component_init
+            quote_spanned! {span=>
+                #[derive(Debug, Clone, Copy)]
+                #vis struct #ident #impl_generics #where_clause {
+                    inner: ::core::marker::PhantomData<#type_generics>
                 }
 
-                fn call_create_element(self, key: Option<&::frender::react::__private::JsValue>) -> ::frender::react::sys::Element {
+                impl #impl_generics ::core::fmt::Debug for #ident #type_generics #where_clause {
+                    fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
+                        write!(f, #debug_arg1, #debug_arg2)
+                    }
+                }
+
+                impl #impl_generics Clone for #ident #type_generics #where_clause {
+                    fn clone(&self) -> Self {
+                        Self {
+                            inner: ::core::marker::PhantomData,
+                        }
+                    }
+                }
+
+                impl #impl_generics Copy for #ident #type_generics #where_clause {}
+            }
+        };
+
+        let errors = errors.output_error().map(darling::Error::write_errors);
+        quote_spanned! {span=>
+            #component_struct
+
+            impl #impl_generics ::frender::react::UseRenderStatic for #ident #type_generics #where_clause {
+                type RenderArg = #props_ty;
+                type RenderOutput = #render_output_ty;
+
+                fn use_render(#use_render_arg) #arrow #render_output_ty #block
+            }
+
+            impl #impl_generics ::frender::react::ComponentStatic for #ident #type_generics #where_clause {
+                type Props = #props_ty;
+                type Element = #render_output_ty;
+
+                fn create_element(props: Self::Props, key: Option<::frender::react::Key>) -> Self::Element {
+                    #[allow(unused_imports)]
+                    use frender::react::UseRenderStatic;
+                    #[allow(unused_imports)]
+                    use frender::react::IntoOptionalElement;
                     #debugs
-                    react::bridge_rust_only_component(
-                        move || self.use_render(),
+                    Self::Element::private_from_element(::frender::react::UseRenderElement::wrap_use_render(
+                        move || Self::use_render(&props).into_optional_element(),
                         key,
                         debug_component_name,
                         debug_props,
-                    )
+                    ).into())
                 }
             }
 
-        });
+            #errors
+        }
     }
+}
+
+/// For `render_output_ty` = `Option<MyElement>`, extract `MyElement`.
+/// Otherwise clone `render_output_ty`
+fn infer_custom_element_ty(render_output_ty: &syn::Type) -> syn::Type {
+    if let syn::Type::Path(path_ty) = render_output_ty {
+        let p = &path_ty.path;
+        if p.leading_colon.is_none() {
+            if p.segments.len() == 1 {
+                let seg = &p.segments[0];
+                if seg.ident == "Option" {
+                    if let syn::PathArguments::AngleBracketed(bracketed_args) = &seg.arguments {
+                        if bracketed_args.args.len() == 1 {
+                            if let syn::GenericArgument::Type(ty) = &bracketed_args.args[0] {
+                                return ty.clone();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    render_output_ty.clone()
 }

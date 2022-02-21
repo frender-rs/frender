@@ -2,7 +2,7 @@ use darling::FromMeta;
 use syn::{punctuated::Pair, spanned::Spanned};
 
 use crate::err::{
-    maybe_with_error, OptionCombineExt, OutputError, ResultUnwrapValueAndErrorExt,
+    maybe_with_error, OptionCombineExt, OutputError, RecordError, ResultUnwrapValueAndErrorExt,
     ResultUnwrapValueExt,
 };
 
@@ -16,15 +16,13 @@ pub struct ComponentOptions {
 }
 
 pub struct ComponentDefinition {
+    pub errors: Vec<darling::Error>,
     pub options: ComponentOptions,
     pub item_fn: ComponentItemFn,
 }
 
 impl ComponentDefinition {
-    pub fn try_from_attrs_and_fn(
-        attr_args: syn::AttributeArgs,
-        input_fn: syn::ItemFn,
-    ) -> Result<Self, (Self, darling::Error)> {
+    pub fn from_attrs_and_fn(attr_args: syn::AttributeArgs, input_fn: syn::ItemFn) -> Self {
         let mut errors = vec![];
         let options = match ComponentOptions::from_list(&attr_args) {
             Ok(v) => v,
@@ -38,9 +36,11 @@ impl ComponentDefinition {
             .unwrap_value_and_record_error(&mut errors)
             .unwrap_value();
 
-        let ret = Self { options, item_fn };
-
-        errors.into_value_result(ret)
+        Self {
+            options,
+            item_fn,
+            errors,
+        }
     }
 }
 
@@ -115,7 +115,7 @@ impl ComponentItemFnSignature {
         check_sig_field_is_none!(error_mut "variadic" = sig.variadic);
 
         let syn::Signature {
-            generics,
+            mut generics,
             ident,
             output,
             mut inputs,
@@ -123,6 +123,27 @@ impl ComponentItemFnSignature {
             paren_token,
             ..
         } = sig;
+
+        if generics.params.first().map_or(false, |tp| match tp {
+            syn::GenericParam::Lifetime(_) => true,
+            _ => false,
+        }) {
+            generics.params = generics
+                .params
+                .into_pairs()
+                .filter(|p| match p.value() {
+                    syn::GenericParam::Lifetime(lt) => {
+                        error.record_error(syn::Error::new(
+                            lt.span(),
+                            "frender component currently does not support lifetimes",
+                        ));
+                        false
+                    }
+                    _ => true,
+                })
+                .collect();
+        }
+
         let arg_props = inputs.pop();
 
         for other_arg in inputs {

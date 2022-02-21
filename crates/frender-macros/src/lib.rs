@@ -1,6 +1,7 @@
 mod case;
 mod component_data;
 mod component_to_tokens;
+mod custom_element;
 mod err;
 mod props_data;
 mod props_to_tokens;
@@ -18,15 +19,9 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     let attr_args = parse_macro_input!(args as syn::AttributeArgs);
     let input_fn = parse_macro_input!(input as syn::ItemFn);
 
-    let (comp, error) = ComponentDefinition::try_from_attrs_and_fn(attr_args, input_fn)
-        .map_or_else(|(comp, err)| (comp, Some(err)), |comp| (comp, None));
+    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, input_fn);
 
-    let mut t = comp.into_token_stream();
-    if let Some(error) = error {
-        t.append_all(error.write_errors());
-    }
-
-    t.into()
+    comp.into_ts().into()
 }
 
 #[proc_macro]
@@ -57,4 +52,14 @@ pub fn def_props(input: TokenStream) -> TokenStream {
     let mut ts = proc_macro2::TokenStream::new();
     value.into_tokens(&mut ts);
     ts.into()
+}
+
+#[proc_macro_attribute]
+pub fn custom_element(args: TokenStream, input: TokenStream) -> TokenStream {
+    use custom_element::*;
+
+    match CustomElementDefinition::parse_input(args, input) {
+        Ok(v) => v.into_ts().into(),
+        Err(error) => error.write_errors().into(),
+    }
 }

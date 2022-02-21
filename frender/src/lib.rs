@@ -3,21 +3,22 @@ pub use debug::*;
 
 pub mod intrinsic_components;
 
-pub mod into_prop_value;
-pub use into_prop_value::*;
-
 pub use forgotten;
 pub use react;
-// pub use react::{children, AsKey, Children, Component, Node, Props, PropsBuilder};
+pub use react::{AsKey, Children};
+pub use react_html as html;
 
 pub use frender_macros::{component, def_props, rsx};
+pub use react::Element;
 
 pub mod prelude {
+    pub use super::html;
     pub use super::intrinsic_components;
     pub use super::react;
-    pub use super::{component, def_props, rsx, rsx_runtime_impl_rsx_prop};
+    pub use super::{component, def_props, rsx};
 
     pub mod rsx_runtime {
+        pub use super::super::impl_rsx_prop;
         pub use react::Fragment;
 
         #[inline]
@@ -27,19 +28,31 @@ pub mod prelude {
         }
 
         #[inline]
-        pub fn impl_rsx<TComp: react::Component, TBuilder: react::PropsBuilder<TComp::Props>>(
+        pub fn impl_rsx_static<
+            TComp: react::ComponentStatic,
+            TBuilder: react::PropsBuilder<TComp::Props>,
+        >(
             props_builder: TBuilder,
-            key: Option<&wasm_bindgen::JsValue>,
-        ) -> react::sys::Element {
+            key: Option<react::Key>,
+        ) -> TComp::Element {
             let props = react::PropsBuilder::build(props_builder);
-            let comp = TComp::new_with_props(props);
-            comp.call_create_element(key)
+            TComp::create_element(props, key)
+        }
+
+        #[inline]
+        pub fn impl_rsx<TComp: react::Component, TBuilder: react::PropsBuilder<TComp::Props>>(
+            component: TComp,
+            props_builder: TBuilder,
+            key: Option<react::Key>,
+        ) -> TComp::Element {
+            let props = react::PropsBuilder::build(props_builder);
+            component.create_element(props, key)
         }
     }
 }
 
 #[macro_export]
-macro_rules! rsx_runtime_impl_rsx_prop {
+macro_rules! impl_rsx_prop {
     ($v:ident . $prop:ident ( $value:expr )) => {
         $v.$prop($value)
     };

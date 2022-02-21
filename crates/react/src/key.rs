@@ -1,5 +1,24 @@
 use wasm_bindgen::JsValue;
 
+#[derive(Debug, Clone)]
+pub struct Key {
+    inner: JsValue,
+}
+
+impl Into<JsValue> for Key {
+    #[inline]
+    fn into(self) -> JsValue {
+        self.inner
+    }
+}
+
+impl AsRef<JsValue> for Key {
+    #[inline]
+    fn as_ref(&self) -> &JsValue {
+        &self.inner
+    }
+}
+
 pub trait AsKey {
     fn as_key(&self) -> JsValue;
 }

@@ -1,33 +1,29 @@
-use wasm_bindgen::JsValue;
+pub type FragmentProps = crate::OptionalChildrenProps;
 
-pub struct Fragment(crate::OptionalChildrenProps);
+pub struct Fragment;
 
-impl crate::Component for Fragment {
-    type Props = crate::OptionalChildrenProps;
-    type ElementType = react_sys::Element;
+impl crate::UseRenderStatic for Fragment {
+    type RenderArg = FragmentProps;
+    type RenderOutput = crate::FragmentElement;
 
-    fn use_render(&self) -> Self::ElementType {
-        crate::create_element_js::create_element_with_js_value(
-            &react_sys::Fragment,
-            None,
-            self.0.children.as_ref(),
-            None,
-        )
+    #[inline]
+    fn use_render(props: &Self::RenderArg) -> Self::RenderOutput {
+        crate::FragmentElement {
+            children: props.children.clone(),
+            key: None,
+        }
     }
+}
 
-    fn new_with_props(props: Self::Props) -> Self
-    where
-        Self: Sized,
-    {
-        Self(props)
-    }
+impl crate::ComponentStatic for Fragment {
+    type Props = FragmentProps;
+    type Element = crate::FragmentElement;
 
-    fn call_create_element(self, key: Option<&JsValue>) -> Self::ElementType {
-        crate::create_element_js::create_element_with_js_value(
-            &react_sys::Fragment,
-            None,
-            self.0.children.as_ref(),
+    #[inline]
+    fn create_element(props: Self::Props, key: Option<crate::Key>) -> Self::Element {
+        crate::FragmentElement {
+            children: props.children,
             key,
-        )
+        }
     }
 }

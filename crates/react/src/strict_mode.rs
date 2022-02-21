@@ -1,33 +1,38 @@
-use wasm_bindgen::JsValue;
+use frender_macros::custom_element;
 
-pub struct StrictMode(crate::OptionalChildrenProps);
+pub type StrictModeProps = crate::OptionalChildrenProps;
 
-impl crate::Component for StrictMode {
-    type Props = crate::OptionalChildrenProps;
-    type ElementType = react_sys::Element;
+pub struct StrictMode;
 
-    fn use_render(&self) -> Self::ElementType {
-        crate::create_element_js::create_element_with_js_value(
-            &react_sys::StrictMode,
-            None,
-            self.0.children.as_ref(),
-            None,
-        )
+#[custom_element(react = "crate")]
+pub struct StrictModeElement(crate::JsBridgeElement);
+
+impl crate::UseRenderStatic for StrictMode {
+    type RenderArg = StrictModeProps;
+    type RenderOutput = StrictModeElement;
+
+    #[inline]
+    fn use_render(props: &Self::RenderArg) -> Self::RenderOutput {
+        StrictModeElement(crate::JsBridgeElement {
+            js_component_type: crate::JsComponentType::Any(react_sys::StrictMode.clone()),
+            js_props_without_children: None,
+            children: props.children.clone(),
+            key: None,
+        })
     }
+}
 
-    fn new_with_props(props: Self::Props) -> Self
-    where
-        Self: Sized,
-    {
-        Self(props)
-    }
+impl crate::ComponentStatic for StrictMode {
+    type Props = StrictModeProps;
+    type Element = StrictModeElement;
 
-    fn call_create_element(self, key: Option<&JsValue>) -> Self::ElementType {
-        crate::create_element_js::create_element_with_js_value(
-            &react_sys::StrictMode,
-            None,
-            self.0.children.as_ref(),
+    #[inline]
+    fn create_element(props: Self::Props, key: Option<crate::Key>) -> Self::Element {
+        StrictModeElement(crate::JsBridgeElement {
+            js_component_type: crate::JsComponentType::Any(react_sys::StrictMode.clone()),
+            js_props_without_children: None,
+            children: props.children,
             key,
-        )
+        })
     }
 }

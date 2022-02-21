@@ -1,8 +1,8 @@
 use convert_js::{FromJs, ToJs};
 use std::marker::PhantomData;
-use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::JsValue;
 
-use crate::SimpleTake;
+use super::SimpleInto;
 
 pub fn use_ref_js<T: ToJs + FromJs>(initial_value: T) -> MutableRefJs<T> {
     let obj = react_sys::use_ref(&initial_value.to_js());
@@ -29,38 +29,29 @@ impl<T: ToJs + FromJs> ToJs for MutableRefJs<T> {
     }
 }
 
-crate::impl_pass_to_js_runtime! {
-    [
-        borrow(this) {
-            crate::PassToJsRuntimeValue {
-                js_value: this.as_ref().clone(),
-                to_persist: None,
-            }
+impl<T: ToJs + FromJs> crate::SafeIntoJsRuntime for MutableRefJs<T> {
+    fn safe_into_js_runtime(self) -> crate::PassedToJsRuntime {
+        crate::PassedToJsRuntime {
+            js_value: self.0.into(),
+            to_persist: None,
         }
-        into(this) {
-            crate::PassToJsRuntimeValue {
-                js_value: this.0.dyn_into().unwrap(),
-                to_persist: None,
-            }
-        }
-    ]
-    {T: ToJs + FromJs} MutableRefJs<T>
+    }
 }
 
-impl<T, W: SimpleTake<T> + ToJs + FromJs> super::ReadRef<T> for MutableRefJs<W>
+impl<T, W: SimpleInto<T> + ToJs + FromJs> super::ReadRef<T> for MutableRefJs<W>
 where
     <W as FromJs>::Error: std::fmt::Debug,
 {
     fn current(&self) -> T {
         let js_value = self.0.current();
         let w = W::from_js(js_value).unwrap();
-        w.simple_take()
+        w.simple_into()
     }
 }
 
-impl<T: SimpleTake<W>, W: ToJs + FromJs> super::WriteRef<T> for MutableRefJs<W> {
+impl<T: SimpleInto<W>, W: ToJs + FromJs> super::WriteRef<T> for MutableRefJs<W> {
     fn set_current(&self, v: T) {
-        let w: W = v.simple_take();
+        let w: W = v.simple_into();
         self.0.set_current(w.to_js())
     }
 }

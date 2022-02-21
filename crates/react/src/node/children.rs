@@ -1,22 +1,40 @@
-use wasm_bindgen::JsValue;
+use std::rc::Rc;
 
-use crate::AnyNode;
+use crate::{AnyNode, ComponentStatic};
 
+/// One or many [`AnyNode`]s whose order will
+/// never change.
+/// When `Children` is used as
 #[derive(Debug, Clone)]
 pub enum Children {
-    Single(AnyNode),
-    StaticMultiple(js_sys::Array),
+    Single(Box<AnyNode>),
+    StaticMultiple(Rc<Vec<AnyNode>>),
 }
 
 impl Children {
+    #[inline]
     pub fn from_static_nodes<T: IntoIterator<Item = AnyNode>>(nodes: T) -> Self {
-        Self::StaticMultiple(js_sys::Array::from_iter(nodes))
+        Self::StaticMultiple(Rc::new(Vec::from_iter(nodes)))
     }
 
-    pub fn as_js_array(&self) -> std::borrow::Cow<js_sys::Array> {
+    pub fn from_single(node: AnyNode) -> Children {
+        Self::Single(Box::new(node))
+    }
+
+    /// See [`AnyNode::unsafe_into_js_node_value`] for the safety notes.
+    #[inline]
+    pub(crate) fn unsafe_into_js_array(self) -> js_sys::Array {
         match self {
-            Children::Single(node) => std::borrow::Cow::Owned(js_sys::Array::of1(node.as_ref())),
-            Children::StaticMultiple(arr) => std::borrow::Cow::Borrowed(arr),
+            Children::Single(node) => js_sys::Array::of1(&node.unsafe_into_js_node_value()),
+            Children::StaticMultiple(arr) => match Rc::try_unwrap(arr) {
+                Ok(arr) => js_sys::Array::from_iter(
+                    arr.into_iter().map(AnyNode::unsafe_into_js_node_value),
+                ),
+                Err(arr) => js_sys::Array::from_iter(
+                    arr.iter()
+                        .map(|v| AnyNode::unsafe_into_js_node_value(v.clone())),
+                ),
+            },
         }
     }
 }
@@ -24,12 +42,7 @@ impl Children {
 impl super::Node for Children {
     #[inline]
     fn as_react_node_js(&self) -> AnyNode {
-        match self {
-            Children::Single(node) => node.clone(),
-            Children::StaticMultiple(arr) => {
-                AnyNode(react_sys::create_fragment(&JsValue::NULL, arr).into())
-            }
-        }
+        self.clone().into_react_node_js()
     }
 
     #[inline]
@@ -37,28 +50,25 @@ impl super::Node for Children {
         Some(self.clone())
     }
 
+    /// Returns the single node or wrap multiple nodes in a Fragment
     #[inline]
     fn into_react_node_js(self) -> AnyNode {
         match self {
-            Children::Single(node) => node,
-            _ => self.as_react_node_js(),
+            Children::Single(node) => *node,
+            children => AnyNode::Element(
+                crate::Fragment::create_element(
+                    crate::OptionalChildrenProps {
+                        children: Some(children),
+                    },
+                    None,
+                )
+                .into(),
+            ),
         }
     }
 
     #[inline]
-    fn into_react_children_js(self) -> Option<Children>
-    where
-        Self: Sized,
-    {
+    fn into_react_children_js(self) -> Option<Children> {
         Some(self)
-    }
-}
-
-impl AsRef<JsValue> for Children {
-    fn as_ref(&self) -> &JsValue {
-        match self {
-            Children::Single(node) => node.as_ref(),
-            Children::StaticMultiple(arr) => arr.as_ref(),
-        }
     }
 }
