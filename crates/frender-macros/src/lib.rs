@@ -8,9 +8,8 @@ mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
 
-use err::{ResultUnwrapValueAndErrorExt, ResultUnwrapValueExt};
 use proc_macro::TokenStream;
-use quote::{ToTokens, TokenStreamExt};
+use quote::ToTokens;
 use syn::parse_macro_input;
 
 #[proc_macro_attribute]

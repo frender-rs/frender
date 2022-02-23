@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use wasm_bindgen::JsValue;
 
 use crate::IntoOptionalElement;
@@ -108,10 +106,6 @@ impl Element {
         el
     }
 }
-
-/// Marks an [`Element`] is created with key.
-#[derive(Debug, Clone)]
-pub struct KeyedElement(pub Element);
 
 impl crate::Node for Element {
     #[inline]

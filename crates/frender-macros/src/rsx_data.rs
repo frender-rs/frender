@@ -1,5 +1,4 @@
 use proc_macro2::Span;
-use quote::{quote, quote_spanned, ToTokens, TokenStreamExt};
 use syn::{braced, parse::Parse, punctuated::Punctuated, spanned::Spanned};
 
 pub struct RsxElement {
@@ -177,9 +176,9 @@ impl Parse for RsxElement {
             match kp {
                 RsxKeyOrProp::Key(k) => {
                     if let Some(key) = key {
-                        static msg: &str = "key should only be specified once";
-                        let mut err = syn::Error::new(key.name.span(), msg);
-                        err.combine(syn::Error::new(k.name.span(), msg));
+                        static MSG: &str = "key should only be specified once";
+                        let mut err = syn::Error::new(key.name.span(), MSG);
+                        err.combine(syn::Error::new(k.name.span(), MSG));
                         return Err(err);
                     } else {
                         key = Some(k);

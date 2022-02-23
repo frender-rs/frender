@@ -1,5 +1,4 @@
 use quote::{quote, quote_spanned, ToTokens};
-use syn::spanned::Spanned;
 
 use crate::err::OutputError;
 
@@ -130,7 +129,7 @@ impl ComponentDefinition {
 
             impl #impl_generics ::frender::react::ComponentStatic for #ident #type_generics #where_clause {
                 type Props = #props_ty;
-                type Element = #render_output_ty;
+                type Element = #custom_element_ty;
 
                 fn create_element(props: Self::Props, key: Option<::frender::react::Key>) -> Self::Element {
                     #[allow(unused_imports)]

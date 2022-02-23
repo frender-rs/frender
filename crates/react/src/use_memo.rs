@@ -1,60 +1,20 @@
-use std::{any::Any, cell::RefCell, rc::Rc};
-
-use wasm_bindgen::UnwrapThrowExt;
+use std::rc::Rc;
 
 use super::IntoRc;
 
-pub fn use_memo_no_dep<T: Any, R: IntoRc<T>, F: FnOnce() -> R>(func: F) -> Rc<T> {
-    let obj = react_sys::use_ref_optional_usize(None);
-
-    let k = obj.current();
-
-    let k = if let Some(k) = k {
-        k
-    } else {
-        web_sys::console::log_1(&wasm_bindgen::JsValue::from_str("into rc"));
-        let rc = func().into_rc();
-        let k = forgotten::forget_rc(rc).into_shared();
-        let k = k.as_usize();
-        let k = *k;
-        obj.set_current(Some(k));
-        k
-    };
-
-    web_sys::console::log_2(
-        &wasm_bindgen::JsValue::from_str("use memo ptr = "),
-        &wasm_bindgen::JsValue::from(k),
-    );
-
-    let v = forgotten::try_get(&unsafe { forgotten::SharedForgottenKey::<T>::from_usize(k) })
-        .expect_throw("use memo ptr should not be freed before element unmounted");
-
-    super::use_effect_on_mounted(move || {
-        move || {
-            // SAFETY: k is valid and will never change in the lifetime of the component
-            unsafe { forgotten::try_free_with_usize(k) };
-        }
-    });
-
-    v
+pub fn use_memo_no_dep<T: 'static + ?Sized>(func: fn() -> Rc<T>) -> Rc<T> {
+    let v = crate::use_ref_readonly_with(move || func());
+    v.0
 }
 
-pub fn use_memo_one<
-    D: 'static + PartialEq,
-    T: 'static,
-    RD: IntoRc<D>,
-    RT: IntoRc<T>,
-    F: FnOnce(&Rc<D>) -> RT,
->(
-    func: F,
-    dep: RD,
+pub fn use_memo_one<D: 'static + PartialEq, T: 'static>(
+    func: fn(&Rc<D>) -> Rc<T>,
+    dep: Rc<D>,
 ) -> Rc<T> {
+    let dep_and_value = crate::use_ref_cell::<Option<(Rc<D>, Rc<T>)>>(None);
+    let mut dep_and_value = dep_and_value.0.borrow_mut();
+
     let dep: Rc<D> = dep.into_rc();
-    let dep_and_value =
-        use_memo_no_dep::<RefCell<Option<(Rc<D>, Rc<T>)>>, _, _>(|| RefCell::new(None));
-
-    let mut dep_and_value = dep_and_value.as_ref().borrow_mut();
-
     match &*dep_and_value {
         Some(t) if &t.0 == &dep => {
             // dep not changed
@@ -64,7 +24,7 @@ pub fn use_memo_one<
             // dep changed
             let new_v: Rc<T> = func(&dep).into_rc();
 
-            *dep_and_value = Some((dep, new_v.clone()));
+            *dep_and_value = Some((dep, Rc::clone(&new_v)));
 
             new_v
         }
@@ -73,16 +33,18 @@ pub fn use_memo_one<
 
 #[macro_export]
 macro_rules! use_memo {
-    ( <$t:ty> $(move)? || $e:expr ) => {
-        $crate::react::use_memo_no_dep::<$t, _, _>($(move)? || $e)
+    (() => $e:expr) => {
+        $crate::use_memo_no_dep(|| $crate::auto_wrap_rc!($e))
     };
-    ( <$t:ty> $(move)? | $($dep:ident),+ $(,)? | $e:expr ) => {
-        $crate::react::use_memo_one::<_, $t, _, _>($(move)? |($($dep:ident),+)| $e , ($($dep:ident),+))
-    };
-    ( $(move)? || $e:expr ) => {
-        $crate::react::use_memo_no_dep(|| $e)
-    };
-    ( $(move)? | $($dep:ident),+ $(,)? | $e:expr ) => {
-        $crate::react::use_memo_one($(move)? |($($dep:ident),+)| $e , ($($dep:ident),+))
+    (($( $dep:ident $(= $dep_expr:expr)? ),+ $(,)?) => $e:expr ) => {
+        $crate::use_memo_one(
+            |__dep_tuple| {
+                $crate::__impl_let_dep_list_memo!( { *__dep_tuple } $($dep)+ );
+                $e
+            },
+            $crate::auto_wrap_rc!((
+                $($crate::__impl_pass_dep!( $dep $(= $dep_expr)? )),+
+            )),
+        )
     };
 }

@@ -1,4 +1,4 @@
-use darling::{FromAttributes, FromMeta};
+use darling::FromAttributes;
 use proc_macro2::Span;
 use syn::{
     parse::Parse,
@@ -6,7 +6,7 @@ use syn::{
     spanned::Spanned,
 };
 
-use crate::err::{OutputError, RecordError, ValueResult};
+use crate::err::RecordError;
 
 #[derive(FromAttributes, Default)]
 #[darling(attributes(props))]

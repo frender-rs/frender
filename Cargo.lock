@@ -143,6 +143,7 @@ dependencies = [
  "frender-macros",
  "js-sys",
  "once_cell",
+ "react-html",
  "react-rs",
  "wasm-bindgen",
  "wasm-bindgen-test",
@@ -243,6 +244,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "react-html"
+version = "1.0.0-alpha.3"
+dependencies = [
+ "convert-js",
+ "frender-macros",
+ "js-sys",
+ "react-rs",
+ "wasm-bindgen",
+ "wasm-bindgen-test",
+ "web-sys",
+]
+
+[[package]]
 name = "react-rs"
 version = "1.0.0-alpha.3"
 dependencies = [
@@ -259,9 +273,9 @@ dependencies = [
 
 [[package]]
 name = "react-sys"
-version = "1.0.0-alpha.22"
+version = "1.0.0-alpha.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e948b0e40d16ea5fd260eee52240698a3f1cf918d1506b755755f129b0d149f"
+checksum = "cf5f860eb17ac1e127aa72d11c26e273362fbcdc0d29f3b468488f6778f1d31c"
 dependencies = [
  "js-sys",
  "wasm-bindgen",

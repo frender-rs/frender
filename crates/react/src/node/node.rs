@@ -1,6 +1,6 @@
 use wasm_bindgen::JsValue;
 
-use crate::{AnyNode, AnyNodeValue, Children, IntoElement, Keyed, KeyedElement};
+use crate::{AnyNode, AnyNodeValue, Children, IntoElement, Keyed};
 
 /// Corresponding to `ReactNode` in typescript
 ///

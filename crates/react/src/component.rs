@@ -1,5 +1,3 @@
-use crate::Keyed;
-
 pub trait PropsBuilder<T> {
     fn build(self) -> T;
 }

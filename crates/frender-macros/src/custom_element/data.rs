@@ -1,7 +1,7 @@
 use darling::{util::Flag, FromMeta};
 use syn::{parse::Parse, spanned::Spanned};
 
-use crate::err::{OptionCombineExt, OutputError, RecordError, ValueResult};
+use crate::err::{OptionCombineExt, OutputError, RecordError};
 
 #[derive(FromMeta, Default)]
 pub struct CustomElementOptions {

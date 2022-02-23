@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use proc_macro2::Span;
 use quote::{quote, quote_spanned, ToTokens, TokenStreamExt};
 use syn::{
     parse_quote_spanned,
@@ -73,7 +72,10 @@ impl PropsDefinitionWithOptions {
                 // the MyProps struct can be the builder for itself
                 let builder_fns = info.iter().map(
                     |PropsFieldInfo {
-                         ident, ty, builder, ..
+                         ident,
+                         ty: _,
+                         builder,
+                         ..
                      }| {
                         let PropsFieldBuilder {
                             arrow,
@@ -226,7 +228,7 @@ impl PropsDefinitionWithOptions {
                     }
                 });
 
-                let optional_field_fns = optional.iter().enumerate().map(|(idx, v)| {
+                let optional_field_fns = optional.iter().map(|v| {
                     let PropsFieldInfo { ident, builder, .. } = v;
                     let PropsFieldBuilder {
                         arrow,
@@ -391,7 +393,7 @@ impl<'a> PropsFieldImpl<'a> {
 
     pub fn to_info(&self, props_ident: &syn::Ident) -> PropsFieldInfo {
         let PropsFieldImpl {
-            vis,
+            // vis,
             ident,
             // question,
             colon,

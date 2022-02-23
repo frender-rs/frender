@@ -14,7 +14,6 @@ mod strict_mode;
 mod use_effect;
 mod use_memo;
 mod use_ref;
-mod use_ref_cell;
 mod use_state;
 
 pub use common_props::*;
@@ -31,14 +30,11 @@ pub use take_rc::*;
 pub use use_effect::*;
 pub use use_memo::*;
 pub use use_ref::*;
-pub use use_ref_cell::*;
 pub use use_state::*;
 
 pub mod __private;
 // pub mod event;
 pub mod any_js_props;
-
-mod utils;
 
 pub use react_sys as sys;
 
