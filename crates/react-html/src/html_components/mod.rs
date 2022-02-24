@@ -73,48 +73,48 @@ crate::macros::all_intrinsic_component_tags! {
     noscript: NoScriptComponent,
     object,
     ol,
-    // optgroup: React.OptgroupHTMLAttributes<HTMLOptGroupElement>, HTMLOptGroupElement;
-    // option: React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement;
-    // output: React.OutputHTMLAttributes<HTMLElement>, HTMLElement;
+    optgroup,
+    option,
+    output,
     p: { ParagraphComponent => web_sys::HtmlParagraphElement },
-    // param: React.ParamHTMLAttributes<HTMLParamElement>, HTMLParamElement;
+    param,
     picture: PictureComponent,
     pre: { PreComponent => web_sys::HtmlPreElement },
-    // progress: React.ProgressHTMLAttributes<HTMLProgressElement>, HTMLProgressElement;
-    // q: React.QuoteHTMLAttributes<HTMLQuoteElement>, HTMLQuoteElement;
+    progress,
+    q,
     rp: RpComponent,
     rt: RtComponent,
     ruby: RubyComponent,
     s: SComponent,
     samp: SampComponent,
-    // slot: React.SlotHTMLAttributes<HTMLSlotElement>, HTMLSlotElement;
-    // script: React.ScriptHTMLAttributes<HTMLScriptElement>, HTMLScriptElement;
+    slot,
+    script,
     section: SectionComponent,
-    // select: React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement;
+    select,
     small: SmallComponent,
-    // source: React.SourceHTMLAttributes<HTMLSourceElement>, HTMLSourceElement;
+    source,
     span: { SpanComponent => web_sys::HtmlSpanElement },
     strong: StrongComponent,
-    // style: React.StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement;
+    style,
     sub: SubComponent,
     summary: SummaryComponent,
     sup: SupComponent,
-    // table: React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement;
+    table,
     template: { TemplateComponent => web_sys::HtmlTemplateElement },
     tbody: { TableBodyComponent => web_sys::HtmlTableSectionElement },
-    // td: React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement;
-    // textarea: React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement;
+    td,
+    textarea,
     tfoot: { TableFootComponent => web_sys::HtmlTableSectionElement },
-    // th: React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement;
+    th,
     thead: { TableHeadComponent => web_sys::HtmlTableSectionElement },
-    // time: React.TimeHTMLAttributes<HTMLElement>, HTMLElement;
+    time,
     title: { TitleComponent => web_sys::HtmlTitleElement },
     tr: { TableRowComponent => web_sys::HtmlTableRowElement },
-    // track: React.TrackHTMLAttributes<HTMLTrackElement>, HTMLTrackElement;
+    track,
     u: UComponent,
     ul: { UListComponent => web_sys::HtmlUListElement },
     var: VarComponent,
-    // video: React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement;
+    video,
     wbr: WbrComponent,
     // webview: React.WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement;
 }

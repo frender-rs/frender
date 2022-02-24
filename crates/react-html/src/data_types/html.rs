@@ -149,3 +149,24 @@ pub enum OListType {
     #[convert_js(rename = "I")]
     RomanUpper,
 }
+
+/// `"left" | "center" | "right" | "justify" | "char"`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum TableCellAlign {
+    Left,
+    Center,
+    Right,
+    Justify,
+    Char,
+}
+
+/// `"top" | "middle" | "bottom" | "baseline"`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum TableCellVAlign {
+    Top,
+    Middle,
+    Bottom,
+    Baseline,
+}

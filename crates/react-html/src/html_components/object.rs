@@ -10,11 +10,11 @@ crate::macros::def_intrinsic_component! {
             class_id: Option<&str>,
             data: Option<&str>,
             form: Option<&str>,
-            height: Option<crate::NumOrStr<'_>>,
+            height['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
             name: Option<&str>,
             html_type@"type": Option<&str>,
             use_map: Option<&str>,
-            width: Option<crate::NumOrStr<'_>>,
+            width['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
             wmode: Option<&str>,
         }
     }
