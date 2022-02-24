@@ -44,6 +44,38 @@ macro_rules! __impl_prop_default {
         }
     };
     (
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { into |$impl_v:ident| $impl_expr:expr }
+    ) => {
+        $($attr)*
+        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self {
+            use react::any_js_props::AnyJsPropsBuilder;
+            let js_value = match $impl_expr { ref v => ::convert_js::ToJs::to_js(v) };
+            self.as_mut().set_prop(
+                $k_js,
+                &js_value,
+            );
+            self
+        }
+    };
+    (
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { into? |$impl_v:ident| $impl_expr:expr }
+    ) => {
+        $($attr)*
+        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self {
+            use react::any_js_props::AnyJsPropsBuilder;
+            if let Some($impl_v) = $impl_v {
+                let js_value = match $impl_expr { ref v => ::convert_js::ToJs::to_js(v) };
+                self.as_mut().set_prop(
+                    $k_js,
+                    &js_value,
+                );
+            } else {
+                self.as_mut().remove_prop($k_js);
+            }
+            self
+        }
+    };
+    (
         $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty
     ) => {
         // convert value to JsValue with ::convert_js::ToJs::to_js
@@ -69,7 +101,7 @@ macro_rules! __impl_auto_impl_trait {
         {$($generics:tt)*} $struct_name:ident {$($type_params:tt)*} { $(where $($where:tt)+)? }
         $auto_impl_trait:ident $([$($auto_impl_trait_type_params:tt)*])?
     ) => {
-        impl<$($generics)*> $auto_impl_trait $(<$($auto_impl_trait_type_params)*>)? for $struct_name $(<$($type_params)+>)? $(where $($where)+)? {}
+        impl<$($generics)*> $auto_impl_trait $(<$($auto_impl_trait_type_params)*>)? for $struct_name <$($type_params)*> $(where $($where)+)? {}
     };
     ($generics:tt $struct_name:ident $type_params:tt $where:tt) => {};
     (

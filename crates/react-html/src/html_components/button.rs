@@ -1,12 +1,14 @@
-use crate::HtmlBasePropsBuilder;
+use crate::{AsHtmlTextValue, HtmlCommonSharedPropsBuilder};
 
 crate::macros::def_intrinsic_component! {
     "button"
-    AnchorComponent(AnchorComponentProps) {
-        AnchorComponentProps
-        : AnchorComponentPropsBuilder
-        : HtmlBasePropsBuilder[web_sys::HtmlAnchorElement, ()]
+    ButtonComponent(ButtonComponentProps) {
+        ButtonComponentProps
+        : ButtonComponentPropsBuilder
+        : HtmlCommonSharedPropsBuilder[web_sys::HtmlButtonElement]
         {
+            default_value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
+            value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
             auto_focus: Option<bool>,
             disabled: Option<bool>,
             form: Option<&str>,

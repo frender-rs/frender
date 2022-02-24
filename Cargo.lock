@@ -47,9 +47,9 @@ dependencies = [
 
 [[package]]
 name = "convert-js"
-version = "1.0.0-alpha.14"
+version = "1.0.0-alpha.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d04090722d767d607dc30106ae567df1f139f76af42a7d17570895f5767d16e"
+checksum = "6e871c84e1fbf717c7d1b87bb802aae2247a55790206f689d1ee7d34706b391b"
 dependencies = [
  "convert-js-macros",
  "js-sys",
@@ -59,9 +59,9 @@ dependencies = [
 
 [[package]]
 name = "convert-js-macros"
-version = "1.0.0-alpha.14"
+version = "1.0.0-alpha.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d907f182c6aed22c91c73602e199fbf052623504f19d0a6b59f8ced5d7421eb"
+checksum = "b258c077b0094292b0b138bfe4cca08a702e36ccd8c544c784008d79509ddded"
 dependencies = [
  "darling",
  "proc-macro2",

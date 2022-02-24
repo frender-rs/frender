@@ -58,7 +58,7 @@ macro_rules! def_intrinsic_component {
                 pub use super:: $props_trait_name;
                 pub use super:: $props_struct_name as ComponentProps;
             )?
-            pub use crate::HtmlBasePropsBuilder;
+            pub use crate::HtmlCommonSharedPropsBuilder;
             pub use super:: $comp as Component;
         }
 

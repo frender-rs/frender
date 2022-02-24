@@ -6,52 +6,52 @@ crate::macros::all_intrinsic_component_tags! {
     area,
     article: ArticleComponent,
     aside: AsideComponent,
-    // audio: React.AudioHTMLAttributes<HTMLAudioElement>, HTMLAudioElement;
+    audio,
     b: BComponent,
-    // base: React.BaseHTMLAttributes<HTMLBaseElement>, HTMLBaseElement;
+    base,
     bdi: BdiComponent,
     bdo: BdoComponent,
     big: BigComponent,
-    // blockquote: React.BlockquoteHTMLAttributes<HTMLElement>, HTMLElement;
-    // body: React.HTMLAttributes<HTMLBodyElement>, HTMLBodyElement;
-    // br: React.HTMLAttributes<HTMLBRElement>, HTMLBRElement;
+    blockquote,
+    body: { BodyComponent => web_sys::HtmlBodyElement },
+    br: { BrComponent => web_sys::HtmlBrElement },
     button,
-    // canvas: React.CanvasHTMLAttributes<HTMLCanvasElement>, HTMLCanvasElement;
+    canvas,
     caption: CaptionComponent,
     cite: CiteComponent,
     code: CodeComponent,
-    // col: React.ColHTMLAttributes<HTMLTableColElement>, HTMLTableColElement;
-    // colgroup: React.ColgroupHTMLAttributes<HTMLTableColElement>, HTMLTableColElement;
-    // data: React.DataHTMLAttributes<HTMLDataElement>, HTMLDataElement;
-    // datalist: React.HTMLAttributes<HTMLDataListElement>, HTMLDataListElement;
+    col,
+    colgroup,
+    data,
+    datalist: { DataListComponent => web_sys::HtmlDataListElement },
     dd: DdComponent,
-    // del: React.DelHTMLAttributes<HTMLElement>, HTMLElement;
-    // details: React.DetailsHTMLAttributes<HTMLElement>, HTMLElement;
+    del,
+    details,
     dfn: DfnComponent,
-    // dialog: React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement;
-    // div: React.HTMLAttributes<HTMLDivElement>, HTMLDivElement;
-    // dl: React.HTMLAttributes<HTMLDListElement>, HTMLDListElement;
+    dialog,
+    div: { DivComponent => web_sys::HtmlDivElement },
+    dl: { DListComponent => web_sys::HtmlDListElement },
     dt: DtComponent,
     em: EmComponent,
-    // embed: React.EmbedHTMLAttributes<HTMLEmbedElement>, HTMLEmbedElement;
-    // fieldset: React.FieldsetHTMLAttributes<HTMLFieldSetElement>, HTMLFieldSetElement;
+    embed,
+    fieldset,
     figcaption: FigCaptionComponent,
     figure: FigureComponent,
     footer: FooterComponent,
-    // form: React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement;
-    // h1: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // h2: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // h3: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // h4: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // h5: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // h6: React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement;
-    // head: React.HTMLAttributes<HTMLHeadElement>, HTMLHeadElement;
+    form,
+    h1: { H1Component => web_sys::HtmlHeadingElement },
+    h2: { H2Component => web_sys::HtmlHeadingElement },
+    h3: { H3Component => web_sys::HtmlHeadingElement },
+    h4: { H4Component => web_sys::HtmlHeadingElement },
+    h5: { H5Component => web_sys::HtmlHeadingElement },
+    h6: { H6Component => web_sys::HtmlHeadingElement },
+    head: { HeadComponent => web_sys::HtmlHeadElement },
     header: HeaderComponent,
     hgroup: HGroupComponent,
-    // hr: React.HTMLAttributes<HTMLHRElement>, HTMLHRElement;
-    // html: React.HtmlHTMLAttributes<HTMLHtmlElement>, HTMLHtmlElement;
+    hr: { HrComponent => web_sys::HtmlHrElement },
+    html,
     i: IComponent,
-    // iframe: React.IframeHTMLAttributes<HTMLIFrameElement>, HTMLIFrameElement;
+    iframe,
     // img: React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement;
     // input: React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement;
     // ins: React.InsHTMLAttributes<HTMLModElement>, HTMLModElement;

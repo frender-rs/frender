@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use convert_js::ToJs;
 
 #[derive(Debug, Clone, Copy, ToJs)]
@@ -54,18 +56,17 @@ pub enum ReferrerPolicy {
     UnsafeUrl,
 }
 
-#[derive(Debug, Clone, ToJs)]
-#[convert_js(union)]
-pub enum ButtonValue {
-    String(String),
-    Number(f64),
-    Strings(Vec<String>),
-}
-
 #[derive(Debug, Clone, Copy, ToJs)]
 #[convert_js(union, rename_all = "lowercase")]
 pub enum ButtonType {
     Submit,
     Reset,
     Button,
+}
+
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum HtmlLoading {
+    Eager,
+    Lazy,
 }

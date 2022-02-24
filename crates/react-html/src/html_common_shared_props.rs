@@ -7,8 +7,8 @@ pub trait IntrinsicComponent {
 }
 
 crate::macros::def_props_trait! {
-    [TElement, TValue: ToJs] HtmlBaseProps [TElement, TValue]
-    : HtmlBasePropsBuilder
+    [TElement] HtmlCommonSharedProps [TElement]
+    : HtmlCommonSharedPropsBuilder
     {
         children[TNode: react::Node]: Option<TNode> {
             impl |this, v| {
@@ -20,7 +20,6 @@ crate::macros::def_props_trait! {
         },
         ref_el[TWriteRef: 'static + react::WriteRef<TElement> + react::SafeIntoJsRuntime]: Option<TWriteRef> { safe_into_js_runtime? },
         default_checked: Option<bool>,
-        default_value: Option<TValue>,
         class@"className": Option<&str>,
         draggable: Option<bool>,
         hidden: Option<bool>,

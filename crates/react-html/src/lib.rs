@@ -1,8 +1,10 @@
 mod data_types;
-mod html_base_props;
+mod html_common_shared_props;
+mod html_media_shared_props;
 
 pub use data_types::*;
-pub use html_base_props::*;
+pub use html_common_shared_props::*;
+pub use html_media_shared_props::*;
 
 pub(crate) mod macros;
 

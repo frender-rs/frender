@@ -6,7 +6,15 @@ macro_rules! intrinsic_component_tag {
         pub mod $tag {
             $crate::macros::def_intrinsic_component! {
                 (stringify!($tag))
-                $comp ( $crate::HtmlBaseProps<web_sys::HtmlElement, ()> )
+                $comp ( $crate::HtmlCommonSharedProps<web_sys::HtmlElement> )
+            }
+        }
+    };
+    ($tag:ident : { $comp:ident => $el:ty }) => {
+        pub mod $tag {
+            $crate::macros::def_intrinsic_component! {
+                (stringify!($tag))
+                $comp ( $crate::HtmlCommonSharedProps<$el> )
             }
         }
     };

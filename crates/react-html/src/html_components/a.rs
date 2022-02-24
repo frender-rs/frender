@@ -1,11 +1,11 @@
-use crate::HtmlBasePropsBuilder;
+use crate::HtmlCommonSharedPropsBuilder;
 
 crate::macros::def_intrinsic_component! {
     "a"
     AnchorComponent(AnchorComponentProps) {
         AnchorComponentProps
         : AnchorComponentPropsBuilder
-        : HtmlBasePropsBuilder[web_sys::HtmlAnchorElement, ()]
+        : HtmlCommonSharedPropsBuilder[web_sys::HtmlAnchorElement]
         {
             download: Option<wasm_bindgen::JsValue>,
             href: Option<&str>,

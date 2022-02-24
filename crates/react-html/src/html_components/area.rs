@@ -1,11 +1,11 @@
-use crate::HtmlBasePropsBuilder;
+use crate::HtmlCommonSharedPropsBuilder;
 
 crate::macros::def_intrinsic_component! {
     "area"
     AreaComponent(AreaComponentProps) {
         AreaComponentProps
         : AreaComponentPropsBuilder
-        : HtmlBasePropsBuilder[web_sys::HtmlAreaElement, ()]
+        : HtmlCommonSharedPropsBuilder[web_sys::HtmlAreaElement]
         {
             alt: Option<&str>,
             coords: Option<&str>,
