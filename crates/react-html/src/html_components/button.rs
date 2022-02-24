@@ -18,7 +18,7 @@ crate::macros::def_intrinsic_component! {
             form_no_validate: Option<bool>,
             form_target: Option<&str>,
             name: Option<&str>,
-            kind@"type": Option<crate::ButtonType>,
+            html_type@"type": Option<crate::ButtonType>,
         }
     }
 }

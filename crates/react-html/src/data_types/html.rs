@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use convert_js::ToJs;
 
 #[derive(Debug, Clone, Copy, ToJs)]
@@ -29,7 +27,7 @@ pub enum HtmlInputMode {
 
 #[derive(Debug, Clone, ToJs)]
 #[convert_js(union)]
-pub enum AnchorTarget {
+pub enum AnchorTarget<'a> {
     #[convert_js(rename = "_self")]
     SelfTarget,
     #[convert_js(rename = "_blank")]
@@ -38,7 +36,7 @@ pub enum AnchorTarget {
     Parent,
     #[convert_js(rename = "_top")]
     Top,
-    Custom(String),
+    Custom(&'a str),
 }
 
 #[derive(Debug, Clone, Copy, ToJs)]
@@ -66,7 +64,88 @@ pub enum ButtonType {
 
 #[derive(Debug, Clone, Copy, ToJs)]
 #[convert_js(union, rename_all = "lowercase")]
-pub enum HtmlLoading {
+pub enum Loading {
     Eager,
     Lazy,
+}
+
+/// `"anonymous" | "use-credentials" | ""`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "kebab-case")]
+pub enum CrossOrigin {
+    #[convert_js(rename = "")]
+    None,
+    Anonymous,
+    UseCredentials,
+}
+
+/// `"async" | "auto" | "sync"`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum Decoding {
+    Async,
+    Auto,
+    Sync,
+}
+
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "kebab-case")]
+pub enum InputType<'a> {
+    Button,
+    Checkbox,
+    Color,
+    Date,
+    DatetimeLocal,
+    Email,
+    File,
+    Hidden,
+    Image,
+    Month,
+    Number,
+    Password,
+    Radio,
+    Range,
+    Reset,
+    Search,
+    Submit,
+    Tel,
+    Text,
+    Time,
+    Url,
+    Week,
+    Custom(&'a str),
+}
+
+/// `'enter' | 'done' | 'go' | 'next' | 'previous' | 'search' | 'send'`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union, rename_all = "lowercase")]
+pub enum EnterKeyHint {
+    Enter,
+    Done,
+    Go,
+    Next,
+    Previous,
+    Search,
+    Send,
+}
+
+/// `'1' | 'a' | 'A' | 'i' | 'I'`
+#[derive(Debug, Clone, Copy, ToJs)]
+#[convert_js(union)]
+pub enum OListType {
+    /// `1` for numbers (default)
+    #[convert_js(rename = "1")]
+    Number,
+    /// `a` for lowercase letters
+    #[convert_js(rename = "a")]
+    LetterLower,
+    /// `A` for uppercase letters
+    #[convert_js(rename = "A")]
+    LetterUpper,
+    /// `i` for lowercase Roman numerals
+    #[convert_js(rename = "i")]
+    RomanLower,
+    /// `I` for uppercase Roman numerals
+    #[convert_js(rename = "I")]
+    RomanUpper,
 }

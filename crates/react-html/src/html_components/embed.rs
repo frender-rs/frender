@@ -10,7 +10,7 @@ crate::macros::def_intrinsic_component! {
             width['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
             height['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
             src: Option<&str>,
-            kind@"type": Option<&str>,
+            html_type@"type": Option<&str>,
         }
     }
 }

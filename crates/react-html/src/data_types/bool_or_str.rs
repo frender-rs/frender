@@ -3,19 +3,19 @@ use std::borrow::Cow;
 
 #[derive(ToJs)]
 #[convert_js(union)]
-pub enum NumOrStr<'a> {
-    Num(f64),
+pub enum BoolOrStr<'a> {
+    Bool(bool),
     Str(&'a str),
 }
 
-impl From<f64> for NumOrStr<'static> {
+impl From<bool> for BoolOrStr<'static> {
     #[inline]
-    fn from(v: f64) -> Self {
-        Self::Num(v)
+    fn from(v: bool) -> Self {
+        Self::Bool(v)
     }
 }
 
-impl<'a> From<&'a str> for NumOrStr<'a> {
+impl<'a> From<&'a str> for BoolOrStr<'a> {
     #[inline]
     fn from(v: &'a str) -> Self {
         Self::Str(v)

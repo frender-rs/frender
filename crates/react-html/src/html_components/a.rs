@@ -14,7 +14,7 @@ crate::macros::def_intrinsic_component! {
             ping: Option<&str>,
             rel: Option<&str>,
             target: Option<crate::AnchorTarget>,
-            kind@"type": Option<&str>,
+            html_type@"type": Option<&str>,
             referrer_policy: Option<crate::ReferrerPolicy>,
         }
     }

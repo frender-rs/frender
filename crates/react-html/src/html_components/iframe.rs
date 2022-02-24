@@ -13,7 +13,7 @@ crate::macros::def_intrinsic_component! {
             { #[deprecated] }
             frame_border['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
             height['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
-            loading: Option<crate::HtmlLoading>,
+            loading: Option<crate::Loading>,
             { #[deprecated] }
             margin_height: Option<f64>,
             { #[deprecated] }
