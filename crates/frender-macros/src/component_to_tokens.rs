@@ -13,6 +13,7 @@ impl ComponentDefinition {
                     //
                     display_name,
                     no_debug_props,
+                    main,
                 },
             item_fn:
                 ComponentItemFn {
@@ -28,6 +29,7 @@ impl ComponentDefinition {
             ident,
             output,
             props_arg,
+            fn_token,
             ..
         } = sig;
 
@@ -50,7 +52,7 @@ impl ComponentDefinition {
             };
             (ty.into_token_stream(), use_render_arg)
         } else {
-            (quote!(::frender::react::NoProps), quote!(_: &Self::Props))
+            (quote!(::frender::react::NoProps), quote!(_: &Self::RenderArg))
         };
 
         let (arrow, render_output_ty, custom_element_ty) = match output {
@@ -116,6 +118,41 @@ impl ComponentDefinition {
             }
         };
 
+        let main_block = if let Some(main) = main {
+            let span = main.span();
+            let ComponentMainOptions {
+                //
+                no_strict_mode,
+                mount_element_id,
+            } = main.as_ref();
+
+            let wrap_strict_mode = if no_strict_mode.is_some() {
+                None
+            } else {
+                let ts = quote_spanned! {span=>
+                    let frender_element = <::frender::react::StrictMode as ::frender::react::ComponentStatic>::create_element(
+                        ::frender::react::StrictModeProps {
+                            children: ::frender::react::Node::into_react_children_js(frender_element),
+                        },
+                        None,
+                    );
+                };
+                Some(ts)
+            };
+
+            let ts = quote_spanned! {span=>
+                #vis #fn_token main() {
+                    let frender_element = <#ident as ::frender::react::ComponentStatic>::create_element(::frender::react::NoProps, None);
+                    #wrap_strict_mode
+                    ::frender::react::render_into_dom_by_id(frender_element, #mount_element_id);
+                }
+            };
+
+            Some(ts)
+        } else {
+            None
+        };
+
         let errors = errors.output_error().map(darling::Error::write_errors);
         quote_spanned! {span=>
             #component_struct
@@ -145,6 +182,8 @@ impl ComponentDefinition {
                     ).into())
                 }
             }
+
+            #main_block
 
             #errors
         }

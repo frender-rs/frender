@@ -19,7 +19,8 @@ pub fn use_ref_with<T: 'static + ?Sized, F: FnOnce() -> Rc<T>>(
 /// the [`MutableRefRc`] will be set as it.
 ///
 /// ```no_run
-/// # fn get_value() { Rc::new(0) }
+/// # use std::rc::Rc;
+/// # fn get_value() -> Rc<i32> { Rc::new(0) }
 /// let value: Rc<i32> = get_value();
 /// react::use_ref_set_as(value);
 /// ```

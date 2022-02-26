@@ -1,9 +1,9 @@
 pub mod js;
 
+mod events;
 mod handlers;
-mod mouse;
 mod synthetic;
 
+pub use events::*;
 pub use handlers::*;
-pub use mouse::*;
 pub use synthetic::*;

@@ -95,12 +95,15 @@ pub fn use_effect_on_mounted<C: 'static + IntoOptionalCleanFn, F: 'static + FnOn
 ///
 /// ```no_run
 /// # use wasm_bindgen::JsValue;
+/// # use std::rc::Rc;
 /// # fn use_test() {
-/// let ref_message = react::use_ref_readonly_with(|| "hello".to_string());
+/// let ref_message = react::use_ref_readonly_with(|| Rc::new("hello".to_string()));
 /// react::use_effect_one(|ref_message| {
-///     let message = ref_message.as_ref();
+///     let ref_message: &react::ReadRefRc<String> = ref_message.as_ref();
+///     let message: &Rc<String> = &ref_message.0;
+///     let message: &String = message.as_ref();
 ///     web_sys::console::log_1(&JsValue::from(format!("{} on component mounted", message)))
-/// }, ref_message)
+/// }, Rc::new(ref_message))
 /// # }
 /// ```
 pub fn use_effect_one<D: 'static + PartialEq, C: 'static + IntoOptionalCleanFn>(
@@ -137,9 +140,6 @@ pub fn use_effect_one<D: 'static + PartialEq, C: 'static + IntoOptionalCleanFn>(
 /// # use wasm_bindgen::JsValue;
 /// # use react::use_effect;
 /// let state = 0;
-/// let action = |msg, v| {
-///     web_sys::console.log2(&JsValue::from(msg), &JsValue::from(v));
-/// };
 /// let message = "The state is ";
 /// use_effect!((
 ///     // depend on `state`
@@ -147,8 +147,7 @@ pub fn use_effect_one<D: 'static + PartialEq, C: 'static + IntoOptionalCleanFn>(
 ///     // depend on an expression and name it `message`
 ///     message = message.to_string(),
 /// ) => {
-///     let action = action.as_ref();
-///     action(message.as_ref(), *state);
+///     web_sys::console::log_2(&JsValue::from(message.as_ref()), &JsValue::from(*state));
 /// })
 /// ```
 ///

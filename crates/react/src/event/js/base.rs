@@ -4,12 +4,13 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(extends = Object)]
+    #[derive(Debug, Clone, PartialEq, Eq)]
     pub type BaseSyntheticEvent;
 
     #[wasm_bindgen(method, getter = nativeEvent)]
-    pub fn native_event(this: &BaseSyntheticEvent) -> JsValue;
+    pub fn native_event_raw(this: &BaseSyntheticEvent) -> JsValue;
     #[wasm_bindgen(method, getter = currentTarget)]
-    pub fn current_target(this: &BaseSyntheticEvent) -> JsValue;
+    pub fn current_target_raw(this: &BaseSyntheticEvent) -> JsValue;
     #[wasm_bindgen(method, getter)]
     pub fn target(this: &BaseSyntheticEvent) -> super::native::EventTarget;
     #[wasm_bindgen(method, getter)]
@@ -36,8 +37,4 @@ extern "C" {
     pub fn time_stamp(this: &BaseSyntheticEvent) -> f64;
     #[wasm_bindgen(method, getter = type)]
     pub fn kind(this: &BaseSyntheticEvent) -> String;
-
-    /// Only accessible for UIEvent interface
-    #[wasm_bindgen(method, getter)]
-    pub(crate) fn detail(this: &BaseSyntheticEvent) -> f64;
 }

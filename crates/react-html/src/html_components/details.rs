@@ -8,8 +8,7 @@ crate::macros::def_intrinsic_component! {
         : HtmlCommonSharedPropsBuilder[web_sys::HtmlElement]
         {
             open: Option<bool>,
-            // TODO: ReactEventHandler<web_sys::HtmlElement>
-            on_toggle: (),
+            on_toggle: react::event::SyntheticEvent<web_sys::HtmlElement> { event_handler },
         }
     }
 }

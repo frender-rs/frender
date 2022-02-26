@@ -6,13 +6,21 @@ use crate::err::{
     ResultUnwrapValueExt,
 };
 
+#[derive(Debug, FromMeta)]
+pub struct ComponentMainOptions {
+    #[darling(default)]
+    pub no_strict_mode: darling::util::Flag,
+    pub mount_element_id: String,
+}
+
 #[derive(Debug, FromMeta, Default)]
 pub struct ComponentOptions {
     #[darling(default)]
     pub display_name: Option<String>,
     #[darling(default)]
     pub no_debug_props: darling::util::Flag,
-    // path: String,
+    #[darling(default)]
+    pub main: Option<darling::util::SpannedValue<ComponentMainOptions>>,
 }
 
 pub struct ComponentDefinition {

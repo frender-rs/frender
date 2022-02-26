@@ -12,3 +12,15 @@ impl<E: crate::IntoElement> RenderIntoDom for E {
         // std::mem::forget(el);
     }
 }
+
+pub fn render_into_dom_by_id<E: RenderIntoDom>(frender_element: E, dom_element_id: &str) {
+    use wasm_bindgen::UnwrapThrowExt;
+    let window = web_sys::window().unwrap_throw();
+    let document = window.document().unwrap_throw();
+
+    let el = document
+        .get_element_by_id(dom_element_id)
+        .expect_throw("No element is found with getElementById");
+
+    frender_element.render_into_dom(&el);
+}

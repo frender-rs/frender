@@ -33,8 +33,8 @@ pub use use_ref::*;
 pub use use_state::*;
 
 pub mod __private;
-// pub mod event;
 pub mod any_js_props;
+pub mod event;
 
 pub use react_sys as sys;
 

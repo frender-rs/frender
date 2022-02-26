@@ -1,17 +1,20 @@
 use js_sys::Object;
 use wasm_bindgen::prelude::*;
 
+use super::{BaseSyntheticEvent, UiEvent};
+
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(extends = Object)]
+    #[wasm_bindgen(extends = Object, extends = BaseSyntheticEvent, extends = UiEvent)]
+    #[derive(Debug, Clone, PartialEq, Eq)]
     pub type MouseEvent;
 
     #[wasm_bindgen(method, getter = altKey)]
     pub fn alt_key(this: &MouseEvent) -> bool;
     #[wasm_bindgen(method, getter)]
-    pub fn button(this: &MouseEvent) -> f64;
+    pub fn button(this: &MouseEvent) -> i16;
     #[wasm_bindgen(method, getter)]
-    pub fn buttons(this: &MouseEvent) -> f64;
+    pub fn buttons(this: &MouseEvent) -> u16;
     #[wasm_bindgen(method, getter = clientX)]
     pub fn client_x(this: &MouseEvent) -> f64;
     #[wasm_bindgen(method, getter = clientY)]

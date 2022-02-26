@@ -10,7 +10,7 @@ use super::{PassedToJsRuntime, SafeIntoJsRuntime};
 use std::{any::Any, marker::PhantomData, rc::Rc};
 use wasm_bindgen::closure::{Closure, WasmClosure, WasmClosureFnOnce};
 
-pub struct WrapFn<F: ?Sized, TArgs>(Rc<F>, PhantomData<TArgs>);
+pub struct WrapFn<F: ?Sized, TArgs>(pub Rc<F>, PhantomData<TArgs>);
 pub struct WrapFnMut<F, TArgs>(pub F, PhantomData<TArgs>);
 pub struct WrapFnOnce<F, TArgs, TReturn>(pub F, PhantomData<(TArgs, TReturn)>);
 pub struct WrapDynFnOrFnMut<F: ?Sized>(pub Box<F>);
@@ -169,6 +169,15 @@ macro_rules! doit {
             }
         }
 
+        impl<TFunc, $($var,)* R> $crate::IntoPropValue<Option<WrapFn<TFunc, ($($var,)*)>>> for Option<TFunc>
+        where TFunc: Fn($($var),*) -> R
+        {
+            #[inline]
+            fn into_prop_value(self) -> Option<WrapFn<TFunc, ($($var,)*)>> {
+                self.map(crate::IntoPropValue::into_prop_value)
+            }
+        }
+
         impl<TFunc: ?Sized, $($var,)* R> $crate::IntoPropValue<Option<WrapFn<TFunc, ($($var,)*)>>> for Rc<TFunc>
         where TFunc: Fn($($var),*) -> R
         {
@@ -178,12 +187,30 @@ macro_rules! doit {
             }
         }
 
+        impl<TFunc: ?Sized, $($var,)* R> $crate::IntoPropValue<Option<WrapFn<TFunc, ($($var,)*)>>> for Option<Rc<TFunc>>
+        where TFunc: Fn($($var),*) -> R
+        {
+            #[inline]
+            fn into_prop_value(self) -> Option<WrapFn<TFunc, ($($var,)*)>> {
+                self.map(crate::IntoPropValue::into_prop_value)
+            }
+        }
+
         impl<TFunc: ?Sized, $($var,)* R> $crate::IntoPropValue<Option<WrapFn<TFunc, ($($var,)*)>>> for &Rc<TFunc>
         where TFunc: Fn($($var),*) -> R
         {
             #[inline]
             fn into_prop_value(self) -> Option<WrapFn<TFunc, ($($var,)*)>> {
                 Some(WrapFn(Rc::clone(self), PhantomData))
+            }
+        }
+
+        impl<TFunc: ?Sized, $($var,)* R> $crate::IntoPropValue<Option<WrapFn<TFunc, ($($var,)*)>>> for Option<&Rc<TFunc>>
+        where TFunc: Fn($($var),*) -> R
+        {
+            #[inline]
+            fn into_prop_value(self) -> Option<WrapFn<TFunc, ($($var,)*)>> {
+                self.map(crate::IntoPropValue::into_prop_value)
             }
         }
 
@@ -203,6 +230,14 @@ macro_rules! doit {
             }
         }
 
+        impl<TFunc, $($var,)* R> $crate::IntoPropValue<Option<WrapFnMut<TFunc, ($($var,)*)>>> for Option<TFunc>
+            where TFunc: FnMut($($var),*) -> R
+        {
+            fn into_prop_value(self) -> Option<WrapFnMut<TFunc, ($($var,)*)>> {
+                self.map(crate::IntoPropValue::into_prop_value)
+            }
+        }
+
         impl<TFunc, $($var,)* R> $crate::IntoPropValue<WrapFnOnce<TFunc, ($($var,)*), R>> for TFunc
             where TFunc: FnOnce($($var),*) -> R
         {
@@ -216,6 +251,14 @@ macro_rules! doit {
         {
             fn into_prop_value(self) -> Option<WrapFnOnce<TFunc, ($($var,)*), R>> {
                 Some(WrapFnOnce(self, PhantomData))
+            }
+        }
+
+        impl<TFunc, $($var,)* R> $crate::IntoPropValue<Option<WrapFnOnce<TFunc, ($($var,)*), R>>> for Option<TFunc>
+            where TFunc: FnOnce($($var),*) -> R
+        {
+            fn into_prop_value(self) -> Option<WrapFnOnce<TFunc, ($($var,)*), R>> {
+                self.map(crate::IntoPropValue::into_prop_value)
             }
         }
     )*)

@@ -18,8 +18,7 @@ crate::macros::def_intrinsic_component! {
             default_value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
             value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
 
-            // TODO: ChangeEventHandler<T>
-            on_change: (),
+            on_change: react::event::ChangeEvent<web_sys::HtmlSelectElement> { event_handler },
         }
     }
 }

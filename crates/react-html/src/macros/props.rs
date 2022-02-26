@@ -9,20 +9,40 @@ macro_rules! __impl_js_prop_name {
 
 macro_rules! __impl_prop_default {
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { safe_into_js_runtime }
+        $k:ident { $k_js:expr } {$($attr:tt)*} [] : $v_ty:ty :
+        { event_handler }
     ) => {
         $($attr)*
-        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self {
+        fn $k <F, A> (mut self, event_handler: Option<react::WrapFn<F, A>>) -> Self
+            where react::WrapFn<F, A>: react::event::IntoJsEventHandler<$v_ty>
+        {
+            if let Some(event_handler) = event_handler {
+                let ret = react::event::IntoJsEventHandler::into_js_event_handler(event_handler);
+                self.as_mut().set_static_prop_and_persist($k_js, ret);
+            } else {
+                use react::any_js_props::AnyJsPropsBuilder;
+                self.as_mut().remove_prop($k_js);
+            }
+            self
+        }
+    };
+    (
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])? :
+        { safe_into_js_runtime }
+    ) => {
+        $($attr)*
+        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             let ret = react::SafeIntoJsRuntime::safe_into_js_runtime(v);
             self.as_mut().set_static_prop_and_persist($k_js, ret);
             self
         }
     };
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { safe_into_js_runtime? }
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])? :
+        { safe_into_js_runtime? }
     ) => {
         $($attr)*
-        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self {
+        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             if let Some(v) = v {
                 let ret = react::SafeIntoJsRuntime::safe_into_js_runtime(v);
                 self.as_mut().set_static_prop_and_persist($k_js, ret);
@@ -34,20 +54,22 @@ macro_rules! __impl_prop_default {
         }
     };
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { impl |$impl_this:ident, $impl_v:ident| $impl_expr:expr }
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])? :
+        { impl |$impl_this:ident, $impl_v:ident| $impl_expr:expr }
     ) => {
         $($attr)*
-        fn $k $($fn_generics)* (self, $impl_v: $v_ty) -> Self {
+        fn $k $($fn_generics)* (self, $impl_v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             #[allow(unused_mut)]
             let mut $impl_this = self;
             $impl_expr
         }
     };
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { into |$impl_v:ident| $impl_expr:expr }
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])? :
+        { into |$impl_v:ident| $impl_expr:expr }
     ) => {
         $($attr)*
-        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self {
+        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             use react::any_js_props::AnyJsPropsBuilder;
             let js_value = match $impl_expr { ref v => ::convert_js::ToJs::to_js(v) };
             self.as_mut().set_prop(
@@ -58,10 +80,11 @@ macro_rules! __impl_prop_default {
         }
     };
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty : { into? |$impl_v:ident| $impl_expr:expr }
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])? :
+        { into? |$impl_v:ident| $impl_expr:expr }
     ) => {
         $($attr)*
-        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self {
+        fn $k $($fn_generics)* (mut self, $impl_v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             use react::any_js_props::AnyJsPropsBuilder;
             if let Some($impl_v) = $impl_v {
                 let js_value = match $impl_expr { ref v => ::convert_js::ToJs::to_js(v) };
@@ -76,11 +99,11 @@ macro_rules! __impl_prop_default {
         }
     };
     (
-        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty
+        $k:ident { $k_js:expr } {$($attr:tt)*} [ $($fn_generics:tt)* ] : $v_ty:ty $(where [$($prop_where_clause:tt)*])?
     ) => {
         // convert value to JsValue with ::convert_js::ToJs::to_js
         $($attr)*
-        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self {
+        fn $k $($fn_generics)* (mut self, v: $v_ty) -> Self $(where $($prop_where_clause)*)? {
             use react::any_js_props::AnyJsPropsBuilder;
             let js_value = ::convert_js::ToJs::to_js(&v);
             self.as_mut().set_prop(
@@ -125,7 +148,8 @@ macro_rules! def_props_trait {
         $(: $auto_impl_trait:ident $([$($auto_impl_trait_type_params:tt)*])?)*
         $(where { $($where:tt)+ })?
         {
-            $($({$($attr:tt)*})? $k:ident $(@ $k_js:literal)? $([$($fn_generics:tt)*])? : $v_ty:ty $({$($impl_tt:tt)*})? ),* $(,)?
+            $($({$($attr:tt)*})? $k:ident $(@ $k_js:literal)? $([$($fn_generics:tt)*])? : $v_ty:ty
+            $(where [$($prop_where_clause:tt)*])? $({$($impl_tt:tt)*})? ),* $(,)?
         }
     ) => {
         #[derive(Debug, Clone)]
@@ -185,6 +209,7 @@ macro_rules! def_props_trait {
                     [$(<$($fn_generics)*>)?]
                     :
                     $v_ty
+                    $(where [$($prop_where_clause)*])?
                     $(: {$($impl_tt)*})?
                 }
             )*

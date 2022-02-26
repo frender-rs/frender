@@ -45,8 +45,7 @@ crate::macros::def_intrinsic_component! {
             value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
             width['a, T: Into<crate::NumOrStr<'a>>]: Option<T> { into? |v| v.into() },
 
-            // TODO: ChangeEventHandler<web_sys::HtmlInputElement>
-            on_change: (),
+            on_change: react::event::ChangeEvent<web_sys::HtmlInputElement> { event_handler },
         }
     }
 }

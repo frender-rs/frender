@@ -24,8 +24,7 @@ crate::macros::def_intrinsic_component! {
             value[TValue: AsHtmlTextValue]: Option<TValue> { into? |v| AsHtmlTextValue::as_html_text_value(&v) },
             wrap: Option<&str>,
 
-            // TODO: ChangeEventHandler<T>
-            on_change: (),
+            on_change: react::event::ChangeEvent<web_sys::HtmlTextAreaElement> { event_handler },
         }
     }
 }
