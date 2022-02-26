@@ -41,18 +41,18 @@ impl Children {
 
 impl super::Node for Children {
     #[inline]
-    fn as_react_node_js(&self) -> AnyNode {
-        self.clone().into_react_node_js()
+    fn to_node(&self) -> AnyNode {
+        self.clone().into_node()
     }
 
     #[inline]
-    fn as_react_children_js(&self) -> Option<Children> {
+    fn to_children(&self) -> Option<Children> {
         Some(self.clone())
     }
 
     /// Returns the single node or wrap multiple nodes in a Fragment
     #[inline]
-    fn into_react_node_js(self) -> AnyNode {
+    fn into_node(self) -> AnyNode {
         match self {
             Children::Single(node) => *node,
             children => AnyNode::Element(
@@ -68,7 +68,7 @@ impl super::Node for Children {
     }
 
     #[inline]
-    fn into_react_children_js(self) -> Option<Children> {
+    fn into_children(self) -> Option<Children> {
         Some(self)
     }
 }

@@ -123,7 +123,7 @@ def_props! {
     // For example, the following is
     // the default definition for prop `children`
     children<TNode: react::Node>(value: TNode) -> Option<react::Children> {
-      value.into_react_children_js()
+      value.into_children()
     },
   }
 }

@@ -494,7 +494,7 @@ fn infer_field_type_and_builder(
     let ret = match name {
         "children" => parse_quote_spanned! {span=>
             <TNode: ::frender::react::Node>(node: Option<TNode>) -> Option<::frender::react::Children> {
-                node.and_then(::frender::react::Node::into_react_children_js)
+                node.and_then(::frender::react::Node::into_children)
             }
         },
         "style" => {

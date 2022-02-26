@@ -14,7 +14,7 @@ crate::macros::def_props_trait! {
             impl |this, v| {
                 use react::any_js_props::AnyJsPropsBuilder;
                 use react::Node;
-                this.as_mut().set_children(v.into_react_children_js());
+                this.as_mut().set_children(v.into_children());
                 this
             }
         },

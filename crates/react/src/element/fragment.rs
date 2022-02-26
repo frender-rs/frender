@@ -52,22 +52,22 @@ impl Into<crate::Element> for FragmentElement {
 
 impl crate::Node for FragmentElement {
     #[inline]
-    fn as_react_node_js(&self) -> crate::AnyNode {
-        self.clone().into_react_node_js()
+    fn to_node(&self) -> crate::AnyNode {
+        self.clone().into_node()
     }
 
     #[inline]
-    fn as_react_children_js(&self) -> Option<crate::Children> {
-        self.clone().into_react_children_js()
+    fn to_children(&self) -> Option<crate::Children> {
+        self.clone().into_children()
     }
 
     #[inline]
-    fn into_react_node_js(self) -> crate::AnyNode {
+    fn into_node(self) -> crate::AnyNode {
         crate::AnyNode::Element(self.into_element())
     }
 
     #[inline]
-    fn into_react_children_js(self) -> Option<crate::Children> {
-        Some(crate::Children::from_single(self.into_react_node_js()))
+    fn into_children(self) -> Option<crate::Children> {
+        Some(crate::Children::from_single(self.into_node()))
     }
 }

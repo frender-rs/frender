@@ -163,7 +163,7 @@ pub enum PropsFieldTypeAndBuilder {
     /// ```text
     /// children? <TNode: Node>(value: TNode) -> Children
     ///     where TNode: Debug {
-    ///     value.into_react_children_js()
+    ///     value.into_children()
     /// }
     /// ```
     Explicit(PropsFieldTypeAndBuilderExplicit),

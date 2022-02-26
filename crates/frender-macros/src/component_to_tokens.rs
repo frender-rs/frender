@@ -132,7 +132,7 @@ impl ComponentDefinition {
                 let ts = quote_spanned! {span=>
                     let frender_element = <::frender::react::StrictMode as ::frender::react::ComponentStatic>::create_element(
                         ::frender::react::StrictModeProps {
-                            children: ::frender::react::Node::into_react_children_js(frender_element),
+                            children: ::frender::react::Node::into_children(frender_element),
                         },
                         None,
                     );

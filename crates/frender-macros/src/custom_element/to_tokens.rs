@@ -115,23 +115,23 @@ impl CustomElementDefinition {
 
             impl #impl_generics #react::Node for #ident #type_generics #where_clause {
                 #[inline]
-                fn as_react_node_js(&self) -> #react::AnyNode {
-                    #react::Node::as_react_node_js(&self.0)
+                fn to_node(&self) -> #react::AnyNode {
+                    #react::Node::to_node(&self.0)
                 }
 
                 #[inline]
-                fn as_react_children_js(&self) -> Option<#react::Children> {
-                    #react::Node::as_react_children_js(&self.0)
+                fn to_children(&self) -> Option<#react::Children> {
+                    #react::Node::to_children(&self.0)
                 }
 
                 #[inline]
-                fn into_react_node_js(self) -> #react::AnyNode {
-                    #react::Node::into_react_node_js(self.0)
+                fn into_node(self) -> #react::AnyNode {
+                    #react::Node::into_node(self.0)
                 }
 
                 #[inline]
-                fn into_react_children_js(self) -> Option<#react::Children> {
-                    #react::Node::into_react_children_js(self.0)
+                fn into_children(self) -> Option<#react::Children> {
+                    #react::Node::into_children(self.0)
                 }
             }
 

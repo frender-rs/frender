@@ -43,11 +43,11 @@ impl AnyNode {
             AnyNode::Multiple(els) => (match Rc::try_unwrap(els) {
                 Ok(els) => js_sys::Array::from_iter(
                     els.into_iter()
-                        .map(|node| node.0.into_react_node_js().unsafe_into_js_node_value()),
+                        .map(|node| node.0.into_node().unsafe_into_js_node_value()),
                 ),
                 Err(els) => js_sys::Array::from_iter(
                     els.iter()
-                        .map(|node| node.0.as_react_node_js().unsafe_into_js_node_value()),
+                        .map(|node| node.0.to_node().unsafe_into_js_node_value()),
                 ),
             })
             .into(),
