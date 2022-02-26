@@ -71,11 +71,37 @@ impl<T: Node> Node for Option<T> {
 }
 
 macro_rules! into_js_node {
+    (into_f64: $($n:ty)*) => ($(
+        impl Node for $n {
+            #[inline]
+            fn to_node(&self) -> AnyNode {
+                (*self).into_node()
+            }
+            #[inline]
+            fn into_node(self) -> AnyNode {
+                AnyNode::Value(AnyNodeValue::unsafe_from_js_react_node(JsValue::from_f64(self.into())))
+            }
+        }
+    )*);
     (deref: $($n:ty)*) => ($(
         impl Node for $n {
             #[inline]
             fn to_node(&self) -> AnyNode {
                 AnyNode::Value(AnyNodeValue::unsafe_from_js_react_node(JsValue::from(*self)))
+            }
+        }
+    )*);
+    (bigint_to_string: $($n:ty)*) => ($(
+        impl Node for $n {
+            #[inline]
+            fn to_node(&self) -> AnyNode {
+                (*self).into_node()
+            }
+            #[inline]
+            fn into_node(self) -> AnyNode {
+                let js_bigint = js_sys::BigInt::from(self);
+                let js_string = js_bigint.to_string(10).unwrap();
+                AnyNode::Value(AnyNodeValue::unsafe_from_js_react_node(JsValue::from(js_string)))
             }
         }
     )*);
@@ -100,11 +126,19 @@ into_js_node! {
 }
 
 into_js_node! {
-    deref:
+    into_f64:
     // numbers https://docs.rs/wasm-bindgen/0.2.78/src/wasm_bindgen/lib.rs.html#849
     i8 u8 i16 u16 i32 u32 f32 f64
+}
+
+into_js_node! {
+    bigint_to_string:
     // big_numbers https://docs.rs/wasm-bindgen/0.2.78/src/wasm_bindgen/lib.rs.html#869
     i64 u64 i128 u128 isize usize
+}
+
+into_js_node! {
+    deref:
     bool
 }
 
