@@ -49,6 +49,14 @@ pub struct StateSetter<T: ?Sized> {
     _data: std::marker::PhantomData<T>,
 }
 
+impl<T: ?Sized> PartialEq for StateSetter<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.ref_state_updaters == other.ref_state_updaters
+    }
+}
+
+impl<T: ?Sized> Eq for StateSetter<T> {}
+
 impl<T: ?Sized> Clone for StateSetter<T> {
     fn clone(&self) -> Self {
         Self {
