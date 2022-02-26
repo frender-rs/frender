@@ -52,7 +52,10 @@ impl ComponentDefinition {
             };
             (ty.into_token_stream(), use_render_arg)
         } else {
-            (quote!(::frender::react::NoProps), quote!(_: &Self::RenderArg))
+            (
+                quote!(::frender::react::NoProps),
+                quote!(_: &Self::RenderArg),
+            )
         };
 
         let (arrow, render_output_ty, custom_element_ty) = match output {
@@ -69,7 +72,7 @@ impl ComponentDefinition {
 
         let debugs = if cfg!(debug_assertions) && no_debug_props.is_none() {
             quote_spanned! {span=>
-                let debug_component_name = Some(JsValue::from_str( #display_name ));
+                let debug_component_name = Some(::frender::react::__private::JsValue::from_str( #display_name ));
                 let debug_props = ::frender::auto_debug_props!(props);
             }
         } else {
@@ -170,12 +173,10 @@ impl ComponentDefinition {
 
                 fn create_element(props: Self::Props, key: Option<::frender::react::Key>) -> Self::Element {
                     #[allow(unused_imports)]
-                    use frender::react::UseRenderStatic;
-                    #[allow(unused_imports)]
                     use frender::react::IntoOptionalElement;
                     #debugs
                     Self::Element::private_from_element(::frender::react::UseRenderElement::wrap_use_render(
-                        move || Self::use_render(&props).into_optional_element(),
+                        move || <Self as ::frender::react::UseRenderStatic>::use_render(&props).into_optional_element(),
                         key,
                         debug_component_name,
                         debug_props,
