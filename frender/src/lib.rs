@@ -15,6 +15,9 @@ pub mod prelude {
     pub use super::html;
     pub use super::intrinsic_components;
     pub use super::react;
+    pub use super::react::{
+        Component, ComponentStatic, ReadRef, UseRender, UseRenderStatic, WriteRef,
+    };
     pub use super::{component, def_props, rsx};
 
     pub mod rsx_runtime {
