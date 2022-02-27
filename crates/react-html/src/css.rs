@@ -31,7 +31,8 @@ impl ToJs for CssProperties {
 }
 
 /// ```no_run
-/// let style: react::CssProperties = style! {
+/// # use react_html::{ style, CssProperties };
+/// let style: CssProperties = style! {
 ///     "margin": "10px auto",
 ///     "paddingTop": 8,
 /// };
