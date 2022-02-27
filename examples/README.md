@@ -18,5 +18,5 @@ If they are not available for your cpu or system,
 you can manually install the libraries, for example:
 
 ```sh
-cargo install wasm-bindgen-cli --version 0.2.78
+cargo install wasm-bindgen-cli --version 0.2.79
 ```

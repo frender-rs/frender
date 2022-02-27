@@ -5,16 +5,9 @@
     <title>Hello World</title>
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="0">
+    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="0" />
   </head>
   <body>
-    <div>
-      Below is a functional component written and rendered in rust
-      <div id="root-rust"></div>
-    </div>
-    <div>
-      Below is a functional component exported from rust wasm and rendered in js
-      <div id="root-js"></div>
-    </div>
+    <div id="frender-root"></div>
   </body>
 </html>

@@ -1,41 +1,44 @@
 use frender::prelude::*;
-use wasm_bindgen::UnwrapThrowExt;
+use wasm_bindgen::JsValue;
 
-fn component_strict_mode() -> wasm_bindgen::JsValue {
-    let r = web_sys::window().unwrap().get("React").unwrap_throw();
-    js_sys::Reflect::get(&r, &wasm_bindgen::JsValue::from_str("StrictMode")).unwrap_throw()
-}
+mod my_counter;
+mod my_timer;
 
-fn main() {
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
+use my_counter::MyCounter;
+use my_timer::MyTimer;
 
-    let el = document.get_element_by_id("root-rust").unwrap();
-
-    let value = 1;
-
-    let strong = rsx!(
-        <strong>
-            "strong"
-        </strong>
-    );
-
-    let react_element = rsx!(
-        <a href="https://example.com">
-            "example anchor"
-            {value}
-            {strong}
-            <i>"iii"</i>
-        </a>
-    );
-
-    let comp = component_strict_mode();
-
-    let react_element = react::sys::create_element(
-        &comp,
-        &wasm_bindgen::JsValue::NULL,
-        &js_sys::Array::of1(&react_element),
-    );
-
-    react::sys::react_dom::render(&react_element, &el);
+#[component(main(mount_element_id = "frender-root"))]
+fn Main() {
+    rsx!(
+        <>
+            <h1>
+                "Counter & Timer - "
+                <i>
+                    <a href="https://github.com/frender-rs/frender" target={html::AnchorTarget::Blank}>
+                        <b children="f" />
+                        "render"
+                    </a>
+                </i>
+            </h1>
+            <main>
+                <div>
+                    <code>"<MyCounter />"</code>
+                    <MyCounter />
+                </div>
+                <div>
+                    <code>"<MyCounter initial_value={3} />"</code>
+                    <MyCounter initial_value={3} />
+                </div>
+                <div>
+                    <code>"<MyTimer initial_interval={1000} />"</code>
+                    <MyTimer initial_interval={1000} />
+                </div>
+                <div>
+                    <code>"<MyTimer initial_interval={500} />"</code>
+                    <MyTimer initial_interval={500} />
+                </div>
+            </main>
+        </>
+    )
+    .into()
 }
