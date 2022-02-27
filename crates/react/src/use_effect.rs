@@ -84,47 +84,38 @@ pub fn use_effect_on_mounted<C: 'static + IntoOptionalCleanFn, F: 'static + FnOn
 /// }, [dep])
 /// ```
 ///
-/// `effect` should be a fn pointer, which can't capture local variables.
-/// To capture local variables, call
-/// [`use_ref`](super::use_ref::use_ref::use_ref) or
-/// [`use_ref_readonly`](crate::use_ref_readonly)
-/// to use a ref of that value, then pass the ref as a dependency.
-/// (The ref won't change in the component life cycle.)
 ///
-/// For example:
-///
-/// ```no_run
-/// # use wasm_bindgen::JsValue;
-/// # use std::rc::Rc;
-/// # fn use_test() {
-/// let ref_message = react::use_ref_readonly_with(|| Rc::new("hello".to_string()));
-/// react::use_effect_one(|ref_message| {
-///     let ref_message: &react::ReadRefRc<String> = ref_message.as_ref();
-///     let message: &Rc<String> = &ref_message.0;
-///     let message: &String = message.as_ref();
-///     web_sys::console::log_1(&JsValue::from(format!("{} on component mounted", message)))
-/// }, Rc::new(ref_message))
-/// # }
-/// ```
-pub fn use_effect_one<D: 'static + PartialEq, C: 'static + IntoOptionalCleanFn>(
-    effect: fn(Rc<D>) -> C,
+pub fn use_effect_one<
+    D: 'static + PartialEq,
+    C: 'static + IntoOptionalCleanFn,
+    F: 'static + FnOnce(Rc<D>) -> C,
+>(
+    effect: F,
     dep: Rc<D>,
 ) {
-    let effect_and_dep_arr = super::use_memo_one(
-        |v| {
-            let (dep, effect) = &**v;
-            let dep = Rc::clone(dep);
-            let effect = *effect;
+    let dep_and_value = crate::use_ref_cell::<Option<(Rc<D>, (JsValue, js_sys::Array))>>(None);
+    let mut dep_and_value = dep_and_value.0.borrow_mut();
 
-            let effect = effect_into_js(move || effect(dep));
+    let (effect, dep_arr) = match &*dep_and_value {
+        Some(t) if &t.0 == &dep => {
+            // dep not changed
+            t.1.clone()
+        }
+        _ => {
+            // dep changed
+            let effect = {
+                let dep = Rc::clone(&dep);
+                effect_into_js(move || effect(dep))
+            };
             let dep_arr = js_sys::Array::of1(&effect);
-            Rc::new((effect, dep_arr))
-        },
-        Rc::new((dep, effect)),
-    );
+            let new_v = (effect, dep_arr);
 
-    let effect = effect_and_dep_arr.0.clone();
-    let dep_arr = effect_and_dep_arr.1.clone();
+            *dep_and_value = Some((dep, new_v.clone()));
+
+            new_v
+        }
+    };
+
     react_sys::use_effect(effect, dep_arr);
 }
 
@@ -183,7 +174,7 @@ macro_rules! use_effect {
     };
     (($( $dep:ident $(= $dep_expr:expr)? ),+ $(,)?) => $e:expr ) => {{
         $crate::use_effect_one(
-            |dep_tuple| {
+            move |dep_tuple| {
                 $crate::__impl_let_dep_list!( { dep_tuple } $($dep)+ );
                 $e
             },

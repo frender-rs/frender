@@ -14,7 +14,6 @@ pub fn use_memo_one<D: 'static + PartialEq, T: 'static>(
     let dep_and_value = crate::use_ref_cell::<Option<(Rc<D>, Rc<T>)>>(None);
     let mut dep_and_value = dep_and_value.0.borrow_mut();
 
-    let dep: Rc<D> = dep.into_rc();
     match &*dep_and_value {
         Some(t) if &t.0 == &dep => {
             // dep not changed
@@ -22,7 +21,7 @@ pub fn use_memo_one<D: 'static + PartialEq, T: 'static>(
         }
         _ => {
             // dep changed
-            let new_v: Rc<T> = func(&dep).into_rc();
+            let new_v: Rc<T> = func(&dep);
 
             *dep_and_value = Some((dep, Rc::clone(&new_v)));
 
