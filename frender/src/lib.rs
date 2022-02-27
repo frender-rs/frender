@@ -7,6 +7,7 @@ pub use forgotten;
 pub use react;
 pub use react::{AsKey, Children};
 pub use react_html as html;
+pub use react_html::style;
 
 pub use frender_macros::{component, def_props, rsx};
 pub use react::Element;
@@ -18,7 +19,7 @@ pub mod prelude {
     pub use super::react::{
         Component, ComponentStatic, ReadRef, UseRender, UseRenderStatic, WriteRef,
     };
-    pub use super::{component, def_props, rsx};
+    pub use super::{component, def_props, rsx, style};
 
     pub mod rsx_runtime {
         pub use super::super::impl_rsx_prop;

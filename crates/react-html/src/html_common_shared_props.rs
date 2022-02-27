@@ -22,9 +22,7 @@ crate::macros::def_props_trait! {
         id: Option<&str>,
         lang: Option<&str>,
         placeholder: Option<&str>,
-        style: Option<&crate::css::CssProperties> {
-            impl |this, v| todo!()
-        },
+        style: Option<crate::css::CssProperties>,
         tab_index: Option<i32>,
         title: Option<&str>,
 

@@ -9,7 +9,11 @@ use my_timer::MyTimer;
 #[component(main(mount_element_id = "frender-root"))]
 fn Main() {
     rsx!(
-        <>
+        <div style={style! {
+            "margin": "auto",
+            "padding": 16,
+            "maxWidth": 768,
+        }}>
             <h1>
                 "Counter & Timer - "
                 <i>
@@ -37,7 +41,6 @@ fn Main() {
                     <MyTimer initial_interval={500} />
                 </div>
             </main>
-        </>
+        </div>
     )
-    .into()
 }

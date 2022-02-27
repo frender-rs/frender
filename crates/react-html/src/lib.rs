@@ -13,6 +13,8 @@ pub(crate) mod macros;
 pub mod css;
 pub mod html_components;
 
+pub use css::CssProperties;
+
 #[cfg(test)]
 mod tests {
     #[test]
