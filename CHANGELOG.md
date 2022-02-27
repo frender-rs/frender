@@ -1,3 +1,10 @@
+# [1.0.0-alpha.5](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2022-02-27)
+
+
+### Bug Fixes
+
+* **react:** remove unused dependencies ([a80e0d6](https://github.com/frender-rs/frender/commit/a80e0d69a116207b2db251bf4cab5068f987b665))
+
 # [1.0.0-alpha.4](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-02-27)
 
 
