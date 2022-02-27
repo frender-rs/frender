@@ -36,8 +36,6 @@ jobs:
         run: yarn install --immutable
       - name: Ensure linted
         run: yarn run ensure-linted
-      - name: Rust Build & Test
-        run: cargo build --verbose && cargo test --verbose
       - name: Test
         run: |
           set -e
