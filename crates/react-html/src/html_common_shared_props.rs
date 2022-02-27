@@ -1,7 +1,3 @@
-use convert_js::ToJs;
-use react::SafeIntoJsRuntime;
-use wasm_bindgen::JsValue;
-
 pub trait IntrinsicComponent {
     const INTRINSIC_TAG: &'static str;
 }

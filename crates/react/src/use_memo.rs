@@ -1,7 +1,5 @@
 use std::rc::Rc;
 
-use super::IntoRc;
-
 pub fn use_memo_no_dep<T: 'static + ?Sized>(func: fn() -> Rc<T>) -> Rc<T> {
     let v = crate::use_ref_readonly_with(move || func());
     v.0

@@ -163,7 +163,10 @@ macro_rules! def_props_trait {
             fn default() -> Self {
                 Self(
                     Default::default(),
-                    $(std::marker::PhantomData::<($($type_params)+)>)?
+                    $(
+                        #[allow(unused_parens)]
+                        std::marker::PhantomData::<($($type_params)+)>
+                    )?
                 )
             }
         }

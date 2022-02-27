@@ -1,5 +1,4 @@
 use frender::prelude::*;
-use wasm_bindgen::JsValue;
 
 mod my_counter;
 mod my_timer;

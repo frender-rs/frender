@@ -1,5 +1,4 @@
 use convert_js::ToJs;
-use std::borrow::Cow;
 
 #[derive(ToJs)]
 #[convert_js(union)]
