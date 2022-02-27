@@ -16,7 +16,6 @@ react-sys = "1.0.0-alpha.23"
 wasm-bindgen = "0.2.63"
 forgotten = "1.1"
 js-sys = "0.3"
-once_cell = "1.8"
 convert-js = "1.0.0-alpha.14"
 
 [dependencies.web-sys]

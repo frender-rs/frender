@@ -264,7 +264,6 @@ dependencies = [
  "forgotten",
  "frender-macros",
  "js-sys",
- "once_cell",
  "react-sys",
  "wasm-bindgen",
  "wasm-bindgen-test",

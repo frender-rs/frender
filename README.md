@@ -33,17 +33,17 @@ Before updating, please see the full [changelog](https://github.com/frender-rs/f
     frender = "= 1.0.0-alpha.5"
     ```
 
-3.  Create `index.html`
+3.  Create `index.html` in the project root directory.
 
     ```html
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="UTF-8" />
-        <title>Hello World</title>
+        <title>My frender App</title>
         <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
         <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-        <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="0" />
+        <link data-trunk rel="rust" href="Cargo.toml" />
       </head>
       <body>
         <div id="frender-root"></div>
@@ -51,7 +51,7 @@ Before updating, please see the full [changelog](https://github.com/frender-rs/f
     </html>
     ```
 
-4.  Modify `main.rs`
+4.  Modify `src/main.rs`
 
     ```rust
     use frender::prelude::*;
