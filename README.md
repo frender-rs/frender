@@ -7,15 +7,74 @@
 
 <div style="text-align:center;margin:16px">
 
-![frender logo](./frender/logo.svg)
+![frender logo](./logo.svg)
 
 Functional Rendering: `React` in `Rust`
 
 </div>
 
-_Working in progress_
+_**f**render_ is still in alpha and it's api might change.
+For now it is recommended to specify the exact version in `Cargo.toml`.
+Before updating, please see the full [changelog](https://github.com/frender-rs/frender/blob/alpha/CHANGELOG.md) in case there are breaking changes.
 
-Development is at [alpha](https://github.com/frender-rs/frender/tree/alpha#readme) branch.
+## Quick Start
+
+1.  Create a new cargo project
+
+    ```sh
+    cargo new my-frender-app
+    cd my-frender-app
+    ```
+
+2.  Add `frender` to dependencies in `Cargo.toml`.
+
+    ```toml
+    [dependencies]
+    frender = "= 1.0.0-alpha.4"
+    ```
+
+3.  Create `index.html`
+
+    ```html
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8" />
+        <title>Hello World</title>
+        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="0" />
+      </head>
+      <body>
+        <div id="frender-root"></div>
+      </body>
+    </html>
+    ```
+
+4.  Modify `main.rs`
+
+    ```rust
+    use frender::prelude::*;
+
+    #[component(main(mount_element_id = "frender-root"))]
+    fn Main() {
+        rsx!(
+            <div>
+                "Hello, frender!"
+            </div>
+        )
+    }
+    ```
+
+5.  Run with `trunk`
+
+    Install [trunk](https://trunkrs.dev/#install) and then execute:
+
+    ```sh
+    trunk serve
+    ```
+
+    Then you can navigate to `http://localhost:8080` to see your frender app.
 
 ## `rsx` syntax
 
@@ -60,7 +119,7 @@ use frender::prelude::*;
 use self::intrinsic_components::div::prelude::*;
 
 rsx! (
-  <self::intrinsic_components::div::Component id="my-div" />
+  <self::intrinsic_components::div::prelude::Component id="my-div" />
 )
 ```
 
@@ -71,8 +130,9 @@ In order to make rsx less verbose, frender provides
 `<MyComponent prop={value} />` will be mapped to
 `IntoPropValue::into_prop_value(value)`.
 
-With this, assuming the prop is `Option<i32>`, you can
-simplify `prop={Some(1)}` to `prop={1}`.
+With this, assuming the prop accepts `Option<i32>`,
+you can simplify `prop={Some(1)}` to `prop={1}`,
+because `T` implements `IntoPropValue<Option<T>>`.
 
 If you want to pass the value as is, you can
 use `:=` to set prop. `prop:={value}`
@@ -117,13 +177,13 @@ def_props! {
     age: Option<u8>,
     // If the prop type is not specified,
     // then frender will infer the type by prop name.
-    // For example, `children` default has type `Option<String>`
+    // For example, `class_name` default has type `Option<String>`
     class_name?,
     // Prop can also have type generics.
     // For example, the following is
     // the default definition for prop `children`
-    children<TNode: react::Node>(value: TNode) -> Option<react::Children> {
-      value.into_children()
+    children<TNode: react::Node>(value: Option<TNode>) -> Option<react::Children> {
+      value.and_then(react::Node::into_children)
     },
   }
 }
@@ -134,7 +194,7 @@ Then write the component with the above props:
 ```rust
 use frender::prelude::*;
 #[component]
-pub fn MyComponent(props: MyProps) {
+pub fn MyComponent(props: &MyProps) {
   rsx!(<div>{&props.children}</div>)
 }
 ```
@@ -155,3 +215,25 @@ rsx! (
   <a children={None::<()>} />
 )
 ```
+
+## Hooks
+
+React hooks are also available in `frender`.
+
+You checkout the [examples](https://github.com/frender-rs/frender/blob/alpha/examples/counter/src/my_counter.rs) for the usage.
+
+## Future Development Plans
+
+- [ ] Export `frender` components to js
+- [ ] Server Side Rendering
+- [ ] Type checking for `CssProperties`
+- [ ] Css-in-rust (For example, integrate with [`emotion/react`](https://emotion.sh/docs/@emotion/react))
+
+## Contributing
+
+`frender` is open sourced at [GitHub](https://github.com/frender-rs/frender).
+Pull requests and issues are welcomed.
+
+You can also [sponsor me](https://ko-fi.com/equalma) and I would be very grateful :heart:
+
+[![Buy Me a Coffee at ko-fi.com](https://cdn.ko-fi.com/cdn/kofi2.png?v=3)](https://ko-fi.com/N4N26J11L)
