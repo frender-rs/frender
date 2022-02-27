@@ -1,6 +1,6 @@
 [package]
 name = "frender"
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 authors = ["EqualMa <equalma@outlook.com>"]
 edition = "2018"
 description = "react in rust. functional rendering web ui"
@@ -17,14 +17,14 @@ once_cell = "1.8"
 
 [dependencies.react-rs]
 path = "../crates/react"
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 
 [dependencies.react-html]
 path = "../crates/react-html"
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 
 [dependencies.frender-macros]
-version = "1.0.0-alpha.2" # replace version
+version = "1.0.0-alpha.4" # replace version
 path = "../crates/frender-macros"
 
 [dependencies.web-sys]

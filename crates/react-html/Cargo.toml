@@ -1,6 +1,6 @@
 [package]
 name = "react-html"
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 edition = "2021"
 description = "react html components for frender"
 license = "MIT"
@@ -82,11 +82,11 @@ features = [
 ]
 
 [dependencies.react-rs]
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 path = "../react"
 
 [dependencies.frender-macros]
-version = "1.0.0-alpha.3" # replace version
+version = "1.0.0-alpha.4" # replace version
 path = "../frender-macros"
 
 [dev-dependencies]

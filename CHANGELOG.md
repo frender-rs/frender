@@ -1,3 +1,38 @@
+# [1.0.0-alpha.4](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-02-27)
+
+
+### Bug Fixes
+
+* big numbers should be converted to string to be used as Node ([8ba7355](https://github.com/frender-rs/frender/commit/8ba7355f9473ba267ca708475d7137961dedaa2c))
+* component macro ([5f8d6f4](https://github.com/frender-rs/frender/commit/5f8d6f45ef57748513e556567788e6f9750a3092))
+* component macro not works with props ([607aa84](https://github.com/frender-rs/frender/commit/607aa84463bf1f22cedfb7de5d8f2bdb9b02b4bb))
+* rsx prop without value should be interpreted as `IntoPropValue::into_prop_value(true)` instead of `true` ([eae5fe8](https://github.com/frender-rs/frender/commit/eae5fe8255dfc6680633a08fe3e125161523a583))
+
+
+### Features
+
+* allow frender::Element to be cloned safely ([926c04f](https://github.com/frender-rs/frender/commit/926c04fc18535d6b25458474bd3abc002b8c9c88))
+* attribute macro component ([c583ae9](https://github.com/frender-rs/frender/commit/c583ae9918c5e33709ac43b3b888690f3884fefb))
+* auto debug props ([acc3c94](https://github.com/frender-rs/frender/commit/acc3c9412065349bdfc092262954498307a559bf))
+* CssProperties and style macro ([7519b9b](https://github.com/frender-rs/frender/commit/7519b9bf0019a1c72ec140c86dec84f0476d4fd5))
+* event handlers ([1628a64](https://github.com/frender-rs/frender/commit/1628a64fcd29fba55b504d3538927292c21a8d39))
+* Fragment and StrictMode ([2a9e8e3](https://github.com/frender-rs/frender/commit/2a9e8e3c01bc61356a54b7e4ba767215f1167655))
+* hooks ([a7f8088](https://github.com/frender-rs/frender/commit/a7f8088823da6fc6af4122530f6fb512714e2583))
+* html intrinsic components ([2e95708](https://github.com/frender-rs/frender/commit/2e957087e5aca4d4aa32ada513a9e6292962517d))
+* impl IntoPropValue<WrapFn> for Rc<Fn> and &Rc<Fn> ([85a8fa2](https://github.com/frender-rs/frender/commit/85a8fa21daa00b90902d44e6809964d5d99fa2e6))
+* impl PartialEq and Eq for StateSetter ([de7132e](https://github.com/frender-rs/frender/commit/de7132e5b5b2c410ff5ab1766828503f151f2e26))
+* include some traits in frender::prelude ([8f6854b](https://github.com/frender-rs/frender/commit/8f6854ba75c9f762f1c39471a3e187c9f7a726e1))
+* macro def_props ([7aec7f0](https://github.com/frender-rs/frender/commit/7aec7f0e18fd39b6ca509fe3d7018e464c099c47))
+* rename Node trait methods ([3ac1012](https://github.com/frender-rs/frender/commit/3ac10129089dcbabc6be9255c460f76639036dba))
+* rsx macro ([28d2ce4](https://github.com/frender-rs/frender/commit/28d2ce4f1e0313a9ba5f5a20977ed928de6cc867))
+* use_effect_one allow FnOnce ([b86cecb](https://github.com/frender-rs/frender/commit/b86cecb97e44d6f64a263c1cbe9b8baeabb51900))
+
+
+### BREAKING CHANGES
+
+* Node trait methods are renamed
+* many api changed to allow frender::Element to be cloned safely
+
 # [1.0.0-alpha.3](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2022-02-03)
 
 
