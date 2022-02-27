@@ -30,7 +30,7 @@ Before updating, please see the full [changelog](https://github.com/frender-rs/f
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.4"
+    frender = "= 1.0.0-alpha.5"
     ```
 
 3.  Create `index.html`
@@ -224,6 +224,8 @@ You checkout the [examples](https://github.com/frender-rs/frender/blob/alpha/exa
 
 ## Future Development Plans
 
+- [ ] Documentation
+- [ ] Intrinsic svg components
 - [ ] Export `frender` components to js
 - [ ] Server Side Rendering
 - [ ] Type checking for `CssProperties`
