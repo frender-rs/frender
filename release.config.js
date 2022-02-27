@@ -2,8 +2,8 @@ const CARGO_PROJECTS = [
   //
   { dir: "crates/frender-macros", replace: 1, ensure: true },
   { dir: "crates/react", replace: 2, ensure: true },
-  { dir: "crates/react-html", replace: 2, ensure: true },
-  { dir: "frender", replace: 2 },
+  { dir: "crates/react-html", replace: 3, ensure: true },
+  { dir: "frender", replace: 4 },
 ].map((pro) => ({ ...pro, file: `${pro.dir}/Cargo.toml` }));
 
 module.exports = {
