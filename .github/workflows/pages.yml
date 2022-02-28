@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Setup rust wasm
+        run: rustup target add wasm32-unknown-unknown
       - name: Install trunk
         run: |
           set -e
