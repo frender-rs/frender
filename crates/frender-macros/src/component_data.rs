@@ -53,7 +53,7 @@ impl ComponentDefinition {
 }
 
 pub struct ComponentItemFn {
-    // pub attrs: Vec<Attribute>,
+    pub attrs: Vec<syn::Attribute>,
     pub vis: syn::Visibility,
     pub sig: ComponentItemFnSignature,
     pub block: Box<syn::Block>,
@@ -80,18 +80,16 @@ impl ComponentItemFn {
 
         let mut error = None;
 
-        for attr in attrs {
-            error.combine_or_replace(syn::Error::new_spanned(
-                attr,
-                "frender component doesn't support attrs yet",
-            ));
-        }
-
         let sig = ComponentItemFnSignature::try_from_sig(sig)
             .unwrap_value_and_record_error(&mut error)
             .unwrap_value();
 
-        let ret = Self { vis, sig, block };
+        let ret = Self {
+            attrs,
+            vis,
+            sig,
+            block,
+        };
 
         error.into_value_result(ret)
     }

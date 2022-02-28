@@ -18,6 +18,7 @@ impl ComponentDefinition {
             item_fn:
                 ComponentItemFn {
                     //
+                    attrs,
                     vis,
                     sig,
                     block,
@@ -84,6 +85,7 @@ impl ComponentDefinition {
 
         let component_struct = if generics.params.is_empty() {
             quote_spanned! {span=>
+                #(#attrs)*
                 #[derive(Debug, Clone, Copy)]
                 #vis struct #ident #impl_generics #where_clause;
             }
@@ -98,6 +100,7 @@ impl ComponentDefinition {
             };
 
             quote_spanned! {span=>
+                #(#attrs)*
                 #[derive(Debug, Clone, Copy)]
                 #vis struct #ident #impl_generics #where_clause {
                     inner: ::core::marker::PhantomData<#type_generics>
