@@ -57,14 +57,14 @@ pub trait IntoJsEventHandler<TEvent> {
 }
 
 /// `Fn()` can be handlers for any event
-impl<F: 'static + Fn(), TEvent> IntoJsEventHandler<TEvent> for crate::WrapFn<F, ()> {
+impl<F: 'static + ?Sized + Fn(), TEvent> IntoJsEventHandler<TEvent> for crate::WrapFn<F, ()> {
     fn into_js_event_handler(self) -> crate::PassedToJsRuntime {
         self.safe_into_js_runtime()
     }
 }
 
 /// `Fn(TEvent)` can be handlers for `TEvent`
-impl<F: 'static + Fn(TEvent), TEvent: FromJs> IntoJsEventHandler<TEvent>
+impl<F: 'static + ?Sized + Fn(TEvent), TEvent: FromJs> IntoJsEventHandler<TEvent>
     for crate::WrapFn<F, (TEvent,)>
 where
     TEvent::Error: std::fmt::Debug,

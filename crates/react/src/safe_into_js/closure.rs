@@ -107,7 +107,7 @@ macro_rules! doit {
         ($($var:ident)*)
     )*) => ($(
         #[doc = concat!("WrapFn<TFunc: Fn(", $(stringify!($var), ", ",)* ") -> TR>")]
-        impl<TFunc, $($var,)* R> SafeIntoJsRuntime for WrapFn<TFunc, ($($var,)*)>
+        impl<TFunc: ?Sized, $($var,)* R> SafeIntoJsRuntime for WrapFn<TFunc, ($($var,)*)>
             where $($var: 'static,)*
                   R: 'static,
                   TFunc: Fn($($var),*) -> R + 'static,
