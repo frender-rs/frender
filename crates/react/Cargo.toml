@@ -1,6 +1,6 @@
 [package]
 name = "react-rs"
-version = "1.0.0-alpha.5" # replace version
+version = "1.0.0-alpha.6" # replace version
 edition = "2021"
 description = "react runtime for frender"
 license = "MIT"
@@ -40,7 +40,7 @@ features = [
 ]
 
 [dependencies.frender-macros]
-version = "1.0.0-alpha.5" # replace version
+version = "1.0.0-alpha.6" # replace version
 path = "../frender-macros"
 
 [dev-dependencies]

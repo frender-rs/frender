@@ -1,3 +1,12 @@
+# [1.0.0-alpha.6](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2022-02-28)
+
+
+### Features
+
+* **frender-macros:** allow attrs in component macro ([62b7b25](https://github.com/frender-rs/frender/commit/62b7b253f5cd6ac97b8e9769dcd136ebfc84b6b2))
+* **react:** allow unsized WrapFn in html common props ([44a5cce](https://github.com/frender-rs/frender/commit/44a5cce2ab48c9de347fb2acba21bd81f505d55a))
+* **react:** impl Clone and Debug for WrapFn ([b5d2cc5](https://github.com/frender-rs/frender/commit/b5d2cc58704f5e8c161305aba343593777312480))
+
 # [1.0.0-alpha.5](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2022-02-27)
 
 
