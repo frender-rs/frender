@@ -2,6 +2,8 @@ const { spawn } = require("child_process");
 const fsp = require("fs/promises");
 const path = require("path");
 
+const BASE_URL = "/frender/";
+
 function wrapHtml(title, content) {
   return `\
 <!DOCTYPE html>
@@ -22,7 +24,7 @@ function indexPageHtml(examplesListHtml) {
     "Frender examples",
     `\
 <div style="max-width: 768px; margin: auto; text-align: center">
-<img src="/logo.svg" alt="frender logo" style="max-width: 100%; max-height: 240px">
+<img src="${BASE_URL}logo.svg" alt="frender logo" style="max-width: 100%; max-height: 240px">
 <p>
 <a href="https://crates.io/crates/frender" rel="nofollow"><img src="https://img.shields.io/crates/v/frender?style=for-the-badge" alt="Crates.io"></a>
 <a href="https://docs.rs/frender" rel="nofollow"><img src="https://img.shields.io/docsrs/frender/latest?style=for-the-badge" alt="docs.rs"></a>
@@ -57,7 +59,7 @@ function getExamplesListHtml(examples) {
 <ul>
 ${examples.map(({ name }) => {
   const nameEncoded = encodeURIComponent(name);
-  return `<li><a target="_blank" href="/frender/examples/${nameEncoded}">${name}</a></li>`;
+  return `<li><a target="_blank" href="${BASE_URL}examples/${nameEncoded}">${name}</a></li>`;
 })}
 </ul>
 `;
@@ -90,7 +92,7 @@ async function main() {
       "-d",
       `dist/examples/${name}`,
       "--public-url",
-      `examples/${name}`,
+      `${BASE_URL}examples/${name}`,
       indexFile,
     ]);
 
