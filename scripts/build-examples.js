@@ -57,7 +57,7 @@ function getExamplesListHtml(examples) {
 <ul>
 ${examples.map(({ name }) => {
   const nameEncoded = encodeURIComponent(name);
-  return `<li><a target="_blank" href="/examples/${nameEncoded}">${name}</a></li>`;
+  return `<li><a target="_blank" href="/frender/examples/${nameEncoded}">${name}</a></li>`;
 })}
 </ul>
 `;
