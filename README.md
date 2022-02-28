@@ -19,6 +19,10 @@ Before updating, please see the full [changelog](https://github.com/frender-rs/f
 
 Development is at [alpha](https://github.com/frender-rs/frender/tree/alpha#readme) branch.
 
+There are some example apps in
+[`examples`](https://github.com/frender-rs/frender/tree/alpha/examples)
+folder. You can preview them at [this site](https://frender-rs.github.io/frender/).
+
 ## Contributing
 
 `frender` is open sourced at [GitHub](https://github.com/frender-rs/frender).
@@ -41,7 +45,7 @@ You can also [sponsor me](https://ko-fi.com/equalma) and I would be very gratefu
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.5"
+    frender = "= 1.0.0-alpha.6"
     ```
 
 3.  Create `index.html` in the project root directory.
