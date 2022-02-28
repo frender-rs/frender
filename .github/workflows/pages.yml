@@ -30,6 +30,7 @@ jobs:
         run: cd "$GITHUB_WORKSPACE/frender" && node scripts/build-examples.js
       - uses: actions/checkout@v2
         with:
+          repository: "frender-rs/frender-rs.github.io"
           ref: "gh-pages"
           path: "gh-pages"
       - name: Publish Pages
@@ -44,6 +45,7 @@ jobs:
             # Changes
             git add .
             git commit -m "publish pages"
+            git push
           else
             # No changes
             echo "Pages not changed"
