@@ -17,6 +17,10 @@ _**f**render_ is still in alpha and it's api might change.
 For now it is recommended to specify the exact version in `Cargo.toml`.
 Before updating, please see the full [changelog](https://github.com/frender-rs/frender/blob/alpha/CHANGELOG.md) in case there are breaking changes.
 
+There are some example apps in
+[`examples`](https://github.com/frender-rs/frender/tree/alpha/examples)
+folder. You can preview them at [this site](https://frender-rs.github.io/frender/).
+
 ## Quick Start
 
 1.  Create a new cargo project
@@ -30,7 +34,7 @@ Before updating, please see the full [changelog](https://github.com/frender-rs/f
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.5"
+    frender = "= 1.0.0-alpha.6"
     ```
 
 3.  Create `index.html` in the project root directory.
