@@ -26,6 +26,18 @@ impl<F: ?Sized> WrapFn<F, ()> {
     }
 }
 
+impl<F: ?Sized, TArgs> Clone for WrapFn<F, TArgs> {
+    fn clone(&self) -> Self {
+        Self(self.0.clone(), PhantomData)
+    }
+}
+
+impl<F: ?Sized, TArgs> std::fmt::Debug for WrapFn<F, TArgs> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "WrapFn<{}>", std::any::type_name::<F>())
+    }
+}
+
 impl<F> WrapFnMut<F, ()> {
     #[inline]
     pub fn new<A>(func: F) -> WrapFnMut<F, A>
