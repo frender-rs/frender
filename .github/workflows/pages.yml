@@ -1,0 +1,48 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches:
+      - alpha
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install trunk
+        run: |
+          set -e
+          cd /usr/local/bin
+          wget -qO- https://github.com/thedodd/trunk/releases/download/${VERSION}/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+          chmod +x trunk
+        env:
+          VERSION: v0.14.0
+      - uses: actions/checkout@v2
+        with:
+          path: "frender"
+      - name: Build Pages
+        run: cd "$GITHUB_WORKSPACE/frender" && node scripts/build-examples.js
+      - uses: actions/checkout@v2
+        with:
+          ref: "gh-pages"
+          path: "gh-pages"
+      - name: Publish Pages
+        run: |
+          set -e
+          cd "$GITHUB_WORKSPACE/frender"
+          mv ../gh-pages/.git dist/.git
+          cd dist
+          if [[ `git status --porcelain` ]]; then
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            # Changes
+            git add .
+            git commit -m "publish pages"
+          else
+            # No changes
+            echo "Pages not changed"
+          fi
