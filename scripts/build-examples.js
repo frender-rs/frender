@@ -1,6 +1,7 @@
 const { spawn } = require("child_process");
 const fsp = require("fs/promises");
 const path = require("path");
+const { PassThrough } = require("stream");
 
 function wrapHtml(title, content) {
   return `\
@@ -94,15 +95,23 @@ async function main() {
       indexFile,
     ]);
 
-    const code = await new Promise((resolve) => {
+    const { code, outputChunks } = await new Promise((resolve) => {
+      const outputChunks = [];
+      child.stdout.on("data", (chunk) => {
+        outputChunks.push(chunk);
+      });
+      child.stderr.on("data", (chunk) => {
+        outputChunks.push(chunk);
+      });
       child.on("exit", (code) => {
-        resolve(code);
+        resolve({ code, outputChunks });
       });
     });
 
     if (code !== 0) {
+      const out = Buffer.concat(outputChunks).toString();
       throw new Error(
-        `Example ${name} failed to build. Exited with status ${code}`,
+        `Example ${name} failed to build. Exited with status ${code}\n${out}`,
       );
     } else {
       console.log(`[Example built success] ${name}`);
