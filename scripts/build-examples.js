@@ -57,10 +57,12 @@ ${examplesListHtml}
 function getExamplesListHtml(examples) {
   return `\
 <ul>
-${examples.map(({ name }) => {
-  const nameEncoded = encodeURIComponent(name);
-  return `<li><a target="_blank" href="${BASE_URL}examples/${nameEncoded}">${name}</a></li>`;
-})}
+${examples
+  .map(({ name }) => {
+    const nameEncoded = encodeURIComponent(name);
+    return `<li><a target="_blank" href="${BASE_URL}examples/${nameEncoded}">${name}</a></li>`;
+  })
+  .join("")}
 </ul>
 `;
 }
