@@ -96,7 +96,7 @@ impl ToTokens for RsxElement {
 
         let key_value = if let Some(key) = key {
             let span = key.name.span();
-            let value = &key.value;
+            let value = &key.value.value;
             quote_spanned!(span=> Some(::frender::AsKey::as_key(&#value)))
         } else {
             quote_spanned!(component_type_span=> None)
