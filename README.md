@@ -34,7 +34,7 @@ folder. You can preview them at [this site](https://frender-rs.github.io/frender
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.6"
+    frender = "= 1.0.0-alpha.7"
     ```
 
 3.  Create `index.html` in the project root directory.

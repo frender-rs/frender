@@ -335,6 +335,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "tic-tac-toe"
+version = "0.1.0"
+dependencies = [
+ "frender",
+]
+
+[[package]]
 name = "unicode-xid"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
