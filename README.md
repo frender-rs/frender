@@ -45,7 +45,7 @@ You can also [sponsor me](https://ko-fi.com/equalma) and I would be very gratefu
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.6"
+    frender = "= 1.0.0-alpha.7"
     ```
 
 3.  Create `index.html` in the project root directory.
