@@ -20,26 +20,30 @@ impl AsRef<JsValue> for Key {
 }
 
 pub trait AsKey {
-    fn as_key(&self) -> JsValue;
+    fn as_key(&self) -> Key;
 }
 
 impl AsKey for String {
     #[inline]
-    fn as_key(&self) -> JsValue {
-        JsValue::from_str(self)
+    fn as_key(&self) -> Key {
+        Key {
+            inner: JsValue::from_str(self),
+        }
     }
 }
 
 impl AsKey for str {
     #[inline]
-    fn as_key(&self) -> JsValue {
-        JsValue::from_str(self)
+    fn as_key(&self) -> Key {
+        Key {
+            inner: JsValue::from_str(self),
+        }
     }
 }
 
 impl<T: AsKey> AsKey for &T {
     #[inline]
-    fn as_key(&self) -> JsValue {
+    fn as_key(&self) -> Key {
         (*self).as_key()
     }
 }
@@ -49,8 +53,8 @@ macro_rules! impl_as_key {
         $(
             impl AsKey for $t {
                 #[inline]
-                fn as_key(&self) -> JsValue {
-                    JsValue::from(*self)
+                fn as_key(&self) -> Key {
+                    Key { inner: JsValue::from(*self) }
                 }
             }
         )*
