@@ -137,7 +137,7 @@ checksum = "d0156dfc70f202d2eea8052988401cd7f0e41c81c494975b591791c20574a945"
 
 [[package]]
 name = "frender"
-version = "1.0.0-alpha.6"
+version = "1.0.0-alpha.7"
 dependencies = [
  "forgotten",
  "frender-macros",
@@ -152,7 +152,7 @@ dependencies = [
 
 [[package]]
 name = "frender-macros"
-version = "1.0.0-alpha.6"
+version = "1.0.0-alpha.7"
 dependencies = [
  "darling",
  "lazy_static",
@@ -245,7 +245,7 @@ dependencies = [
 
 [[package]]
 name = "react-html"
-version = "1.0.0-alpha.6"
+version = "1.0.0-alpha.7"
 dependencies = [
  "convert-js",
  "frender-macros",
@@ -258,7 +258,7 @@ dependencies = [
 
 [[package]]
 name = "react-rs"
-version = "1.0.0-alpha.6"
+version = "1.0.0-alpha.7"
 dependencies = [
  "convert-js",
  "forgotten",

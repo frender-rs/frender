@@ -1,3 +1,16 @@
+# [1.0.0-alpha.7](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2022-03-01)
+
+
+### Bug Fixes
+
+* AsKey::as_key should return Key ([0712217](https://github.com/frender-rs/frender/commit/071221716d94d4ab8b40b6e83c6dea29147b392a))
+* **frender-macros:** key in rsx prop should not apply into_prop_value ([db2e333](https://github.com/frender-rs/frender/commit/db2e333993390e4d387f48bc08f4c5b0b2c71193))
+
+
+### Features
+
+* **react:** removed WrapFn*, added AnyFn* ([ba76464](https://github.com/frender-rs/frender/commit/ba76464cb46b2839604083268ed55905c7503b3d))
+
 # [1.0.0-alpha.6](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2022-02-28)
 
 
