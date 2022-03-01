@@ -1,10 +1,12 @@
 // mod use_closure;
 mod take_rc;
 // mod use_closure;
+mod any_fn_family;
 mod common_props;
 mod component;
 mod element;
 mod fragment;
+mod into_boxed;
 mod into_prop_value;
 mod key;
 mod node;
@@ -16,10 +18,12 @@ mod use_memo;
 mod use_ref;
 mod use_state;
 
+pub use any_fn_family::*;
 pub use common_props::*;
 pub use component::*;
 pub use element::*;
 pub use fragment::*;
+pub use into_boxed::*;
 pub use into_prop_value::*;
 pub use key::*;
 pub use node::*;

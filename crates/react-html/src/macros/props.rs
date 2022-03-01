@@ -13,8 +13,8 @@ macro_rules! __impl_prop_default {
         { event_handler }
     ) => {
         $($attr)*
-        fn $k <F: ?Sized, A> (mut self, event_handler: Option<react::WrapFn<F, A>>) -> Self
-            where react::WrapFn<F, A>: react::event::IntoJsEventHandler<$v_ty>
+        fn $k <F: ?Sized + react::DynFn> (mut self, event_handler: Option<react::AnyFn<F>>) -> Self
+            where react::AnyFn<F>: react::event::IntoJsEventHandler<$v_ty>
         {
             if let Some(event_handler) = event_handler {
                 let ret = react::event::IntoJsEventHandler::into_js_event_handler(event_handler);

@@ -55,3 +55,28 @@ impl AnyNode {
         js
     }
 }
+
+impl Node for AnyNode {
+    #[inline]
+    fn to_node(&self) -> AnyNode {
+        self.clone()
+    }
+
+    #[inline]
+    fn to_children(&self) -> Option<crate::Children> {
+        Some(crate::Children::from_single(self.clone()))
+    }
+
+    #[inline]
+    fn into_node(self) -> AnyNode {
+        self
+    }
+
+    #[inline]
+    fn into_children(self) -> Option<crate::Children>
+    where
+        Self: Sized,
+    {
+        Some(crate::Children::from_single(self))
+    }
+}

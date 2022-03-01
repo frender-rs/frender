@@ -89,7 +89,7 @@ where
     T: 'static,
 {
     fn safe_into_js_runtime(self) -> crate::PassedToJsRuntime {
-        crate::WrapFn::new(move |v| self.set_current(v)).safe_into_js_runtime()
+        crate::AnyFn::new(move |v| self.set_current(v)).safe_into_js_runtime()
     }
 }
 

@@ -7,9 +7,9 @@
 //! # use react::{IntoPropValue, event::{ IntoJsEventHandler, MouseEvent }};
 //! # struct MyPropsBuilder;
 //! # impl MyPropsBuilder {
-//! #   fn on_click<F, A>(&self, _handler: Option<react::WrapFn<F, A>>)
+//! #   fn on_click<F: ?Sized + react::DynFn>(&self, _handler: Option<react::AnyFn<F>>)
 //! #   where
-//! #       react::WrapFn<F, A>: IntoJsEventHandler<MouseEvent> {}
+//! #       react::AnyFn<F>: IntoJsEventHandler<MouseEvent> {}
 //! # }
 //! # let builder = MyPropsBuilder;
 //! # builder.on_click(IntoPropValue::into_prop_value(
@@ -57,20 +57,21 @@ pub trait IntoJsEventHandler<TEvent> {
 }
 
 /// `Fn()` can be handlers for any event
-impl<F: 'static + ?Sized + Fn(), TEvent> IntoJsEventHandler<TEvent> for crate::WrapFn<F, ()> {
+impl<TEvent> IntoJsEventHandler<TEvent> for crate::AnyFn<dyn Fn()> {
+    #[inline]
     fn into_js_event_handler(self) -> crate::PassedToJsRuntime {
         self.safe_into_js_runtime()
     }
 }
 
 /// `Fn(TEvent)` can be handlers for `TEvent`
-impl<F: 'static + ?Sized + Fn(TEvent), TEvent: FromJs> IntoJsEventHandler<TEvent>
-    for crate::WrapFn<F, (TEvent,)>
+impl<TEvent: 'static + FromJs> IntoJsEventHandler<TEvent> for crate::AnyFn<dyn Fn(TEvent)>
 where
     TEvent::Error: std::fmt::Debug,
 {
+    #[inline]
     fn into_js_event_handler(self) -> crate::PassedToJsRuntime {
-        crate::WrapFn::new(move |js_value: wasm_bindgen::JsValue| {
+        crate::AnyFn::new(move |js_value: wasm_bindgen::JsValue| {
             let event = TEvent::from_js(js_value).unwrap_throw();
             (self.0.as_ref())(event);
         })
