@@ -1,3 +1,10 @@
+# [1.0.0-alpha.8](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2022-03-02)
+
+
+### Features
+
+* add default type Option<String> for prop `class` ([8ad5793](https://github.com/frender-rs/frender/commit/8ad5793a3829afe9a9cdaea233f83679d38a7d86))
+
 # [1.0.0-alpha.7](https://github.com/frender-rs/frender/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2022-03-01)
 
 
