@@ -506,7 +506,7 @@ fn infer_field_type_and_builder(
                 ty,
             }
         }
-        "id" | "class_name" => {
+        "id" | "class_name" | "class" => {
             let ty: syn::TypePath = parse_quote_spanned!(span=>
                 Option<String>);
             let ty = syn::Type::Path(ty);

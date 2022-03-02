@@ -34,7 +34,7 @@ folder. You can preview them at [this site](https://frender-rs.github.io/frender
 
     ```toml
     [dependencies]
-    frender = "= 1.0.0-alpha.7"
+    frender = "= 1.0.0-alpha.8"
     ```
 
 3.  Create `index.html` in the project root directory.
@@ -177,15 +177,28 @@ def_props! {
   pub struct MyProps {
     // Required prop
     name: String,
+
     // Optional prop which defaults to `Default::default()`
-    age: Option<u8>,
+    // The following property `age` is optional, and defaults to `None`
+    age?: Option<u8>,
+
+    // The following property `tags` is optional, and defaults to `Vec::default()`
+    tags?: Vec<String>,
+
     // If the prop type is not specified,
     // then frender will infer the type by prop name.
     // For example, `class_name` default has type `Option<String>`
+    // The following property `class_name` is optional, has type Option<String>
     class_name?,
+
+    // The following property `id` is required, has type Option<String>
+    id,
+
     // Prop can also have type generics.
     // For example, the following is
-    // the default definition for prop `children`
+    // the default definition for prop `children`,
+    // which means it accepts any `Option<TNode>` where TNode implements react::Node,
+    // and then map the value into `Option<react::Children>` and store it into MyProps.
     children<TNode: react::Node>(value: Option<TNode>) -> Option<react::Children> {
       value.and_then(react::Node::into_children)
     },
