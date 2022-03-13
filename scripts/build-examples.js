@@ -34,6 +34,8 @@ function indexPageHtml(examplesListHtml) {
 <p>Functional Rendering: <code>React</code> in <code>Rust</code></p>
 </div>
 <div style="margin: 32px 0;">
+<h2>Frender book</h2>
+  You can learn frender with the <a href="${BASE_URL}book/">book</a>.
 <h2>Examples</h2>
 ${examplesListHtml}
 </div>

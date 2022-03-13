@@ -1,0 +1,9 @@
+[book]
+authors = ["EqualMa"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Frender Book"
+
+[output.html]
+site-url = "/frender/book/"
