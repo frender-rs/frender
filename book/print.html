@@ -1,0 +1,854 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Frender Book</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Guide</li><li class="chapter-item expanded "><a href="guide/quick-start.html"><strong aria-hidden="true">1.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="guide/rsx.html"><strong aria-hidden="true">2.</strong> rsx syntax</a></li><li class="chapter-item expanded "><a href="guide/component.html"><strong aria-hidden="true">3.</strong> Custom Component</a></li><li class="chapter-item expanded "><a href="guide/hooks.html"><strong aria-hidden="true">4.</strong> Hooks</a></li><li class="chapter-item expanded affix "><li class="part-title">Implementation Details</li><li class="chapter-item expanded "><a href="details/how-frender-works.html"><strong aria-hidden="true">5.</strong> How Frender works</a></li><li class="chapter-item expanded "><a href="details/rsx.html"><strong aria-hidden="true">6.</strong> How rsx macro works</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Frender Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="frender"><a class="header" href="#frender">frender</a></h1>
+<p><a href="https://crates.io/crates/frender"><img src="https://img.shields.io/crates/v/frender?style=for-the-badge" alt="Crates.io" /></a>
+<a href="https://docs.rs/frender"><img src="https://img.shields.io/docsrs/frender/latest?style=for-the-badge" alt="docs.rs" /></a>
+<a href="https://github.com/frender-rs/frender/blob/main/LICENSE"><img src="https://img.shields.io/github/license/frender-rs/frender?style=for-the-badge" alt="GitHub license" /></a>
+<a href="https://github.com/frender-rs/frender/stargazers"><img src="https://img.shields.io/github/stars/frender-rs/frender?style=for-the-badge" alt="GitHub stars" /></a></p>
+<div style="text-align:center;margin:16px">
+<p><img src="logo.svg" alt="frender logo" /></p>
+<p>Functional Rendering: <code>React</code> in <code>Rust</code></p>
+</div>
+<p><em><strong>f</strong>render</em> is still in alpha and it's api might change.
+For now it is recommended to specify the exact version in <code>Cargo.toml</code>.
+Before updating, please see the full <a href="https://github.com/frender-rs/frender/blob/alpha/CHANGELOG.md">changelog</a> in case there are breaking changes.</p>
+<p>There are some example apps in
+<a href="https://github.com/frender-rs/frender/tree/alpha/examples"><code>examples</code></a>
+folder. You can preview them at <a href="https://frender-rs.github.io/frender/">this site</a>.</p>
+<p>You can quick start with the
+<a href="https://frender-rs.github.io/frender/book">frender book</a>.</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li>Functional components and hooks</li>
+<li>Statically typed props</li>
+<li>Forced immutability with <a href="https://doc.rust-lang.org/std/rc/struct.Rc.html"><code>Rc</code></a></li>
+</ul>
+<h2 id="future-development-plans"><a class="header" href="#future-development-plans">Future Development Plans</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"/>
+Documentation</li>
+<li><input disabled="" type="checkbox"/>
+Intrinsic svg components</li>
+<li><input disabled="" type="checkbox"/>
+Export <code>frender</code> components to js</li>
+<li><input disabled="" type="checkbox"/>
+Server Side Rendering</li>
+<li><input disabled="" type="checkbox"/>
+Type checking for <code>CssProperties</code></li>
+<li><input disabled="" type="checkbox"/>
+Css-in-rust (For example, integrate with <a href="https://emotion.sh/docs/@emotion/react"><code>emotion/react</code></a>)</li>
+<li><input disabled="" type="checkbox"/>
+Performance benchmarking</li>
+</ul>
+<h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
+<p><code>frender</code> is open sourced at <a href="https://github.com/frender-rs/frender">GitHub</a>.
+Pull requests and issues are welcomed.</p>
+<p>You can also <a href="https://ko-fi.com/equalma">sponsor me</a> and I would be very grateful :heart:</p>
+<p><a href="https://ko-fi.com/N4N26J11L"><img src="https://cdn.ko-fi.com/cdn/kofi2.png?v=3" alt="Buy Me a Coffee at ko-fi.com" /></a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
+<ol>
+<li>
+<p>Create a new cargo project</p>
+<pre><code class="language-sh">cargo new my-frender-app
+cd my-frender-app
+</code></pre>
+</li>
+<li>
+<p>Add <code>frender</code> to dependencies in <code>Cargo.toml</code>.</p>
+<pre><code class="language-toml">[dependencies]
+frender = &quot;= 1.0.0-alpha.8&quot;
+</code></pre>
+</li>
+<li>
+<p>Create <code>index.html</code> in the project root directory.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot; /&gt;
+    &lt;title&gt;My frender App&lt;/title&gt;
+    &lt;script src=&quot;https://unpkg.com/react@17/umd/react.development.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://unpkg.com/react-dom@17/umd/react-dom.development.js&quot;&gt;&lt;/script&gt;
+    &lt;link data-trunk rel=&quot;rust&quot; href=&quot;Cargo.toml&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id=&quot;frender-root&quot;&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+<li>
+<p>Modify <code>src/main.rs</code></p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use frender::prelude::*;
+
+#[component(main(mount_element_id = &quot;frender-root&quot;))]
+fn Main() {
+    rsx!(
+        &lt;div&gt;
+            &quot;Hello, frender!&quot;
+        &lt;/div&gt;
+    )
+}
+<span class="boring">}
+</span></code></pre></pre>
+</li>
+<li>
+<p>Run with <code>trunk</code></p>
+<p>Install <a href="https://trunkrs.dev/#install">trunk</a> and then execute:</p>
+<pre><code class="language-sh">trunk serve
+</code></pre>
+<p>Then you can navigate to <code>http://localhost:8080</code> to see your frender app.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rsx-syntax"><a class="header" href="#rsx-syntax"><code>rsx</code> syntax</a></h1>
+<p>Frender provides the <code>rsx</code> macro to create elements
+with syntax similar to jsx.</p>
+<h2 id="create-elements-with-props"><a class="header" href="#create-elements-with-props">Create elements with props</a></h2>
+<p><code>rsx</code> prop key should be an valid ident.
+Any literal string or expression wrapped in braces
+can be used as <code>rsx</code> prop value.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent
+        prop1=&quot;my-literal-string&quot;
+        prop2={my_expr}
+        prop3
+    /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>The above code requires <code>MyComponent</code> to implements
+<a href="https://docs.rs/react-rs/latest/react/trait.ComponentStatic.html"><code>StaticComponent</code></a>,
+and will be transformed into something like
+the following code, which makes props strongly typed.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>MyComponent::create_element(
+    MyComponent::Props::init_builder()
+        .prop1(&quot;my-literal-string&quot;.into_prop_value())
+        .prop2(my_expr.into_prop_value())
+        .prop3(true.into_prop_value())
+        .build()
+)
+<span class="boring">}
+</span></code></pre></pre>
+<h3 id="prop-value-auto-conversion"><a class="header" href="#prop-value-auto-conversion">Prop value auto conversion</a></h3>
+<p>Notice the <code>my_expr.into_prop_value()</code> in the above example.
+<a href="https://docs.rs/react-rs/latest/react/trait.IntoPropValue.html"><code>IntoPropValue::into_prop_value</code></a>
+trait is introduced for auto converting prop values,
+so that rsx props can be less verbose.</p>
+<p>For example, assuming the <code>index</code> prop of <code>MyComponent</code>
+accepts <code>Option&lt;i32&gt;</code>,
+you can create the element with any of the following codes.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx! ( &lt;MyComponent index={Some(1)} /&gt; )
+rsx! ( &lt;MyComponent index={1} /&gt; )
+<span class="boring">}
+</span></code></pre></pre>
+<p><code>IntoPropValue&lt;Option&lt;T&gt;&gt;</code> is implemented for any type <code>T</code>.
+Thus, <code>1</code> can be converted to <code>Some(1)</code>
+automatically when used rsx prop value.</p>
+<p>To disable the auto conversion,
+you can use <code>:=</code> to set prop <code>prop:={value}</code>.
+For example:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent prop1:=&quot;value&quot; prop2=&quot;value&quot; /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>will be transformed into</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>MyComponent::create_element(
+    MyComponent::Props::init_builder()
+        .prop1(&quot;value&quot;)
+        .prop2(&quot;value&quot;.into_prop_value())
+        .build()
+)
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="create-elements-with-children"><a class="header" href="#create-elements-with-children">Create elements with children</a></h2>
+<p>Any literals, rsx elements or rust expressions wrapped in braces
+can be a valid child in rsx elements.</p>
+<p>Elements with multiple children will accept a tuple of these values
+into <code>children</code> prop.
+For example:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent&gt;
+        &quot;my-literal-string&quot;
+        1
+        {my_expr}
+        &lt;div id=&quot;my-div&quot; /&gt;
+    &lt;/MyComponent&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>is equivalent to the following code:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent
+        children={
+            (
+                &quot;my-literal-string&quot;,
+                1,
+                {my_expr},
+                rsx!( &lt;div id=&quot;my-div&quot; /&gt; ),
+            )
+        }
+    /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>Elements with exactly one child will accept a single value
+into <code>children</code> prop, not wrapped in a tuple.
+For example:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent&gt;
+        &lt;div id=&quot;my-div&quot; /&gt;
+    &lt;/MyComponent&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>will be transformed to the following code:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;MyComponent
+        children={rsx!( &lt;div id=&quot;my-div&quot; /&gt; )}
+    /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="create-intrinsic-elements"><a class="header" href="#create-intrinsic-elements">Create intrinsic elements</a></h2>
+<p>Any component name starting with lower case letter <code>[a-z]</code>
+will be interpreted as an <strong>intrinsic component</strong>.
+For example, <code>rsx!( &lt;div id=&quot;my-div&quot; /&gt; )</code> will be resolved to:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use frender::prelude::*;
+use self::intrinsic_components::div::prelude::*;
+
+rsx! (
+  &lt;self::intrinsic_components::div::prelude::Component id=&quot;my-div&quot; /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>Notice the <code>self::intrinsic_components</code>.
+This means rsx searches for <code>intrinsic_components</code> module
+in the current module instead of sub module of <code>frender</code>.
+This would allow you to import a custom <code>intrinsic_components</code>
+in a module level.</p>
+<h2 id="keyed-element"><a class="header" href="#keyed-element">Keyed element</a></h2>
+<p><code>key</code> prop is preserved as a keyword, like React.js.
+When <code>key</code> prop is specified, the element will be wrapped with
+<a href="https://docs.rs/react-rs/latest/react/struct.Keyed.html"><code>Keyed&lt;TElement&gt;</code></a>,
+indicating the element is created with a key.
+For example:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use react::{Element, Keyed};
+
+let element: Element = rsx!( &lt;div /&gt; );
+let keyed_element: Keyed&lt;Element&gt; = rsx!( &lt;div key=&quot;my-div&quot; /&gt; );
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="fragment-element"><a class="header" href="#fragment-element">Fragment element</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;&gt;
+        &quot;create&quot;
+        &lt;i&gt;&quot;react&quot;&lt;/i&gt;
+        &quot;fragment&quot;
+        {&quot;to wrap multiple children&quot;}
+    &lt;/&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>The above rsx will be transformed into:</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;self::rsx_runtime::Fragment&gt;
+        &quot;create&quot;
+        &lt;i&gt;&quot;react&quot;&lt;/i&gt;
+        &quot;fragment&quot;
+        {&quot;to wrap multiple children&quot;}
+    &lt;/self::rsx_runtime::Fragment&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>To create fragment element with key,
+you can use <code>#</code> as the component name.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;# key=&quot;my-key&quot;&gt;1 2 3&lt;/#&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note that <code>Fragment</code> component outputs a custom element type
+<a href="https://docs.rs/react-rs/latest/react/struct.FragmentElement.html"><code>FragmentElement</code></a>.
+It implements <code>Into&lt;react::Element&gt;</code>.</p>
+<h2 id="enclose-any-element-with-_"><a class="header" href="#enclose-any-element-with-_">Enclose any element with <code>&lt;/_&gt;</code></a></h2>
+<p>You can enclose any element with <code>&lt;/_&gt;</code>,
+which is very useful when the component type
+has a long module path or complex generics.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx!(
+    &lt;&gt;
+        &lt;path::to::Component&gt;&lt;/_&gt;
+        // the above is equivalent to:
+        &lt;path::to::Component&gt;&lt;/path::to::Component&gt;
+
+        &lt;MyComponent&lt;i32&gt;&gt;1&lt;/_&gt;
+        // the above is equivalent to:
+        &lt;MyComponent&lt;i32&gt;&gt;1&lt;/MyComponent&lt;i32&gt;&gt;
+    &lt;/&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="write-a-component"><a class="header" href="#write-a-component">Write a component</a></h1>
+<p>With the <code>#[component]</code> macro,
+writing a component in frender is
+as simple as writing a rust <code>fn</code>.
+The macro will turn the <code>fn</code> item to a <code>struct</code>,
+and implement
+<a href="https://docs.rs/frender/latest/frender/prelude/trait.UseRenderStatic.html"><code>UseRenderStatic</code></a>
+and
+<a href="https://docs.rs/frender/latest/frender/prelude/trait.ComponentStatic.html"><code>ComponentStatic</code></a>
+for it.
+The <code>fn</code> body will be the body of <code>UseRenderStatic::use_render</code> method.
+The return type of the <code>fn</code> will be <code>UseRenderStatic::RenderOutput</code>.
+The optional first arg of the <code>fn</code> will be the props type of this component,
+which is <code>UseRenderStatic::RenderArg</code> and [<code>ComponentStatic::Props</code>].
+If there is no args in the <code>fn</code>, the props type will be
+<a href="https://docs.rs/react-rs/latest/react/struct.NoProps.html"><code>react::NoProps</code></a>.</p>
+<p>The return type can be omitted.
+If omitted, the default return type is
+<a href="https://docs.rs/react-rs/latest/react/struct.Element.html"><code>react::Element</code></a>.</p>
+<h2 id="component-with-no-props"><a class="header" href="#component-with-no-props">Component with no props</a></h2>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use frender::prelude::*;
+
+#[component]
+fn MyComponent() {
+  //            ^
+  //            the return type defaults to react::Element
+  rsx!( &lt;div /&gt; )
+}
+
+<span class="boring">fn check_something() -&gt; bool { true }
+</span>
+// Or you can specify the return type explicitly
+#[component]
+fn MyAnotherComponent() -&gt; Option&lt;react::Element&gt; {
+  if check_something() {
+    Some(rsx!( &lt;MyComponent /&gt; ))
+  } else {
+    None
+  }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="component-with-props"><a class="header" href="#component-with-props">Component with props</a></h2>
+<p>First, define props with <code>def_props</code> macro.</p>
+<pre><pre class="playground"><code class="language-rust no_run">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use frender::prelude::*;
+
+def_props! {
+  pub struct MyProps {
+    // Required prop
+    name: String,
+
+    // Optional prop which defaults to `Default::default()`
+    // The following property `age` is optional, and defaults to `None`
+    age?: Option&lt;u8&gt;,
+
+    // The following property `tags` is optional, and defaults to `Vec::default()`
+    tags?: Vec&lt;String&gt;,
+
+    // If the prop type is not specified,
+    // then frender will infer the type by prop name.
+    // For example, `class_name` default has type `Option&lt;String&gt;`
+    // The following property `class_name` is optional, has type Option&lt;String&gt;
+    class_name?,
+
+    // The following property `id` is required, has type Option&lt;String&gt;
+    id,
+
+    // Prop can also have type generics.
+    // For example, the following is
+    // the default definition for prop `children`,
+    // which means it accepts any `Option&lt;TNode&gt;` where TNode implements react::Node,
+    // and then map the value into `Option&lt;react::Children&gt;` and store it into MyProps.
+    children&lt;TNode: react::Node&gt;(value: Option&lt;TNode&gt;) -&gt; Option&lt;react::Children&gt; {
+      value.and_then(react::Node::into_children)
+    },
+  }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Then write the component with the above props:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use frender::prelude::*;
+
+#[component]
+pub fn MyComponent(props: &amp;MyProps) {
+    rsx!(
+        &lt;div&gt;{&amp;props.children}&lt;/div&gt;
+    )
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Due to the generics, in some very rare cases, you may meet errors like
+<code>type annotations needed</code> <code>cannot infer type for type parameter</code>.
+You can solve it by specifying the type
+with the turbofish syntax <code>::&lt;&gt;</code>.
+For example:</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>rsx! (
+  // ERROR: type annotations needed
+  &lt;a children={None} /&gt;
+)
+rsx! (
+  // it works!
+  &lt;a children={None::&lt;()&gt;} /&gt;
+)
+<span class="boring">}
+</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hooks"><a class="header" href="#hooks">Hooks</a></h1>
+<p>React hooks are available in <code>frender</code>.</p>
+<!-- TODO: hooks docs -->
+<p>The documentation is working in progress. You can checkout the <a href="https://github.com/frender-rs/frender/blob/alpha/examples/counter/src/my_counter.rs">examples</a> for the usage.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="how-frender-works"><a class="header" href="#how-frender-works">How Frender works</a></h1>
+<p>Frender is based on react's functional components (<code>React.FC</code>).
+<code>React.FC</code> are just js functions with special restrictions (
+such as must return <code>null | React.Element</code>,
+must obey hooks rules).
+What frender do is just to convert a rust function to a js function with <a href="https://rustwasm.github.io/wasm-bindgen/api/wasm_bindgen/closure/struct.Closure.html"><code>wasm_bindgen::clousre::Closure</code></a>.</p>
+<p>However, the problem is that js doesn't know about
+the ownership and lifetimes of data in rust.
+Luckily, React components have life cycles.
+In functional components,
+the best way to do tasks (side effects)
+in life cycles is using
+<a href="https://reactjs.org/docs/hooks-effect.html"><code>React.useEffect</code></a>
+like the following.</p>
+<pre><code class="language-js">function MyComponent() {
+  React.useEffect(() =&gt; {
+    // do side effects on mounted
+    doSomething();
+
+    return () =&gt; {
+      // do side effects on unmounted
+      doSomeCleanup();
+    };
+  }, []);
+}
+</code></pre>
+<p>Frender bridges rust ownership within the component life cycle,
+by persisting some data when
+like the following:</p>
+<pre><code class="language-js">function MyComponent() {
+  const refInitialized = React.useRef(false);
+  if (!refInitialized.current) {
+    // persist rust data with
+    // std::mem::ManuallyDrop
+    persistRustData();
+    refInitialized.current = true;
+  }
+  React.useEffect(() =&gt; {
+    return () =&gt; {
+      // manually drop the persisted data
+      // on unmounted
+      dropPersistedRustData();
+    };
+  }, []);
+}
+</code></pre>
+<p>With the above idea,
+<code>frender::react::use_ref</code> can be implemented by guarding <code>React.useRef</code>
+with the following pseudo code.</p>
+<pre><code class="language-rust ignore">fn use_ref&lt;T&gt;(initial_value: T) {
+    let js_ref_object = React.useRef();
+    if js_ref_object.is_undefined() {
+        // forget the initial value and use a number to represent it
+        let key: usize = forget_and_get_key(initial_value);
+        // numbers are safe and easy to be converted to a js number
+        js_ref_object.current = key;
+    }
+
+    React.useEffect(|| {
+        // return a cleanup function so that
+        // the forgotten data will be dropped after component unmounted
+        return || {
+            // manually drop the forgotten data
+            manually_drop_by_key(key);
+        }
+    }, []);
+
+    let rust_ref_object = FrenderUseRefObject {
+        // to get the current data,
+        // just get the current key,
+        // and then get the data
+        current: || get_by_key(js_ref_object.current),
+        set_current: |new_value| {
+            let old_key = js_ref_object.current;
+            manually_drop_by_key(old_key);
+            let new_key = forget_and_get_key(new_value);
+            js_ref_object.current = new_key;
+        },
+    };
+
+    rust_ref_object
+}
+</code></pre>
+<p>Frender guards other hooks and the component function
+in the same way to keep the app memory safe.</p>
+<p>Next, you can read about <a href="details/rsx.html"><em>How <code>rsx</code> macro works</em></a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="how-rsx-macro-works"><a class="header" href="#how-rsx-macro-works">How rsx macro works</a></h1>
+<p>As described in the <a href="details/../guide/rsx.html">guide</a>,
+frender interprets <code>rsx!( &lt;MyComponent prop={value} /&gt; )</code> as the builder pattern:</p>
+<pre><code class="language-rust ignore">MyComponent::create_element(
+    MyComponent::Props::init_builder()
+        .prop(value)
+        .build()
+)
+</code></pre>
+<p>But how does the builder pattern know whether
+a prop is required or optional?
+Here I will explain the implementation details.</p>
+<h2 id="completely-optional-props"><a class="header" href="#completely-optional-props">Completely optional props</a></h2>
+<p>If the properties of a props struct
+are all optional, it would be easy to
+implement the builder pattern.
+We can use the struct itself as the builder type.</p>
+<pre><pre class="playground"><code class="language-rust">struct MyProps {
+    // defaults to None
+    optional_name: Option&lt;String&gt;,
+    // Optional prop does not need to be Option&lt;T&gt;.
+    // It just need to implement Default.
+    // The following prop defaults to 0.
+    optional_num: i32
+}
+
+impl frender::react::Props for MyProps {
+    type InitialBuilder = Self;
+
+    fn init_builder() -&gt; Self {
+        Self {
+            optional_name: Default::default(),
+            optional_num: Default::default(),
+        }
+    }
+}
+
+// builder methods
+impl MyProps {
+    fn optional_name(mut self, value: Option&lt;String&gt;) -&gt; Self {
+        self.optional_name = value;
+        self
+    }
+
+    fn optional_num(mut self, value: i32) -&gt; Self {
+        self.optional_num = value;
+        self
+    }
+}
+
+impl frender::react::PropsBuilder&lt;MyProps&gt; for MyProps {
+    fn build(self) -&gt; MyProps {
+        self
+    }
+}
+
+fn main() {
+    let props = MyProps::init_builder()
+        .optional_name(&quot;frender&quot;.to_string())
+        .build();
+
+    assert_eq!(props.optional_name, &quot;frender&quot;);
+    assert_eq!(props.optional_num, 0);
+}
+</code></pre></pre>
+<h2 id="props-with-required-fields"><a class="header" href="#props-with-required-fields">Props with required fields</a></h2>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct PropertyAlreadySet&lt;T&gt;(T);
+struct PropertyNotSet;
+
+struct MyProps {
+    // required property
+    pub name: String,
+    // optional property, defaults to None
+    pub optional_message: Option&lt;String&gt;,
+}
+
+impl frender::react::Props for MyProps {
+    type InitialBuilder = MyPropsBuilder;
+
+    fn init_builder() -&gt; MyPropsBuilder {
+        MyPropsBuilder {
+            // required field is initialized as `PropertyNotSet`
+            name: PropertyNotSet,
+            // optional field is initialized as default
+            optional_message: Default::default(),
+        }
+    }
+}
+
+struct MyPropsBuilder&lt;MyPropsBuilder__name&gt; {
+    name: MyPropsBuilder__name,
+    optional_message: Option&lt;String&gt;,
+}
+
+impl&lt;MyPropsBuilder__name&gt; MyPropsBuilder&lt;MyPropsBuilder__name&gt; {
+    pub fn name(self, value: String) -&gt; MyPropsBuilder&lt;PropertyAlreadySet&lt;String&gt;&gt; {
+        MyPropsBuilder {
+            name: value,
+            optional_message: self.optional_message,
+        }
+    }
+
+    pub fn optional_message(mut self, value: Option&lt;String&gt;) -&gt; Self {
+        self.optional_message = value;
+        self
+    }
+}
+
+impl frender::react::PropsBuilder&lt;MyProps&gt; for MyPropsBuilder&lt;PropertyAlreadySet&lt;String&gt;&gt; {
+    fn build(self) -&gt; MyProps {
+        MyProps {
+            name: self.name.0,
+            optional_message: self.optional_message,
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2 id="def_props-macro"><a class="header" href="#def_props-macro"><code>def_props</code> macro</a></h2>
+<p>Using frender, you don't need to
+implement the above yourself.
+All of the details is encapsulated
+in the <code>def_props</code> macro.</p>
+<pre><pre class="playground"><code class="language-rust">
+<span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span><span class="boring">extern crate frender;
+</span>use frender::prelude::*;
+
+def_props! {
+    struct MyProps {
+        // required property
+        pub name: String,
+        // optional property, defaults to None
+        pub optional_message?: Option&lt;String&gt;,
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>
