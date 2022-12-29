@@ -1,0 +1,22 @@
+[package]
+name = "frender-hook-element"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frender-core = { path = "../frender-core", version = "0.1.0" }
+frender-dom = { path = "../frender-dom", version = "0.1.0", optional = true }
+frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
+pin-project-lite = "0.2.9"
+
+[dependencies.hooks]
+version = "1.0.0-alpha.19"
+default-features = false
+features = ["derive"]
+
+[features]
+dom = ["dep:frender-dom"]
+ssr = ["dep:frender-ssr"]
+macro = []

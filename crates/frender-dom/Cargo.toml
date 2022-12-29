@@ -1,0 +1,22 @@
+[package]
+name = "frender-dom"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frender-core = { path = "../frender-core", version = "0.1.0" }
+pin-project-lite = "0.2.9"
+gloo = { version = "0.8.0", features = ["futures"] }
+
+[dependencies.futures-lite]
+version = "1.12.0"
+default-features = false
+
+[dependencies.web-sys]
+version = "0.3.60"
+features = [
+    #
+    "Node",
+]

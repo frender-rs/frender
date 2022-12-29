@@ -2,9 +2,7 @@ name: Release
 on:
   push:
     branches:
-      - main
-      - alpha
-      - beta
+      - v2
 
 env:
   CARGO_TERM_COLOR: always
@@ -50,6 +48,10 @@ jobs:
           set -e
           cargo check --verbose
           cargo test --verbose
+          cargo check -p frender-hook-element
+          cargo check -p frender-hook-element --features ssr
+          cargo check -p frender-hook-element --features dom
+          cargo check -p frender-hook-element --features ssr,dom
           wasm-pack test --node frender
       - name: Release
         env:
