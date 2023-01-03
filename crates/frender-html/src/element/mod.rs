@@ -1,2 +1,2 @@
 pub mod button;
-pub mod text;
+pub mod str_text;

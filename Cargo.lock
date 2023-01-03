@@ -18,6 +18,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 
 [[package]]
+name = "bg"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cfe75e297d4d6cb5387c13a627dca01620ab396791b7dcfbd6ec6ea2d539a6d"
+
+[[package]]
 name = "bincode"
 version = "1.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -223,7 +229,9 @@ dependencies = [
  "frender-core",
  "futures-lite",
  "gloo",
+ "js-sys",
  "pin-project-lite",
+ "wasm-bindgen",
  "web-sys",
 ]
 
@@ -241,6 +249,18 @@ dependencies = [
 [[package]]
 name = "frender-html"
 version = "0.1.0"
+dependencies = [
+ "bg",
+ "frender-core",
+ "frender-dom",
+ "frender-ssr",
+ "futures-lite",
+ "gloo",
+ "html-escape",
+ "pin-project-lite",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "frender-macros"
@@ -506,6 +526,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "html-escape"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d1ad449764d627e22bfd7cd5e8868264fc9236e07c752972b4080cd351cb476"
+dependencies = [
+ "utf8-width",
 ]
 
 [[package]]
@@ -817,6 +846,12 @@ name = "unicode-ident"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ceab39d59e4c9499d4e5a8ee0e2735b891bb7308ac83dfb4e80cad195c9f6f3"
+
+[[package]]
+name = "utf8-width"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5190c9442dcdaf0ddd50f37420417d219ae5261bbf5db120d0f9bab996c9cba1"
 
 [[package]]
 name = "wasm-bindgen"

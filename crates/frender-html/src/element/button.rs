@@ -1,12 +1,14 @@
 #![allow(non_camel_case_types)]
 
 use bg::builder;
-use futures_io::AsyncWrite;
+
+use frender_core::UpdateRenderState;
+use frender_dom::Dom;
+use frender_ssr::{AsyncWrite, SsrContext};
 
 use crate::{
     props::{events, UpdateDomEventListener},
-    render::{Dom, SsrContext, UpdateRenderState},
-    utils::insert_element_and_update,
+    utils::dom::insert_element_and_update,
 };
 
 builder! {
@@ -17,7 +19,7 @@ builder! {
 }
 
 pub mod dom {
-    use crate::render::RenderState;
+    use frender_core::RenderState;
 
     pin_project_lite::pin_project! {
         pub struct State<Children, OnClick> {
@@ -59,9 +61,9 @@ pub mod dom {
 pub mod ssr {
     use std::{borrow::Cow, pin::Pin, task::Poll};
 
-    use futures_io::AsyncWrite;
+    use frender_ssr::{AsyncWrite, SsrContext, SsrWriter};
 
-    use crate::render::{RenderState, SsrWriter};
+    use frender_core::RenderState;
 
     struct StateInner<W: AsyncWrite + Unpin> {
         writer: SsrWriter<W>,
@@ -76,7 +78,7 @@ pub mod ssr {
         pub(super) fn update_render_state_with_str(
             &mut self,
             buf: impl Into<Cow<'static, str>>,
-            ctx: &mut crate::render::SsrContext<W>,
+            ctx: &mut SsrContext<W>,
         ) {
             self.0 = ctx.writer.take().map(|writer| {
                 let buf: Cow<str> = buf.into();

@@ -4,8 +4,6 @@ use gloo::events::EventListener;
 use wasm_bindgen::JsCast;
 use web_sys::EventTarget;
 
-use crate::render::Unset;
-
 pub trait StaticEventType {
     const EVENT_TYPE: &'static str;
 
@@ -70,7 +68,7 @@ pub trait UpdateDomEventListener<EventType: StaticEventType>: Sized {
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State);
 }
 
-impl<EventType: StaticEventType> UpdateDomEventListener<EventType> for Unset {
+impl<EventType: StaticEventType, T> UpdateDomEventListener<EventType> for bg::Unspecified<T> {
     type State = ();
 
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {}

@@ -1,10 +1,11 @@
+#[cfg(all(feature = "ssr", feature = "dom"))]
 #[macro_export]
-macro_rules! def_component {
+macro_rules! component_dom_ssr {
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident () $body:tt
     ) => {
-        $crate::def_component! {
+        $crate::component_ssr_dom! {
             $(#$attr)*
             $vis fn $name (_ctx: _) $body
         }
@@ -187,3 +188,12 @@ macro_rules! def_component {
         }
     };
 }
+
+// #[cfg(feature = "ssr")]
+// pub mod only_ssr;
+
+// #[cfg(feature = "dom")]
+// pub mod only_dom;
+
+pub use hooks::core as hooks_core;
+pub use hooks::hook;
