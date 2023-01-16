@@ -6,11 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bg = "0.1.1"
+bg = "0.2.0"
+convert-js = "1.0.0-alpha.15"
 frender-core = { path = "../frender-core", version = "0.1.0" }
 frender-dom = { path = "../frender-dom", version = "0.1.0", optional = true }
 frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
 futures-lite = { version = "1.12.0", default-features = false, optional = true }
+ghost-lite = "0.1.2"
 gloo = { version = "0.8.0", optional = true }
 html-escape = { version = "0.2.13", optional = true }
 pin-project-lite = "0.2.9"
@@ -21,8 +23,11 @@ version = "0.3.60"
 optional = true
 features = [
     #
+    # "ClipboardEvent",
     "EventTarget",
+    "InputEvent",
     "Node",
+    "SecurityPolicyViolationEvent",
     "Text",
 ]
 

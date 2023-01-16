@@ -7,14 +7,26 @@ use frender_dom::Dom;
 use frender_ssr::{AsyncWrite, SsrContext};
 
 use crate::{
-    props::{events, UpdateDomEventListener},
+    props::{events, UpdateDomEventListener, UpdateHtmlElementEventListeners},
     utils::dom::insert_element_and_update,
 };
 
 builder! {
     pub struct ButtonProps {
+        __html_common_props[inherit crate::props::HtmlCommonSharedProps],
         children[impl Sized],
-        on_click[impl Sized],
+        value[borrow? str],
+        default_value[borrow? str],
+        auto_focus[? bool],
+        disabled[? bool],
+        form[borrow? str],
+        form_action[borrow? str],
+        form_enc_type[borrow? str],
+        form_method[borrow? str],
+        form_no_validate[? bool],
+        form_target[borrow? str],
+        name[borrow? str],
+        html_type[? crate::ButtonType],
     }
 }
 
@@ -161,14 +173,15 @@ builder! {
     pub use build as build_element;
 }
 
+#[cfg(aaa)]
 impl<TypeDefs: ?Sized + button::Types> UpdateRenderState<Dom> for button::Data<TypeDefs>
 where
     TypeDefs::children: UpdateRenderState<Dom>,
-    TypeDefs::on_click: UpdateDomEventListener<events::OnClick>,
+    TypeDefs::on_click: UpdateDomEventListener<events::Click>,
 {
     type State = dom::State<
         <TypeDefs::children as UpdateRenderState<Dom>>::State,
-        <TypeDefs::on_click as UpdateDomEventListener<events::OnClick>>::State,
+        <TypeDefs::on_click as UpdateDomEventListener<events::Click>>::State,
     >;
 
     #[inline]
@@ -188,11 +201,12 @@ where
     }
 }
 
+#[cfg(aaa)]
 impl<W: AsyncWrite + Unpin, TypeDefs: ?Sized + button::Types> UpdateRenderState<SsrContext<W>>
     for button::Data<TypeDefs>
 where
     TypeDefs::children: UpdateRenderState<SsrContext<W>>,
-    TypeDefs::on_click: UpdateDomEventListener<events::OnClick>,
+    TypeDefs::on_click: UpdateDomEventListener<events::Click>,
 {
     type State = ssr::State<W>;
 

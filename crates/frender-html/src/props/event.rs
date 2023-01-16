@@ -68,9 +68,10 @@ pub trait UpdateDomEventListener<EventType: StaticEventType>: Sized {
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State);
 }
 
-impl<EventType: StaticEventType, T> UpdateDomEventListener<EventType> for bg::Unspecified<T> {
+impl<EventType: StaticEventType> UpdateDomEventListener<EventType> for () {
     type State = ();
 
+    #[inline]
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {}
 }
 

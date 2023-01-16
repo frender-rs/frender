@@ -19,9 +19,12 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 
 [[package]]
 name = "bg"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cfe75e297d4d6cb5387c13a627dca01620ab396791b7dcfbd6ec6ea2d539a6d"
+checksum = "37a8c19859bd78a2d51f2aba8dac261bcd0dcb30881a89b4c8157c2cd1986982"
+dependencies = [
+ "ghost-lite",
+]
 
 [[package]]
 name = "bincode"
@@ -251,10 +254,12 @@ name = "frender-html"
 version = "0.1.0"
 dependencies = [
  "bg",
+ "convert-js",
  "frender-core",
  "frender-dom",
  "frender-ssr",
  "futures-lite",
+ "ghost-lite",
  "gloo",
  "html-escape",
  "pin-project-lite",
@@ -317,6 +322,12 @@ name = "futures-sink"
 version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39c15cf1a4aa79df40f1bb462fb39676d0ad9e366c2a33b590d7c66f4f81fcf9"
+
+[[package]]
+name = "ghost-lite"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c3aba3a404a4a33e8ca6dc3578932cbce8325ec590ec2998cf6aac1701936af"
 
 [[package]]
 name = "gloo"
