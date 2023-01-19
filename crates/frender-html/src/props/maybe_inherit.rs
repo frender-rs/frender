@@ -30,3 +30,18 @@ impl<V> MaybeInherit<V> for crate::Inherit<V> {
         Some(Inheritable::Inherit)
     }
 }
+
+macro_rules! impl_maybe_inherit_for {
+    ($($ty:ty;)*) => {$(
+        impl MaybeInherit<$ty> for () {
+            #[inline]
+            fn into_maybe_inheritable(self) -> Option<Inheritable<$ty>> {
+                None
+            }
+        }
+    )*};
+}
+
+impl_maybe_inherit_for! {
+    bool;
+}

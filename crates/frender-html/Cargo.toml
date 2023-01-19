@@ -25,6 +25,10 @@ features = [
     #
     # "ClipboardEvent",
     "EventTarget",
+    "HtmlDetailsElement",
+    "HtmlTableCaptionElement",
+    "HtmlMeterElement",
+    "HtmlOutputElement",
     "InputEvent",
     "Node",
     "SecurityPolicyViolationEvent",
