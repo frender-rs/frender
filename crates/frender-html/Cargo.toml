@@ -29,6 +29,7 @@ features = [
     "HtmlTableCaptionElement",
     "HtmlMeterElement",
     "HtmlOutputElement",
+    "HtmlTimeElement",
     "InputEvent",
     "Node",
     "SecurityPolicyViolationEvent",

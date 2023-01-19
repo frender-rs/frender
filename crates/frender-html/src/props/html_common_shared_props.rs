@@ -519,7 +519,7 @@ def_intrinsic_component_props! {
                 }
             ]
         ][
-            pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement) {
+            pub struct HtmlMediaElementProps(web_sys::HtmlMediaElement) {
                 auto_play ? bool {"autoplay" set_autoplay*},
                 controls ? bool {set_controls*},
                 cross_origin ? str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
@@ -527,13 +527,24 @@ def_intrinsic_component_props! {
                 muted ? bool {set_muted*},
                 preload ? str {set_preload},
                 src ? str {set_src},
-            }
+            } [
+                pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement) {
+                }
+            ][
+                pub struct HtmlVideoElementProps(web_sys::HtmlVideoElement) {
+                    height ? u32 {set_height*},
+                    plays_inline ? bool {"playsinline"},
+                    poster ? str {set_poster},
+                    width ? u32 {set_width*},
+                }
+            ]
         ][
             pub struct HtmlBaseElementProps(web_sys::HtmlBaseElement) {
                 href ? str { set_href },
                 target ? str { set_target },
             }
         ][
+            // blockquote q
             pub struct HtmlQuoteElementProps(web_sys::HtmlQuoteElement) {
                 cite ? str { set_cite },
             }
@@ -568,23 +579,6 @@ def_intrinsic_component_props! {
             pub struct HtmlTableCaptionElementProps(web_sys::HtmlTableCaptionElement) {
                 #[deprecated = "Do not use this attribute, as it has been deprecated. The <caption> element should be styled using the CSS properties caption-side and text-align."]
                 align ? str {set_align},
-            }
-        ][
-            // col colgroup
-            pub struct HtmlTableColElementProps(web_sys::HtmlTableColElement) {
-                span ? u32 {set_span*},
-                #[deprecated]
-                align ? str {set_align},
-                #[deprecated]
-                bgcolor ? str,
-                #[deprecated]
-                char ? str,
-                #[deprecated]
-                charoff ? str,
-                #[deprecated]
-                v_align ? str {"valign" set_v_align},
-                #[deprecated]
-                width ? str {set_width},
             }
         ][
             pub struct HtmlDataElementProps(web_sys::HtmlDataElement) {
@@ -741,7 +735,7 @@ def_intrinsic_component_props! {
                 name ? str {set_name},
             }
         ][
-            pub struct HtmlMeterElement(web_sys::HtmlMeterElement) {
+            pub struct HtmlMeterElementProps(web_sys::HtmlMeterElement) {
                 value ? f64 {set_value*},
                 min ? f64 {set_min*},
                 max ? f64 {set_max*},
@@ -750,7 +744,7 @@ def_intrinsic_component_props! {
                 optimum ? f64 {set_optimum*},
             }
         ][
-            pub struct HtmlObjectElement(web_sys::HtmlObjectElement) {
+            pub struct HtmlObjectElementProps(web_sys::HtmlObjectElement) {
                 data ? str {set_data},
                 form ? str,
                 height ? str {set_height},
@@ -760,40 +754,36 @@ def_intrinsic_component_props! {
                 width ? str {set_width},
             }
         ][
-            pub struct HtmlOListElement(web_sys::HtmlOListElement) {
+            pub struct HtmlOListElementProps(web_sys::HtmlOListElement) {
                 reversed ? bool {set_reversed*},
                 start ? i32 {set_start*},
                 type_ ? str {"type" set_type},
             }
         ][
-            pub struct HtmlOptGroupElement(web_sys::HtmlOptGroupElement) {
+            pub struct HtmlOptGroupElementProps(web_sys::HtmlOptGroupElement) {
                 disabled ? bool {set_disabled*},
                 label ? str {set_label},
             }
         ][
-            pub struct HtmlOptionElement(web_sys::HtmlOptionElement) {
+            pub struct HtmlOptionElementProps(web_sys::HtmlOptionElement) {
                 disabled ? bool {set_disabled*},
                 label ? str {set_label},
                 selected ? bool {set_selected*},
                 value ? str {set_value},
             }
         ][
-            pub struct HtmlOutputElement(web_sys::HtmlOutputElement) {
+            pub struct HtmlOutputElementProps(web_sys::HtmlOutputElement) {
                 html_for ? str {"for"},
                 form ? str,
                 name ? str {set_name},
             }
         ][
-            pub struct HtmlProgressElement(web_sys::HtmlProgressElement) {
+            pub struct HtmlProgressElementProps(web_sys::HtmlProgressElement) {
                 max ? f64 {set_max*},
                 value ? f64 {set_value*},
             }
         ][
-            pub struct HtmlQuoteElement(web_sys::HtmlQuoteElement) {
-                cite ? str {set_cite},
-            }
-        ][
-            pub struct HtmlScriptElement(web_sys::HtmlScriptElement) {
+            pub struct HtmlScriptElementProps(web_sys::HtmlScriptElement) {
                 r#async ? bool {set_async*},
                 cross_origin ? str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
                 defer ? bool {set_defer*},
@@ -804,6 +794,130 @@ def_intrinsic_component_props! {
                 src ? str {set_src},
                 type_ ? str {set_type},
                 blocking ? str,
+            }
+        ][
+            pub struct HtmlSelectElementProps(web_sys::HtmlSelectElement) {
+                auto_complete ? str {"autocomplete" set_autocomplete},
+                disabled ? bool {set_disabled*},
+                form ? str,
+                multiple ? bool {set_multiple*},
+                name ? str {set_name},
+                required ? bool {set_required*},
+                size ? u32 {set_size*},
+            }
+        ][
+            pub struct HtmlSlotElementProps(web_sys::HtmlSlotElement) {
+                name ? str {set_name},
+            }
+        ][
+            pub struct HtmlSourceElementProps(web_sys::HtmlSourceElement) {
+                type_ ? str {set_type},
+                src ? str {set_src},
+                srcset ? str {set_srcset},
+                sizes ? str {set_sizes},
+                media ? str {set_media},
+                height ? u32,
+                width ? u32,
+            }
+        ][
+            pub struct HtmlStyleElementProps(web_sys::HtmlStyleElement) {
+                media ? str {set_media},
+                blocking ? str,
+                #[deprecated = "This attribute should not be provided: if it is, the only permitted values are the empty string or a case-insensitive match for \"text/css.\""]
+                type_ ? str {set_type},
+            }
+        ][
+            pub struct HtmlTableElementProps(web_sys::HtmlTableElement) {
+                #[deprecated]
+                align ? str {set_align},
+                #[deprecated]
+                bg_color ? str {"bgcolor" set_bg_color},
+                #[deprecated]
+                border ? str {set_border},
+                #[deprecated]
+                cell_padding ? str {"cellpadding" set_cell_padding},
+                #[deprecated]
+                cell_spacing ? str {"cellspacing" set_cell_spacing},
+                #[deprecated]
+                frame ? str {set_frame},
+                #[deprecated]
+                rules ? str {set_rules},
+                #[deprecated]
+                summary ? str {set_summary},
+                #[deprecated]
+                width ? str {set_width},
+            }
+        ][
+            // tbody tfoot
+            pub struct HtmlTableSectionElementProps(web_sys::HtmlTableSectionElement) {
+                #[deprecated]
+                align ? str {set_align},
+                #[deprecated]
+                bg_color ? str {"bgcolor"},
+                #[deprecated]
+                char ? str {set_ch},
+                #[deprecated]
+                char_off ? str {"charoff" set_ch_off},
+                #[deprecated]
+                v_align ? str {"valign" set_v_align},
+            } [
+                pub struct HtmlTableRowElementProps(web_sys::HtmlTableRowElement) {
+                }
+            ][
+                // col colgroup
+                pub struct HtmlTableColElementProps(web_sys::HtmlTableColElement) {
+                    span ? u32 {set_span*},
+                    #[deprecated]
+                    width ? str {set_width},
+                }
+            ][
+                // td th thead
+                pub struct HtmlTableCellElementProps(web_sys::HtmlTableCellElement) {
+                    col_span ? u32 {"colspan" set_col_span*},
+                    headers ? str {set_headers},
+                    row_span ? u32 {"rowspan" set_row_span*},
+                    #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
+                    abbr ? str,
+                    #[deprecated]
+                    axis ? str {set_axis},
+                    #[deprecated = "Use the CSS height property instead."]
+                    height ? str {set_height},
+                    #[deprecated]
+                    scope ? str,
+                    #[deprecated]
+                    width ? str {set_width},
+                }
+            ]
+        ][
+            pub struct HtmlTextAreaElementProps(web_sys::HtmlTextAreaElement) {
+                auto_complete ? str {"autocomplete" set_autocomplete},
+                auto_correct ? str,
+                cols ? u32 {set_cols*},
+                disabled ? bool {set_disabled*},
+                form ? str,
+                max_length ? i32 {"maxlength" set_max_length*},
+                min_length ? i32 {"minlength" set_min_length*},
+                name ? str {set_name},
+                placeholder ? str {set_placeholder},
+                read_only ? bool {"readonly" set_read_only*},
+                required ? bool {set_required*},
+                rows ? u32 {set_rows*},
+                wrap ? str {set_wrap},
+            }
+        ][
+            pub struct HtmlTimeElementProps(web_sys::HtmlTimeElement) {
+                date_time ? str {"datetime" set_date_time},
+            }
+        ][
+            pub struct HtmlTrackElementProps(web_sys::HtmlTrackElement) {
+                default ? bool {set_default*},
+                kind ? str {set_kind},
+                label ? str {set_label},
+                src ? str {set_src},
+                src_lang ? str {"srclang" set_srclang},
+            }
+        ][
+            pub struct HtmlUListElementProps(web_sys::HtmlUListElement) {
             }
         ]
     ]
