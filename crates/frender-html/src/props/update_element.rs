@@ -3,7 +3,7 @@ use std::pin::Pin;
 use frender_dom::Dom;
 
 pub trait UpdateElement<E> {
-    type State;
+    type State: Default;
 
     fn update_element(
         this: Self,

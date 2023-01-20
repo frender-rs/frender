@@ -153,7 +153,10 @@ macro_rules! __impl_replace_fns {
 #[macro_export]
 macro_rules! __impl_def_intrinsic_component_props_one {
     (
-        $vis:vis struct $name:ident ($dom_element_ty:ty) {$(
+        $vis:vis struct $name:ident (
+            $dom_element_ty:ty
+            $(: $($component_name:ident),+ $(,)?)?
+        ) {$(
             $(#$field_attr:tt)*
             $field:ident
             $(
@@ -214,6 +217,14 @@ macro_rules! __impl_def_intrinsic_component_props_one {
                 )?
             ),*}
         }
+
+        $($(
+            $crate::__impl_def_intrinsic_component! {
+                $component_name
+                $name
+                $dom_element_ty
+            }
+        )+)?
     };
 }
 
@@ -280,6 +291,8 @@ macro_rules! __impl_def_intrinsic_component_props {
     ) => {
         #[allow(non_snake_case)]
         $vis mod $name {
+            pub mod prelude {}
+
             pub mod overwrite {
                 #![allow(non_camel_case_types)]
 
@@ -373,6 +386,11 @@ macro_rules! __impl_def_intrinsic_component_props {
                     }
                 }
             }
+
+            #[inline]
+            pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
+                building.0
+            }
         }
 
         $crate::__impl_builder_fns! {
@@ -434,6 +452,54 @@ macro_rules! __impl_def_intrinsic_component_props {
                     )*
                 }
             )
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! __impl_def_intrinsic_component {
+    (
+        $component_name:ident
+        $props_name:ident
+        $dom_element_ty:ty
+    ) => {
+        ::bg::builder! {
+            pub struct $component_name($props_name);
+
+            pub use build as build_element;
+        }
+
+        impl<TypeDefs: ?::core::marker::Sized + $component_name::Types>
+            ::frender_core::UpdateRenderState<::frender_dom::Dom>
+            for $component_name::Data<TypeDefs>
+        where
+            $props_name::Data<TypeDefs>: $crate::props::UpdateElement<$dom_element_ty>,
+        {
+            type State =
+                $crate::props::IntrinsicComponentRenderState<
+                    $dom_element_ty,
+                    <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                        $dom_element_ty,
+                    >>::State,
+                >;
+
+            fn update_render_state(
+                self,
+                ctx: &mut ::frender_dom::Dom,
+                state: ::core::pin::Pin<&mut Self::State>,
+            ) {
+                let (node_and_mounted, state) = state.pin_project();
+                $crate::utils::dom::insert_element_and_update_with_tag(
+                    node_and_mounted,
+                    ctx,
+                    ::core::stringify!($component_name),
+                    |element, children_ctx| {
+                        <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                            $dom_element_ty,
+                        >>::update_element(self.0, element, children_ctx, state)
+                    },
+                )
+            }
         }
     };
 }
