@@ -11,8 +11,8 @@ fn Main(ctx: _) {
     ctx.render(rsx!(
         <div style=r#"
             margin: auto;
-            padding: 16;
-            max-width: 768;
+            padding: 16px;
+            max-width: 768px;
         "#>
             <h1>
                 "Counter & Timer - "
@@ -44,24 +44,6 @@ fn Main(ctx: _) {
         </div>
     ))
 }
-
-// #[component(only_dom)]
-// fn Main(ctx: _) {
-//     ctx.render(rsx!(
-//         <>
-//             "<MyCounter />"
-//             <MyCounter />
-//             "<MyCounter initial_value=5 />"
-//             <MyCounter initial_value=5 />
-
-//             "<MyTimer />"
-//             <MyTimer />
-
-//             "<MyTimer initial_interval=2000 />"
-//             <MyTimer initial_interval=2000 />
-//         </>
-//     ))
-// }
 
 fn main() {
     frender::hook_element::frender_dom::spawn_mount_to_dom_element_by_id(

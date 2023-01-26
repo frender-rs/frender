@@ -1,9 +1,16 @@
 mod debug;
 pub use debug::*;
 
+pub use frender_core::{Keyed, RenderState, StaticText, UpdateRenderState};
 pub use frender_macros::{component, def_props};
 
-pub use frender_html::intrinsic_components;
+#[cfg(feature = "dom")]
+pub use frender_hook_element::frender_dom::Dom;
+
+pub use frender_html::{
+    intrinsic_components,
+    props::{events, UpdateDomEventListener},
+};
 
 pub use frender_hook_element as hook_element;
 
@@ -12,6 +19,8 @@ pub mod prelude {
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
     pub use crate::{render, rsx};
+
+    pub use frender_core::{Keyed, StaticText};
     pub use frender_html::intrinsic_components;
     pub use frender_macros::component;
 }

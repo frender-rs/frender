@@ -1,5 +1,4 @@
 use frender::prelude::*;
-use wasm_bindgen::JsValue;
 
 bg::builder! {
     pub struct MyTimerProps {
@@ -27,10 +26,10 @@ pub fn MyTimer(ctx: _, props: &MyTimerProps) {
     hooks::use_effect(
         move |stopped: &_| {
             let stopped = *stopped;
-            web_sys::console::log_1(&JsValue::from(format!(
+            gloo::console::log!(format!(
                 "Timer(initial_interval={}) stopped changed to {}",
                 initial_interval, stopped
-            )));
+            ));
             if stopped {
                 return None;
             } else {

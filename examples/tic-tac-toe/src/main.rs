@@ -5,44 +5,42 @@ pub mod data;
 
 use frender::prelude::*;
 
-def_props! {
+bg::builder! {
     pub struct SquareProps {
-        pub value<TNode: react::Node>(v: TNode) -> react::AnyNode {
-            v.into_node()
-        },
-        pub on_click: react::AnyFn<dyn Fn()>,
+        value[impl frender::UpdateRenderState<frender::Dom> + 'static],
+        on_click[impl frender::UpdateDomEventListener<frender::events::Click>],
     }
 }
 
-#[component]
-fn Square(props: &SquareProps) {
-    rsx!(
-        <button class="square" on_click={props.on_click.clone()}>
-            {&props.value}
+#[component(only_dom)]
+fn Square(ctx: _, props: SquareProps) {
+    ctx.render(rsx!(
+        <button class="square" on_click={props.on_click}>
+            {props.value}
         </button>
-    )
+    ))
 }
 
-def_props! {
+bg::builder! {
     pub struct BoardProps {
-        pub board: data::Board,
-        pub on_click: react::AnyFn<dyn Fn(usize)>,
+        board: data::Board,
+        on_click[impl Fn(usize) + 'static + Clone],
     }
 }
 
-#[component]
-fn Board(props: &BoardProps) {
+#[component(only_dom)]
+fn Board(ctx: _, props: BoardProps) {
     let render_square = |i: usize| {
         let on_click = props.on_click.clone();
         rsx!(
             <Square
-                value:={props.board.squares[i].to_str()}
-                on_click={move || on_click(i)}
+                value={props.board.squares[i].to_str()}
+                on_click={move |_: &_| on_click(i)}
             />
         )
     };
 
-    rsx!(
+    ctx.render(rsx!(
         <div>
             <div class="board-row">
                 {render_square(0)}
@@ -60,14 +58,15 @@ fn Board(props: &BoardProps) {
                 {render_square(8)}
             </div>
         </div>
-    )
+    ))
 }
 
-#[component]
-fn Game() {
-    let (state, state_setter) = react::use_state!(() => data::Game::new());
+#[component(only_dom)]
+fn Game(ctx: _) {
+    let (state, state_setter) = hooks::use_state_with(data::Game::new);
 
     let current = state.current();
+    let state_setter = state_setter.clone();
     let winner = current.calculate_winner();
 
     let status = match winner {
@@ -78,29 +77,15 @@ fn Game() {
     let on_click = {
         let state_setter = state_setter.clone();
         move |i| {
-            state_setter.set_optional_from_old(move |old| {
-                let mut game = (**old).clone();
-                if game.click(i) {
-                    // game state changed
-                    Some(game)
-                } else {
-                    // game state not changed
-                    None
-                }
+            state_setter.mutate_with_fn_box(move |game| {
+                game.click(i);
             })
         }
     };
 
     let jump_to = move |i| {
-        state_setter.set_optional_from_old(move |old| {
-            let mut game = (**old).clone();
-            if game.jump_to(i) {
-                // game state changed
-                Some(game)
-            } else {
-                // game state not changed
-                None
-            }
+        state_setter.mutate_with_fn_box(move |game| {
+            game.jump_to(i);
         })
     };
 
@@ -112,15 +97,16 @@ fn Game() {
             } else {
                 "Go to game start".to_string()
             };
+
             rsx!(
               <li key={i}>
-                <button on_click={move || jump_to(i)}>{desc}</button>
+                <button on_click={move |_: &_| jump_to(i)}>{desc}</button>
               </li>
             )
         })
         .collect::<Vec<_>>();
 
-    rsx!(
+    ctx.render(rsx!(
         <div class="game">
             <div class="game-board">
                 <Board
@@ -133,21 +119,21 @@ fn Game() {
                 <ol>{moves}</ol>
             </div>
         </div>
-    )
+    ))
 }
 
-#[component(main(mount_element_id = "frender-root"))]
-fn Main() {
-    rsx!(
-        <div style={style! {
-            "margin": "auto",
-            "padding": 16,
-            "maxWidth": 768,
-        }}>
+#[component(only_dom)]
+fn Main(ctx: _) {
+    ctx.render(rsx!(
+        <div style=r#"
+            margin: auto;
+            padding: 16px;
+            max-width: 768px;
+        "#>
             <h1>
                 "Tic Tac Toe - "
                 <i>
-                    <a href="https://github.com/frender-rs/frender" target={html::AnchorTarget::Blank}>
+                    <a href="https://github.com/frender-rs/frender" target="_blank">
                         <b children="f" />
                         "render"
                     </a>
@@ -155,11 +141,18 @@ fn Main() {
             </h1>
             <p>
                 "This is the frender version of "
-                <a href="https://codepen.io/gaearon/pen/gWWZgR?editors=0010" target={html::AnchorTarget::Blank}>"ReactJs Tic Tac Toe"</a>
+                <a href="https://codepen.io/gaearon/pen/gWWZgR?editors=0010" target="_blank">"ReactJs Tic Tac Toe"</a>
             </p>
-            <main style={style!{ "marginTop": "32px" }}>
+            <main style="margin-top: 32px">
                 <Game />
             </main>
         </div>
-    )
+    ))
+}
+
+fn main() {
+    ::frender::hook_element::frender_dom::spawn_mount_to_dom_element_by_id(
+        rsx!(Main()),
+        "frender-root",
+    );
 }

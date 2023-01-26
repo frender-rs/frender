@@ -63,7 +63,7 @@ impl<Event, F: FnOnce(&Event)> EventListenerOnce<Event, F> {
 pub type EventListenerOnceDyn<Event> = EventListenerOnce<Event, Box<dyn FnOnce(&Event)>>;
 
 pub trait UpdateDomEventListener<EventType: StaticEventType>: Sized {
-    type State: Default;
+    type State: Default + 'static;
 
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State);
 }
@@ -72,13 +72,13 @@ impl<EventType: StaticEventType> UpdateDomEventListener<EventType> for () {
     type State = ();
 
     #[inline]
-    fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {}
+    fn update_dom_event_listener(self, _: &EventTarget, _: &mut Self::State) {}
 }
 
 impl<EventType: StaticEventType, F: Fn(&EventType::Event) + ?Sized + 'static>
     UpdateDomEventListener<EventType> for EventListenerShared<EventType::Event, F>
 where
-    EventType::Event: JsCast,
+    EventType::Event: JsCast + 'static,
 {
     type State = Option<(Self, EventListener)>;
 

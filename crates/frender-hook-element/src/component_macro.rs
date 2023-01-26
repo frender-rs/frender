@@ -195,6 +195,7 @@ macro_rules! component_ssr_dom {
 #[cfg(feature = "dom")]
 #[macro_export]
 macro_rules! component_only_dom {
+    // fn MyComp () {}
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident () $body:tt
@@ -204,6 +205,7 @@ macro_rules! component_only_dom {
             $vis fn $name (_ctx: _) $body
         }
     };
+    // fn MyComp (ctx: _) {}
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident ($ctx_arg:tt : _ $(,)?)
@@ -241,6 +243,7 @@ macro_rules! component_only_dom {
             }
         }
     };
+    // fn MyComp (ctx: _, props: &MyCompProps) {}
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident ($ctx_arg:ident : _, $props_arg:ident : & $($props_name:ident)? $(:: $props_p:ident)* $(,)?)
@@ -290,37 +293,27 @@ macro_rules! component_only_dom {
             pub use build_element::build_element;
         }
     };
+    // fn MyComp (ctx: _, props: MyCompProps) {}
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident ($ctx_arg:ident : _, $props_arg:ident : $($props_name:ident)? $(:: $props_p:ident)* $(,)?)
         $impl_code:tt
     ) => {
-        impl self:: $name :: ImplSsr {
-            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
-            #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
-                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, dyn ::core::any::Any>,
-                $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-            ) -> $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, impl $crate::RenderState + 'static>
-            $impl_code
-        }
-
         impl self:: $name :: ImplDom {
             #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
             pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
-                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::Dom, dyn ::core::any::Any>,
+                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
                 $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-            ) -> $crate::ContextAndState<'render_ctx, Dom, impl $crate::RenderState + 'static>
+            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
             $impl_code
         }
 
-        $crate::builder! {
+        $crate::bg::builder! {
             $(#$attr)*
             $vis struct $name($($props_name)? $(:: $props_p)*);
 
             pub(super) enum ImplDom {}
-            pub(super) enum ImplSsr {}
 
             mod build_element {
                 use super::super::*;
@@ -329,22 +322,17 @@ macro_rules! component_only_dom {
                     super::Building(props): super::Building<TypesDef>,
                 ) -> $crate::HookElementWithOwnedProps<
                     impl $crate::FnOnceOutputElementHookWithOwnedProps<
-                            $crate::Dom,
+                            $crate::frender_dom::Dom,
                             $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-                            RenderState = impl $crate::RenderState + 'static,
+                            RenderState = impl $crate::frender_core::RenderState + 'static,
                         > + Copy
                         + 'static,
-                    impl $crate::FnOnceOutputElementHookWithOwnedProps<
-                            $crate::AnySsrContext,
-                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-                            RenderState = impl $crate::RenderState + 'static,
-                        > + Copy
-                        + 'static,
+                    (),
                     $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
                 > {
                     $crate::HookElementWithOwnedProps {
                         with_dom: super::ImplDom:: $name,
-                        with_ssr: super::ImplSsr:: $name,
+                        with_ssr: (),
                         props,
                     }
                 }
