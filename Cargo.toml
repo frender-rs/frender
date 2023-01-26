@@ -2,9 +2,12 @@
 
 members = [
     "frender",
-    "crates/*",
+    # TODO:
+    "crates/frender-*",
     "examples/*",
 ]
+
+exclude = ["examples/tic-tac-toe"]
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.

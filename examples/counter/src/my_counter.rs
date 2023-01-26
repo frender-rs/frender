@@ -1,26 +1,34 @@
 use frender::prelude::*;
+use hooks::ShareValue;
 
-def_props! {
-    #[derive(Debug)]
+bg::builder! {
     pub struct MyCounterProps {
-        pub initial_value?: usize,
+        initial_value[? u32],
     }
 }
 
-#[component]
-pub fn MyCounter(props: &MyCounterProps) {
-    let (state, state_setter) = react::use_state!(props.initial_value);
+#[component(only_dom)]
+pub fn MyCounter(ctx: _, props: &MyCounterProps) {
+    let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
+    let shared_state = hooks::use_shared_state(initial_value);
 
     let on_increment = {
-        let state_setter = state_setter.clone();
-        // clone state_setter so that the cloned value can be moved into the following closure
-        move || state_setter.set_from_old(|v| **v + 1)
+        let shared_state = shared_state.clone();
+        // clone state so that the cloned value can be moved into the following closure
+        move |_: &_| {
+            shared_state.replace_from_ref(|v| *v + 1);
+        }
     };
-    let on_decrement = move || state_setter.set_from_old(|v| **v - 1);
+    let on_decrement = {
+        let shared_state = shared_state.clone();
+        move |_: &_| {
+            shared_state.replace_from_ref(|v| *v - 1);
+        }
+    };
 
-    let state = *state;
+    let state = shared_state.get();
 
-    rsx!(
+    render!(ctx=>
         <div>
             <button on_click={on_decrement} disabled={state == 0}>
                 " - "
@@ -28,7 +36,7 @@ pub fn MyCounter(props: &MyCounterProps) {
             " "
             {state}
             " "
-            <button on_click={on_increment} disabled={state == usize::MAX}>
+            <button on_click={on_increment} disabled={state == u32::MAX}>
                 " + "
             </button>
         </div>

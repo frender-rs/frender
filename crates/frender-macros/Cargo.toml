@@ -13,7 +13,7 @@ proc-macro = true
 [dependencies]
 syn = "1.0.86"
 quote = "1.0"
-darling = "0.13.1"
+darling = "0.14"
 regex = "1"
 lazy_static = "1"
 proc-macro2 = "1.0.36"

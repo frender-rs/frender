@@ -52,6 +52,10 @@ jobs:
           cargo check -p frender-hook-element --features ssr
           cargo check -p frender-hook-element --features dom
           cargo check -p frender-hook-element --features ssr,dom
+
+          cargo check -p frender-dom
+          cargo check -p frender-dom --features spawn
+
           wasm-pack test --node frender
       - name: Release
         env:

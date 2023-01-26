@@ -1,7 +1,7 @@
+mod auto_intrinsic;
 mod case;
 mod component_data;
 mod component_to_tokens;
-mod custom_element;
 mod err;
 mod props_data;
 mod props_to_tokens;
@@ -16,11 +16,10 @@ use syn::parse_macro_input;
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     use component_data::*;
     let attr_args = parse_macro_input!(args as syn::AttributeArgs);
-    let input_fn = parse_macro_input!(input as syn::ItemFn);
 
-    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, input_fn);
+    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, input);
 
-    comp.into_ts().into()
+    comp.into_ts()
 }
 
 #[proc_macro]
@@ -37,11 +36,21 @@ pub fn ident_snake_to_camel(input: TokenStream) -> TokenStream {
     lit.to_token_stream().into()
 }
 
+/// intrinsic components are not auto prepend with `self::intrinsic_components::`
 #[proc_macro]
-pub fn rsx(input: TokenStream) -> TokenStream {
-    let value = parse_macro_input!(input as rsx_data::RsxChild);
+pub fn rsx_xml_with_full_path(input: TokenStream) -> TokenStream {
+    let value = match syn::parse::<rsx_data::OptionalCratePathAndRsxChild>(input) {
+        Ok(v) => v,
+        Err(err) => {
+            return proc_macro::TokenTree::Group(proc_macro::Group::new(
+                proc_macro::Delimiter::Brace,
+                err.to_compile_error().into(),
+            ))
+            .into()
+        }
+    };
 
-    value.to_token_stream().into()
+    value.into_ts().into()
 }
 
 #[proc_macro]
@@ -53,12 +62,7 @@ pub fn def_props(input: TokenStream) -> TokenStream {
     ts.into()
 }
 
-#[proc_macro_attribute]
-pub fn custom_element(args: TokenStream, input: TokenStream) -> TokenStream {
-    use custom_element::*;
-
-    match CustomElementDefinition::parse_input(args, input) {
-        Ok(v) => v.into_ts().into(),
-        Err(error) => error.write_errors().into(),
-    }
+#[proc_macro]
+pub fn __impl_auto_prepend_intrinsic_components(input: TokenStream) -> TokenStream {
+    auto_intrinsic::auto_intrinsic(input)
 }

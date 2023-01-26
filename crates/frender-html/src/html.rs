@@ -103,7 +103,7 @@ crate::def_intrinsic_component_props! {
             role ? str,
             slot ? str,
             spellcheck ? bool { set_spellcheck* },
-            // style ? str { set_style }, // TODO:
+            style ? str,
             tab_index ? i32 { "tabindex" set_tab_index* },
             title ? str {set_title},
             translate ? str,
@@ -112,6 +112,16 @@ crate::def_intrinsic_component_props! {
             // TODO: aria-*
             // TODO: data-*
             // TODO: events
+            on_click : () = () => {
+                dom {
+                    bounds[crate::props::UpdateDomEventListener<crate::props::events::Click>]
+                    state
+                        < <TypeDefs::on_click as crate::props::UpdateDomEventListener<crate::props::events::Click>>::State >
+                    impl { data, state, element, .. } {
+                        crate::props::UpdateDomEventListener::<crate::props::events::Click>::update_dom_event_listener(data, element, state)
+                    }
+                }
+            },
         } [
             pub struct HtmlHrefCommonProps(web_sys::HtmlAnchorElement) {
                 download ? str { set_download },

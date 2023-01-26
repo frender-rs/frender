@@ -1,10 +1,17 @@
+use darling::ToTokens;
 use proc_macro2::Span;
 use syn::{braced, parse::Parse, punctuated::Punctuated, spanned::Spanned};
+
+pub struct RsxCratePath {
+    pub at: syn::Token![@],
+    pub bracket: syn::token::Bracket,
+    pub path: proc_macro2::TokenStream,
+}
 
 pub struct RsxElement {
     pub start_lt: syn::Token![<],
     pub component_type: RsxComponentType,
-    pub props: Punctuated<RsxProp, syn::token::Group>,
+    pub props: Vec<RsxProp>,
     pub key: Option<RsxKey>,
     pub children: RsxElementChildren,
 }
@@ -18,12 +25,49 @@ pub enum RsxElementChildren {
     /// `<a></a>` or `<a></_>`
     Yes {
         start_gt: syn::Token![>],
-        children: Punctuated<RsxChild, syn::token::Group>,
+        children: Vec<RsxChild>,
         end_lt: syn::Token![<],
         end_slash: syn::Token![/],
         end_component_type: RsxEndElementComponentType,
         end_gt: syn::Token![>],
     },
+}
+
+impl RsxElementChildren {
+    pub fn start_gt(&self) -> &syn::Token![>] {
+        match self {
+            RsxElementChildren::No { start_gt, .. } => start_gt,
+            RsxElementChildren::Yes { start_gt, .. } => start_gt,
+        }
+    }
+
+    pub fn unwrap_children(self) -> Option<Vec<RsxChild>> {
+        match self {
+            RsxElementChildren::No { .. } => None,
+            RsxElementChildren::Yes { children, .. } => {
+                if children.is_empty() {
+                    None
+                } else {
+                    Some(children)
+                }
+            }
+        }
+    }
+
+    pub fn unwrap_children_and_span(self) -> Option<(Vec<RsxChild>, Span)> {
+        match self {
+            RsxElementChildren::No { .. } => None,
+            RsxElementChildren::Yes {
+                children, start_gt, ..
+            } => {
+                if children.is_empty() {
+                    None
+                } else {
+                    Some((children, start_gt.span))
+                }
+            }
+        }
+    }
 }
 
 pub enum RsxEndElementComponentType {
@@ -63,12 +107,20 @@ impl RsxEndElementComponentType {
                     RsxComponentType::Fragment(_) => true,
                     _ => false,
                 },
-                RsxComponentType::Intrinsic(start) => match end {
-                    RsxComponentType::Intrinsic(end) => end == start,
-                    _ => false,
-                },
-                RsxComponentType::TypePath(start) => match end {
-                    RsxComponentType::TypePath(end) => end == start,
+                RsxComponentType::Path(start) => match end {
+                    RsxComponentType::Path(end) => {
+                        end == start
+                            || end.get_ident().map_or(false, |end_ident| {
+                                start.leading_colon.is_none()
+                                    && start.segments.len() == 3
+                                    && start.segments[0].arguments.is_none()
+                                    && start.segments[0].ident == "self"
+                                    && start.segments[1].arguments.is_none()
+                                    && start.segments[1].ident == "intrinsic_components"
+                                    && start.segments[2].arguments.is_none()
+                                    && start.segments[2].ident == end_ident.to_string()
+                            })
+                    }
                     _ => false,
                 },
             },
@@ -103,7 +155,7 @@ impl Parse for RsxElement {
         let start_lt: syn::Token![<] = input.parse()?;
         let component_type: RsxComponentType = input.parse()?;
 
-        let mut props = Punctuated::new();
+        let mut props = Vec::new();
         let mut key: Option<RsxKey> = None;
 
         loop {
@@ -111,7 +163,7 @@ impl Parse for RsxElement {
             if let Some(start_gt) = start_gt {
                 // <a> props end but there might be children
 
-                let mut children = Punctuated::new();
+                let mut children = Vec::new();
                 loop {
                     if input.peek(syn::Token![<]) {
                         if input.peek2(syn::Token![/]) {
@@ -151,7 +203,7 @@ impl Parse for RsxElement {
                     } else {
                         // { expr } or "lit"
                         let le = input.parse()?;
-                        children.push(RsxChild::LitOrBracedExpr(le));
+                        children.push(RsxChild::LitOrBraced(le));
                     }
                 }
             }
@@ -193,8 +245,7 @@ impl Parse for RsxElement {
 pub enum RsxComponentType {
     /// `<>` or `<#>`
     Fragment(Option<syn::Token![#]>),
-    Intrinsic(syn::Ident),
-    TypePath(syn::TypePath),
+    Path(syn::Path),
 }
 
 impl std::fmt::Display for RsxComponentType {
@@ -203,8 +254,7 @@ impl std::fmt::Display for RsxComponentType {
             RsxComponentType::Fragment(t) => {
                 write!(f, "{}", if t.is_some() { "#" } else { "" })
             }
-            RsxComponentType::Intrinsic(id) => write!(f, "{}", id),
-            RsxComponentType::TypePath(tp) => write!(f, "{:?}", tp),
+            RsxComponentType::Path(tp) => write!(f, "{}", tp.to_token_stream().to_string()),
         }
     }
 }
@@ -213,8 +263,7 @@ impl RsxComponentType {
     pub fn optional_span(&self) -> Option<Span> {
         match self {
             RsxComponentType::Fragment(t) => t.as_ref().map(Spanned::span),
-            RsxComponentType::Intrinsic(id) => Some(id.span()),
-            RsxComponentType::TypePath(tp) => Some(tp.span()),
+            RsxComponentType::Path(tp) => Some(tp.span()),
         }
     }
 }
@@ -242,19 +291,9 @@ impl Parse for RsxComponentType {
                 // <#> fragment
                 Ok(Self::Fragment(Some(frag)))
             } else {
-                let p: syn::TypePath = input.parse()?;
+                let p: syn::Path = input.parse()?;
 
-                if p.qself.is_none()
-                    && p.path
-                        .get_ident()
-                        .map_or(false, ident_is_intrinsic_component)
-                {
-                    // <a> intrinsic component
-                    Ok(Self::Intrinsic(p.path.segments[0].ident.clone()))
-                } else {
-                    // <MyComp>
-                    Ok(Self::TypePath(p))
-                }
+                Ok(Self::Path(p))
             }
         }
     }
@@ -299,31 +338,18 @@ impl Parse for RsxKeyOrProp {
 }
 
 pub struct RsxPropValue {
-    /// if is some,
-    /// then value itself will be passed without
-    /// `IntoPropValue::into_prop_value` or `AsKey::as_key`
-    pub colon: Option<syn::Token![:]>,
     pub eq: syn::Token![=],
-    pub value: LitOrBracedExpr,
+    pub value: LitOrBraced,
 }
 
 impl Parse for RsxProp {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let name: syn::Ident = input.parse()?;
-        let colon: Option<syn::Token![:]> = input.parse()?;
 
-        let value = if colon.is_some() {
-            let eq: syn::Token![=] = input.parse()?;
-            Some(RsxPropValue {
-                colon,
-                eq,
-                value: input.parse()?,
-            })
-        } else {
+        let value = {
             let eq: Option<syn::Token![=]> = input.parse()?;
             if let Some(eq) = eq {
                 Some(RsxPropValue {
-                    colon: None,
                     eq,
                     value: input.parse()?,
                 })
@@ -336,24 +362,24 @@ impl Parse for RsxProp {
     }
 }
 
-pub enum LitOrBracedExpr {
+pub enum LitOrBraced {
     Lit(syn::Lit),
-    BracedExpr {
+    Braced {
         brace: syn::token::Brace,
-        expr: syn::Expr,
+        inner: proc_macro2::TokenStream,
     },
 }
 
-impl Parse for LitOrBracedExpr {
+impl Parse for LitOrBraced {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let lookahead = input.lookahead1();
         if lookahead.peek(syn::token::Brace) {
             let expr;
             let brace = braced!(expr in input);
 
-            Ok(Self::BracedExpr {
+            Ok(Self::Braced {
                 brace,
-                expr: expr.parse()?,
+                inner: expr.parse()?,
             })
         } else {
             input.parse().map(Self::Lit)
@@ -362,7 +388,7 @@ impl Parse for LitOrBracedExpr {
 }
 
 pub enum RsxChild {
-    LitOrBracedExpr(LitOrBracedExpr),
+    LitOrBraced(LitOrBraced),
     Element(RsxElement),
 }
 
@@ -371,7 +397,34 @@ impl Parse for RsxChild {
         if input.peek(syn::Token![<]) {
             input.parse().map(Self::Element)
         } else {
-            input.parse().map(Self::LitOrBracedExpr)
+            input.parse().map(Self::LitOrBraced)
         }
+    }
+}
+
+pub struct OptionalCratePathAndRsxChild {
+    pub crate_path: Option<RsxCratePath>,
+    pub child: RsxChild,
+}
+
+impl Parse for OptionalCratePathAndRsxChild {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let crate_path_at: Option<syn::Token![@]> = input.parse()?;
+
+        let crate_path = if let Some(at) = crate_path_at {
+            let path;
+
+            Some(RsxCratePath {
+                at,
+                bracket: syn::bracketed!(path in input),
+                path: path.parse()?,
+            })
+        } else {
+            None
+        };
+
+        let child = input.parse()?;
+
+        Ok(Self { crate_path, child })
     }
 }

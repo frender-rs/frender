@@ -8,41 +8,81 @@ use crate::err::{
 
 #[derive(Debug, FromMeta)]
 pub struct ComponentMainOptions {
-    #[darling(default)]
-    pub no_strict_mode: darling::util::Flag,
     pub mount_element_id: String,
 }
 
+pub enum RenderCtx {
+    Ssr,
+    Dom,
+    SsrAndDom,
+}
+
+impl RenderCtx {
+    pub fn macro_name(self) -> &'static str {
+        match self {
+            RenderCtx::Ssr => "component_only_ssr",
+            RenderCtx::Dom => "component_only_dom",
+            RenderCtx::SsrAndDom => "component_ssr_dom",
+        }
+    }
+}
+
 #[derive(Debug, FromMeta, Default)]
-pub struct ComponentOptions {
-    #[darling(default)]
-    pub display_name: Option<String>,
-    #[darling(default)]
-    pub no_debug_props: darling::util::Flag,
+pub struct ComponentOptionsInput {
     #[darling(default)]
     pub main: Option<darling::util::SpannedValue<ComponentMainOptions>>,
+    pub hook_element_path: Option<syn::Path>,
+    pub only_ssr: darling::util::Flag,
+    pub only_dom: darling::util::Flag,
+}
+
+pub struct ComponentOptions {
+    pub main: Option<darling::util::SpannedValue<ComponentMainOptions>>,
+    // Defaults to `::frender::hook_element`
+    pub hook_element_path: Option<syn::Path>,
+    pub render_ctx: RenderCtx,
 }
 
 pub struct ComponentDefinition {
     pub errors: Vec<darling::Error>,
     pub options: ComponentOptions,
-    pub item_fn: ComponentItemFn,
+    pub item_fn: proc_macro::TokenStream,
 }
 
 impl ComponentDefinition {
-    pub fn from_attrs_and_fn(attr_args: syn::AttributeArgs, input_fn: syn::ItemFn) -> Self {
+    pub fn from_attrs_and_fn(
+        attr_args: syn::AttributeArgs,
+        item_fn: proc_macro::TokenStream,
+    ) -> Self {
         let mut errors = vec![];
-        let options = match ComponentOptions::from_list(&attr_args) {
+        let options = match ComponentOptionsInput::from_list(&attr_args) {
             Ok(v) => v,
             Err(err) => {
                 errors.push(err);
-                ComponentOptions::default()
+                ComponentOptionsInput::default()
             }
         };
 
-        let item_fn = ComponentItemFn::try_from_input_fn(input_fn)
-            .unwrap_value_and_record_error(&mut errors)
-            .unwrap_value();
+        let render_ctx = if options.only_ssr.is_present() {
+            if options.only_dom.is_present() {
+                const MSG: &str = "`only_ssr` and `only_dom` can't be both present";
+                errors.push(darling::Error::custom(MSG).with_span(&options.only_ssr));
+                errors.push(darling::Error::custom(MSG).with_span(&options.only_dom));
+                RenderCtx::SsrAndDom
+            } else {
+                RenderCtx::Ssr
+            }
+        } else if options.only_dom.is_present() {
+            RenderCtx::Dom
+        } else {
+            RenderCtx::SsrAndDom
+        };
+
+        let options = ComponentOptions {
+            main: options.main,
+            hook_element_path: options.hook_element_path,
+            render_ctx,
+        };
 
         Self {
             options,

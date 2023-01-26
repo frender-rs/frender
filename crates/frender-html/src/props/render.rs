@@ -34,7 +34,16 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 }
 
-impl<E: AsRef<web_sys::Element>, S: Default> RenderState for IntrinsicComponentRenderState<E, S> {
+pub trait IntrinsicComponentPollReactive {
+    fn intrinsic_component_poll_reactive(
+        self: Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<bool>;
+}
+
+impl<E: AsRef<web_sys::Element>, S: Default + IntrinsicComponentPollReactive> RenderState
+    for IntrinsicComponentRenderState<E, S>
+{
     fn new_uninitialized() -> Self {
         Self {
             element_and_mounted: None,
@@ -50,5 +59,13 @@ impl<E: AsRef<web_sys::Element>, S: Default> RenderState for IntrinsicComponentR
             }
             _ => {}
         }
+    }
+
+    #[inline]
+    fn poll_reactive(
+        self: Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<bool> {
+        S::intrinsic_component_poll_reactive(self.project().render_state, cx)
     }
 }

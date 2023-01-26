@@ -1,77 +1,55 @@
 use frender::prelude::*;
-use wasm_bindgen::{closure::Closure, JsCast, JsValue, UnwrapThrowExt};
+use wasm_bindgen::JsValue;
 
-def_props! {
-    #[derive(Debug)]
+bg::builder! {
     pub struct MyTimerProps {
-        pub initial_interval?: i32,
+        initial_interval: u32 = 0,
     }
 }
 
-#[component]
-pub fn MyTimer(props: &MyTimerProps) {
-    let initial_interval = &props.initial_interval;
-    let initial_interval = if initial_interval > &0 {
-        *initial_interval
-    } else {
-        1000
-    };
-
-    // use_ref of the initial_interval value,
+#[component(only_dom)]
+pub fn MyTimer(ctx: _, props: &MyTimerProps) {
+    // store the initial_interval value,
     // so that the value never changes in the component life.
-    let ref_initial_interval = react::use_ref!(initial_interval);
-    let initial_interval = *ref_initial_interval.current();
+    let ref_initial_interval = hooks::use_mut_default::<Option<u32>>();
+    let mut initial_interval = *ref_initial_interval.get_or_insert(props.initial_interval);
+    if initial_interval == 0 {
+        initial_interval = 1000;
+    }
 
-    let (state, state_setter) = react::use_state!(0usize);
-    let (stopped_rc, stopped_setter) = react::use_state!(false);
+    let (state, state_updater) = hooks::use_state(0usize);
+    let (stopped, stopped_setter) = hooks::use_state(false);
 
-    let stopped = *stopped_rc;
+    let stopped = *stopped;
 
-    // use_ref of our closure,
-    // so that the closure is persisted in the component life.
-    let ref_handler = react::use_ref!(None::<Closure<dyn Fn()>>);
+    let state_updater = state_updater.clone();
 
-    // ref_handler should also be listed as an explicit dependency,
-    // even though it will always be equal to the previous value.
-    react::use_effect!((stopped_rc) => {
-        let stopped = *stopped_rc;
-        let initial_interval = *ref_initial_interval.current();
+    hooks::use_effect(
+        move |stopped: &_| {
+            let stopped = *stopped;
+            web_sys::console::log_1(&JsValue::from(format!(
+                "Timer(initial_interval={}) stopped changed to {}",
+                initial_interval, stopped
+            )));
+            if stopped {
+                return None;
+            } else {
+                let interval = gloo::timers::callback::Interval::new(initial_interval, move || {
+                    state_updater.replace_with_fn_pointer(|v| v.overflowing_add(1).0)
+                });
 
-        web_sys::console::log_1(&JsValue::from(
-            format!("Timer(initial_interval={}) stopped changed to {}", initial_interval, stopped)
-        ));
-        if stopped {
-            ref_handler.set_current(None);
-            return None;
-        }
-        let window = web_sys::window().unwrap();
-        let closure = Closure::wrap(Box::new(move || {
-            state_setter.set_from_old(|v| {
-                let v = **v;
-                v.overflowing_add(1).0
-            })
-        }) as Box<dyn Fn()>);
-        let js_func: &JsValue = closure.as_ref().as_ref();
-
-        let handle = window
-            .set_interval_with_callback_and_timeout_and_arguments_0(
-                js_func.unchecked_ref(),
-                initial_interval,
-            )
-            .unwrap_throw();
-
-        ref_handler.set_current(Some(closure));
-
-        // return a cleanup function which will clear the interval
-        Some(move || {
-            window.clear_interval_with_handle(handle);
-        })
-    });
+                // return a cleanup function which will clear the interval
+                Some(move || drop(interval))
+            }
+        },
+        stopped,
+    );
 
     let state = *state;
-    let toggle_stopped = move || stopped_setter.set_from_old(|v| !**v);
+    let stopped_setter = stopped_setter.clone();
+    let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
 
-    rsx!(
+    render!(ctx =>
         <div>
             "Timer(initial_interval="{initial_interval}"): "
             {state}

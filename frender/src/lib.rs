@@ -1,63 +1,129 @@
 mod debug;
 pub use debug::*;
 
-pub mod intrinsic_components;
+pub use frender_macros::{component, def_props};
 
-pub use forgotten;
-pub use react;
-pub use react::{AsKey, Children};
-pub use react_html as html;
-pub use react_html::style;
+pub use frender_html::intrinsic_components;
 
-pub use frender_macros::{component, def_props, rsx};
-pub use react::Element;
+pub use frender_hook_element as hook_element;
 
 pub mod prelude {
-    pub use super::html;
-    pub use super::intrinsic_components;
-    pub use super::react;
-    pub use super::react::{
-        Component, ComponentStatic, ReadRef, UseRender, UseRenderStatic, WriteRef,
+    pub use bg;
+    pub use bg::{Maybe as _, MaybeBorrow as _};
+
+    pub use crate::{render, rsx};
+    pub use frender_html::intrinsic_components;
+    pub use frender_macros::component;
+}
+
+#[macro_export]
+macro_rules! rsx_xml {
+    (< $name:ident $next:tt $($t:tt)*) => {
+        $crate::__impl_rsx_xml_ident_next! {
+            $next
+            $name
+            $next
+            $($t)*
+        }
     };
-    pub use super::{component, def_props, rsx, style};
-
-    pub mod rsx_runtime {
-        pub use super::super::impl_rsx_prop;
-        pub use react::Fragment;
-
-        #[inline]
-        pub fn init_props_builder<TComp: react::Component>(
-        ) -> <TComp::Props as react::Props>::InitialBuilder {
-            <TComp::Props as react::Props>::init_builder()
-        }
-
-        #[inline]
-        pub fn impl_rsx_static<
-            TComp: react::ComponentStatic,
-            TBuilder: react::PropsBuilder<TComp::Props>,
-        >(
-            props_builder: TBuilder,
-            key: Option<react::Key>,
-        ) -> TComp::Element {
-            let props = react::PropsBuilder::build(props_builder);
-            TComp::create_element(props, key)
-        }
-
-        #[inline]
-        pub fn impl_rsx<TComp: react::Component, TBuilder: react::PropsBuilder<TComp::Props>>(
-            component: TComp,
-            props_builder: TBuilder,
-            key: Option<react::Key>,
-        ) -> TComp::Element {
-            let props = react::PropsBuilder::build(props_builder);
-            component.create_element(props, key)
+    (< $($t:tt)*) => {
+        $crate::__private::rsx_xml_with_full_path! {
+            < $($t)*
         }
     }
 }
 
 #[macro_export]
-macro_rules! impl_rsx_prop {
-    ($v:ident . $prop:ident ( $value:expr )) => {
-        $v.$prop($value)
+macro_rules! render {
+    ($ctx:expr => $($t:tt)*) => {
+        $crate::__private::frender_hook_element::ContextAndState::render($ctx, $crate::rsx!($($t)*))
+    };
+}
+
+#[macro_export]
+macro_rules! rsx {
+    (< $($t:tt)*) => {
+        $crate::rsx_xml! {
+            < $($t)*
+        }
+    };
+    ($lit:literal) => { $lit };
+    ({ $($braced:tt)* }) => { $($braced)* };
+    (
+        $($t:tt)*
+    ) => {
+        $crate::rsx_build_element! { $($t)* }
+    };
+}
+
+#[doc(hidden)]
+pub mod __private {
+    pub use frender_hook_element;
+
+    pub use frender_macros::rsx_xml_with_full_path;
+
+    pub use frender_macros::__impl_auto_prepend_intrinsic_components;
+}
+
+#[macro_export]
+macro_rules! __impl_rsx_xml_ident_next {
+    (
+        / $($t:tt)*
+    ) => {
+        $crate::__private::__impl_auto_prepend_intrinsic_components! {
+            [$crate::__private::rsx_xml_with_full_path]
+            [<]
+            $($t)*
+        }
+    };
+    (
+        > $($t:tt)*
+    ) => {
+        $crate::__private::__impl_auto_prepend_intrinsic_components! {
+            [$crate::__private::rsx_xml_with_full_path]
+            [<]
+            $($t)*
+        }
+    };
+    (
+        $_prop:ident $($t:tt)*
+    ) => {
+        $crate::__private::__impl_auto_prepend_intrinsic_components! {
+            [$crate::__private::rsx_xml_with_full_path]
+            [<]
+            $($t)*
+        }
+    };
+    (
+        $($t:tt)*
+    ) => {
+        $crate::__private::rsx_xml_with_full_path! {
+            < $($t)*
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! rsx_build_element {
+    (
+        $maybe_intrinsic:ident
+        ($($inner:tt)*)
+        $($t:tt)*
+    ) => {
+        $crate::__private::__impl_auto_prepend_intrinsic_components! {
+            [$crate::prelude::bg::finish_builder_with]
+            [[build_element]]
+            $maybe_intrinsic
+            ($($inner)*)
+            $($t)*
+        }
+    };
+    (
+        $($t:tt)*
+    ) => {
+        $crate::prelude::bg::finish_builder_with!(
+            [build_element]
+            $($t)*
+        )
     };
 }

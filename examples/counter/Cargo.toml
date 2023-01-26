@@ -10,7 +10,7 @@ default = ["console_error_panic_hook"]
 [dependencies]
 wasm-bindgen = "0.2.74"
 js-sys = "0.3"
-frender = { path = "../../frender" }
+frender = { path = "../../frender", features = ["dom", "ssr", "spawn"] }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -24,22 +24,13 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 #
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.5", optional = true }
+hooks = "1.0.0-alpha.20"
+gloo = "0.8.0"
+wasm-bindgen-futures = "0.4.33"
 
 [dependencies.web-sys]
 version = "0.3"
-features = [
-    "console",
-    "Window",
-    "Document",
-    "Element",
-]
+features = ["console", "Window", "Document", "Element"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
-
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = false
-[package.metadata.wasm-pack.profile.dev]
-wasm-opt = false
-[package.metadata.wasm-pack.profile.profiling]
-wasm-opt = false

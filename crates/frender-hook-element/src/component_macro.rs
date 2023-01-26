@@ -1,6 +1,6 @@
 #[cfg(all(feature = "ssr", feature = "dom"))]
 #[macro_export]
-macro_rules! component_dom_ssr {
+macro_rules! component_ssr_dom {
     (
         $(#$attr:tt)*
         $vis:vis fn $name:ident () $body:tt
@@ -192,8 +192,168 @@ macro_rules! component_dom_ssr {
 // #[cfg(feature = "ssr")]
 // pub mod only_ssr;
 
-// #[cfg(feature = "dom")]
-// pub mod only_dom;
+#[cfg(feature = "dom")]
+#[macro_export]
+macro_rules! component_only_dom {
+    (
+        $(#$attr:tt)*
+        $vis:vis fn $name:ident () $body:tt
+    ) => {
+        $crate::component_only_dom! {
+            $(#$attr)*
+            $vis fn $name (_ctx: _) $body
+        }
+    };
+    (
+        $(#$attr:tt)*
+        $vis:vis fn $name:ident ($ctx_arg:tt : _ $(,)?)
+        $impl_code:tt
+    ) => {
+        impl self:: $name ::ImplDom {
+            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
+            #[allow(non_snake_case)]
+            fn $name(
+                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
+            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
+            $impl_code
+        }
+
+        $crate::bg::builder! {
+            $(#$attr)*
+            $vis struct $name($crate::bg::Empty);
+
+            pub(super) enum ImplDom {}
+
+            #[inline]
+            pub fn build_element<TypesDef: ?Sized + $crate::bg::Empty::ValidTypes>(
+                _: Building<TypesDef>,
+            ) -> $crate::HookElementWithNoProps<
+                impl $crate::FnOnceOutputElementHookWithNoProps<
+                    $crate::frender_dom::Dom,
+                    RenderState = impl $crate::frender_core::RenderState + 'static,
+                > + ::core::marker::Copy + 'static,
+                (),
+            > {
+                $crate::HookElementWithNoProps {
+                    with_dom: self::ImplDom::$name,
+                    with_ssr: (),
+                }
+            }
+        }
+    };
+    (
+        $(#$attr:tt)*
+        $vis:vis fn $name:ident ($ctx_arg:ident : _, $props_arg:ident : & $($props_name:ident)? $(:: $props_p:ident)* $(,)?)
+        $impl_code:tt
+    ) => {
+        impl self:: $name ::ImplDom {
+            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
+            #[allow(non_snake_case)]
+            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
+                $props_arg: &$($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
+            $impl_code
+        }
+
+        $crate::bg::builder! {
+            $(#$attr)*
+            $vis struct $name($($props_name)? $(:: $props_p)*);
+
+            pub(super) enum ImplDom {}
+            pub(super) enum ImplSsr {}
+
+            mod build_element {
+                use super::super::*;
+
+                #[inline]
+                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                    super::Building(props): super::Building<TypesDef>,
+                ) -> $crate::HookElementWithRefProps<
+                    impl $crate::FnOnceOutputElementHookWithRefProps<
+                            $crate::frender_dom::Dom,
+                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                            RenderState = impl $crate::frender_core::RenderState + 'static,
+                        > + Copy
+                        + 'static,
+                    (),
+                    $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                > {
+                    $crate::HookElementWithRefProps {
+                        with_dom: super::ImplDom::$name,
+                        with_ssr: (),
+                        props,
+                    }
+                }
+            }
+
+            pub use build_element::build_element;
+        }
+    };
+    (
+        $(#$attr:tt)*
+        $vis:vis fn $name:ident ($ctx_arg:ident : _, $props_arg:ident : $($props_name:ident)? $(:: $props_p:ident)* $(,)?)
+        $impl_code:tt
+    ) => {
+        impl self:: $name :: ImplSsr {
+            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
+            #[allow(non_snake_case)]
+            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, dyn ::core::any::Any>,
+                $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+            ) -> $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, impl $crate::RenderState + 'static>
+            $impl_code
+        }
+
+        impl self:: $name :: ImplDom {
+            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
+            #[allow(non_snake_case)]
+            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::Dom, dyn ::core::any::Any>,
+                $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+            ) -> $crate::ContextAndState<'render_ctx, Dom, impl $crate::RenderState + 'static>
+            $impl_code
+        }
+
+        $crate::builder! {
+            $(#$attr)*
+            $vis struct $name($($props_name)? $(:: $props_p)*);
+
+            pub(super) enum ImplDom {}
+            pub(super) enum ImplSsr {}
+
+            mod build_element {
+                use super::super::*;
+                #[inline]
+                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                    super::Building(props): super::Building<TypesDef>,
+                ) -> $crate::HookElementWithOwnedProps<
+                    impl $crate::FnOnceOutputElementHookWithOwnedProps<
+                            $crate::Dom,
+                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                            RenderState = impl $crate::RenderState + 'static,
+                        > + Copy
+                        + 'static,
+                    impl $crate::FnOnceOutputElementHookWithOwnedProps<
+                            $crate::AnySsrContext,
+                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                            RenderState = impl $crate::RenderState + 'static,
+                        > + Copy
+                        + 'static,
+                    $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                > {
+                    $crate::HookElementWithOwnedProps {
+                        with_dom: super::ImplDom:: $name,
+                        with_ssr: super::ImplSsr:: $name,
+                        props,
+                    }
+                }
+            }
+
+            pub use build_element::build_element;
+        }
+    };
+}
 
 pub use hooks::core as hooks_core;
 pub use hooks::hook;

@@ -2,8 +2,10 @@ use std::pin::Pin;
 
 use frender_dom::Dom;
 
+use super::IntrinsicComponentPollReactive;
+
 pub trait UpdateElement<E> {
-    type State: Default;
+    type State: Default + IntrinsicComponentPollReactive;
 
     fn update_element(
         this: Self,

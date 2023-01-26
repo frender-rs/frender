@@ -385,6 +385,21 @@ macro_rules! __impl_def_intrinsic_component_props {
                         }
                     }
                 }
+
+                impl <
+                    TypeDefs: ?::core::marker::Sized + RenderStateTypes,
+                > $crate::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
+                    #[inline]
+                    fn intrinsic_component_poll_reactive(
+                        self: ::core::pin::Pin<&mut Self>,
+                        cx: &mut ::core::task::Context<'_>,
+                    ) -> ::core::task::Poll<bool> {
+                        ::frender_core::RenderState::poll_reactive(
+                            self.project().children,
+                            cx
+                        )
+                    }
+                }
             }
 
             #[inline]
@@ -414,7 +429,7 @@ macro_rules! __impl_def_intrinsic_component_props {
         > $crate::props::UpdateElement<$dom_element_ty> for $name::Data<TypeDefs>
         where
             $(
-                $(TypeDefs::$field : $($dom_bounds)+)?
+                $(TypeDefs::$field : $($dom_bounds)+ ,)?
             )*
         {
             type State = $name::render_state::RenderState<

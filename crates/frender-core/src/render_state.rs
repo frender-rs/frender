@@ -5,7 +5,9 @@ use crate::utils::pin_as_deref_mut;
 pub trait RenderState {
     /// We are not using [`Default`] trait because
     /// [`Pin<Box<_>>`] does not impl [`Default`].
-    fn new_uninitialized() -> Self;
+    fn new_uninitialized() -> Self
+    where
+        Self: Sized;
 
     fn unmount(self: Pin<&mut Self>);
 
