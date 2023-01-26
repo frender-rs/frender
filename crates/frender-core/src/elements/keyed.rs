@@ -2,6 +2,10 @@ use std::collections::HashMap;
 
 use crate::{RenderState, UpdateRenderState};
 
+/// TODO: `Keyed(element, key)`
+///     - improve performance.
+///       Currently, all elements are unmounted and then new elements update the states.
+///     - impl UpdateRenderState<Ctx> for T where T: IntoIterator<Keyed<E, K>>
 pub struct Keyed<E, K>(pub E, pub K);
 
 pub struct KeyedElementsState<K, S> {
