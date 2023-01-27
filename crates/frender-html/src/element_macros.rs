@@ -155,7 +155,10 @@ macro_rules! __impl_def_intrinsic_component_props_one {
     (
         $vis:vis struct $name:ident (
             $dom_element_ty:ty
-            $(: $($component_name:ident),+ $(,)?)?
+            $(
+                : $component_name:ident
+                $(, $alias_component_name:ident)* $(,)?
+            )?
         ) {$(
             $(#$field_attr:tt)*
             $field:ident
@@ -218,13 +221,17 @@ macro_rules! __impl_def_intrinsic_component_props_one {
             ),*}
         }
 
-        $($(
+        $(
             $crate::__impl_def_intrinsic_component! {
+                pub
                 $component_name
+                [$(
+                    $alias_component_name
+                )*]
                 $name
                 $dom_element_ty
             }
-        )+)?
+        )?
     };
 }
 
@@ -474,19 +481,74 @@ macro_rules! __impl_def_intrinsic_component_props {
 #[macro_export]
 macro_rules! __impl_def_intrinsic_component {
     (
+        $vis:vis
         $component_name:ident
+        [$($alias_component_name:ident)*]
         $props_name:ident
         $dom_element_ty:ty
     ) => {
-        ::bg::builder! {
-            pub struct $component_name($props_name);
+        $vis mod $component_name {
+            mod reuse {
+                use super::super::*;
+                pub use $props_name ::{
+                    prelude, Building, Types, TypesInitial, ValidTypes,
+                };
+            }
+
+            pub use reuse::{prelude, Building, Types, TypesInitial, ValidTypes};
+
+            pub struct ComponentType;
+
+            impl $crate::props::IntrinsicComponent for ComponentType {
+                const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
+            }
+
+            mod struct_data {
+                use super::super::*;
+                #[allow(non_camel_case_types)]
+                pub struct $component_name <
+                    TypeDefs: ?::core::marker::Sized + $props_name ::Types,
+                    ComponentType: $crate::props::IntrinsicComponent = super::ComponentType,
+                >(
+                    pub $props_name ::Data<TypeDefs>,
+                    pub ComponentType,
+                );
+            }
+
+            pub use struct_data::$component_name as Data;
+
+            pub type DataInitial = Data<TypesInitial>;
+
+            #[inline]
+            pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+                building: Building<TypeDefs>,
+            ) -> Data<TypeDefs> {
+                use super::*;
+                self::Data($props_name ::build(building), self::ComponentType)
+            }
 
             pub use build as build_element;
+
+            #[inline]
+            pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
+                building: Building<TypeDefs>,
+            ) -> Data<TypeDefs> {
+                build(building)
+            }
         }
 
-        impl<TypeDefs: ?::core::marker::Sized + $component_name::Types>
+        #[inline]
+        $vis fn $component_name (
+        ) -> $component_name ::Building<$component_name ::TypesInitial> {
+            $props_name ()
+        }
+
+        impl<
+            TypeDefs: ?::core::marker::Sized + $component_name::Types,
+            ComponentType: $crate::props::IntrinsicComponent,
+        >
             ::frender_core::UpdateRenderState<::frender_dom::Dom>
-            for $component_name::Data<TypeDefs>
+            for $component_name::Data<TypeDefs, ComponentType>
         where
             $props_name::Data<TypeDefs>: $crate::props::UpdateElement<$dom_element_ty>,
         {
@@ -507,7 +569,7 @@ macro_rules! __impl_def_intrinsic_component {
                 $crate::utils::dom::insert_element_and_update_with_tag(
                     node_and_mounted,
                     ctx,
-                    ::core::stringify!($component_name),
+                    ComponentType::INTRINSIC_TAG,
                     |element, children_ctx| {
                         <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
                             $dom_element_ty,
@@ -516,5 +578,44 @@ macro_rules! __impl_def_intrinsic_component {
                 )
             }
         }
+
+        $(
+            $vis mod $alias_component_name {
+                pub use super::$component_name::{prelude, Building, Types, TypesInitial, ValidTypes};
+
+                pub struct ComponentType;
+
+                impl $crate::props::IntrinsicComponent for ComponentType {
+                    const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($alias_component_name);
+                }
+
+                pub type Data<TypeDefs> = super::$component_name::Data<TypeDefs, ComponentType>;
+
+                pub type DataInitial = Data<TypesInitial>;
+
+                #[inline]
+                pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+                    building: Building<TypeDefs>,
+                ) -> Data<TypeDefs> {
+                    use super::*;
+                    super::$component_name::Data($props_name ::build(building), self::ComponentType)
+                }
+
+                pub use build as build_element;
+
+                #[inline]
+                pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
+                    building: Building<TypeDefs>,
+                ) -> Data<TypeDefs> {
+                    build(building)
+                }
+            }
+
+            #[inline]
+            $vis fn $alias_component_name (
+            ) -> $alias_component_name ::Building<$alias_component_name ::TypesInitial> {
+                $props_name ()
+            }
+        )*
     };
 }
