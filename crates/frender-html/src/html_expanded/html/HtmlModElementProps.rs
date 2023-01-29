@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlModElementProps() -> HtmlModElementProps::Building<HtmlModElementProps::TypesInitial> {
-    HtmlModElementProps::Building(HtmlModElementProps::Data {
+pub fn HtmlModElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

@@ -299,9 +299,10 @@ macro_rules! __impl_def_intrinsic_component_props {
         #[allow(non_snake_case)]
         $vis mod $name {
             #[allow(non_snake_case)]
-            $vis fn $name () -> $name::Building<$name::TypesInitial> {
-                $name::Building(
-                    $name::Data {
+            $vis fn $name () -> Building<TypesInitial> {
+                use super::*;
+                self::Building(
+                    self::Data {
                         $(
                             $field : $initial_value,
                         )*

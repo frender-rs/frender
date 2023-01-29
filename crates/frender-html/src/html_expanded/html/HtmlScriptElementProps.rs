@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlScriptElementProps(
-) -> HtmlScriptElementProps::Building<HtmlScriptElementProps::TypesInitial> {
-    HtmlScriptElementProps::Building(HtmlScriptElementProps::Data {
+pub fn HtmlScriptElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

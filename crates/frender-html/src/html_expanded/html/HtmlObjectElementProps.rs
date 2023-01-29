@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlObjectElementProps(
-) -> HtmlObjectElementProps::Building<HtmlObjectElementProps::TypesInitial> {
-    HtmlObjectElementProps::Building(HtmlObjectElementProps::Data {
+pub fn HtmlObjectElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

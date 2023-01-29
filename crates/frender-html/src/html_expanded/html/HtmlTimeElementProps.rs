@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlTimeElementProps() -> HtmlTimeElementProps::Building<HtmlTimeElementProps::TypesInitial>
-{
-    HtmlTimeElementProps::Building(HtmlTimeElementProps::Data {
+pub fn HtmlTimeElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

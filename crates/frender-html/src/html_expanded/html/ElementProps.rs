@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn ElementProps() -> ElementProps::Building<ElementProps::TypesInitial> {
-    ElementProps::Building(ElementProps::Data {
+pub fn ElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

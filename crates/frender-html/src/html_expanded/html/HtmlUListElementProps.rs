@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlUListElementProps(
-) -> HtmlUListElementProps::Building<HtmlUListElementProps::TypesInitial> {
-    HtmlUListElementProps::Building(HtmlUListElementProps::Data {
+pub fn HtmlUListElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

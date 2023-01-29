@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlFormElementProps() -> HtmlFormElementProps::Building<HtmlFormElementProps::TypesInitial>
-{
-    HtmlFormElementProps::Building(HtmlFormElementProps::Data {
+pub fn HtmlFormElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

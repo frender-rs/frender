@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlLinkElementProps() -> HtmlLinkElementProps::Building<HtmlLinkElementProps::TypesInitial>
-{
-    HtmlLinkElementProps::Building(HtmlLinkElementProps::Data {
+pub fn HtmlLinkElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

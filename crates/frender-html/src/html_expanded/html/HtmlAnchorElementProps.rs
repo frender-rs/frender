@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlAnchorElementProps(
-) -> HtmlAnchorElementProps::Building<HtmlAnchorElementProps::TypesInitial> {
-    HtmlAnchorElementProps::Building(HtmlAnchorElementProps::Data {
+pub fn HtmlAnchorElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlSlotElementProps() -> HtmlSlotElementProps::Building<HtmlSlotElementProps::TypesInitial>
-{
-    HtmlSlotElementProps::Building(HtmlSlotElementProps::Data {
+pub fn HtmlSlotElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

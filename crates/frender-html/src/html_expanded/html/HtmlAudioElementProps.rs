@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlAudioElementProps(
-) -> HtmlAudioElementProps::Building<HtmlAudioElementProps::TypesInitial> {
-    HtmlAudioElementProps::Building(HtmlAudioElementProps::Data {
+pub fn HtmlAudioElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

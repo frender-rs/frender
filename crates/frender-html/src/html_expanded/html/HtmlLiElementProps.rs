@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlLiElementProps() -> HtmlLiElementProps::Building<HtmlLiElementProps::TypesInitial> {
-    HtmlLiElementProps::Building(HtmlLiElementProps::Data {
+pub fn HtmlLiElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

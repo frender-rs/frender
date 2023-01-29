@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlOptionElementProps(
-) -> HtmlOptionElementProps::Building<HtmlOptionElementProps::TypesInitial> {
-    HtmlOptionElementProps::Building(HtmlOptionElementProps::Data {
+pub fn HtmlOptionElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

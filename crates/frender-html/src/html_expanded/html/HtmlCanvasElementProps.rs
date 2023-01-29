@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlCanvasElementProps(
-) -> HtmlCanvasElementProps::Building<HtmlCanvasElementProps::TypesInitial> {
-    HtmlCanvasElementProps::Building(HtmlCanvasElementProps::Data {
+pub fn HtmlCanvasElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

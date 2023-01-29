@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlMetaElementProps() -> HtmlMetaElementProps::Building<HtmlMetaElementProps::TypesInitial>
-{
-    HtmlMetaElementProps::Building(HtmlMetaElementProps::Data {
+pub fn HtmlMetaElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

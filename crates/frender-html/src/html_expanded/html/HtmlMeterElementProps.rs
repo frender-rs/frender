@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlMeterElementProps(
-) -> HtmlMeterElementProps::Building<HtmlMeterElementProps::TypesInitial> {
-    HtmlMeterElementProps::Building(HtmlMeterElementProps::Data {
+pub fn HtmlMeterElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

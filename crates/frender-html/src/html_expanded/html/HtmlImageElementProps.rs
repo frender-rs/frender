@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlImageElementProps(
-) -> HtmlImageElementProps::Building<HtmlImageElementProps::TypesInitial> {
-    HtmlImageElementProps::Building(HtmlImageElementProps::Data {
+pub fn HtmlImageElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlHrefCommonProps() -> HtmlHrefCommonProps::Building<HtmlHrefCommonProps::TypesInitial> {
-    HtmlHrefCommonProps::Building(HtmlHrefCommonProps::Data {
+pub fn HtmlHrefCommonProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlBrElementProps() -> HtmlBrElementProps::Building<HtmlBrElementProps::TypesInitial> {
-    HtmlBrElementProps::Building(HtmlBrElementProps::Data {
+pub fn HtmlBrElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

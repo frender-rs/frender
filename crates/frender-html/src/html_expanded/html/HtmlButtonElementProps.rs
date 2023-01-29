@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlButtonElementProps(
-) -> HtmlButtonElementProps::Building<HtmlButtonElementProps::TypesInitial> {
-    HtmlButtonElementProps::Building(HtmlButtonElementProps::Data {
+pub fn HtmlButtonElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

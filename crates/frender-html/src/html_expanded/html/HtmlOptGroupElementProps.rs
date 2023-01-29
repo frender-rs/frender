@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlOptGroupElementProps(
-) -> HtmlOptGroupElementProps::Building<HtmlOptGroupElementProps::TypesInitial> {
-    HtmlOptGroupElementProps::Building(HtmlOptGroupElementProps::Data {
+pub fn HtmlOptGroupElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

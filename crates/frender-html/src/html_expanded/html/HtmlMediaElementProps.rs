@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlMediaElementProps(
-) -> HtmlMediaElementProps::Building<HtmlMediaElementProps::TypesInitial> {
-    HtmlMediaElementProps::Building(HtmlMediaElementProps::Data {
+pub fn HtmlMediaElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

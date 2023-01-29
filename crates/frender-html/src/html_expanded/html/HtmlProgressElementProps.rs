@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlProgressElementProps(
-) -> HtmlProgressElementProps::Building<HtmlProgressElementProps::TypesInitial> {
-    HtmlProgressElementProps::Building(HtmlProgressElementProps::Data {
+pub fn HtmlProgressElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

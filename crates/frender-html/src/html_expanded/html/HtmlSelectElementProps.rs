@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlSelectElementProps(
-) -> HtmlSelectElementProps::Building<HtmlSelectElementProps::TypesInitial> {
-    HtmlSelectElementProps::Building(HtmlSelectElementProps::Data {
+pub fn HtmlSelectElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

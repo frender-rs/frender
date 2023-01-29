@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlTableSectionElementProps(
-) -> HtmlTableSectionElementProps::Building<HtmlTableSectionElementProps::TypesInitial> {
-    HtmlTableSectionElementProps::Building(HtmlTableSectionElementProps::Data {
+pub fn HtmlTableSectionElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

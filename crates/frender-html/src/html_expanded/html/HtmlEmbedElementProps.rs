@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlEmbedElementProps(
-) -> HtmlEmbedElementProps::Building<HtmlEmbedElementProps::TypesInitial> {
-    HtmlEmbedElementProps::Building(HtmlEmbedElementProps::Data {
+pub fn HtmlEmbedElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

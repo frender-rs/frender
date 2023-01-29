@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlVideoElementProps(
-) -> HtmlVideoElementProps::Building<HtmlVideoElementProps::TypesInitial> {
-    HtmlVideoElementProps::Building(HtmlVideoElementProps::Data {
+pub fn HtmlVideoElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

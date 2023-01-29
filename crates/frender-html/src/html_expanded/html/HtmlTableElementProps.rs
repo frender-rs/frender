@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlTableElementProps(
-) -> HtmlTableElementProps::Building<HtmlTableElementProps::TypesInitial> {
-    HtmlTableElementProps::Building(HtmlTableElementProps::Data {
+pub fn HtmlTableElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

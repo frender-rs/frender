@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlLabelElementProps(
-) -> HtmlLabelElementProps::Building<HtmlLabelElementProps::TypesInitial> {
-    HtmlLabelElementProps::Building(HtmlLabelElementProps::Data {
+pub fn HtmlLabelElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

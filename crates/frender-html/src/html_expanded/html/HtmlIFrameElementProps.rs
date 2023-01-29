@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlIFrameElementProps(
-) -> HtmlIFrameElementProps::Building<HtmlIFrameElementProps::TypesInitial> {
-    HtmlIFrameElementProps::Building(HtmlIFrameElementProps::Data {
+pub fn HtmlIFrameElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

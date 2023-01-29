@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlTrackElementProps(
-) -> HtmlTrackElementProps::Building<HtmlTrackElementProps::TypesInitial> {
-    HtmlTrackElementProps::Building(HtmlTrackElementProps::Data {
+pub fn HtmlTrackElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

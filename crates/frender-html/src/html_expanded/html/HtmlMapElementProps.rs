@@ -1,6 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlMapElementProps() -> HtmlMapElementProps::Building<HtmlMapElementProps::TypesInitial> {
-    HtmlMapElementProps::Building(HtmlMapElementProps::Data {
+pub fn HtmlMapElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

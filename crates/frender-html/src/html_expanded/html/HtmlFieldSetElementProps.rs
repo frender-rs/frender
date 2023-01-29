@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlFieldSetElementProps(
-) -> HtmlFieldSetElementProps::Building<HtmlFieldSetElementProps::TypesInitial> {
-    HtmlFieldSetElementProps::Building(HtmlFieldSetElementProps::Data {
+pub fn HtmlFieldSetElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

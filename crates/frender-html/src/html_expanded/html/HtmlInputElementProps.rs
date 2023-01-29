@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlInputElementProps(
-) -> HtmlInputElementProps::Building<HtmlInputElementProps::TypesInitial> {
-    HtmlInputElementProps::Building(HtmlInputElementProps::Data {
+pub fn HtmlInputElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

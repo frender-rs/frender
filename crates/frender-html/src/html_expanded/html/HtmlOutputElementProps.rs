@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlOutputElementProps(
-) -> HtmlOutputElementProps::Building<HtmlOutputElementProps::TypesInitial> {
-    HtmlOutputElementProps::Building(HtmlOutputElementProps::Data {
+pub fn HtmlOutputElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

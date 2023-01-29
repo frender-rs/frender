@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlAreaElementProps() -> HtmlAreaElementProps::Building<HtmlAreaElementProps::TypesInitial>
-{
-    HtmlAreaElementProps::Building(HtmlAreaElementProps::Data {
+pub fn HtmlAreaElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

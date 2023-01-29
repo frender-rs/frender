@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlQuoteElementProps(
-) -> HtmlQuoteElementProps::Building<HtmlQuoteElementProps::TypesInitial> {
-    HtmlQuoteElementProps::Building(HtmlQuoteElementProps::Data {
+pub fn HtmlQuoteElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),

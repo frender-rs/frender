@@ -1,7 +1,7 @@
 #[allow(non_snake_case)]
-pub fn HtmlDialogElementProps(
-) -> HtmlDialogElementProps::Building<HtmlDialogElementProps::TypesInitial> {
-    HtmlDialogElementProps::Building(HtmlDialogElementProps::Data {
+pub fn HtmlDialogElementProps() -> Building<TypesInitial> {
+    use super::*;
+    self::Building(self::Data {
         children: (),
         class: (),
         id: (),
