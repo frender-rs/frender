@@ -298,6 +298,17 @@ macro_rules! __impl_def_intrinsic_component_props {
     ) => {
         #[allow(non_snake_case)]
         $vis mod $name {
+            #[allow(non_snake_case)]
+            $vis fn $name () -> $name::Building<$name::TypesInitial> {
+                $name::Building(
+                    $name::Data {
+                        $(
+                            $field : $initial_value,
+                        )*
+                    }
+                )
+            }
+
             pub mod prelude {}
 
             pub mod overwrite {
@@ -348,6 +359,7 @@ macro_rules! __impl_def_intrinsic_component_props {
 
             pub type DataInitial = Data<TypesInitial>;
 
+            #[cfg(feature = "dom")]
             pub mod render_state {
                 #[allow(non_camel_case_types)]
                 pub trait RenderStateTypes {$(
@@ -413,24 +425,29 @@ macro_rules! __impl_def_intrinsic_component_props {
             pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
                 building.0
             }
+
+            mod builder_and_replacer {
+                use super::super::*;
+
+                $crate::__impl_builder_fns! {
+                    $name {$(
+                        $(#$field_attr)*
+                        $field $([$($bounds)+])?
+                    )*}
+                    {$($field)*}
+                }
+
+                // $crate::__impl_replace_fns! {
+                //     $name {$(
+                //         $(#$field_attr)*
+                //         $field $([$($bounds)+])?
+                //     )*}
+                //     {$($field)*}
+                // }
+            }
         }
 
-        $crate::__impl_builder_fns! {
-            $name {$(
-                $(#$field_attr)*
-                $field $([$($bounds)+])?
-            )*}
-            {$($field)*}
-        }
-
-        $crate::__impl_replace_fns! {
-            $name {$(
-                $(#$field_attr)*
-                $field $([$($bounds)+])?
-            )*}
-            {$($field)*}
-        }
-
+        #[cfg(feature = "dom")]
         impl<
             TypeDefs: ?::core::marker::Sized + $name::Types,
         > $crate::props::UpdateElement<$dom_element_ty> for $name::Data<TypeDefs>
@@ -465,16 +482,7 @@ macro_rules! __impl_def_intrinsic_component_props {
             }
         }
 
-        #[allow(non_snake_case)]
-        $vis fn $name () -> $name::Building<$name::TypesInitial> {
-            $name::Building(
-                $name::Data {
-                    $(
-                        $field : $initial_value,
-                    )*
-                }
-            )
-        }
+        $vis use $name::$name;
     };
 }
 
@@ -488,6 +496,12 @@ macro_rules! __impl_def_intrinsic_component {
         $dom_element_ty:ty
     ) => {
         $vis mod $component_name {
+            #[inline]
+            pub fn $component_name (
+            ) -> Building<TypesInitial> {
+                super::$props_name ()
+            }
+
             mod reuse {
                 use super::super::*;
                 pub use $props_name ::{
@@ -537,11 +551,7 @@ macro_rules! __impl_def_intrinsic_component {
             }
         }
 
-        #[inline]
-        $vis fn $component_name (
-        ) -> $component_name ::Building<$component_name ::TypesInitial> {
-            $props_name ()
-        }
+        $vis use $component_name::$component_name;
 
         impl<
             TypeDefs: ?::core::marker::Sized + $component_name::Types,
@@ -581,6 +591,12 @@ macro_rules! __impl_def_intrinsic_component {
 
         $(
             $vis mod $alias_component_name {
+                #[inline]
+                pub fn $alias_component_name (
+                ) -> Building<TypesInitial> {
+                    super::$props_name ()
+                }
+
                 pub use super::$component_name::{prelude, Building, Types, TypesInitial, ValidTypes};
 
                 pub struct ComponentType;
@@ -611,11 +627,7 @@ macro_rules! __impl_def_intrinsic_component {
                 }
             }
 
-            #[inline]
-            $vis fn $alias_component_name (
-            ) -> $alias_component_name ::Building<$alias_component_name ::TypesInitial> {
-                $props_name ()
-            }
+            $vis use $alias_component_name::$alias_component_name;
         )*
     };
 }

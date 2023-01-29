@@ -254,6 +254,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-html-expand"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "frender-macros"
 version = "1.0.0-alpha.8"
 dependencies = [

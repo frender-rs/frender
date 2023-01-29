@@ -1,4 +1,6 @@
+#[cfg(feature = "html_macro_not_expand")]
 mod element_macros;
+#[cfg(feature = "html_macro_not_expand")]
 pub use element_macros::*;
 
 mod data_types;
@@ -6,7 +8,13 @@ pub use data_types::*;
 
 pub mod props;
 
+#[cfg(feature = "html_macro_not_expand")]
 pub mod html;
+
+#[cfg(not(feature = "html_macro_not_expand"))]
+mod html_expanded;
+#[cfg(not(feature = "html_macro_not_expand"))]
+pub use html_expanded::html;
 
 mod utils;
 

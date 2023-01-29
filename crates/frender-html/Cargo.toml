@@ -112,3 +112,4 @@ features = [
 default = ["dom", "ssr"]
 dom = ["dep:frender-dom", "dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
 ssr = ["dep:frender-ssr", "dep:html-escape", "dep:futures-lite"]
+html_macro_not_expand = []
