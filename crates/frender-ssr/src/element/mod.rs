@@ -1,1 +1,3 @@
-pub mod element;
+pub mod bytes;
+pub mod scalar;
+pub mod str;

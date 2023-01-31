@@ -277,7 +277,9 @@ dependencies = [
 name = "frender-ssr"
 version = "0.1.0"
 dependencies = [
+ "frender-core",
  "futures-io",
+ "html-escape",
 ]
 
 [[package]]

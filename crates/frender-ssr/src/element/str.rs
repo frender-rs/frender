@@ -1,41 +1,82 @@
-impl<W: AsyncWrite + Unpin> UpdateRenderState<SsrContext<W>> for Cow<'_, str> {
-    type State = ssr::State<W>;
+use std::{borrow::Cow, pin::Pin};
 
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: std::pin::Pin<&mut Self::State>) {
+use frender_core::{StaticText, UpdateRenderState};
+
+use crate::bytes::{CowSlicedBytes, SlicedBytes};
+
+use super::bytes::{State, UnsafeRawHtmlBytes};
+
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for String {
+    type State = State<W, SlicedBytes>;
+
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+        let s = match html_escape::encode_safe(&self) {
+            Cow::Borrowed(_) => self,
+            Cow::Owned(s) => s,
+        };
+
+        UnsafeRawHtmlBytes(s).update_render_state(ctx, state)
+    }
+}
+
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for &str {
+    type State = State<W, SlicedBytes>;
+
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+        let s = match html_escape::encode_safe(self) {
+            Cow::Borrowed(s) => s.into(),
+            Cow::Owned(s) => s,
+        };
+
+        UnsafeRawHtmlBytes(s).update_render_state(ctx, state)
+    }
+}
+
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for Cow<'_, str> {
+    type State = State<W, SlicedBytes>;
+
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
         match self {
-            Cow::Borrowed(data) => data.update_render_state(ctx, state),
-            Cow::Owned(data) => data.update_render_state(ctx, state),
+            Cow::Borrowed(s) => s.update_render_state(ctx, state),
+            Cow::Owned(s) => s.update_render_state(ctx, state),
         }
     }
 }
 
-impl<W: AsyncWrite + Unpin> UpdateRenderState<SsrContext<W>> for &str {
-    type State = ssr::State<W>;
-
-    #[inline]
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: std::pin::Pin<&mut Self::State>) {
-        state
-            .get_mut()
-            .update_render_state_with_str(self.to_owned(), ctx)
-    }
-}
-
-impl<W: AsyncWrite + Unpin> UpdateRenderState<SsrContext<W>> for String {
-    type State = ssr::State<W>;
-
-    #[inline]
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: std::pin::Pin<&mut Self::State>) {
-        state.get_mut().update_render_state_with_str(self, ctx)
-    }
-}
-
-impl<S: Into<Cow<'static, str>>, W: AsyncWrite + Unpin> UpdateRenderState<SsrContext<W>>
-    for StaticText<S>
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>>
+    for StaticText<&'static str>
 {
-    type State = ssr::State<W>;
+    type State = State<W, CowSlicedBytes<'static>>;
 
-    #[inline]
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: std::pin::Pin<&mut Self::State>) {
-        state.get_mut().update_render_state_with_str(self.0, ctx);
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+        let s = match html_escape::encode_safe(self.0) {
+            Cow::Borrowed(s) => Cow::Borrowed(s),
+            Cow::Owned(s) => Cow::Owned(s),
+        };
+
+        UnsafeRawHtmlBytes(s).update_render_state(ctx, state)
+    }
+}
+
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for StaticText<String> {
+    type State = State<W, SlicedBytes>;
+
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+        self.0.update_render_state(ctx, state)
+    }
+}
+
+impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>>
+    for StaticText<Cow<'static, str>>
+{
+    type State = State<W, CowSlicedBytes<'static>>;
+
+    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+        let s = match html_escape::encode_safe(&self.0) {
+            Cow::Borrowed(_) => self.0,
+            Cow::Owned(s) => Cow::Owned(s),
+        };
+
+        UnsafeRawHtmlBytes(s).update_render_state(ctx, state)
     }
 }
