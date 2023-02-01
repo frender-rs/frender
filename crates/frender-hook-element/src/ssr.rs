@@ -23,7 +23,7 @@ where
     fn update_render_state(self, ctx: &mut SsrContext<W>, state: Pin<&mut Self::State>) {
         let state = state.project();
         *state.ctx = Some(SsrContext {
-            writer: ctx.writer.take(),
+            writer_or_error: ctx.writer_or_error.take(),
         });
         let hook = state.hook.use_hook((self.with_dom,));
         hook.use_hook((ContextAndState::new(ctx, state.render_state),));

@@ -20,7 +20,7 @@ impl HookContext for frender_dom::Dom {
 impl<W: frender_ssr::AsyncWrite + Unpin> HookContext for frender_ssr::SsrContext<W> {
     #[inline]
     fn take_context(this: &mut Self) -> Self {
-        std::mem::replace(this, Self { writer: None })
+        std::mem::replace(this, Self { writer_or_error: None })
     }
 
     #[inline]
