@@ -1,5 +1,6 @@
 #[allow(non_snake_case)]
 pub fn HtmlMediaElementProps() -> Building<TypesInitial> {
+    #[allow(unused_imports)]
     use super::*;
     self::Building(self::Data {
         children: (),
@@ -5913,6 +5914,791 @@ mod builder_and_replacer {
                 preload,
                 src,
             })
+        }
+    }
+}
+#[cfg(feature = "dom")]
+mod impl_update_element {
+    #[allow(unused_imports)]
+    use super::super::*;
+    impl<TypeDefs: ?::core::marker::Sized + super::Types>
+        crate::props::UpdateElement<web_sys::HtmlMediaElement> for super::Data<TypeDefs>
+    where
+        TypeDefs::children: ::frender_core::UpdateRenderState<::frender_dom::Dom>,
+        TypeDefs::on_click: crate::props::UpdateDomEventListener<crate::props::events::Click>,
+    {
+        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < children = < TypeDefs :: children as frender_core :: UpdateRenderState < frender_dom :: Dom , > > :: State , class = < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , id = < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , part = < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , access_key = < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_capitalize = < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_focus = < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , content_editable = () , context_menu = < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , dir = < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , draggable = < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , enter_key_hint = < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , hidden = < TypeDefs :: hidden as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , inert = < TypeDefs :: inert as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , input_mode = < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , is = < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_id = < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_prop = < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_ref = < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_scope = < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_type = < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , lang = < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , nonce = < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , role = < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , slot = < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , spellcheck = < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , style = < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , tab_index = < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: State , title = < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , translate = < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , virtual_keyboard_policy = < TypeDefs :: virtual_keyboard_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , on_click = < TypeDefs :: on_click as crate :: props :: UpdateDomEventListener < crate :: props :: events :: Click , > > :: State , auto_play = < TypeDefs :: auto_play as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , controls = < TypeDefs :: controls as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , cross_origin = < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , loop_ = < TypeDefs :: loop_ as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , muted = < TypeDefs :: muted as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , preload = < TypeDefs :: preload as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , src = < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , > , > ;
+        fn update_element(
+            this: Self,
+            element: &web_sys::HtmlMediaElement,
+            children_ctx: &mut ::frender_dom::Dom,
+            state: ::core::pin::Pin<&mut Self::State>,
+        ) {
+            let state = state.pin_project();
+            let dom_element: &::web_sys::Element = element.as_ref();
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.children,
+                state: state.children,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    state,
+                    children_ctx,
+                    ..
+                } => ::frender_core::UpdateRenderState::update_render_state(
+                    data,
+                    children_ctx,
+                    state,
+                ),
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.class,
+                state: state.class,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "class";
+                    < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.id,
+                state: state.id,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "id";
+                    < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_id (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.part,
+                state: state.part,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "part";
+                    < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.access_key,
+                state: state.access_key,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "accesskey";
+                    < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_access_key (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.auto_capitalize,
+                state: state.auto_capitalize,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "autocapitalize";
+                    < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.auto_focus,
+                state: state.auto_focus,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "autofocus";
+                    < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.content_editable,
+                state: state.content_editable,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData { data, .. } => {}
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.context_menu,
+                state: state.context_menu,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "contextmenu";
+                    < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.dir,
+                state: state.dir,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "dir";
+                    < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_dir (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.draggable,
+                state: state.draggable,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "draggable";
+                    < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_draggable (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.enter_key_hint,
+                state: state.enter_key_hint,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "enterkeyhint";
+                    < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.hidden,
+                state: state.hidden,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "hidden";
+                    < TypeDefs :: hidden as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_hidden (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.inert,
+                state: state.inert,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "inert";
+                    < TypeDefs :: inert as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.input_mode,
+                state: state.input_mode,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "inputmode";
+                    < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.is,
+                state: state.is,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "is";
+                    < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.item_id,
+                state: state.item_id,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "itemid";
+                    < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.item_prop,
+                state: state.item_prop,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "itemprop";
+                    < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.item_ref,
+                state: state.item_ref,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "itemref";
+                    < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.item_scope,
+                state: state.item_scope,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "itemscope";
+                    < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.item_type,
+                state: state.item_type,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "itemtype";
+                    < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.lang,
+                state: state.lang,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "lang";
+                    < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_lang (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.nonce,
+                state: state.nonce,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "nonce";
+                    < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.role,
+                state: state.role,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "role";
+                    < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.slot,
+                state: state.slot,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "slot";
+                    < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.spellcheck,
+                state: state.spellcheck,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "spellcheck";
+                    < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_spellcheck (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.style,
+                state: state.style,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "style";
+                    < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.tab_index,
+                state: state.tab_index,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "tabindex";
+                    < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (data , state , | v | element . set_tab_index (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.title,
+                state: state.title,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "title";
+                    < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_title (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.translate,
+                state: state.translate,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "translate";
+                    < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.virtual_keyboard_policy,
+                state: state.virtual_keyboard_policy,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "virtualkeyboardpolicy";
+                    <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValue<
+                        str,
+                    >>::maybe_update_value(
+                        data,
+                        state,
+                        |v| {
+                            crate::props::UpdateElementAttribute::update_element_attribute(
+                                v,
+                                dom_element,
+                                ATTR_NAME,
+                            )
+                        },
+                        || dom_element.remove_attribute(ATTR_NAME).unwrap(),
+                    )
+                }
+            }
+            # [allow (unused_variables)] match (crate :: props :: FieldData { data : this . on_click , state : state . on_click , element , dom_element , children_ctx : & mut * children_ctx , }) { crate :: props :: FieldData { data , state , element , .. } => { crate :: props :: UpdateDomEventListener :: < crate :: props :: events :: Click , > :: update_dom_event_listener (data , element , state) } }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.auto_play,
+                state: state.auto_play,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "autoplay";
+                    < TypeDefs :: auto_play as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_autoplay (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.controls,
+                state: state.controls,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "controls";
+                    < TypeDefs :: controls as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_controls (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.cross_origin,
+                state: state.cross_origin,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "crossorigin";
+                    < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.loop_,
+                state: state.loop_,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "loop";
+                    < TypeDefs :: loop_ as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_loop (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.muted,
+                state: state.muted,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "muted";
+                    < TypeDefs :: muted as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_muted (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.preload,
+                state: state.preload,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "preload";
+                    < TypeDefs :: preload as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_preload (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
+            #[allow(unused_variables)]
+            match (crate::props::FieldData {
+                data: this.src,
+                state: state.src,
+                element,
+                dom_element,
+                children_ctx: &mut *children_ctx,
+            }) {
+                crate::props::FieldData {
+                    data,
+                    dom_element,
+                    state,
+                    element,
+                    ..
+                } => {
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = "src";
+                    < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
+                }
+            }
         }
     }
 }

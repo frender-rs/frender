@@ -35,3 +35,39 @@ pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
 ) -> Data<TypeDefs> {
     build(building)
 }
+#[cfg(feature = "dom")]
+mod impl_update_render_state_dom {
+    use super::super::*;
+    impl<
+            TypeDefs: ?::core::marker::Sized + base::Types,
+            ComponentType: crate::props::IntrinsicComponent,
+        > ::frender_core::UpdateRenderState<::frender_dom::Dom>
+        for base::Data<TypeDefs, ComponentType>
+    where
+        HtmlBaseElementProps::Data<TypeDefs>: crate::props::UpdateElement<web_sys::HtmlBaseElement>,
+    {
+        type State = crate::props::IntrinsicComponentRenderState<
+            web_sys::HtmlBaseElement,
+            <HtmlBaseElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+                web_sys::HtmlBaseElement,
+            >>::State,
+        >;
+        fn update_render_state(
+            self,
+            ctx: &mut ::frender_dom::Dom,
+            state: ::core::pin::Pin<&mut Self::State>,
+        ) {
+            let (node_and_mounted, state) = state.pin_project();
+            crate::utils::dom::insert_element_and_update_with_tag(
+                node_and_mounted,
+                ctx,
+                ComponentType::INTRINSIC_TAG,
+                |element, children_ctx| {
+                    <HtmlBaseElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+                        web_sys::HtmlBaseElement,
+                    >>::update_element(self.0, element, children_ctx, state)
+                },
+            )
+        }
+    }
+}

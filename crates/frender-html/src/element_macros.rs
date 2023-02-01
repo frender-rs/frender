@@ -300,6 +300,7 @@ macro_rules! __impl_def_intrinsic_component_props {
         $vis mod $name {
             #[allow(non_snake_case)]
             $vis fn $name () -> Building<TypesInitial> {
+                #[allow(unused_imports)]
                 use super::*;
                 self::Building(
                     self::Data {
@@ -446,40 +447,44 @@ macro_rules! __impl_def_intrinsic_component_props {
                 //     {$($field)*}
                 // }
             }
-        }
 
-        #[cfg(feature = "dom")]
-        impl<
-            TypeDefs: ?::core::marker::Sized + $name::Types,
-        > $crate::props::UpdateElement<$dom_element_ty> for $name::Data<TypeDefs>
-        where
-            $(
-                $(TypeDefs::$field : $($dom_bounds)+ ,)?
-            )*
-        {
-            type State = $name::render_state::RenderState<
-                dyn $name::render_state::RenderStateTypes<$(
-                    $field = $crate::expand_a_or_b![[$($dom_state_ty)?][()]],
-                )*>
-            >;
+            #[cfg(feature = "dom")]
+            mod impl_update_element {
+                #[allow(unused_imports)]
+                use super::super::*;
+                impl<
+                    TypeDefs: ?::core::marker::Sized + super::Types,
+                > $crate::props::UpdateElement<$dom_element_ty> for super::Data<TypeDefs>
+                where
+                    $(
+                        $(TypeDefs::$field : $($dom_bounds)+ ,)?
+                    )*
+                {
+                    type State = super::render_state::RenderState<
+                        dyn super::render_state::RenderStateTypes<$(
+                            $field = $crate::expand_a_or_b![[$($dom_state_ty)?][()]],
+                        )*>
+                    >;
 
-            fn update_element(this: Self, element: &$dom_element_ty, children_ctx: &mut ::frender_dom::Dom, state: ::core::pin::Pin<&mut Self::State>) {
-                let state = state.pin_project();
+                    fn update_element(this: Self, element: &$dom_element_ty, children_ctx: &mut ::frender_dom::Dom, state: ::core::pin::Pin<&mut Self::State>) {
+                        let state = state.pin_project();
 
-                let dom_element: &::web_sys::Element = element.as_ref();
+                        let dom_element: &::web_sys::Element = element.as_ref();
 
-                $(
-                    #[allow(unused_variables)]
-                    match ($crate::props::FieldData {
-                        data: this.$field,
-                        state: state.$field,
-                        element,
-                        dom_element,
-                        children_ctx: &mut *children_ctx,
-                    }) {
-                        $crate::props::FieldData $dom_pat => $dom_impl
+                        $(
+                            #[allow(unused_variables)]
+                            match ($crate::props::FieldData {
+                                data: this.$field,
+                                state: state.$field,
+                                element,
+                                dom_element,
+                                children_ctx: &mut *children_ctx,
+                            }) {
+                                $crate::props::FieldData $dom_pat => $dom_impl
+                            }
+                        )*
                     }
-                )*
+                }
             }
         }
 
@@ -550,45 +555,49 @@ macro_rules! __impl_def_intrinsic_component {
             ) -> Data<TypeDefs> {
                 build(building)
             }
+
+            #[cfg(feature = "dom")]
+            mod impl_update_render_state_dom {
+                use super::super::*;
+                impl<
+                    TypeDefs: ?::core::marker::Sized + $component_name::Types,
+                    ComponentType: $crate::props::IntrinsicComponent,
+                >
+                    ::frender_core::UpdateRenderState<::frender_dom::Dom>
+                    for $component_name::Data<TypeDefs, ComponentType>
+                where
+                    $props_name::Data<TypeDefs>: $crate::props::UpdateElement<$dom_element_ty>,
+                {
+                    type State =
+                        $crate::props::IntrinsicComponentRenderState<
+                            $dom_element_ty,
+                            <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                                $dom_element_ty,
+                            >>::State,
+                        >;
+
+                    fn update_render_state(
+                        self,
+                        ctx: &mut ::frender_dom::Dom,
+                        state: ::core::pin::Pin<&mut Self::State>,
+                    ) {
+                        let (node_and_mounted, state) = state.pin_project();
+                        $crate::utils::dom::insert_element_and_update_with_tag(
+                            node_and_mounted,
+                            ctx,
+                            ComponentType::INTRINSIC_TAG,
+                            |element, children_ctx| {
+                                <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                                    $dom_element_ty,
+                                >>::update_element(self.0, element, children_ctx, state)
+                            },
+                        )
+                    }
+                }
+            }
         }
 
         $vis use $component_name::$component_name;
-
-        impl<
-            TypeDefs: ?::core::marker::Sized + $component_name::Types,
-            ComponentType: $crate::props::IntrinsicComponent,
-        >
-            ::frender_core::UpdateRenderState<::frender_dom::Dom>
-            for $component_name::Data<TypeDefs, ComponentType>
-        where
-            $props_name::Data<TypeDefs>: $crate::props::UpdateElement<$dom_element_ty>,
-        {
-            type State =
-                $crate::props::IntrinsicComponentRenderState<
-                    $dom_element_ty,
-                    <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
-                        $dom_element_ty,
-                    >>::State,
-                >;
-
-            fn update_render_state(
-                self,
-                ctx: &mut ::frender_dom::Dom,
-                state: ::core::pin::Pin<&mut Self::State>,
-            ) {
-                let (node_and_mounted, state) = state.pin_project();
-                $crate::utils::dom::insert_element_and_update_with_tag(
-                    node_and_mounted,
-                    ctx,
-                    ComponentType::INTRINSIC_TAG,
-                    |element, children_ctx| {
-                        <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
-                            $dom_element_ty,
-                        >>::update_element(self.0, element, children_ctx, state)
-                    },
-                )
-            }
-        }
 
         $(
             $vis mod $alias_component_name {
