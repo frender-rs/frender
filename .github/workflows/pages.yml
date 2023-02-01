@@ -1,9 +1,9 @@
-name: Publish GitHub Pages
+name: Publish GitHub Pages for frender@v2
 
 on:
   push:
     branches:
-      - alpha
+      - v2
 
 env:
   CARGO_TERM_COLOR: always
@@ -22,7 +22,7 @@ jobs:
           wget -qO- https://github.com/thedodd/trunk/releases/download/${VERSION}/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
           chmod +x trunk
         env:
-          VERSION: v0.14.0
+          VERSION: v0.16.0
       - name: Install mdbook
         run: |
           set -e
@@ -58,8 +58,9 @@ jobs:
         run: |
           set -e
           cd "$GITHUB_WORKSPACE/frender"
-          mv ../gh-pages/.git dist/.git
-          cd dist
+          rm -rf ../gh-pages/v2/
+          mv dist ../gh-pages/v2
+          cd ../gh-pages
           # https://github.blog/2009-12-29-bypassing-jekyll-on-github-pages/
           touch .nojekyll
           if [[ `git status --porcelain` ]]; then

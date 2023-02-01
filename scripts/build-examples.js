@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 const fsp = require("fs/promises");
 const path = require("path");
 
-const BASE_URL = "/frender/";
+const BASE_URL = "/frender/v2/";
 
 function wrapHtml(title, content) {
   return `\

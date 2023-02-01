@@ -6,4 +6,4 @@ src = "src"
 title = "Frender Book"
 
 [output.html]
-site-url = "/frender/book/"
+site-url = "/frender/v2/book/"
