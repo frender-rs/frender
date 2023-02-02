@@ -2,13 +2,6 @@ use darling::ToTokens;
 use proc_macro2::Span;
 use syn::{braced, parse::Parse, spanned::Spanned};
 
-use crate::utils::grouped::Bracketed;
-
-pub struct RsxCratePath {
-    pub at: syn::Token![@],
-    pub bracketed_path: Bracketed<proc_macro2::TokenStream>,
-}
-
 pub struct RsxElement {
     pub start_lt: syn::Token![<],
     pub component_type: RsxComponentType,
@@ -403,26 +396,4 @@ impl Parse for RsxChild {
     }
 }
 
-pub struct OptionalCratePathAndRsxChild {
-    pub crate_path: Option<RsxCratePath>,
-    pub child: RsxChild,
-}
-
-impl Parse for OptionalCratePathAndRsxChild {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let crate_path_at: Option<syn::Token![@]> = input.parse()?;
-
-        let crate_path = if let Some(at) = crate_path_at {
-            Some(RsxCratePath {
-                at,
-                bracketed_path: input.parse()?,
-            })
-        } else {
-            None
-        };
-
-        let child = input.parse()?;
-
-        Ok(Self { crate_path, child })
-    }
-}
+pub type OptionalCratePathAndRsxChild = crate::utils::prefix_path::PrefixPath<RsxChild>;

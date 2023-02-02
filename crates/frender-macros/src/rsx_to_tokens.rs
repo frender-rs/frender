@@ -152,9 +152,9 @@ impl OptionalCratePathAndRsxChild {
         let mut errors: Vec<syn::Error> = vec![];
 
         let crate_path = self
-            .crate_path
+            .path
             .map_or_else(|| quote::quote!(::frender), |v| v.bracketed_path.content);
-        let value = self.child.try_into_ts(&crate_path, &mut errors);
+        let value = self.rest.try_into_ts(&crate_path, &mut errors);
         if errors.is_empty() {
             value
         } else {
