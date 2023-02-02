@@ -6,6 +6,7 @@ mod props_data;
 mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
+mod utils;
 
 use proc_macro::TokenStream;
 use quote::ToTokens;
