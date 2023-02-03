@@ -234,6 +234,7 @@ dependencies = [
  "convert-js",
  "frender-core",
  "frender-dom",
+ "frender-macros",
  "frender-ssr",
  "futures-lite",
  "ghost-lite",

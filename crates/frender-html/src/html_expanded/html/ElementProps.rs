@@ -43,9 +43,9 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type children;
-        type class: ::frender_dom::props::MaybeUpdateValue<str>;
-        type id: ::frender_dom::props::MaybeUpdateValue<str>;
-        type part: ::frender_dom::props::MaybeUpdateValue<str>;
+        type class: crate::MaybeUpdateValue<str>;
+        type id: crate::MaybeUpdateValue<str>;
+        type part: crate::MaybeUpdateValue<str>;
     }
 }
 pub use trait_types::Types;
@@ -243,85 +243,50 @@ pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building.0
 }
 mod builder_and_replacer {
+    #[allow(unused_imports)]
     use super::super::*;
-    impl<TypeDefs: ElementProps::Types + ?::core::marker::Sized> ElementProps::Building<TypeDefs> {
+    impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
         pub fn children<V>(
             self,
             children: V,
-        ) -> ElementProps::Building<ElementProps::overwrite::children<TypeDefs, V>> {
-            let __tmp_value = children;
-            let ElementProps::Data {
+        ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
+            super::Building(super::Data {
                 children,
-                class,
-                id,
-                part,
-            } = self.0;
-            let _ = children;
-            let children = __tmp_value;
-            ElementProps::Building(ElementProps::Data {
-                children,
-                class,
-                id,
-                part,
+                class: self.0.class,
+                id: self.0.id,
+                part: self.0.part,
             })
         }
-        pub fn class<V: ::frender_dom::props::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValue<str>>(
             self,
             class: V,
-        ) -> ElementProps::Building<ElementProps::overwrite::class<TypeDefs, V>> {
-            let __tmp_value = class;
-            let ElementProps::Data {
-                children,
+        ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
+            super::Building(super::Data {
+                children: self.0.children,
                 class,
-                id,
-                part,
-            } = self.0;
-            let _ = class;
-            let class = __tmp_value;
-            ElementProps::Building(ElementProps::Data {
-                children,
-                class,
-                id,
-                part,
+                id: self.0.id,
+                part: self.0.part,
             })
         }
-        pub fn id<V: ::frender_dom::props::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValue<str>>(
             self,
             id: V,
-        ) -> ElementProps::Building<ElementProps::overwrite::id<TypeDefs, V>> {
-            let __tmp_value = id;
-            let ElementProps::Data {
-                children,
-                class,
+        ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
+            super::Building(super::Data {
+                children: self.0.children,
+                class: self.0.class,
                 id,
-                part,
-            } = self.0;
-            let _ = id;
-            let id = __tmp_value;
-            ElementProps::Building(ElementProps::Data {
-                children,
-                class,
-                id,
-                part,
+                part: self.0.part,
             })
         }
-        pub fn part<V: ::frender_dom::props::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValue<str>>(
             self,
             part: V,
-        ) -> ElementProps::Building<ElementProps::overwrite::part<TypeDefs, V>> {
-            let __tmp_value = part;
-            let ElementProps::Data {
-                children,
-                class,
-                id,
-                part,
-            } = self.0;
-            let _ = part;
-            let part = __tmp_value;
-            ElementProps::Building(ElementProps::Data {
-                children,
-                class,
-                id,
+        ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
+            super::Building(super::Data {
+                children: self.0.children,
+                class: self.0.class,
+                id: self.0.id,
                 part,
             })
         }

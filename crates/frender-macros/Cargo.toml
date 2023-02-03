@@ -15,3 +15,6 @@ syn = "1.0.86"
 quote = "1.0"
 darling = "0.14"
 proc-macro2 = "1.0.36"
+
+[features]
+intrinsic-component = []

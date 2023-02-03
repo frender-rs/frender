@@ -18,6 +18,12 @@ html-escape = { version = "0.2.13", optional = true }
 pin-project-lite = "0.2.9"
 wasm-bindgen = { version = "0.2.83", optional = true }
 
+[dependencies.frender-macros]
+version = "1.0.0-alpha.8"
+path = "../frender-macros"
+optional = true
+features = ["intrinsic-component"]
+
 [dependencies.web-sys]
 version = "0.3.60"
 optional = true
@@ -112,4 +118,4 @@ features = [
 default = ["dom", "ssr"]
 dom = ["dep:frender-dom", "dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
 ssr = ["dep:frender-ssr", "dep:html-escape", "dep:futures-lite"]
-html_macro_not_expand = []
+html_macro_not_expand = ["dep:frender-macros"]

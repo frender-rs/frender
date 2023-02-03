@@ -12,6 +12,9 @@ use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::parse_macro_input;
 
+#[cfg(feature = "intrinsic-component")]
+mod intrinsic_component;
+
 #[proc_macro_attribute]
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     use component_data::*;
@@ -51,4 +54,15 @@ pub fn def_props(input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn __impl_auto_prepend_intrinsic_components(input: TokenStream) -> TokenStream {
     auto_intrinsic::auto_intrinsic(input)
+}
+
+#[cfg(feature = "intrinsic-component")]
+#[proc_macro]
+pub fn def_intrinsic_component_props(input: TokenStream) -> TokenStream {
+    let value: utils::prefix_path::PrefixPath<intrinsic_component::IntrinsicComponentPropsData> =
+        parse_macro_input!(input);
+    value
+        .rest
+        .into_ts(value.path.as_ref().map(|p| &p.bracketed_path.content))
+        .into()
 }

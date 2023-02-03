@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Grouped<G, S> {
     pub group_token: G,
     pub content: S,
@@ -15,6 +16,14 @@ macro_rules! impl_grouped {
         $(,)?
     ) => {$(
         pub type $name<S> = Grouped<$ty, S>;
+
+        pub fn $name<S>(content: S) -> $name<S> {
+            $name {
+                group_token: Default::default(),
+                content,
+            }
+        }
+
         impl<S: ::syn::parse::Parse> ::syn::parse::Parse for $name<S> {
             fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
                 let content;

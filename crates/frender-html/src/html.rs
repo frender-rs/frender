@@ -1,6 +1,7 @@
 #![allow(non_camel_case_types)]
 
 crate::def_intrinsic_component_props! {
+    @[crate]
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {
