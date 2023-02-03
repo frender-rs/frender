@@ -14,7 +14,7 @@ pub trait MaybeUpdateValue<V: ?Sized> {
 impl<V: ?Sized> MaybeUpdateValue<V> for () {
     type State = ();
 
-    #[inline]
+    #[inline(always)]
     fn maybe_update_value(_: Self, _: &mut Self::State, _: impl FnOnce(&V), _: impl FnOnce()) {}
 }
 

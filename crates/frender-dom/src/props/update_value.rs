@@ -12,7 +12,7 @@ pub trait UpdateValue<V: ?Sized> {
 impl UpdateValue<str> for &str {
     type State = ();
 
-    #[inline]
+    #[inline(always)]
     fn update_value(this: Self, _: &mut Self::State, update: impl FnOnce(&str)) {
         update(this)
     }
@@ -22,7 +22,6 @@ impl UpdateValue<str> for &str {
 impl UpdateValue<str> for Cow<'_, str> {
     type State = Option<String>;
 
-    #[inline]
     fn update_value(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
         if cache.as_deref() == Some(&*this) {
             return;
