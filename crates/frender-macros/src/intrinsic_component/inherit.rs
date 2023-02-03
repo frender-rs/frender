@@ -101,6 +101,7 @@ impl FieldDeclarationInherit {
 
                 quote! {
                     #[doc = #doc]
+                    #[inline]
                     pub fn #name <V #field_bounds>(
                         self,
                         #name: V,

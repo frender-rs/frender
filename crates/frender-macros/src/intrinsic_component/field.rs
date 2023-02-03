@@ -64,6 +64,7 @@ impl Field {
         });
         quote! {
             #(#attrs)*
+            #[inline]
             pub fn #name <V #bounds>(
                 self,
                 #name: V,

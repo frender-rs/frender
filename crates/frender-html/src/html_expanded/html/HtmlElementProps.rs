@@ -1536,6 +1536,7 @@ mod builder_and_replacer {
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
         #[doc = "See [`ElementProps::children`]"]
+        #[inline]
         pub fn children<V>(
             self,
             children: V,
@@ -1575,6 +1576,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`ElementProps::class`]"]
+        #[inline]
         pub fn class<V: crate::MaybeUpdateValue<str>>(
             self,
             class: V,
@@ -1614,6 +1616,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`ElementProps::id`]"]
+        #[inline]
         pub fn id<V: crate::MaybeUpdateValue<str>>(
             self,
             id: V,
@@ -1653,6 +1656,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`ElementProps::part`]"]
+        #[inline]
         pub fn part<V: crate::MaybeUpdateValue<str>>(
             self,
             part: V,
@@ -1691,6 +1695,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn access_key<V: crate::MaybeUpdateValue<str>>(
             self,
             access_key: V,
@@ -1727,6 +1732,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
             self,
             auto_capitalize: V,
@@ -1763,6 +1769,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
             self,
             auto_focus: V,
@@ -1799,6 +1806,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
             content_editable: V,
@@ -1836,6 +1844,7 @@ mod builder_and_replacer {
             })
         }
         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
+        #[inline]
         pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
             self,
             context_menu: V,
@@ -1872,6 +1881,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn dir<V: crate::MaybeUpdateValue<str>>(
             self,
             dir: V,
@@ -1908,6 +1918,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
             self,
             draggable: V,
@@ -1944,6 +1955,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
             self,
             enter_key_hint: V,
@@ -1980,6 +1992,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
             self,
             hidden: V,
@@ -2016,6 +2029,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn inert<V: crate::MaybeUpdateValue<bool>>(
             self,
             inert: V,
@@ -2052,6 +2066,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
             self,
             input_mode: V,
@@ -2088,6 +2103,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn is<V: crate::MaybeUpdateValue<str>>(
             self,
             is: V,
@@ -2124,6 +2140,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn item_id<V: crate::MaybeUpdateValue<str>>(
             self,
             item_id: V,
@@ -2160,6 +2177,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
             self,
             item_prop: V,
@@ -2196,6 +2214,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
             self,
             item_ref: V,
@@ -2232,6 +2251,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
             self,
             item_scope: V,
@@ -2268,6 +2288,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn item_type<V: crate::MaybeUpdateValue<str>>(
             self,
             item_type: V,
@@ -2304,6 +2325,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn lang<V: crate::MaybeUpdateValue<str>>(
             self,
             lang: V,
@@ -2340,6 +2362,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn nonce<V: crate::MaybeUpdateValue<str>>(
             self,
             nonce: V,
@@ -2376,6 +2399,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn role<V: crate::MaybeUpdateValue<str>>(
             self,
             role: V,
@@ -2412,6 +2436,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn slot<V: crate::MaybeUpdateValue<str>>(
             self,
             slot: V,
@@ -2448,6 +2473,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
             self,
             spellcheck: V,
@@ -2484,6 +2510,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn style<V: crate::MaybeUpdateValue<str>>(
             self,
             style: V,
@@ -2520,6 +2547,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
             self,
             tab_index: V,
@@ -2556,6 +2584,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn title<V: crate::MaybeUpdateValue<str>>(
             self,
             title: V,
@@ -2592,6 +2621,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn translate<V: crate::MaybeUpdateValue<str>>(
             self,
             translate: V,
@@ -2628,6 +2658,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
             self,
             virtual_keyboard_policy: V,
@@ -2664,6 +2695,7 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[inline]
         pub fn on_click<V>(
             self,
             on_click: V,

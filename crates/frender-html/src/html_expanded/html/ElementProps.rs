@@ -246,6 +246,7 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
+        #[inline]
         pub fn children<V>(
             self,
             children: V,
@@ -257,6 +258,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
+        #[inline]
         pub fn class<V: crate::MaybeUpdateValue<str>>(
             self,
             class: V,
@@ -268,6 +270,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
+        #[inline]
         pub fn id<V: crate::MaybeUpdateValue<str>>(
             self,
             id: V,
@@ -279,6 +282,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
+        #[inline]
         pub fn part<V: crate::MaybeUpdateValue<str>>(
             self,
             part: V,

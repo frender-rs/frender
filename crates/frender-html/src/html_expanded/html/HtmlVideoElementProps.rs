@@ -576,6 +576,7 @@ mod builder_and_replacer {
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
         #[doc = "See [`HtmlMediaElementProps::children`]"]
+        #[inline]
         pub fn children<V>(
             self,
             children: V,
@@ -592,6 +593,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::class`]"]
+        #[inline]
         pub fn class<V: crate::MaybeUpdateValue<str>>(
             self,
             class: V,
@@ -607,6 +609,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::id`]"]
+        #[inline]
         pub fn id<V: crate::MaybeUpdateValue<str>>(
             self,
             id: V,
@@ -622,6 +625,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::part`]"]
+        #[inline]
         pub fn part<V: crate::MaybeUpdateValue<str>>(
             self,
             part: V,
@@ -637,6 +641,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::access_key`]"]
+        #[inline]
         pub fn access_key<V: crate::MaybeUpdateValue<str>>(
             self,
             access_key: V,
@@ -653,6 +658,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::auto_capitalize`]"]
+        #[inline]
         pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
             self,
             auto_capitalize: V,
@@ -669,6 +675,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::auto_focus`]"]
+        #[inline]
         pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
             self,
             auto_focus: V,
@@ -685,6 +692,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::content_editable`]"]
+        #[inline]
         pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
             content_editable: V,
@@ -701,6 +709,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::context_menu`]"]
+        #[inline]
         pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
             self,
             context_menu: V,
@@ -717,6 +726,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::dir`]"]
+        #[inline]
         pub fn dir<V: crate::MaybeUpdateValue<str>>(
             self,
             dir: V,
@@ -732,6 +742,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::draggable`]"]
+        #[inline]
         pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
             self,
             draggable: V,
@@ -748,6 +759,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::enter_key_hint`]"]
+        #[inline]
         pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
             self,
             enter_key_hint: V,
@@ -764,6 +776,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::hidden`]"]
+        #[inline]
         pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
             self,
             hidden: V,
@@ -779,6 +792,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::inert`]"]
+        #[inline]
         pub fn inert<V: crate::MaybeUpdateValue<bool>>(
             self,
             inert: V,
@@ -794,6 +808,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::input_mode`]"]
+        #[inline]
         pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
             self,
             input_mode: V,
@@ -810,6 +825,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::is`]"]
+        #[inline]
         pub fn is<V: crate::MaybeUpdateValue<str>>(
             self,
             is: V,
@@ -825,6 +841,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::item_id`]"]
+        #[inline]
         pub fn item_id<V: crate::MaybeUpdateValue<str>>(
             self,
             item_id: V,
@@ -840,6 +857,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::item_prop`]"]
+        #[inline]
         pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
             self,
             item_prop: V,
@@ -856,6 +874,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::item_ref`]"]
+        #[inline]
         pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
             self,
             item_ref: V,
@@ -872,6 +891,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::item_scope`]"]
+        #[inline]
         pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
             self,
             item_scope: V,
@@ -888,6 +908,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::item_type`]"]
+        #[inline]
         pub fn item_type<V: crate::MaybeUpdateValue<str>>(
             self,
             item_type: V,
@@ -904,6 +925,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::lang`]"]
+        #[inline]
         pub fn lang<V: crate::MaybeUpdateValue<str>>(
             self,
             lang: V,
@@ -919,6 +941,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::nonce`]"]
+        #[inline]
         pub fn nonce<V: crate::MaybeUpdateValue<str>>(
             self,
             nonce: V,
@@ -934,6 +957,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::role`]"]
+        #[inline]
         pub fn role<V: crate::MaybeUpdateValue<str>>(
             self,
             role: V,
@@ -949,6 +973,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::slot`]"]
+        #[inline]
         pub fn slot<V: crate::MaybeUpdateValue<str>>(
             self,
             slot: V,
@@ -964,6 +989,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::spellcheck`]"]
+        #[inline]
         pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
             self,
             spellcheck: V,
@@ -980,6 +1006,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::style`]"]
+        #[inline]
         pub fn style<V: crate::MaybeUpdateValue<str>>(
             self,
             style: V,
@@ -995,6 +1022,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::tab_index`]"]
+        #[inline]
         pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
             self,
             tab_index: V,
@@ -1011,6 +1039,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::title`]"]
+        #[inline]
         pub fn title<V: crate::MaybeUpdateValue<str>>(
             self,
             title: V,
@@ -1026,6 +1055,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::translate`]"]
+        #[inline]
         pub fn translate<V: crate::MaybeUpdateValue<str>>(
             self,
             translate: V,
@@ -1042,6 +1072,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::virtual_keyboard_policy`]"]
+        #[inline]
         pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
             self,
             virtual_keyboard_policy: V,
@@ -1058,6 +1089,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::on_click`]"]
+        #[inline]
         pub fn on_click<V>(
             self,
             on_click: V,
@@ -1074,6 +1106,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::auto_play`]"]
+        #[inline]
         pub fn auto_play<V: crate::MaybeUpdateValue<bool>>(
             self,
             auto_play: V,
@@ -1090,6 +1123,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::controls`]"]
+        #[inline]
         pub fn controls<V: crate::MaybeUpdateValue<bool>>(
             self,
             controls: V,
@@ -1106,6 +1140,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::cross_origin`]"]
+        #[inline]
         pub fn cross_origin<V: crate::MaybeUpdateValue<str>>(
             self,
             cross_origin: V,
@@ -1122,6 +1157,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::loop_`]"]
+        #[inline]
         pub fn loop_<V: crate::MaybeUpdateValue<bool>>(
             self,
             loop_: V,
@@ -1137,6 +1173,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::muted`]"]
+        #[inline]
         pub fn muted<V: crate::MaybeUpdateValue<bool>>(
             self,
             muted: V,
@@ -1152,6 +1189,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::preload`]"]
+        #[inline]
         pub fn preload<V: crate::MaybeUpdateValue<str>>(
             self,
             preload: V,
@@ -1167,6 +1205,7 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlMediaElementProps::src`]"]
+        #[inline]
         pub fn src<V: crate::MaybeUpdateValue<str>>(
             self,
             src: V,
@@ -1181,6 +1220,7 @@ mod builder_and_replacer {
                 width: self.0.width,
             })
         }
+        #[inline]
         pub fn height<V: crate::MaybeUpdateValue<u32>>(
             self,
             height: V,
@@ -1193,6 +1233,7 @@ mod builder_and_replacer {
                 width: self.0.width,
             })
         }
+        #[inline]
         pub fn plays_inline<V: crate::MaybeUpdateValue<bool>>(
             self,
             plays_inline: V,
@@ -1205,6 +1246,7 @@ mod builder_and_replacer {
                 width: self.0.width,
             })
         }
+        #[inline]
         pub fn poster<V: crate::MaybeUpdateValue<str>>(
             self,
             poster: V,
@@ -1217,6 +1259,7 @@ mod builder_and_replacer {
                 width: self.0.width,
             })
         }
+        #[inline]
         pub fn width<V: crate::MaybeUpdateValue<u32>>(
             self,
             width: V,
