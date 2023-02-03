@@ -24,6 +24,18 @@ macro_rules! impl_grouped {
             }
         }
 
+        impl<S: ::syn::parse::Parse> $name<S> {
+            pub fn parse_many(input: syn::parse::ParseStream) -> syn::Result<Vec<Self>> {
+                let mut res = vec![];
+
+                while let Some(v) = input.parse()? {
+                    res.push(v)
+                }
+
+                Ok(res)
+            }
+        }
+
         impl<S: ::syn::parse::Parse> ::syn::parse::Parse for $name<S> {
             fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
                 let content;

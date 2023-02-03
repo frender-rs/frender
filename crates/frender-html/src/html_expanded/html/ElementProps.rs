@@ -232,7 +232,7 @@ pub mod render_state {
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            ::frender_core::RenderState::poll_reactive(self.project().children, cx)
+            crate::__private::RenderState::poll_reactive(self.project().children, cx)
         }
     }
 }

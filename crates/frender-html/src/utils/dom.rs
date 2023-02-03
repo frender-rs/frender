@@ -4,7 +4,6 @@ use frender_dom::{Dom, NextNodePosition};
 
 use crate::props::ElementAndMounted;
 
-#[inline]
 pub fn insert_element_and_update_with_tag<E: JsCast + AsRef<web_sys::Element>>(
     this: &mut Option<ElementAndMounted<E>>,
     ctx: &mut Dom,
@@ -25,7 +24,6 @@ pub fn insert_element_and_update_with_tag<E: JsCast + AsRef<web_sys::Element>>(
     )
 }
 
-#[inline]
 pub fn insert_element_and_update<E: JsCast + AsRef<web_sys::Element>>(
     this: &mut Option<ElementAndMounted<E>>,
     ctx: &mut Dom,

@@ -120,9 +120,6 @@ pub use var::var;
 pub mod wbr;
 pub use wbr::wbr;
 #[allow(non_snake_case)]
-pub mod HtmlHrefCommonProps;
-pub use HtmlHrefCommonProps::HtmlHrefCommonProps;
-#[allow(non_snake_case)]
 pub mod HtmlAnchorElementProps;
 pub use HtmlAnchorElementProps::HtmlAnchorElementProps;
 pub mod a;

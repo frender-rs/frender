@@ -9,6 +9,7 @@ use frender_macros::def_intrinsic_component_props;
 pub use frender_dom::props::MaybeUpdateValue;
 
 pub mod __private {
+    pub use frender_core::RenderState;
     pub use pin_project_lite::pin_project;
 }
 

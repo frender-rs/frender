@@ -3,10 +3,7 @@ pub fn HtmlElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
     self::Building(self::Data {
-        children: (),
-        class: (),
-        id: (),
-        part: (),
+        ElementProps: ElementProps::build(ElementProps()),
         access_key: (),
         auto_capitalize: (),
         auto_focus: (),
@@ -40,11 +37,8 @@ pub fn HtmlElementProps() -> Building<TypesInitial> {
 pub mod prelude {}
 pub mod overwrite {
     #![allow(non_camel_case_types)]
-    pub type children<TypeDefs, Value> = dyn super::Types<
-        children = Value,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+    pub type ElementProps<TypeDefs, Value> = dyn super::Types<
+        ElementProps = Value,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -74,113 +68,33 @@ pub mod overwrite {
         virtual_keyboard_policy = <TypeDefs as super::Types>::virtual_keyboard_policy,
         on_click = <TypeDefs as super::Types>::on_click,
     >;
-    pub type class<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = Value,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
-        access_key = <TypeDefs as super::Types>::access_key,
-        auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
-        auto_focus = <TypeDefs as super::Types>::auto_focus,
-        content_editable = <TypeDefs as super::Types>::content_editable,
-        context_menu = <TypeDefs as super::Types>::context_menu,
-        dir = <TypeDefs as super::Types>::dir,
-        draggable = <TypeDefs as super::Types>::draggable,
-        enter_key_hint = <TypeDefs as super::Types>::enter_key_hint,
-        hidden = <TypeDefs as super::Types>::hidden,
-        inert = <TypeDefs as super::Types>::inert,
-        input_mode = <TypeDefs as super::Types>::input_mode,
-        is = <TypeDefs as super::Types>::is,
-        item_id = <TypeDefs as super::Types>::item_id,
-        item_prop = <TypeDefs as super::Types>::item_prop,
-        item_ref = <TypeDefs as super::Types>::item_ref,
-        item_scope = <TypeDefs as super::Types>::item_scope,
-        item_type = <TypeDefs as super::Types>::item_type,
-        lang = <TypeDefs as super::Types>::lang,
-        nonce = <TypeDefs as super::Types>::nonce,
-        role = <TypeDefs as super::Types>::role,
-        slot = <TypeDefs as super::Types>::slot,
-        spellcheck = <TypeDefs as super::Types>::spellcheck,
-        style = <TypeDefs as super::Types>::style,
-        tab_index = <TypeDefs as super::Types>::tab_index,
-        title = <TypeDefs as super::Types>::title,
-        translate = <TypeDefs as super::Types>::translate,
-        virtual_keyboard_policy = <TypeDefs as super::Types>::virtual_keyboard_policy,
-        on_click = <TypeDefs as super::Types>::on_click,
+    pub type children<TypeDefs, Value> = self::ElementProps<
+        TypeDefs,
+        super::super::ElementProps::overwrite::children<
+            <TypeDefs as super::Types>::ElementProps,
+            Value,
+        >,
     >;
-    pub type id<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = Value,
-        part = <TypeDefs as super::Types>::part,
-        access_key = <TypeDefs as super::Types>::access_key,
-        auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
-        auto_focus = <TypeDefs as super::Types>::auto_focus,
-        content_editable = <TypeDefs as super::Types>::content_editable,
-        context_menu = <TypeDefs as super::Types>::context_menu,
-        dir = <TypeDefs as super::Types>::dir,
-        draggable = <TypeDefs as super::Types>::draggable,
-        enter_key_hint = <TypeDefs as super::Types>::enter_key_hint,
-        hidden = <TypeDefs as super::Types>::hidden,
-        inert = <TypeDefs as super::Types>::inert,
-        input_mode = <TypeDefs as super::Types>::input_mode,
-        is = <TypeDefs as super::Types>::is,
-        item_id = <TypeDefs as super::Types>::item_id,
-        item_prop = <TypeDefs as super::Types>::item_prop,
-        item_ref = <TypeDefs as super::Types>::item_ref,
-        item_scope = <TypeDefs as super::Types>::item_scope,
-        item_type = <TypeDefs as super::Types>::item_type,
-        lang = <TypeDefs as super::Types>::lang,
-        nonce = <TypeDefs as super::Types>::nonce,
-        role = <TypeDefs as super::Types>::role,
-        slot = <TypeDefs as super::Types>::slot,
-        spellcheck = <TypeDefs as super::Types>::spellcheck,
-        style = <TypeDefs as super::Types>::style,
-        tab_index = <TypeDefs as super::Types>::tab_index,
-        title = <TypeDefs as super::Types>::title,
-        translate = <TypeDefs as super::Types>::translate,
-        virtual_keyboard_policy = <TypeDefs as super::Types>::virtual_keyboard_policy,
-        on_click = <TypeDefs as super::Types>::on_click,
+    pub type class<TypeDefs, Value> = self::ElementProps<
+        TypeDefs,
+        super::super::ElementProps::overwrite::class<
+            <TypeDefs as super::Types>::ElementProps,
+            Value,
+        >,
     >;
-    pub type part<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = Value,
-        access_key = <TypeDefs as super::Types>::access_key,
-        auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
-        auto_focus = <TypeDefs as super::Types>::auto_focus,
-        content_editable = <TypeDefs as super::Types>::content_editable,
-        context_menu = <TypeDefs as super::Types>::context_menu,
-        dir = <TypeDefs as super::Types>::dir,
-        draggable = <TypeDefs as super::Types>::draggable,
-        enter_key_hint = <TypeDefs as super::Types>::enter_key_hint,
-        hidden = <TypeDefs as super::Types>::hidden,
-        inert = <TypeDefs as super::Types>::inert,
-        input_mode = <TypeDefs as super::Types>::input_mode,
-        is = <TypeDefs as super::Types>::is,
-        item_id = <TypeDefs as super::Types>::item_id,
-        item_prop = <TypeDefs as super::Types>::item_prop,
-        item_ref = <TypeDefs as super::Types>::item_ref,
-        item_scope = <TypeDefs as super::Types>::item_scope,
-        item_type = <TypeDefs as super::Types>::item_type,
-        lang = <TypeDefs as super::Types>::lang,
-        nonce = <TypeDefs as super::Types>::nonce,
-        role = <TypeDefs as super::Types>::role,
-        slot = <TypeDefs as super::Types>::slot,
-        spellcheck = <TypeDefs as super::Types>::spellcheck,
-        style = <TypeDefs as super::Types>::style,
-        tab_index = <TypeDefs as super::Types>::tab_index,
-        title = <TypeDefs as super::Types>::title,
-        translate = <TypeDefs as super::Types>::translate,
-        virtual_keyboard_policy = <TypeDefs as super::Types>::virtual_keyboard_policy,
-        on_click = <TypeDefs as super::Types>::on_click,
+    pub type id<TypeDefs, Value> = self::ElementProps<
+        TypeDefs,
+        super::super::ElementProps::overwrite::id<<TypeDefs as super::Types>::ElementProps, Value>,
+    >;
+    pub type part<TypeDefs, Value> = self::ElementProps<
+        TypeDefs,
+        super::super::ElementProps::overwrite::part<
+            <TypeDefs as super::Types>::ElementProps,
+            Value,
+        >,
     >;
     pub type access_key<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = Value,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -211,10 +125,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type auto_capitalize<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = Value,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -245,10 +156,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type auto_focus<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = Value,
@@ -279,10 +187,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type content_editable<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -313,10 +218,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type context_menu<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -347,10 +249,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type dir<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -381,10 +280,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type draggable<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -415,10 +311,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type enter_key_hint<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -449,10 +342,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type hidden<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -483,10 +373,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type inert<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -517,10 +404,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type input_mode<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -551,10 +435,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type is<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -585,10 +466,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type item_id<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -619,10 +497,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type item_prop<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -653,10 +528,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type item_ref<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -687,10 +559,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type item_scope<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -721,10 +590,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type item_type<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -755,10 +621,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type lang<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -789,10 +652,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type nonce<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -823,10 +683,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type role<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -857,10 +714,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type slot<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -891,10 +745,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type spellcheck<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -925,10 +776,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type style<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -959,10 +807,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type tab_index<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -993,10 +838,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type title<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -1027,10 +869,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type translate<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -1061,10 +900,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type virtual_keyboard_policy<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -1095,10 +931,7 @@ pub mod overwrite {
         on_click = <TypeDefs as super::Types>::on_click,
     >;
     pub type on_click<TypeDefs, Value> = dyn super::Types<
-        children = <TypeDefs as super::Types>::children,
-        class = <TypeDefs as super::Types>::class,
-        id = <TypeDefs as super::Types>::id,
-        part = <TypeDefs as super::Types>::part,
+        ElementProps = <TypeDefs as super::Types>::ElementProps,
         access_key = <TypeDefs as super::Types>::access_key,
         auto_capitalize = <TypeDefs as super::Types>::auto_capitalize,
         auto_focus = <TypeDefs as super::Types>::auto_focus,
@@ -1134,10 +967,7 @@ mod trait_types {
     use super::super::*;
     #[allow(non_camel_case_types)]
     pub trait Types {
-        type children;
-        type class: crate::MaybeUpdateValue<str>;
-        type id: crate::MaybeUpdateValue<str>;
-        type part: crate::MaybeUpdateValue<str>;
+        type ElementProps: ?::core::marker::Sized + ElementProps::Types;
         type access_key: crate::MaybeUpdateValue<str>;
         type auto_capitalize: crate::MaybeUpdateValue<str>;
         type auto_focus: crate::MaybeUpdateValue<bool>;
@@ -1173,10 +1003,7 @@ pub use trait_types::Types as ValidTypes;
 pub mod data_struct {
     #[non_exhaustive]
     pub struct HtmlElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
-        pub children: TypeDefs::children,
-        pub class: TypeDefs::class,
-        pub id: TypeDefs::id,
-        pub part: TypeDefs::part,
+        pub ElementProps: super::super::ElementProps::Data<TypeDefs::ElementProps>,
         pub access_key: TypeDefs::access_key,
         pub auto_capitalize: TypeDefs::auto_capitalize,
         pub auto_focus: TypeDefs::auto_focus,
@@ -1214,10 +1041,7 @@ mod types_initial {
     #[allow(unused_imports)]
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
-        children = (),
-        class = (),
-        id = (),
-        part = (),
+        ElementProps = ElementProps::TypesInitial,
         access_key = (),
         auto_capitalize = (),
         auto_focus = (),
@@ -1254,10 +1078,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type children: ::frender_core::RenderState;
-        type class: ::core::default::Default;
-        type id: ::core::default::Default;
-        type part: ::core::default::Default;
+        type ElementProps: ::core::default::Default + crate::props::IntrinsicComponentPollReactive;
         type access_key: ::core::default::Default;
         type auto_capitalize: ::core::default::Default;
         type auto_focus: ::core::default::Default;
@@ -1291,10 +1112,7 @@ pub mod render_state {
     where
         TypeDefs: ?::core::marker::Sized,
     {
-        pub children: TypeDefs::children,
-        pub class: TypeDefs::class,
-        pub id: TypeDefs::id,
-        pub part: TypeDefs::part,
+        pub ElementProps: TypeDefs::ElementProps,
         pub access_key: TypeDefs::access_key,
         pub auto_capitalize: TypeDefs::auto_capitalize,
         pub auto_focus: TypeDefs::auto_focus,
@@ -1336,10 +1154,7 @@ pub mod render_state {
         RenderState<TypeDefs>: '__pin,
         TypeDefs: ?::core::marker::Sized,
     {
-        pub children: ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::children)>,
-        pub class: &'__pin mut (TypeDefs::class),
-        pub id: &'__pin mut (TypeDefs::id),
-        pub part: &'__pin mut (TypeDefs::part),
+        pub ElementProps: ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::ElementProps)>,
         pub access_key: &'__pin mut (TypeDefs::access_key),
         pub auto_capitalize: &'__pin mut (TypeDefs::auto_capitalize),
         pub auto_focus: &'__pin mut (TypeDefs::auto_focus),
@@ -1387,10 +1202,7 @@ pub mod render_state {
             RenderState<TypeDefs>: '__pin,
             TypeDefs: ?::core::marker::Sized,
         {
-            pub children: ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::children)>,
-            pub class: &'__pin (TypeDefs::class),
-            pub id: &'__pin (TypeDefs::id),
-            pub part: &'__pin (TypeDefs::part),
+            pub ElementProps: ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::ElementProps)>,
             pub access_key: &'__pin (TypeDefs::access_key),
             pub auto_capitalize: &'__pin (TypeDefs::auto_capitalize),
             pub auto_focus: &'__pin (TypeDefs::auto_focus),
@@ -1429,10 +1241,7 @@ pub mod render_state {
             ) -> RenderStateProj<'__pin, TypeDefs> {
                 unsafe {
                     let Self {
-                        children,
-                        class,
-                        id,
-                        part,
+                        ElementProps,
                         access_key,
                         auto_capitalize,
                         auto_focus,
@@ -1463,10 +1272,9 @@ pub mod render_state {
                         on_click,
                     } = self.get_unchecked_mut();
                     RenderStateProj {
-                        children: ::pin_project_lite::__private::Pin::new_unchecked(children),
-                        class: class,
-                        id: id,
-                        part: part,
+                        ElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            ElementProps,
+                        ),
                         access_key: access_key,
                         auto_capitalize: auto_capitalize,
                         auto_focus: auto_focus,
@@ -1503,10 +1311,7 @@ pub mod render_state {
             ) -> ProjectionRef<'__pin, TypeDefs> {
                 unsafe {
                     let Self {
-                        children,
-                        class,
-                        id,
-                        part,
+                        ElementProps,
                         access_key,
                         auto_capitalize,
                         auto_focus,
@@ -1537,10 +1342,9 @@ pub mod render_state {
                         on_click,
                     } = self.get_ref();
                     ProjectionRef {
-                        children: ::pin_project_lite::__private::Pin::new_unchecked(children),
-                        class: class,
-                        id: id,
-                        part: part,
+                        ElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            ElementProps,
+                        ),
                         access_key: access_key,
                         auto_capitalize: auto_capitalize,
                         auto_focus: auto_focus,
@@ -1579,10 +1383,7 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
-            children: TypeDefs::children,
-            class: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::class>,
-            id: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::id>,
-            part: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::part>,
+            ElementProps: TypeDefs::ElementProps,
             access_key: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::access_key>,
             auto_capitalize: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_capitalize>,
             auto_focus: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_focus>,
@@ -1633,10 +1434,7 @@ pub mod render_state {
         where
             TypeDefs: ?::core::marker::Sized,
         {
-            let _ = &this.children;
-            let _ = &this.class;
-            let _ = &this.id;
-            let _ = &this.part;
+            let _ = &this.ElementProps;
             let _ = &this.access_key;
             let _ = &this.auto_capitalize;
             let _ = &this.auto_focus;
@@ -1680,10 +1478,7 @@ pub mod render_state {
     {
         fn default() -> Self {
             Self {
-                children: ::frender_core::RenderState::new_uninitialized(),
-                class: ::core::default::Default::default(),
-                id: ::core::default::Default::default(),
-                part: ::core::default::Default::default(),
+                ElementProps: ::core::default::Default::default(),
                 access_key: ::core::default::Default::default(),
                 auto_capitalize: ::core::default::Default::default(),
                 auto_focus: ::core::default::Default::default(),
@@ -1723,7 +1518,10 @@ pub mod render_state {
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            ::frender_core::RenderState::poll_reactive(self.project().children, cx)
+            crate::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+                self.project().ElementProps,
+                cx,
+            )
         }
     }
 }
@@ -1737,15 +1535,15 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
+        #[doc = "See [`ElementProps::children`]"]
         pub fn children<V>(
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Building(super::Data {
-                children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: ElementProps::build(
+                    ElementProps::Building(self.0.ElementProps).children(children),
+                ),
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1776,15 +1574,15 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[doc = "See [`ElementProps::class`]"]
         pub fn class<V: crate::MaybeUpdateValue<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: ElementProps::build(
+                    ElementProps::Building(self.0.ElementProps).class(class),
+                ),
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1815,15 +1613,15 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[doc = "See [`ElementProps::id`]"]
         pub fn id<V: crate::MaybeUpdateValue<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id,
-                part: self.0.part,
+                ElementProps: ElementProps::build(
+                    ElementProps::Building(self.0.ElementProps).id(id),
+                ),
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1854,15 +1652,15 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
+        #[doc = "See [`ElementProps::part`]"]
         pub fn part<V: crate::MaybeUpdateValue<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part,
+                ElementProps: ElementProps::build(
+                    ElementProps::Building(self.0.ElementProps).part(part),
+                ),
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1898,10 +1696,7 @@ mod builder_and_replacer {
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1937,10 +1732,7 @@ mod builder_and_replacer {
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -1976,10 +1768,7 @@ mod builder_and_replacer {
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus,
@@ -2015,10 +1804,7 @@ mod builder_and_replacer {
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2055,10 +1841,7 @@ mod builder_and_replacer {
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2094,10 +1877,7 @@ mod builder_and_replacer {
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2133,10 +1913,7 @@ mod builder_and_replacer {
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2172,10 +1949,7 @@ mod builder_and_replacer {
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2211,10 +1985,7 @@ mod builder_and_replacer {
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2250,10 +2021,7 @@ mod builder_and_replacer {
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2289,10 +2057,7 @@ mod builder_and_replacer {
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2328,10 +2093,7 @@ mod builder_and_replacer {
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2367,10 +2129,7 @@ mod builder_and_replacer {
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2406,10 +2165,7 @@ mod builder_and_replacer {
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2445,10 +2201,7 @@ mod builder_and_replacer {
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2484,10 +2237,7 @@ mod builder_and_replacer {
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2523,10 +2273,7 @@ mod builder_and_replacer {
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2562,10 +2309,7 @@ mod builder_and_replacer {
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2601,10 +2345,7 @@ mod builder_and_replacer {
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2640,10 +2381,7 @@ mod builder_and_replacer {
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2679,10 +2417,7 @@ mod builder_and_replacer {
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2718,10 +2453,7 @@ mod builder_and_replacer {
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2757,10 +2489,7 @@ mod builder_and_replacer {
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2796,10 +2525,7 @@ mod builder_and_replacer {
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2835,10 +2561,7 @@ mod builder_and_replacer {
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2874,10 +2597,7 @@ mod builder_and_replacer {
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2913,10 +2633,7 @@ mod builder_and_replacer {
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2952,10 +2669,7 @@ mod builder_and_replacer {
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Building(super::Data {
-                children: self.0.children,
-                class: self.0.class,
-                id: self.0.id,
-                part: self.0.part,
+                ElementProps: self.0.ElementProps,
                 access_key: self.0.access_key,
                 auto_capitalize: self.0.auto_capitalize,
                 auto_focus: self.0.auto_focus,
@@ -2995,10 +2709,10 @@ mod impl_update_element {
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
         crate::props::UpdateElement<web_sys::HtmlElement> for super::Data<TypeDefs>
     where
-        TypeDefs::children: ::frender_core::UpdateRenderState<::frender_dom::Dom>,
+        ElementProps::Data<TypeDefs::ElementProps>: crate::props::UpdateElement<web_sys::Element>,
         TypeDefs::on_click: crate::props::UpdateDomEventListener<crate::props::events::Click>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < children = < TypeDefs :: children as frender_core :: UpdateRenderState < frender_dom :: Dom , > > :: State , class = < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , id = < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , part = < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , access_key = < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_capitalize = < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_focus = < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , content_editable = () , context_menu = < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , dir = < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , draggable = < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , enter_key_hint = < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , hidden = < TypeDefs :: hidden as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , inert = < TypeDefs :: inert as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , input_mode = < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , is = < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_id = < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_prop = < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_ref = < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_scope = < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_type = < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , lang = < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , nonce = < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , role = < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , slot = < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , spellcheck = < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , style = < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , tab_index = < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: State , title = < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , translate = < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , virtual_keyboard_policy = < TypeDefs :: virtual_keyboard_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , on_click = < TypeDefs :: on_click as crate :: props :: UpdateDomEventListener < crate :: props :: events :: Click , > > :: State , > , > ;
+        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < ElementProps = < ElementProps :: Data < TypeDefs :: ElementProps , > as crate :: props :: UpdateElement < web_sys :: Element > > :: State , access_key = < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_capitalize = < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_focus = < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , content_editable = () , context_menu = < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , dir = < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , draggable = < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , enter_key_hint = < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , hidden = < TypeDefs :: hidden as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , inert = < TypeDefs :: inert as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , input_mode = < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , is = < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_id = < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_prop = < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_ref = < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_scope = < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , item_type = < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , lang = < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , nonce = < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , role = < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , slot = < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , spellcheck = < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , style = < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , tab_index = < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: State , title = < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , translate = < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , virtual_keyboard_policy = < TypeDefs :: virtual_keyboard_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , on_click = < TypeDefs :: on_click as crate :: props :: UpdateDomEventListener < crate :: props :: events :: Click , > > :: State , > , > ;
         fn update_element(
             this: Self,
             element: &web_sys::HtmlElement,
@@ -3009,8 +2723,8 @@ mod impl_update_element {
             let dom_element: &::web_sys::Element = element.as_ref();
             #[allow(unused_variables)]
             match (crate::props::FieldData {
-                data: this.children,
-                state: state.children,
+                data: this.ElementProps,
+                state: state.ElementProps,
                 element,
                 dom_element,
                 children_ctx: &mut *children_ctx,
@@ -3018,73 +2732,15 @@ mod impl_update_element {
                 crate::props::FieldData {
                     data,
                     state,
+                    element,
                     children_ctx,
                     ..
-                } => ::frender_core::UpdateRenderState::update_render_state(
+                } => crate::props::UpdateElement::update_element(
                     data,
+                    element.as_ref(),
                     children_ctx,
                     state,
                 ),
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.class,
-                state: state.class,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "class";
-                    < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.id,
-                state: state.id,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "id";
-                    < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_id (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.part,
-                state: state.part,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "part";
-                    < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
             }
             #[allow(unused_variables)]
             match (crate::props::FieldData {

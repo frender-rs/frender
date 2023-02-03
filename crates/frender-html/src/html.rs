@@ -124,7 +124,7 @@ crate::def_intrinsic_component_props! {
                 }
             },
         } [
-            pub struct HtmlHrefCommonProps(web_sys::HtmlAnchorElement) {
+            virtual {
                 download ? str { set_download },
                 href ? str { set_href },
                 ping ? str { set_ping },
@@ -154,6 +154,7 @@ crate::def_intrinsic_component_props! {
                 src ? str {set_src},
             } [
                 pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement : audio) {
+                    __ ? str, // TODO: optimize for direct inherited struct
                 }
             ][
                 pub struct HtmlVideoElementProps(web_sys::HtmlVideoElement : video) {
@@ -176,6 +177,8 @@ crate::def_intrinsic_component_props! {
             pub struct HtmlBodyElementProps(web_sys::HtmlBodyElement : body) {
                 // TODO:
                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
+                #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
+                alink ? str,
             }
         ][
             pub struct HtmlBrElementProps(web_sys::HtmlBrElement : br) {
@@ -472,7 +475,7 @@ crate::def_intrinsic_component_props! {
                 width ? str {set_width},
             }
         ][
-            pub struct HtmlTableSectionElementProps(web_sys::HtmlTableSectionElement : tbody, tfoot, thead) {
+            virtual {
                 #[deprecated]
                 align ? str {set_align},
                 #[deprecated]
@@ -484,6 +487,9 @@ crate::def_intrinsic_component_props! {
                 #[deprecated]
                 v_align ? str {"valign" set_v_align},
             } [
+                pub struct HtmlTableSectionElementProps(web_sys::HtmlTableSectionElement : tbody, tfoot, thead) {
+                }
+            ][
                 pub struct HtmlTableRowElementProps(web_sys::HtmlTableRowElement : tr) {
                 }
             ][

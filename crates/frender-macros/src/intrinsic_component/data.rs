@@ -1,12 +1,15 @@
 use proc_macro2::TokenStream;
-use syn::{parse::Parse, punctuated::Punctuated};
+use syn::{
+    parse::{Parse, ParseStream},
+    punctuated::Punctuated,
+};
 
 use crate::utils::{
     grouped::{Braced, Bracketed, Parenthesized},
     kw::PrefixKeyword,
 };
 
-use super::kw;
+use super::{kw, FieldDeclarationInherit, IntrinsicComponentPropsVirtual};
 
 #[derive(Clone)]
 pub struct FieldDeclarationMaybeDetailsMethod {
@@ -217,6 +220,34 @@ pub enum FieldDeclaration {
         details: Option<Braced<FieldDeclarationMaybeDetails>>,
     },
     Full(FieldDeclarationFull),
+    Inherit(FieldDeclarationInherit),
+}
+
+impl FieldDeclaration {
+    #[must_use]
+    pub fn is_inherit(&self) -> bool {
+        matches!(self, Self::Inherit(..))
+    }
+
+    pub fn as_inherit(&self) -> Option<&FieldDeclarationInherit> {
+        if let Self::Inherit(v) = self {
+            Some(v)
+        } else {
+            None
+        }
+    }
+}
+
+impl FieldDeclarationFull {
+    pub fn dom_state(&self) -> Option<&FieldDeclarationDomState> {
+        self.definitions
+            .content
+            .dom_definitions
+            .content
+            .state
+            .as_ref()
+            .map(|b| &b.content)
+    }
 }
 
 impl Parse for FieldDeclaration {
@@ -250,7 +281,15 @@ impl Parse for Field {
     }
 }
 
+#[derive(Clone)]
 pub struct Fields(pub Punctuated<Field, syn::Token![,]>);
+
+impl Fields {
+    pub fn prepend(&mut self, mut prepend_fields: Fields) {
+        prepend_fields.0.extend(std::mem::take(&mut self.0));
+        *self = prepend_fields;
+    }
+}
 
 impl Parse for Fields {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
@@ -297,7 +336,21 @@ pub struct IntrinsicComponentPropsData {
     pub name: syn::Ident,
     pub dom_element: Parenthesized<DomElement>,
     pub fields: Braced<Fields>,
-    pub inherits: Vec<Bracketed<IntrinsicComponentPropsData>>,
+    pub inherits: Vec<Bracketed<IntrinsicComponentProps>>,
+}
+
+pub enum IntrinsicComponentProps {
+    Virtual(IntrinsicComponentPropsVirtual),
+    Data(IntrinsicComponentPropsData),
+}
+
+impl IntrinsicComponentProps {
+    pub fn fields_mut(&mut self) -> &mut Fields {
+        match self {
+            IntrinsicComponentProps::Virtual(v) => &mut v.fields.content,
+            IntrinsicComponentProps::Data(d) => &mut d.fields.content,
+        }
+    }
 }
 
 impl Parse for IntrinsicComponentPropsData {
@@ -309,15 +362,17 @@ impl Parse for IntrinsicComponentPropsData {
             name: input.parse()?,
             dom_element: input.parse()?,
             fields: input.parse()?,
-            inherits: {
-                let mut inherits = vec![];
-
-                while let Some(inherit) = input.parse()? {
-                    inherits.push(inherit)
-                }
-
-                inherits
-            },
+            inherits: input.call(Bracketed::parse_many)?,
         })
+    }
+}
+
+impl Parse for IntrinsicComponentProps {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(syn::Token![virtual]) {
+            input.parse().map(Self::Virtual)
+        } else {
+            input.parse().map(Self::Data)
+        }
     }
 }

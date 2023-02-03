@@ -8,7 +8,8 @@ use crate::utils::grouped::{Braced, Bracketed};
 
 use super::{
     kw, Field, FieldDeclaration, FieldDeclarationDefinitions, FieldDeclarationDomDefinitions,
-    FieldDeclarationDomState, FieldDeclarationFull, IntrinsicComponentPropsData,
+    FieldDeclarationDomState, FieldDeclarationFull, FieldDeclarationInherit,
+    IntrinsicComponentProps, IntrinsicComponentPropsData,
 };
 
 impl FieldDeclaration {
@@ -28,6 +29,10 @@ impl FieldDeclaration {
                     .implementation
                     .pat,
             ),
+            FieldDeclaration::Inherit(_) => Cow::Owned(TokenTree::Group(proc_macro2::Group::new(
+                proc_macro2::Delimiter::Brace,
+                quote!(data, state, element, children_ctx, ..),
+            ))),
         }
     }
 
@@ -129,10 +134,23 @@ impl FieldDeclaration {
                     .implementation
                     .impl_body,
             ),
+            FieldDeclaration::Inherit(v) => Cow::Owned(TokenTree::Group(Group::new(
+                proc_macro2::Delimiter::Brace,
+                quote!(#crate_path ::props::UpdateElement::update_element(
+                    data,
+                    element.as_ref(),
+                    children_ctx,
+                    state,
+                )),
+            ))),
         }
     }
 
-    pub fn dom_bounds(&self) -> Option<&TokenStream> {
+    pub fn dom_bounds(
+        &self,
+        crate_path: &impl ToTokens,
+        field_name: &syn::Ident,
+    ) -> Option<TokenStream> {
         match self {
             FieldDeclaration::Maybe { .. } => None,
             FieldDeclaration::Full(v) => v
@@ -142,47 +160,59 @@ impl FieldDeclaration {
                 .content
                 .bounds
                 .as_ref()
-                .map(|bounds| &bounds.content.content),
+                .map(|bounds| &bounds.content.content)
+                .map(|simple_bounds| quote! { TypeDefs::#field_name : #simple_bounds }),
+            FieldDeclaration::Inherit(v) => {
+                let base = &v.from_path;
+                let dom_element_ty = &v.dom_element_ty;
+                Some(quote!(
+                    #base ::Data<TypeDefs::#field_name>: #crate_path ::props::UpdateElement<#dom_element_ty>
+                ))
+            }
         }
     }
 
     pub fn dom_state_initial_value(&self) -> Cow<syn::Expr> {
-        self.dom_state()
-            .and_then(|state| state.implementation.as_ref())
-            .map_or_else(
-                || {
-                    Cow::Owned(syn::Expr::Verbatim(quote!(
-                        ::core::default::Default::default()
-                    )))
-                },
-                |im| Cow::Borrowed(&im.initial_value.content),
-            )
-    }
-
-    pub fn dom_state(&self) -> Option<&FieldDeclarationDomState> {
         match self {
             FieldDeclaration::Maybe { .. } => None,
             FieldDeclaration::Full(v) => v
-                .definitions
-                .content
-                .dom_definitions
-                .content
-                .state
-                .as_ref()
-                .map(|b| &b.content),
+                .dom_state()
+                .and_then(|state| state.implementation.as_ref())
+                .map(|imp| &imp.initial_value.content),
+            FieldDeclaration::Inherit(_) => None,
         }
+        .map_or_else(
+            || {
+                Cow::Owned(syn::Expr::Verbatim(quote!(
+                    ::core::default::Default::default()
+                )))
+            },
+            Cow::Borrowed,
+        )
     }
 
-    pub fn dom_state_bounds(&self) -> Cow<TokenStream> {
-        self.dom_state()
-            .and_then(|v| v.implementation.as_ref().map(|im| &im.bounds.content))
-            .map_or_else(
-                || Cow::Owned(quote!(::core::default::Default)),
-                Cow::Borrowed,
-            )
+    pub fn dom_state_bounds(&self, crate_path: &impl ToTokens) -> Cow<TokenStream> {
+        match self {
+            FieldDeclaration::Maybe { .. } => None,
+            FieldDeclaration::Full(v) => v.dom_state(),
+            FieldDeclaration::Inherit(_) => {
+                return Cow::Owned(quote! {
+                    ::core::default::Default + #crate_path ::props::IntrinsicComponentPollReactive
+                });
+            }
+        }
+        .and_then(|v| v.implementation.as_ref().map(|im| &im.bounds.content))
+        .map_or_else(
+            || Cow::Owned(quote!(::core::default::Default)),
+            Cow::Borrowed,
+        )
     }
 
-    pub fn dom_state_type(&self, field_name: &syn::Ident) -> Option<Cow<syn::Type>> {
+    pub fn dom_state_type(
+        &self,
+        crate_path: &impl ToTokens,
+        field_name: &syn::Ident,
+    ) -> Option<Cow<syn::Type>> {
         match self {
             FieldDeclaration::Maybe {
                 question_token,
@@ -199,59 +229,29 @@ impl FieldDeclaration {
                 .state
                 .as_ref()
                 .map(|state| Cow::Borrowed(&state.content.ty)),
+            FieldDeclaration::Inherit(v) => {
+                let path = &v.from_path;
+                let dom_element_ty = &v.dom_element_ty;
+                Some(Cow::Owned(syn::Type::Verbatim(quote! {
+                    <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
+                })))
+            }
         }
     }
 }
 
 impl Field {
-    pub fn dom_render_state_type_item(&self) -> TokenStream {
+    pub fn dom_render_state_type_item(&self, crate_path: &impl ToTokens) -> TokenStream {
         let name = &self.name;
-        let dom_state_bounds = self.declaration.dom_state_bounds();
+        let dom_state_bounds = self.declaration.dom_state_bounds(crate_path);
         quote! {
             type #name : #dom_state_bounds;
-        }
-    }
-
-    pub fn builder_fn(
-        &self,
-        all_fields: &Vec<&syn::Ident>,
-        crate_path: &impl ToTokens,
-    ) -> TokenStream {
-        let Self {
-            attrs,
-            name,
-            declaration,
-        } = self;
-        let bounds = declaration
-            .bounds(crate_path)
-            .map(|bounds| quote!(: #bounds));
-        let new_value = all_fields.iter().map(|field| {
-            if *field == name {
-                name.into_token_stream()
-            } else {
-                quote!(#field: self.0.#field)
-            }
-        });
-        quote! {
-            #(#attrs)*
-            pub fn #name <V #bounds>(
-                self,
-                #name: V,
-            ) -> super::Building<
-                super::overwrite::#name<TypeDefs, V>,
-            > {
-                super::Building(
-                    super::Data {
-                        #(#new_value),*
-                    }
-                )
-            }
         }
     }
 }
 
 impl FieldDeclaration {
-    pub fn dom_state_pin(&self) -> Option<&kw::pin> {
+    pub fn dom_state_pin(&self) -> Option<Cow<kw::pin>> {
         match self {
             FieldDeclaration::Maybe { .. } => None,
             FieldDeclaration::Full(v) => v
@@ -261,7 +261,9 @@ impl FieldDeclaration {
                 .content
                 .state
                 .as_ref()
-                .and_then(|state| state.content.pin.as_ref()),
+                .and_then(|state| state.content.pin.as_ref())
+                .map(Cow::Borrowed),
+            FieldDeclaration::Inherit(_) => Some(Default::default()),
         }
     }
 
@@ -271,6 +273,13 @@ impl FieldDeclaration {
                 Some(Cow::Owned(quote!(#crate_path ::MaybeUpdateValue<#ty>)))
             }
             FieldDeclaration::Full(v) => v.bounds.as_ref().map(|b| &b.content).map(Cow::Borrowed),
+            FieldDeclaration::Inherit(v) => {
+                //
+                let path = &v.from_path;
+                Some(Cow::Owned(quote! {
+                    ?::core::marker::Sized + #path ::Types
+                }))
+            }
         }
     }
 
@@ -278,6 +287,12 @@ impl FieldDeclaration {
         match self {
             FieldDeclaration::Maybe { .. } => Cow::Owned(syn::Type::Verbatim(quote!(()))),
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_type),
+            FieldDeclaration::Inherit(v) => {
+                let path = &v.from_path;
+                Cow::Owned(syn::Type::Verbatim(quote!(
+                    #path ::TypesInitial
+                )))
+            }
         }
     }
 
@@ -285,6 +300,12 @@ impl FieldDeclaration {
         match self {
             FieldDeclaration::Maybe { .. } => Cow::Owned(syn::Expr::Verbatim(quote!(()))),
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_value),
+            FieldDeclaration::Inherit(v) => {
+                let path = &v.from_path;
+                Cow::Owned(syn::Expr::Verbatim(quote! {
+                    #path ::build(#path ())
+                }))
+            }
         }
     }
 }
@@ -342,7 +363,8 @@ impl IntrinsicComponentPropsData {
             }
         });
 
-        let impl_field_overwrite = field_names.iter().enumerate().map(|(i, field)| {
+        let impl_field_overwrite = fields.iter().enumerate().map(|(i, field)| {
+            let field_name = &field.name;
             let fields = field_names.iter().enumerate().map(|(cur, name)| {
                 if cur == i {
                     quote!(#name = Value)
@@ -352,14 +374,30 @@ impl IntrinsicComponentPropsData {
                     }
                 }
             });
+
+            let overwrite_sub_fields = match &field.declaration {
+                FieldDeclaration::Inherit(v) => Some(
+                    FieldDeclarationInherit::make_overwrite_type_items(
+                        &v.from_path,
+                        &v.fields,
+                        field_name,
+                    )
+                    .collect(),
+                ),
+                _ => None::<TokenStream>,
+            };
+
             quote! {
-                pub type #field < TypeDefs, Value > = dyn super::Types<
+                pub type #field_name < TypeDefs, Value > = dyn super::Types<
                     #(#fields),*
                 >;
+                #overwrite_sub_fields
             }
         });
 
-        let dom_state_type_items = fields.iter().map(Field::dom_render_state_type_item);
+        let dom_state_type_items = fields
+            .iter()
+            .map(|f| Field::dom_render_state_type_item(f, &crate_path));
         let dom_state_fields = fields.iter().map(|field| {
             let pin = field.declaration.dom_state_pin().map(|pin| quote!(#[#pin]));
             let name = &field.name;
@@ -371,23 +409,18 @@ impl IntrinsicComponentPropsData {
 
         let impl_builder_fn = fields
             .iter()
-            .map(|field| field.builder_fn(&field_names, &crate_path));
+            .map(|field| field.to_builder_fns(&field_names, &crate_path));
 
         let dom_bounds = fields
             .iter()
-            .map(|f| f.declaration.dom_bounds().map(|bounds| (f, bounds)))
-            .filter_map(|v| {
-                v.map(|(field, bounds)| {
-                    let name = &field.name;
-                    quote! { TypeDefs::#name : #bounds ,}
-                })
-            });
+            .map(|f| f.declaration.dom_bounds(&crate_path, &f.name))
+            .filter_map(std::convert::identity);
 
         let dom_state_types = fields.iter().map(|f| {
             let name = &f.name;
             let ty = f
                 .declaration
-                .dom_state_type(name)
+                .dom_state_type(&crate_path, name)
                 .unwrap_or_else(|| Cow::Owned(syn::Type::Verbatim(quote!(()))));
             quote!(#name = #ty)
         });
@@ -399,12 +432,20 @@ impl IntrinsicComponentPropsData {
 
         let inherits_ts = inherits.into_iter().map(|inherit| {
             let mut inherit = inherit.content;
-            let mut inherit_fields = fields.clone();
-            let fields = &mut inherit.fields.content.0;
 
-            inherit_fields.extend(std::mem::take(fields));
-
-            *fields = inherit_fields;
+            let name = name.clone();
+            inherit.fields_mut().0.insert(
+                0,
+                Field {
+                    attrs: vec![],
+                    name: name.clone(),
+                    declaration: FieldDeclaration::Inherit(FieldDeclarationInherit {
+                        from_path: name.into(),
+                        dom_element_ty: dom_element_type.clone(),
+                        fields: fields.iter().map(Clone::clone).collect(),
+                    }),
+                },
+            );
 
             inherit.into_ts(Some(&crate_path))
         });
@@ -426,6 +467,12 @@ impl IntrinsicComponentPropsData {
                     }
                 }
             });
+
+        let struct_fields = fields.iter().map(Field::to_struct_field);
+
+        let impl_poll_reactive = fields
+            .iter()
+            .filter_map(|v| v.to_impl_poll_reactive(&crate_path));
 
         quote_spanned! {span=>
             #[allow(non_snake_case)]
@@ -465,9 +512,7 @@ impl IntrinsicComponentPropsData {
                 pub mod data_struct {
                     #[non_exhaustive]
                     pub struct #name<TypeDefs: super::Types + ?::core::marker::Sized> {
-                        #(
-                            pub #field_names : TypeDefs::#field_names,
-                        )*
+                        #(#struct_fields),*
                     }
                 }
 
@@ -534,10 +579,7 @@ impl IntrinsicComponentPropsData {
                             self: ::core::pin::Pin<&mut Self>,
                             cx: &mut ::core::task::Context<'_>,
                         ) -> ::core::task::Poll<bool> {
-                            ::frender_core::RenderState::poll_reactive(
-                                self.project().children,
-                                cx
-                            )
+                            #(#impl_poll_reactive)*
                         }
                     }
                 }
@@ -565,7 +607,7 @@ impl IntrinsicComponentPropsData {
                         TypeDefs: ?::core::marker::Sized + super::Types,
                     > #crate_path ::props::UpdateElement<#dom_element_type> for super::Data<TypeDefs>
                     where
-                        #(#dom_bounds)*
+                        #(#dom_bounds),*
                     {
                         type State = super::render_state::RenderState<
                             dyn super::render_state::RenderStateTypes<
@@ -601,5 +643,25 @@ impl IntrinsicComponentPropsData {
 
             #(#inherits_ts)*
         }
+    }
+}
+
+impl IntrinsicComponentProps {
+    pub fn try_unzip(self) -> syn::Result<Vec<IntrinsicComponentPropsData>> {
+        match self {
+            IntrinsicComponentProps::Virtual(v) => v.try_unzip(),
+            IntrinsicComponentProps::Data(d) => Ok(vec![d]),
+        }
+    }
+
+    pub fn into_ts(self, explicit_path: Option<&TokenStream>) -> TokenStream {
+        self.try_unzip().map_or_else(
+            |err| err.into_compile_error(),
+            |data| {
+                data.into_iter()
+                    .map(|data| data.into_ts(explicit_path))
+                    .collect()
+            },
+        )
     }
 }
