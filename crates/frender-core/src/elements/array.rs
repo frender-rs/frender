@@ -8,7 +8,7 @@ impl<S: RenderState, const N: usize> RenderState for [S; N] {
 
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {
-        pin_project_map_array(self, |state| S::unmount(state))
+        pin_project_map_array(self, S::unmount)
     }
 
     fn poll_reactive(
