@@ -31,10 +31,10 @@ jobs:
           chmod +x mdbook
         env:
           VERSION: v0.4.15
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: "frender"
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/bin/
@@ -49,7 +49,7 @@ jobs:
           node scripts/build-examples.js
           mdbook build frender-book
           mv frender-book/book dist/
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: "gh-pages"
           path: "gh-pages"
