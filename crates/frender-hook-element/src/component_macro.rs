@@ -212,12 +212,19 @@ macro_rules! component_only_dom {
         $impl_code:tt
     ) => {
         impl self:: $name ::ImplDom {
-            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            fn $name(
-                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
-            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
-            $impl_code
+            fn $name() -> impl $crate::frender_core::UpdateRenderState<
+                $crate::frender_dom::Dom,
+                State = impl $crate::frender_core::RenderState + 'static
+            > + 'static {
+                $crate::component_macro::detect_hooks! {
+                    @[$crate::component_macro::hooks_core]
+                    macro($crate::def_hook_fn_component_without_props)
+                    no_data($crate::NoData)
+                    prepend([$ctx_arg : $crate::ContextAndState<$crate::frender_dom::Dom, _>])
+                    $impl_code
+                }
+            }
         }
 
         $crate::bg::builder! {
@@ -229,17 +236,11 @@ macro_rules! component_only_dom {
             #[inline]
             pub fn build_element<TypesDef: ?Sized + $crate::bg::Empty::ValidTypes>(
                 _: Building<TypesDef>,
-            ) -> $crate::HookElementWithNoProps<
-                impl $crate::FnOnceOutputElementHookWithNoProps<
-                    $crate::frender_dom::Dom,
-                    RenderState = impl $crate::frender_core::RenderState + 'static,
-                > + ::core::marker::Copy + 'static,
-                (),
-            > {
-                $crate::HookElementWithNoProps {
-                    with_dom: self::ImplDom::$name,
-                    with_ssr: (),
-                }
+            ) -> impl $crate::frender_core::UpdateRenderState<
+                $crate::frender_dom::Dom,
+                State = impl $crate::frender_core::RenderState + 'static
+            > + 'static {
+                self::ImplDom::$name()
             }
         }
     };
@@ -343,5 +344,25 @@ macro_rules! component_only_dom {
     };
 }
 
+pub use frender_macros::detect_hooks;
 pub use hooks::core as hooks_core;
 pub use hooks::hook;
+
+#[macro_export]
+macro_rules! def_hook_fn_component_without_props {
+    (
+        [$($ctx_arg:tt)*]
+        data_expr($($data_expr:tt)+)
+        fn_arg_data_pat($($fn_arg_data_pat:tt)+)
+        fn_stmts_extract_data($($fn_stmts_extract_data:tt)*)
+        fn_stmts($($stmts:tt)*)
+    ) => {
+        $crate::fn_hook_component_with_no_props(
+            $($data_expr)+ ,
+            |$($fn_arg_data_pat)+ , $($ctx_arg)*| {
+                $($fn_stmts_extract_data)*
+                $($stmts)*
+            }
+        )
+    };
+}

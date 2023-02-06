@@ -1,6 +1,6 @@
 [package]
 name = "frender-macros"
-version = "1.0.0-alpha.8" # replace version
+version = "1.0.0-alpha.8"          # replace version
 edition = "2021"
 description = "macros for frender"
 license = "MIT"
@@ -15,6 +15,7 @@ syn = "1.0.86"
 quote = "1.0"
 darling = "0.14"
 proc-macro2 = "1.0.36"
+hooks-derive-core = { version = "1.1.0-alpha.8" }
 
 [features]
 intrinsic-component = []
