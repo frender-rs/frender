@@ -8,7 +8,7 @@ bg::builder! {
 }
 
 #[component(only_dom)]
-pub fn MyCounter(ctx: _, props: MyCounterProps) {
+pub fn MyCounter(ctx: _, props: &MyCounterProps) {
     let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
     let shared_state = hooks::use_shared_state(initial_value);
 

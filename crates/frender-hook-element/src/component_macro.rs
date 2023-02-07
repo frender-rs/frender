@@ -41,7 +41,7 @@ macro_rules! component_ssr_dom {
             pub(super) enum ImplDom {}
 
             #[inline]
-            pub fn build_element<TypesDef: ?Sized + $crate::bg::Empty::ValidTypes>(
+            pub fn build_element<TypesDef: ?::core::marker::Sized + $crate::bg::Empty::ValidTypes>(
                 _: Building<TypesDef>,
             ) -> $crate::HookElementWithNoProps<
                 impl $crate::FnOnceOutputElementHookWithNoProps<
@@ -68,7 +68,7 @@ macro_rules! component_ssr_dom {
         impl self:: $name ::ImplSsr {
             #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                 $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, dyn ::core::any::Any>,
                 $props_arg: &$($props_name)? $(:: $props_p)* ::Data<TypesDef>,
             ) -> $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, impl $crate::RenderState + 'static>
@@ -78,7 +78,7 @@ macro_rules! component_ssr_dom {
         impl self:: $name ::ImplDom {
             #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                 $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::Dom, dyn ::core::any::Any>,
                 $props_arg: &$($props_name)? $(:: $props_p)* ::Data<TypesDef>,
             ) -> $crate::ContextAndState<'render_ctx, $crate::Dom, impl $crate::RenderState + 'static>
@@ -96,7 +96,7 @@ macro_rules! component_ssr_dom {
                 use super::super::*;
 
                 #[inline]
-                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                pub fn build_element<TypesDef: 'static + ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                     super::Building(props): super::Building<TypesDef>,
                 ) -> $crate::HookElementWithRefProps<
                     impl $crate::FnOnceOutputElementHookWithRefProps<
@@ -132,7 +132,7 @@ macro_rules! component_ssr_dom {
         impl self:: $name :: ImplSsr {
             #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                 $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, dyn ::core::any::Any>,
                 $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
             ) -> $crate::ContextAndState<'render_ctx, $crate::AnySsrContext, impl $crate::RenderState + 'static>
@@ -142,7 +142,7 @@ macro_rules! component_ssr_dom {
         impl self:: $name :: ImplDom {
             #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                 $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::Dom, dyn ::core::any::Any>,
                 $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
             ) -> $crate::ContextAndState<'render_ctx, Dom, impl $crate::RenderState + 'static>
@@ -159,7 +159,7 @@ macro_rules! component_ssr_dom {
             mod build_element {
                 use super::super::*;
                 #[inline]
-                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                pub fn build_element<TypesDef: 'static + ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                     super::Building(props): super::Building<TypesDef>,
                 ) -> $crate::HookElementWithOwnedProps<
                     impl $crate::FnOnceOutputElementHookWithOwnedProps<
@@ -219,9 +219,9 @@ macro_rules! component_only_dom {
             > + 'static {
                 $crate::component_macro::detect_hooks! {
                     @[$crate::component_macro::hooks_core]
-                    macro($crate::def_hook_fn_component_without_props)
+                    macro($crate::def_hook_fn_component_with_ref_props)
                     no_data($crate::NoData)
-                    prepend([$ctx_arg : $crate::ContextAndState<$crate::frender_dom::Dom, _>])
+                    prepend([$ctx_arg : $crate::ContextAndState<$crate::frender_dom::Dom, _>, _: &()][()][][()])
                     $impl_code
                 }
             }
@@ -234,7 +234,7 @@ macro_rules! component_only_dom {
             pub(super) enum ImplDom {}
 
             #[inline]
-            pub fn build_element<TypesDef: ?Sized + $crate::bg::Empty::ValidTypes>(
+            pub fn build_element<TypesDef: ?::core::marker::Sized + $crate::bg::Empty::ValidTypes>(
                 _: Building<TypesDef>,
             ) -> impl $crate::frender_core::UpdateRenderState<
                 $crate::frender_dom::Dom,
@@ -251,13 +251,24 @@ macro_rules! component_only_dom {
         $impl_code:tt
     ) => {
         impl self:: $name ::ImplDom {
-            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
             #[allow(non_snake_case)]
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
-                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
-                $props_arg: &$($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
-            $impl_code
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                props: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+            ) -> impl $crate::frender_core::UpdateRenderState<
+                $crate::frender_dom::Dom,
+                State = impl $crate::frender_core::RenderState
+            > {
+                $crate::component_macro::detect_hooks! {
+                    @[$crate::component_macro::hooks_core]
+                    macro($crate::def_hook_fn_component_with_ref_props)
+                    no_data($crate::NoData)
+                    prepend(
+                        [$ctx_arg : $crate::ContextAndState<$crate::frender_dom::Dom, _>, $props_arg: &$($props_name)? $(:: $props_p)* ::Data<TypesDef>]
+                        [props][][()]
+                    )
+                    $impl_code
+                }
+            }
         }
 
         $crate::bg::builder! {
@@ -271,23 +282,13 @@ macro_rules! component_only_dom {
                 use super::super::*;
 
                 #[inline]
-                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                pub fn build_element<TypesDef: 'static + ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                     super::Building(props): super::Building<TypesDef>,
-                ) -> $crate::HookElementWithRefProps<
-                    impl $crate::FnOnceOutputElementHookWithRefProps<
-                            $crate::frender_dom::Dom,
-                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-                            RenderState = impl $crate::frender_core::RenderState + 'static,
-                        > + Copy
-                        + 'static,
-                    (),
-                    $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                ) -> impl $crate::frender_core::UpdateRenderState<
+                    $crate::frender_dom::Dom,
+                    State = impl $crate::frender_core::RenderState
                 > {
-                    $crate::HookElementWithRefProps {
-                        with_dom: super::ImplDom::$name,
-                        with_ssr: (),
-                        props,
-                    }
+                    super::ImplDom::$name (props)
                 }
             }
 
@@ -301,7 +302,8 @@ macro_rules! component_only_dom {
         $impl_code:tt
     ) => {
         impl self:: $name :: ImplDom {
-            pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+            #[allow(non_snake_case)]
+            pub fn $name<TypesDef: ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                 $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
             ) -> impl $crate::frender_core::UpdateRenderState<
                 $crate::frender_dom::Dom,
@@ -326,7 +328,7 @@ macro_rules! component_only_dom {
             mod build_element {
                 use super::super::*;
                 #[inline]
-                pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
+                pub fn build_element<TypesDef: 'static + ?::core::marker::Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                     super::Building(props): super::Building<TypesDef>,
                 ) -> impl $crate::frender_core::UpdateRenderState<
                     $crate::frender_dom::Dom,
@@ -380,6 +382,28 @@ macro_rules! def_hook_fn_component_with_owned_props {
                 $($stmts)*
             },
             $($props)*
+        )
+    };
+}
+
+#[macro_export]
+macro_rules! def_hook_fn_component_with_ref_props {
+    (
+        [$($args:tt)*][$($props:tt)*][$($dom:tt)*][$($ssr:tt)*]
+        data_expr($($data_expr:tt)+)
+        fn_arg_data_pat($($fn_arg_data_pat:tt)+)
+        fn_stmts_extract_data($($fn_stmts_extract_data:tt)*)
+        fn_stmts($($stmts:tt)*)
+    ) => {
+        $crate::FnHookElementWithRefProps::new_dom(
+            $($data_expr)+ ,
+            $($props)* ,
+            $($dom)*
+            move |$($fn_arg_data_pat)+ , $($args)*| {
+                $($fn_stmts_extract_data)*
+                $($stmts)*
+            },
+            $($ssr)*
         )
     };
 }

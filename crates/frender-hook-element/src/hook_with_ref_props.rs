@@ -15,7 +15,11 @@ pub struct FnHookElementWithRefProps<Data, Props, UDom, USsr, S> {
 }
 
 impl<Data, Props, UDom, USsr, S> FnHookElementWithRefProps<Data, Props, UDom, USsr, S> {
-    pub fn new(hook_data: Data, props: Props, use_hook_dom: UDom, use_hook_ssr: USsr) -> Self {
+    #[cfg(feature = "dom")]
+    pub fn new_dom(hook_data: Data, props: Props, use_hook_dom: UDom, use_hook_ssr: USsr) -> Self
+    where
+        UDom: FnMut(Pin<&mut Data>, ContextAndState<'_, frender_dom::Dom, S>, &Props),
+    {
         Self {
             hook_data,
             props,
