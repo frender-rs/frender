@@ -5,30 +5,9 @@ use frender_ssr::{AsyncWrite, SsrContext};
 use hooks::Hook;
 
 use crate::{
-    ContextAndState, HookElementPollTillEnd, HookElementWithNoProps, HookElementWithOwnedProps,
-    HookElementWithRefProps, HookStatePollOnce, HookStateWithNoProps, HookStateWithRefProps,
+    ContextAndState, HookElementPollTillEnd, HookElementWithOwnedProps, HookElementWithRefProps,
+    HookStatePollOnce, HookStateWithRefProps,
 };
-
-impl<F2, F, H, S: RenderState + 'static, W: AsyncWrite + Unpin> UpdateRenderState<SsrContext<W>>
-    for HookElementWithNoProps<F, F2>
-where
-    F: FnOnce() -> H,
-    H: for<'a> Hook<
-        (ContextAndState<'a, SsrContext<W>, dyn Any>,),
-        Value = ContextAndState<'a, SsrContext<W>, S>,
-    >,
-{
-    type State = HookStateWithNoProps<H, SsrContext<W>, S>;
-
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: Pin<&mut Self::State>) {
-        let state = state.project();
-        *state.ctx = Some(SsrContext {
-            writer_or_error: ctx.writer_or_error.take(),
-        });
-        let hook = state.hook.use_hook((self.with_dom,));
-        hook.use_hook((ContextAndState::new(ctx, state.render_state),));
-    }
-}
 
 impl<F, HDom, H, S: RenderState + 'static, Props, W: AsyncWrite + Unpin>
     UpdateRenderState<SsrContext<W>>

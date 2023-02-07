@@ -48,3 +48,9 @@ Pull requests and issues are welcomed.
 You can also [sponsor me](https://ko-fi.com/equalma) and I would be very grateful :heart:
 
 [![Buy Me a Coffee at ko-fi.com](https://cdn.ko-fi.com/cdn/kofi2.png?v=3)](https://ko-fi.com/N4N26J11L)
+
+## Development
+
+```
+cargo run --bin frender-html-expand
+```

@@ -5,8 +5,8 @@ use frender_dom::Dom;
 use hooks::Hook;
 
 use crate::{
-    ContextAndState, HookElementPollTillEnd, HookElementWithNoProps, HookElementWithOwnedProps,
-    HookElementWithRefProps, HookStatePollOnce, HookStateWithNoProps, HookStateWithRefProps,
+    ContextAndState, HookElementPollTillEnd, HookElementWithOwnedProps, HookElementWithRefProps,
+    HookStatePollOnce, HookStateWithRefProps,
 };
 
 impl<F, F2, H, S: RenderState + 'static, Props> UpdateRenderState<Dom>
@@ -24,21 +24,6 @@ where
         let state = state.project();
         let hook = state.hook.use_hook((self.with_dom,));
         hook.use_hook((ContextAndState::new(ctx, state.render_state), self.props));
-    }
-}
-
-impl<F2, F, H, S: RenderState + 'static> UpdateRenderState<Dom> for HookElementWithNoProps<F, F2>
-where
-    F: FnOnce() -> H,
-    H: for<'a> Hook<(ContextAndState<'a, Dom, dyn Any>,), Value = ContextAndState<'a, Dom, S>>,
-{
-    type State = HookStateWithNoProps<H, Dom, S>;
-
-    fn update_render_state(self, ctx: &mut Dom, state: Pin<&mut Self::State>) {
-        let state = state.project();
-        *state.ctx = Some(ctx.clone());
-        let hook = state.hook.use_hook((self.with_dom,));
-        hook.use_hook((ContextAndState::new(ctx, state.render_state),));
     }
 }
 
