@@ -21,13 +21,7 @@ pub use hook_with_owned_props::*;
 pub use hook_with_ref_props::*;
 
 #[cfg(feature = "dom")]
-mod dom;
-
-#[cfg(feature = "dom")]
 pub use frender_dom;
-
-#[cfg(feature = "ssr")]
-mod ssr;
 
 #[cfg(feature = "ssr")]
 pub use frender_ssr;

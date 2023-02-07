@@ -60,11 +60,7 @@ impl<Data: HookPollNextUpdate, S: RenderState> RenderState for FnHookElementStat
 impl<Data: HookPollNextUpdate, Ctx, S: RenderState, HDom, HSsr, Props> UpdateRenderState<Ctx>
     for FnHookElementWithOwnedProps<Data, S, Props, HDom, HSsr>
 where
-    HDom: for<'c> FnOnce(
-        Pin<&mut Data>,
-        ContextAndState<'c, Ctx, S>,
-        Props,
-    ) -> ContextAndState<'c, Ctx, S>,
+    HDom: for<'c> FnOnce(Pin<&mut Data>, ContextAndState<'c, Ctx, S>, Props),
 {
     type State = FnHookElementState<Data, S>;
 
@@ -85,11 +81,7 @@ where
 pub fn fn_dom_hook_element_with_owned_props<
     Data: HookPollNextUpdate,
     S: RenderState,
-    HDom: for<'c> FnOnce(
-        Pin<&mut Data>,
-        ContextAndState<'c, frender_dom::Dom, S>,
-        Props,
-    ) -> ContextAndState<'c, frender_dom::Dom, S>,
+    HDom: for<'c> FnOnce(Pin<&mut Data>, ContextAndState<'c, frender_dom::Dom, S>, Props),
     Props,
 >(
     data: Data,

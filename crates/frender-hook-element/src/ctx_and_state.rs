@@ -15,13 +15,7 @@ impl<'a, Ctx, State: ?Sized> ContextAndState<'a, Ctx, State> {
 
 impl<'a, Ctx, S: RenderState + 'static> ContextAndState<'a, Ctx, S> {
     #[inline]
-    pub fn render<E: UpdateRenderState<Ctx, State = S>>(
-        mut self,
-        element: E,
-    ) -> ContextAndState<'a, Ctx, E::State> {
-        // let mut this = self.downcast_state::<E::State>().unwrap();
-        element.update_render_state(self.context, self.state.as_mut());
-
-        self
+    pub fn render<E: UpdateRenderState<Ctx, State = S>>(self, element: E) {
+        element.update_render_state(self.context, self.state);
     }
 }

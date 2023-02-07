@@ -18,10 +18,7 @@ pin_project_lite::pin_project! {
 pub fn fn_hook_component_with_no_props<
     Data: HookPollNextUpdate,
     S: RenderState + 'static,
-    U: for<'c> FnMut(
-        Pin<&mut Data>,
-        ContextAndState<'c, frender_dom::Dom, S>,
-    ) -> ContextAndState<'c, frender_dom::Dom, S>,
+    U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, frender_dom::Dom, S>),
 >(
     data: Data,
     use_hook: U,
@@ -49,7 +46,7 @@ impl<
         Data: HookPollNextUpdate,
         Ctx: crate::HookContext,
         S: RenderState + 'static,
-        U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>) -> ContextAndState<'c, Ctx, S>,
+        U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>),
     > UpdateRenderState<Ctx> for FnHookComponentWithNoProps<Data, S, U>
 {
     type State = FnHookStateWithNoProps<Data, Ctx, S, U>;
@@ -80,7 +77,7 @@ impl<Data: HookPollNextUpdate, Ctx, S, U> RenderState for FnHookStateWithNoProps
 where
     Ctx: crate::HookContext,
     S: RenderState + 'static,
-    U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>) -> ContextAndState<'c, Ctx, S>,
+    U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>),
 {
     fn new_uninitialized() -> Self
     where
