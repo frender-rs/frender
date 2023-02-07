@@ -5,11 +5,12 @@ use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
 
 use crate::ContextAndState;
 
-pub struct FnHookElementWithOwnedProps<Data, HDom, HSsr, Props> {
+pub struct FnHookElementWithOwnedProps<Data, S, Props, HDom, HSsr> {
     pub data: Data,
+    pub props: Props,
     pub with_dom: HDom,
     pub with_ssr: HSsr,
-    pub props: Props,
+    __phantom_state: std::marker::PhantomData<S>,
 }
 
 pin_project_lite::pin_project! {
@@ -56,19 +57,19 @@ impl<Data: HookPollNextUpdate, S: RenderState> RenderState for FnHookElementStat
     }
 }
 
-impl<Data: HookPollNextUpdate, Ctx, S: RenderState + 'static, HDom, HSsr, Props>
-    UpdateRenderState<Ctx> for FnHookElementWithOwnedProps<Data, HDom, HSsr, Props>
+impl<Data: HookPollNextUpdate, Ctx, S: RenderState, HDom, HSsr, Props> UpdateRenderState<Ctx>
+    for FnHookElementWithOwnedProps<Data, S, Props, HDom, HSsr>
 where
-    HDom: for<'c> FnMut(
+    HDom: for<'c> FnOnce(
         Pin<&mut Data>,
-        ContextAndState<'c, Ctx, dyn Any>,
+        ContextAndState<'c, Ctx, S>,
         Props,
     ) -> ContextAndState<'c, Ctx, S>,
 {
     type State = FnHookElementState<Data, S>;
 
     fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
-        let mut use_hook = self.with_dom;
+        let use_hook = self.with_dom;
         let state = state.project();
 
         let data = state.data.use_hook((move || self.data,));
@@ -83,10 +84,10 @@ where
 
 pub fn fn_dom_hook_element_with_owned_props<
     Data: HookPollNextUpdate,
-    S: RenderState + 'static,
-    HDom: for<'c> FnMut(
+    S: RenderState,
+    HDom: for<'c> FnOnce(
         Pin<&mut Data>,
-        ContextAndState<'c, frender_dom::Dom, dyn Any>,
+        ContextAndState<'c, frender_dom::Dom, S>,
         Props,
     ) -> ContextAndState<'c, frender_dom::Dom, S>,
     Props,
@@ -94,11 +95,12 @@ pub fn fn_dom_hook_element_with_owned_props<
     data: Data,
     use_hook: HDom,
     props: Props,
-) -> FnHookElementWithOwnedProps<Data, HDom, (), Props> {
+) -> FnHookElementWithOwnedProps<Data, S, Props, HDom, ()> {
     FnHookElementWithOwnedProps {
         data,
         with_dom: use_hook,
         with_ssr: (),
         props,
+        __phantom_state: std::marker::PhantomData,
     }
 }

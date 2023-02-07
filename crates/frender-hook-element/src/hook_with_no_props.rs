@@ -11,7 +11,7 @@ pin_project_lite::pin_project! {
         #[pin]
         data: Data,
         use_hook: U,
-        __phantom_state: std::marker::PhantomData<S> ,
+        __phantom_state: std::marker::PhantomData<S>,
     }
 }
 
@@ -20,7 +20,7 @@ pub fn fn_hook_component_with_no_props<
     S: RenderState + 'static,
     U: for<'c> FnMut(
         Pin<&mut Data>,
-        ContextAndState<'c, frender_dom::Dom, dyn Any>,
+        ContextAndState<'c, frender_dom::Dom, S>,
     ) -> ContextAndState<'c, frender_dom::Dom, S>,
 >(
     data: Data,
@@ -49,10 +49,7 @@ impl<
         Data: HookPollNextUpdate,
         Ctx: crate::HookContext,
         S: RenderState + 'static,
-        U: for<'c> FnMut(
-            Pin<&mut Data>,
-            ContextAndState<'c, Ctx, dyn Any>,
-        ) -> ContextAndState<'c, Ctx, S>,
+        U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>) -> ContextAndState<'c, Ctx, S>,
     > UpdateRenderState<Ctx> for FnHookComponentWithNoProps<Data, S, U>
 {
     type State = FnHookStateWithNoProps<Data, Ctx, S, U>;
@@ -75,7 +72,7 @@ pin_project_lite::pin_project! {
         pub data: LazyPinnedHook<Data>,
         #[pin]
         pub render_state: S,
-        pub ctx_and_use_hook: Option<(Ctx,U)>,
+        pub ctx_and_use_hook: Option<(Ctx, U)>,
     }
 }
 
@@ -83,10 +80,7 @@ impl<Data: HookPollNextUpdate, Ctx, S, U> RenderState for FnHookStateWithNoProps
 where
     Ctx: crate::HookContext,
     S: RenderState + 'static,
-    U: for<'c> FnMut(
-        Pin<&mut Data>,
-        ContextAndState<'c, Ctx, dyn Any>,
-    ) -> ContextAndState<'c, Ctx, S>,
+    U: for<'c> FnMut(Pin<&mut Data>, ContextAndState<'c, Ctx, S>) -> ContextAndState<'c, Ctx, S>,
 {
     fn new_uninitialized() -> Self
     where
