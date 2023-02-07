@@ -5,8 +5,8 @@ use frender_ssr::{AsyncWrite, SsrContext};
 use hooks::Hook;
 
 use crate::{
-    ContextAndState, HookElementPollTillEnd, HookElementWithOwnedProps, HookElementWithRefProps,
-    HookStatePollOnce, HookStateWithRefProps,
+    ContextAndState, HookElementPollTillEnd, HookElementWithRefProps, HookStatePollOnce,
+    HookStateWithRefProps,
 };
 
 impl<F, HDom, H, S: RenderState + 'static, Props, W: AsyncWrite + Unpin>
@@ -46,23 +46,5 @@ where
         let state = state.project();
         let hook = state.hook.use_hook((self.with_dom,));
         hook.use_hook((ContextAndState::new(ctx, state.render_state), &self.props));
-    }
-}
-
-impl<F, F1, H, S: RenderState + 'static, Props, W: AsyncWrite + Unpin>
-    UpdateRenderState<SsrContext<W>> for HookElementWithOwnedProps<F1, F, Props>
-where
-    F: FnOnce() -> H,
-    H: for<'a> Hook<
-        (ContextAndState<'a, SsrContext<W>, dyn Any>, Props),
-        Value = ContextAndState<'a, SsrContext<W>, S>,
-    >,
-{
-    type State = HookStatePollOnce<H, S>;
-
-    fn update_render_state(self, ctx: &mut SsrContext<W>, state: Pin<&mut Self::State>) {
-        let state = state.project();
-        let hook = state.hook.use_hook((self.with_ssr,));
-        hook.use_hook((ContextAndState::new(ctx, state.render_state), self.props));
     }
 }

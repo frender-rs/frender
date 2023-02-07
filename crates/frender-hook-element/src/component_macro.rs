@@ -301,13 +301,20 @@ macro_rules! component_only_dom {
         $impl_code:tt
     ) => {
         impl self:: $name :: ImplDom {
-            #[$crate::component_macro::hook(args_generics = "'render_ctx", hooks_core_path($crate::component_macro::hooks_core))]
-            #[allow(non_snake_case)]
             pub fn $name<TypesDef: ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
-                $ctx_arg: $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, dyn ::core::any::Any>,
                 $props_arg: $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-            ) -> $crate::ContextAndState<'render_ctx, $crate::frender_dom::Dom, impl $crate::frender_core::RenderState + 'static>
-            $impl_code
+            ) -> impl $crate::frender_core::UpdateRenderState<
+                $crate::frender_dom::Dom,
+                State = impl $crate::frender_core::RenderState + 'static
+            > {
+                $crate::component_macro::detect_hooks! {
+                    @[$crate::component_macro::hooks_core]
+                    macro($crate::def_hook_fn_component_with_owned_props)
+                    no_data($crate::NoData)
+                    prepend([$ctx_arg : $crate::ContextAndState<$crate::frender_dom::Dom, _>, _: ()][()])
+                    $impl_code
+                }
+            }
         }
 
         $crate::bg::builder! {
@@ -321,21 +328,11 @@ macro_rules! component_only_dom {
                 #[inline]
                 pub fn build_element<TypesDef: 'static + ?Sized + $($props_name)? $(:: $props_p)* ::ValidTypes>(
                     super::Building(props): super::Building<TypesDef>,
-                ) -> $crate::HookElementWithOwnedProps<
-                    impl $crate::FnOnceOutputElementHookWithOwnedProps<
-                            $crate::frender_dom::Dom,
-                            $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
-                            RenderState = impl $crate::frender_core::RenderState + 'static,
-                        > + Copy
-                        + 'static,
-                    (),
-                    $($props_name)? $(:: $props_p)* ::Data<TypesDef>,
+                ) -> impl $crate::frender_core::UpdateRenderState<
+                    $crate::frender_dom::Dom,
+                    State = impl $crate::frender_core::RenderState + 'static
                 > {
-                    $crate::HookElementWithOwnedProps {
-                        with_dom: super::ImplDom:: $name,
-                        with_ssr: (),
-                        props,
-                    }
+                    super::ImplDom:: $name (props)
                 }
             }
 
@@ -363,6 +360,26 @@ macro_rules! def_hook_fn_component_without_props {
                 $($fn_stmts_extract_data)*
                 $($stmts)*
             }
+        )
+    };
+}
+
+#[macro_export]
+macro_rules! def_hook_fn_component_with_owned_props {
+    (
+        [$($args:tt)*][$($props:tt)*]
+        data_expr($($data_expr:tt)+)
+        fn_arg_data_pat($($fn_arg_data_pat:tt)+)
+        fn_stmts_extract_data($($fn_stmts_extract_data:tt)*)
+        fn_stmts($($stmts:tt)*)
+    ) => {
+        $crate::fn_dom_hook_element_with_owned_props(
+            $($data_expr)+ ,
+            move |$($fn_arg_data_pat)+ , $($args)*| {
+                $($fn_stmts_extract_data)*
+                $($stmts)*
+            },
+            $($props)*
         )
     };
 }
