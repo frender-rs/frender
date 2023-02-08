@@ -376,15 +376,15 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type download: crate::MaybeUpdateValue<str>;
-        type href: crate::MaybeUpdateValue<str>;
-        type ping: crate::MaybeUpdateValue<str>;
-        type referrer_policy: crate::MaybeUpdateValue<str>;
-        type rel: crate::MaybeUpdateValue<str>;
-        type target: crate::MaybeUpdateValue<str>;
-        type alt: crate::MaybeUpdateValue<str>;
-        type coords: crate::MaybeUpdateValue<str>;
-        type shape: crate::MaybeUpdateValue<str>;
+        type download: crate::MaybeUpdateValueByRef<str>;
+        type href: crate::MaybeUpdateValueByRef<str>;
+        type ping: crate::MaybeUpdateValueByRef<str>;
+        type referrer_policy: crate::MaybeUpdateValueByRef<str>;
+        type rel: crate::MaybeUpdateValueByRef<str>;
+        type target: crate::MaybeUpdateValueByRef<str>;
+        type alt: crate::MaybeUpdateValueByRef<str>;
+        type coords: crate::MaybeUpdateValueByRef<str>;
+        type shape: crate::MaybeUpdateValueByRef<str>;
     }
 }
 pub use trait_types::Types;
@@ -431,30 +431,12 @@ pub mod render_state {
     pub trait RenderStateTypes {
         type HtmlElementProps: ::core::default::Default
             + crate::props::IntrinsicComponentPollReactive;
-        type download: ::core::default::Default;
-        type href: ::core::default::Default;
-        type ping: ::core::default::Default;
-        type referrer_policy: ::core::default::Default;
-        type rel: ::core::default::Default;
-        type target: ::core::default::Default;
-        type alt: ::core::default::Default;
-        type coords: ::core::default::Default;
-        type shape: ::core::default::Default;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
         TypeDefs: ?::core::marker::Sized,
     {
         pub HtmlElementProps: TypeDefs::HtmlElementProps,
-        pub download: TypeDefs::download,
-        pub href: TypeDefs::href,
-        pub ping: TypeDefs::ping,
-        pub referrer_policy: TypeDefs::referrer_policy,
-        pub rel: TypeDefs::rel,
-        pub target: TypeDefs::target,
-        pub alt: TypeDefs::alt,
-        pub coords: TypeDefs::coords,
-        pub shape: TypeDefs::shape,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -470,15 +452,6 @@ pub mod render_state {
     {
         pub HtmlElementProps:
             ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
-        pub download: &'__pin mut (TypeDefs::download),
-        pub href: &'__pin mut (TypeDefs::href),
-        pub ping: &'__pin mut (TypeDefs::ping),
-        pub referrer_policy: &'__pin mut (TypeDefs::referrer_policy),
-        pub rel: &'__pin mut (TypeDefs::rel),
-        pub target: &'__pin mut (TypeDefs::target),
-        pub alt: &'__pin mut (TypeDefs::alt),
-        pub coords: &'__pin mut (TypeDefs::coords),
-        pub shape: &'__pin mut (TypeDefs::shape),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -500,15 +473,6 @@ pub mod render_state {
         {
             pub HtmlElementProps:
                 ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
-            pub download: &'__pin (TypeDefs::download),
-            pub href: &'__pin (TypeDefs::href),
-            pub ping: &'__pin (TypeDefs::ping),
-            pub referrer_policy: &'__pin (TypeDefs::referrer_policy),
-            pub rel: &'__pin (TypeDefs::rel),
-            pub target: &'__pin (TypeDefs::target),
-            pub alt: &'__pin (TypeDefs::alt),
-            pub coords: &'__pin (TypeDefs::coords),
-            pub shape: &'__pin (TypeDefs::shape),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -518,31 +482,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
             ) -> RenderStateProj<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        download,
-                        href,
-                        ping,
-                        referrer_policy,
-                        rel,
-                        target,
-                        alt,
-                        coords,
-                        shape,
-                    } = self.get_unchecked_mut();
+                    let Self { HtmlElementProps } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        download: download,
-                        href: href,
-                        ping: ping,
-                        referrer_policy: referrer_policy,
-                        rel: rel,
-                        target: target,
-                        alt: alt,
-                        coords: coords,
-                        shape: shape,
                     }
                 }
             }
@@ -550,31 +494,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin Self>,
             ) -> ProjectionRef<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        download,
-                        href,
-                        ping,
-                        referrer_policy,
-                        rel,
-                        target,
-                        alt,
-                        coords,
-                        shape,
-                    } = self.get_ref();
+                    let Self { HtmlElementProps } = self.get_ref();
                     ProjectionRef {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        download: download,
-                        href: href,
-                        ping: ping,
-                        referrer_policy: referrer_policy,
-                        rel: rel,
-                        target: target,
-                        alt: alt,
-                        coords: coords,
-                        shape: shape,
                     }
                 }
             }
@@ -586,15 +510,6 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             HtmlElementProps: TypeDefs::HtmlElementProps,
-            download: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::download>,
-            href: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::href>,
-            ping: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::ping>,
-            referrer_policy: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::referrer_policy>,
-            rel: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::rel>,
-            target: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::target>,
-            alt: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::alt>,
-            coords: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::coords>,
-            shape: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::shape>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -616,15 +531,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.HtmlElementProps;
-            let _ = &this.download;
-            let _ = &this.href;
-            let _ = &this.ping;
-            let _ = &this.referrer_policy;
-            let _ = &this.rel;
-            let _ = &this.target;
-            let _ = &this.alt;
-            let _ = &this.coords;
-            let _ = &this.shape;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -641,15 +547,6 @@ pub mod render_state {
         fn default() -> Self {
             Self {
                 HtmlElementProps: ::core::default::Default::default(),
-                download: ::core::default::Default::default(),
-                href: ::core::default::Default::default(),
-                ping: ::core::default::Default::default(),
-                referrer_policy: ::core::default::Default::default(),
-                rel: ::core::default::Default::default(),
-                target: ::core::default::Default::default(),
-                alt: ::core::default::Default::default(),
-                coords: ::core::default::Default::default(),
-                shape: ::core::default::Default::default(),
             }
         }
     }
@@ -701,7 +598,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::class`]"]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -722,7 +619,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::id`]"]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -743,7 +640,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::part`]"]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -764,7 +661,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::access_key`]"]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValue<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -785,7 +682,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -850,7 +747,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::context_menu`]"]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -871,7 +768,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::dir`]"]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValue<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -913,7 +810,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -977,7 +874,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::input_mode`]"]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -998,7 +895,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::is`]"]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValue<str>>(
+        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1019,7 +916,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_id`]"]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1040,7 +937,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_prop`]"]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1061,7 +958,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_ref`]"]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1082,7 +979,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_scope`]"]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1103,7 +1000,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_type`]"]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1124,7 +1021,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::lang`]"]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValue<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1145,7 +1042,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::nonce`]"]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValue<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1166,7 +1063,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::role`]"]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValue<str>>(
+        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1187,7 +1084,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::slot`]"]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValue<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1229,7 +1126,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::style`]"]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValue<str>>(
+        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1271,7 +1168,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::title`]"]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValue<str>>(
+        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1292,7 +1189,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::translate`]"]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValue<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1313,7 +1210,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1355,7 +1252,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn download<V: crate::MaybeUpdateValue<str>>(
+        pub fn download<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             download: V,
         ) -> super::Building<super::overwrite::download<TypeDefs, V>> {
@@ -1373,7 +1270,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn href<V: crate::MaybeUpdateValue<str>>(
+        pub fn href<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             href: V,
         ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
@@ -1391,7 +1288,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn ping<V: crate::MaybeUpdateValue<str>>(
+        pub fn ping<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             ping: V,
         ) -> super::Building<super::overwrite::ping<TypeDefs, V>> {
@@ -1409,7 +1306,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn referrer_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn referrer_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
@@ -1427,7 +1324,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn rel<V: crate::MaybeUpdateValue<str>>(
+        pub fn rel<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
@@ -1445,7 +1342,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn target<V: crate::MaybeUpdateValue<str>>(
+        pub fn target<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             target: V,
         ) -> super::Building<super::overwrite::target<TypeDefs, V>> {
@@ -1463,7 +1360,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn alt<V: crate::MaybeUpdateValue<str>>(
+        pub fn alt<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             alt: V,
         ) -> super::Building<super::overwrite::alt<TypeDefs, V>> {
@@ -1481,7 +1378,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn coords<V: crate::MaybeUpdateValue<str>>(
+        pub fn coords<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             coords: V,
         ) -> super::Building<super::overwrite::coords<TypeDefs, V>> {
@@ -1499,7 +1396,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn shape<V: crate::MaybeUpdateValue<str>>(
+        pub fn shape<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             shape: V,
         ) -> super::Building<super::overwrite::shape<TypeDefs, V>> {
@@ -1528,7 +1425,7 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , download = < TypeDefs :: download as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , href = < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , ping = < TypeDefs :: ping as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , referrer_policy = < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , rel = < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , target = < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , alt = < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , coords = < TypeDefs :: coords as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , shape = < TypeDefs :: shape as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , > , > ;
+        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , > , > ;
         fn update_element(
             this: Self,
             element: &web_sys::HtmlAreaElement,
@@ -1537,206 +1434,56 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.HtmlElementProps,
-                state: state.HtmlElementProps,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    state,
-                    element,
-                    children_ctx,
-                    ..
-                } => crate::props::UpdateElement::update_element(
-                    data,
-                    element.as_ref(),
-                    children_ctx,
-                    state,
-                ),
+            crate::props::UpdateElement::update_element(
+                this.HtmlElementProps,
+                element.as_ref(),
+                children_ctx,
+                state.HtmlElementProps,
+            );
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "download";
+                < TypeDefs :: download as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . download , | v | element . set_download (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.download,
-                state: state.download,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "download";
-                    < TypeDefs :: download as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_download (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "href";
+                < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . href , | v | element . set_href (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.href,
-                state: state.href,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "href";
-                    < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_href (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "ping";
+                < TypeDefs :: ping as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . ping , | v | element . set_ping (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.ping,
-                state: state.ping,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "ping";
-                    < TypeDefs :: ping as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_ping (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
+                < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.referrer_policy,
-                state: state.referrer_policy,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
-                    < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "rel";
+                < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . rel , | v | element . set_rel (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.rel,
-                state: state.rel,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "rel";
-                    < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_rel (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "target";
+                < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . target , | v | element . set_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.target,
-                state: state.target,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "target";
-                    < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "alt";
+                < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.alt,
-                state: state.alt,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "alt";
-                    < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "coords";
+                < TypeDefs :: coords as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . coords , | v | element . set_coords (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.coords,
-                state: state.coords,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "coords";
-                    < TypeDefs :: coords as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_coords (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.shape,
-                state: state.shape,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "shape";
-                    < TypeDefs :: shape as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_shape (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "shape";
+                < TypeDefs :: shape as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . shape , | v | element . set_shape (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
         }
     }

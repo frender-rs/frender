@@ -1366,36 +1366,36 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type accept: crate::MaybeUpdateValue<str>;
-        type alt: crate::MaybeUpdateValue<str>;
-        type auto_complete: crate::MaybeUpdateValue<str>;
-        type capture: crate::MaybeUpdateValue<str>;
+        type accept: crate::MaybeUpdateValueByRef<str>;
+        type alt: crate::MaybeUpdateValueByRef<str>;
+        type auto_complete: crate::MaybeUpdateValueByRef<str>;
+        type capture: crate::MaybeUpdateValueByRef<str>;
         type checked: crate::MaybeUpdateValue<bool>;
-        type dirname: crate::MaybeUpdateValue<str>;
+        type dirname: crate::MaybeUpdateValueByRef<str>;
         type disabled: crate::MaybeUpdateValue<bool>;
-        type form: crate::MaybeUpdateValue<str>;
-        type form_action: crate::MaybeUpdateValue<str>;
-        type form_enc_type: crate::MaybeUpdateValue<str>;
-        type form_method: crate::MaybeUpdateValue<str>;
+        type form: crate::MaybeUpdateValueByRef<str>;
+        type form_action: crate::MaybeUpdateValueByRef<str>;
+        type form_enc_type: crate::MaybeUpdateValueByRef<str>;
+        type form_method: crate::MaybeUpdateValueByRef<str>;
         type form_no_validate: crate::MaybeUpdateValue<bool>;
-        type form_target: crate::MaybeUpdateValue<str>;
+        type form_target: crate::MaybeUpdateValueByRef<str>;
         type height: crate::MaybeUpdateValue<u32>;
-        type list: crate::MaybeUpdateValue<str>;
-        type max: crate::MaybeUpdateValue<str>;
+        type list: crate::MaybeUpdateValueByRef<str>;
+        type max: crate::MaybeUpdateValueByRef<str>;
         type max_length: crate::MaybeUpdateValue<i32>;
-        type min: crate::MaybeUpdateValue<str>;
+        type min: crate::MaybeUpdateValueByRef<str>;
         type min_length: crate::MaybeUpdateValue<i32>;
         type multiple: crate::MaybeUpdateValue<bool>;
-        type name: crate::MaybeUpdateValue<str>;
-        type pattern: crate::MaybeUpdateValue<str>;
-        type placeholder: crate::MaybeUpdateValue<str>;
+        type name: crate::MaybeUpdateValueByRef<str>;
+        type pattern: crate::MaybeUpdateValueByRef<str>;
+        type placeholder: crate::MaybeUpdateValueByRef<str>;
         type read_only: crate::MaybeUpdateValue<bool>;
         type required: crate::MaybeUpdateValue<bool>;
         type size: crate::MaybeUpdateValue<u32>;
-        type src: crate::MaybeUpdateValue<str>;
-        type step: crate::MaybeUpdateValue<str>;
-        type type_: crate::MaybeUpdateValue<str>;
-        type value: crate::MaybeUpdateValue<str>;
+        type src: crate::MaybeUpdateValueByRef<str>;
+        type step: crate::MaybeUpdateValueByRef<str>;
+        type type_: crate::MaybeUpdateValueByRef<str>;
+        type value: crate::MaybeUpdateValueByRef<str>;
         type width: crate::MaybeUpdateValue<u32>;
     }
 }
@@ -1487,74 +1487,12 @@ pub mod render_state {
     pub trait RenderStateTypes {
         type HtmlElementProps: ::core::default::Default
             + crate::props::IntrinsicComponentPollReactive;
-        type accept: ::core::default::Default;
-        type alt: ::core::default::Default;
-        type auto_complete: ::core::default::Default;
-        type capture: ::core::default::Default;
-        type checked: ::core::default::Default;
-        type dirname: ::core::default::Default;
-        type disabled: ::core::default::Default;
-        type form: ::core::default::Default;
-        type form_action: ::core::default::Default;
-        type form_enc_type: ::core::default::Default;
-        type form_method: ::core::default::Default;
-        type form_no_validate: ::core::default::Default;
-        type form_target: ::core::default::Default;
-        type height: ::core::default::Default;
-        type list: ::core::default::Default;
-        type max: ::core::default::Default;
-        type max_length: ::core::default::Default;
-        type min: ::core::default::Default;
-        type min_length: ::core::default::Default;
-        type multiple: ::core::default::Default;
-        type name: ::core::default::Default;
-        type pattern: ::core::default::Default;
-        type placeholder: ::core::default::Default;
-        type read_only: ::core::default::Default;
-        type required: ::core::default::Default;
-        type size: ::core::default::Default;
-        type src: ::core::default::Default;
-        type step: ::core::default::Default;
-        type type_: ::core::default::Default;
-        type value: ::core::default::Default;
-        type width: ::core::default::Default;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
         TypeDefs: ?::core::marker::Sized,
     {
         pub HtmlElementProps: TypeDefs::HtmlElementProps,
-        pub accept: TypeDefs::accept,
-        pub alt: TypeDefs::alt,
-        pub auto_complete: TypeDefs::auto_complete,
-        pub capture: TypeDefs::capture,
-        pub checked: TypeDefs::checked,
-        pub dirname: TypeDefs::dirname,
-        pub disabled: TypeDefs::disabled,
-        pub form: TypeDefs::form,
-        pub form_action: TypeDefs::form_action,
-        pub form_enc_type: TypeDefs::form_enc_type,
-        pub form_method: TypeDefs::form_method,
-        pub form_no_validate: TypeDefs::form_no_validate,
-        pub form_target: TypeDefs::form_target,
-        pub height: TypeDefs::height,
-        pub list: TypeDefs::list,
-        pub max: TypeDefs::max,
-        pub max_length: TypeDefs::max_length,
-        pub min: TypeDefs::min,
-        pub min_length: TypeDefs::min_length,
-        pub multiple: TypeDefs::multiple,
-        pub name: TypeDefs::name,
-        pub pattern: TypeDefs::pattern,
-        pub placeholder: TypeDefs::placeholder,
-        pub read_only: TypeDefs::read_only,
-        pub required: TypeDefs::required,
-        pub size: TypeDefs::size,
-        pub src: TypeDefs::src,
-        pub step: TypeDefs::step,
-        pub type_: TypeDefs::type_,
-        pub value: TypeDefs::value,
-        pub width: TypeDefs::width,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -1570,37 +1508,6 @@ pub mod render_state {
     {
         pub HtmlElementProps:
             ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
-        pub accept: &'__pin mut (TypeDefs::accept),
-        pub alt: &'__pin mut (TypeDefs::alt),
-        pub auto_complete: &'__pin mut (TypeDefs::auto_complete),
-        pub capture: &'__pin mut (TypeDefs::capture),
-        pub checked: &'__pin mut (TypeDefs::checked),
-        pub dirname: &'__pin mut (TypeDefs::dirname),
-        pub disabled: &'__pin mut (TypeDefs::disabled),
-        pub form: &'__pin mut (TypeDefs::form),
-        pub form_action: &'__pin mut (TypeDefs::form_action),
-        pub form_enc_type: &'__pin mut (TypeDefs::form_enc_type),
-        pub form_method: &'__pin mut (TypeDefs::form_method),
-        pub form_no_validate: &'__pin mut (TypeDefs::form_no_validate),
-        pub form_target: &'__pin mut (TypeDefs::form_target),
-        pub height: &'__pin mut (TypeDefs::height),
-        pub list: &'__pin mut (TypeDefs::list),
-        pub max: &'__pin mut (TypeDefs::max),
-        pub max_length: &'__pin mut (TypeDefs::max_length),
-        pub min: &'__pin mut (TypeDefs::min),
-        pub min_length: &'__pin mut (TypeDefs::min_length),
-        pub multiple: &'__pin mut (TypeDefs::multiple),
-        pub name: &'__pin mut (TypeDefs::name),
-        pub pattern: &'__pin mut (TypeDefs::pattern),
-        pub placeholder: &'__pin mut (TypeDefs::placeholder),
-        pub read_only: &'__pin mut (TypeDefs::read_only),
-        pub required: &'__pin mut (TypeDefs::required),
-        pub size: &'__pin mut (TypeDefs::size),
-        pub src: &'__pin mut (TypeDefs::src),
-        pub step: &'__pin mut (TypeDefs::step),
-        pub type_: &'__pin mut (TypeDefs::type_),
-        pub value: &'__pin mut (TypeDefs::value),
-        pub width: &'__pin mut (TypeDefs::width),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -1622,37 +1529,6 @@ pub mod render_state {
         {
             pub HtmlElementProps:
                 ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
-            pub accept: &'__pin (TypeDefs::accept),
-            pub alt: &'__pin (TypeDefs::alt),
-            pub auto_complete: &'__pin (TypeDefs::auto_complete),
-            pub capture: &'__pin (TypeDefs::capture),
-            pub checked: &'__pin (TypeDefs::checked),
-            pub dirname: &'__pin (TypeDefs::dirname),
-            pub disabled: &'__pin (TypeDefs::disabled),
-            pub form: &'__pin (TypeDefs::form),
-            pub form_action: &'__pin (TypeDefs::form_action),
-            pub form_enc_type: &'__pin (TypeDefs::form_enc_type),
-            pub form_method: &'__pin (TypeDefs::form_method),
-            pub form_no_validate: &'__pin (TypeDefs::form_no_validate),
-            pub form_target: &'__pin (TypeDefs::form_target),
-            pub height: &'__pin (TypeDefs::height),
-            pub list: &'__pin (TypeDefs::list),
-            pub max: &'__pin (TypeDefs::max),
-            pub max_length: &'__pin (TypeDefs::max_length),
-            pub min: &'__pin (TypeDefs::min),
-            pub min_length: &'__pin (TypeDefs::min_length),
-            pub multiple: &'__pin (TypeDefs::multiple),
-            pub name: &'__pin (TypeDefs::name),
-            pub pattern: &'__pin (TypeDefs::pattern),
-            pub placeholder: &'__pin (TypeDefs::placeholder),
-            pub read_only: &'__pin (TypeDefs::read_only),
-            pub required: &'__pin (TypeDefs::required),
-            pub size: &'__pin (TypeDefs::size),
-            pub src: &'__pin (TypeDefs::src),
-            pub step: &'__pin (TypeDefs::step),
-            pub type_: &'__pin (TypeDefs::type_),
-            pub value: &'__pin (TypeDefs::value),
-            pub width: &'__pin (TypeDefs::width),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -1662,75 +1538,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
             ) -> RenderStateProj<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        accept,
-                        alt,
-                        auto_complete,
-                        capture,
-                        checked,
-                        dirname,
-                        disabled,
-                        form,
-                        form_action,
-                        form_enc_type,
-                        form_method,
-                        form_no_validate,
-                        form_target,
-                        height,
-                        list,
-                        max,
-                        max_length,
-                        min,
-                        min_length,
-                        multiple,
-                        name,
-                        pattern,
-                        placeholder,
-                        read_only,
-                        required,
-                        size,
-                        src,
-                        step,
-                        type_,
-                        value,
-                        width,
-                    } = self.get_unchecked_mut();
+                    let Self { HtmlElementProps } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        accept: accept,
-                        alt: alt,
-                        auto_complete: auto_complete,
-                        capture: capture,
-                        checked: checked,
-                        dirname: dirname,
-                        disabled: disabled,
-                        form: form,
-                        form_action: form_action,
-                        form_enc_type: form_enc_type,
-                        form_method: form_method,
-                        form_no_validate: form_no_validate,
-                        form_target: form_target,
-                        height: height,
-                        list: list,
-                        max: max,
-                        max_length: max_length,
-                        min: min,
-                        min_length: min_length,
-                        multiple: multiple,
-                        name: name,
-                        pattern: pattern,
-                        placeholder: placeholder,
-                        read_only: read_only,
-                        required: required,
-                        size: size,
-                        src: src,
-                        step: step,
-                        type_: type_,
-                        value: value,
-                        width: width,
                     }
                 }
             }
@@ -1738,75 +1550,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin Self>,
             ) -> ProjectionRef<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        accept,
-                        alt,
-                        auto_complete,
-                        capture,
-                        checked,
-                        dirname,
-                        disabled,
-                        form,
-                        form_action,
-                        form_enc_type,
-                        form_method,
-                        form_no_validate,
-                        form_target,
-                        height,
-                        list,
-                        max,
-                        max_length,
-                        min,
-                        min_length,
-                        multiple,
-                        name,
-                        pattern,
-                        placeholder,
-                        read_only,
-                        required,
-                        size,
-                        src,
-                        step,
-                        type_,
-                        value,
-                        width,
-                    } = self.get_ref();
+                    let Self { HtmlElementProps } = self.get_ref();
                     ProjectionRef {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        accept: accept,
-                        alt: alt,
-                        auto_complete: auto_complete,
-                        capture: capture,
-                        checked: checked,
-                        dirname: dirname,
-                        disabled: disabled,
-                        form: form,
-                        form_action: form_action,
-                        form_enc_type: form_enc_type,
-                        form_method: form_method,
-                        form_no_validate: form_no_validate,
-                        form_target: form_target,
-                        height: height,
-                        list: list,
-                        max: max,
-                        max_length: max_length,
-                        min: min,
-                        min_length: min_length,
-                        multiple: multiple,
-                        name: name,
-                        pattern: pattern,
-                        placeholder: placeholder,
-                        read_only: read_only,
-                        required: required,
-                        size: size,
-                        src: src,
-                        step: step,
-                        type_: type_,
-                        value: value,
-                        width: width,
                     }
                 }
             }
@@ -1818,38 +1566,6 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             HtmlElementProps: TypeDefs::HtmlElementProps,
-            accept: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::accept>,
-            alt: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::alt>,
-            auto_complete: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_complete>,
-            capture: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::capture>,
-            checked: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::checked>,
-            dirname: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::dirname>,
-            disabled: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::disabled>,
-            form: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form>,
-            form_action: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form_action>,
-            form_enc_type: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form_enc_type>,
-            form_method: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form_method>,
-            form_no_validate:
-                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form_no_validate>,
-            form_target: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form_target>,
-            height: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::height>,
-            list: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::list>,
-            max: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::max>,
-            max_length: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::max_length>,
-            min: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::min>,
-            min_length: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::min_length>,
-            multiple: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::multiple>,
-            name: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::name>,
-            pattern: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::pattern>,
-            placeholder: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::placeholder>,
-            read_only: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::read_only>,
-            required: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::required>,
-            size: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::size>,
-            src: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::src>,
-            step: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::step>,
-            type_: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::type_>,
-            value: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::value>,
-            width: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::width>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -1871,37 +1587,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.HtmlElementProps;
-            let _ = &this.accept;
-            let _ = &this.alt;
-            let _ = &this.auto_complete;
-            let _ = &this.capture;
-            let _ = &this.checked;
-            let _ = &this.dirname;
-            let _ = &this.disabled;
-            let _ = &this.form;
-            let _ = &this.form_action;
-            let _ = &this.form_enc_type;
-            let _ = &this.form_method;
-            let _ = &this.form_no_validate;
-            let _ = &this.form_target;
-            let _ = &this.height;
-            let _ = &this.list;
-            let _ = &this.max;
-            let _ = &this.max_length;
-            let _ = &this.min;
-            let _ = &this.min_length;
-            let _ = &this.multiple;
-            let _ = &this.name;
-            let _ = &this.pattern;
-            let _ = &this.placeholder;
-            let _ = &this.read_only;
-            let _ = &this.required;
-            let _ = &this.size;
-            let _ = &this.src;
-            let _ = &this.step;
-            let _ = &this.type_;
-            let _ = &this.value;
-            let _ = &this.width;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -1918,37 +1603,6 @@ pub mod render_state {
         fn default() -> Self {
             Self {
                 HtmlElementProps: ::core::default::Default::default(),
-                accept: ::core::default::Default::default(),
-                alt: ::core::default::Default::default(),
-                auto_complete: ::core::default::Default::default(),
-                capture: ::core::default::Default::default(),
-                checked: ::core::default::Default::default(),
-                dirname: ::core::default::Default::default(),
-                disabled: ::core::default::Default::default(),
-                form: ::core::default::Default::default(),
-                form_action: ::core::default::Default::default(),
-                form_enc_type: ::core::default::Default::default(),
-                form_method: ::core::default::Default::default(),
-                form_no_validate: ::core::default::Default::default(),
-                form_target: ::core::default::Default::default(),
-                height: ::core::default::Default::default(),
-                list: ::core::default::Default::default(),
-                max: ::core::default::Default::default(),
-                max_length: ::core::default::Default::default(),
-                min: ::core::default::Default::default(),
-                min_length: ::core::default::Default::default(),
-                multiple: ::core::default::Default::default(),
-                name: ::core::default::Default::default(),
-                pattern: ::core::default::Default::default(),
-                placeholder: ::core::default::Default::default(),
-                read_only: ::core::default::Default::default(),
-                required: ::core::default::Default::default(),
-                size: ::core::default::Default::default(),
-                src: ::core::default::Default::default(),
-                step: ::core::default::Default::default(),
-                type_: ::core::default::Default::default(),
-                value: ::core::default::Default::default(),
-                width: ::core::default::Default::default(),
             }
         }
     }
@@ -2022,7 +1676,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::class`]"]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2065,7 +1719,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::id`]"]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -2108,7 +1762,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::part`]"]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -2151,7 +1805,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::access_key`]"]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValue<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -2194,7 +1848,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -2325,7 +1979,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::context_menu`]"]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -2368,7 +2022,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::dir`]"]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValue<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -2454,7 +2108,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -2584,7 +2238,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::input_mode`]"]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -2627,7 +2281,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::is`]"]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValue<str>>(
+        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -2670,7 +2324,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_id`]"]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -2713,7 +2367,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_prop`]"]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -2756,7 +2410,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_ref`]"]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -2799,7 +2453,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_scope`]"]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -2842,7 +2496,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_type`]"]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -2885,7 +2539,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::lang`]"]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValue<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -2928,7 +2582,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::nonce`]"]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValue<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -2971,7 +2625,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::role`]"]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValue<str>>(
+        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -3014,7 +2668,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::slot`]"]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValue<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -3100,7 +2754,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::style`]"]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValue<str>>(
+        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -3186,7 +2840,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::title`]"]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValue<str>>(
+        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -3229,7 +2883,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::translate`]"]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValue<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -3272,7 +2926,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -3358,7 +3012,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn accept<V: crate::MaybeUpdateValue<str>>(
+        pub fn accept<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             accept: V,
         ) -> super::Building<super::overwrite::accept<TypeDefs, V>> {
@@ -3398,7 +3052,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn alt<V: crate::MaybeUpdateValue<str>>(
+        pub fn alt<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             alt: V,
         ) -> super::Building<super::overwrite::alt<TypeDefs, V>> {
@@ -3438,7 +3092,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn auto_complete<V: crate::MaybeUpdateValue<str>>(
+        pub fn auto_complete<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_complete: V,
         ) -> super::Building<super::overwrite::auto_complete<TypeDefs, V>> {
@@ -3478,7 +3132,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn capture<V: crate::MaybeUpdateValue<str>>(
+        pub fn capture<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             capture: V,
         ) -> super::Building<super::overwrite::capture<TypeDefs, V>> {
@@ -3558,7 +3212,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn dirname<V: crate::MaybeUpdateValue<str>>(
+        pub fn dirname<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dirname: V,
         ) -> super::Building<super::overwrite::dirname<TypeDefs, V>> {
@@ -3638,7 +3292,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form<V: crate::MaybeUpdateValue<str>>(
+        pub fn form<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             form: V,
         ) -> super::Building<super::overwrite::form<TypeDefs, V>> {
@@ -3678,7 +3332,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form_action<V: crate::MaybeUpdateValue<str>>(
+        pub fn form_action<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             form_action: V,
         ) -> super::Building<super::overwrite::form_action<TypeDefs, V>> {
@@ -3718,7 +3372,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form_enc_type<V: crate::MaybeUpdateValue<str>>(
+        pub fn form_enc_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             form_enc_type: V,
         ) -> super::Building<super::overwrite::form_enc_type<TypeDefs, V>> {
@@ -3758,7 +3412,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form_method<V: crate::MaybeUpdateValue<str>>(
+        pub fn form_method<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             form_method: V,
         ) -> super::Building<super::overwrite::form_method<TypeDefs, V>> {
@@ -3838,7 +3492,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form_target<V: crate::MaybeUpdateValue<str>>(
+        pub fn form_target<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             form_target: V,
         ) -> super::Building<super::overwrite::form_target<TypeDefs, V>> {
@@ -3918,7 +3572,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn list<V: crate::MaybeUpdateValue<str>>(
+        pub fn list<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             list: V,
         ) -> super::Building<super::overwrite::list<TypeDefs, V>> {
@@ -3958,7 +3612,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn max<V: crate::MaybeUpdateValue<str>>(
+        pub fn max<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             max: V,
         ) -> super::Building<super::overwrite::max<TypeDefs, V>> {
@@ -4038,7 +3692,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn min<V: crate::MaybeUpdateValue<str>>(
+        pub fn min<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             min: V,
         ) -> super::Building<super::overwrite::min<TypeDefs, V>> {
@@ -4158,7 +3812,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn name<V: crate::MaybeUpdateValue<str>>(
+        pub fn name<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             name: V,
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
@@ -4198,7 +3852,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn pattern<V: crate::MaybeUpdateValue<str>>(
+        pub fn pattern<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             pattern: V,
         ) -> super::Building<super::overwrite::pattern<TypeDefs, V>> {
@@ -4238,7 +3892,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn placeholder<V: crate::MaybeUpdateValue<str>>(
+        pub fn placeholder<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             placeholder: V,
         ) -> super::Building<super::overwrite::placeholder<TypeDefs, V>> {
@@ -4398,7 +4052,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn src<V: crate::MaybeUpdateValue<str>>(
+        pub fn src<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -4438,7 +4092,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn step<V: crate::MaybeUpdateValue<str>>(
+        pub fn step<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             step: V,
         ) -> super::Building<super::overwrite::step<TypeDefs, V>> {
@@ -4478,7 +4132,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn type_<V: crate::MaybeUpdateValue<str>>(
+        pub fn type_<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             type_: V,
         ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
@@ -4518,7 +4172,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn value<V: crate::MaybeUpdateValue<str>>(
+        pub fn value<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             value: V,
         ) -> super::Building<super::overwrite::value<TypeDefs, V>> {
@@ -4609,7 +4263,7 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , accept = < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , alt = < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , auto_complete = < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , capture = < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , checked = < TypeDefs :: checked as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , dirname = < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , disabled = < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , form = < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , form_action = < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , form_enc_type = < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , form_method = < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , form_no_validate = < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , form_target = < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , height = < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: State , list = < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , max = < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , max_length = < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: State , min = < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , min_length = < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: State , multiple = < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , name = < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , pattern = < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , placeholder = < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , read_only = < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , required = < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: State , size = < TypeDefs :: size as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: State , src = < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , step = < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , type_ = < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , value = < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , width = < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: State , > , > ;
+        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , > , > ;
         fn update_element(
             this: Self,
             element: &web_sys::HtmlInputElement,
@@ -4618,646 +4272,174 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.HtmlElementProps,
-                state: state.HtmlElementProps,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    state,
-                    element,
-                    children_ctx,
-                    ..
-                } => crate::props::UpdateElement::update_element(
-                    data,
-                    element.as_ref(),
-                    children_ctx,
-                    state,
-                ),
+            crate::props::UpdateElement::update_element(
+                this.HtmlElementProps,
+                element.as_ref(),
+                children_ctx,
+                state.HtmlElementProps,
+            );
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "accept";
+                < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | element . set_accept (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.accept,
-                state: state.accept,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "accept";
-                    < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_accept (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "alt";
+                < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.alt,
-                state: state.alt,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "alt";
-                    < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "autocomplete";
+                < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.auto_complete,
-                state: state.auto_complete,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "autocomplete";
-                    < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "capture";
+                < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . capture , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.capture,
-                state: state.capture,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "capture";
-                    < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "checked";
+                < TypeDefs :: checked as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . checked , | v | element . set_checked (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.checked,
-                state: state.checked,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "checked";
-                    < TypeDefs :: checked as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_checked (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "dirname";
+                < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dirname , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.dirname,
-                state: state.dirname,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "dirname";
-                    < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "disabled";
+                < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.disabled,
-                state: state.disabled,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "disabled";
-                    < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_disabled (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "form";
+                < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form,
-                state: state.form,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "form";
-                    < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "formaction";
+                < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_action , | v | element . set_form_action (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form_action,
-                state: state.form_action,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "formaction";
-                    < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_form_action (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "formenctype";
+                < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_enc_type , | v | element . set_form_enctype (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form_enc_type,
-                state: state.form_enc_type,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "formenctype";
-                    < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_form_enctype (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "formmethod";
+                < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_method , | v | element . set_form_method (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form_method,
-                state: state.form_method,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "formmethod";
-                    < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_form_method (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "formnovalidate";
+                < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . form_no_validate , | v | element . set_form_no_validate (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form_no_validate,
-                state: state.form_no_validate,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "formnovalidate";
-                    < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_form_no_validate (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "formtarget";
+                < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_target , | v | element . set_form_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.form_target,
-                state: state.form_target,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "formtarget";
-                    < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_form_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "height";
+                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.height,
-                state: state.height,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "height";
-                    < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (data , state , | v | element . set_height (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "list";
+                < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . list , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.list,
-                state: state.list,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "list";
-                    < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "max";
+                < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . max , | v | element . set_max (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.max,
-                state: state.max,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "max";
-                    < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_max (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "maxlength";
+                < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.max_length,
-                state: state.max_length,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "maxlength";
-                    < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (data , state , | v | element . set_max_length (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "min";
+                < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . min , | v | element . set_min (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.min,
-                state: state.min,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "min";
-                    < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_min (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "minlength";
+                < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.min_length,
-                state: state.min_length,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "minlength";
-                    < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (data , state , | v | element . set_min_length (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "multiple";
+                < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . multiple , | v | element . set_multiple (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.multiple,
-                state: state.multiple,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "multiple";
-                    < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_multiple (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "name";
+                < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.name,
-                state: state.name,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "name";
-                    < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "pattern";
+                < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . pattern , | v | element . set_pattern (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.pattern,
-                state: state.pattern,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "pattern";
-                    < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_pattern (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "placeholder";
+                < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.placeholder,
-                state: state.placeholder,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "placeholder";
-                    < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_placeholder (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "readonly";
+                < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.read_only,
-                state: state.read_only,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "readonly";
-                    < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_read_only (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "required";
+                < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.required,
-                state: state.required,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "required";
-                    < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | element . set_required (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "size";
+                <TypeDefs::size as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                    this.size,
+                    |v| element.set_size(v),
+                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
+                )
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.size,
-                state: state.size,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "size";
-                    < TypeDefs :: size as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (data , state , | v | element . set_size (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "src";
+                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.src,
-                state: state.src,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "src";
-                    < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "step";
+                < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . step , | v | element . set_step (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.step,
-                state: state.step,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "step";
-                    < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_step (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "type";
+                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.type_,
-                state: state.type_,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "type";
-                    < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "value";
+                < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . value , | v | element . set_value (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.value,
-                state: state.value,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "value";
-                    < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_value (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.width,
-                state: state.width,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "width";
-                    < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (data , state , | v | element . set_width (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "width";
+                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                    this.width,
+                    |v| element.set_width(v),
+                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
+                )
             }
         }
     }

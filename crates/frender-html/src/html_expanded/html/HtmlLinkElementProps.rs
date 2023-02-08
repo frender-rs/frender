@@ -550,21 +550,21 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type as_: crate::MaybeUpdateValue<str>;
-        type cross_origin: crate::MaybeUpdateValue<str>;
-        type fetch_priority: crate::MaybeUpdateValue<str>;
-        type href: crate::MaybeUpdateValue<str>;
-        type href_lang: crate::MaybeUpdateValue<str>;
-        type image_sizes: crate::MaybeUpdateValue<str>;
-        type image_src_set: crate::MaybeUpdateValue<str>;
-        type integrity: crate::MaybeUpdateValue<str>;
-        type media: crate::MaybeUpdateValue<str>;
-        type prefetch: crate::MaybeUpdateValue<str>;
-        type referrer_policy: crate::MaybeUpdateValue<str>;
-        type rel: crate::MaybeUpdateValue<str>;
-        type sizes: crate::MaybeUpdateValue<str>;
-        type type_: crate::MaybeUpdateValue<str>;
-        type blocking: crate::MaybeUpdateValue<str>;
+        type as_: crate::MaybeUpdateValueByRef<str>;
+        type cross_origin: crate::MaybeUpdateValueByRef<str>;
+        type fetch_priority: crate::MaybeUpdateValueByRef<str>;
+        type href: crate::MaybeUpdateValueByRef<str>;
+        type href_lang: crate::MaybeUpdateValueByRef<str>;
+        type image_sizes: crate::MaybeUpdateValueByRef<str>;
+        type image_src_set: crate::MaybeUpdateValueByRef<str>;
+        type integrity: crate::MaybeUpdateValueByRef<str>;
+        type media: crate::MaybeUpdateValueByRef<str>;
+        type prefetch: crate::MaybeUpdateValueByRef<str>;
+        type referrer_policy: crate::MaybeUpdateValueByRef<str>;
+        type rel: crate::MaybeUpdateValueByRef<str>;
+        type sizes: crate::MaybeUpdateValueByRef<str>;
+        type type_: crate::MaybeUpdateValueByRef<str>;
+        type blocking: crate::MaybeUpdateValueByRef<str>;
     }
 }
 pub use trait_types::Types;
@@ -623,42 +623,12 @@ pub mod render_state {
     pub trait RenderStateTypes {
         type HtmlElementProps: ::core::default::Default
             + crate::props::IntrinsicComponentPollReactive;
-        type as_: ::core::default::Default;
-        type cross_origin: ::core::default::Default;
-        type fetch_priority: ::core::default::Default;
-        type href: ::core::default::Default;
-        type href_lang: ::core::default::Default;
-        type image_sizes: ::core::default::Default;
-        type image_src_set: ::core::default::Default;
-        type integrity: ::core::default::Default;
-        type media: ::core::default::Default;
-        type prefetch: ::core::default::Default;
-        type referrer_policy: ::core::default::Default;
-        type rel: ::core::default::Default;
-        type sizes: ::core::default::Default;
-        type type_: ::core::default::Default;
-        type blocking: ::core::default::Default;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
         TypeDefs: ?::core::marker::Sized,
     {
         pub HtmlElementProps: TypeDefs::HtmlElementProps,
-        pub as_: TypeDefs::as_,
-        pub cross_origin: TypeDefs::cross_origin,
-        pub fetch_priority: TypeDefs::fetch_priority,
-        pub href: TypeDefs::href,
-        pub href_lang: TypeDefs::href_lang,
-        pub image_sizes: TypeDefs::image_sizes,
-        pub image_src_set: TypeDefs::image_src_set,
-        pub integrity: TypeDefs::integrity,
-        pub media: TypeDefs::media,
-        pub prefetch: TypeDefs::prefetch,
-        pub referrer_policy: TypeDefs::referrer_policy,
-        pub rel: TypeDefs::rel,
-        pub sizes: TypeDefs::sizes,
-        pub type_: TypeDefs::type_,
-        pub blocking: TypeDefs::blocking,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -674,21 +644,6 @@ pub mod render_state {
     {
         pub HtmlElementProps:
             ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
-        pub as_: &'__pin mut (TypeDefs::as_),
-        pub cross_origin: &'__pin mut (TypeDefs::cross_origin),
-        pub fetch_priority: &'__pin mut (TypeDefs::fetch_priority),
-        pub href: &'__pin mut (TypeDefs::href),
-        pub href_lang: &'__pin mut (TypeDefs::href_lang),
-        pub image_sizes: &'__pin mut (TypeDefs::image_sizes),
-        pub image_src_set: &'__pin mut (TypeDefs::image_src_set),
-        pub integrity: &'__pin mut (TypeDefs::integrity),
-        pub media: &'__pin mut (TypeDefs::media),
-        pub prefetch: &'__pin mut (TypeDefs::prefetch),
-        pub referrer_policy: &'__pin mut (TypeDefs::referrer_policy),
-        pub rel: &'__pin mut (TypeDefs::rel),
-        pub sizes: &'__pin mut (TypeDefs::sizes),
-        pub type_: &'__pin mut (TypeDefs::type_),
-        pub blocking: &'__pin mut (TypeDefs::blocking),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -710,21 +665,6 @@ pub mod render_state {
         {
             pub HtmlElementProps:
                 ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
-            pub as_: &'__pin (TypeDefs::as_),
-            pub cross_origin: &'__pin (TypeDefs::cross_origin),
-            pub fetch_priority: &'__pin (TypeDefs::fetch_priority),
-            pub href: &'__pin (TypeDefs::href),
-            pub href_lang: &'__pin (TypeDefs::href_lang),
-            pub image_sizes: &'__pin (TypeDefs::image_sizes),
-            pub image_src_set: &'__pin (TypeDefs::image_src_set),
-            pub integrity: &'__pin (TypeDefs::integrity),
-            pub media: &'__pin (TypeDefs::media),
-            pub prefetch: &'__pin (TypeDefs::prefetch),
-            pub referrer_policy: &'__pin (TypeDefs::referrer_policy),
-            pub rel: &'__pin (TypeDefs::rel),
-            pub sizes: &'__pin (TypeDefs::sizes),
-            pub type_: &'__pin (TypeDefs::type_),
-            pub blocking: &'__pin (TypeDefs::blocking),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -734,43 +674,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
             ) -> RenderStateProj<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        as_,
-                        cross_origin,
-                        fetch_priority,
-                        href,
-                        href_lang,
-                        image_sizes,
-                        image_src_set,
-                        integrity,
-                        media,
-                        prefetch,
-                        referrer_policy,
-                        rel,
-                        sizes,
-                        type_,
-                        blocking,
-                    } = self.get_unchecked_mut();
+                    let Self { HtmlElementProps } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        as_: as_,
-                        cross_origin: cross_origin,
-                        fetch_priority: fetch_priority,
-                        href: href,
-                        href_lang: href_lang,
-                        image_sizes: image_sizes,
-                        image_src_set: image_src_set,
-                        integrity: integrity,
-                        media: media,
-                        prefetch: prefetch,
-                        referrer_policy: referrer_policy,
-                        rel: rel,
-                        sizes: sizes,
-                        type_: type_,
-                        blocking: blocking,
                     }
                 }
             }
@@ -778,43 +686,11 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin Self>,
             ) -> ProjectionRef<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        HtmlElementProps,
-                        as_,
-                        cross_origin,
-                        fetch_priority,
-                        href,
-                        href_lang,
-                        image_sizes,
-                        image_src_set,
-                        integrity,
-                        media,
-                        prefetch,
-                        referrer_policy,
-                        rel,
-                        sizes,
-                        type_,
-                        blocking,
-                    } = self.get_ref();
+                    let Self { HtmlElementProps } = self.get_ref();
                     ProjectionRef {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlElementProps,
                         ),
-                        as_: as_,
-                        cross_origin: cross_origin,
-                        fetch_priority: fetch_priority,
-                        href: href,
-                        href_lang: href_lang,
-                        image_sizes: image_sizes,
-                        image_src_set: image_src_set,
-                        integrity: integrity,
-                        media: media,
-                        prefetch: prefetch,
-                        referrer_policy: referrer_policy,
-                        rel: rel,
-                        sizes: sizes,
-                        type_: type_,
-                        blocking: blocking,
                     }
                 }
             }
@@ -826,21 +702,6 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             HtmlElementProps: TypeDefs::HtmlElementProps,
-            as_: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::as_>,
-            cross_origin: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::cross_origin>,
-            fetch_priority: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::fetch_priority>,
-            href: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::href>,
-            href_lang: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::href_lang>,
-            image_sizes: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::image_sizes>,
-            image_src_set: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::image_src_set>,
-            integrity: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::integrity>,
-            media: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::media>,
-            prefetch: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::prefetch>,
-            referrer_policy: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::referrer_policy>,
-            rel: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::rel>,
-            sizes: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::sizes>,
-            type_: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::type_>,
-            blocking: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::blocking>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -862,21 +723,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.HtmlElementProps;
-            let _ = &this.as_;
-            let _ = &this.cross_origin;
-            let _ = &this.fetch_priority;
-            let _ = &this.href;
-            let _ = &this.href_lang;
-            let _ = &this.image_sizes;
-            let _ = &this.image_src_set;
-            let _ = &this.integrity;
-            let _ = &this.media;
-            let _ = &this.prefetch;
-            let _ = &this.referrer_policy;
-            let _ = &this.rel;
-            let _ = &this.sizes;
-            let _ = &this.type_;
-            let _ = &this.blocking;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -893,21 +739,6 @@ pub mod render_state {
         fn default() -> Self {
             Self {
                 HtmlElementProps: ::core::default::Default::default(),
-                as_: ::core::default::Default::default(),
-                cross_origin: ::core::default::Default::default(),
-                fetch_priority: ::core::default::Default::default(),
-                href: ::core::default::Default::default(),
-                href_lang: ::core::default::Default::default(),
-                image_sizes: ::core::default::Default::default(),
-                image_src_set: ::core::default::Default::default(),
-                integrity: ::core::default::Default::default(),
-                media: ::core::default::Default::default(),
-                prefetch: ::core::default::Default::default(),
-                referrer_policy: ::core::default::Default::default(),
-                rel: ::core::default::Default::default(),
-                sizes: ::core::default::Default::default(),
-                type_: ::core::default::Default::default(),
-                blocking: ::core::default::Default::default(),
             }
         }
     }
@@ -965,7 +796,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::class`]"]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -992,7 +823,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::id`]"]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -1019,7 +850,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::part`]"]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -1046,7 +877,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::access_key`]"]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValue<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -1073,7 +904,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -1156,7 +987,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::context_menu`]"]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -1183,7 +1014,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::dir`]"]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValue<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -1237,7 +1068,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -1319,7 +1150,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::input_mode`]"]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -1346,7 +1177,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::is`]"]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValue<str>>(
+        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1373,7 +1204,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_id`]"]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1400,7 +1231,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_prop`]"]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1427,7 +1258,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_ref`]"]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1454,7 +1285,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_scope`]"]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1481,7 +1312,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::item_type`]"]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1508,7 +1339,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::lang`]"]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValue<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1535,7 +1366,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::nonce`]"]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValue<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1562,7 +1393,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::role`]"]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValue<str>>(
+        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1589,7 +1420,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::slot`]"]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValue<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1643,7 +1474,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::style`]"]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValue<str>>(
+        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1697,7 +1528,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::title`]"]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValue<str>>(
+        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1724,7 +1555,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::translate`]"]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValue<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1751,7 +1582,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1805,7 +1636,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn as_<V: crate::MaybeUpdateValue<str>>(
+        pub fn as_<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             as_: V,
         ) -> super::Building<super::overwrite::as_<TypeDefs, V>> {
@@ -1829,7 +1660,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn cross_origin<V: crate::MaybeUpdateValue<str>>(
+        pub fn cross_origin<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             cross_origin: V,
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
@@ -1853,7 +1684,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn fetch_priority<V: crate::MaybeUpdateValue<str>>(
+        pub fn fetch_priority<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             fetch_priority: V,
         ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>> {
@@ -1877,7 +1708,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn href<V: crate::MaybeUpdateValue<str>>(
+        pub fn href<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             href: V,
         ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
@@ -1901,7 +1732,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn href_lang<V: crate::MaybeUpdateValue<str>>(
+        pub fn href_lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             href_lang: V,
         ) -> super::Building<super::overwrite::href_lang<TypeDefs, V>> {
@@ -1925,7 +1756,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn image_sizes<V: crate::MaybeUpdateValue<str>>(
+        pub fn image_sizes<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             image_sizes: V,
         ) -> super::Building<super::overwrite::image_sizes<TypeDefs, V>> {
@@ -1949,7 +1780,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn image_src_set<V: crate::MaybeUpdateValue<str>>(
+        pub fn image_src_set<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             image_src_set: V,
         ) -> super::Building<super::overwrite::image_src_set<TypeDefs, V>> {
@@ -1973,7 +1804,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn integrity<V: crate::MaybeUpdateValue<str>>(
+        pub fn integrity<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             integrity: V,
         ) -> super::Building<super::overwrite::integrity<TypeDefs, V>> {
@@ -1997,7 +1828,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn media<V: crate::MaybeUpdateValue<str>>(
+        pub fn media<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             media: V,
         ) -> super::Building<super::overwrite::media<TypeDefs, V>> {
@@ -2021,7 +1852,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn prefetch<V: crate::MaybeUpdateValue<str>>(
+        pub fn prefetch<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             prefetch: V,
         ) -> super::Building<super::overwrite::prefetch<TypeDefs, V>> {
@@ -2045,7 +1876,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn referrer_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn referrer_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
@@ -2069,7 +1900,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn rel<V: crate::MaybeUpdateValue<str>>(
+        pub fn rel<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
@@ -2093,7 +1924,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn sizes<V: crate::MaybeUpdateValue<str>>(
+        pub fn sizes<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             sizes: V,
         ) -> super::Building<super::overwrite::sizes<TypeDefs, V>> {
@@ -2117,7 +1948,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn type_<V: crate::MaybeUpdateValue<str>>(
+        pub fn type_<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             type_: V,
         ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
@@ -2141,7 +1972,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn blocking<V: crate::MaybeUpdateValue<str>>(
+        pub fn blocking<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             blocking: V,
         ) -> super::Building<super::overwrite::blocking<TypeDefs, V>> {
@@ -2176,7 +2007,7 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , as_ = < TypeDefs :: as_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , cross_origin = < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , fetch_priority = < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , href = < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , href_lang = < TypeDefs :: href_lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , image_sizes = < TypeDefs :: image_sizes as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , image_src_set = < TypeDefs :: image_src_set as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , integrity = < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , media = < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , prefetch = < TypeDefs :: prefetch as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , referrer_policy = < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , rel = < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , sizes = < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , type_ = < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , blocking = < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: State , > , > ;
+        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , > , > ;
         fn update_element(
             this: Self,
             element: &web_sys::HtmlLinkElement,
@@ -2185,326 +2016,86 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.HtmlElementProps,
-                state: state.HtmlElementProps,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    state,
-                    element,
-                    children_ctx,
-                    ..
-                } => crate::props::UpdateElement::update_element(
-                    data,
-                    element.as_ref(),
-                    children_ctx,
-                    state,
-                ),
+            crate::props::UpdateElement::update_element(
+                this.HtmlElementProps,
+                element.as_ref(),
+                children_ctx,
+                state.HtmlElementProps,
+            );
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "as";
+                < TypeDefs :: as_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . as_ , | v | element . set_as (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.as_,
-                state: state.as_,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "as";
-                    < TypeDefs :: as_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_as (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "crossorigin";
+                < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.cross_origin,
-                state: state.cross_origin,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "crossorigin";
-                    < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "fetchpriority";
+                < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.fetch_priority,
-                state: state.fetch_priority,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "fetchpriority";
-                    < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "href";
+                < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . href , | v | element . set_href (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.href,
-                state: state.href,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "href";
-                    < TypeDefs :: href as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_href (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "hreflang";
+                < TypeDefs :: href_lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . href_lang , | v | element . set_hreflang (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.href_lang,
-                state: state.href_lang,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "hreflang";
-                    < TypeDefs :: href_lang as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_hreflang (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "imagesizes";
+                < TypeDefs :: image_sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . image_sizes , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.image_sizes,
-                state: state.image_sizes,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "imagesizes";
-                    < TypeDefs :: image_sizes as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "imagesrcset";
+                < TypeDefs :: image_src_set as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . image_src_set , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.image_src_set,
-                state: state.image_src_set,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "imagesrcset";
-                    < TypeDefs :: image_src_set as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "integrity";
+                < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.integrity,
-                state: state.integrity,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "integrity";
-                    < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_integrity (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "media";
+                < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . media , | v | element . set_media (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.media,
-                state: state.media,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "media";
-                    < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_media (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "prefetch";
+                < TypeDefs :: prefetch as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . prefetch , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.prefetch,
-                state: state.prefetch,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "prefetch";
-                    < TypeDefs :: prefetch as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
+                < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.referrer_policy,
-                state: state.referrer_policy,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
-                    < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "rel";
+                < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . rel , | v | element . set_rel (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.rel,
-                state: state.rel,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "rel";
-                    < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_rel (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "sizes";
+                < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.sizes,
-                state: state.sizes,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "sizes";
-                    < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "type";
+                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.type_,
-                state: state.type_,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "type";
-                    < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.blocking,
-                state: state.blocking,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "blocking";
-                    < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "blocking";
+                < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
         }
     }

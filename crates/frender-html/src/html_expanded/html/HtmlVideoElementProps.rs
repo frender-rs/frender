@@ -344,7 +344,7 @@ mod trait_types {
         type HtmlMediaElementProps: ?::core::marker::Sized + HtmlMediaElementProps::Types;
         type height: crate::MaybeUpdateValue<u32>;
         type plays_inline: crate::MaybeUpdateValue<bool>;
-        type poster: crate::MaybeUpdateValue<str>;
+        type poster: crate::MaybeUpdateValueByRef<str>;
         type width: crate::MaybeUpdateValue<u32>;
     }
 }
@@ -383,20 +383,12 @@ pub mod render_state {
     pub trait RenderStateTypes {
         type HtmlMediaElementProps: ::core::default::Default
             + crate::props::IntrinsicComponentPollReactive;
-        type height: ::core::default::Default;
-        type plays_inline: ::core::default::Default;
-        type poster: ::core::default::Default;
-        type width: ::core::default::Default;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
         TypeDefs: ?::core::marker::Sized,
     {
         pub HtmlMediaElementProps: TypeDefs::HtmlMediaElementProps,
-        pub height: TypeDefs::height,
-        pub plays_inline: TypeDefs::plays_inline,
-        pub poster: TypeDefs::poster,
-        pub width: TypeDefs::width,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -412,10 +404,6 @@ pub mod render_state {
     {
         pub HtmlMediaElementProps:
             ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlMediaElementProps)>,
-        pub height: &'__pin mut (TypeDefs::height),
-        pub plays_inline: &'__pin mut (TypeDefs::plays_inline),
-        pub poster: &'__pin mut (TypeDefs::poster),
-        pub width: &'__pin mut (TypeDefs::width),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -437,10 +425,6 @@ pub mod render_state {
         {
             pub HtmlMediaElementProps:
                 ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlMediaElementProps)>,
-            pub height: &'__pin (TypeDefs::height),
-            pub plays_inline: &'__pin (TypeDefs::plays_inline),
-            pub poster: &'__pin (TypeDefs::poster),
-            pub width: &'__pin (TypeDefs::width),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -452,19 +436,11 @@ pub mod render_state {
                 unsafe {
                     let Self {
                         HtmlMediaElementProps,
-                        height,
-                        plays_inline,
-                        poster,
-                        width,
                     } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlMediaElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlMediaElementProps,
                         ),
-                        height: height,
-                        plays_inline: plays_inline,
-                        poster: poster,
-                        width: width,
                     }
                 }
             }
@@ -474,19 +450,11 @@ pub mod render_state {
                 unsafe {
                     let Self {
                         HtmlMediaElementProps,
-                        height,
-                        plays_inline,
-                        poster,
-                        width,
                     } = self.get_ref();
                     ProjectionRef {
                         HtmlMediaElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             HtmlMediaElementProps,
                         ),
-                        height: height,
-                        plays_inline: plays_inline,
-                        poster: poster,
-                        width: width,
                     }
                 }
             }
@@ -498,10 +466,6 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             HtmlMediaElementProps: TypeDefs::HtmlMediaElementProps,
-            height: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::height>,
-            plays_inline: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::plays_inline>,
-            poster: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::poster>,
-            width: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::width>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -523,10 +487,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.HtmlMediaElementProps;
-            let _ = &this.height;
-            let _ = &this.plays_inline;
-            let _ = &this.poster;
-            let _ = &this.width;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -543,10 +503,6 @@ pub mod render_state {
         fn default() -> Self {
             Self {
                 HtmlMediaElementProps: ::core::default::Default::default(),
-                height: ::core::default::Default::default(),
-                plays_inline: ::core::default::Default::default(),
-                poster: ::core::default::Default::default(),
-                width: ::core::default::Default::default(),
             }
         }
     }
@@ -594,7 +550,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::class`]"]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -610,7 +566,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::id`]"]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -626,7 +582,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::part`]"]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -642,7 +598,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::access_key`]"]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValue<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -659,7 +615,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::auto_capitalize`]"]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValue<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -710,7 +666,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::context_menu`]"]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValue<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -727,7 +683,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::dir`]"]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValue<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -760,7 +716,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::enter_key_hint`]"]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValue<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -809,7 +765,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::input_mode`]"]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValue<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -826,7 +782,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::is`]"]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValue<str>>(
+        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -842,7 +798,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::item_id`]"]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -858,7 +814,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::item_prop`]"]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -875,7 +831,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::item_ref`]"]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -892,7 +848,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::item_scope`]"]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -909,7 +865,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::item_type`]"]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValue<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -926,7 +882,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::lang`]"]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValue<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -942,7 +898,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::nonce`]"]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValue<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -958,7 +914,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::role`]"]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValue<str>>(
+        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -974,7 +930,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::slot`]"]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValue<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1007,7 +963,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::style`]"]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValue<str>>(
+        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1040,7 +996,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::title`]"]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValue<str>>(
+        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1056,7 +1012,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::translate`]"]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValue<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1073,7 +1029,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::virtual_keyboard_policy`]"]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValue<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1141,7 +1097,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::cross_origin`]"]
         #[inline]
-        pub fn cross_origin<V: crate::MaybeUpdateValue<str>>(
+        pub fn cross_origin<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             cross_origin: V,
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
@@ -1190,7 +1146,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::preload`]"]
         #[inline]
-        pub fn preload<V: crate::MaybeUpdateValue<str>>(
+        pub fn preload<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             preload: V,
         ) -> super::Building<super::overwrite::preload<TypeDefs, V>> {
@@ -1206,7 +1162,7 @@ mod builder_and_replacer {
         }
         #[doc = "See [`HtmlMediaElementProps::src`]"]
         #[inline]
-        pub fn src<V: crate::MaybeUpdateValue<str>>(
+        pub fn src<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -1247,7 +1203,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn poster<V: crate::MaybeUpdateValue<str>>(
+        pub fn poster<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             poster: V,
         ) -> super::Building<super::overwrite::poster<TypeDefs, V>> {
@@ -1289,12 +1245,6 @@ mod impl_update_element {
                 HtmlMediaElementProps = <HtmlMediaElementProps::Data<
                     TypeDefs::HtmlMediaElementProps,
                 > as crate::props::UpdateElement<web_sys::HtmlMediaElement>>::State,
-                height = <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::State,
-                plays_inline = <TypeDefs::plays_inline as ::frender_dom::props::MaybeUpdateValue<
-                    bool,
-                >>::State,
-                poster = <TypeDefs::poster as ::frender_dom::props::MaybeUpdateValue<str>>::State,
-                width = <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::State,
             >,
         >;
         fn update_element(
@@ -1305,106 +1255,35 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.HtmlMediaElementProps,
-                state: state.HtmlMediaElementProps,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    state,
-                    element,
-                    children_ctx,
-                    ..
-                } => crate::props::UpdateElement::update_element(
-                    data,
-                    element.as_ref(),
-                    children_ctx,
-                    state,
-                ),
+            crate::props::UpdateElement::update_element(
+                this.HtmlMediaElementProps,
+                element.as_ref(),
+                children_ctx,
+                state.HtmlMediaElementProps,
+            );
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "height";
+                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.height,
-                state: state.height,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "height";
-                    < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (data , state , | v | element . set_height (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "playsinline";
+                < TypeDefs :: plays_inline as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . plays_inline , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.plays_inline,
-                state: state.plays_inline,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "playsinline";
-                    < TypeDefs :: plays_inline as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "poster";
+                < TypeDefs :: poster as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . poster , | v | element . set_poster (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.poster,
-                state: state.poster,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "poster";
-                    < TypeDefs :: poster as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_poster (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.width,
-                state: state.width,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "width";
-                    < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (data , state , | v | element . set_width (* v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "width";
+                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                    this.width,
+                    |v| element.set_width(v),
+                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
+                )
             }
         }
     }

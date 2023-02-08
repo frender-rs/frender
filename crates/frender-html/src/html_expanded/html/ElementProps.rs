@@ -43,9 +43,9 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type children;
-        type class: crate::MaybeUpdateValue<str>;
-        type id: crate::MaybeUpdateValue<str>;
-        type part: crate::MaybeUpdateValue<str>;
+        type class: crate::MaybeUpdateValueByRef<str>;
+        type id: crate::MaybeUpdateValueByRef<str>;
+        type part: crate::MaybeUpdateValueByRef<str>;
     }
 }
 pub use trait_types::Types;
@@ -74,18 +74,12 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type children: ::frender_core::RenderState;
-        type class: ::core::default::Default;
-        type id: ::core::default::Default;
-        type part: ::core::default::Default;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
         TypeDefs: ?::core::marker::Sized,
     {
         pub children: TypeDefs::children,
-        pub class: TypeDefs::class,
-        pub id: TypeDefs::id,
-        pub part: TypeDefs::part,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -100,9 +94,6 @@ pub mod render_state {
         TypeDefs: ?::core::marker::Sized,
     {
         pub children: ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::children)>,
-        pub class: &'__pin mut (TypeDefs::class),
-        pub id: &'__pin mut (TypeDefs::id),
-        pub part: &'__pin mut (TypeDefs::part),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -123,9 +114,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             pub children: ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::children)>,
-            pub class: &'__pin (TypeDefs::class),
-            pub id: &'__pin (TypeDefs::id),
-            pub part: &'__pin (TypeDefs::part),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -135,17 +123,9 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
             ) -> RenderStateProj<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        children,
-                        class,
-                        id,
-                        part,
-                    } = self.get_unchecked_mut();
+                    let Self { children } = self.get_unchecked_mut();
                     RenderStateProj {
                         children: ::pin_project_lite::__private::Pin::new_unchecked(children),
-                        class: class,
-                        id: id,
-                        part: part,
                     }
                 }
             }
@@ -153,17 +133,9 @@ pub mod render_state {
                 self: ::pin_project_lite::__private::Pin<&'__pin Self>,
             ) -> ProjectionRef<'__pin, TypeDefs> {
                 unsafe {
-                    let Self {
-                        children,
-                        class,
-                        id,
-                        part,
-                    } = self.get_ref();
+                    let Self { children } = self.get_ref();
                     ProjectionRef {
                         children: ::pin_project_lite::__private::Pin::new_unchecked(children),
-                        class: class,
-                        id: id,
-                        part: part,
                     }
                 }
             }
@@ -175,9 +147,6 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             children: TypeDefs::children,
-            class: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::class>,
-            id: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::id>,
-            part: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::part>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -199,9 +168,6 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.children;
-            let _ = &this.class;
-            let _ = &this.id;
-            let _ = &this.part;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -218,9 +184,6 @@ pub mod render_state {
         fn default() -> Self {
             Self {
                 children: ::frender_core::RenderState::new_uninitialized(),
-                class: ::core::default::Default::default(),
-                id: ::core::default::Default::default(),
-                part: ::core::default::Default::default(),
             }
         }
     }
@@ -259,7 +222,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValue<str>>(
+        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -271,7 +234,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValue<str>>(
+        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -283,7 +246,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValue<str>>(
+        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -310,9 +273,6 @@ mod impl_update_element {
                 children = <TypeDefs::children as frender_core::UpdateRenderState<
                     frender_dom::Dom,
                 >>::State,
-                class = <TypeDefs::class as ::frender_dom::props::MaybeUpdateValue<str>>::State,
-                id = <TypeDefs::id as ::frender_dom::props::MaybeUpdateValue<str>>::State,
-                part = <TypeDefs::part as ::frender_dom::props::MaybeUpdateValue<str>>::State,
             >,
         >;
         fn update_element(
@@ -323,84 +283,25 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.children,
-                state: state.children,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    state,
-                    children_ctx,
-                    ..
-                } => ::frender_core::UpdateRenderState::update_render_state(
-                    data,
-                    children_ctx,
-                    state,
-                ),
+            ::frender_core::UpdateRenderState::update_render_state(
+                this.children,
+                children_ctx,
+                state.children,
+            );
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "class";
+                < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . class , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.class,
-                state: state.class,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "class";
-                    < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "id";
+                < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . id , | v | element . set_id (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.id,
-                state: state.id,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "id";
-                    < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | element . set_id (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
-            }
-            #[allow(unused_variables)]
-            match (crate::props::FieldData {
-                data: this.part,
-                state: state.part,
-                element,
-                dom_element,
-                children_ctx: &mut *children_ctx,
-            }) {
-                crate::props::FieldData {
-                    data,
-                    dom_element,
-                    state,
-                    element,
-                    ..
-                } => {
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = "part";
-                    < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValue < str , > > :: maybe_update_value (data , state , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-                }
+            {
+                #[allow(unused)]
+                const ATTR_NAME: &::core::primitive::str = "part";
+                < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . part , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
             }
         }
     }
