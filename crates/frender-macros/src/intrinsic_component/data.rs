@@ -9,105 +9,18 @@ use crate::utils::{
     kw::PrefixKeyword,
 };
 
-use super::{kw, FieldDeclarationInherit, IntrinsicComponentPropsVirtual};
-
-#[derive(Clone)]
-pub struct FieldDeclarationMaybeDetailsMethod {
-    pub name: syn::Ident,
-    pub deref_star_token: Option<syn::Token![*]>,
-}
-
-#[derive(Clone)]
-pub struct FieldDeclarationMaybeDetailsImpl<K> {
-    pub keyword: K,
-    pub element_pat_ident: syn::Ident,
-    pub rest: TokenStream,
-}
-
-impl<K: Parse> Parse for FieldDeclarationMaybeDetailsImpl<K> {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        Ok(Self {
-            keyword: input.parse()?,
-            element_pat_ident: input.parse()?,
-            rest: input.parse()?,
-        })
-    }
-}
-
-#[derive(Clone)]
-pub struct FieldDeclarationMaybeDetails {
-    pub html_prop_name: Option<syn::LitStr>,
-    pub impl_update: Option<Bracketed<FieldDeclarationMaybeDetailsImpl<kw::update>>>,
-    pub impl_remove: Option<Bracketed<FieldDeclarationMaybeDetailsImpl<kw::remove>>>,
-    pub html_element_method: Option<FieldDeclarationMaybeDetailsMethod>,
-}
-
-impl Parse for FieldDeclarationMaybeDetails {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let mut custom_impl: Option<_> = None;
-        Ok(Self {
-            html_prop_name: input.parse()?,
-            impl_update: {
-                if input.peek(syn::token::Bracket) {
-                    let content;
-                    let group_token = syn::bracketed!(content in input);
-
-                    if content.peek(kw::update) {
-                        Some(Bracketed {
-                            group_token,
-                            content: content.parse()?,
-                        })
-                    } else {
-                        custom_impl = Some((group_token, content));
-                        None
-                    }
-                } else {
-                    None
-                }
-            },
-            impl_remove: {
-                if custom_impl.is_none() {
-                    if input.peek(syn::token::Bracket) {
-                        let content;
-                        let group_token = syn::bracketed!(content in input);
-                        custom_impl = Some((group_token, content))
-                    }
-                }
-                if let Some((group_token, content)) = custom_impl {
-                    Some(Bracketed {
-                        group_token,
-                        content: content.parse()?,
-                    })
-                } else {
-                    None
-                }
-            },
-            html_element_method: {
-                if let Some(name) = input.parse()? {
-                    Some(FieldDeclarationMaybeDetailsMethod {
-                        name,
-                        deref_star_token: input.parse()?,
-                    })
-                } else {
-                    None
-                }
-            },
-        })
-    }
-}
+use super::{kw, FieldDeclarationInherit, FieldDeclarationMaybe, IntrinsicComponentPropsVirtual};
 
 #[derive(Clone)]
 pub struct FieldDeclarationDomImpl {
     pub impl_token: syn::Token![impl],
-    pub pat: proc_macro2::TokenTree,
-    pub impl_body: proc_macro2::TokenTree,
+    pub impl_body: Braced<TokenStream>,
 }
 
 impl Parse for FieldDeclarationDomImpl {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         Ok(Self {
             impl_token: input.parse()?,
-            pat: input.parse()?,
             impl_body: input.parse()?,
         })
     }
@@ -214,11 +127,7 @@ impl Parse for FieldDeclarationFull {
 
 #[derive(Clone)]
 pub enum FieldDeclaration {
-    Maybe {
-        question_token: syn::Token![?],
-        ty: syn::Type,
-        details: Option<Braced<FieldDeclarationMaybeDetails>>,
-    },
+    Maybe(FieldDeclarationMaybe),
     Full(FieldDeclarationFull),
     Inherit(FieldDeclarationInherit),
 }
@@ -253,11 +162,12 @@ impl FieldDeclarationFull {
 impl Parse for FieldDeclaration {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         if let Some(question_token) = input.parse()? {
-            Ok(Self::Maybe {
+            Ok(Self::Maybe(FieldDeclarationMaybe {
                 question_token,
+                by_ref: input.parse()?,
                 ty: input.parse()?,
                 details: input.parse()?,
-            })
+            }))
         } else {
             Ok(Self::Full(input.parse()?))
         }

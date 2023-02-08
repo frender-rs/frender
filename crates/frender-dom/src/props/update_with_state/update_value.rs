@@ -2,27 +2,27 @@ use std::borrow::Cow;
 
 use frender_core::{StaticStr, StaticText};
 
-pub trait UpdateValue<V: ?Sized> {
+pub trait UpdateValueWithState<V: ?Sized> {
     type State: Default;
 
-    fn update_value(this: Self, state: &mut Self::State, update: impl FnOnce(&V));
+    fn update_value_with_state(this: Self, state: &mut Self::State, update: impl FnOnce(&V));
 }
 
 /// No cache
-impl UpdateValue<str> for &str {
+impl UpdateValueWithState<str> for &str {
     type State = ();
 
     #[inline(always)]
-    fn update_value(this: Self, _: &mut Self::State, update: impl FnOnce(&str)) {
+    fn update_value_with_state(this: Self, _: &mut Self::State, update: impl FnOnce(&str)) {
         update(this)
     }
 }
 
 /// Cache if self is [`Cow::Owned`]
-impl UpdateValue<str> for Cow<'_, str> {
+impl UpdateValueWithState<str> for Cow<'_, str> {
     type State = Option<String>;
 
-    fn update_value(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
+    fn update_value_with_state(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
         if cache.as_deref() == Some(&*this) {
             return;
         }
@@ -34,10 +34,10 @@ impl UpdateValue<str> for Cow<'_, str> {
     }
 }
 
-impl<S: StaticStr> UpdateValue<str> for StaticText<S> {
+impl<S: StaticStr> UpdateValueWithState<str> for StaticText<S> {
     type State = Option<S>;
 
-    fn update_value(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
+    fn update_value_with_state(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
         if cache.as_deref() == Some(&*this) {
             return;
         }
@@ -47,10 +47,10 @@ impl<S: StaticStr> UpdateValue<str> for StaticText<S> {
     }
 }
 
-impl UpdateValue<str> for String {
+impl UpdateValueWithState<str> for String {
     type State = Option<String>;
 
-    fn update_value(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
+    fn update_value_with_state(this: Self, cache: &mut Self::State, update: impl FnOnce(&str)) {
         if cache.as_ref() == Some(&this) {
             return;
         }
@@ -59,10 +59,10 @@ impl UpdateValue<str> for String {
     }
 }
 
-impl UpdateValue<bool> for bool {
+impl UpdateValueWithState<bool> for bool {
     type State = bool;
 
-    fn update_value(this: Self, state: &mut Self::State, update: impl FnOnce(&bool)) {
+    fn update_value_with_state(this: Self, state: &mut Self::State, update: impl FnOnce(&bool)) {
         if *state == this {
             return;
         }

@@ -7,46 +7,23 @@ use syn::parse_quote;
 use crate::utils::grouped::{Braced, Bracketed};
 
 use super::{
-    kw, Field, FieldDeclaration, FieldDeclarationDefinitions, FieldDeclarationDomDefinitions,
-    FieldDeclarationDomState, FieldDeclarationFull, FieldDeclarationInherit,
+    kw, Field, FieldDeclaration, FieldDeclarationInherit, FieldDeclarationMaybe,
     IntrinsicComponentProps, IntrinsicComponentPropsData,
 };
 
 impl FieldDeclaration {
-    pub fn dom_pat(&self) -> Cow<TokenTree> {
-        match self {
-            FieldDeclaration::Maybe { .. } => {
-                Cow::Owned(TokenTree::Group(proc_macro2::Group::new(
-                    proc_macro2::Delimiter::Brace,
-                    quote!(data, dom_element, state, element, ..),
-                )))
-            }
-            FieldDeclaration::Full(v) => Cow::Borrowed(
-                &v.definitions
-                    .content
-                    .dom_definitions
-                    .content
-                    .implementation
-                    .pat,
-            ),
-            FieldDeclaration::Inherit(_) => Cow::Owned(TokenTree::Group(proc_macro2::Group::new(
-                proc_macro2::Delimiter::Brace,
-                quote!(data, state, element, children_ctx, ..),
-            ))),
-        }
-    }
-
     pub fn dom_implementation(
         &self,
         field_name: &syn::Ident,
         crate_path: &impl ToTokens,
-    ) -> Cow<TokenTree> {
+    ) -> Cow<TokenStream> {
         match self {
-            FieldDeclaration::Maybe {
-                question_token,
+            FieldDeclaration::Maybe(FieldDeclarationMaybe {
+                question_token: _,
+                by_ref,
                 ty,
                 details,
-            } => {
+            }) => {
                 let html_prop_name = details
                     .as_ref()
                     .and_then(|d| d.content.html_prop_name.as_ref())
@@ -112,19 +89,24 @@ impl FieldDeclaration {
                         },
                     );
 
-                Cow::Owned(TokenTree::Group(Group::new(
-                    proc_macro2::Delimiter::Brace,
-                    quote! {
-                        #[allow(unused)]
-                        const ATTR_NAME: &::core::primitive::str = #html_prop_name ;
-                        <TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValue<#ty>>::maybe_update_value(
-                            data,
-                            state,
-                            #update,
-                            #remove
-                        )
-                    },
-                )))
+                let (trait_name, trait_method) = if by_ref.is_some() {
+                    (
+                        quote!(MaybeUpdateValueByRef),
+                        quote!(maybe_update_value_by_ref),
+                    )
+                } else {
+                    (quote!(MaybeUpdateValue), quote!(maybe_update_value))
+                };
+
+                Cow::Owned(quote! {{
+                    #[allow(unused)]
+                    const ATTR_NAME: &::core::primitive::str = #html_prop_name ;
+                    <TypeDefs::#field_name as ::frender_dom::props::#trait_name<#ty>>::#trait_method(
+                        #by_ref this.#field_name,
+                        #update,
+                        #remove
+                    )
+                }})
             }
             FieldDeclaration::Full(v) => Cow::Borrowed(
                 &v.definitions
@@ -132,17 +114,17 @@ impl FieldDeclaration {
                     .dom_definitions
                     .content
                     .implementation
-                    .impl_body,
+                    .impl_body
+                    .content,
             ),
-            FieldDeclaration::Inherit(v) => Cow::Owned(TokenTree::Group(Group::new(
-                proc_macro2::Delimiter::Brace,
-                quote!(#crate_path ::props::UpdateElement::update_element(
-                    data,
+            FieldDeclaration::Inherit(_) => {
+                Cow::Owned(quote!(#crate_path ::props::UpdateElement::update_element(
+                    this.#field_name,
                     element.as_ref(),
                     children_ctx,
-                    state,
-                )),
-            ))),
+                    state.#field_name,
+                );))
+            }
         }
     }
 
@@ -152,7 +134,7 @@ impl FieldDeclaration {
         field_name: &syn::Ident,
     ) -> Option<TokenStream> {
         match self {
-            FieldDeclaration::Maybe { .. } => None,
+            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => None,
             FieldDeclaration::Full(v) => v
                 .definitions
                 .content
@@ -172,105 +154,93 @@ impl FieldDeclaration {
         }
     }
 
-    pub fn dom_state_initial_value(&self) -> Cow<syn::Expr> {
-        match self {
-            FieldDeclaration::Maybe { .. } => None,
-            FieldDeclaration::Full(v) => v
-                .dom_state()
-                .and_then(|state| state.implementation.as_ref())
-                .map(|imp| &imp.initial_value.content),
-            FieldDeclaration::Inherit(_) => None,
-        }
-        .map_or_else(
-            || {
-                Cow::Owned(syn::Expr::Verbatim(quote!(
-                    ::core::default::Default::default()
-                )))
-            },
-            Cow::Borrowed,
-        )
-    }
-
-    pub fn dom_state_bounds(&self, crate_path: &impl ToTokens) -> Cow<TokenStream> {
-        match self {
-            FieldDeclaration::Maybe { .. } => None,
-            FieldDeclaration::Full(v) => v.dom_state(),
-            FieldDeclaration::Inherit(_) => {
-                return Cow::Owned(quote! {
-                    ::core::default::Default + #crate_path ::props::IntrinsicComponentPollReactive
-                });
-            }
-        }
-        .and_then(|v| v.implementation.as_ref().map(|im| &im.bounds.content))
-        .map_or_else(
-            || Cow::Owned(quote!(::core::default::Default)),
-            Cow::Borrowed,
-        )
-    }
-
-    pub fn dom_state_type(
-        &self,
+    pub fn dom_state<'a>(
+        &'a self,
         crate_path: &impl ToTokens,
-        field_name: &syn::Ident,
-    ) -> Option<Cow<syn::Type>> {
+        field_name: &'a syn::Ident,
+    ) -> Option<DomState<'a>> {
         match self {
-            FieldDeclaration::Maybe {
-                question_token,
-                ty,
-                details,
-            } => Some(Cow::Owned(syn::Type::Verbatim(
-                quote! {<TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValue<#ty>>::State},
-            ))),
-            FieldDeclaration::Full(v) => v
-                .definitions
-                .content
-                .dom_definitions
-                .content
-                .state
-                .as_ref()
-                .map(|state| Cow::Borrowed(&state.content.ty)),
+            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => {
+                // pin = None;
+                // state_ty = Cow::Owned(syn::Type::Verbatim(
+                //     quote! {<TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValue<#ty>>::State},
+                // ));
+
+                return None;
+            }
+            FieldDeclaration::Full(v) => {
+                return v.dom_state().map(|state| {
+                    let ty = Cow::Borrowed(&state.ty);
+                    let bounds = state
+                        .implementation
+                        .as_ref()
+                        .map(|im| &im.bounds.content)
+                        .map_or_else(
+                            || Cow::Owned(quote!(::core::default::Default)),
+                            Cow::Borrowed,
+                        );
+                    let initial_value = state
+                        .implementation
+                        .as_ref()
+                        .map(|imp| &imp.initial_value.content)
+                        .map_or_else(
+                            || {
+                                Cow::Owned(syn::Expr::Verbatim(quote!(
+                                    ::core::default::Default::default()
+                                )))
+                            },
+                            Cow::Borrowed,
+                        );
+
+                    DomState {
+                        pin: state.pin,
+                        field_name,
+                        ty,
+                        bounds,
+                        initial_value,
+                    }
+                })
+            }
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
                 let dom_element_ty = &v.dom_element_ty;
-                Some(Cow::Owned(syn::Type::Verbatim(quote! {
-                    <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
-                })))
+
+                Some(DomState {
+                    pin: Some(Default::default()),
+                    field_name,
+                    ty: Cow::Owned(syn::Type::Verbatim(quote! {
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
+                    })),
+                    bounds: Cow::Owned(quote! {
+                        ::core::default::Default + #crate_path ::props::IntrinsicComponentPollReactive
+                    }),
+                    initial_value: Cow::Owned(syn::Expr::Verbatim(quote!(
+                        ::core::default::Default::default()
+                    ))),
+                })
             }
         }
     }
 }
 
-impl Field {
-    pub fn dom_render_state_type_item(&self, crate_path: &impl ToTokens) -> TokenStream {
-        let name = &self.name;
-        let dom_state_bounds = self.declaration.dom_state_bounds(crate_path);
-        quote! {
-            type #name : #dom_state_bounds;
-        }
-    }
+pub struct DomState<'a> {
+    pub pin: Option<kw::pin>,
+    pub field_name: &'a syn::Ident,
+    pub ty: Cow<'a, syn::Type>,
+    pub bounds: Cow<'a, TokenStream>,
+    pub initial_value: Cow<'a, syn::Expr>,
 }
 
 impl FieldDeclaration {
-    pub fn dom_state_pin(&self) -> Option<Cow<kw::pin>> {
-        match self {
-            FieldDeclaration::Maybe { .. } => None,
-            FieldDeclaration::Full(v) => v
-                .definitions
-                .content
-                .dom_definitions
-                .content
-                .state
-                .as_ref()
-                .and_then(|state| state.content.pin.as_ref())
-                .map(Cow::Borrowed),
-            FieldDeclaration::Inherit(_) => Some(Default::default()),
-        }
-    }
-
     pub fn bounds(&self, crate_path: &impl ToTokens) -> Option<Cow<TokenStream>> {
         match self {
-            FieldDeclaration::Maybe { ty, .. } => {
-                Some(Cow::Owned(quote!(#crate_path ::MaybeUpdateValue<#ty>)))
+            FieldDeclaration::Maybe(FieldDeclarationMaybe { ty, by_ref, .. }) => {
+                let trait_name = if by_ref.is_some() {
+                    quote!(MaybeUpdateValueByRef)
+                } else {
+                    quote!(MaybeUpdateValue)
+                };
+                Some(Cow::Owned(quote!(#crate_path ::#trait_name <#ty>)))
             }
             FieldDeclaration::Full(v) => v.bounds.as_ref().map(|b| &b.content).map(Cow::Borrowed),
             FieldDeclaration::Inherit(v) => {
@@ -285,7 +255,9 @@ impl FieldDeclaration {
 
     pub fn initial_type(&self) -> Cow<syn::Type> {
         match self {
-            FieldDeclaration::Maybe { .. } => Cow::Owned(syn::Type::Verbatim(quote!(()))),
+            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => {
+                Cow::Owned(syn::Type::Verbatim(quote!(())))
+            }
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_type),
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
@@ -298,7 +270,9 @@ impl FieldDeclaration {
 
     pub fn initial_value(&self) -> Cow<syn::Expr> {
         match self {
-            FieldDeclaration::Maybe { .. } => Cow::Owned(syn::Expr::Verbatim(quote!(()))),
+            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => {
+                Cow::Owned(syn::Expr::Verbatim(quote!(())))
+            }
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_value),
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
@@ -355,14 +329,6 @@ impl IntrinsicComponentPropsData {
             })
             .unzip();
 
-        let field_dom_state_init = fields.iter().map(|field| {
-            let name = &field.name;
-            let value = field.declaration.dom_state_initial_value();
-            quote! {
-                #name : #value
-            }
-        });
-
         let impl_field_overwrite = fields.iter().enumerate().map(|(i, field)| {
             let field_name = &field.name;
             let fields = field_names.iter().enumerate().map(|(cur, name)| {
@@ -395,17 +361,42 @@ impl IntrinsicComponentPropsData {
             }
         });
 
-        let dom_state_type_items = fields
+        let opt_dom_states = fields
             .iter()
-            .map(|f| Field::dom_render_state_type_item(f, &crate_path));
-        let dom_state_fields = fields.iter().map(|field| {
-            let pin = field.declaration.dom_state_pin().map(|pin| quote!(#[#pin]));
-            let name = &field.name;
-            quote! {
-                #pin
-                pub #name: TypeDefs::#name,
-            }
-        });
+            .map(|f| f.declaration.dom_state(&crate_path, &f.name))
+            .collect::<Vec<_>>();
+
+        let dom_states = opt_dom_states
+            .iter()
+            .filter_map(|s| s.as_ref())
+            .collect::<Vec<_>>();
+
+        let dom_state_type_items = dom_states.iter().map(
+            |DomState {
+                 field_name, bounds, ..
+             }| quote!( type #field_name : #bounds; ),
+        );
+        let dom_state_fields = dom_states.iter().map(
+            |DomState {
+                 field_name, pin, ..
+             }| {
+                let pin = pin.map(|pin| quote!(#[#pin]));
+                quote! {
+                    #pin
+                    pub #field_name: TypeDefs::#field_name,
+                }
+            },
+        );
+        let dom_state_types = dom_states
+            .iter()
+            .map(|DomState { field_name, ty, .. }| quote!(#field_name = #ty));
+        let field_dom_state_init = dom_states.iter().map(
+            |DomState {
+                 field_name,
+                 initial_value,
+                 ..
+             }| quote!(#field_name : #initial_value),
+        );
 
         let impl_builder_fn = fields
             .iter()
@@ -416,16 +407,6 @@ impl IntrinsicComponentPropsData {
             .map(|f| f.declaration.dom_bounds(&crate_path, &f.name))
             .filter_map(std::convert::identity);
 
-        let dom_state_types = fields.iter().map(|f| {
-            let name = &f.name;
-            let ty = f
-                .declaration
-                .dom_state_type(&crate_path, name)
-                .unwrap_or_else(|| Cow::Owned(syn::Type::Verbatim(quote!(()))));
-            quote!(#name = #ty)
-        });
-
-        let dom_pats = fields.iter().map(|f| f.declaration.dom_pat());
         let dom_implementations = fields
             .iter()
             .map(|f| f.declaration.dom_implementation(&f.name, &crate_path));
@@ -620,18 +601,7 @@ impl IntrinsicComponentPropsData {
 
                             let dom_element: &::web_sys::Element = element.as_ref();
 
-                            #(
-                                #[allow(unused_variables)]
-                                match (#crate_path ::props::FieldData {
-                                    data: this. #field_names,
-                                    state: state. #field_names,
-                                    element,
-                                    dom_element,
-                                    children_ctx: &mut *children_ctx,
-                                }) {
-                                    #crate_path::props::FieldData #dom_pats => #dom_implementations
-                                }
-                            )*
+                            #(#dom_implementations)*
                         }
                     }
                 }

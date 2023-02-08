@@ -6,7 +6,7 @@ pub use element_macros::*;
 #[cfg(feature = "html_macro_not_expand")]
 use frender_macros::def_intrinsic_component_props;
 
-pub use frender_dom::props::MaybeUpdateValue;
+pub use frender_dom::props::{MaybeUpdateValue, MaybeUpdateValueByRef};
 
 pub mod __private {
     pub use frender_core::RenderState;
