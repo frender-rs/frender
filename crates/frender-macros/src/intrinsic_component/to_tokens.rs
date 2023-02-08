@@ -16,6 +16,7 @@ impl FieldDeclaration {
         &self,
         field_name: &syn::Ident,
         crate_path: &impl ToTokens,
+        only_one_inherit_field: bool,
     ) -> Cow<TokenStream> {
         match self {
             FieldDeclaration::Maybe(FieldDeclarationMaybe {
@@ -118,11 +119,16 @@ impl FieldDeclaration {
                     .content,
             ),
             FieldDeclaration::Inherit(_) => {
+                let state = if only_one_inherit_field {
+                    quote!(state)
+                } else {
+                    quote!(state.#field_name)
+                };
                 Cow::Owned(quote!(#crate_path ::props::UpdateElement::update_element(
                     this.#field_name,
                     element.as_ref(),
                     children_ctx,
-                    state.#field_name,
+                    #state
                 );))
             }
         }
@@ -193,6 +199,7 @@ impl FieldDeclaration {
                         );
 
                     DomState {
+                        inherit: None,
                         pin: state.pin,
                         field_name,
                         ty,
@@ -206,6 +213,7 @@ impl FieldDeclaration {
                 let dom_element_ty = &v.dom_element_ty;
 
                 Some(DomState {
+                    inherit: Some(v),
                     pin: Some(Default::default()),
                     field_name,
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
@@ -224,6 +232,7 @@ impl FieldDeclaration {
 }
 
 pub struct DomState<'a> {
+    pub inherit: Option<&'a FieldDeclarationInherit>,
     pub pin: Option<kw::pin>,
     pub field_name: &'a syn::Ident,
     pub ty: Cow<'a, syn::Type>,
@@ -361,42 +370,126 @@ impl IntrinsicComponentPropsData {
             }
         });
 
-        let opt_dom_states = fields
+        let dom_states = fields
             .iter()
-            .map(|f| f.declaration.dom_state(&crate_path, &f.name))
+            .filter_map(|f| f.declaration.dom_state(&crate_path, &f.name))
             .collect::<Vec<_>>();
 
-        let dom_states = opt_dom_states
-            .iter()
-            .filter_map(|s| s.as_ref())
-            .collect::<Vec<_>>();
+        let only_one_inherit_field;
+        let state_init;
+        let dom_state_type;
+        let mod_render_state;
 
-        let dom_state_type_items = dom_states.iter().map(
-            |DomState {
-                 field_name, bounds, ..
-             }| quote!( type #field_name : #bounds; ),
-        );
-        let dom_state_fields = dom_states.iter().map(
-            |DomState {
-                 field_name, pin, ..
-             }| {
-                let pin = pin.map(|pin| quote!(#[#pin]));
-                quote! {
-                    #pin
-                    pub #field_name: TypeDefs::#field_name,
+        if let (
+            true,
+            Some(DomState {
+                inherit: Some(only_inherit),
+                field_name,
+                ..
+            }),
+        ) = (dom_states.len() == 1, dom_states.first())
+        {
+            only_one_inherit_field = true;
+            state_init = None;
+
+            let inherit_path = &only_inherit.from_path;
+            let dom_el_ty = &only_inherit.dom_element_ty;
+
+            dom_state_type = quote! {
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::props::UpdateElement<#dom_el_ty>>::State
+            };
+            mod_render_state = quote!(pub use super::#inherit_path::render_state;);
+        } else {
+            only_one_inherit_field = false;
+            state_init = Some(quote!( let state = state.pin_project(); ));
+
+            let dom_state_type_items = dom_states.iter().map(
+                |DomState {
+                     field_name, bounds, ..
+                 }| quote!( type #field_name : #bounds; ),
+            );
+            let dom_state_fields = dom_states.iter().map(
+                |DomState {
+                     field_name, pin, ..
+                 }| {
+                    let pin = pin.map(|pin| quote!(#[#pin]));
+                    quote! {
+                        #pin
+                        pub #field_name: TypeDefs::#field_name,
+                    }
+                },
+            );
+            let dom_state_types = dom_states
+                .iter()
+                .map(|DomState { field_name, ty, .. }| quote!(#field_name = #ty));
+            let field_dom_state_init = dom_states.iter().map(
+                |DomState {
+                     field_name,
+                     initial_value,
+                     ..
+                 }| quote!(#field_name : #initial_value),
+            );
+
+            let impl_poll_reactive = fields
+                .iter()
+                .filter_map(|v| v.to_impl_poll_reactive(&crate_path));
+
+            dom_state_type = quote! {
+                super::render_state::RenderState<
+                    dyn super::render_state::RenderStateTypes<
+                        #(#dom_state_types),*
+                    >
+                >
+            };
+
+            mod_render_state = quote! {
+                pub mod render_state {
+                    #[allow(non_camel_case_types)]
+                    pub trait RenderStateTypes {
+                        #(#dom_state_type_items)*
+                    }
+
+                    #crate_path ::__private::pin_project! {
+                        #[project = RenderStateProj]
+                        pub struct RenderState<TypeDefs: RenderStateTypes>
+                        where TypeDefs: ?::core::marker::Sized {
+                            #(#dom_state_fields)*
+                        }
+                    }
+
+                    impl<
+                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
+                    > RenderState<TypeDefs> {
+                        #[inline]
+                        pub(crate) fn pin_project(self: ::core::pin::Pin<&mut Self>) -> RenderStateProj<'_, TypeDefs> {
+                            self.project()
+                        }
+                    }
+
+                    impl<
+                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
+                    > ::core::default::Default for RenderState<TypeDefs> {
+                        fn default() -> Self {
+                            Self {
+                                #(#field_dom_state_init),*
+                            }
+                        }
+                    }
+
+                    impl <
+                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
+                    > #crate_path ::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
+                        #[inline]
+                        fn intrinsic_component_poll_reactive(
+                            self: ::core::pin::Pin<&mut Self>,
+                            cx: &mut ::core::task::Context<'_>,
+                        ) -> ::core::task::Poll<bool> {
+                            #(#impl_poll_reactive)*
+                        }
+                    }
                 }
-            },
-        );
-        let dom_state_types = dom_states
-            .iter()
-            .map(|DomState { field_name, ty, .. }| quote!(#field_name = #ty));
-        let field_dom_state_init = dom_states.iter().map(
-            |DomState {
-                 field_name,
-                 initial_value,
-                 ..
-             }| quote!(#field_name : #initial_value),
-        );
+            }
+        }
 
         let impl_builder_fn = fields
             .iter()
@@ -407,9 +500,10 @@ impl IntrinsicComponentPropsData {
             .map(|f| f.declaration.dom_bounds(&crate_path, &f.name))
             .filter_map(std::convert::identity);
 
-        let dom_implementations = fields
-            .iter()
-            .map(|f| f.declaration.dom_implementation(&f.name, &crate_path));
+        let dom_implementations = fields.iter().map(|f| {
+            f.declaration
+                .dom_implementation(&f.name, &crate_path, only_one_inherit_field)
+        });
 
         let inherits_ts = inherits.into_iter().map(|inherit| {
             let mut inherit = inherit.content;
@@ -450,10 +544,6 @@ impl IntrinsicComponentPropsData {
             });
 
         let struct_fields = fields.iter().map(Field::to_struct_field);
-
-        let impl_poll_reactive = fields
-            .iter()
-            .filter_map(|v| v.to_impl_poll_reactive(&crate_path));
 
         quote_spanned! {span=>
             #[allow(non_snake_case)]
@@ -519,51 +609,7 @@ impl IntrinsicComponentPropsData {
                 pub type DataInitial = Data<TypesInitial>;
 
                 #[cfg(feature = "dom")]
-                pub mod render_state {
-                    #[allow(non_camel_case_types)]
-                    pub trait RenderStateTypes {
-                        #(#dom_state_type_items)*
-                    }
-
-                    #crate_path ::__private::pin_project! {
-                        #[project = RenderStateProj]
-                        pub struct RenderState<TypeDefs: RenderStateTypes>
-                        where TypeDefs: ?::core::marker::Sized {
-                            #(#dom_state_fields)*
-                        }
-                    }
-
-                    impl<
-                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > RenderState<TypeDefs> {
-                        #[inline]
-                        pub(crate) fn pin_project(self: ::core::pin::Pin<&mut Self>) -> RenderStateProj<'_, TypeDefs> {
-                            self.project()
-                        }
-                    }
-
-                    impl<
-                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > ::core::default::Default for RenderState<TypeDefs> {
-                        fn default() -> Self {
-                            Self {
-                                #(#field_dom_state_init),*
-                            }
-                        }
-                    }
-
-                    impl <
-                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > #crate_path ::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
-                        #[inline]
-                        fn intrinsic_component_poll_reactive(
-                            self: ::core::pin::Pin<&mut Self>,
-                            cx: &mut ::core::task::Context<'_>,
-                        ) -> ::core::task::Poll<bool> {
-                            #(#impl_poll_reactive)*
-                        }
-                    }
-                }
+                #mod_render_state
 
                 #[inline]
                 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
@@ -590,14 +636,10 @@ impl IntrinsicComponentPropsData {
                     where
                         #(#dom_bounds),*
                     {
-                        type State = super::render_state::RenderState<
-                            dyn super::render_state::RenderStateTypes<
-                                #(#dom_state_types),*
-                            >
-                        >;
+                        type State = #dom_state_type;
 
                         fn update_element(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_dom::Dom, state: ::core::pin::Pin<&mut Self::State>) {
-                            let state = state.pin_project();
+                            #state_init
 
                             let dom_element: &::web_sys::Element = element.as_ref();
 
