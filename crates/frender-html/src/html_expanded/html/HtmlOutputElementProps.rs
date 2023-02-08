@@ -306,145 +306,7 @@ mod types_initial {
 pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
 #[cfg(feature = "dom")]
-pub mod render_state {
-    #[allow(non_camel_case_types)]
-    pub trait RenderStateTypes {
-        type HtmlElementProps: ::core::default::Default
-            + crate::props::IntrinsicComponentPollReactive;
-    }
-    pub struct RenderState<TypeDefs: RenderStateTypes>
-    where
-        TypeDefs: ?::core::marker::Sized,
-    {
-        pub HtmlElementProps: TypeDefs::HtmlElementProps,
-    }
-    #[allow(dead_code)]
-    #[allow(single_use_lifetimes)]
-    #[allow(clippy::unknown_clippy_lints)]
-    #[allow(clippy::mut_mut)]
-    #[allow(clippy::redundant_pub_crate)]
-    #[allow(clippy::ref_option_ref)]
-    #[allow(clippy::type_repetition_in_bounds)]
-    pub(crate) struct RenderStateProj<'__pin, TypeDefs: RenderStateTypes>
-    where
-        RenderState<TypeDefs>: '__pin,
-        TypeDefs: ?::core::marker::Sized,
-    {
-        pub HtmlElementProps:
-            ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
-    }
-    #[allow(explicit_outlives_requirements)]
-    #[allow(single_use_lifetimes)]
-    #[allow(clippy::unknown_clippy_lints)]
-    #[allow(clippy::redundant_pub_crate)]
-    #[allow(clippy::used_underscore_binding)]
-    const _: () = {
-        #[allow(dead_code)]
-        #[allow(single_use_lifetimes)]
-        #[allow(clippy::unknown_clippy_lints)]
-        #[allow(clippy::mut_mut)]
-        #[allow(clippy::redundant_pub_crate)]
-        #[allow(clippy::ref_option_ref)]
-        #[allow(clippy::type_repetition_in_bounds)]
-        pub(crate) struct ProjectionRef<'__pin, TypeDefs: RenderStateTypes>
-        where
-            RenderState<TypeDefs>: '__pin,
-            TypeDefs: ?::core::marker::Sized,
-        {
-            pub HtmlElementProps:
-                ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
-        }
-        impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
-        where
-            TypeDefs: ?::core::marker::Sized,
-        {
-            pub(crate) fn project<'__pin>(
-                self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
-            ) -> RenderStateProj<'__pin, TypeDefs> {
-                unsafe {
-                    let Self { HtmlElementProps } = self.get_unchecked_mut();
-                    RenderStateProj {
-                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
-                            HtmlElementProps,
-                        ),
-                    }
-                }
-            }
-            pub(crate) fn project_ref<'__pin>(
-                self: ::pin_project_lite::__private::Pin<&'__pin Self>,
-            ) -> ProjectionRef<'__pin, TypeDefs> {
-                unsafe {
-                    let Self { HtmlElementProps } = self.get_ref();
-                    ProjectionRef {
-                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
-                            HtmlElementProps,
-                        ),
-                    }
-                }
-            }
-        }
-        #[allow(non_snake_case)]
-        pub struct __Origin<'__pin, TypeDefs: RenderStateTypes>
-        where
-            TypeDefs: ?::core::marker::Sized,
-        {
-            __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
-            HtmlElementProps: TypeDefs::HtmlElementProps,
-        }
-        impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
-            for RenderState<TypeDefs>
-        where
-            __Origin<'__pin, TypeDefs>: ::pin_project_lite::__private::Unpin,
-            TypeDefs: ?::core::marker::Sized,
-        {
-        }
-        trait MustNotImplDrop {}
-        #[allow(clippy::drop_bounds, drop_bounds)]
-        impl<T: ::pin_project_lite::__private::Drop> MustNotImplDrop for T {}
-        impl<TypeDefs: RenderStateTypes> MustNotImplDrop for RenderState<TypeDefs> where
-            TypeDefs: ?::core::marker::Sized
-        {
-        }
-        #[forbid(unaligned_references, safe_packed_borrows)]
-        fn __assert_not_repr_packed<TypeDefs: RenderStateTypes>(this: &RenderState<TypeDefs>)
-        where
-            TypeDefs: ?::core::marker::Sized,
-        {
-            let _ = &this.HtmlElementProps;
-        }
-    };
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
-        #[inline]
-        pub(crate) fn pin_project(
-            self: ::core::pin::Pin<&mut Self>,
-        ) -> RenderStateProj<'_, TypeDefs> {
-            self.project()
-        }
-    }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> ::core::default::Default
-        for RenderState<TypeDefs>
-    {
-        fn default() -> Self {
-            Self {
-                HtmlElementProps: ::core::default::Default::default(),
-            }
-        }
-    }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
-    {
-        #[inline]
-        fn intrinsic_component_poll_reactive(
-            self: ::core::pin::Pin<&mut Self>,
-            cx: &mut ::core::task::Context<'_>,
-        ) -> ::core::task::Poll<bool> {
-            crate::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
-                self.project().HtmlElementProps,
-                cx,
-            )
-        }
-    }
-}
+pub use super::HtmlElementProps::render_state;
 #[inline]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
@@ -987,20 +849,22 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < HtmlElementProps = < HtmlElementProps :: Data < TypeDefs :: HtmlElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlElement > > :: State , > , > ;
+        type State =
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::State;
         fn update_element(
             this: Self,
             element: &web_sys::HtmlOutputElement,
             children_ctx: &mut ::frender_dom::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
-            let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
             crate::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
-                state.HtmlElementProps,
+                state,
             );
             {
                 #[allow(unused)]
