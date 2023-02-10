@@ -736,6 +736,17 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlBodyElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: alink as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alink , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "alink" ,) , | | dom_element . remove_attribute ("alink") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlBodyElement,
@@ -749,11 +760,7 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "alink";
-                < TypeDefs :: alink as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alink , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: alink as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alink , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "alink" ,) , | | dom_element . remove_attribute ("alink") . unwrap () ,) ;
         }
     }
 }

@@ -9,13 +9,10 @@ use crate::Dom;
 
 use crate::utils::option::map_or_insert_with_ctx;
 
-pub struct StateInner<Cache> {
+pub struct State<Cache> {
     node: web_sys::Text,
     cache: Cache,
-}
-
-pub struct State<Cache> {
-    inner: Option<StateInner<Cache>>,
+    unmounted: bool,
 }
 
 pub trait RenderingStr: Deref<Target = str> {
@@ -134,27 +131,26 @@ impl<Cache> State<Cache> {
     where
         S: RenderingStr<Cache = Cache>,
     {
-        map_or_insert_with_ctx(
-            &mut self.inner,
-            (dom_ctx, data),
-            |this, (dom_ctx, data)| {
-                if S::not_match_cache(&data, &this.cache) {
-                    this.node.set_data(&data);
-                    S::update_cache(&mut this.cache, data);
-                }
-                dom_ctx
-                    .next_node_position
-                    .set_as_insert_after(this.node.clone().into());
-            },
-            |(dom_ctx, data)| {
-                let text = dom_ctx.document.create_text_node(&data);
-                dom_ctx.next_node_position.add_node(text.clone().into());
-                StateInner {
-                    node: text,
-                    cache: S::create_cache(data),
-                }
-            },
-        );
+        if S::not_match_cache(&data, &self.cache) {
+            self.node.set_data(&data);
+            S::update_cache(&mut self.cache, data);
+        }
+        dom_ctx
+            .next_node_position
+            .set_as_insert_after(self.node.clone().into());
+    }
+
+    pub fn initialize_with_str<S>(data: S, dom_ctx: &mut Dom) -> Self
+    where
+        S: RenderingStr<Cache = Cache>,
+    {
+        let text = dom_ctx.document.create_text_node(&data);
+        dom_ctx.next_node_position.add_node(text.clone().into());
+        State {
+            node: text,
+            cache: S::create_cache(data),
+            unmounted: false,
+        }
     }
 
     /// The js value returned by `to_js` will be called with `String(value)`
@@ -171,6 +167,20 @@ impl<Cache> State<Cache> {
         self.update_with_js_string(data, dom_ctx, move |v| js::js_string(to_js(v)))
     }
 
+    /// The js value returned by `to_js` will be called with `String(value)`
+    /// and then set as data of `Text` node.
+    #[inline]
+    pub fn initialize_with_js_value(
+        data: Cache,
+        dom_ctx: &mut Dom,
+        to_js: impl FnOnce(&Cache) -> JsValue,
+    ) -> Self
+    where
+        Cache: PartialEq<Cache>,
+    {
+        Self::initialize_with_js_string(data, dom_ctx, move |v| js::js_string(to_js(v)))
+    }
+
     pub fn update_with_js_string(
         &mut self,
         data: Cache,
@@ -179,48 +189,42 @@ impl<Cache> State<Cache> {
     ) where
         Cache: PartialEq<Cache>,
     {
-        map_or_insert_with_ctx(
-            &mut self.inner,
-            (dom_ctx, data, to_js),
-            |this, (dom_ctx, data, to_js)| {
-                if this.cache != data {
-                    let s = to_js(&data);
-                    this.node.unchecked_ref::<js::Text>().set_data(s);
-                    this.cache = data;
-                }
-                dom_ctx
-                    .next_node_position
-                    .set_as_insert_after(this.node.clone().into());
-            },
-            |(dom_ctx, data, to_js)| {
-                let s = to_js(&data);
-                let text = dom_ctx
-                    .document
-                    .unchecked_ref::<js::Document>()
-                    .create_text_node(s);
-                dom_ctx.next_node_position.add_node(text.clone().into());
-                StateInner {
-                    node: text,
-                    cache: data,
-                }
-            },
-        );
+        if self.cache != data {
+            let s = to_js(&data);
+            self.node.unchecked_ref::<js::Text>().set_data(s);
+            self.cache = data;
+        }
+        dom_ctx
+            .next_node_position
+            .set_as_insert_after(self.node.clone().into());
+    }
+
+    pub fn initialize_with_js_string(
+        data: Cache,
+        dom_ctx: &mut Dom,
+        to_js: impl FnOnce(&Cache) -> JsString,
+    ) -> Self {
+        let s = to_js(&data);
+        let text = dom_ctx
+            .document
+            .unchecked_ref::<js::Document>()
+            .create_text_node(s);
+        dom_ctx.next_node_position.add_node(text.clone().into());
+        Self {
+            node: text,
+            cache: data,
+            unmounted: false,
+        }
     }
 }
 
 impl<Cache> Unpin for State<Cache> {}
 
 impl<Cache> RenderState for State<Cache> {
-    #[inline]
-    fn new_uninitialized() -> Self {
-        Self { inner: None }
-    }
-
     fn unmount(self: std::pin::Pin<&mut Self>) {
         let this = self.get_mut();
-        if let Some(inner) = this.inner.take() {
-            inner.node.remove()
-        }
+        this.unmounted = true;
+        this.node.remove();
     }
 }
 
@@ -231,6 +235,11 @@ macro_rules! impl_render_str {
     ),* $(,)?) => {$(
         impl $(<$($generics)*>)? UpdateRenderState<Dom> for $for_ty {
             type State = State<<Self as RenderingStr>::Cache>;
+
+            #[inline]
+            fn initialize_render_state(self, ctx: &mut Dom) -> Self::State {
+                Self::State::initialize_with_str(self, ctx)
+            }
 
             #[inline]
             fn update_render_state(self, ctx: &mut Dom, state: std::pin::Pin<&mut Self::State>) {

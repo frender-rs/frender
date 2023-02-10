@@ -100,7 +100,7 @@ impl RsxElement {
         if let Some(key) = key {
             let value = key.value.value;
             quote_spanned! {start_gt_span=>
-                #crate_path ::Keyed(#element, #value)
+                #crate_path ::Keyed(#value, #element)
             }
         } else {
             element

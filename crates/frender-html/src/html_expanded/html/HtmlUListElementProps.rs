@@ -796,6 +796,22 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlUListElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            <TypeDefs::compact as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.compact,
+                |v| element.set_compact(v),
+                || dom_element.remove_attribute("compact").unwrap(),
+            );
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlUListElement,
@@ -809,16 +825,12 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "compact";
-                < TypeDefs :: compact as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . compact , | v | element . set_compact (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "type";
-                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            <TypeDefs::compact as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.compact,
+                |v| element.set_compact(v),
+                || dom_element.remove_attribute("compact").unwrap(),
+            );
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type") . unwrap () ,) ;
         }
     }
 }

@@ -794,6 +794,18 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlModElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: cite as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cite , | v | element . set_cite (v) , | | dom_element . remove_attribute ("cite") . unwrap () ,) ;
+            < TypeDefs :: date_time as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . date_time , | v | element . set_date_time (v) , | | dom_element . remove_attribute ("datetime") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlModElement,
@@ -807,16 +819,8 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "cite";
-                < TypeDefs :: cite as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cite , | v | element . set_cite (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "datetime";
-                < TypeDefs :: date_time as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . date_time , | v | element . set_date_time (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: cite as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cite , | v | element . set_cite (v) , | | dom_element . remove_attribute ("cite") . unwrap () ,) ;
+            < TypeDefs :: date_time as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . date_time , | v | element . set_date_time (v) , | | dom_element . remove_attribute ("datetime") . unwrap () ,) ;
         }
     }
 }

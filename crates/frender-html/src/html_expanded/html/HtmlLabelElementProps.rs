@@ -735,6 +735,17 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlLabelElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: html_for as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . html_for , | v | element . set_html_for (v) , | | dom_element . remove_attribute ("for") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlLabelElement,
@@ -748,11 +759,7 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "for";
-                < TypeDefs :: html_for as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . html_for , | v | element . set_html_for (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: html_for as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . html_for , | v | element . set_html_for (v) , | | dom_element . remove_attribute ("for") . unwrap () ,) ;
         }
     }
 }

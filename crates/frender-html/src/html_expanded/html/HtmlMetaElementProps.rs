@@ -916,6 +916,20 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlMetaElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . charset , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "charset" ,) , | | dom_element . remove_attribute ("charset") . unwrap () ,) ;
+            < TypeDefs :: content as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . content , | v | element . set_content (v) , | | dom_element . remove_attribute ("content") . unwrap () ,) ;
+            < TypeDefs :: http_equiv as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . http_equiv , | v | element . set_http_equiv (v) , | | dom_element . remove_attribute ("http-equiv") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlMetaElement,
@@ -929,26 +943,10 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "charset";
-                < TypeDefs :: charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . charset , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "content";
-                < TypeDefs :: content as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . content , | v | element . set_content (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "http-equiv";
-                < TypeDefs :: http_equiv as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . http_equiv , | v | element . set_http_equiv (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "name";
-                < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . charset , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "charset" ,) , | | dom_element . remove_attribute ("charset") . unwrap () ,) ;
+            < TypeDefs :: content as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . content , | v | element . set_content (v) , | | dom_element . remove_attribute ("content") . unwrap () ,) ;
+            < TypeDefs :: http_equiv as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . http_equiv , | v | element . set_http_equiv (v) , | | dom_element . remove_attribute ("http-equiv") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
         }
     }
 }

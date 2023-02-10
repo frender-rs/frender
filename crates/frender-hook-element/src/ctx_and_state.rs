@@ -1,21 +1,24 @@
-use std::{any::Any, pin::Pin};
+use std::pin::Pin;
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{LazyPinned, RenderState, UpdateRenderState};
 
-pub struct ContextAndState<'a, Ctx, State: ?Sized> {
+pub struct ContextAndState<'a, Ctx, State> {
     context: &'a mut Ctx,
-    state: Pin<&'a mut State>,
+    state: Pin<&'a mut LazyPinned<State>>,
 }
 
-impl<'a, Ctx, State: ?Sized> ContextAndState<'a, Ctx, State> {
-    pub fn new(context: &'a mut Ctx, state: Pin<&'a mut State>) -> Self {
+impl<'a, Ctx, State> ContextAndState<'a, Ctx, State> {
+    pub fn new(context: &'a mut Ctx, state: Pin<&'a mut LazyPinned<State>>) -> Self {
         Self { context, state }
     }
 }
 
-impl<'a, Ctx, S: RenderState + 'static> ContextAndState<'a, Ctx, S> {
-    #[inline]
+impl<'a, Ctx, S: RenderState> ContextAndState<'a, Ctx, S> {
     pub fn render<E: UpdateRenderState<Ctx, State = S>>(self, element: E) {
-        element.update_render_state(self.context, self.state);
+        self.state.use_pin_or_insert_with_data(
+            (element, self.context),
+            |(element, context), state| element.update_render_state(context, state),
+            |(element, context)| element.initialize_render_state(context),
+        );
     }
 }

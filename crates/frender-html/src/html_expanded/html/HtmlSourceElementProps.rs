@@ -1129,6 +1129,43 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlSourceElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute ("srcset") . unwrap () ,) ;
+            < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute ("sizes") . unwrap () ,) ;
+            < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . media , | v | element . set_media (v) , | | dom_element . remove_attribute ("media") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "height",
+                    )
+                },
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "width",
+                    )
+                },
+                || dom_element.remove_attribute("width").unwrap(),
+            );
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlSourceElement,
@@ -1142,51 +1179,33 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "type_";
-                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "srcset";
-                < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "sizes";
-                < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "media";
-                < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . media , | v | element . set_media (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                    this.width,
-                    |v| {
-                        crate::props::UpdateElementAttribute::update_element_attribute(
-                            v,
-                            dom_element,
-                            ATTR_NAME,
-                        )
-                    },
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute ("srcset") . unwrap () ,) ;
+            < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute ("sizes") . unwrap () ,) ;
+            < TypeDefs :: media as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . media , | v | element . set_media (v) , | | dom_element . remove_attribute ("media") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "height",
+                    )
+                },
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "width",
+                    )
+                },
+                || dom_element.remove_attribute("width").unwrap(),
+            );
         }
     }
 }

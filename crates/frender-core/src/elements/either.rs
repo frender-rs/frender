@@ -9,23 +9,14 @@ pub enum Either<A, B> {
 
 pin_project_lite::pin_project! {
     pub struct EitherState<A, B> {
-        pub mounted: Option<Either<(), ()>>,
         #[pin]
-        pub a: A,
+        pub a: Option<A>,
         #[pin]
         pub b: B,
     }
 }
 
 impl<A: RenderState, B: RenderState> RenderState for EitherState<A, B> {
-    fn new_uninitialized() -> Self {
-        Self {
-            mounted: None,
-            a: A::new_uninitialized(),
-            b: B::new_uninitialized(),
-        }
-    }
-
     fn unmount(self: Pin<&mut Self>) {
         let this = self.project();
         match this.mounted {
@@ -35,6 +26,18 @@ impl<A: RenderState, B: RenderState> RenderState for EitherState<A, B> {
         }
         *this.mounted = None;
     }
+
+    fn poll_reactive(
+        self: Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<bool> {
+        let this = self.project();
+        match this.mounted {
+            Some(Either::A(_)) => this.a.poll_reactive(cx),
+            Some(Either::B(_)) => this.b.poll_reactive(cx),
+            None => true.into(),
+        }
+    }
 }
 
 impl<A, B, Ctx> UpdateRenderState<Ctx> for Either<A, B>
@@ -43,6 +46,17 @@ where
     B: UpdateRenderState<Ctx>,
 {
     type State = EitherState<A::State, B::State>;
+
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        match self {
+            Either::A(a) => EitherState {
+                mounted: (),
+                a: a.initialize_render_state(ctx),
+                b: None,
+            },
+            Either::B(b) => b.initialize_render_state(ctx),
+        }
+    }
 
     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
         let state = state.project();

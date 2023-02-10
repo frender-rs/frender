@@ -1663,6 +1663,41 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlImageElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute ("alt") . unwrap () ,) ;
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            < TypeDefs :: decoding as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . decoding , | v | element . set_decoding (v) , | | dom_element . remove_attribute ("decoding") . unwrap () ,) ;
+            < TypeDefs :: element_timing as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . element_timing , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "elementtiming" ,) , | | dom_element . remove_attribute ("elementtiming") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            <TypeDefs::is_map as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.is_map,
+                |v| element.set_is_map(v),
+                || dom_element.remove_attribute("ismap").unwrap(),
+            );
+            < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "loading" ,) , | | dom_element . remove_attribute ("loading") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute ("sizes") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute ("srcset") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
+            < TypeDefs :: use_map as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . use_map , | v | element . set_use_map (v) , | | dom_element . remove_attribute ("usemap") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlImageElement,
@@ -1676,75 +1711,31 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "alt";
-                < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "crossorigin";
-                < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "decoding";
-                < TypeDefs :: decoding as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . decoding , | v | element . set_decoding (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "elementtiming";
-                < TypeDefs :: element_timing as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . element_timing , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "ismap";
-                < TypeDefs :: is_map as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . is_map , | v | element . set_is_map (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "loading";
-                < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
-                < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "sizes";
-                < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "srcset";
-                < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                    this.width,
-                    |v| element.set_width(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "usemap";
-                < TypeDefs :: use_map as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . use_map , | v | element . set_use_map (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute ("alt") . unwrap () ,) ;
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            < TypeDefs :: decoding as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . decoding , | v | element . set_decoding (v) , | | dom_element . remove_attribute ("decoding") . unwrap () ,) ;
+            < TypeDefs :: element_timing as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . element_timing , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "elementtiming" ,) , | | dom_element . remove_attribute ("elementtiming") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            <TypeDefs::is_map as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.is_map,
+                |v| element.set_is_map(v),
+                || dom_element.remove_attribute("ismap").unwrap(),
+            );
+            < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "loading" ,) , | | dom_element . remove_attribute ("loading") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: sizes as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sizes , | v | element . set_sizes (v) , | | dom_element . remove_attribute ("sizes") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: srcset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . srcset , | v | element . set_srcset (v) , | | dom_element . remove_attribute ("srcset") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
+            < TypeDefs :: use_map as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . use_map , | v | element . set_use_map (v) , | | dom_element . remove_attribute ("usemap") . unwrap () ,) ;
         }
     }
 }

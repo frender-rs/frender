@@ -1379,6 +1379,26 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlFormElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "accept" ,) , | | dom_element . remove_attribute ("accept") . unwrap () ,) ;
+            < TypeDefs :: accept_charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept_charset , | v | element . set_accept_charset (v) , | | dom_element . remove_attribute ("accept-charset") . unwrap () ,) ;
+            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . rel , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "rel" ,) , | | dom_element . remove_attribute ("rel") . unwrap () ,) ;
+            < TypeDefs :: action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . action , | v | element . set_action (v) , | | dom_element . remove_attribute ("action") . unwrap () ,) ;
+            < TypeDefs :: enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enc_type , | v | element . set_enctype (v) , | | dom_element . remove_attribute ("enctype") . unwrap () ,) ;
+            < TypeDefs :: method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . method , | v | element . set_method (v) , | | dom_element . remove_attribute ("method") . unwrap () ,) ;
+            < TypeDefs :: no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_validate , | v | element . set_no_validate (v) , | | dom_element . remove_attribute ("novalidate") . unwrap () ,) ;
+            < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . target , | v | element . set_target (v) , | | dom_element . remove_attribute ("target") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlFormElement,
@@ -1392,56 +1412,16 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "accept";
-                < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "accept-charset";
-                < TypeDefs :: accept_charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept_charset , | v | element . set_accept_charset (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "autocomplete";
-                < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "name";
-                < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "rel";
-                < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . rel , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "action";
-                < TypeDefs :: action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . action , | v | element . set_action (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "enctype";
-                < TypeDefs :: enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enc_type , | v | element . set_enctype (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "method";
-                < TypeDefs :: method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . method , | v | element . set_method (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "novalidate";
-                < TypeDefs :: no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_validate , | v | element . set_no_validate (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "target";
-                < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . target , | v | element . set_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "accept" ,) , | | dom_element . remove_attribute ("accept") . unwrap () ,) ;
+            < TypeDefs :: accept_charset as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept_charset , | v | element . set_accept_charset (v) , | | dom_element . remove_attribute ("accept-charset") . unwrap () ,) ;
+            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: rel as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . rel , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "rel" ,) , | | dom_element . remove_attribute ("rel") . unwrap () ,) ;
+            < TypeDefs :: action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . action , | v | element . set_action (v) , | | dom_element . remove_attribute ("action") . unwrap () ,) ;
+            < TypeDefs :: enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enc_type , | v | element . set_enctype (v) , | | dom_element . remove_attribute ("enctype") . unwrap () ,) ;
+            < TypeDefs :: method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . method , | v | element . set_method (v) , | | dom_element . remove_attribute ("method") . unwrap () ,) ;
+            < TypeDefs :: no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_validate , | v | element . set_no_validate (v) , | | dom_element . remove_attribute ("novalidate") . unwrap () ,) ;
+            < TypeDefs :: target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . target , | v | element . set_target (v) , | | dom_element . remove_attribute ("target") . unwrap () ,) ;
         }
     }
 }

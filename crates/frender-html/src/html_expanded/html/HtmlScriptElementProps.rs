@@ -1378,6 +1378,34 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlScriptElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.r#async,
+                |v| element.set_async(v),
+                || dom_element.remove_attribute("r#async").unwrap(),
+            );
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.defer,
+                |v| element.set_defer(v),
+                || dom_element.remove_attribute("defer").unwrap(),
+            );
+            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
+            < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute ("integrity") . unwrap () ,) ;
+            < TypeDefs :: no_module as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_module , | v | element . set_no_module (v) , | | dom_element . remove_attribute ("nomodule") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "referrerpolicy" ,) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
+            < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "blocking" ,) , | | dom_element . remove_attribute ("blocking") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlScriptElement,
@@ -1391,56 +1419,24 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "r#async";
-                < TypeDefs :: r#async as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . r#async , | v | element . set_async (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "crossorigin";
-                < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "defer";
-                < TypeDefs :: defer as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . defer , | v | element . set_defer (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "fetchpriority";
-                < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "integrity";
-                < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "nomodule";
-                < TypeDefs :: no_module as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_module , | v | element . set_no_module (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
-                < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "type_";
-                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "blocking";
-                < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.r#async,
+                |v| element.set_async(v),
+                || dom_element.remove_attribute("r#async").unwrap(),
+            );
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.defer,
+                |v| element.set_defer(v),
+                || dom_element.remove_attribute("defer").unwrap(),
+            );
+            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
+            < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute ("integrity") . unwrap () ,) ;
+            < TypeDefs :: no_module as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_module , | v | element . set_no_module (v) , | | dom_element . remove_attribute ("nomodule") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "referrerpolicy" ,) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
+            < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "blocking" ,) , | | dom_element . remove_attribute ("blocking") . unwrap () ,) ;
         }
     }
 }

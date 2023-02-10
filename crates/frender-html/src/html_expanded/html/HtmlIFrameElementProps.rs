@@ -1663,6 +1663,29 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlIFrameElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: allow as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . allow , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "allow" ,) , | | dom_element . remove_attribute ("allow") . unwrap () ,) ;
+            < TypeDefs :: allow_fullscreen as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_fullscreen , | v | element . set_allow_fullscreen (v) , | | dom_element . remove_attribute ("allowfullscreen") . unwrap () ,) ;
+            < TypeDefs :: allow_payment_request as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_payment_request , | v | element . set_allow_payment_request (v) , | | dom_element . remove_attribute ("allowpaymentrequest") . unwrap () ,) ;
+            < TypeDefs :: csp as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . csp , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "csp" ,) , | | dom_element . remove_attribute ("csp") . unwrap () ,) ;
+            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
+            < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute ("height") . unwrap () ,) ;
+            < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "loading" ,) , | | dom_element . remove_attribute ("loading") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: sandbox as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sandbox , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "sandbox" ,) , | | dom_element . remove_attribute ("sandbox") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: src_doc as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_doc , | v | element . set_srcdoc (v) , | | dom_element . remove_attribute ("srcdoc") . unwrap () ,) ;
+            < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute ("width") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlIFrameElement,
@@ -1676,71 +1699,19 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "allow";
-                < TypeDefs :: allow as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . allow , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "allowfullscreen";
-                < TypeDefs :: allow_fullscreen as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_fullscreen , | v | element . set_allow_fullscreen (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "allowpaymentrequest";
-                < TypeDefs :: allow_payment_request as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_payment_request , | v | element . set_allow_payment_request (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "csp";
-                < TypeDefs :: csp as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . csp , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "fetchpriority";
-                < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "loading";
-                < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "name";
-                < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "referrerpolicy";
-                < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "sandbox";
-                < TypeDefs :: sandbox as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sandbox , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "srcdoc";
-                < TypeDefs :: src_doc as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_doc , | v | element . set_srcdoc (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: allow as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . allow , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "allow" ,) , | | dom_element . remove_attribute ("allow") . unwrap () ,) ;
+            < TypeDefs :: allow_fullscreen as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_fullscreen , | v | element . set_allow_fullscreen (v) , | | dom_element . remove_attribute ("allowfullscreen") . unwrap () ,) ;
+            < TypeDefs :: allow_payment_request as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . allow_payment_request , | v | element . set_allow_payment_request (v) , | | dom_element . remove_attribute ("allowpaymentrequest") . unwrap () ,) ;
+            < TypeDefs :: csp as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . csp , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "csp" ,) , | | dom_element . remove_attribute ("csp") . unwrap () ,) ;
+            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
+            < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute ("height") . unwrap () ,) ;
+            < TypeDefs :: loading as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . loading , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "loading" ,) , | | dom_element . remove_attribute ("loading") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | element . set_referrer_policy (v) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
+            < TypeDefs :: sandbox as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . sandbox , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "sandbox" ,) , | | dom_element . remove_attribute ("sandbox") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: src_doc as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_doc , | v | element . set_srcdoc (v) , | | dom_element . remove_attribute ("srcdoc") . unwrap () ,) ;
+            < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute ("width") . unwrap () ,) ;
         }
     }
 }

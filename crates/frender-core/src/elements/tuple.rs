@@ -4,9 +4,6 @@ use crate::{RenderState, UpdateRenderState};
 
 impl RenderState for () {
     #[inline]
-    fn new_uninitialized() -> Self {}
-
-    #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {}
 }
 
@@ -14,11 +11,19 @@ impl<Ctx> UpdateRenderState<Ctx> for () {
     type State = ();
 
     #[inline]
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {}
+
+    #[inline]
     fn update_render_state(self, _: &mut Ctx, _: std::pin::Pin<&mut Self::State>) {}
 }
 
 impl<Ctx, R0: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for (R0,) {
     type State = R0::State;
+
+    #[inline]
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        R0::initialize_render_state(self.0, ctx)
+    }
 
     #[inline]
     fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
@@ -37,12 +42,6 @@ macro_rules! impl_render_for_tuple {
             }
 
             impl<$($field: RenderState),+> RenderState for $name<$($field),+> {
-                fn new_uninitialized() -> Self {
-                    Self {
-                        $($field: $field::new_uninitialized()),+
-                    }
-                }
-
                 fn unmount(self: ::core::pin::Pin<&mut Self>) {
                     let this = self.project();
                     $( this.$field.unmount(); )+
@@ -63,6 +62,15 @@ macro_rules! impl_render_for_tuple {
 
             impl<Ctx, $($field: UpdateRenderState<Ctx>),+> UpdateRenderState<Ctx> for ($($field),+) {
                 type State = $name <$($field::State),+>;
+
+                #[inline]
+                fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+                    let ($($field,)+) = self;
+
+                    $name {$(
+                        $field: $field::initialize_render_state($field, ctx),
+                    )+}
+                }
 
                 #[inline]
                 fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {

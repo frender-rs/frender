@@ -897,6 +897,15 @@ mod impl_update_element {
             crate::props::UpdateElement<web_sys::HtmlMediaElement>,
     {
         type State = < HtmlMediaElementProps :: Data < TypeDefs :: HtmlMediaElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlMediaElement > > :: State ;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlAudioElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: __ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . __ , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "__" ,) , | | dom_element . remove_attribute ("__") . unwrap () ,) ;
+            < HtmlMediaElementProps :: Data < TypeDefs :: HtmlMediaElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlMediaElement , > > :: initialize_state (this . HtmlMediaElementProps , element , children_ctx ,)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlAudioElement,
@@ -910,11 +919,7 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "__";
-                < TypeDefs :: __ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . __ , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: __ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . __ , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "__" ,) , | | dom_element . remove_attribute ("__") . unwrap () ,) ;
         }
     }
 }

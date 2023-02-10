@@ -1129,6 +1129,31 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlMediaElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: auto_play as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_play , | v | element . set_autoplay (v) , | | dom_element . remove_attribute ("autoplay") . unwrap () ,) ;
+            < TypeDefs :: controls as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . controls , | v | element . set_controls (v) , | | dom_element . remove_attribute ("controls") . unwrap () ,) ;
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.loop_,
+                |v| element.set_loop(v),
+                || dom_element.remove_attribute("loop").unwrap(),
+            );
+            <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.muted,
+                |v| element.set_muted(v),
+                || dom_element.remove_attribute("muted").unwrap(),
+            );
+            < TypeDefs :: preload as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . preload , | v | element . set_preload (v) , | | dom_element . remove_attribute ("preload") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlMediaElement,
@@ -1142,41 +1167,21 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "autoplay";
-                < TypeDefs :: auto_play as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_play , | v | element . set_autoplay (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "controls";
-                < TypeDefs :: controls as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . controls , | v | element . set_controls (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "crossorigin";
-                < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "loop";
-                < TypeDefs :: loop_ as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . loop_ , | v | element . set_loop (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "muted";
-                < TypeDefs :: muted as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . muted , | v | element . set_muted (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "preload";
-                < TypeDefs :: preload as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . preload , | v | element . set_preload (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: auto_play as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_play , | v | element . set_autoplay (v) , | | dom_element . remove_attribute ("autoplay") . unwrap () ,) ;
+            < TypeDefs :: controls as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . controls , | v | element . set_controls (v) , | | dom_element . remove_attribute ("controls") . unwrap () ,) ;
+            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
+            <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.loop_,
+                |v| element.set_loop(v),
+                || dom_element.remove_attribute("loop").unwrap(),
+            );
+            <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.muted,
+                |v| element.set_muted(v),
+                || dom_element.remove_attribute("muted").unwrap(),
+            );
+            < TypeDefs :: preload as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . preload , | v | element . set_preload (v) , | | dom_element . remove_attribute ("preload") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
         }
     }
 }

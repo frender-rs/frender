@@ -1,11 +1,16 @@
 use std::pin::Pin;
 
-use crate::{utils::pin_as_deref_mut, RenderState, UpdateRenderState};
+use crate::{utils::pin_as_deref_mut, UpdateRenderState};
 
 pub struct BoxState<E, const DYN: bool>(pub E);
 
 impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, false> {
     type State = Pin<Box<E::State>>;
+
+    #[inline]
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        Box::pin(self.0.initialize_render_state(ctx))
+    }
 
     #[inline]
     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {

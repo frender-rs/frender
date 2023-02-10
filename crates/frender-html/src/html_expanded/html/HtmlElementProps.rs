@@ -1078,8 +1078,8 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type ElementProps: ::core::default::Default + crate::props::IntrinsicComponentPollReactive;
-        type on_click: ::core::default::Default;
+        type ElementProps: crate::props::IntrinsicComponentPollReactive;
+        type on_click: std::any::Any;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
@@ -1199,16 +1199,6 @@ pub mod render_state {
             self: ::core::pin::Pin<&mut Self>,
         ) -> RenderStateProj<'_, TypeDefs> {
             self.project()
-        }
-    }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> ::core::default::Default
-        for RenderState<TypeDefs>
-    {
-        fn default() -> Self {
-            Self {
-                ElementProps: ::core::default::Default::default(),
-                on_click: ::core::default::Default::default(),
-            }
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
@@ -2446,6 +2436,70 @@ mod impl_update_element {
         TypeDefs::on_click: crate::props::UpdateDomEventListener<crate::props::events::Click>,
     {
         type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < ElementProps = < ElementProps :: Data < TypeDefs :: ElementProps , > as crate :: props :: UpdateElement < web_sys :: Element > > :: State , on_click = < TypeDefs :: on_click as crate :: props :: UpdateDomEventListener < crate :: props :: events :: Click , > > :: State , > , > ;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . access_key , | v | element . set_access_key (v) , | | dom_element . remove_attribute ("accesskey") . unwrap () ,) ;
+            < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_capitalize , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autocapitalize" ,) , | | dom_element . remove_attribute ("autocapitalize") . unwrap () ,) ;
+            < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_focus , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autofocus" ,) , | | dom_element . remove_attribute ("autofocus") . unwrap () ,) ;
+            < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . context_menu , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "contextmenu" ,) , | | dom_element . remove_attribute ("contextmenu") . unwrap () ,) ;
+            < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dir , | v | element . set_dir (v) , | | dom_element . remove_attribute ("dir") . unwrap () ,) ;
+            < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . draggable , | v | element . set_draggable (v) , | | dom_element . remove_attribute ("draggable") . unwrap () ,) ;
+            < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enter_key_hint , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "enterkeyhint" ,) , | | dom_element . remove_attribute ("enterkeyhint") . unwrap () ,) ;
+            <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.hidden,
+                |v| element.set_hidden(v),
+                || dom_element.remove_attribute("hidden").unwrap(),
+            );
+            <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.inert,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "inert",
+                    )
+                },
+                || dom_element.remove_attribute("inert").unwrap(),
+            );
+            < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . input_mode , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "inputmode" ,) , | | dom_element . remove_attribute ("inputmode") . unwrap () ,) ;
+            < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . is , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "is" ,) , | | dom_element . remove_attribute ("is") . unwrap () ,) ;
+            < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_id , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemid" ,) , | | dom_element . remove_attribute ("itemid") . unwrap () ,) ;
+            < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_prop , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemprop" ,) , | | dom_element . remove_attribute ("itemprop") . unwrap () ,) ;
+            < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_ref , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemref" ,) , | | dom_element . remove_attribute ("itemref") . unwrap () ,) ;
+            < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemscope" ,) , | | dom_element . remove_attribute ("itemscope") . unwrap () ,) ;
+            < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_type , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemtype" ,) , | | dom_element . remove_attribute ("itemtype") . unwrap () ,) ;
+            < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . lang , | v | element . set_lang (v) , | | dom_element . remove_attribute ("lang") . unwrap () ,) ;
+            < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . nonce , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "nonce" ,) , | | dom_element . remove_attribute ("nonce") . unwrap () ,) ;
+            < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . role , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "role" ,) , | | dom_element . remove_attribute ("role") . unwrap () ,) ;
+            < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . slot , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "slot" ,) , | | dom_element . remove_attribute ("slot") . unwrap () ,) ;
+            < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . spellcheck , | v | element . set_spellcheck (v) , | | dom_element . remove_attribute ("spellcheck") . unwrap () ,) ;
+            < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . style , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "style" ,) , | | dom_element . remove_attribute ("style") . unwrap () ,) ;
+            < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . tab_index , | v | element . set_tab_index (v) , | | dom_element . remove_attribute ("tabindex") . unwrap () ,) ;
+            < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . title , | v | element . set_title (v) , | | dom_element . remove_attribute ("title") . unwrap () ,) ;
+            < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . translate , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "translate" ,) , | | dom_element . remove_attribute ("translate") . unwrap () ,) ;
+            <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueByRef<
+                str,
+            >>::maybe_update_value_by_ref(
+                &this.virtual_keyboard_policy,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "virtualkeyboardpolicy",
+                    )
+                },
+                || {
+                    dom_element
+                        .remove_attribute("virtualkeyboardpolicy")
+                        .unwrap()
+                },
+            );
+            super :: render_state :: RenderState { ElementProps : < ElementProps :: Data < TypeDefs :: ElementProps , > as crate :: props :: UpdateElement < web_sys :: Element , > > :: initialize_state (this . ElementProps , element , children_ctx) , on_click : crate :: props :: UpdateDomEventListener :: < crate :: props :: events :: Click , > :: initialize_dom_event_listener_state (this . on_click , element) , }
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlElement,
@@ -2460,148 +2514,62 @@ mod impl_update_element {
                 children_ctx,
                 state.ElementProps,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "accesskey";
-                < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . access_key , | v | element . set_access_key (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "autocapitalize";
-                < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_capitalize , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "autofocus";
-                < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_focus , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "contextmenu";
-                < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . context_menu , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "dir";
-                < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dir , | v | element . set_dir (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "draggable";
-                < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . draggable , | v | element . set_draggable (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "enterkeyhint";
-                < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enter_key_hint , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "hidden";
-                < TypeDefs :: hidden as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . hidden , | v | element . set_hidden (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "inert";
-                < TypeDefs :: inert as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . inert , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "inputmode";
-                < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . input_mode , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "is";
-                < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . is , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "itemid";
-                < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_id , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "itemprop";
-                < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_prop , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "itemref";
-                < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_ref , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "itemscope";
-                < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "itemtype";
-                < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_type , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "lang";
-                < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . lang , | v | element . set_lang (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "nonce";
-                < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . nonce , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "role";
-                < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . role , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "slot";
-                < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . slot , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "spellcheck";
-                < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . spellcheck , | v | element . set_spellcheck (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "style";
-                < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . style , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "tabindex";
-                < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . tab_index , | v | element . set_tab_index (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "title";
-                < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . title , | v | element . set_title (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "translate";
-                < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . translate , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "virtualkeyboardpolicy";
-                <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueByRef<
-                    str,
-                >>::maybe_update_value_by_ref(
-                    &this.virtual_keyboard_policy,
-                    |v| {
-                        crate::props::UpdateElementAttribute::update_element_attribute(
-                            v,
-                            dom_element,
-                            ATTR_NAME,
-                        )
-                    },
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
+            < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . access_key , | v | element . set_access_key (v) , | | dom_element . remove_attribute ("accesskey") . unwrap () ,) ;
+            < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_capitalize , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autocapitalize" ,) , | | dom_element . remove_attribute ("autocapitalize") . unwrap () ,) ;
+            < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_focus , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autofocus" ,) , | | dom_element . remove_attribute ("autofocus") . unwrap () ,) ;
+            < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . context_menu , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "contextmenu" ,) , | | dom_element . remove_attribute ("contextmenu") . unwrap () ,) ;
+            < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dir , | v | element . set_dir (v) , | | dom_element . remove_attribute ("dir") . unwrap () ,) ;
+            < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . draggable , | v | element . set_draggable (v) , | | dom_element . remove_attribute ("draggable") . unwrap () ,) ;
+            < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enter_key_hint , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "enterkeyhint" ,) , | | dom_element . remove_attribute ("enterkeyhint") . unwrap () ,) ;
+            <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.hidden,
+                |v| element.set_hidden(v),
+                || dom_element.remove_attribute("hidden").unwrap(),
+            );
+            <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.inert,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "inert",
+                    )
+                },
+                || dom_element.remove_attribute("inert").unwrap(),
+            );
+            < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . input_mode , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "inputmode" ,) , | | dom_element . remove_attribute ("inputmode") . unwrap () ,) ;
+            < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . is , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "is" ,) , | | dom_element . remove_attribute ("is") . unwrap () ,) ;
+            < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_id , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemid" ,) , | | dom_element . remove_attribute ("itemid") . unwrap () ,) ;
+            < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_prop , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemprop" ,) , | | dom_element . remove_attribute ("itemprop") . unwrap () ,) ;
+            < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_ref , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemref" ,) , | | dom_element . remove_attribute ("itemref") . unwrap () ,) ;
+            < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemscope" ,) , | | dom_element . remove_attribute ("itemscope") . unwrap () ,) ;
+            < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_type , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemtype" ,) , | | dom_element . remove_attribute ("itemtype") . unwrap () ,) ;
+            < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . lang , | v | element . set_lang (v) , | | dom_element . remove_attribute ("lang") . unwrap () ,) ;
+            < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . nonce , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "nonce" ,) , | | dom_element . remove_attribute ("nonce") . unwrap () ,) ;
+            < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . role , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "role" ,) , | | dom_element . remove_attribute ("role") . unwrap () ,) ;
+            < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . slot , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "slot" ,) , | | dom_element . remove_attribute ("slot") . unwrap () ,) ;
+            < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . spellcheck , | v | element . set_spellcheck (v) , | | dom_element . remove_attribute ("spellcheck") . unwrap () ,) ;
+            < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . style , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "style" ,) , | | dom_element . remove_attribute ("style") . unwrap () ,) ;
+            < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . tab_index , | v | element . set_tab_index (v) , | | dom_element . remove_attribute ("tabindex") . unwrap () ,) ;
+            < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . title , | v | element . set_title (v) , | | dom_element . remove_attribute ("title") . unwrap () ,) ;
+            < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . translate , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "translate" ,) , | | dom_element . remove_attribute ("translate") . unwrap () ,) ;
+            <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueByRef<
+                str,
+            >>::maybe_update_value_by_ref(
+                &this.virtual_keyboard_policy,
+                |v| {
+                    crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "virtualkeyboardpolicy",
+                    )
+                },
+                || {
+                    dom_element
+                        .remove_attribute("virtualkeyboardpolicy")
+                        .unwrap()
+                },
+            );
             crate :: props :: UpdateDomEventListener :: < crate :: props :: events :: Click , > :: update_dom_event_listener (this . on_click , element , state . on_click) ;
         }
     }

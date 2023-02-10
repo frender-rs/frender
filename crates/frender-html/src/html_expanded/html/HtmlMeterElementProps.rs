@@ -1054,6 +1054,46 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlMeterElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            <TypeDefs::value as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.value,
+                |v| element.set_value(v),
+                || dom_element.remove_attribute("value").unwrap(),
+            );
+            <TypeDefs::min as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.min,
+                |v| element.set_min(v),
+                || dom_element.remove_attribute("min").unwrap(),
+            );
+            <TypeDefs::max as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.max,
+                |v| element.set_max(v),
+                || dom_element.remove_attribute("max").unwrap(),
+            );
+            <TypeDefs::low as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.low,
+                |v| element.set_low(v),
+                || dom_element.remove_attribute("low").unwrap(),
+            );
+            <TypeDefs::high as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.high,
+                |v| element.set_high(v),
+                || dom_element.remove_attribute("high").unwrap(),
+            );
+            <TypeDefs::optimum as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.optimum,
+                |v| element.set_optimum(v),
+                || dom_element.remove_attribute("optimum").unwrap(),
+            );
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlMeterElement,
@@ -1067,56 +1107,36 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "value";
-                <TypeDefs::value as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
-                    this.value,
-                    |v| element.set_value(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "min";
-                <TypeDefs::min as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
-                    this.min,
-                    |v| element.set_min(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "max";
-                <TypeDefs::max as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
-                    this.max,
-                    |v| element.set_max(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "low";
-                <TypeDefs::low as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
-                    this.low,
-                    |v| element.set_low(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "high";
-                <TypeDefs::high as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
-                    this.high,
-                    |v| element.set_high(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "optimum";
-                < TypeDefs :: optimum as :: frender_dom :: props :: MaybeUpdateValue < f64 , > > :: maybe_update_value (this . optimum , | v | element . set_optimum (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            <TypeDefs::value as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.value,
+                |v| element.set_value(v),
+                || dom_element.remove_attribute("value").unwrap(),
+            );
+            <TypeDefs::min as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.min,
+                |v| element.set_min(v),
+                || dom_element.remove_attribute("min").unwrap(),
+            );
+            <TypeDefs::max as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.max,
+                |v| element.set_max(v),
+                || dom_element.remove_attribute("max").unwrap(),
+            );
+            <TypeDefs::low as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.low,
+                |v| element.set_low(v),
+                || dom_element.remove_attribute("low").unwrap(),
+            );
+            <TypeDefs::high as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.high,
+                |v| element.set_high(v),
+                || dom_element.remove_attribute("high").unwrap(),
+            );
+            <TypeDefs::optimum as ::frender_dom::props::MaybeUpdateValue<f64>>::maybe_update_value(
+                this.optimum,
+                |v| element.set_optimum(v),
+                || dom_element.remove_attribute("optimum").unwrap(),
+            );
         }
     }
 }

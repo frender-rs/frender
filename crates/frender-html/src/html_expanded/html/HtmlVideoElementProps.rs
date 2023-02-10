@@ -1099,6 +1099,26 @@ mod impl_update_element {
             crate::props::UpdateElement<web_sys::HtmlMediaElement>,
     {
         type State = < HtmlMediaElementProps :: Data < TypeDefs :: HtmlMediaElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlMediaElement > > :: State ;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlVideoElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            < TypeDefs :: plays_inline as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . plays_inline , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "playsinline" ,) , | | dom_element . remove_attribute ("playsinline") . unwrap () ,) ;
+            < TypeDefs :: poster as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . poster , | v | element . set_poster (v) , | | dom_element . remove_attribute ("poster") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
+            < HtmlMediaElementProps :: Data < TypeDefs :: HtmlMediaElementProps , > as crate :: props :: UpdateElement < web_sys :: HtmlMediaElement , > > :: initialize_state (this . HtmlMediaElementProps , element , children_ctx ,)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlVideoElement,
@@ -1112,30 +1132,18 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "playsinline";
-                < TypeDefs :: plays_inline as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . plays_inline , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "poster";
-                < TypeDefs :: poster as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . poster , | v | element . set_poster (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                    this.width,
-                    |v| element.set_width(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            < TypeDefs :: plays_inline as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . plays_inline , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "playsinline" ,) , | | dom_element . remove_attribute ("playsinline") . unwrap () ,) ;
+            < TypeDefs :: poster as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . poster , | v | element . set_poster (v) , | | dom_element . remove_attribute ("poster") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
         }
     }
 }

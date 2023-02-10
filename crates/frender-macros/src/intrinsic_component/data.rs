@@ -32,7 +32,7 @@ pub struct FieldDeclarationDomStateImpl {
     /// dom state bounds
     pub bounds: Bracketed<TokenStream>,
     pub eq_token: syn::Token![=],
-    pub initial_value: Parenthesized<syn::Expr>,
+    pub initialize_state: Parenthesized<TokenStream>,
 }
 
 #[derive(Clone)]
@@ -57,7 +57,7 @@ impl Parse for FieldDeclarationDomState {
                         colon_token,
                         bounds: input.parse()?,
                         eq_token: input.parse()?,
-                        initial_value: input.parse()?,
+                        initialize_state: input.parse()?,
                     })
                 } else {
                     None
@@ -73,6 +73,7 @@ pub struct FieldDeclarationDomDefinitions {
     pub bounds: Option<PrefixKeyword<kw::bounds, Bracketed<TokenStream>>>,
     pub state: Option<PrefixKeyword<kw::state, FieldDeclarationDomState>>,
     pub implementation: FieldDeclarationDomImpl,
+    pub initialize: Option<PrefixKeyword<kw::initialize, Bracketed<TokenStream>>>,
 }
 
 impl Parse for FieldDeclarationDomDefinitions {
@@ -81,6 +82,7 @@ impl Parse for FieldDeclarationDomDefinitions {
             bounds: input.parse()?,
             state: input.parse()?,
             implementation: input.parse()?,
+            initialize: input.parse()?,
         })
     }
 }

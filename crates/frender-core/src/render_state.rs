@@ -3,12 +3,6 @@ use std::{pin::Pin, task::Poll};
 use crate::utils::pin_as_deref_mut;
 
 pub trait RenderState {
-    /// We are not using [`Default`] trait because
-    /// [`Pin<Box<_>>`] does not impl [`Default`].
-    fn new_uninitialized() -> Self
-    where
-        Self: Sized;
-
     fn unmount(self: Pin<&mut Self>);
 
     #[inline]
@@ -19,11 +13,6 @@ pub trait RenderState {
 }
 
 impl<S: RenderState> RenderState for Pin<Box<S>> {
-    #[inline]
-    fn new_uninitialized() -> Self {
-        Box::pin(S::new_uninitialized())
-    }
-
     #[inline]
     fn unmount(self: Pin<&mut Self>) {
         S::unmount(pin_as_deref_mut(self))

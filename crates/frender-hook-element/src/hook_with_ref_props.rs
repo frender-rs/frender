@@ -4,7 +4,7 @@ use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
 
 use crate::{ContextAndState, HookContext};
 
-use frender_core::RenderState;
+use frender_core::{LazyPinned, RenderState};
 
 pub struct FnHookElementWithRefProps<Data, Props, UDom, USsr, S> {
     pub hook_data: Data,
@@ -33,10 +33,12 @@ impl<Data, Props, UDom, USsr, S> FnHookElementWithRefProps<Data, Props, UDom, US
 pin_project_lite::pin_project! {
     pub struct FnHookElementStateWithRefProps<Data: HookPollNextUpdate, Props, S, U, Ctx> {
         #[pin]
-        pub hook_data: LazyPinnedHook<Data>,
+        pub hook_data: Data,
         #[pin]
-        pub render_state: S,
-        pub ctx_and_use_hook_and_props: Option<(Ctx, U, Props)>,
+        pub render_state: LazyPinned<S>,
+        pub ctx: Ctx,
+        pub use_hook: U,
+        pub props: Props,
     }
 }
 
@@ -45,19 +47,8 @@ impl<Data: HookPollNextUpdate, S: RenderState, U, Ctx: HookContext, Props> Rende
 where
     U: FnMut(Pin<&mut Data>, ContextAndState<'_, Ctx, S>, &Props),
 {
-    fn new_uninitialized() -> Self
-    where
-        Self: Sized,
-    {
-        Self {
-            hook_data: Default::default(),
-            render_state: S::new_uninitialized(),
-            ctx_and_use_hook_and_props: None,
-        }
-    }
-
     fn unmount(self: Pin<&mut Self>) {
-        self.project().render_state.unmount()
+        self.project().render_state.as_pin_mut().map(S::unmount);
     }
 
     fn poll_reactive(
@@ -67,7 +58,11 @@ where
         let mut this = self.project();
 
         let res = this.hook_data.as_mut().poll_next_update(cx);
-        let r = this.render_state.as_mut().poll_reactive(cx);
+        let r = this
+            .render_state
+            .as_mut()
+            .as_pin_mut()
+            .map_or(std::task::Poll::Ready(true), |s| S::poll_reactive(s, cx));
 
         match (res, r) {
             (std::task::Poll::Ready(false), std::task::Poll::Ready(false)) => {
@@ -78,22 +73,20 @@ where
                 std::task::Poll::Ready(false) | std::task::Poll::Pending,
             ) => std::task::Poll::Pending,
             _ => {
-                if let (Some(data), Some((context, use_hook, props))) = (
-                    this.hook_data.pin_project_hook(),
-                    this.ctx_and_use_hook_and_props.as_mut(),
-                ) {
-                    Ctx::with_context(context, |context| {
-                        use_hook(
-                            data,
-                            ContextAndState::new(context, this.render_state),
-                            props,
-                        );
-                    });
-                    cx.waker().wake_by_ref();
-                    std::task::Poll::Pending
-                } else {
-                    std::task::Poll::Ready(true)
-                }
+                let context = this.ctx;
+                let use_hook = this.use_hook;
+                let data = this.hook_data;
+                let props = this.props;
+
+                Ctx::with_context(context, |context| {
+                    use_hook(
+                        data,
+                        ContextAndState::new(context, this.render_state),
+                        props,
+                    );
+                });
+                cx.waker().wake_by_ref();
+                std::task::Poll::Pending
             }
         }
     }
@@ -108,16 +101,26 @@ where
 {
     type State = FnHookElementStateWithRefProps<Data, Props, S, UDom, frender_dom::Dom>;
 
+    fn initialize_render_state(self, ctx: &mut frender_dom::Dom) -> Self::State {
+        FnHookElementStateWithRefProps {
+            hook_data: self.hook_data,
+            render_state: Default::default(),
+            ctx: frender_dom::Dom::take_context(ctx),
+            use_hook: self.use_hook_dom,
+            props: self.props,
+        }
+    }
+
     fn update_render_state(self, ctx: &mut frender_dom::Dom, state: Pin<&mut Self::State>) {
         let state = state.project();
-        let hook_data = state.hook_data.use_hook((move || self.hook_data,));
         let mut use_hook = self.use_hook_dom;
         use_hook(
-            hook_data,
+            state.hook_data,
             ContextAndState::new(ctx, state.render_state),
             &self.props,
         );
-        *state.ctx_and_use_hook_and_props =
-            Some((frender_dom::Dom::take_context(ctx), use_hook, self.props));
+        *state.ctx = frender_dom::Dom::take_context(ctx);
+        *state.use_hook = use_hook;
+        *state.props = self.props;
     }
 }

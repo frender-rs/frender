@@ -1673,6 +1673,37 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlTableCellElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute ("align") . unwrap () ,) ;
+            < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "bgcolor" ,) , | | dom_element . remove_attribute ("bgcolor") . unwrap () ,) ;
+            < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute ("char") . unwrap () ,) ;
+            < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute ("charoff") . unwrap () ,) ;
+            < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute ("valign") . unwrap () ,) ;
+            <TypeDefs::col_span as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.col_span,
+                |v| element.set_col_span(v),
+                || dom_element.remove_attribute("colspan").unwrap(),
+            );
+            < TypeDefs :: headers as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . headers , | v | element . set_headers (v) , | | dom_element . remove_attribute ("headers") . unwrap () ,) ;
+            <TypeDefs::row_span as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.row_span,
+                |v| element.set_row_span(v),
+                || dom_element.remove_attribute("rowspan").unwrap(),
+            );
+            < TypeDefs :: abbr as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . abbr , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "abbr" ,) , | | dom_element . remove_attribute ("abbr") . unwrap () ,) ;
+            < TypeDefs :: axis as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . axis , | v | element . set_axis (v) , | | dom_element . remove_attribute ("axis") . unwrap () ,) ;
+            < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute ("height") . unwrap () ,) ;
+            < TypeDefs :: scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "scope" ,) , | | dom_element . remove_attribute ("scope") . unwrap () ,) ;
+            < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute ("width") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlTableCellElement,
@@ -1686,71 +1717,27 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "align";
-                < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "bgcolor";
-                < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "char";
-                < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "charoff";
-                < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "valign";
-                < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "colspan";
-                < TypeDefs :: col_span as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . col_span , | v | element . set_col_span (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "headers";
-                < TypeDefs :: headers as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . headers , | v | element . set_headers (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "rowspan";
-                < TypeDefs :: row_span as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . row_span , | v | element . set_row_span (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "abbr";
-                < TypeDefs :: abbr as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . abbr , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "axis";
-                < TypeDefs :: axis as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . axis , | v | element . set_axis (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "scope";
-                < TypeDefs :: scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute ("align") . unwrap () ,) ;
+            < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "bgcolor" ,) , | | dom_element . remove_attribute ("bgcolor") . unwrap () ,) ;
+            < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute ("char") . unwrap () ,) ;
+            < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute ("charoff") . unwrap () ,) ;
+            < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute ("valign") . unwrap () ,) ;
+            <TypeDefs::col_span as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.col_span,
+                |v| element.set_col_span(v),
+                || dom_element.remove_attribute("colspan").unwrap(),
+            );
+            < TypeDefs :: headers as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . headers , | v | element . set_headers (v) , | | dom_element . remove_attribute ("headers") . unwrap () ,) ;
+            <TypeDefs::row_span as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.row_span,
+                |v| element.set_row_span(v),
+                || dom_element.remove_attribute("rowspan").unwrap(),
+            );
+            < TypeDefs :: abbr as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . abbr , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "abbr" ,) , | | dom_element . remove_attribute ("abbr") . unwrap () ,) ;
+            < TypeDefs :: axis as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . axis , | v | element . set_axis (v) , | | dom_element . remove_attribute ("axis") . unwrap () ,) ;
+            < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . height , | v | element . set_height (v) , | | dom_element . remove_attribute ("height") . unwrap () ,) ;
+            < TypeDefs :: scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "scope" ,) , | | dom_element . remove_attribute ("scope") . unwrap () ,) ;
+            < TypeDefs :: width as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . width , | v | element . set_width (v) , | | dom_element . remove_attribute ("width") . unwrap () ,) ;
         }
     }
 }

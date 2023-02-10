@@ -4129,6 +4129,63 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlInputElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | element . set_accept (v) , | | dom_element . remove_attribute ("accept") . unwrap () ,) ;
+            < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute ("alt") . unwrap () ,) ;
+            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
+            < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . capture , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "capture" ,) , | | dom_element . remove_attribute ("capture") . unwrap () ,) ;
+            <TypeDefs::checked as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.checked,
+                |v| element.set_checked(v),
+                || dom_element.remove_attribute("checked").unwrap(),
+            );
+            < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dirname , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "dirname" ,) , | | dom_element . remove_attribute ("dirname") . unwrap () ,) ;
+            < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute ("disabled") . unwrap () ,) ;
+            < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "form" ,) , | | dom_element . remove_attribute ("form") . unwrap () ,) ;
+            < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_action , | v | element . set_form_action (v) , | | dom_element . remove_attribute ("formaction") . unwrap () ,) ;
+            < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_enc_type , | v | element . set_form_enctype (v) , | | dom_element . remove_attribute ("formenctype") . unwrap () ,) ;
+            < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_method , | v | element . set_form_method (v) , | | dom_element . remove_attribute ("formmethod") . unwrap () ,) ;
+            < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . form_no_validate , | v | element . set_form_no_validate (v) , | | dom_element . remove_attribute ("formnovalidate") . unwrap () ,) ;
+            < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_target , | v | element . set_form_target (v) , | | dom_element . remove_attribute ("formtarget") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . list , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "list" ,) , | | dom_element . remove_attribute ("list") . unwrap () ,) ;
+            < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . max , | v | element . set_max (v) , | | dom_element . remove_attribute ("max") . unwrap () ,) ;
+            < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute ("maxlength") . unwrap () ,) ;
+            < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . min , | v | element . set_min (v) , | | dom_element . remove_attribute ("min") . unwrap () ,) ;
+            < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute ("minlength") . unwrap () ,) ;
+            < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . multiple , | v | element . set_multiple (v) , | | dom_element . remove_attribute ("multiple") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . pattern , | v | element . set_pattern (v) , | | dom_element . remove_attribute ("pattern") . unwrap () ,) ;
+            < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute ("placeholder") . unwrap () ,) ;
+            < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute ("readonly") . unwrap () ,) ;
+            < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute ("required") . unwrap () ,) ;
+            <TypeDefs::size as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.size,
+                |v| element.set_size(v),
+                || dom_element.remove_attribute("size").unwrap(),
+            );
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . step , | v | element . set_step (v) , | | dom_element . remove_attribute ("step") . unwrap () ,) ;
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type") . unwrap () ,) ;
+            < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . value , | v | element . set_value (v) , | | dom_element . remove_attribute ("value") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlInputElement,
@@ -4142,169 +4199,53 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "accept";
-                < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | element . set_accept (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "alt";
-                < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "autocomplete";
-                < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "capture";
-                < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . capture , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "checked";
-                < TypeDefs :: checked as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . checked , | v | element . set_checked (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "dirname";
-                < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dirname , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "disabled";
-                < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "form";
-                < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "formaction";
-                < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_action , | v | element . set_form_action (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "formenctype";
-                < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_enc_type , | v | element . set_form_enctype (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "formmethod";
-                < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_method , | v | element . set_form_method (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "formnovalidate";
-                < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . form_no_validate , | v | element . set_form_no_validate (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "formtarget";
-                < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_target , | v | element . set_form_target (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "height";
-                < TypeDefs :: height as :: frender_dom :: props :: MaybeUpdateValue < u32 , > > :: maybe_update_value (this . height , | v | element . set_height (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "list";
-                < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . list , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "max";
-                < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . max , | v | element . set_max (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "maxlength";
-                < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "min";
-                < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . min , | v | element . set_min (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "minlength";
-                < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "multiple";
-                < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . multiple , | v | element . set_multiple (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "name";
-                < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "pattern";
-                < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . pattern , | v | element . set_pattern (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "placeholder";
-                < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "readonly";
-                < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "required";
-                < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "size";
-                <TypeDefs::size as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                    this.size,
-                    |v| element.set_size(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "step";
-                < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . step , | v | element . set_step (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "type";
-                < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "value";
-                < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . value , | v | element . set_value (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "width";
-                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                    this.width,
-                    |v| element.set_width(v),
-                    || dom_element.remove_attribute(ATTR_NAME).unwrap(),
-                )
-            }
+            < TypeDefs :: accept as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . accept , | v | element . set_accept (v) , | | dom_element . remove_attribute ("accept") . unwrap () ,) ;
+            < TypeDefs :: alt as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . alt , | v | element . set_alt (v) , | | dom_element . remove_attribute ("alt") . unwrap () ,) ;
+            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
+            < TypeDefs :: capture as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . capture , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "capture" ,) , | | dom_element . remove_attribute ("capture") . unwrap () ,) ;
+            <TypeDefs::checked as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.checked,
+                |v| element.set_checked(v),
+                || dom_element.remove_attribute("checked").unwrap(),
+            );
+            < TypeDefs :: dirname as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dirname , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "dirname" ,) , | | dom_element . remove_attribute ("dirname") . unwrap () ,) ;
+            < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute ("disabled") . unwrap () ,) ;
+            < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "form" ,) , | | dom_element . remove_attribute ("form") . unwrap () ,) ;
+            < TypeDefs :: form_action as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_action , | v | element . set_form_action (v) , | | dom_element . remove_attribute ("formaction") . unwrap () ,) ;
+            < TypeDefs :: form_enc_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_enc_type , | v | element . set_form_enctype (v) , | | dom_element . remove_attribute ("formenctype") . unwrap () ,) ;
+            < TypeDefs :: form_method as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_method , | v | element . set_form_method (v) , | | dom_element . remove_attribute ("formmethod") . unwrap () ,) ;
+            < TypeDefs :: form_no_validate as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . form_no_validate , | v | element . set_form_no_validate (v) , | | dom_element . remove_attribute ("formnovalidate") . unwrap () ,) ;
+            < TypeDefs :: form_target as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form_target , | v | element . set_form_target (v) , | | dom_element . remove_attribute ("formtarget") . unwrap () ,) ;
+            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.height,
+                |v| element.set_height(v),
+                || dom_element.remove_attribute("height").unwrap(),
+            );
+            < TypeDefs :: list as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . list , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "list" ,) , | | dom_element . remove_attribute ("list") . unwrap () ,) ;
+            < TypeDefs :: max as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . max , | v | element . set_max (v) , | | dom_element . remove_attribute ("max") . unwrap () ,) ;
+            < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute ("maxlength") . unwrap () ,) ;
+            < TypeDefs :: min as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . min , | v | element . set_min (v) , | | dom_element . remove_attribute ("min") . unwrap () ,) ;
+            < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute ("minlength") . unwrap () ,) ;
+            < TypeDefs :: multiple as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . multiple , | v | element . set_multiple (v) , | | dom_element . remove_attribute ("multiple") . unwrap () ,) ;
+            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
+            < TypeDefs :: pattern as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . pattern , | v | element . set_pattern (v) , | | dom_element . remove_attribute ("pattern") . unwrap () ,) ;
+            < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute ("placeholder") . unwrap () ,) ;
+            < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute ("readonly") . unwrap () ,) ;
+            < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute ("required") . unwrap () ,) ;
+            <TypeDefs::size as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.size,
+                |v| element.set_size(v),
+                || dom_element.remove_attribute("size").unwrap(),
+            );
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: step as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . step , | v | element . set_step (v) , | | dom_element . remove_attribute ("step") . unwrap () ,) ;
+            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type") . unwrap () ,) ;
+            < TypeDefs :: value as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . value , | v | element . set_value (v) , | | dom_element . remove_attribute ("value") . unwrap () ,) ;
+            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+                this.width,
+                |v| element.set_width(v),
+                || dom_element.remove_attribute("width").unwrap(),
+            );
         }
     }
 }

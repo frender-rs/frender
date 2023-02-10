@@ -8,7 +8,8 @@ crate::def_intrinsic_component_props! {
                 bounds[::frender_core::UpdateRenderState<::frender_dom::Dom>]
                 state pin
                     < <TypeDefs::children as frender_core::UpdateRenderState<frender_dom::Dom>>::State >
-                    :[::frender_core::RenderState]=(::frender_core::RenderState::new_uninitialized())
+                    :[::frender_core::RenderState]
+                    =(::frender_core::UpdateRenderState::initialize_render_state(this.children, children_ctx))
                 impl {
                     ::frender_core::UpdateRenderState::update_render_state(this.children, children_ctx, state.children);
                 }
@@ -118,6 +119,13 @@ crate::def_intrinsic_component_props! {
                     bounds[crate::props::UpdateDomEventListener<crate::props::events::Click>]
                     state
                         < <TypeDefs::on_click as crate::props::UpdateDomEventListener<crate::props::events::Click>>::State >
+                        :[std::any::Any]
+                        =(
+                            crate::props::UpdateDomEventListener::<crate::props::events::Click>::initialize_dom_event_listener_state(
+                                this.on_click,
+                                element,
+                            )
+                        )
                     impl {
                         crate::props::UpdateDomEventListener::<crate::props::events::Click>::update_dom_event_listener(this.on_click, element, state.on_click);
                     }

@@ -988,6 +988,21 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlTableSectionElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute ("align") . unwrap () ,) ;
+            < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "bgcolor" ,) , | | dom_element . remove_attribute ("bgcolor") . unwrap () ,) ;
+            < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute ("char") . unwrap () ,) ;
+            < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute ("charoff") . unwrap () ,) ;
+            < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute ("valign") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlTableSectionElement,
@@ -1001,31 +1016,11 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "align";
-                < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "bgcolor";
-                < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "char";
-                < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "charoff";
-                < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "valign";
-                < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . align , | v | element . set_align (v) , | | dom_element . remove_attribute ("align") . unwrap () ,) ;
+            < TypeDefs :: bg_color as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . bg_color , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "bgcolor" ,) , | | dom_element . remove_attribute ("bgcolor") . unwrap () ,) ;
+            < TypeDefs :: char as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char , | v | element . set_ch (v) , | | dom_element . remove_attribute ("char") . unwrap () ,) ;
+            < TypeDefs :: char_off as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . char_off , | v | element . set_ch_off (v) , | | dom_element . remove_attribute ("charoff") . unwrap () ,) ;
+            < TypeDefs :: v_align as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . v_align , | v | element . set_v_align (v) , | | dom_element . remove_attribute ("valign") . unwrap () ,) ;
         }
     }
 }

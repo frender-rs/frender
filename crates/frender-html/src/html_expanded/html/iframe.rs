@@ -56,22 +56,20 @@ mod impl_update_render_state_dom {
                 web_sys::HtmlIFrameElement,
             >>::State,
         >;
+        fn initialize_render_state(self, ctx: &mut ::frender_dom::Dom) -> Self::State {
+            Self::State::initialize_with_tag(self.0, ctx, ComponentType::INTRINSIC_TAG)
+        }
         fn update_render_state(
             self,
             ctx: &mut ::frender_dom::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let (node_and_mounted, state) = state.pin_project();
-            crate::utils::dom::insert_element_and_update_with_tag(
-                node_and_mounted,
-                ctx,
-                ComponentType::INTRINSIC_TAG,
-                |element, children_ctx| {
-                    <HtmlIFrameElementProps::Data<TypeDefs> as crate::props::UpdateElement<
-                        web_sys::HtmlIFrameElement,
-                    >>::update_element(self.0, element, children_ctx, state)
-                },
-            )
+            crate::utils::dom::update_element(node_and_mounted, ctx, |element, children_ctx| {
+                <HtmlIFrameElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+                    web_sys::HtmlIFrameElement,
+                >>::update_element(self.0, element, children_ctx, state)
+            })
         }
     }
 }

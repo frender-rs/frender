@@ -82,16 +82,23 @@ macro_rules! __impl_def_intrinsic_component {
                             >>::State,
                         >;
 
+                    fn initialize_render_state(self, ctx: &mut ::frender_dom::Dom) -> Self::State {
+                        Self::State::initialize_with_tag(
+                            self.0,
+                            ctx,
+                            ComponentType::INTRINSIC_TAG,
+                        )
+                    }
+
                     fn update_render_state(
                         self,
                         ctx: &mut ::frender_dom::Dom,
                         state: ::core::pin::Pin<&mut Self::State>,
                     ) {
                         let (node_and_mounted, state) = state.pin_project();
-                        $crate::utils::dom::insert_element_and_update_with_tag(
+                        $crate::utils::dom::update_element(
                             node_and_mounted,
                             ctx,
-                            ComponentType::INTRINSIC_TAG,
                             |element, children_ctx| {
                                 <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
                                     $dom_element_ty,

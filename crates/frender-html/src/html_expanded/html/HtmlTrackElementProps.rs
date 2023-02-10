@@ -983,6 +983,25 @@ mod impl_update_element {
             <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::HtmlTrackElement,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            <TypeDefs::default as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.default,
+                |v| element.set_default(v),
+                || dom_element.remove_attribute("default").unwrap(),
+            );
+            < TypeDefs :: kind as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . kind , | v | element . set_kind (v) , | | dom_element . remove_attribute ("kind") . unwrap () ,) ;
+            < TypeDefs :: label as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . label , | v | element . set_label (v) , | | dom_element . remove_attribute ("label") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: src_lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_lang , | v | element . set_srclang (v) , | | dom_element . remove_attribute ("srclang") . unwrap () ,) ;
+            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
+                web_sys::HtmlElement,
+            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+        }
         fn update_element(
             this: Self,
             element: &web_sys::HtmlTrackElement,
@@ -996,31 +1015,15 @@ mod impl_update_element {
                 children_ctx,
                 state,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "default";
-                < TypeDefs :: default as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . default , | v | element . set_default (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "kind";
-                < TypeDefs :: kind as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . kind , | v | element . set_kind (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "label";
-                < TypeDefs :: label as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . label , | v | element . set_label (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "src";
-                < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "srclang";
-                < TypeDefs :: src_lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_lang , | v | element . set_srclang (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            <TypeDefs::default as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+                this.default,
+                |v| element.set_default(v),
+                || dom_element.remove_attribute("default").unwrap(),
+            );
+            < TypeDefs :: kind as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . kind , | v | element . set_kind (v) , | | dom_element . remove_attribute ("kind") . unwrap () ,) ;
+            < TypeDefs :: label as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . label , | v | element . set_label (v) , | | dom_element . remove_attribute ("label") . unwrap () ,) ;
+            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
+            < TypeDefs :: src_lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src_lang , | v | element . set_srclang (v) , | | dom_element . remove_attribute ("srclang") . unwrap () ,) ;
         }
     }
 }

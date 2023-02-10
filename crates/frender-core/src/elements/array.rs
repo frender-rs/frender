@@ -2,11 +2,6 @@ use crate::{utils::pin_project_map_array, RenderState, UpdateRenderState};
 
 impl<S: RenderState, const N: usize> RenderState for [S; N] {
     #[inline]
-    fn new_uninitialized() -> Self {
-        [(); N].map(|_| S::new_uninitialized())
-    }
-
-    #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {
         pin_project_map_array(self, S::unmount)
     }
@@ -33,6 +28,10 @@ impl<S: RenderState, const N: usize> RenderState for [S; N] {
 
 impl<E: UpdateRenderState<Ctx>, Ctx, const N: usize> UpdateRenderState<Ctx> for [E; N] {
     type State = [E::State; N];
+
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        self.map(|v| E::initialize_render_state(v, ctx))
+    }
 
     fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
         let mut this = self.into_iter();

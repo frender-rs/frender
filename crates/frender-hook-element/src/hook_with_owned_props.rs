@@ -1,12 +1,12 @@
 use std::{any::Any, pin::Pin};
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{LazyPinned, RenderState, UpdateRenderState};
 use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
 
 use crate::ContextAndState;
 
 pub struct FnHookElementWithOwnedProps<Data, S, Props, HDom, HSsr> {
-    pub data: Data,
+    pub hook_data: Data,
     pub props: Props,
     pub with_dom: HDom,
     pub with_ssr: HSsr,
@@ -16,25 +16,15 @@ pub struct FnHookElementWithOwnedProps<Data, S, Props, HDom, HSsr> {
 pin_project_lite::pin_project! {
     pub struct FnHookElementState<Data: HookPollNextUpdate, State> {
         #[pin]
-        data: LazyPinnedHook<Data>,
+        hook_data: Data,
         #[pin]
-        render_state: State,
+        render_state: LazyPinned<State>,
     }
 }
 
 impl<Data: HookPollNextUpdate, S: RenderState> RenderState for FnHookElementState<Data, S> {
-    fn new_uninitialized() -> Self
-    where
-        Self: Sized,
-    {
-        Self {
-            data: Default::default(),
-            render_state: S::new_uninitialized(),
-        }
-    }
-
     fn unmount(self: Pin<&mut Self>) {
-        self.project().render_state.unmount()
+        self.project().render_state.as_pin_mut().map(S::unmount);
     }
 
     fn poll_reactive(
@@ -42,8 +32,11 @@ impl<Data: HookPollNextUpdate, S: RenderState> RenderState for FnHookElementStat
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<bool> {
         let this = self.project();
-        let a = this.data.poll_next_update(cx);
-        let b = this.render_state.poll_reactive(cx);
+        let a = this.hook_data.poll_next_update(cx);
+        let b = this
+            .render_state
+            .as_pin_mut()
+            .map_or(std::task::Poll::Ready(true), |s| s.poll_reactive(cx));
 
         match (a, b) {
             (std::task::Poll::Ready(false), std::task::Poll::Ready(false)) => {
@@ -64,14 +57,19 @@ where
 {
     type State = FnHookElementState<Data, S>;
 
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        FnHookElementState {
+            hook_data: self.hook_data,
+            render_state: Default::default(),
+        }
+    }
+
     fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
         let use_hook = self.with_dom;
         let state = state.project();
 
-        let data = state.data.use_hook((move || self.data,));
-
         use_hook(
-            data,
+            state.hook_data,
             ContextAndState::new(ctx, state.render_state),
             self.props,
         );
@@ -84,12 +82,12 @@ pub fn fn_dom_hook_element_with_owned_props<
     HDom: for<'c> FnOnce(Pin<&mut Data>, ContextAndState<'c, frender_dom::Dom, S>, Props),
     Props,
 >(
-    data: Data,
+    hook_data: Data,
     use_hook: HDom,
     props: Props,
 ) -> FnHookElementWithOwnedProps<Data, S, Props, HDom, ()> {
     FnHookElementWithOwnedProps {
-        data,
+        hook_data,
         with_dom: use_hook,
         with_ssr: (),
         props,

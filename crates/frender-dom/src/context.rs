@@ -97,12 +97,11 @@ impl Dom {
         mut get_element: impl FnMut() -> E,
         stop: impl IntoFuture<Output = ()>,
     ) {
-        let state = E::State::new_uninitialized();
+        let state = get_element().initialize_render_state(self);
+
         futures_lite::pin!(state);
 
         let root_position = self.next_node_position.clone();
-
-        get_element().update_render_state(self, state.as_mut());
 
         let stop = crate::utils::reentrant(stop.into_future());
 

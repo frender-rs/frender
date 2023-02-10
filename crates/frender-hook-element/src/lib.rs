@@ -12,11 +12,9 @@ pub use ctx_and_state::*;
 pub use hook_context::*;
 pub use no_data::*;
 
-mod hook_with_no_props;
 mod hook_with_owned_props;
 mod hook_with_ref_props;
 
-pub use hook_with_no_props::*;
 pub use hook_with_owned_props::*;
 pub use hook_with_ref_props::*;
 

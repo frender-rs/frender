@@ -178,15 +178,6 @@ pub mod render_state {
             self.project()
         }
     }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> ::core::default::Default
-        for RenderState<TypeDefs>
-    {
-        fn default() -> Self {
-            Self {
-                children: ::frender_core::RenderState::new_uninitialized(),
-            }
-        }
-    }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
         crate::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
     {
@@ -275,6 +266,22 @@ mod impl_update_element {
                 >>::State,
             >,
         >;
+        fn initialize_state(
+            this: Self,
+            element: &web_sys::Element,
+            children_ctx: &mut ::frender_dom::Dom,
+        ) -> Self::State {
+            let dom_element: &::web_sys::Element = element.as_ref();
+            < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . class , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "class" ,) , | | dom_element . remove_attribute ("class") . unwrap () ,) ;
+            < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . id , | v | element . set_id (v) , | | dom_element . remove_attribute ("id") . unwrap () ,) ;
+            < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . part , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "part" ,) , | | dom_element . remove_attribute ("part") . unwrap () ,) ;
+            super::render_state::RenderState {
+                children: ::frender_core::UpdateRenderState::initialize_render_state(
+                    this.children,
+                    children_ctx,
+                ),
+            }
+        }
         fn update_element(
             this: Self,
             element: &web_sys::Element,
@@ -288,21 +295,9 @@ mod impl_update_element {
                 children_ctx,
                 state.children,
             );
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "class";
-                < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . class , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "id";
-                < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . id , | v | element . set_id (v) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
-            {
-                #[allow(unused)]
-                const ATTR_NAME: &::core::primitive::str = "part";
-                < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . part , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , ATTR_NAME ,) , | | dom_element . remove_attribute (ATTR_NAME) . unwrap () ,)
-            }
+            < TypeDefs :: class as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . class , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "class" ,) , | | dom_element . remove_attribute ("class") . unwrap () ,) ;
+            < TypeDefs :: id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . id , | v | element . set_id (v) , | | dom_element . remove_attribute ("id") . unwrap () ,) ;
+            < TypeDefs :: part as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . part , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "part" ,) , | | dom_element . remove_attribute ("part") . unwrap () ,) ;
         }
     }
 }

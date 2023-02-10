@@ -12,6 +12,27 @@ use super::{
 };
 
 impl FieldDeclaration {
+    pub fn dom_initialize(
+        &self,
+        crate_path: impl ToTokens,
+        field_name: &syn::Ident,
+    ) -> Option<Cow<TokenStream>> {
+        match self {
+            FieldDeclaration::Maybe(m) => {
+                Some(Cow::Owned(m.to_ts_update_element(crate_path, field_name)))
+            }
+            FieldDeclaration::Full(f) => f
+                .definitions
+                .content
+                .dom_definitions
+                .content
+                .initialize
+                .as_ref()
+                .map(|init| Cow::Borrowed(&init.content.content)),
+            FieldDeclaration::Inherit(_) => None,
+        }
+    }
+
     pub fn dom_implementation(
         &self,
         field_name: &syn::Ident,
@@ -19,95 +40,8 @@ impl FieldDeclaration {
         only_one_inherit_field: bool,
     ) -> Cow<TokenStream> {
         match self {
-            FieldDeclaration::Maybe(FieldDeclarationMaybe {
-                question_token: _,
-                by_ref,
-                ty,
-                details,
-            }) => {
-                let html_prop_name = details
-                    .as_ref()
-                    .and_then(|d| d.content.html_prop_name.as_ref())
-                    .map_or_else(
-                        || Cow::Owned(syn::LitStr::new(&field_name.to_string(), field_name.span())),
-                        Cow::Borrowed,
-                    );
-                let html_element_method = details
-                    .as_ref()
-                    .and_then(|d| d.content.html_element_method.as_ref());
-                let update = details
-                    .as_ref()
-                    .and_then(|d| d.content.impl_update.as_ref().map(|imp| &imp.content))
-                    .map_or_else(
-                        || {
-                            let imp=
-                            if let Some(html_element_method) = html_element_method {
-                                let element_method=&html_element_method.name;
-                                let deref_star = html_element_method.deref_star_token.as_ref();
-                                quote! {
-                                    element.#element_method(#deref_star v)
-                                }
-                            } else {
-                                quote! {
-                                    #crate_path::props::UpdateElementAttribute::update_element_attribute(v, dom_element, ATTR_NAME)
-                                }
-                            };
-
-                            quote!(|v| #imp)
-                        },
-                        |update| {
-                        let maybe_update_element = &update.element_pat_ident;
-                        let maybe_update = &update.rest;
-                        let v = quote! {
-                            match element { #maybe_update_element => #maybe_update }
-                        };
-                        if let Some(html_element_method) = html_element_method {
-                            let error = syn::Error::new(html_element_method.name.span(), "html_element_method not respected because custom update is implemented")
-                                .into_compile_error();
-                            quote! {
-                                (#v, #error).0
-                            }
-                        } else {
-                            v
-                        }
-                    });
-
-                let remove = details
-                    .as_ref()
-                    .and_then(|d| d.content.impl_remove.as_ref().map(|imp| &imp.content))
-                    .map_or_else(
-                        || {
-                            quote! {
-                                || dom_element.remove_attribute(ATTR_NAME).unwrap()
-                            }
-                        },
-                        |remove| {
-                            let maybe_remove_element = &remove.element_pat_ident;
-                            let maybe_remove = &remove.rest;
-                            quote! {
-                                match element { #maybe_remove_element => #maybe_remove }
-                            }
-                        },
-                    );
-
-                let (trait_name, trait_method) = if by_ref.is_some() {
-                    (
-                        quote!(MaybeUpdateValueByRef),
-                        quote!(maybe_update_value_by_ref),
-                    )
-                } else {
-                    (quote!(MaybeUpdateValue), quote!(maybe_update_value))
-                };
-
-                Cow::Owned(quote! {{
-                    #[allow(unused)]
-                    const ATTR_NAME: &::core::primitive::str = #html_prop_name ;
-                    <TypeDefs::#field_name as ::frender_dom::props::#trait_name<#ty>>::#trait_method(
-                        #by_ref this.#field_name,
-                        #update,
-                        #remove
-                    )
-                }})
+            FieldDeclaration::Maybe(m) => {
+                Cow::Owned(m.to_ts_update_element(crate_path, field_name))
             }
             FieldDeclaration::Full(v) => Cow::Borrowed(
                 &v.definitions
@@ -185,16 +119,12 @@ impl FieldDeclaration {
                             || Cow::Owned(quote!(::core::default::Default)),
                             Cow::Borrowed,
                         );
-                    let initial_value = state
+                    let initialize_state = state
                         .implementation
                         .as_ref()
-                        .map(|imp| &imp.initial_value.content)
+                        .map(|imp| &imp.initialize_state.content)
                         .map_or_else(
-                            || {
-                                Cow::Owned(syn::Expr::Verbatim(quote!(
-                                    ::core::default::Default::default()
-                                )))
-                            },
+                            || Cow::Owned(quote!(::core::default::Default::default())),
                             Cow::Borrowed,
                         );
 
@@ -204,9 +134,9 @@ impl FieldDeclaration {
                         field_name,
                         ty,
                         bounds,
-                        initial_value,
+                        initialize_state,
                     }
-                })
+                });
             }
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
@@ -220,11 +150,13 @@ impl FieldDeclaration {
                         <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
                     })),
                     bounds: Cow::Owned(quote! {
-                        ::core::default::Default + #crate_path ::props::IntrinsicComponentPollReactive
+                        #crate_path ::props::IntrinsicComponentPollReactive
                     }),
-                    initial_value: Cow::Owned(syn::Expr::Verbatim(quote!(
-                        ::core::default::Default::default()
-                    ))),
+                    initialize_state: Cow::Owned(quote! {
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::initialize_state(
+                            this.#field_name, element, children_ctx
+                        )
+                    }),
                 })
             }
         }
@@ -237,7 +169,7 @@ pub struct DomState<'a> {
     pub field_name: &'a syn::Ident,
     pub ty: Cow<'a, syn::Type>,
     pub bounds: Cow<'a, TokenStream>,
-    pub initial_value: Cow<'a, syn::Expr>,
+    pub initialize_state: Cow<'a, TokenStream>,
 }
 
 impl FieldDeclaration {
@@ -370,6 +302,11 @@ impl IntrinsicComponentPropsData {
             }
         });
 
+        let dom_initialize = fields
+            .iter()
+            .filter_map(|f| f.declaration.dom_initialize(&crate_path, &f.name))
+            .collect::<Vec<_>>();
+
         let dom_states = fields
             .iter()
             .filter_map(|f| f.declaration.dom_state(&crate_path, &f.name))
@@ -378,6 +315,7 @@ impl IntrinsicComponentPropsData {
         let only_one_inherit_field;
         let state_init;
         let dom_state_type;
+        let dom_state_initialize;
         let mod_render_state;
 
         if let (
@@ -397,6 +335,13 @@ impl IntrinsicComponentPropsData {
 
             dom_state_type = quote! {
                 <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::props::UpdateElement<#dom_el_ty>>::State
+            };
+            dom_state_initialize = quote! {
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::props::UpdateElement<#dom_el_ty>>::initialize_state(
+                    this.#field_name,
+                    element,
+                    children_ctx,
+                )
             };
             mod_render_state = quote!(pub use super::#inherit_path::render_state;);
         } else {
@@ -422,12 +367,12 @@ impl IntrinsicComponentPropsData {
             let dom_state_types = dom_states
                 .iter()
                 .map(|DomState { field_name, ty, .. }| quote!(#field_name = #ty));
-            let field_dom_state_init = dom_states.iter().map(
+            let dom_initialize_states = dom_states.iter().map(
                 |DomState {
                      field_name,
-                     initial_value,
+                     initialize_state,
                      ..
-                 }| quote!(#field_name : #initial_value),
+                 }| quote!(#field_name : #initialize_state),
             );
 
             let impl_poll_reactive = fields
@@ -440,6 +385,12 @@ impl IntrinsicComponentPropsData {
                         #(#dom_state_types),*
                     >
                 >
+            };
+
+            dom_state_initialize = quote! {
+                super::render_state::RenderState {
+                    #(#dom_initialize_states),*
+                }
             };
 
             mod_render_state = quote! {
@@ -463,16 +414,6 @@ impl IntrinsicComponentPropsData {
                         #[inline]
                         pub(crate) fn pin_project(self: ::core::pin::Pin<&mut Self>) -> RenderStateProj<'_, TypeDefs> {
                             self.project()
-                        }
-                    }
-
-                    impl<
-                        TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > ::core::default::Default for RenderState<TypeDefs> {
-                        fn default() -> Self {
-                            Self {
-                                #(#field_dom_state_init),*
-                            }
                         }
                     }
 
@@ -637,6 +578,14 @@ impl IntrinsicComponentPropsData {
                         #(#dom_bounds),*
                     {
                         type State = #dom_state_type;
+
+                        fn initialize_state(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_dom::Dom) -> Self::State {
+                            let dom_element: &::web_sys::Element = element.as_ref();
+
+                            #(#dom_initialize)*
+
+                            #dom_state_initialize
+                        }
 
                         fn update_element(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_dom::Dom, state: ::core::pin::Pin<&mut Self::State>) {
                             #state_init
