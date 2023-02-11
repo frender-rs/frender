@@ -10,7 +10,7 @@ pub struct FieldDeclarationMaybeDetails {
     pub html_prop_name: Option<syn::LitStr>,
     pub impl_update: Option<Bracketed<FieldDeclarationMaybeDetailsImpl<kw::update>>>,
     pub impl_remove: Option<Bracketed<FieldDeclarationMaybeDetailsImpl<kw::remove>>>,
-    pub html_element_method: Option<FieldDeclarationMaybeDetailsMethod>,
+    pub html_element_method: Option<syn::Ident>,
 }
 
 #[derive(Clone)]
@@ -18,12 +18,6 @@ pub struct FieldDeclarationMaybeDetailsImpl<K> {
     pub keyword: K,
     pub element_pat_ident: syn::Ident,
     pub rest: TokenStream,
-}
-
-#[derive(Clone)]
-pub struct FieldDeclarationMaybeDetailsMethod {
-    pub name: syn::Ident,
-    pub deref_star_token: Option<syn::Token![*]>,
 }
 
 impl<K: Parse> Parse for FieldDeclarationMaybeDetailsImpl<K> {
@@ -78,10 +72,7 @@ impl Parse for FieldDeclarationMaybeDetails {
             },
             html_element_method: {
                 if let Some(name) = input.parse()? {
-                    Some(FieldDeclarationMaybeDetailsMethod {
-                        name,
-                        deref_star_token: input.parse()?,
-                    })
+                    Some(name)
                 } else {
                     None
                 }

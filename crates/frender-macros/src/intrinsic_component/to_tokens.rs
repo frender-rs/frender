@@ -19,7 +19,11 @@ impl FieldDeclaration {
     ) -> Option<Cow<TokenStream>> {
         match self {
             FieldDeclaration::Maybe(m) => {
-                Some(Cow::Owned(m.to_ts_update_element(crate_path, field_name)))
+                if m.no_cache.is_some() {
+                    Some(Cow::Owned(m.to_ts_update_element(crate_path, field_name)))
+                } else {
+                    None
+                }
             }
             FieldDeclaration::Full(f) => f
                 .definitions
@@ -100,13 +104,23 @@ impl FieldDeclaration {
         field_name: &'a syn::Ident,
     ) -> Option<DomState<'a>> {
         match self {
-            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => {
-                // pin = None;
-                // state_ty = Cow::Owned(syn::Type::Verbatim(
-                //     quote! {<TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValue<#ty>>::State},
-                // ));
-
-                return None;
+            FieldDeclaration::Maybe(m @ FieldDeclarationMaybe { no_cache, ty, .. }) => {
+                if no_cache.is_some() {
+                    return None;
+                }
+                Some(DomState {
+                    inherit: None,
+                    pin: None,
+                    field_name,
+                    ty: Cow::Owned(syn::Type::Verbatim(quote! {
+                        <TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValueWithState<#ty>>::State
+                    })),
+                    bounds: None,
+                    initialize_state: Cow::Owned(
+                        m.to_ts_dom_initialize_state(crate_path, field_name)
+                            .unwrap(),
+                    ),
+                })
             }
             FieldDeclaration::Full(v) => {
                 return v.dom_state().map(|state| {
@@ -133,7 +147,7 @@ impl FieldDeclaration {
                         pin: state.pin,
                         field_name,
                         ty,
-                        bounds,
+                        bounds: Some(bounds),
                         initialize_state,
                     }
                 });
@@ -149,9 +163,9 @@ impl FieldDeclaration {
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
                         <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
                     })),
-                    bounds: Cow::Owned(quote! {
+                    bounds: Some(Cow::Owned(quote! {
                         #crate_path ::props::IntrinsicComponentPollReactive
-                    }),
+                    })),
                     initialize_state: Cow::Owned(quote! {
                         <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::initialize_state(
                             this.#field_name, element, children_ctx
@@ -168,15 +182,22 @@ pub struct DomState<'a> {
     pub pin: Option<kw::pin>,
     pub field_name: &'a syn::Ident,
     pub ty: Cow<'a, syn::Type>,
-    pub bounds: Cow<'a, TokenStream>,
+    pub bounds: Option<Cow<'a, TokenStream>>,
     pub initialize_state: Cow<'a, TokenStream>,
 }
 
 impl FieldDeclaration {
     pub fn bounds(&self, crate_path: &impl ToTokens) -> Option<Cow<TokenStream>> {
         match self {
-            FieldDeclaration::Maybe(FieldDeclarationMaybe { ty, by_ref, .. }) => {
-                let trait_name = if by_ref.is_some() {
+            FieldDeclaration::Maybe(FieldDeclarationMaybe {
+                ty,
+                no_cache,
+                by_ref,
+                ..
+            }) => {
+                let trait_name = if no_cache.is_none() {
+                    quote!(MaybeUpdateValueWithState)
+                } else if by_ref.is_some() {
                     quote!(MaybeUpdateValueByRef)
                 } else {
                     quote!(MaybeUpdateValue)

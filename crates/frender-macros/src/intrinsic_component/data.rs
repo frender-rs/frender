@@ -163,13 +163,8 @@ impl FieldDeclarationFull {
 
 impl Parse for FieldDeclaration {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        if let Some(question_token) = input.parse()? {
-            Ok(Self::Maybe(FieldDeclarationMaybe {
-                question_token,
-                by_ref: input.parse()?,
-                ty: input.parse()?,
-                details: input.parse()?,
-            }))
+        if input.peek(syn::Token![?]) {
+            Ok(Self::Maybe(input.parse()?))
         } else {
             Ok(Self::Full(input.parse()?))
         }
