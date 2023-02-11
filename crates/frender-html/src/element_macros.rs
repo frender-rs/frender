@@ -8,7 +8,7 @@ macro_rules! __impl_def_intrinsic_component {
         $dom_element_ty:ty
     ) => {
         $vis mod $component_name {
-            #[inline]
+            #[inline(always)]
             pub fn $component_name (
             ) -> Building<TypesInitial> {
                 super::$props_name ()
@@ -45,7 +45,7 @@ macro_rules! __impl_def_intrinsic_component {
 
             pub type DataInitial = Data<TypesInitial>;
 
-            #[inline]
+            #[inline(always)]
             pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
                 building: Building<TypeDefs>,
             ) -> Data<TypeDefs> {
@@ -55,7 +55,7 @@ macro_rules! __impl_def_intrinsic_component {
 
             pub use build as build_element;
 
-            #[inline]
+            #[inline(always)]
             pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
                 building: Building<TypeDefs>,
             ) -> Data<TypeDefs> {
@@ -114,7 +114,7 @@ macro_rules! __impl_def_intrinsic_component {
 
         $(
             $vis mod $alias_component_name {
-                #[inline]
+                #[inline(always)]
                 pub fn $alias_component_name (
                 ) -> Building<TypesInitial> {
                     super::$props_name ()
@@ -132,7 +132,7 @@ macro_rules! __impl_def_intrinsic_component {
 
                 pub type DataInitial = Data<TypesInitial>;
 
-                #[inline]
+                #[inline(always)]
                 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
                     building: Building<TypeDefs>,
                 ) -> Data<TypeDefs> {
@@ -142,7 +142,7 @@ macro_rules! __impl_def_intrinsic_component {
 
                 pub use build as build_element;
 
-                #[inline]
+                #[inline(always)]
                 pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
                     building: Building<TypeDefs>,
                 ) -> Data<TypeDefs> {

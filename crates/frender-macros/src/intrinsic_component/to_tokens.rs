@@ -432,7 +432,7 @@ impl IntrinsicComponentPropsData {
                     impl<
                         TypeDefs: ?::core::marker::Sized + RenderStateTypes,
                     > RenderState<TypeDefs> {
-                        #[inline]
+                        #[inline(always)]
                         pub(crate) fn pin_project(self: ::core::pin::Pin<&mut Self>) -> RenderStateProj<'_, TypeDefs> {
                             self.project()
                         }
@@ -512,6 +512,7 @@ impl IntrinsicComponentPropsData {
             #vis mod #name {
                 #(#attrs)*
                 #[allow(non_snake_case)]
+                #[inline(always)]
                 #vis fn #name () -> Building<TypesInitial> {
                     #[allow(unused_imports)]
                     use super::*;
@@ -573,7 +574,7 @@ impl IntrinsicComponentPropsData {
                 #[cfg(feature = "dom")]
                 #mod_render_state
 
-                #[inline]
+                #[inline(always)]
                 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
                     building.0
                 }
