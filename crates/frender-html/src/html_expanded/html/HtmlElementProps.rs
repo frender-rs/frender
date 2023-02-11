@@ -968,33 +968,33 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type ElementProps: ?::core::marker::Sized + ElementProps::Types;
-        type access_key: crate::MaybeUpdateValueByRef<str>;
-        type auto_capitalize: crate::MaybeUpdateValueByRef<str>;
-        type auto_focus: crate::MaybeUpdateValue<bool>;
+        type access_key: crate::MaybeUpdateValueWithState<str>;
+        type auto_capitalize: crate::MaybeUpdateValueWithState<str>;
+        type auto_focus: crate::MaybeUpdateValueWithState<bool>;
         type content_editable: crate::props::MaybeInherit<bool>;
-        type context_menu: crate::MaybeUpdateValueByRef<str>;
-        type dir: crate::MaybeUpdateValueByRef<str>;
-        type draggable: crate::MaybeUpdateValue<bool>;
-        type enter_key_hint: crate::MaybeUpdateValueByRef<str>;
-        type hidden: crate::MaybeUpdateValue<bool>;
-        type inert: crate::MaybeUpdateValue<bool>;
-        type input_mode: crate::MaybeUpdateValueByRef<str>;
-        type is: crate::MaybeUpdateValueByRef<str>;
-        type item_id: crate::MaybeUpdateValueByRef<str>;
-        type item_prop: crate::MaybeUpdateValueByRef<str>;
-        type item_ref: crate::MaybeUpdateValueByRef<str>;
-        type item_scope: crate::MaybeUpdateValueByRef<str>;
-        type item_type: crate::MaybeUpdateValueByRef<str>;
-        type lang: crate::MaybeUpdateValueByRef<str>;
-        type nonce: crate::MaybeUpdateValueByRef<str>;
-        type role: crate::MaybeUpdateValueByRef<str>;
-        type slot: crate::MaybeUpdateValueByRef<str>;
-        type spellcheck: crate::MaybeUpdateValue<bool>;
-        type style: crate::MaybeUpdateValueByRef<str>;
-        type tab_index: crate::MaybeUpdateValue<i32>;
-        type title: crate::MaybeUpdateValueByRef<str>;
-        type translate: crate::MaybeUpdateValueByRef<str>;
-        type virtual_keyboard_policy: crate::MaybeUpdateValueByRef<str>;
+        type context_menu: crate::MaybeUpdateValueWithState<str>;
+        type dir: crate::MaybeUpdateValueWithState<str>;
+        type draggable: crate::MaybeUpdateValueWithState<bool>;
+        type enter_key_hint: crate::MaybeUpdateValueWithState<str>;
+        type hidden: crate::MaybeUpdateValueWithState<bool>;
+        type inert: crate::MaybeUpdateValueWithState<bool>;
+        type input_mode: crate::MaybeUpdateValueWithState<str>;
+        type is: crate::MaybeUpdateValueWithState<str>;
+        type item_id: crate::MaybeUpdateValueWithState<str>;
+        type item_prop: crate::MaybeUpdateValueWithState<str>;
+        type item_ref: crate::MaybeUpdateValueWithState<str>;
+        type item_scope: crate::MaybeUpdateValueWithState<str>;
+        type item_type: crate::MaybeUpdateValueWithState<str>;
+        type lang: crate::MaybeUpdateValueWithState<str>;
+        type nonce: crate::MaybeUpdateValueWithState<str>;
+        type role: crate::MaybeUpdateValueWithState<str>;
+        type slot: crate::MaybeUpdateValueWithState<str>;
+        type spellcheck: crate::MaybeUpdateValueWithState<bool>;
+        type style: crate::MaybeUpdateValueWithState<str>;
+        type tab_index: crate::MaybeUpdateValueWithState<i32>;
+        type title: crate::MaybeUpdateValueWithState<str>;
+        type translate: crate::MaybeUpdateValueWithState<str>;
+        type virtual_keyboard_policy: crate::MaybeUpdateValueWithState<str>;
         type on_click;
     }
 }
@@ -1079,6 +1079,32 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type ElementProps: crate::props::IntrinsicComponentPollReactive;
+        type access_key;
+        type auto_capitalize;
+        type auto_focus;
+        type context_menu;
+        type dir;
+        type draggable;
+        type enter_key_hint;
+        type hidden;
+        type inert;
+        type input_mode;
+        type is;
+        type item_id;
+        type item_prop;
+        type item_ref;
+        type item_scope;
+        type item_type;
+        type lang;
+        type nonce;
+        type role;
+        type slot;
+        type spellcheck;
+        type style;
+        type tab_index;
+        type title;
+        type translate;
+        type virtual_keyboard_policy;
         type on_click: std::any::Any;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
@@ -1086,6 +1112,32 @@ pub mod render_state {
         TypeDefs: ?::core::marker::Sized,
     {
         pub ElementProps: TypeDefs::ElementProps,
+        pub access_key: TypeDefs::access_key,
+        pub auto_capitalize: TypeDefs::auto_capitalize,
+        pub auto_focus: TypeDefs::auto_focus,
+        pub context_menu: TypeDefs::context_menu,
+        pub dir: TypeDefs::dir,
+        pub draggable: TypeDefs::draggable,
+        pub enter_key_hint: TypeDefs::enter_key_hint,
+        pub hidden: TypeDefs::hidden,
+        pub inert: TypeDefs::inert,
+        pub input_mode: TypeDefs::input_mode,
+        pub is: TypeDefs::is,
+        pub item_id: TypeDefs::item_id,
+        pub item_prop: TypeDefs::item_prop,
+        pub item_ref: TypeDefs::item_ref,
+        pub item_scope: TypeDefs::item_scope,
+        pub item_type: TypeDefs::item_type,
+        pub lang: TypeDefs::lang,
+        pub nonce: TypeDefs::nonce,
+        pub role: TypeDefs::role,
+        pub slot: TypeDefs::slot,
+        pub spellcheck: TypeDefs::spellcheck,
+        pub style: TypeDefs::style,
+        pub tab_index: TypeDefs::tab_index,
+        pub title: TypeDefs::title,
+        pub translate: TypeDefs::translate,
+        pub virtual_keyboard_policy: TypeDefs::virtual_keyboard_policy,
         pub on_click: TypeDefs::on_click,
     }
     #[allow(dead_code)]
@@ -1101,6 +1153,32 @@ pub mod render_state {
         TypeDefs: ?::core::marker::Sized,
     {
         pub ElementProps: ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::ElementProps)>,
+        pub access_key: &'__pin mut (TypeDefs::access_key),
+        pub auto_capitalize: &'__pin mut (TypeDefs::auto_capitalize),
+        pub auto_focus: &'__pin mut (TypeDefs::auto_focus),
+        pub context_menu: &'__pin mut (TypeDefs::context_menu),
+        pub dir: &'__pin mut (TypeDefs::dir),
+        pub draggable: &'__pin mut (TypeDefs::draggable),
+        pub enter_key_hint: &'__pin mut (TypeDefs::enter_key_hint),
+        pub hidden: &'__pin mut (TypeDefs::hidden),
+        pub inert: &'__pin mut (TypeDefs::inert),
+        pub input_mode: &'__pin mut (TypeDefs::input_mode),
+        pub is: &'__pin mut (TypeDefs::is),
+        pub item_id: &'__pin mut (TypeDefs::item_id),
+        pub item_prop: &'__pin mut (TypeDefs::item_prop),
+        pub item_ref: &'__pin mut (TypeDefs::item_ref),
+        pub item_scope: &'__pin mut (TypeDefs::item_scope),
+        pub item_type: &'__pin mut (TypeDefs::item_type),
+        pub lang: &'__pin mut (TypeDefs::lang),
+        pub nonce: &'__pin mut (TypeDefs::nonce),
+        pub role: &'__pin mut (TypeDefs::role),
+        pub slot: &'__pin mut (TypeDefs::slot),
+        pub spellcheck: &'__pin mut (TypeDefs::spellcheck),
+        pub style: &'__pin mut (TypeDefs::style),
+        pub tab_index: &'__pin mut (TypeDefs::tab_index),
+        pub title: &'__pin mut (TypeDefs::title),
+        pub translate: &'__pin mut (TypeDefs::translate),
+        pub virtual_keyboard_policy: &'__pin mut (TypeDefs::virtual_keyboard_policy),
         pub on_click: &'__pin mut (TypeDefs::on_click),
     }
     #[allow(explicit_outlives_requirements)]
@@ -1122,6 +1200,32 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             pub ElementProps: ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::ElementProps)>,
+            pub access_key: &'__pin (TypeDefs::access_key),
+            pub auto_capitalize: &'__pin (TypeDefs::auto_capitalize),
+            pub auto_focus: &'__pin (TypeDefs::auto_focus),
+            pub context_menu: &'__pin (TypeDefs::context_menu),
+            pub dir: &'__pin (TypeDefs::dir),
+            pub draggable: &'__pin (TypeDefs::draggable),
+            pub enter_key_hint: &'__pin (TypeDefs::enter_key_hint),
+            pub hidden: &'__pin (TypeDefs::hidden),
+            pub inert: &'__pin (TypeDefs::inert),
+            pub input_mode: &'__pin (TypeDefs::input_mode),
+            pub is: &'__pin (TypeDefs::is),
+            pub item_id: &'__pin (TypeDefs::item_id),
+            pub item_prop: &'__pin (TypeDefs::item_prop),
+            pub item_ref: &'__pin (TypeDefs::item_ref),
+            pub item_scope: &'__pin (TypeDefs::item_scope),
+            pub item_type: &'__pin (TypeDefs::item_type),
+            pub lang: &'__pin (TypeDefs::lang),
+            pub nonce: &'__pin (TypeDefs::nonce),
+            pub role: &'__pin (TypeDefs::role),
+            pub slot: &'__pin (TypeDefs::slot),
+            pub spellcheck: &'__pin (TypeDefs::spellcheck),
+            pub style: &'__pin (TypeDefs::style),
+            pub tab_index: &'__pin (TypeDefs::tab_index),
+            pub title: &'__pin (TypeDefs::title),
+            pub translate: &'__pin (TypeDefs::translate),
+            pub virtual_keyboard_policy: &'__pin (TypeDefs::virtual_keyboard_policy),
             pub on_click: &'__pin (TypeDefs::on_click),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
@@ -1134,12 +1238,64 @@ pub mod render_state {
                 unsafe {
                     let Self {
                         ElementProps,
+                        access_key,
+                        auto_capitalize,
+                        auto_focus,
+                        context_menu,
+                        dir,
+                        draggable,
+                        enter_key_hint,
+                        hidden,
+                        inert,
+                        input_mode,
+                        is,
+                        item_id,
+                        item_prop,
+                        item_ref,
+                        item_scope,
+                        item_type,
+                        lang,
+                        nonce,
+                        role,
+                        slot,
+                        spellcheck,
+                        style,
+                        tab_index,
+                        title,
+                        translate,
+                        virtual_keyboard_policy,
                         on_click,
                     } = self.get_unchecked_mut();
                     RenderStateProj {
                         ElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             ElementProps,
                         ),
+                        access_key: access_key,
+                        auto_capitalize: auto_capitalize,
+                        auto_focus: auto_focus,
+                        context_menu: context_menu,
+                        dir: dir,
+                        draggable: draggable,
+                        enter_key_hint: enter_key_hint,
+                        hidden: hidden,
+                        inert: inert,
+                        input_mode: input_mode,
+                        is: is,
+                        item_id: item_id,
+                        item_prop: item_prop,
+                        item_ref: item_ref,
+                        item_scope: item_scope,
+                        item_type: item_type,
+                        lang: lang,
+                        nonce: nonce,
+                        role: role,
+                        slot: slot,
+                        spellcheck: spellcheck,
+                        style: style,
+                        tab_index: tab_index,
+                        title: title,
+                        translate: translate,
+                        virtual_keyboard_policy: virtual_keyboard_policy,
                         on_click: on_click,
                     }
                 }
@@ -1150,12 +1306,64 @@ pub mod render_state {
                 unsafe {
                     let Self {
                         ElementProps,
+                        access_key,
+                        auto_capitalize,
+                        auto_focus,
+                        context_menu,
+                        dir,
+                        draggable,
+                        enter_key_hint,
+                        hidden,
+                        inert,
+                        input_mode,
+                        is,
+                        item_id,
+                        item_prop,
+                        item_ref,
+                        item_scope,
+                        item_type,
+                        lang,
+                        nonce,
+                        role,
+                        slot,
+                        spellcheck,
+                        style,
+                        tab_index,
+                        title,
+                        translate,
+                        virtual_keyboard_policy,
                         on_click,
                     } = self.get_ref();
                     ProjectionRef {
                         ElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
                             ElementProps,
                         ),
+                        access_key: access_key,
+                        auto_capitalize: auto_capitalize,
+                        auto_focus: auto_focus,
+                        context_menu: context_menu,
+                        dir: dir,
+                        draggable: draggable,
+                        enter_key_hint: enter_key_hint,
+                        hidden: hidden,
+                        inert: inert,
+                        input_mode: input_mode,
+                        is: is,
+                        item_id: item_id,
+                        item_prop: item_prop,
+                        item_ref: item_ref,
+                        item_scope: item_scope,
+                        item_type: item_type,
+                        lang: lang,
+                        nonce: nonce,
+                        role: role,
+                        slot: slot,
+                        spellcheck: spellcheck,
+                        style: style,
+                        tab_index: tab_index,
+                        title: title,
+                        translate: translate,
+                        virtual_keyboard_policy: virtual_keyboard_policy,
                         on_click: on_click,
                     }
                 }
@@ -1168,6 +1376,33 @@ pub mod render_state {
         {
             __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
             ElementProps: TypeDefs::ElementProps,
+            access_key: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::access_key>,
+            auto_capitalize: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_capitalize>,
+            auto_focus: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_focus>,
+            context_menu: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::context_menu>,
+            dir: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::dir>,
+            draggable: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::draggable>,
+            enter_key_hint: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::enter_key_hint>,
+            hidden: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::hidden>,
+            inert: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::inert>,
+            input_mode: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::input_mode>,
+            is: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::is>,
+            item_id: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::item_id>,
+            item_prop: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::item_prop>,
+            item_ref: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::item_ref>,
+            item_scope: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::item_scope>,
+            item_type: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::item_type>,
+            lang: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::lang>,
+            nonce: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::nonce>,
+            role: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::role>,
+            slot: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::slot>,
+            spellcheck: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::spellcheck>,
+            style: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::style>,
+            tab_index: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::tab_index>,
+            title: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::title>,
+            translate: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::translate>,
+            virtual_keyboard_policy:
+                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::virtual_keyboard_policy>,
             on_click: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_click>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
@@ -1190,6 +1425,32 @@ pub mod render_state {
             TypeDefs: ?::core::marker::Sized,
         {
             let _ = &this.ElementProps;
+            let _ = &this.access_key;
+            let _ = &this.auto_capitalize;
+            let _ = &this.auto_focus;
+            let _ = &this.context_menu;
+            let _ = &this.dir;
+            let _ = &this.draggable;
+            let _ = &this.enter_key_hint;
+            let _ = &this.hidden;
+            let _ = &this.inert;
+            let _ = &this.input_mode;
+            let _ = &this.is;
+            let _ = &this.item_id;
+            let _ = &this.item_prop;
+            let _ = &this.item_ref;
+            let _ = &this.item_scope;
+            let _ = &this.item_type;
+            let _ = &this.lang;
+            let _ = &this.nonce;
+            let _ = &this.role;
+            let _ = &this.slot;
+            let _ = &this.spellcheck;
+            let _ = &this.style;
+            let _ = &this.tab_index;
+            let _ = &this.title;
+            let _ = &this.translate;
+            let _ = &this.virtual_keyboard_policy;
             let _ = &this.on_click;
         }
     };
@@ -1226,7 +1487,7 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
-        #[doc = "See [`ElementProps::children`]"]
+        ///See [`ElementProps::children`]
         #[inline]
         pub fn children<V>(
             self,
@@ -1266,9 +1527,9 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
-        #[doc = "See [`ElementProps::class`]"]
+        ///See [`ElementProps::class`]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn class<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -1306,9 +1567,9 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
-        #[doc = "See [`ElementProps::id`]"]
+        ///See [`ElementProps::id`]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -1346,9 +1607,9 @@ mod builder_and_replacer {
                 on_click: self.0.on_click,
             })
         }
-        #[doc = "See [`ElementProps::part`]"]
+        ///See [`ElementProps::part`]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn part<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -1387,7 +1648,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -1424,7 +1685,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -1461,7 +1722,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
+        pub fn auto_focus<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -1536,7 +1797,7 @@ mod builder_and_replacer {
         }
         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -1573,7 +1834,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -1610,7 +1871,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
+        pub fn draggable<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -1647,7 +1908,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -1684,7 +1945,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
+        pub fn hidden<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -1721,7 +1982,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn inert<V: crate::MaybeUpdateValue<bool>>(
+        pub fn inert<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -1758,7 +2019,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -1795,7 +2056,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn is<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1832,7 +2093,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1869,7 +2130,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1906,7 +2167,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1943,7 +2204,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1980,7 +2241,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -2017,7 +2278,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -2054,7 +2315,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -2091,7 +2352,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn role<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -2128,7 +2389,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -2165,7 +2426,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
+        pub fn spellcheck<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -2202,7 +2463,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn style<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -2239,7 +2500,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
+        pub fn tab_index<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -2276,7 +2537,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn title<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -2313,7 +2574,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -2350,7 +2611,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -2435,70 +2696,364 @@ mod impl_update_element {
         ElementProps::Data<TypeDefs::ElementProps>: crate::props::UpdateElement<web_sys::Element>,
         TypeDefs::on_click: crate::props::UpdateDomEventListener<crate::props::events::Click>,
     {
-        type State = super :: render_state :: RenderState < dyn super :: render_state :: RenderStateTypes < ElementProps = < ElementProps :: Data < TypeDefs :: ElementProps , > as crate :: props :: UpdateElement < web_sys :: Element > > :: State , on_click = < TypeDefs :: on_click as crate :: props :: UpdateDomEventListener < crate :: props :: events :: Click , > > :: State , > , > ;
+        type State = super::render_state::RenderState<
+            dyn super::render_state::RenderStateTypes<
+                ElementProps = <ElementProps::Data<
+                    TypeDefs::ElementProps,
+                > as crate::props::UpdateElement<web_sys::Element>>::State,
+                access_key = <TypeDefs::access_key as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                auto_capitalize = <TypeDefs::auto_capitalize as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                auto_focus = <TypeDefs::auto_focus as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                context_menu = <TypeDefs::context_menu as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                dir = <TypeDefs::dir as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                draggable = <TypeDefs::draggable as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                enter_key_hint = <TypeDefs::enter_key_hint as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                hidden = <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                inert = <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                input_mode = <TypeDefs::input_mode as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                is = <TypeDefs::is as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                item_id = <TypeDefs::item_id as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                item_prop = <TypeDefs::item_prop as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                item_ref = <TypeDefs::item_ref as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                item_scope = <TypeDefs::item_scope as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                item_type = <TypeDefs::item_type as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                lang = <TypeDefs::lang as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                nonce = <TypeDefs::nonce as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                role = <TypeDefs::role as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                slot = <TypeDefs::slot as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                spellcheck = <TypeDefs::spellcheck as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                style = <TypeDefs::style as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                tab_index = <TypeDefs::tab_index as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::State,
+                title = <TypeDefs::title as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                translate = <TypeDefs::translate as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                virtual_keyboard_policy = <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                on_click = <TypeDefs::on_click as crate::props::UpdateDomEventListener<
+                    crate::props::events::Click,
+                >>::State,
+            >,
+        >;
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlElement,
             children_ctx: &mut ::frender_dom::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
-            < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . access_key , | v | element . set_access_key (v) , | | dom_element . remove_attribute ("accesskey") . unwrap () ,) ;
-            < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_capitalize , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autocapitalize" ,) , | | dom_element . remove_attribute ("autocapitalize") . unwrap () ,) ;
-            < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_focus , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autofocus" ,) , | | dom_element . remove_attribute ("autofocus") . unwrap () ,) ;
-            < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . context_menu , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "contextmenu" ,) , | | dom_element . remove_attribute ("contextmenu") . unwrap () ,) ;
-            < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dir , | v | element . set_dir (v) , | | dom_element . remove_attribute ("dir") . unwrap () ,) ;
-            < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . draggable , | v | element . set_draggable (v) , | | dom_element . remove_attribute ("draggable") . unwrap () ,) ;
-            < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enter_key_hint , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "enterkeyhint" ,) , | | dom_element . remove_attribute ("enterkeyhint") . unwrap () ,) ;
-            <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
-                this.hidden,
-                |v| element.set_hidden(v),
-                || dom_element.remove_attribute("hidden").unwrap(),
-            );
-            <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
-                this.inert,
-                |v| {
-                    crate::props::UpdateElementAttribute::update_element_attribute(
+            super::render_state::RenderState {
+                ElementProps: <ElementProps::Data<
+                    TypeDefs::ElementProps,
+                > as crate::props::UpdateElement<
+                    web_sys::Element,
+                >>::initialize_state(this.ElementProps, element, children_ctx),
+                access_key: <TypeDefs::access_key as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.access_key,
+                    |v| element.set_access_key(v),
+                    || dom_element.remove_attribute("accesskey").unwrap(),
+                ),
+                auto_capitalize: <TypeDefs::auto_capitalize as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.auto_capitalize,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
+                        "autocapitalize",
+                    ),
+                    || dom_element.remove_attribute("autocapitalize").unwrap(),
+                ),
+                auto_focus: <TypeDefs::auto_focus as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.auto_focus,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        *v,
+                        dom_element,
+                        "autofocus",
+                    ),
+                    || dom_element.remove_attribute("autofocus").unwrap(),
+                ),
+                context_menu: <TypeDefs::context_menu as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.context_menu,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "contextmenu",
+                    ),
+                    || dom_element.remove_attribute("contextmenu").unwrap(),
+                ),
+                dir: <TypeDefs::dir as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.dir,
+                    |v| element.set_dir(v),
+                    || dom_element.remove_attribute("dir").unwrap(),
+                ),
+                draggable: <TypeDefs::draggable as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.draggable,
+                    |v| element.set_draggable(*v),
+                    || dom_element.remove_attribute("draggable").unwrap(),
+                ),
+                enter_key_hint: <TypeDefs::enter_key_hint as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.enter_key_hint,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "enterkeyhint",
+                    ),
+                    || dom_element.remove_attribute("enterkeyhint").unwrap(),
+                ),
+                hidden: <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.hidden,
+                    |v| element.set_hidden(*v),
+                    || dom_element.remove_attribute("hidden").unwrap(),
+                ),
+                inert: <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.inert,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        *v,
+                        dom_element,
                         "inert",
-                    )
-                },
-                || dom_element.remove_attribute("inert").unwrap(),
-            );
-            < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . input_mode , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "inputmode" ,) , | | dom_element . remove_attribute ("inputmode") . unwrap () ,) ;
-            < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . is , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "is" ,) , | | dom_element . remove_attribute ("is") . unwrap () ,) ;
-            < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_id , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemid" ,) , | | dom_element . remove_attribute ("itemid") . unwrap () ,) ;
-            < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_prop , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemprop" ,) , | | dom_element . remove_attribute ("itemprop") . unwrap () ,) ;
-            < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_ref , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemref" ,) , | | dom_element . remove_attribute ("itemref") . unwrap () ,) ;
-            < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemscope" ,) , | | dom_element . remove_attribute ("itemscope") . unwrap () ,) ;
-            < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_type , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemtype" ,) , | | dom_element . remove_attribute ("itemtype") . unwrap () ,) ;
-            < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . lang , | v | element . set_lang (v) , | | dom_element . remove_attribute ("lang") . unwrap () ,) ;
-            < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . nonce , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "nonce" ,) , | | dom_element . remove_attribute ("nonce") . unwrap () ,) ;
-            < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . role , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "role" ,) , | | dom_element . remove_attribute ("role") . unwrap () ,) ;
-            < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . slot , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "slot" ,) , | | dom_element . remove_attribute ("slot") . unwrap () ,) ;
-            < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . spellcheck , | v | element . set_spellcheck (v) , | | dom_element . remove_attribute ("spellcheck") . unwrap () ,) ;
-            < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . style , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "style" ,) , | | dom_element . remove_attribute ("style") . unwrap () ,) ;
-            < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . tab_index , | v | element . set_tab_index (v) , | | dom_element . remove_attribute ("tabindex") . unwrap () ,) ;
-            < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . title , | v | element . set_title (v) , | | dom_element . remove_attribute ("title") . unwrap () ,) ;
-            < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . translate , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "translate" ,) , | | dom_element . remove_attribute ("translate") . unwrap () ,) ;
-            <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueByRef<
-                str,
-            >>::maybe_update_value_by_ref(
-                &this.virtual_keyboard_policy,
-                |v| {
-                    crate::props::UpdateElementAttribute::update_element_attribute(
+                    ),
+                    || dom_element.remove_attribute("inert").unwrap(),
+                ),
+                input_mode: <TypeDefs::input_mode as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.input_mode,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "inputmode",
+                    ),
+                    || dom_element.remove_attribute("inputmode").unwrap(),
+                ),
+                is: <TypeDefs::is as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.is,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "is",
+                    ),
+                    || dom_element.remove_attribute("is").unwrap(),
+                ),
+                item_id: <TypeDefs::item_id as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.item_id,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "itemid",
+                    ),
+                    || dom_element.remove_attribute("itemid").unwrap(),
+                ),
+                item_prop: <TypeDefs::item_prop as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.item_prop,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "itemprop",
+                    ),
+                    || dom_element.remove_attribute("itemprop").unwrap(),
+                ),
+                item_ref: <TypeDefs::item_ref as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.item_ref,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "itemref",
+                    ),
+                    || dom_element.remove_attribute("itemref").unwrap(),
+                ),
+                item_scope: <TypeDefs::item_scope as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.item_scope,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "itemscope",
+                    ),
+                    || dom_element.remove_attribute("itemscope").unwrap(),
+                ),
+                item_type: <TypeDefs::item_type as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.item_type,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "itemtype",
+                    ),
+                    || dom_element.remove_attribute("itemtype").unwrap(),
+                ),
+                lang: <TypeDefs::lang as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.lang,
+                    |v| element.set_lang(v),
+                    || dom_element.remove_attribute("lang").unwrap(),
+                ),
+                nonce: <TypeDefs::nonce as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.nonce,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "nonce",
+                    ),
+                    || dom_element.remove_attribute("nonce").unwrap(),
+                ),
+                role: <TypeDefs::role as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.role,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "role",
+                    ),
+                    || dom_element.remove_attribute("role").unwrap(),
+                ),
+                slot: <TypeDefs::slot as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.slot,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "slot",
+                    ),
+                    || dom_element.remove_attribute("slot").unwrap(),
+                ),
+                spellcheck: <TypeDefs::spellcheck as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.spellcheck,
+                    |v| element.set_spellcheck(*v),
+                    || dom_element.remove_attribute("spellcheck").unwrap(),
+                ),
+                style: <TypeDefs::style as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.style,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "style",
+                    ),
+                    || dom_element.remove_attribute("style").unwrap(),
+                ),
+                tab_index: <TypeDefs::tab_index as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::initialize_state_and_update(
+                    this.tab_index,
+                    |v| element.set_tab_index(*v),
+                    || dom_element.remove_attribute("tabindex").unwrap(),
+                ),
+                title: <TypeDefs::title as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.title,
+                    |v| element.set_title(v),
+                    || dom_element.remove_attribute("title").unwrap(),
+                ),
+                translate: <TypeDefs::translate as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.translate,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "translate",
+                    ),
+                    || dom_element.remove_attribute("translate").unwrap(),
+                ),
+                virtual_keyboard_policy: <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.virtual_keyboard_policy,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "virtualkeyboardpolicy",
-                    )
-                },
-                || {
-                    dom_element
-                        .remove_attribute("virtualkeyboardpolicy")
-                        .unwrap()
-                },
-            );
-            super :: render_state :: RenderState { ElementProps : < ElementProps :: Data < TypeDefs :: ElementProps , > as crate :: props :: UpdateElement < web_sys :: Element , > > :: initialize_state (this . ElementProps , element , children_ctx) , on_click : crate :: props :: UpdateDomEventListener :: < crate :: props :: events :: Click , > :: initialize_dom_event_listener_state (this . on_click , element) , }
+                    ),
+                    || { dom_element.remove_attribute("virtualkeyboardpolicy").unwrap() },
+                ),
+                on_click: crate::props::UpdateDomEventListener::<
+                    crate::props::events::Click,
+                >::initialize_dom_event_listener_state(this.on_click, element),
+            }
         }
         fn update_element(
             this: Self,
@@ -2514,63 +3069,289 @@ mod impl_update_element {
                 children_ctx,
                 state.ElementProps,
             );
-            < TypeDefs :: access_key as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . access_key , | v | element . set_access_key (v) , | | dom_element . remove_attribute ("accesskey") . unwrap () ,) ;
-            < TypeDefs :: auto_capitalize as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_capitalize , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autocapitalize" ,) , | | dom_element . remove_attribute ("autocapitalize") . unwrap () ,) ;
-            < TypeDefs :: auto_focus as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . auto_focus , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "autofocus" ,) , | | dom_element . remove_attribute ("autofocus") . unwrap () ,) ;
-            < TypeDefs :: context_menu as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . context_menu , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "contextmenu" ,) , | | dom_element . remove_attribute ("contextmenu") . unwrap () ,) ;
-            < TypeDefs :: dir as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . dir , | v | element . set_dir (v) , | | dom_element . remove_attribute ("dir") . unwrap () ,) ;
-            < TypeDefs :: draggable as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . draggable , | v | element . set_draggable (v) , | | dom_element . remove_attribute ("draggable") . unwrap () ,) ;
-            < TypeDefs :: enter_key_hint as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . enter_key_hint , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "enterkeyhint" ,) , | | dom_element . remove_attribute ("enterkeyhint") . unwrap () ,) ;
-            <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+            <TypeDefs::access_key as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.access_key,
+                state.access_key,
+                |v| element.set_access_key(v),
+                || dom_element.remove_attribute("accesskey").unwrap(),
+            );
+            <TypeDefs::auto_capitalize as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.auto_capitalize,
+                state.auto_capitalize,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "autocapitalize",
+                ),
+                || dom_element.remove_attribute("autocapitalize").unwrap(),
+            );
+            <TypeDefs::auto_focus as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.auto_focus,
+                state.auto_focus,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    *v,
+                    dom_element,
+                    "autofocus",
+                ),
+                || dom_element.remove_attribute("autofocus").unwrap(),
+            );
+            <TypeDefs::context_menu as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.context_menu,
+                state.context_menu,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "contextmenu",
+                ),
+                || dom_element.remove_attribute("contextmenu").unwrap(),
+            );
+            <TypeDefs::dir as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.dir,
+                state.dir,
+                |v| element.set_dir(v),
+                || dom_element.remove_attribute("dir").unwrap(),
+            );
+            <TypeDefs::draggable as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.draggable,
+                state.draggable,
+                |v| element.set_draggable(*v),
+                || dom_element.remove_attribute("draggable").unwrap(),
+            );
+            <TypeDefs::enter_key_hint as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.enter_key_hint,
+                state.enter_key_hint,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "enterkeyhint",
+                ),
+                || dom_element.remove_attribute("enterkeyhint").unwrap(),
+            );
+            <TypeDefs::hidden as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
                 this.hidden,
-                |v| element.set_hidden(v),
+                state.hidden,
+                |v| element.set_hidden(*v),
                 || dom_element.remove_attribute("hidden").unwrap(),
             );
-            <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+            <TypeDefs::inert as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
                 this.inert,
-                |v| {
-                    crate::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "inert",
-                    )
-                },
+                state.inert,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    *v,
+                    dom_element,
+                    "inert",
+                ),
                 || dom_element.remove_attribute("inert").unwrap(),
             );
-            < TypeDefs :: input_mode as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . input_mode , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "inputmode" ,) , | | dom_element . remove_attribute ("inputmode") . unwrap () ,) ;
-            < TypeDefs :: is as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . is , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "is" ,) , | | dom_element . remove_attribute ("is") . unwrap () ,) ;
-            < TypeDefs :: item_id as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_id , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemid" ,) , | | dom_element . remove_attribute ("itemid") . unwrap () ,) ;
-            < TypeDefs :: item_prop as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_prop , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemprop" ,) , | | dom_element . remove_attribute ("itemprop") . unwrap () ,) ;
-            < TypeDefs :: item_ref as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_ref , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemref" ,) , | | dom_element . remove_attribute ("itemref") . unwrap () ,) ;
-            < TypeDefs :: item_scope as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_scope , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemscope" ,) , | | dom_element . remove_attribute ("itemscope") . unwrap () ,) ;
-            < TypeDefs :: item_type as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . item_type , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "itemtype" ,) , | | dom_element . remove_attribute ("itemtype") . unwrap () ,) ;
-            < TypeDefs :: lang as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . lang , | v | element . set_lang (v) , | | dom_element . remove_attribute ("lang") . unwrap () ,) ;
-            < TypeDefs :: nonce as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . nonce , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "nonce" ,) , | | dom_element . remove_attribute ("nonce") . unwrap () ,) ;
-            < TypeDefs :: role as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . role , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "role" ,) , | | dom_element . remove_attribute ("role") . unwrap () ,) ;
-            < TypeDefs :: slot as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . slot , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "slot" ,) , | | dom_element . remove_attribute ("slot") . unwrap () ,) ;
-            < TypeDefs :: spellcheck as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . spellcheck , | v | element . set_spellcheck (v) , | | dom_element . remove_attribute ("spellcheck") . unwrap () ,) ;
-            < TypeDefs :: style as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . style , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "style" ,) , | | dom_element . remove_attribute ("style") . unwrap () ,) ;
-            < TypeDefs :: tab_index as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . tab_index , | v | element . set_tab_index (v) , | | dom_element . remove_attribute ("tabindex") . unwrap () ,) ;
-            < TypeDefs :: title as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . title , | v | element . set_title (v) , | | dom_element . remove_attribute ("title") . unwrap () ,) ;
-            < TypeDefs :: translate as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . translate , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "translate" ,) , | | dom_element . remove_attribute ("translate") . unwrap () ,) ;
-            <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueByRef<
+            <TypeDefs::input_mode as ::frender_dom::props::MaybeUpdateValueWithState<
                 str,
-            >>::maybe_update_value_by_ref(
-                &this.virtual_keyboard_policy,
-                |v| {
-                    crate::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "virtualkeyboardpolicy",
-                    )
-                },
-                || {
-                    dom_element
-                        .remove_attribute("virtualkeyboardpolicy")
-                        .unwrap()
-                },
+            >>::maybe_update_value_with_state(
+                this.input_mode,
+                state.input_mode,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "inputmode",
+                ),
+                || dom_element.remove_attribute("inputmode").unwrap(),
             );
-            crate :: props :: UpdateDomEventListener :: < crate :: props :: events :: Click , > :: update_dom_event_listener (this . on_click , element , state . on_click) ;
+            <TypeDefs::is as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.is,
+                state.is,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "is",
+                ),
+                || dom_element.remove_attribute("is").unwrap(),
+            );
+            <TypeDefs::item_id as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.item_id,
+                state.item_id,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "itemid",
+                ),
+                || dom_element.remove_attribute("itemid").unwrap(),
+            );
+            <TypeDefs::item_prop as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.item_prop,
+                state.item_prop,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "itemprop",
+                ),
+                || dom_element.remove_attribute("itemprop").unwrap(),
+            );
+            <TypeDefs::item_ref as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.item_ref,
+                state.item_ref,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "itemref",
+                ),
+                || dom_element.remove_attribute("itemref").unwrap(),
+            );
+            <TypeDefs::item_scope as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.item_scope,
+                state.item_scope,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "itemscope",
+                ),
+                || dom_element.remove_attribute("itemscope").unwrap(),
+            );
+            <TypeDefs::item_type as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.item_type,
+                state.item_type,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "itemtype",
+                ),
+                || dom_element.remove_attribute("itemtype").unwrap(),
+            );
+            <TypeDefs::lang as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.lang,
+                state.lang,
+                |v| element.set_lang(v),
+                || dom_element.remove_attribute("lang").unwrap(),
+            );
+            <TypeDefs::nonce as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.nonce,
+                state.nonce,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "nonce",
+                ),
+                || dom_element.remove_attribute("nonce").unwrap(),
+            );
+            <TypeDefs::role as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.role,
+                state.role,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "role",
+                ),
+                || dom_element.remove_attribute("role").unwrap(),
+            );
+            <TypeDefs::slot as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.slot,
+                state.slot,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "slot",
+                ),
+                || dom_element.remove_attribute("slot").unwrap(),
+            );
+            <TypeDefs::spellcheck as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.spellcheck,
+                state.spellcheck,
+                |v| element.set_spellcheck(*v),
+                || dom_element.remove_attribute("spellcheck").unwrap(),
+            );
+            <TypeDefs::style as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.style,
+                state.style,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "style",
+                ),
+                || dom_element.remove_attribute("style").unwrap(),
+            );
+            <TypeDefs::tab_index as ::frender_dom::props::MaybeUpdateValueWithState<
+                i32,
+            >>::maybe_update_value_with_state(
+                this.tab_index,
+                state.tab_index,
+                |v| element.set_tab_index(*v),
+                || dom_element.remove_attribute("tabindex").unwrap(),
+            );
+            <TypeDefs::title as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.title,
+                state.title,
+                |v| element.set_title(v),
+                || dom_element.remove_attribute("title").unwrap(),
+            );
+            <TypeDefs::translate as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.translate,
+                state.translate,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "translate",
+                ),
+                || dom_element.remove_attribute("translate").unwrap(),
+            );
+            <TypeDefs::virtual_keyboard_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.virtual_keyboard_policy,
+                state.virtual_keyboard_policy,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "virtualkeyboardpolicy",
+                ),
+                || dom_element.remove_attribute("virtualkeyboardpolicy").unwrap(),
+            );
+            crate::props::UpdateDomEventListener::<
+                crate::props::events::Click,
+            >::update_dom_event_listener(this.on_click, element, state.on_click);
         }
     }
 }

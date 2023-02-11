@@ -400,16 +400,16 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type r#async: crate::MaybeUpdateValue<bool>;
-        type cross_origin: crate::MaybeUpdateValueByRef<str>;
-        type defer: crate::MaybeUpdateValue<bool>;
-        type fetch_priority: crate::MaybeUpdateValueByRef<str>;
-        type integrity: crate::MaybeUpdateValueByRef<str>;
-        type no_module: crate::MaybeUpdateValue<bool>;
-        type referrer_policy: crate::MaybeUpdateValueByRef<str>;
-        type src: crate::MaybeUpdateValueByRef<str>;
-        type type_: crate::MaybeUpdateValueByRef<str>;
-        type blocking: crate::MaybeUpdateValueByRef<str>;
+        type r#async: crate::MaybeUpdateValueWithState<bool>;
+        type cross_origin: crate::MaybeUpdateValueWithState<str>;
+        type defer: crate::MaybeUpdateValueWithState<bool>;
+        type fetch_priority: crate::MaybeUpdateValueWithState<str>;
+        type integrity: crate::MaybeUpdateValueWithState<str>;
+        type no_module: crate::MaybeUpdateValueWithState<bool>;
+        type referrer_policy: crate::MaybeUpdateValueWithState<str>;
+        type src: crate::MaybeUpdateValueWithState<str>;
+        type type_: crate::MaybeUpdateValueWithState<str>;
+        type blocking: crate::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -453,7 +453,239 @@ mod types_initial {
 pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
 #[cfg(feature = "dom")]
-pub use super::HtmlElementProps::render_state;
+pub mod render_state {
+    #[allow(non_camel_case_types)]
+    pub trait RenderStateTypes {
+        type HtmlElementProps: crate::props::IntrinsicComponentPollReactive;
+        type r#async;
+        type cross_origin;
+        type defer;
+        type fetch_priority;
+        type integrity;
+        type no_module;
+        type referrer_policy;
+        type src;
+        type type_;
+        type blocking;
+    }
+    pub struct RenderState<TypeDefs: RenderStateTypes>
+    where
+        TypeDefs: ?::core::marker::Sized,
+    {
+        pub HtmlElementProps: TypeDefs::HtmlElementProps,
+        pub r#async: TypeDefs::r#async,
+        pub cross_origin: TypeDefs::cross_origin,
+        pub defer: TypeDefs::defer,
+        pub fetch_priority: TypeDefs::fetch_priority,
+        pub integrity: TypeDefs::integrity,
+        pub no_module: TypeDefs::no_module,
+        pub referrer_policy: TypeDefs::referrer_policy,
+        pub src: TypeDefs::src,
+        pub type_: TypeDefs::type_,
+        pub blocking: TypeDefs::blocking,
+    }
+    #[allow(dead_code)]
+    #[allow(single_use_lifetimes)]
+    #[allow(clippy::unknown_clippy_lints)]
+    #[allow(clippy::mut_mut)]
+    #[allow(clippy::redundant_pub_crate)]
+    #[allow(clippy::ref_option_ref)]
+    #[allow(clippy::type_repetition_in_bounds)]
+    pub(crate) struct RenderStateProj<'__pin, TypeDefs: RenderStateTypes>
+    where
+        RenderState<TypeDefs>: '__pin,
+        TypeDefs: ?::core::marker::Sized,
+    {
+        pub HtmlElementProps:
+            ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
+        pub r#async: &'__pin mut (TypeDefs::r#async),
+        pub cross_origin: &'__pin mut (TypeDefs::cross_origin),
+        pub defer: &'__pin mut (TypeDefs::defer),
+        pub fetch_priority: &'__pin mut (TypeDefs::fetch_priority),
+        pub integrity: &'__pin mut (TypeDefs::integrity),
+        pub no_module: &'__pin mut (TypeDefs::no_module),
+        pub referrer_policy: &'__pin mut (TypeDefs::referrer_policy),
+        pub src: &'__pin mut (TypeDefs::src),
+        pub type_: &'__pin mut (TypeDefs::type_),
+        pub blocking: &'__pin mut (TypeDefs::blocking),
+    }
+    #[allow(explicit_outlives_requirements)]
+    #[allow(single_use_lifetimes)]
+    #[allow(clippy::unknown_clippy_lints)]
+    #[allow(clippy::redundant_pub_crate)]
+    #[allow(clippy::used_underscore_binding)]
+    const _: () = {
+        #[allow(dead_code)]
+        #[allow(single_use_lifetimes)]
+        #[allow(clippy::unknown_clippy_lints)]
+        #[allow(clippy::mut_mut)]
+        #[allow(clippy::redundant_pub_crate)]
+        #[allow(clippy::ref_option_ref)]
+        #[allow(clippy::type_repetition_in_bounds)]
+        pub(crate) struct ProjectionRef<'__pin, TypeDefs: RenderStateTypes>
+        where
+            RenderState<TypeDefs>: '__pin,
+            TypeDefs: ?::core::marker::Sized,
+        {
+            pub HtmlElementProps:
+                ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
+            pub r#async: &'__pin (TypeDefs::r#async),
+            pub cross_origin: &'__pin (TypeDefs::cross_origin),
+            pub defer: &'__pin (TypeDefs::defer),
+            pub fetch_priority: &'__pin (TypeDefs::fetch_priority),
+            pub integrity: &'__pin (TypeDefs::integrity),
+            pub no_module: &'__pin (TypeDefs::no_module),
+            pub referrer_policy: &'__pin (TypeDefs::referrer_policy),
+            pub src: &'__pin (TypeDefs::src),
+            pub type_: &'__pin (TypeDefs::type_),
+            pub blocking: &'__pin (TypeDefs::blocking),
+        }
+        impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            pub(crate) fn project<'__pin>(
+                self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
+            ) -> RenderStateProj<'__pin, TypeDefs> {
+                unsafe {
+                    let Self {
+                        HtmlElementProps,
+                        r#async,
+                        cross_origin,
+                        defer,
+                        fetch_priority,
+                        integrity,
+                        no_module,
+                        referrer_policy,
+                        src,
+                        type_,
+                        blocking,
+                    } = self.get_unchecked_mut();
+                    RenderStateProj {
+                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            HtmlElementProps,
+                        ),
+                        r#async: r#async,
+                        cross_origin: cross_origin,
+                        defer: defer,
+                        fetch_priority: fetch_priority,
+                        integrity: integrity,
+                        no_module: no_module,
+                        referrer_policy: referrer_policy,
+                        src: src,
+                        type_: type_,
+                        blocking: blocking,
+                    }
+                }
+            }
+            pub(crate) fn project_ref<'__pin>(
+                self: ::pin_project_lite::__private::Pin<&'__pin Self>,
+            ) -> ProjectionRef<'__pin, TypeDefs> {
+                unsafe {
+                    let Self {
+                        HtmlElementProps,
+                        r#async,
+                        cross_origin,
+                        defer,
+                        fetch_priority,
+                        integrity,
+                        no_module,
+                        referrer_policy,
+                        src,
+                        type_,
+                        blocking,
+                    } = self.get_ref();
+                    ProjectionRef {
+                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            HtmlElementProps,
+                        ),
+                        r#async: r#async,
+                        cross_origin: cross_origin,
+                        defer: defer,
+                        fetch_priority: fetch_priority,
+                        integrity: integrity,
+                        no_module: no_module,
+                        referrer_policy: referrer_policy,
+                        src: src,
+                        type_: type_,
+                        blocking: blocking,
+                    }
+                }
+            }
+        }
+        #[allow(non_snake_case)]
+        pub struct __Origin<'__pin, TypeDefs: RenderStateTypes>
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
+            HtmlElementProps: TypeDefs::HtmlElementProps,
+            r#async: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::r#async>,
+            cross_origin: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::cross_origin>,
+            defer: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::defer>,
+            fetch_priority: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::fetch_priority>,
+            integrity: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::integrity>,
+            no_module: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::no_module>,
+            referrer_policy: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::referrer_policy>,
+            src: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::src>,
+            type_: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::type_>,
+            blocking: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::blocking>,
+        }
+        impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
+            for RenderState<TypeDefs>
+        where
+            __Origin<'__pin, TypeDefs>: ::pin_project_lite::__private::Unpin,
+            TypeDefs: ?::core::marker::Sized,
+        {
+        }
+        trait MustNotImplDrop {}
+        #[allow(clippy::drop_bounds, drop_bounds)]
+        impl<T: ::pin_project_lite::__private::Drop> MustNotImplDrop for T {}
+        impl<TypeDefs: RenderStateTypes> MustNotImplDrop for RenderState<TypeDefs> where
+            TypeDefs: ?::core::marker::Sized
+        {
+        }
+        #[forbid(unaligned_references, safe_packed_borrows)]
+        fn __assert_not_repr_packed<TypeDefs: RenderStateTypes>(this: &RenderState<TypeDefs>)
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            let _ = &this.HtmlElementProps;
+            let _ = &this.r#async;
+            let _ = &this.cross_origin;
+            let _ = &this.defer;
+            let _ = &this.fetch_priority;
+            let _ = &this.integrity;
+            let _ = &this.no_module;
+            let _ = &this.referrer_policy;
+            let _ = &this.src;
+            let _ = &this.type_;
+            let _ = &this.blocking;
+        }
+    };
+    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
+        #[inline]
+        pub(crate) fn pin_project(
+            self: ::core::pin::Pin<&mut Self>,
+        ) -> RenderStateProj<'_, TypeDefs> {
+            self.project()
+        }
+    }
+    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
+        crate::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+    {
+        #[inline]
+        fn intrinsic_component_poll_reactive(
+            self: ::core::pin::Pin<&mut Self>,
+            cx: &mut ::core::task::Context<'_>,
+        ) -> ::core::task::Poll<bool> {
+            crate::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+                self.project().HtmlElementProps,
+                cx,
+            )
+        }
+    }
+}
 #[inline]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
@@ -464,7 +696,7 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
-        #[doc = "See [`HtmlElementProps::children`]"]
+        ///See [`HtmlElementProps::children`]
         #[inline]
         pub fn children<V>(
             self,
@@ -486,9 +718,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::class`]"]
+        ///See [`HtmlElementProps::class`]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn class<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -508,9 +740,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::id`]"]
+        ///See [`HtmlElementProps::id`]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -530,9 +762,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::part`]"]
+        ///See [`HtmlElementProps::part`]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn part<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -552,9 +784,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::access_key`]"]
+        ///See [`HtmlElementProps::access_key`]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -574,9 +806,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
+        ///See [`HtmlElementProps::auto_capitalize`]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -597,9 +829,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::auto_focus`]"]
+        ///See [`HtmlElementProps::auto_focus`]
         #[inline]
-        pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
+        pub fn auto_focus<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -619,7 +851,7 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::content_editable`]"]
+        ///See [`HtmlElementProps::content_editable`]
         #[inline]
         pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
@@ -642,9 +874,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::context_menu`]"]
+        ///See [`HtmlElementProps::context_menu`]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -664,9 +896,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::dir`]"]
+        ///See [`HtmlElementProps::dir`]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -686,9 +918,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::draggable`]"]
+        ///See [`HtmlElementProps::draggable`]
         #[inline]
-        pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
+        pub fn draggable<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -708,9 +940,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
+        ///See [`HtmlElementProps::enter_key_hint`]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -731,9 +963,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::hidden`]"]
+        ///See [`HtmlElementProps::hidden`]
         #[inline]
-        pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
+        pub fn hidden<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -753,9 +985,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::inert`]"]
+        ///See [`HtmlElementProps::inert`]
         #[inline]
-        pub fn inert<V: crate::MaybeUpdateValue<bool>>(
+        pub fn inert<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -775,9 +1007,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::input_mode`]"]
+        ///See [`HtmlElementProps::input_mode`]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -797,9 +1029,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::is`]"]
+        ///See [`HtmlElementProps::is`]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn is<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -819,9 +1051,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_id`]"]
+        ///See [`HtmlElementProps::item_id`]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -841,9 +1073,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_prop`]"]
+        ///See [`HtmlElementProps::item_prop`]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -863,9 +1095,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_ref`]"]
+        ///See [`HtmlElementProps::item_ref`]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -885,9 +1117,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_scope`]"]
+        ///See [`HtmlElementProps::item_scope`]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -907,9 +1139,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_type`]"]
+        ///See [`HtmlElementProps::item_type`]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -929,9 +1161,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::lang`]"]
+        ///See [`HtmlElementProps::lang`]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -951,9 +1183,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::nonce`]"]
+        ///See [`HtmlElementProps::nonce`]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -973,9 +1205,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::role`]"]
+        ///See [`HtmlElementProps::role`]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn role<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -995,9 +1227,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::slot`]"]
+        ///See [`HtmlElementProps::slot`]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1017,9 +1249,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::spellcheck`]"]
+        ///See [`HtmlElementProps::spellcheck`]
         #[inline]
-        pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
+        pub fn spellcheck<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -1039,9 +1271,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::style`]"]
+        ///See [`HtmlElementProps::style`]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn style<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1061,9 +1293,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::tab_index`]"]
+        ///See [`HtmlElementProps::tab_index`]
         #[inline]
-        pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
+        pub fn tab_index<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -1083,9 +1315,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::title`]"]
+        ///See [`HtmlElementProps::title`]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn title<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1105,9 +1337,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::translate`]"]
+        ///See [`HtmlElementProps::translate`]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1127,9 +1359,9 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
+        ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1150,7 +1382,7 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[doc = "See [`HtmlElementProps::on_click`]"]
+        ///See [`HtmlElementProps::on_click`]
         #[inline]
         pub fn on_click<V>(
             self,
@@ -1173,7 +1405,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn r#async<V: crate::MaybeUpdateValue<bool>>(
+        pub fn r#async<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             r#async: V,
         ) -> super::Building<super::overwrite::r#async<TypeDefs, V>> {
@@ -1192,7 +1424,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn cross_origin<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn cross_origin<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             cross_origin: V,
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
@@ -1211,7 +1443,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn defer<V: crate::MaybeUpdateValue<bool>>(
+        pub fn defer<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             defer: V,
         ) -> super::Building<super::overwrite::defer<TypeDefs, V>> {
@@ -1230,7 +1462,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn fetch_priority<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn fetch_priority<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             fetch_priority: V,
         ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>> {
@@ -1249,7 +1481,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn integrity<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn integrity<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             integrity: V,
         ) -> super::Building<super::overwrite::integrity<TypeDefs, V>> {
@@ -1268,7 +1500,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn no_module<V: crate::MaybeUpdateValue<bool>>(
+        pub fn no_module<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             no_module: V,
         ) -> super::Building<super::overwrite::no_module<TypeDefs, V>> {
@@ -1287,7 +1519,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn referrer_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn referrer_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
@@ -1306,7 +1538,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn src<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn src<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -1325,7 +1557,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn type_<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn type_<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             type_: V,
         ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
@@ -1344,7 +1576,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn blocking<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn blocking<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             blocking: V,
         ) -> super::Building<super::overwrite::blocking<TypeDefs, V>> {
@@ -1374,37 +1606,142 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State =
-            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
-                web_sys::HtmlElement,
-            >>::State;
+        type State = super::render_state::RenderState<
+            dyn super::render_state::RenderStateTypes<
+                HtmlElementProps = <HtmlElementProps::Data<
+                    TypeDefs::HtmlElementProps,
+                > as crate::props::UpdateElement<web_sys::HtmlElement>>::State,
+                r#async = <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                cross_origin = <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                defer = <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                fetch_priority = <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                integrity = <TypeDefs::integrity as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                no_module = <TypeDefs::no_module as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                referrer_policy = <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                src = <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                type_ = <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                blocking = <TypeDefs::blocking as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+            >,
+        >;
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlScriptElement,
             children_ctx: &mut ::frender_dom::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
-            <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
-                this.r#async,
-                |v| element.set_async(v),
-                || dom_element.remove_attribute("r#async").unwrap(),
-            );
-            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
-            <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
-                this.defer,
-                |v| element.set_defer(v),
-                || dom_element.remove_attribute("defer").unwrap(),
-            );
-            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
-            < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute ("integrity") . unwrap () ,) ;
-            < TypeDefs :: no_module as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_module , | v | element . set_no_module (v) , | | dom_element . remove_attribute ("nomodule") . unwrap () ,) ;
-            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "referrerpolicy" ,) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
-            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
-            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
-            < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "blocking" ,) , | | dom_element . remove_attribute ("blocking") . unwrap () ,) ;
-            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
-                web_sys::HtmlElement,
-            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+            super::render_state::RenderState {
+                HtmlElementProps: <HtmlElementProps::Data<
+                    TypeDefs::HtmlElementProps,
+                > as crate::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::initialize_state(this.HtmlElementProps, element, children_ctx),
+                r#async: <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.r#async,
+                    |v| element.set_async(*v),
+                    || dom_element.remove_attribute("r#async").unwrap(),
+                ),
+                cross_origin: <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.cross_origin,
+                    match element {
+                        el => |v: &_| el.set_cross_origin(Some(v)),
+                    },
+                    match element {
+                        el => || el.set_cross_origin(None),
+                    },
+                ),
+                defer: <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.defer,
+                    |v| element.set_defer(*v),
+                    || dom_element.remove_attribute("defer").unwrap(),
+                ),
+                fetch_priority: <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.fetch_priority,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "fetchpriority",
+                    ),
+                    || dom_element.remove_attribute("fetchpriority").unwrap(),
+                ),
+                integrity: <TypeDefs::integrity as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.integrity,
+                    |v| element.set_integrity(v),
+                    || dom_element.remove_attribute("integrity").unwrap(),
+                ),
+                no_module: <TypeDefs::no_module as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.no_module,
+                    |v| element.set_no_module(*v),
+                    || dom_element.remove_attribute("nomodule").unwrap(),
+                ),
+                referrer_policy: <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.referrer_policy,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "referrerpolicy",
+                    ),
+                    || dom_element.remove_attribute("referrerpolicy").unwrap(),
+                ),
+                src: <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.src,
+                    |v| element.set_src(v),
+                    || dom_element.remove_attribute("src").unwrap(),
+                ),
+                type_: <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.type_,
+                    |v| element.set_type(v),
+                    || dom_element.remove_attribute("type_").unwrap(),
+                ),
+                blocking: <TypeDefs::blocking as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.blocking,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "blocking",
+                    ),
+                    || dom_element.remove_attribute("blocking").unwrap(),
+                ),
+            }
         }
         fn update_element(
             this: Self,
@@ -1412,31 +1749,110 @@ mod impl_update_element {
             children_ctx: &mut ::frender_dom::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
+            let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
             crate::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
-                state,
+                state.HtmlElementProps,
             );
-            <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+            <TypeDefs::r#async as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
                 this.r#async,
-                |v| element.set_async(v),
+                state.r#async,
+                |v| element.set_async(*v),
                 || dom_element.remove_attribute("r#async").unwrap(),
             );
-            < TypeDefs :: cross_origin as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . cross_origin , match element { el => | v : & _ | el . set_cross_origin (Some (v)) , } , match element { el => | | el . set_cross_origin (None) , } ,) ;
-            <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValue<bool>>::maybe_update_value(
+            <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.cross_origin,
+                state.cross_origin,
+                match element {
+                    el => |v: &_| el.set_cross_origin(Some(v)),
+                },
+                match element {
+                    el => || el.set_cross_origin(None),
+                },
+            );
+            <TypeDefs::defer as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
                 this.defer,
-                |v| element.set_defer(v),
+                state.defer,
+                |v| element.set_defer(*v),
                 || dom_element.remove_attribute("defer").unwrap(),
             );
-            < TypeDefs :: fetch_priority as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . fetch_priority , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "fetchpriority" ,) , | | dom_element . remove_attribute ("fetchpriority") . unwrap () ,) ;
-            < TypeDefs :: integrity as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . integrity , | v | element . set_integrity (v) , | | dom_element . remove_attribute ("integrity") . unwrap () ,) ;
-            < TypeDefs :: no_module as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . no_module , | v | element . set_no_module (v) , | | dom_element . remove_attribute ("nomodule") . unwrap () ,) ;
-            < TypeDefs :: referrer_policy as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . referrer_policy , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "referrerpolicy" ,) , | | dom_element . remove_attribute ("referrerpolicy") . unwrap () ,) ;
-            < TypeDefs :: src as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . src , | v | element . set_src (v) , | | dom_element . remove_attribute ("src") . unwrap () ,) ;
-            < TypeDefs :: type_ as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . type_ , | v | element . set_type (v) , | | dom_element . remove_attribute ("type_") . unwrap () ,) ;
-            < TypeDefs :: blocking as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . blocking , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "blocking" ,) , | | dom_element . remove_attribute ("blocking") . unwrap () ,) ;
+            <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.fetch_priority,
+                state.fetch_priority,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "fetchpriority",
+                ),
+                || dom_element.remove_attribute("fetchpriority").unwrap(),
+            );
+            <TypeDefs::integrity as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.integrity,
+                state.integrity,
+                |v| element.set_integrity(v),
+                || dom_element.remove_attribute("integrity").unwrap(),
+            );
+            <TypeDefs::no_module as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.no_module,
+                state.no_module,
+                |v| element.set_no_module(*v),
+                || dom_element.remove_attribute("nomodule").unwrap(),
+            );
+            <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.referrer_policy,
+                state.referrer_policy,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "referrerpolicy",
+                ),
+                || dom_element.remove_attribute("referrerpolicy").unwrap(),
+            );
+            <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.src,
+                state.src,
+                |v| element.set_src(v),
+                || dom_element.remove_attribute("src").unwrap(),
+            );
+            <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.type_,
+                state.type_,
+                |v| element.set_type(v),
+                || dom_element.remove_attribute("type_").unwrap(),
+            );
+            <TypeDefs::blocking as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.blocking,
+                state.blocking,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "blocking",
+                ),
+                || dom_element.remove_attribute("blocking").unwrap(),
+            );
         }
     }
 }

@@ -484,19 +484,19 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type auto_complete: crate::MaybeUpdateValueByRef<str>;
-        type auto_correct: crate::MaybeUpdateValueByRef<str>;
-        type cols: crate::MaybeUpdateValue<u32>;
-        type disabled: crate::MaybeUpdateValue<bool>;
-        type form: crate::MaybeUpdateValueByRef<str>;
-        type max_length: crate::MaybeUpdateValue<i32>;
-        type min_length: crate::MaybeUpdateValue<i32>;
-        type name: crate::MaybeUpdateValueByRef<str>;
-        type placeholder: crate::MaybeUpdateValueByRef<str>;
-        type read_only: crate::MaybeUpdateValue<bool>;
-        type required: crate::MaybeUpdateValue<bool>;
-        type rows: crate::MaybeUpdateValue<u32>;
-        type wrap: crate::MaybeUpdateValueByRef<str>;
+        type auto_complete: crate::MaybeUpdateValueWithState<str>;
+        type auto_correct: crate::MaybeUpdateValueWithState<str>;
+        type cols: crate::MaybeUpdateValueWithState<u32>;
+        type disabled: crate::MaybeUpdateValueWithState<bool>;
+        type form: crate::MaybeUpdateValueWithState<str>;
+        type max_length: crate::MaybeUpdateValueWithState<i32>;
+        type min_length: crate::MaybeUpdateValueWithState<i32>;
+        type name: crate::MaybeUpdateValueWithState<str>;
+        type placeholder: crate::MaybeUpdateValueWithState<str>;
+        type read_only: crate::MaybeUpdateValueWithState<bool>;
+        type required: crate::MaybeUpdateValueWithState<bool>;
+        type rows: crate::MaybeUpdateValueWithState<u32>;
+        type wrap: crate::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -546,7 +546,269 @@ mod types_initial {
 pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
 #[cfg(feature = "dom")]
-pub use super::HtmlElementProps::render_state;
+pub mod render_state {
+    #[allow(non_camel_case_types)]
+    pub trait RenderStateTypes {
+        type HtmlElementProps: crate::props::IntrinsicComponentPollReactive;
+        type auto_complete;
+        type auto_correct;
+        type cols;
+        type disabled;
+        type form;
+        type max_length;
+        type min_length;
+        type name;
+        type placeholder;
+        type read_only;
+        type required;
+        type rows;
+        type wrap;
+    }
+    pub struct RenderState<TypeDefs: RenderStateTypes>
+    where
+        TypeDefs: ?::core::marker::Sized,
+    {
+        pub HtmlElementProps: TypeDefs::HtmlElementProps,
+        pub auto_complete: TypeDefs::auto_complete,
+        pub auto_correct: TypeDefs::auto_correct,
+        pub cols: TypeDefs::cols,
+        pub disabled: TypeDefs::disabled,
+        pub form: TypeDefs::form,
+        pub max_length: TypeDefs::max_length,
+        pub min_length: TypeDefs::min_length,
+        pub name: TypeDefs::name,
+        pub placeholder: TypeDefs::placeholder,
+        pub read_only: TypeDefs::read_only,
+        pub required: TypeDefs::required,
+        pub rows: TypeDefs::rows,
+        pub wrap: TypeDefs::wrap,
+    }
+    #[allow(dead_code)]
+    #[allow(single_use_lifetimes)]
+    #[allow(clippy::unknown_clippy_lints)]
+    #[allow(clippy::mut_mut)]
+    #[allow(clippy::redundant_pub_crate)]
+    #[allow(clippy::ref_option_ref)]
+    #[allow(clippy::type_repetition_in_bounds)]
+    pub(crate) struct RenderStateProj<'__pin, TypeDefs: RenderStateTypes>
+    where
+        RenderState<TypeDefs>: '__pin,
+        TypeDefs: ?::core::marker::Sized,
+    {
+        pub HtmlElementProps:
+            ::pin_project_lite::__private::Pin<&'__pin mut (TypeDefs::HtmlElementProps)>,
+        pub auto_complete: &'__pin mut (TypeDefs::auto_complete),
+        pub auto_correct: &'__pin mut (TypeDefs::auto_correct),
+        pub cols: &'__pin mut (TypeDefs::cols),
+        pub disabled: &'__pin mut (TypeDefs::disabled),
+        pub form: &'__pin mut (TypeDefs::form),
+        pub max_length: &'__pin mut (TypeDefs::max_length),
+        pub min_length: &'__pin mut (TypeDefs::min_length),
+        pub name: &'__pin mut (TypeDefs::name),
+        pub placeholder: &'__pin mut (TypeDefs::placeholder),
+        pub read_only: &'__pin mut (TypeDefs::read_only),
+        pub required: &'__pin mut (TypeDefs::required),
+        pub rows: &'__pin mut (TypeDefs::rows),
+        pub wrap: &'__pin mut (TypeDefs::wrap),
+    }
+    #[allow(explicit_outlives_requirements)]
+    #[allow(single_use_lifetimes)]
+    #[allow(clippy::unknown_clippy_lints)]
+    #[allow(clippy::redundant_pub_crate)]
+    #[allow(clippy::used_underscore_binding)]
+    const _: () = {
+        #[allow(dead_code)]
+        #[allow(single_use_lifetimes)]
+        #[allow(clippy::unknown_clippy_lints)]
+        #[allow(clippy::mut_mut)]
+        #[allow(clippy::redundant_pub_crate)]
+        #[allow(clippy::ref_option_ref)]
+        #[allow(clippy::type_repetition_in_bounds)]
+        pub(crate) struct ProjectionRef<'__pin, TypeDefs: RenderStateTypes>
+        where
+            RenderState<TypeDefs>: '__pin,
+            TypeDefs: ?::core::marker::Sized,
+        {
+            pub HtmlElementProps:
+                ::pin_project_lite::__private::Pin<&'__pin (TypeDefs::HtmlElementProps)>,
+            pub auto_complete: &'__pin (TypeDefs::auto_complete),
+            pub auto_correct: &'__pin (TypeDefs::auto_correct),
+            pub cols: &'__pin (TypeDefs::cols),
+            pub disabled: &'__pin (TypeDefs::disabled),
+            pub form: &'__pin (TypeDefs::form),
+            pub max_length: &'__pin (TypeDefs::max_length),
+            pub min_length: &'__pin (TypeDefs::min_length),
+            pub name: &'__pin (TypeDefs::name),
+            pub placeholder: &'__pin (TypeDefs::placeholder),
+            pub read_only: &'__pin (TypeDefs::read_only),
+            pub required: &'__pin (TypeDefs::required),
+            pub rows: &'__pin (TypeDefs::rows),
+            pub wrap: &'__pin (TypeDefs::wrap),
+        }
+        impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            pub(crate) fn project<'__pin>(
+                self: ::pin_project_lite::__private::Pin<&'__pin mut Self>,
+            ) -> RenderStateProj<'__pin, TypeDefs> {
+                unsafe {
+                    let Self {
+                        HtmlElementProps,
+                        auto_complete,
+                        auto_correct,
+                        cols,
+                        disabled,
+                        form,
+                        max_length,
+                        min_length,
+                        name,
+                        placeholder,
+                        read_only,
+                        required,
+                        rows,
+                        wrap,
+                    } = self.get_unchecked_mut();
+                    RenderStateProj {
+                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            HtmlElementProps,
+                        ),
+                        auto_complete: auto_complete,
+                        auto_correct: auto_correct,
+                        cols: cols,
+                        disabled: disabled,
+                        form: form,
+                        max_length: max_length,
+                        min_length: min_length,
+                        name: name,
+                        placeholder: placeholder,
+                        read_only: read_only,
+                        required: required,
+                        rows: rows,
+                        wrap: wrap,
+                    }
+                }
+            }
+            pub(crate) fn project_ref<'__pin>(
+                self: ::pin_project_lite::__private::Pin<&'__pin Self>,
+            ) -> ProjectionRef<'__pin, TypeDefs> {
+                unsafe {
+                    let Self {
+                        HtmlElementProps,
+                        auto_complete,
+                        auto_correct,
+                        cols,
+                        disabled,
+                        form,
+                        max_length,
+                        min_length,
+                        name,
+                        placeholder,
+                        read_only,
+                        required,
+                        rows,
+                        wrap,
+                    } = self.get_ref();
+                    ProjectionRef {
+                        HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
+                            HtmlElementProps,
+                        ),
+                        auto_complete: auto_complete,
+                        auto_correct: auto_correct,
+                        cols: cols,
+                        disabled: disabled,
+                        form: form,
+                        max_length: max_length,
+                        min_length: min_length,
+                        name: name,
+                        placeholder: placeholder,
+                        read_only: read_only,
+                        required: required,
+                        rows: rows,
+                        wrap: wrap,
+                    }
+                }
+            }
+        }
+        #[allow(non_snake_case)]
+        pub struct __Origin<'__pin, TypeDefs: RenderStateTypes>
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            __dummy_lifetime: ::pin_project_lite::__private::PhantomData<&'__pin ()>,
+            HtmlElementProps: TypeDefs::HtmlElementProps,
+            auto_complete: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_complete>,
+            auto_correct: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::auto_correct>,
+            cols: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::cols>,
+            disabled: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::disabled>,
+            form: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::form>,
+            max_length: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::max_length>,
+            min_length: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::min_length>,
+            name: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::name>,
+            placeholder: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::placeholder>,
+            read_only: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::read_only>,
+            required: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::required>,
+            rows: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::rows>,
+            wrap: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::wrap>,
+        }
+        impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
+            for RenderState<TypeDefs>
+        where
+            __Origin<'__pin, TypeDefs>: ::pin_project_lite::__private::Unpin,
+            TypeDefs: ?::core::marker::Sized,
+        {
+        }
+        trait MustNotImplDrop {}
+        #[allow(clippy::drop_bounds, drop_bounds)]
+        impl<T: ::pin_project_lite::__private::Drop> MustNotImplDrop for T {}
+        impl<TypeDefs: RenderStateTypes> MustNotImplDrop for RenderState<TypeDefs> where
+            TypeDefs: ?::core::marker::Sized
+        {
+        }
+        #[forbid(unaligned_references, safe_packed_borrows)]
+        fn __assert_not_repr_packed<TypeDefs: RenderStateTypes>(this: &RenderState<TypeDefs>)
+        where
+            TypeDefs: ?::core::marker::Sized,
+        {
+            let _ = &this.HtmlElementProps;
+            let _ = &this.auto_complete;
+            let _ = &this.auto_correct;
+            let _ = &this.cols;
+            let _ = &this.disabled;
+            let _ = &this.form;
+            let _ = &this.max_length;
+            let _ = &this.min_length;
+            let _ = &this.name;
+            let _ = &this.placeholder;
+            let _ = &this.read_only;
+            let _ = &this.required;
+            let _ = &this.rows;
+            let _ = &this.wrap;
+        }
+    };
+    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
+        #[inline]
+        pub(crate) fn pin_project(
+            self: ::core::pin::Pin<&mut Self>,
+        ) -> RenderStateProj<'_, TypeDefs> {
+            self.project()
+        }
+    }
+    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
+        crate::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+    {
+        #[inline]
+        fn intrinsic_component_poll_reactive(
+            self: ::core::pin::Pin<&mut Self>,
+            cx: &mut ::core::task::Context<'_>,
+        ) -> ::core::task::Poll<bool> {
+            crate::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+                self.project().HtmlElementProps,
+                cx,
+            )
+        }
+    }
+}
 #[inline]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
@@ -557,7 +819,7 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
-        #[doc = "See [`HtmlElementProps::children`]"]
+        ///See [`HtmlElementProps::children`]
         #[inline]
         pub fn children<V>(
             self,
@@ -582,9 +844,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::class`]"]
+        ///See [`HtmlElementProps::class`]
         #[inline]
-        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn class<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -607,9 +869,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::id`]"]
+        ///See [`HtmlElementProps::id`]
         #[inline]
-        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -632,9 +894,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::part`]"]
+        ///See [`HtmlElementProps::part`]
         #[inline]
-        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn part<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -657,9 +919,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::access_key`]"]
+        ///See [`HtmlElementProps::access_key`]
         #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn access_key<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -682,9 +944,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
+        ///See [`HtmlElementProps::auto_capitalize`]
         #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn auto_capitalize<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -708,9 +970,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::auto_focus`]"]
+        ///See [`HtmlElementProps::auto_focus`]
         #[inline]
-        pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
+        pub fn auto_focus<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -733,7 +995,7 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::content_editable`]"]
+        ///See [`HtmlElementProps::content_editable`]
         #[inline]
         pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
@@ -759,9 +1021,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::context_menu`]"]
+        ///See [`HtmlElementProps::context_menu`]
         #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn context_menu<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -784,9 +1046,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::dir`]"]
+        ///See [`HtmlElementProps::dir`]
         #[inline]
-        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn dir<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -809,9 +1071,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::draggable`]"]
+        ///See [`HtmlElementProps::draggable`]
         #[inline]
-        pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
+        pub fn draggable<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -834,9 +1096,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
+        ///See [`HtmlElementProps::enter_key_hint`]
         #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn enter_key_hint<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -860,9 +1122,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::hidden`]"]
+        ///See [`HtmlElementProps::hidden`]
         #[inline]
-        pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
+        pub fn hidden<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -885,9 +1147,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::inert`]"]
+        ///See [`HtmlElementProps::inert`]
         #[inline]
-        pub fn inert<V: crate::MaybeUpdateValue<bool>>(
+        pub fn inert<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -910,9 +1172,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::input_mode`]"]
+        ///See [`HtmlElementProps::input_mode`]
         #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn input_mode<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -935,9 +1197,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::is`]"]
+        ///See [`HtmlElementProps::is`]
         #[inline]
-        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn is<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -960,9 +1222,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_id`]"]
+        ///See [`HtmlElementProps::item_id`]
         #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -985,9 +1247,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_prop`]"]
+        ///See [`HtmlElementProps::item_prop`]
         #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_prop<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1010,9 +1272,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_ref`]"]
+        ///See [`HtmlElementProps::item_ref`]
         #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_ref<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1035,9 +1297,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_scope`]"]
+        ///See [`HtmlElementProps::item_scope`]
         #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_scope<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1060,9 +1322,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::item_type`]"]
+        ///See [`HtmlElementProps::item_type`]
         #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn item_type<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1085,9 +1347,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::lang`]"]
+        ///See [`HtmlElementProps::lang`]
         #[inline]
-        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1110,9 +1372,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::nonce`]"]
+        ///See [`HtmlElementProps::nonce`]
         #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn nonce<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1135,9 +1397,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::role`]"]
+        ///See [`HtmlElementProps::role`]
         #[inline]
-        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn role<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1160,9 +1422,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::slot`]"]
+        ///See [`HtmlElementProps::slot`]
         #[inline]
-        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn slot<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1185,9 +1447,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::spellcheck`]"]
+        ///See [`HtmlElementProps::spellcheck`]
         #[inline]
-        pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
+        pub fn spellcheck<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -1210,9 +1472,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::style`]"]
+        ///See [`HtmlElementProps::style`]
         #[inline]
-        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn style<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1235,9 +1497,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::tab_index`]"]
+        ///See [`HtmlElementProps::tab_index`]
         #[inline]
-        pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
+        pub fn tab_index<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -1260,9 +1522,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::title`]"]
+        ///See [`HtmlElementProps::title`]
         #[inline]
-        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn title<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1285,9 +1547,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::translate`]"]
+        ///See [`HtmlElementProps::translate`]
         #[inline]
-        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn translate<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1310,9 +1572,9 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
+        ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1336,7 +1598,7 @@ mod builder_and_replacer {
                 wrap: self.0.wrap,
             })
         }
-        #[doc = "See [`HtmlElementProps::on_click`]"]
+        ///See [`HtmlElementProps::on_click`]
         #[inline]
         pub fn on_click<V>(
             self,
@@ -1362,7 +1624,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn auto_complete<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn auto_complete<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_complete: V,
         ) -> super::Building<super::overwrite::auto_complete<TypeDefs, V>> {
@@ -1384,7 +1646,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn auto_correct<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn auto_correct<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_correct: V,
         ) -> super::Building<super::overwrite::auto_correct<TypeDefs, V>> {
@@ -1406,7 +1668,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn cols<V: crate::MaybeUpdateValue<u32>>(
+        pub fn cols<V: crate::MaybeUpdateValueWithState<u32>>(
             self,
             cols: V,
         ) -> super::Building<super::overwrite::cols<TypeDefs, V>> {
@@ -1428,7 +1690,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn disabled<V: crate::MaybeUpdateValue<bool>>(
+        pub fn disabled<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             disabled: V,
         ) -> super::Building<super::overwrite::disabled<TypeDefs, V>> {
@@ -1450,7 +1712,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn form<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn form<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             form: V,
         ) -> super::Building<super::overwrite::form<TypeDefs, V>> {
@@ -1472,7 +1734,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn max_length<V: crate::MaybeUpdateValue<i32>>(
+        pub fn max_length<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             max_length: V,
         ) -> super::Building<super::overwrite::max_length<TypeDefs, V>> {
@@ -1494,7 +1756,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn min_length<V: crate::MaybeUpdateValue<i32>>(
+        pub fn min_length<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             min_length: V,
         ) -> super::Building<super::overwrite::min_length<TypeDefs, V>> {
@@ -1516,7 +1778,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn name<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn name<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             name: V,
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
@@ -1538,7 +1800,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn placeholder<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn placeholder<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             placeholder: V,
         ) -> super::Building<super::overwrite::placeholder<TypeDefs, V>> {
@@ -1560,7 +1822,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn read_only<V: crate::MaybeUpdateValue<bool>>(
+        pub fn read_only<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             read_only: V,
         ) -> super::Building<super::overwrite::read_only<TypeDefs, V>> {
@@ -1582,7 +1844,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn required<V: crate::MaybeUpdateValue<bool>>(
+        pub fn required<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             required: V,
         ) -> super::Building<super::overwrite::required<TypeDefs, V>> {
@@ -1604,7 +1866,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn rows<V: crate::MaybeUpdateValue<u32>>(
+        pub fn rows<V: crate::MaybeUpdateValueWithState<u32>>(
             self,
             rows: V,
         ) -> super::Building<super::overwrite::rows<TypeDefs, V>> {
@@ -1626,7 +1888,7 @@ mod builder_and_replacer {
             })
         }
         #[inline]
-        pub fn wrap<V: crate::MaybeUpdateValueByRef<str>>(
+        pub fn wrap<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             wrap: V,
         ) -> super::Building<super::overwrite::wrap<TypeDefs, V>> {
@@ -1659,40 +1921,164 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State =
-            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
-                web_sys::HtmlElement,
-            >>::State;
+        type State = super::render_state::RenderState<
+            dyn super::render_state::RenderStateTypes<
+                HtmlElementProps = <HtmlElementProps::Data<
+                    TypeDefs::HtmlElementProps,
+                > as crate::props::UpdateElement<web_sys::HtmlElement>>::State,
+                auto_complete = <TypeDefs::auto_complete as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                auto_correct = <TypeDefs::auto_correct as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                cols = <TypeDefs::cols as ::frender_dom::props::MaybeUpdateValueWithState<
+                    u32,
+                >>::State,
+                disabled = <TypeDefs::disabled as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                form = <TypeDefs::form as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                max_length = <TypeDefs::max_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::State,
+                min_length = <TypeDefs::min_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::State,
+                name = <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                placeholder = <TypeDefs::placeholder as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                read_only = <TypeDefs::read_only as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                required = <TypeDefs::required as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::State,
+                rows = <TypeDefs::rows as ::frender_dom::props::MaybeUpdateValueWithState<
+                    u32,
+                >>::State,
+                wrap = <TypeDefs::wrap as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+            >,
+        >;
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlTextAreaElement,
             children_ctx: &mut ::frender_dom::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
-            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
-            < TypeDefs :: auto_correct as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_correct , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "auto_correct" ,) , | | dom_element . remove_attribute ("auto_correct") . unwrap () ,) ;
-            <TypeDefs::cols as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                this.cols,
-                |v| element.set_cols(v),
-                || dom_element.remove_attribute("cols").unwrap(),
-            );
-            < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute ("disabled") . unwrap () ,) ;
-            < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "form" ,) , | | dom_element . remove_attribute ("form") . unwrap () ,) ;
-            < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute ("maxlength") . unwrap () ,) ;
-            < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute ("minlength") . unwrap () ,) ;
-            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
-            < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute ("placeholder") . unwrap () ,) ;
-            < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute ("readonly") . unwrap () ,) ;
-            < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute ("required") . unwrap () ,) ;
-            <TypeDefs::rows as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
-                this.rows,
-                |v| element.set_rows(v),
-                || dom_element.remove_attribute("rows").unwrap(),
-            );
-            < TypeDefs :: wrap as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . wrap , | v | element . set_wrap (v) , | | dom_element . remove_attribute ("wrap") . unwrap () ,) ;
-            <HtmlElementProps::Data<TypeDefs::HtmlElementProps> as crate::props::UpdateElement<
-                web_sys::HtmlElement,
-            >>::initialize_state(this.HtmlElementProps, element, children_ctx)
+            super::render_state::RenderState {
+                HtmlElementProps: <HtmlElementProps::Data<
+                    TypeDefs::HtmlElementProps,
+                > as crate::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::initialize_state(this.HtmlElementProps, element, children_ctx),
+                auto_complete: <TypeDefs::auto_complete as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.auto_complete,
+                    |v| element.set_autocomplete(v),
+                    || dom_element.remove_attribute("autocomplete").unwrap(),
+                ),
+                auto_correct: <TypeDefs::auto_correct as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.auto_correct,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "auto_correct",
+                    ),
+                    || dom_element.remove_attribute("auto_correct").unwrap(),
+                ),
+                cols: <TypeDefs::cols as ::frender_dom::props::MaybeUpdateValueWithState<
+                    u32,
+                >>::initialize_state_and_update(
+                    this.cols,
+                    |v| element.set_cols(*v),
+                    || dom_element.remove_attribute("cols").unwrap(),
+                ),
+                disabled: <TypeDefs::disabled as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.disabled,
+                    |v| element.set_disabled(*v),
+                    || dom_element.remove_attribute("disabled").unwrap(),
+                ),
+                form: <TypeDefs::form as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.form,
+                    |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                        v,
+                        dom_element,
+                        "form",
+                    ),
+                    || dom_element.remove_attribute("form").unwrap(),
+                ),
+                max_length: <TypeDefs::max_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::initialize_state_and_update(
+                    this.max_length,
+                    |v| element.set_max_length(*v),
+                    || dom_element.remove_attribute("maxlength").unwrap(),
+                ),
+                min_length: <TypeDefs::min_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                    i32,
+                >>::initialize_state_and_update(
+                    this.min_length,
+                    |v| element.set_min_length(*v),
+                    || dom_element.remove_attribute("minlength").unwrap(),
+                ),
+                name: <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.name,
+                    |v| element.set_name(v),
+                    || dom_element.remove_attribute("name").unwrap(),
+                ),
+                placeholder: <TypeDefs::placeholder as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.placeholder,
+                    |v| element.set_placeholder(v),
+                    || dom_element.remove_attribute("placeholder").unwrap(),
+                ),
+                read_only: <TypeDefs::read_only as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.read_only,
+                    |v| element.set_read_only(*v),
+                    || dom_element.remove_attribute("readonly").unwrap(),
+                ),
+                required: <TypeDefs::required as ::frender_dom::props::MaybeUpdateValueWithState<
+                    bool,
+                >>::initialize_state_and_update(
+                    this.required,
+                    |v| element.set_required(*v),
+                    || dom_element.remove_attribute("required").unwrap(),
+                ),
+                rows: <TypeDefs::rows as ::frender_dom::props::MaybeUpdateValueWithState<
+                    u32,
+                >>::initialize_state_and_update(
+                    this.rows,
+                    |v| element.set_rows(*v),
+                    || dom_element.remove_attribute("rows").unwrap(),
+                ),
+                wrap: <TypeDefs::wrap as ::frender_dom::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.wrap,
+                    |v| element.set_wrap(v),
+                    || dom_element.remove_attribute("wrap").unwrap(),
+                ),
+            }
         }
         fn update_element(
             this: Self,
@@ -1700,34 +2086,126 @@ mod impl_update_element {
             children_ctx: &mut ::frender_dom::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
+            let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
             crate::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
-                state,
+                state.HtmlElementProps,
             );
-            < TypeDefs :: auto_complete as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_complete , | v | element . set_autocomplete (v) , | | dom_element . remove_attribute ("autocomplete") . unwrap () ,) ;
-            < TypeDefs :: auto_correct as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . auto_correct , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "auto_correct" ,) , | | dom_element . remove_attribute ("auto_correct") . unwrap () ,) ;
-            <TypeDefs::cols as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+            <TypeDefs::auto_complete as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.auto_complete,
+                state.auto_complete,
+                |v| element.set_autocomplete(v),
+                || dom_element.remove_attribute("autocomplete").unwrap(),
+            );
+            <TypeDefs::auto_correct as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.auto_correct,
+                state.auto_correct,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "auto_correct",
+                ),
+                || dom_element.remove_attribute("auto_correct").unwrap(),
+            );
+            <TypeDefs::cols as ::frender_dom::props::MaybeUpdateValueWithState<
+                u32,
+            >>::maybe_update_value_with_state(
                 this.cols,
-                |v| element.set_cols(v),
+                state.cols,
+                |v| element.set_cols(*v),
                 || dom_element.remove_attribute("cols").unwrap(),
             );
-            < TypeDefs :: disabled as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . disabled , | v | element . set_disabled (v) , | | dom_element . remove_attribute ("disabled") . unwrap () ,) ;
-            < TypeDefs :: form as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . form , | v | crate :: props :: UpdateElementAttribute :: update_element_attribute (v , dom_element , "form" ,) , | | dom_element . remove_attribute ("form") . unwrap () ,) ;
-            < TypeDefs :: max_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . max_length , | v | element . set_max_length (v) , | | dom_element . remove_attribute ("maxlength") . unwrap () ,) ;
-            < TypeDefs :: min_length as :: frender_dom :: props :: MaybeUpdateValue < i32 , > > :: maybe_update_value (this . min_length , | v | element . set_min_length (v) , | | dom_element . remove_attribute ("minlength") . unwrap () ,) ;
-            < TypeDefs :: name as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . name , | v | element . set_name (v) , | | dom_element . remove_attribute ("name") . unwrap () ,) ;
-            < TypeDefs :: placeholder as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . placeholder , | v | element . set_placeholder (v) , | | dom_element . remove_attribute ("placeholder") . unwrap () ,) ;
-            < TypeDefs :: read_only as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . read_only , | v | element . set_read_only (v) , | | dom_element . remove_attribute ("readonly") . unwrap () ,) ;
-            < TypeDefs :: required as :: frender_dom :: props :: MaybeUpdateValue < bool , > > :: maybe_update_value (this . required , | v | element . set_required (v) , | | dom_element . remove_attribute ("required") . unwrap () ,) ;
-            <TypeDefs::rows as ::frender_dom::props::MaybeUpdateValue<u32>>::maybe_update_value(
+            <TypeDefs::disabled as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.disabled,
+                state.disabled,
+                |v| element.set_disabled(*v),
+                || dom_element.remove_attribute("disabled").unwrap(),
+            );
+            <TypeDefs::form as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.form,
+                state.form,
+                |v| crate::props::UpdateElementAttribute::update_element_attribute(
+                    v,
+                    dom_element,
+                    "form",
+                ),
+                || dom_element.remove_attribute("form").unwrap(),
+            );
+            <TypeDefs::max_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                i32,
+            >>::maybe_update_value_with_state(
+                this.max_length,
+                state.max_length,
+                |v| element.set_max_length(*v),
+                || dom_element.remove_attribute("maxlength").unwrap(),
+            );
+            <TypeDefs::min_length as ::frender_dom::props::MaybeUpdateValueWithState<
+                i32,
+            >>::maybe_update_value_with_state(
+                this.min_length,
+                state.min_length,
+                |v| element.set_min_length(*v),
+                || dom_element.remove_attribute("minlength").unwrap(),
+            );
+            <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.name,
+                state.name,
+                |v| element.set_name(v),
+                || dom_element.remove_attribute("name").unwrap(),
+            );
+            <TypeDefs::placeholder as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.placeholder,
+                state.placeholder,
+                |v| element.set_placeholder(v),
+                || dom_element.remove_attribute("placeholder").unwrap(),
+            );
+            <TypeDefs::read_only as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.read_only,
+                state.read_only,
+                |v| element.set_read_only(*v),
+                || dom_element.remove_attribute("readonly").unwrap(),
+            );
+            <TypeDefs::required as ::frender_dom::props::MaybeUpdateValueWithState<
+                bool,
+            >>::maybe_update_value_with_state(
+                this.required,
+                state.required,
+                |v| element.set_required(*v),
+                || dom_element.remove_attribute("required").unwrap(),
+            );
+            <TypeDefs::rows as ::frender_dom::props::MaybeUpdateValueWithState<
+                u32,
+            >>::maybe_update_value_with_state(
                 this.rows,
-                |v| element.set_rows(v),
+                state.rows,
+                |v| element.set_rows(*v),
                 || dom_element.remove_attribute("rows").unwrap(),
             );
-            < TypeDefs :: wrap as :: frender_dom :: props :: MaybeUpdateValueByRef < str , > > :: maybe_update_value_by_ref (& this . wrap , | v | element . set_wrap (v) , | | dom_element . remove_attribute ("wrap") . unwrap () ,) ;
+            <TypeDefs::wrap as ::frender_dom::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.wrap,
+                state.wrap,
+                |v| element.set_wrap(v),
+                || dom_element.remove_attribute("wrap").unwrap(),
+            );
         }
     }
 }
