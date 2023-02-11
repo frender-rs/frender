@@ -1,4 +1,5 @@
 #[allow(non_snake_case)]
+#[inline(always)]
 pub fn ElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
@@ -205,7 +206,7 @@ pub mod render_state {
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
-        #[inline]
+        #[inline(always)]
         pub(crate) fn pin_project(
             self: ::core::pin::Pin<&mut Self>,
         ) -> RenderStateProj<'_, TypeDefs> {
@@ -224,7 +225,7 @@ pub mod render_state {
         }
     }
 }
-#[inline]
+#[inline(always)]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
@@ -234,7 +235,7 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
-        #[inline]
+        #[inline(always)]
         pub fn children<V>(
             self,
             children: V,
@@ -246,7 +247,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn class<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
@@ -258,7 +259,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
@@ -270,7 +271,7 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn part<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             part: V,

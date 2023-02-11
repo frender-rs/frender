@@ -1,4 +1,4 @@
-#[inline]
+#[inline(always)]
 pub fn video() -> Building<TypesInitial> {
     super::HtmlVideoElementProps()
 }
@@ -21,7 +21,7 @@ mod struct_data {
 }
 pub use struct_data::video as Data;
 pub type DataInitial = Data<TypesInitial>;
-#[inline]
+#[inline(always)]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
@@ -29,7 +29,7 @@ pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     self::Data(HtmlVideoElementProps::build(building), self::ComponentType)
 }
 pub use build as build_element;
-#[inline]
+#[inline(always)]
 pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {

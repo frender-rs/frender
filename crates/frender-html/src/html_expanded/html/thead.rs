@@ -1,4 +1,4 @@
-#[inline]
+#[inline(always)]
 pub fn thead() -> Building<TypesInitial> {
     super::HtmlTableSectionElementProps()
 }
@@ -9,7 +9,7 @@ impl crate::props::IntrinsicComponent for ComponentType {
 }
 pub type Data<TypeDefs> = super::tbody::Data<TypeDefs, ComponentType>;
 pub type DataInitial = Data<TypesInitial>;
-#[inline]
+#[inline(always)]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
@@ -20,7 +20,7 @@ pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     )
 }
 pub use build as build_element;
-#[inline]
+#[inline(always)]
 pub fn valid<TypeDefs: ?::core::marker::Sized + ValidTypes>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {

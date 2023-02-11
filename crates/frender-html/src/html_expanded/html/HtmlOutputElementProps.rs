@@ -1,4 +1,5 @@
 #[allow(non_snake_case)]
+#[inline(always)]
 pub fn HtmlOutputElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
@@ -447,7 +448,7 @@ pub mod render_state {
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
-        #[inline]
+        #[inline(always)]
         pub(crate) fn pin_project(
             self: ::core::pin::Pin<&mut Self>,
         ) -> RenderStateProj<'_, TypeDefs> {
@@ -469,7 +470,7 @@ pub mod render_state {
         }
     }
 }
-#[inline]
+#[inline(always)]
 pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
@@ -480,7 +481,7 @@ mod builder_and_replacer {
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
         ///See [`HtmlElementProps::children`]
-        #[inline]
+        #[inline(always)]
         pub fn children<V>(
             self,
             children: V,
@@ -495,7 +496,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::class`]
-        #[inline]
+        #[inline(always)]
         pub fn class<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
@@ -510,7 +511,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::id`]
-        #[inline]
+        #[inline(always)]
         pub fn id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
@@ -525,7 +526,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::part`]
-        #[inline]
+        #[inline(always)]
         pub fn part<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
@@ -540,7 +541,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::access_key`]
-        #[inline]
+        #[inline(always)]
         pub fn access_key<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             access_key: V,
@@ -555,7 +556,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::auto_capitalize`]
-        #[inline]
+        #[inline(always)]
         pub fn auto_capitalize<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_capitalize: V,
@@ -571,7 +572,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::auto_focus`]
-        #[inline]
+        #[inline(always)]
         pub fn auto_focus<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             auto_focus: V,
@@ -586,7 +587,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::content_editable`]
-        #[inline]
+        #[inline(always)]
         pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
             content_editable: V,
@@ -602,7 +603,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::context_menu`]
-        #[inline]
+        #[inline(always)]
         pub fn context_menu<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             context_menu: V,
@@ -617,7 +618,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::dir`]
-        #[inline]
+        #[inline(always)]
         pub fn dir<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
@@ -632,7 +633,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::draggable`]
-        #[inline]
+        #[inline(always)]
         pub fn draggable<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             draggable: V,
@@ -647,7 +648,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::enter_key_hint`]
-        #[inline]
+        #[inline(always)]
         pub fn enter_key_hint<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             enter_key_hint: V,
@@ -663,7 +664,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::hidden`]
-        #[inline]
+        #[inline(always)]
         pub fn hidden<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
@@ -678,7 +679,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::inert`]
-        #[inline]
+        #[inline(always)]
         pub fn inert<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
@@ -693,7 +694,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::input_mode`]
-        #[inline]
+        #[inline(always)]
         pub fn input_mode<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             input_mode: V,
@@ -708,7 +709,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::is`]
-        #[inline]
+        #[inline(always)]
         pub fn is<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
@@ -723,7 +724,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::item_id`]
-        #[inline]
+        #[inline(always)]
         pub fn item_id<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
@@ -738,7 +739,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::item_prop`]
-        #[inline]
+        #[inline(always)]
         pub fn item_prop<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
@@ -753,7 +754,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::item_ref`]
-        #[inline]
+        #[inline(always)]
         pub fn item_ref<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
@@ -768,7 +769,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::item_scope`]
-        #[inline]
+        #[inline(always)]
         pub fn item_scope<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_scope: V,
@@ -783,7 +784,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::item_type`]
-        #[inline]
+        #[inline(always)]
         pub fn item_type<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
@@ -798,7 +799,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::lang`]
-        #[inline]
+        #[inline(always)]
         pub fn lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
@@ -813,7 +814,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::nonce`]
-        #[inline]
+        #[inline(always)]
         pub fn nonce<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
@@ -828,7 +829,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::role`]
-        #[inline]
+        #[inline(always)]
         pub fn role<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
@@ -843,7 +844,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::slot`]
-        #[inline]
+        #[inline(always)]
         pub fn slot<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
@@ -858,7 +859,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::spellcheck`]
-        #[inline]
+        #[inline(always)]
         pub fn spellcheck<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             spellcheck: V,
@@ -873,7 +874,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::style`]
-        #[inline]
+        #[inline(always)]
         pub fn style<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
@@ -888,7 +889,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::tab_index`]
-        #[inline]
+        #[inline(always)]
         pub fn tab_index<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
@@ -903,7 +904,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::title`]
-        #[inline]
+        #[inline(always)]
         pub fn title<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
@@ -918,7 +919,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::translate`]
-        #[inline]
+        #[inline(always)]
         pub fn translate<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
@@ -933,7 +934,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
-        #[inline]
+        #[inline(always)]
         pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             virtual_keyboard_policy: V,
@@ -949,7 +950,7 @@ mod builder_and_replacer {
             })
         }
         ///See [`HtmlElementProps::on_click`]
-        #[inline]
+        #[inline(always)]
         pub fn on_click<V>(
             self,
             on_click: V,
@@ -963,7 +964,7 @@ mod builder_and_replacer {
                 name: self.0.name,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn html_for<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             html_for: V,
@@ -975,7 +976,7 @@ mod builder_and_replacer {
                 name: self.0.name,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn form<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             form: V,
@@ -987,7 +988,7 @@ mod builder_and_replacer {
                 name: self.0.name,
             })
         }
-        #[inline]
+        #[inline(always)]
         pub fn name<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             name: V,
