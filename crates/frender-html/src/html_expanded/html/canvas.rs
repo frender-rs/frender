@@ -1,5 +1,5 @@
 #[inline]
-pub fn canvas() -> Building<TypesInitial> {
+pub const fn canvas() -> Building<TypesInitial> {
     super::HtmlCanvasElementProps()
 }
 mod reuse {
@@ -25,7 +25,7 @@ mod struct_data {
 pub use struct_data::canvas as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

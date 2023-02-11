@@ -1,5 +1,5 @@
 #[inline]
-pub fn map() -> Building<TypesInitial> {
+pub const fn map() -> Building<TypesInitial> {
     super::HtmlMapElementProps()
 }
 mod reuse {
@@ -22,7 +22,7 @@ mod struct_data {
 pub use struct_data::map as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

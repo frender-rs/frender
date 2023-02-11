@@ -1,5 +1,6 @@
 #[allow(non_snake_case)]
-pub fn ElementProps() -> Building<TypesInitial> {
+#[inline(always)]
+pub const fn ElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
     self::Building(self::Data {
@@ -42,10 +43,10 @@ mod trait_types {
     use super::super::*;
     #[allow(non_camel_case_types)]
     pub trait Types {
-        type children;
-        type class: crate::MaybeUpdateValueByRef<str>;
-        type id: crate::MaybeUpdateValueByRef<str>;
-        type part: crate::MaybeUpdateValueByRef<str>;
+        type children: ~const ::core::marker::Destruct;
+        type class: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type id: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type part: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
     }
 }
 pub use trait_types::Types;
@@ -190,8 +191,8 @@ pub mod render_state {
         }
     }
 }
-#[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+#[inline(always)]
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     building.0
@@ -200,11 +201,14 @@ mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
-        #[inline]
-        pub fn children<V>(
+        #[inline(always)]
+        pub const fn children<V>(
             self,
             children: V,
-        ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::children<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 children,
                 class: self.0.class,
@@ -212,11 +216,14 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
-        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
-        ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::class<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 children: self.0.children,
                 class,
@@ -224,11 +231,14 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
-        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
-        ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::id<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 children: self.0.children,
                 class: self.0.class,
@@ -236,11 +246,14 @@ mod builder_and_replacer {
                 part: self.0.part,
             })
         }
-        #[inline]
-        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
-        ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::part<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 children: self.0.children,
                 class: self.0.class,

@@ -1,5 +1,5 @@
 #[inline]
-pub fn textarea() -> Building<TypesInitial> {
+pub const fn textarea() -> Building<TypesInitial> {
     super::HtmlTextAreaElementProps()
 }
 mod reuse {
@@ -25,7 +25,7 @@ mod struct_data {
 pub use struct_data::textarea as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

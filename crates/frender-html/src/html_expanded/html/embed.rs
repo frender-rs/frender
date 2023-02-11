@@ -1,5 +1,5 @@
 #[inline]
-pub fn embed() -> Building<TypesInitial> {
+pub const fn embed() -> Building<TypesInitial> {
     super::HtmlEmbedElementProps()
 }
 mod reuse {
@@ -22,7 +22,7 @@ mod struct_data {
 pub use struct_data::embed as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

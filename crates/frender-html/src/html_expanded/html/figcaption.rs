@@ -1,5 +1,5 @@
 #[inline]
-pub fn figcaption() -> Building<TypesInitial> {
+pub const fn figcaption() -> Building<TypesInitial> {
     super::HtmlElementProps()
 }
 pub use super::abbr::{prelude, Building, Types, TypesInitial, ValidTypes};
@@ -10,7 +10,7 @@ impl crate::props::IntrinsicComponent for ComponentType {
 pub type Data<TypeDefs> = super::abbr::Data<TypeDefs, ComponentType>;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

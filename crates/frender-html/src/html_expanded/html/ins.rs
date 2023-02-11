@@ -1,5 +1,5 @@
 #[inline]
-pub fn ins() -> Building<TypesInitial> {
+pub const fn ins() -> Building<TypesInitial> {
     super::HtmlModElementProps()
 }
 pub use super::del::{prelude, Building, Types, TypesInitial, ValidTypes};
@@ -10,7 +10,7 @@ impl crate::props::IntrinsicComponent for ComponentType {
 pub type Data<TypeDefs> = super::del::Data<TypeDefs, ComponentType>;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

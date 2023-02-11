@@ -1,5 +1,5 @@
 #[inline]
-pub fn details() -> Building<TypesInitial> {
+pub const fn details() -> Building<TypesInitial> {
     super::HtmlDetailsElementProps()
 }
 mod reuse {
@@ -25,7 +25,7 @@ mod struct_data {
 pub use struct_data::details as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

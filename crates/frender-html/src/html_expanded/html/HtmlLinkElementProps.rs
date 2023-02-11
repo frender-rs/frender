@@ -1,5 +1,6 @@
 #[allow(non_snake_case)]
-pub fn HtmlLinkElementProps() -> Building<TypesInitial> {
+#[inline(always)]
+pub const fn HtmlLinkElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
     self::Building(self::Data {
@@ -549,22 +550,24 @@ mod trait_types {
     use super::super::*;
     #[allow(non_camel_case_types)]
     pub trait Types {
-        type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type as_: crate::MaybeUpdateValueByRef<str>;
-        type cross_origin: crate::MaybeUpdateValueByRef<str>;
-        type fetch_priority: crate::MaybeUpdateValueByRef<str>;
-        type href: crate::MaybeUpdateValueByRef<str>;
-        type href_lang: crate::MaybeUpdateValueByRef<str>;
-        type image_sizes: crate::MaybeUpdateValueByRef<str>;
-        type image_src_set: crate::MaybeUpdateValueByRef<str>;
-        type integrity: crate::MaybeUpdateValueByRef<str>;
-        type media: crate::MaybeUpdateValueByRef<str>;
-        type prefetch: crate::MaybeUpdateValueByRef<str>;
-        type referrer_policy: crate::MaybeUpdateValueByRef<str>;
-        type rel: crate::MaybeUpdateValueByRef<str>;
-        type sizes: crate::MaybeUpdateValueByRef<str>;
-        type type_: crate::MaybeUpdateValueByRef<str>;
-        type blocking: crate::MaybeUpdateValueByRef<str>;
+        type HtmlElementProps: ?::core::marker::Sized
+            + HtmlElementProps::Types
+            + ~const ::core::marker::Destruct;
+        type as_: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type cross_origin: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type fetch_priority: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type href: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type href_lang: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type image_sizes: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type image_src_set: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type integrity: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type media: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type prefetch: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type referrer_policy: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type rel: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type sizes: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type type_: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
+        type blocking: crate::MaybeUpdateValueByRef<str> + ~const ::core::marker::Destruct;
     }
 }
 pub use trait_types::Types;
@@ -619,8 +622,8 @@ pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
 #[cfg(feature = "dom")]
 pub use super::HtmlElementProps::render_state;
-#[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+#[inline(always)]
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     building.0
@@ -630,8 +633,8 @@ mod builder_and_replacer {
     use super::super::*;
     impl<TypeDefs: super::Types + ?::core::marker::Sized> super::Building<TypeDefs> {
         #[doc = "See [`HtmlElementProps::children`]"]
-        #[inline]
-        pub fn children<V>(
+        #[inline(always)]
+        pub const fn children<V>(
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
@@ -657,8 +660,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::class`]"]
-        #[inline]
-        pub fn class<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn class<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -684,8 +687,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::id`]"]
-        #[inline]
-        pub fn id<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -711,8 +714,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::part`]"]
-        #[inline]
-        pub fn part<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn part<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -738,8 +741,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::access_key`]"]
-        #[inline]
-        pub fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn access_key<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -765,8 +768,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::auto_capitalize`]"]
-        #[inline]
-        pub fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn auto_capitalize<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -793,8 +796,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::auto_focus`]"]
-        #[inline]
-        pub fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
+        #[inline(always)]
+        pub const fn auto_focus<V: crate::MaybeUpdateValue<bool>>(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -820,8 +823,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::content_editable`]"]
-        #[inline]
-        pub fn content_editable<V: crate::props::MaybeInherit<bool>>(
+        #[inline(always)]
+        pub const fn content_editable<V: crate::props::MaybeInherit<bool>>(
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
@@ -848,8 +851,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::context_menu`]"]
-        #[inline]
-        pub fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn context_menu<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -875,8 +878,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::dir`]"]
-        #[inline]
-        pub fn dir<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn dir<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -902,8 +905,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::draggable`]"]
-        #[inline]
-        pub fn draggable<V: crate::MaybeUpdateValue<bool>>(
+        #[inline(always)]
+        pub const fn draggable<V: crate::MaybeUpdateValue<bool>>(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -929,8 +932,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::enter_key_hint`]"]
-        #[inline]
-        pub fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn enter_key_hint<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -957,8 +960,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::hidden`]"]
-        #[inline]
-        pub fn hidden<V: crate::MaybeUpdateValue<bool>>(
+        #[inline(always)]
+        pub const fn hidden<V: crate::MaybeUpdateValue<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -984,8 +987,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::inert`]"]
-        #[inline]
-        pub fn inert<V: crate::MaybeUpdateValue<bool>>(
+        #[inline(always)]
+        pub const fn inert<V: crate::MaybeUpdateValue<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -1011,8 +1014,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::input_mode`]"]
-        #[inline]
-        pub fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn input_mode<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -1038,8 +1041,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::is`]"]
-        #[inline]
-        pub fn is<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn is<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1065,8 +1068,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::item_id`]"]
-        #[inline]
-        pub fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn item_id<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1092,8 +1095,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::item_prop`]"]
-        #[inline]
-        pub fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn item_prop<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1119,8 +1122,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::item_ref`]"]
-        #[inline]
-        pub fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn item_ref<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1146,8 +1149,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::item_scope`]"]
-        #[inline]
-        pub fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn item_scope<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1173,8 +1176,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::item_type`]"]
-        #[inline]
-        pub fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn item_type<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1200,8 +1203,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::lang`]"]
-        #[inline]
-        pub fn lang<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1227,8 +1230,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::nonce`]"]
-        #[inline]
-        pub fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn nonce<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1254,8 +1257,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::role`]"]
-        #[inline]
-        pub fn role<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn role<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1281,8 +1284,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::slot`]"]
-        #[inline]
-        pub fn slot<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn slot<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1308,8 +1311,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::spellcheck`]"]
-        #[inline]
-        pub fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
+        #[inline(always)]
+        pub const fn spellcheck<V: crate::MaybeUpdateValue<bool>>(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -1335,8 +1338,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::style`]"]
-        #[inline]
-        pub fn style<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn style<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1362,8 +1365,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::tab_index`]"]
-        #[inline]
-        pub fn tab_index<V: crate::MaybeUpdateValue<i32>>(
+        #[inline(always)]
+        pub const fn tab_index<V: crate::MaybeUpdateValue<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -1389,8 +1392,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::title`]"]
-        #[inline]
-        pub fn title<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn title<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1416,8 +1419,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::translate`]"]
-        #[inline]
-        pub fn translate<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn translate<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1443,8 +1446,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::virtual_keyboard_policy`]"]
-        #[inline]
-        pub fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn virtual_keyboard_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -1471,8 +1474,8 @@ mod builder_and_replacer {
             })
         }
         #[doc = "See [`HtmlElementProps::on_click`]"]
-        #[inline]
-        pub fn on_click<V>(
+        #[inline(always)]
+        pub const fn on_click<V>(
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
@@ -1497,11 +1500,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn as_<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn as_<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             as_: V,
-        ) -> super::Building<super::overwrite::as_<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::as_<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_,
@@ -1521,11 +1527,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn cross_origin<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn cross_origin<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             cross_origin: V,
-        ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1545,11 +1554,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn fetch_priority<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn fetch_priority<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             fetch_priority: V,
-        ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1569,11 +1581,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn href<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn href<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             href: V,
-        ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::href<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1593,11 +1608,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn href_lang<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn href_lang<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             href_lang: V,
-        ) -> super::Building<super::overwrite::href_lang<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::href_lang<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1617,11 +1635,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn image_sizes<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn image_sizes<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             image_sizes: V,
-        ) -> super::Building<super::overwrite::image_sizes<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::image_sizes<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1641,11 +1662,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn image_src_set<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn image_src_set<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             image_src_set: V,
-        ) -> super::Building<super::overwrite::image_src_set<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::image_src_set<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1665,11 +1689,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn integrity<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn integrity<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             integrity: V,
-        ) -> super::Building<super::overwrite::integrity<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::integrity<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1689,11 +1716,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn media<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn media<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             media: V,
-        ) -> super::Building<super::overwrite::media<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::media<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1713,11 +1743,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn prefetch<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn prefetch<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             prefetch: V,
-        ) -> super::Building<super::overwrite::prefetch<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::prefetch<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1737,11 +1770,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn referrer_policy<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn referrer_policy<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             referrer_policy: V,
-        ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1761,11 +1797,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn rel<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn rel<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             rel: V,
-        ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::rel<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1785,11 +1824,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn sizes<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn sizes<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             sizes: V,
-        ) -> super::Building<super::overwrite::sizes<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::sizes<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1809,11 +1851,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn type_<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn type_<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::type_<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,
@@ -1833,11 +1878,14 @@ mod builder_and_replacer {
                 blocking: self.0.blocking,
             })
         }
-        #[inline]
-        pub fn blocking<V: crate::MaybeUpdateValueByRef<str>>(
+        #[inline(always)]
+        pub const fn blocking<V: crate::MaybeUpdateValueByRef<str>>(
             self,
             blocking: V,
-        ) -> super::Building<super::overwrite::blocking<TypeDefs, V>> {
+        ) -> super::Building<super::overwrite::blocking<TypeDefs, V>>
+        where
+            Self: ~const ::core::marker::Destruct,
+        {
             super::Building(super::Data {
                 HtmlElementProps: self.0.HtmlElementProps,
                 as_: self.0.as_,

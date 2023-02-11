@@ -1,5 +1,5 @@
 #[inline]
-pub fn q() -> Building<TypesInitial> {
+pub const fn q() -> Building<TypesInitial> {
     super::HtmlQuoteElementProps()
 }
 pub use super::blockquote::{prelude, Building, Types, TypesInitial, ValidTypes};
@@ -10,7 +10,7 @@ impl crate::props::IntrinsicComponent for ComponentType {
 pub type Data<TypeDefs> = super::blockquote::Data<TypeDefs, ComponentType>;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;

@@ -1,5 +1,5 @@
 #[inline]
-pub fn script() -> Building<TypesInitial> {
+pub const fn script() -> Building<TypesInitial> {
     super::HtmlScriptElementProps()
 }
 mod reuse {
@@ -25,7 +25,7 @@ mod struct_data {
 pub use struct_data::script as Data;
 pub type DataInitial = Data<TypesInitial>;
 #[inline]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
+pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(
     building: Building<TypeDefs>,
 ) -> Data<TypeDefs> {
     use super::*;
