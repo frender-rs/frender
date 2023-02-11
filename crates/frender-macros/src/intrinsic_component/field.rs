@@ -64,13 +64,13 @@ impl Field {
         });
         quote! {
             #(#attrs)*
-            #[inline]
-            pub fn #name <V #bounds>(
+            #[inline(always)]
+            pub const fn #name <V #bounds>(
                 self,
                 #name: V,
             ) -> super::Building<
                 super::overwrite::#name<TypeDefs, V>,
-            > {
+            > where Self: ~const ::core::marker::Destruct {
                 super::Building(
                     super::Data {
                         #(#new_value),*

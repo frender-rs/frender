@@ -254,10 +254,10 @@ impl IntrinsicComponentPropsData {
                 let name = &v.name;
                 let initial_value = v.declaration.initial_value();
                 let initial_type = v.declaration.initial_type();
-                let bounds = v
-                    .declaration
-                    .bounds(&crate_path)
-                    .map(|bounds| quote!(: #bounds));
+                let bounds = v.declaration.bounds(&crate_path).map_or_else(
+                    || quote!(: ~const ::core::marker::Destruct),
+                    |bounds| quote!(: #bounds + ~const ::core::marker::Destruct),
+                );
 
                 let field_initial_value = quote!(#name : #initial_value);
                 let field_type_item = quote!(type #name #bounds;);
@@ -491,7 +491,8 @@ impl IntrinsicComponentPropsData {
             #vis mod #name {
                 #(#attrs)*
                 #[allow(non_snake_case)]
-                #vis fn #name () -> Building<TypesInitial> {
+                #[inline(always)]
+                #vis const fn #name () -> Building<TypesInitial> {
                     #[allow(unused_imports)]
                     use super::*;
                     self::Building(
@@ -552,8 +553,8 @@ impl IntrinsicComponentPropsData {
                 #[cfg(feature = "dom")]
                 #mod_render_state
 
-                #[inline]
-                pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
+                #[inline(always)]
+                pub const fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
                     building.0
                 }
 

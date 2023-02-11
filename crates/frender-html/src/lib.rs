@@ -1,3 +1,5 @@
+#![feature(const_trait_impl)]
+
 #[cfg(feature = "html_macro_not_expand")]
 mod element_macros;
 #[cfg(feature = "html_macro_not_expand")]
