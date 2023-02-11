@@ -93,7 +93,7 @@ pub fn write_mod_content_into_dir(
             }
             _ => {
                 // directly append to mod.rs
-                file.write_all(item.into_token_stream().to_string().as_bytes())?;
+                file.write_all(utils::format_item(item).as_bytes())?;
             }
         }
     }

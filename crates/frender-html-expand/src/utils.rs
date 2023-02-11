@@ -3,6 +3,14 @@ use std::{
     path::{Path, PathBuf},
 };
 
+pub fn format_item(item: syn::Item) -> String {
+    prettyplease::unparse(&syn::File {
+        shebang: None,
+        attrs: vec![],
+        items: vec![item],
+    })
+}
+
 pub fn cargo_expand_html() -> io::Result<String> {
     let output = std::process::Command::new("cargo")
         .arg("expand")
