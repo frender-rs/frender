@@ -1,50 +1,49 @@
 use std::pin::Pin;
 
-use crate::{utils::LazyPinned, RenderState, UpdateRenderState};
+use crate::{RenderState, UpdateRenderState};
 
-pin_project_lite::pin_project! {
-    pub struct OptionState<S> {
-        #[pin]
-        inner: LazyPinned<S>
-    }
-}
-
-impl<S: RenderState> RenderState for OptionState<S> {
+impl<S: RenderState + Unpin> RenderState for Option<S> {
     fn unmount(self: Pin<&mut Self>) {
-        self.project().inner.as_pin_mut().map(S::unmount);
+        let this = self.get_mut();
+        match this {
+            Some(state) => {
+                S::unmount(Pin::new(state));
+            }
+            None => return,
+        }
+        *this = None;
     }
 
     fn poll_reactive(
         self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<bool> {
-        self.project()
-            .inner
-            .as_pin_mut()
-            .map_or(std::task::Poll::Ready(false), |s| S::poll_reactive(s, cx))
+        match self.get_mut() {
+            Some(s) => S::poll_reactive(Pin::new(s), cx),
+            None => std::task::Poll::Ready(false),
+        }
     }
 }
 
-impl<Ctx, R: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for Option<R> {
-    type State = OptionState<R::State>;
+impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for Option<E>
+where
+    <E as UpdateRenderState<Ctx>>::State: Unpin,
+{
+    type State = Option<E::State>;
 
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        OptionState {
-            inner: LazyPinned(self.map(|this| R::initialize_render_state(this, ctx))),
+        match self {
+            Some(this) => Some(this.initialize_render_state(ctx)),
+            None => todo!(),
         }
     }
 
     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-        if let Some(element) = self {
-            state.project().inner.use_pin_or_insert_with_data(
-                (element, ctx),
-                |(element, ctx), state| {
-                    element.update_render_state(ctx, state);
-                },
-                |(element, ctx)| element.initialize_render_state(ctx),
-            );
-        } else {
-            state.project().inner.as_pin_mut().map(R::State::unmount);
+        match (self, state.get_mut()) {
+            (Some(this), Some(state)) => this.update_render_state(ctx, Pin::new(state)),
+            (Some(this), state @ None) => *state = Some(this.initialize_render_state(ctx)),
+            (None, Some(state)) => Pin::new(state).unmount(),
+            (None, None) => {}
         }
     }
 }

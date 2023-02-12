@@ -1,7 +1,8 @@
 use std::{any::Any, pin::Pin};
 
-use frender_core::{LazyPinned, RenderState, UpdateRenderState};
+use frender_core::{RenderState, UpdateRenderState};
 use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
+use lazy_pinned::LazyPinned;
 
 use crate::ContextAndState;
 

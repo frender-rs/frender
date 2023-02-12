@@ -1,6 +1,7 @@
 use std::pin::Pin;
 
-use frender_core::{LazyPinned, RenderState, UpdateRenderState};
+use frender_core::{RenderState, UpdateRenderState};
+use lazy_pinned::LazyPinned;
 
 pub struct ContextAndState<'a, Ctx, State> {
     context: &'a mut Ctx,

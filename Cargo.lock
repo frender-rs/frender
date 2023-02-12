@@ -197,6 +197,8 @@ dependencies = [
 name = "frender-core"
 version = "0.1.0"
 dependencies = [
+ "either",
+ "lazy-pinned",
  "pin-project-lite",
 ]
 
@@ -224,6 +226,7 @@ dependencies = [
  "frender-macros",
  "frender-ssr",
  "hooks",
+ "lazy-pinned",
  "pin-project-lite",
 ]
 
@@ -567,6 +570,12 @@ checksum = "445dde2150c55e483f3d8416706b97ec8e8237c307e5b7b4b8dd15e6af2a0730"
 dependencies = [
  "wasm-bindgen",
 ]
+
+[[package]]
+name = "lazy-pinned"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85a140d4d7ef417e1b0abf66c11b792f92c9de9e7cce22788c78d04e34ba3b44"
 
 [[package]]
 name = "log"

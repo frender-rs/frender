@@ -1,82 +1,56 @@
 use std::pin::Pin;
 
+use either::Either;
+
 use crate::{RenderState, UpdateRenderState};
 
-pub enum Either<A, B> {
-    A(A),
-    B(B),
-}
-
-pin_project_lite::pin_project! {
-    pub struct EitherState<A, B> {
-        #[pin]
-        pub a: Option<A>,
-        #[pin]
-        pub b: B,
-    }
-}
-
-impl<A: RenderState, B: RenderState> RenderState for EitherState<A, B> {
+impl<L: RenderState, R: RenderState> RenderState for Either<L, R> {
     fn unmount(self: Pin<&mut Self>) {
-        let this = self.project();
-        match this.mounted {
-            Some(Either::A(_)) => this.a.unmount(),
-            Some(Either::B(_)) => this.b.unmount(),
-            None => return,
+        match self.as_pin_mut() {
+            Either::Left(s) => s.unmount(),
+            Either::Right(s) => s.unmount(),
         }
-        *this.mounted = None;
     }
 
     fn poll_reactive(
         self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<bool> {
-        let this = self.project();
-        match this.mounted {
-            Some(Either::A(_)) => this.a.poll_reactive(cx),
-            Some(Either::B(_)) => this.b.poll_reactive(cx),
-            None => true.into(),
+        match self.as_pin_mut() {
+            Either::Left(s) => s.poll_reactive(cx),
+            Either::Right(s) => s.poll_reactive(cx),
         }
     }
 }
 
-impl<A, B, Ctx> UpdateRenderState<Ctx> for Either<A, B>
+impl<L, R, Ctx> UpdateRenderState<Ctx> for Either<L, R>
 where
-    A: UpdateRenderState<Ctx>,
-    B: UpdateRenderState<Ctx>,
+    L: UpdateRenderState<Ctx>,
+    R: UpdateRenderState<Ctx>,
+    L::State: Unpin,
+    R::State: Unpin,
 {
-    type State = EitherState<A::State, B::State>;
+    type State = Either<L::State, R::State>;
 
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
         match self {
-            Either::A(a) => EitherState {
-                mounted: (),
-                a: a.initialize_render_state(ctx),
-                b: None,
-            },
-            Either::B(b) => b.initialize_render_state(ctx),
+            Either::Left(e) => Either::Left(e.initialize_render_state(ctx)),
+            Either::Right(e) => Either::Right(e.initialize_render_state(ctx)),
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-        let state = state.project();
-        match self {
-            Either::A(this) => {
-                if let Some(Either::B(_)) = state.mounted {
-                    state.b.unmount();
-                    *state.mounted = None;
-                }
-                this.update_render_state(ctx, state.a);
-                *state.mounted = Some(Either::A(()));
+    fn update_render_state(self, ctx: &mut Ctx, mut state: Pin<&mut Self::State>) {
+        *state = match (self, state.as_mut().as_pin_mut()) {
+            (Either::Left(e), Either::Left(state)) => return e.update_render_state(ctx, state),
+            (Either::Right(e), Either::Right(state)) => return e.update_render_state(ctx, state),
+            (Either::Left(e), Either::Right(state)) => {
+                state.unmount();
+                Either::Left(e.initialize_render_state(ctx))
             }
-            Either::B(this) => {
-                if let Some(Either::A(_)) = state.mounted {
-                    state.a.unmount();
-                    *state.mounted = None;
-                }
-                this.update_render_state(ctx, state.b);
-                *state.mounted = Some(Either::B(()));
+            (Either::Right(e), Either::Left(state)) => {
+                state.unmount();
+                Either::Right(e.initialize_render_state(ctx))
             }
-        }
+        };
     }
 }

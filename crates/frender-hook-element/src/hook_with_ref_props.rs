@@ -1,10 +1,11 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
+use lazy_pinned::LazyPinned;
 
 use crate::{ContextAndState, HookContext};
 
-use frender_core::{LazyPinned, RenderState};
+use frender_core::RenderState;
 
 pub struct FnHookElementWithRefProps<Data, Props, UDom, USsr, S> {
     pub hook_data: Data,
