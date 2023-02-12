@@ -56,7 +56,7 @@ impl PropsDefinitionWithOptions {
             .iter()
             .partition::<Vec<_>, _>(|v| v.builder_type_param.is_some());
 
-        let fields_all_optional = required.len() == 0;
+        let fields_all_optional = required.is_empty();
 
         let builder_ident = if fields_all_optional {
             Cow::Borrowed(&ident)
@@ -210,7 +210,7 @@ impl PropsDefinitionWithOptions {
 
                     let tp_new = {
                         let mut tp_new = builder_tp_ts.clone();
-                        tp_new[idx] = &builder_valid_type[idx];
+                        tp_new[idx] = builder_valid_type[idx];
                         tp_new
                     };
 
@@ -519,8 +519,7 @@ fn infer_field_type_and_builder(
             return Err(syn::Error::new(
                 span,
                 format!(
-                    "Can't infer type for prop {}. Please specify the field type.",
-                    name
+                    "Can't infer type for prop {name}. Please specify the field type."
                 ),
             ))
         }

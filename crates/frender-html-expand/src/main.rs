@@ -79,8 +79,8 @@ pub fn write_mod_content_into_dir(
                 write!(
                     file,
                     "{} mod {};",
-                    vis.into_token_stream().to_string(),
-                    ident.to_string(),
+                    vis.into_token_stream(),
+                    ident,
                 )?;
 
                 write_mod_content_into_dir(

@@ -148,11 +148,7 @@ where
     type State = Option<<F as UpdateDomEventListener<Event>>::State>;
 
     fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
-        if let Some(el) = self {
-            Some(F::initialize_dom_event_listener_state(el, target))
-        } else {
-            None
-        }
+        self.map(|el| F::initialize_dom_event_listener_state(el, target))
     }
 
     fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {

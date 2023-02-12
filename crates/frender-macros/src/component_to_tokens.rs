@@ -1,4 +1,4 @@
-use quote::{quote, quote_spanned, ToTokens};
+use quote::{quote_spanned, ToTokens};
 
 use crate::err::OutputError;
 
@@ -22,7 +22,7 @@ impl ComponentDefinition {
             let span = main.span();
             let ComponentMainOptions {
                 //
-                mount_element_id,
+                mount_element_id: _,
             } = main.as_ref();
 
             let ts = quote_spanned! {span=>
@@ -58,15 +58,13 @@ impl ComponentDefinition {
 fn infer_custom_element_ty(render_output_ty: &syn::Type) -> syn::Type {
     if let syn::Type::Path(path_ty) = render_output_ty {
         let p = &path_ty.path;
-        if p.leading_colon.is_none() {
-            if p.segments.len() == 1 {
-                let seg = &p.segments[0];
-                if seg.ident == "Option" {
-                    if let syn::PathArguments::AngleBracketed(bracketed_args) = &seg.arguments {
-                        if bracketed_args.args.len() == 1 {
-                            if let syn::GenericArgument::Type(ty) = &bracketed_args.args[0] {
-                                return ty.clone();
-                            }
+        if p.leading_colon.is_none() && p.segments.len() == 1 {
+            let seg = &p.segments[0];
+            if seg.ident == "Option" {
+                if let syn::PathArguments::AngleBracketed(bracketed_args) = &seg.arguments {
+                    if bracketed_args.args.len() == 1 {
+                        if let syn::GenericArgument::Type(ty) = &bracketed_args.args[0] {
+                            return ty.clone();
                         }
                     }
                 }

@@ -9,7 +9,7 @@ pub fn mount_to_dom_element_by_id<E: UpdateRenderState<Dom> + Copy>(
     let window = web_sys::window().unwrap();
 
     let document = window.document().unwrap();
-    let current_parent = document.get_element_by_id(&id).unwrap();
+    let current_parent = document.get_element_by_id(id).unwrap();
 
     async move {
         Dom::new(document, current_parent)
@@ -25,7 +25,7 @@ pub fn mount_get_element_to_dom_element_by_id<E: UpdateRenderState<Dom>>(
     let window = web_sys::window().unwrap();
 
     let document = window.document().unwrap();
-    let current_parent = document.get_element_by_id(&id).unwrap();
+    let current_parent = document.get_element_by_id(id).unwrap();
 
     async move {
         Dom::new(document, current_parent)

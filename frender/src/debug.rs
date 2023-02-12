@@ -48,11 +48,11 @@ pub mod impl_auto_debug_props {
         v.as_debug_props()
     }
     fn debug_debug<T: ::core::fmt::Debug>(v: &T) -> Option<JsValue> {
-        Some(JsValue::from(format!("{:#?}", v)))
+        Some(JsValue::from(format!("{v:#?}")))
     }
     fn debug_any<T>(_: &T) -> Option<JsValue> {
         let ty = std::any::type_name::<T>();
-        Some(JsValue::from(format!("{} {{ ... }}", ty)))
+        Some(JsValue::from(format!("{ty} {{ ... }}")))
     }
 
     pub trait IsDebugPropsOrNot {

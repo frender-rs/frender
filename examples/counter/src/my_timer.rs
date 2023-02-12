@@ -27,11 +27,10 @@ pub fn MyTimer(ctx: _, props: &MyTimerProps) {
         move |stopped: &_| {
             let stopped = *stopped;
             gloo::console::log!(format!(
-                "Timer(initial_interval={}) stopped changed to {}",
-                initial_interval, stopped
+                "Timer(initial_interval={initial_interval}) stopped changed to {stopped}"
             ));
             if stopped {
-                return None;
+                None
             } else {
                 let interval = gloo::timers::callback::Interval::new(initial_interval, move || {
                     state_updater.replace_with_fn_pointer(|v| v.overflowing_add(1).0)

@@ -7,13 +7,13 @@ fn auto_debug_props() {
     struct MyAnyType;
 
     let any_info = std::any::type_name::<MyAnyType>();
-    let any_info = format!("{} {{ ... }}", any_info);
+    let any_info = format!("{any_info} {{ ... }}");
 
     struct MyDebugType;
     static DEBUG_INFO: &str = "MyDebugType debug info";
     impl ::std::fmt::Debug for MyDebugType {
         fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{}", DEBUG_INFO)
+            write!(f, "{DEBUG_INFO}")
         }
     }
 

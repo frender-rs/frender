@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
+use hooks::{Hook, HookPollNextUpdate};
 use lazy_pinned::LazyPinned;
 
 use crate::{ContextAndState, HookContext};

@@ -31,7 +31,7 @@ pub trait AsyncWritableBytes: AsRef<[u8]> {
 
 impl AsyncWritableBytes for &[u8] {
     fn truncate_start_at(&mut self, n: usize) {
-        let buf = std::mem::replace(self, &[]);
+        let buf = std::mem::take(self);
         let (_, rest) = buf.split_at(n);
         *self = rest;
     }

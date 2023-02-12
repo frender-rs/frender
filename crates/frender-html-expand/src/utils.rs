@@ -1,6 +1,6 @@
 use std::{
     io::{self, Write},
-    path::{Path, PathBuf},
+    path::{PathBuf},
 };
 
 pub fn format_item(item: syn::Item) -> String {
@@ -24,7 +24,7 @@ pub fn cargo_expand_html() -> io::Result<String> {
     if !output.status.success() {
         return Err(io::Error::new(
             io::ErrorKind::Other,
-            format!("Failed to run cargo expand"),
+            "Failed to run cargo expand".to_string(),
         ));
     }
 
@@ -71,7 +71,7 @@ pub fn cargo_fmt_package(package: &str) -> io::Result<()> {
     } else {
         Err(io::Error::new(
             io::ErrorKind::Other,
-            format!("Failed to run cargo fmt -p {}", package),
+            format!("Failed to run cargo fmt -p {package}"),
         ))
     }
 }

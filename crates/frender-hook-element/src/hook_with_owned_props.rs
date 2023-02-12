@@ -1,7 +1,7 @@
-use std::{any::Any, pin::Pin};
+use std::{pin::Pin};
 
 use frender_core::{RenderState, UpdateRenderState};
-use hooks::{Hook, HookPollNextUpdate, LazyPinnedHook};
+use hooks::{HookPollNextUpdate};
 use lazy_pinned::LazyPinned;
 
 use crate::ContextAndState;
@@ -58,7 +58,7 @@ where
 {
     type State = FnHookElementState<Data, S>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(self, _ctx: &mut Ctx) -> Self::State {
         FnHookElementState {
             hook_data: self.hook_data,
             render_state: Default::default(),

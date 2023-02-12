@@ -11,7 +11,7 @@ impl<Ctx> UpdateRenderState<Ctx> for () {
     type State = ();
 
     #[inline]
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {}
+    fn initialize_render_state(self, _ctx: &mut Ctx) -> Self::State {}
 
     #[inline]
     fn update_render_state(self, _: &mut Ctx, _: std::pin::Pin<&mut Self::State>) {}

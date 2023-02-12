@@ -93,7 +93,7 @@ fn Game(ctx: _) {
         .map(|i: usize| {
             let jump_to = jump_to.clone();
             let desc = if i > 0 {
-                format!("Go to move #{}", i)
+                format!("Go to move #{i}")
             } else {
                 "Go to game start".to_string()
             };

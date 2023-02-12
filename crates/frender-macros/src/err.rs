@@ -130,7 +130,7 @@ impl OutputError for Vec<darling::Error> {
 
     #[inline]
     fn output_error(self) -> Option<Self::OutputError> {
-        if self.len() == 0 {
+        if self.is_empty() {
             None
         } else {
             Some(darling::Error::multiple(self))

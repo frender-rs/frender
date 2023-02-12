@@ -37,8 +37,8 @@ pub fn auto_intrinsic(input: TokenStream) -> TokenStream {
     };
 
     let element_path = if let Some(TokenTree::Ident(ident)) = input.next() {
-        let first_char = ident.to_string().chars().nth(0).unwrap();
-        if first_char >= 'a' && first_char <= 'z' {
+        let first_char = ident.to_string().chars().next().unwrap();
+        if ('a'..='z').contains(&first_char) {
             let span = ident.span();
             let (colon1, colon2) = colon2_with_span(span);
             TokenStream::from_iter([

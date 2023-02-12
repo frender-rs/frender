@@ -112,7 +112,7 @@ impl RsxEndElementComponentType {
                                     && start.segments[1].arguments.is_none()
                                     && start.segments[1].ident == "intrinsic_components"
                                     && start.segments[2].arguments.is_none()
-                                    && start.segments[2].ident == end_ident.to_string()
+                                    && start.segments[2].ident == *end_ident
                             })
                     }
                     _ => false,
@@ -123,10 +123,10 @@ impl RsxEndElementComponentType {
         if matched {
             Ok(())
         } else {
-            let mut err = syn::Error::new(start_span, format!("<{}> not properly enclosed", start));
+            let mut err = syn::Error::new(start_span, format!("<{start}> not properly enclosed"));
             err.combine(syn::Error::new(
                 end_span,
-                format!("Expect </_> or </{}>, but got </{}>", start, self),
+                format!("Expect </_> or </{start}>, but got </{self}>"),
             ));
             Err(err)
         }
@@ -248,7 +248,7 @@ impl std::fmt::Display for RsxComponentType {
             RsxComponentType::Fragment(t) => {
                 write!(f, "{}", if t.is_some() { "#" } else { "" })
             }
-            RsxComponentType::Path(tp) => write!(f, "{}", tp.to_token_stream().to_string()),
+            RsxComponentType::Path(tp) => write!(f, "{}", tp.to_token_stream()),
         }
     }
 }
@@ -265,8 +265,8 @@ impl RsxComponentType {
 #[inline]
 fn ident_is_intrinsic_component(ident: &syn::Ident) -> bool {
     let s = ident.to_string();
-    let c = s.chars().nth(0).unwrap();
-    c >= 'a' && c <= 'z'
+    let c = s.chars().next().unwrap();
+    ('a'..='z').contains(&c)
     // match c {
     //     'a'..='z' => true,
     //     _ => false,

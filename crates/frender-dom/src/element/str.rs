@@ -7,7 +7,7 @@ use wasm_bindgen::{JsCast, JsValue};
 
 use crate::Dom;
 
-use crate::utils::option::map_or_insert_with_ctx;
+
 
 pub struct State<Cache> {
     node: web_sys::Text,
@@ -91,7 +91,7 @@ impl RenderingStr for Cow<'_, str> {
 
     #[inline]
     fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
-        cache.as_deref() != Some(&this)
+        cache.as_deref() != Some(this)
     }
 
     #[inline]

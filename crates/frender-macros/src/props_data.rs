@@ -35,7 +35,7 @@ impl PropsOptions {
         input: syn::parse::ParseStream,
         recorder: &mut R,
     ) -> Self {
-        match syn::Attribute::parse_inner(&input) {
+        match syn::Attribute::parse_inner(input) {
             Ok(attrs) => {
                 for attr in &attrs {
                     let ident = attr.path.get_ident().map(syn::Ident::to_string);
