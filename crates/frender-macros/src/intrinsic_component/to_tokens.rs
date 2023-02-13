@@ -7,8 +7,8 @@ use syn::parse_quote;
 use crate::utils::grouped::{Braced, Bracketed};
 
 use super::{
-    kw, Field, FieldDeclaration, FieldDeclarationInherit, FieldDeclarationMaybe,
-    IntrinsicComponentProps, IntrinsicComponentPropsData,
+    kw, Field, FieldDeclaration, FieldDeclarationEventListener, FieldDeclarationInherit,
+    FieldDeclarationMaybe, IntrinsicComponentProps, IntrinsicComponentPropsData,
 };
 
 impl FieldDeclaration {
@@ -34,6 +34,7 @@ impl FieldDeclaration {
                 .as_ref()
                 .map(|init| Cow::Borrowed(&init.content.content)),
             FieldDeclaration::Inherit(_) => None,
+            FieldDeclaration::EventListener(_) => None,
         }
     }
 
@@ -56,6 +57,11 @@ impl FieldDeclaration {
                     .impl_body
                     .content,
             ),
+            FieldDeclaration::EventListener(FieldDeclarationEventListener { ty, .. }) => {
+                Cow::Owned(quote! {
+                    #crate_path ::props::UpdateDomEventListener::<#ty>::update_dom_event_listener(this.#field_name, element, state.#field_name);
+                })
+            }
             FieldDeclaration::Inherit(_) => {
                 let state = if only_one_inherit_field {
                     quote!(state)
@@ -88,6 +94,11 @@ impl FieldDeclaration {
                 .as_ref()
                 .map(|bounds| &bounds.content.content)
                 .map(|simple_bounds| quote! { TypeDefs::#field_name : #simple_bounds }),
+            FieldDeclaration::EventListener(v) => {
+                let simple_bounds = v.to_ts_dom_bounds(crate_path);
+
+                Some(quote! { TypeDefs::#field_name : #simple_bounds })
+            }
             FieldDeclaration::Inherit(v) => {
                 let base = &v.from_path;
                 let dom_element_ty = &v.dom_element_ty;
@@ -152,6 +163,23 @@ impl FieldDeclaration {
                     }
                 });
             }
+            FieldDeclaration::EventListener(FieldDeclarationEventListener { ty, .. }) => {
+                Some(DomState {
+                    inherit: None,
+                    pin: None,
+                    field_name,
+                    ty: Cow::Owned(syn::Type::Verbatim(quote! {
+                            <TypeDefs::#field_name as #crate_path::props::UpdateDomEventListener<#ty>>::State
+                    })),
+                    bounds: None,
+                    initialize_state: Cow::Owned(quote!(
+                        #crate_path::props::UpdateDomEventListener::<crate::props::events::Click>::initialize_dom_event_listener_state(
+                            this.on_click,
+                            element,
+                        )
+                    )),
+                })
+            }
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
                 let dom_element_ty = &v.dom_element_ty;
@@ -205,6 +233,7 @@ impl FieldDeclaration {
                 Some(Cow::Owned(quote!(#crate_path ::#trait_name <#ty>)))
             }
             FieldDeclaration::Full(v) => v.bounds.as_ref().map(|b| &b.content).map(Cow::Borrowed),
+            FieldDeclaration::EventListener(_) => None,
             FieldDeclaration::Inherit(v) => {
                 //
                 let path = &v.from_path;
@@ -221,6 +250,7 @@ impl FieldDeclaration {
                 Cow::Owned(syn::Type::Verbatim(quote!(())))
             }
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_type),
+            FieldDeclaration::EventListener(_) => Cow::Owned(syn::Type::Verbatim(quote!(()))),
             FieldDeclaration::Inherit(v) => {
                 let path = &v.from_path;
                 Cow::Owned(syn::Type::Verbatim(quote!(
@@ -232,7 +262,7 @@ impl FieldDeclaration {
 
     pub fn initial_value(&self) -> Cow<syn::Expr> {
         match self {
-            FieldDeclaration::Maybe(FieldDeclarationMaybe { .. }) => {
+            FieldDeclaration::Maybe(_) | FieldDeclaration::EventListener(_) => {
                 Cow::Owned(syn::Expr::Verbatim(quote!(())))
             }
             FieldDeclaration::Full(v) => Cow::Borrowed(&v.initial_value),

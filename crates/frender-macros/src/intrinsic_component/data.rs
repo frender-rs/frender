@@ -9,7 +9,10 @@ use crate::utils::{
     kw::PrefixKeyword,
 };
 
-use super::{kw, FieldDeclarationInherit, FieldDeclarationMaybe, IntrinsicComponentPropsVirtual};
+use super::{
+    kw, FieldDeclarationEventListener, FieldDeclarationInherit, FieldDeclarationMaybe,
+    IntrinsicComponentPropsVirtual,
+};
 
 #[derive(Clone)]
 pub struct FieldDeclarationDomImpl {
@@ -130,6 +133,7 @@ impl Parse for FieldDeclarationFull {
 #[derive(Clone)]
 pub enum FieldDeclaration {
     Maybe(FieldDeclarationMaybe),
+    EventListener(FieldDeclarationEventListener),
     Full(FieldDeclarationFull),
     Inherit(FieldDeclarationInherit),
 }
@@ -165,6 +169,8 @@ impl Parse for FieldDeclaration {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         if input.peek(syn::Token![?]) {
             Ok(Self::Maybe(input.parse()?))
+        } else if input.peek(syn::Token![@]) {
+            Ok(Self::EventListener(input.parse()?))
         } else {
             Ok(Self::Full(input.parse()?))
         }

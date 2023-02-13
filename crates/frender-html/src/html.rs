@@ -114,23 +114,7 @@ crate::def_intrinsic_component_props! {
             // TODO: aria-*
             // TODO: data-*
             // TODO: events
-            on_click : () = () => {
-                dom {
-                    bounds[crate::props::UpdateDomEventListener<crate::props::events::Click>]
-                    state
-                        < <TypeDefs::on_click as crate::props::UpdateDomEventListener<crate::props::events::Click>>::State >
-                        :[std::any::Any]
-                        =(
-                            crate::props::UpdateDomEventListener::<crate::props::events::Click>::initialize_dom_event_listener_state(
-                                this.on_click,
-                                element,
-                            )
-                        )
-                    impl {
-                        crate::props::UpdateDomEventListener::<crate::props::events::Click>::update_dom_event_listener(this.on_click, element, state.on_click);
-                    }
-                }
-            },
+            on_click @ crate::props::events::Click,
         } [
             virtual {
                 download ? &str { set_download },
