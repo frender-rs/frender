@@ -173,8 +173,8 @@ impl FieldDeclaration {
                     })),
                     bounds: None,
                     initialize_state: Cow::Owned(quote!(
-                        #crate_path::props::UpdateDomEventListener::<crate::props::events::Click>::initialize_dom_event_listener_state(
-                            this.on_click,
+                        #crate_path::props::UpdateDomEventListener::<#ty>::initialize_dom_event_listener_state(
+                            this.#field_name,
                             element,
                         )
                     )),
