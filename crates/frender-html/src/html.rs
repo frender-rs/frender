@@ -1,5 +1,7 @@
 #![allow(non_camel_case_types)]
 
+use crate::props::events;
+
 crate::def_intrinsic_component_props! {
     @[crate]
     pub struct ElementProps (web_sys::Element) {
@@ -18,6 +20,41 @@ crate::def_intrinsic_component_props! {
         class ? &str,
         id ? &str {set_id},
         part ? &str,
+        on_cancel @ events::Cancel,
+        on_error @ events::Error,
+        on_scroll @ events::Scroll,
+        on_security_policy_violation @ events::SecurityPolicyViolation,
+        on_select @ events::Select,
+        on_wheel @ events::Wheel,
+        on_copy @ events::Copy,
+        on_cut @ events::Cut,
+        on_paste @ events::Paste,
+        on_composition_end @ events::CompositionEnd,
+        on_composition_start @ events::CompositionStart,
+        on_composition_update @ events::CompositionUpdate,
+        on_blur @ events::Blur,
+        on_focus @ events::Focus,
+        on_focus_in @ events::FocusIn,
+        on_focus_out @ events::FocusOut,
+        on_fullscreen_change @ events::FullscreenChange,
+        on_fullscreen_error @ events::FullscreenError,
+        on_key_down @ events::KeyDown,
+        on_key_up @ events::KeyUp,
+        on_aux_click @ events::AuxClick,
+        on_click @ events::Click,
+        on_context_menu @ events::ContextMenu,
+        on_double_click @ events::DoubleClick,
+        on_mouse_down @ events::MouseDown,
+        on_mouse_enter @ events::MouseEnter,
+        on_mouse_leave @ events::MouseLeave,
+        on_mouse_move @ events::MouseMove,
+        on_mouse_out @ events::MouseOut,
+        on_mouse_over @ events::MouseOver,
+        on_mouse_up @ events::MouseUp,
+        on_touch_cancel @ events::TouchCancel,
+        on_touch_end @ events::TouchEnd,
+        on_touch_move @ events::TouchMove,
+        on_touch_start @ events::TouchStart,
     } [
         pub struct HtmlElementProps (
             web_sys::HtmlElement :
@@ -113,8 +150,35 @@ crate::def_intrinsic_component_props! {
 
             // TODO: aria-*
             // TODO: data-*
-            // TODO: events
-            on_click @ crate::props::events::Click,
+            on_invalid @ events::Invalid,
+            on_animation_cancel @ events::AnimationCancel,
+            on_animation_end @ events::AnimationEnd,
+            on_animation_iteration @ events::AnimationIteration,
+            on_animation_start @ events::AnimationStart,
+            on_before_input @ events::BeforeInput,
+            on_input @ events::Input,
+            on_change @ events::Change,
+            on_got_pointer_capture @ events::GotPointerCapture,
+            on_lost_pointer_capture @ events::LostPointerCapture,
+            on_pointer_cancel @ events::PointerCancel,
+            on_pointer_down @ events::PointerDown,
+            on_pointer_enter @ events::PointerEnter,
+            on_pointer_leave @ events::PointerLeave,
+            on_pointer_move @ events::PointerMove,
+            on_pointer_out @ events::PointerOut,
+            on_pointer_over @ events::PointerOver,
+            on_pointer_up @ events::PointerUp,
+            on_transition_cancel @ events::TransitionCancel,
+            on_transition_end @ events::TransitionEnd,
+            on_transition_run @ events::TransitionRun,
+            on_transition_start @ events::TransitionStart,
+            on_drag @ events::Drag,
+            on_drag_end @ events::DragEnd,
+            on_drag_enter @ events::DragEnter,
+            on_drag_leave @ events::DragLeave,
+            on_drag_over @ events::DragOver,
+            on_drag_start @ events::DragStart,
+            on_drop @ events::Drop,
         } [
             virtual {
                 download ? &str { set_download },
@@ -144,6 +208,28 @@ crate::def_intrinsic_component_props! {
                 muted ? bool {set_muted},
                 preload ? &str {set_preload},
                 src ? &str {set_src},
+                on_abort @ events::Abort,
+                on_can_play @ events::CanPlay,
+                on_can_play_through @ events::CanPlayThrough,
+                on_duration_change @ events::DurationChange,
+                on_emptied @ events::Emptied,
+                on_ended @ events::Ended,
+                on_loaded_data @ events::LoadedData,
+                on_loaded_metadata @ events::LoadedMetadata,
+                on_load_start @ events::LoadStart,
+                on_pause @ events::Pause,
+                on_play @ events::Play,
+                on_playing @ events::Playing,
+                on_progress @ events::Progress,
+                on_rate_change @ events::RateChange,
+                on_resize @ events::Resize,
+                on_seeked @ events::Seeked,
+                on_seeking @ events::Seeking,
+                on_stalled @ events::Stalled,
+                on_suspend @ events::Suspend,
+                on_time_update @ events::TimeUpdate,
+                on_volume_change @ events::VolumeChange,
+                on_waiting @ events::Waiting,
             } [
                 pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement : audio) {
                     __ ? &str, // TODO: optimize for direct inherited struct
@@ -243,6 +329,9 @@ crate::def_intrinsic_component_props! {
                 method ? &str {set_method},
                 no_validate ? bool {"novalidate" set_no_validate},
                 target ? &str {set_target},
+                on_form_data @ events::FormData,
+                on_reset @ events::Reset,
+                on_submit @ events::Submit,
             }
         ][
             pub struct HtmlHtmlElementProps(web_sys::HtmlHtmlElement : html) {
