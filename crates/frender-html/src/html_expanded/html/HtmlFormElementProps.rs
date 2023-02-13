@@ -15,6 +15,9 @@ pub fn HtmlFormElementProps() -> Building<TypesInitial> {
         method: (),
         no_validate: (),
         target: (),
+        on_form_data: (),
+        on_reset: (),
+        on_submit: (),
     })
 }
 pub mod prelude {}
@@ -32,6 +35,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
@@ -64,6 +70,251 @@ pub mod overwrite {
     pub type part<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::part<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_scroll<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_scroll<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_security_policy_violation<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_security_policy_violation<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_select<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_select<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_wheel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_wheel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_copy<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_copy<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cut<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cut<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_paste<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_paste<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_update<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_update<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_blur<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_blur<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_in<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_in<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_aux_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_aux_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_context_menu<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_context_menu<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_double_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_double_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_start<
             <TypeDefs as super::Types>::HtmlElementProps,
             Value,
         >,
@@ -257,9 +508,205 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+    pub type on_invalid<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
-        super::super::HtmlElementProps::overwrite::on_click<
+        super::super::HtmlElementProps::overwrite::on_invalid<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_iteration<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_iteration<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_before_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_before_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_got_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_got_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_lost_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_lost_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_run<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_run<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drop<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drop<
             <TypeDefs as super::Types>::HtmlElementProps,
             Value,
         >,
@@ -276,6 +723,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type accept_charset<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -289,6 +739,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type auto_complete<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -302,6 +755,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type name<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -315,6 +771,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type rel<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -328,6 +787,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type action<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -341,6 +803,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type enc_type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -354,6 +819,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type method<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -367,6 +835,9 @@ pub mod overwrite {
         method = Value,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type no_validate<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -380,6 +851,9 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = Value,
         target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
     >;
     pub type target<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -393,6 +867,57 @@ pub mod overwrite {
         method = <TypeDefs as super::Types>::method,
         no_validate = <TypeDefs as super::Types>::no_validate,
         target = Value,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
+    >;
+    pub type on_form_data<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        accept = <TypeDefs as super::Types>::accept,
+        accept_charset = <TypeDefs as super::Types>::accept_charset,
+        auto_complete = <TypeDefs as super::Types>::auto_complete,
+        name = <TypeDefs as super::Types>::name,
+        rel = <TypeDefs as super::Types>::rel,
+        action = <TypeDefs as super::Types>::action,
+        enc_type = <TypeDefs as super::Types>::enc_type,
+        method = <TypeDefs as super::Types>::method,
+        no_validate = <TypeDefs as super::Types>::no_validate,
+        target = <TypeDefs as super::Types>::target,
+        on_form_data = Value,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = <TypeDefs as super::Types>::on_submit,
+    >;
+    pub type on_reset<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        accept = <TypeDefs as super::Types>::accept,
+        accept_charset = <TypeDefs as super::Types>::accept_charset,
+        auto_complete = <TypeDefs as super::Types>::auto_complete,
+        name = <TypeDefs as super::Types>::name,
+        rel = <TypeDefs as super::Types>::rel,
+        action = <TypeDefs as super::Types>::action,
+        enc_type = <TypeDefs as super::Types>::enc_type,
+        method = <TypeDefs as super::Types>::method,
+        no_validate = <TypeDefs as super::Types>::no_validate,
+        target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = Value,
+        on_submit = <TypeDefs as super::Types>::on_submit,
+    >;
+    pub type on_submit<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        accept = <TypeDefs as super::Types>::accept,
+        accept_charset = <TypeDefs as super::Types>::accept_charset,
+        auto_complete = <TypeDefs as super::Types>::auto_complete,
+        name = <TypeDefs as super::Types>::name,
+        rel = <TypeDefs as super::Types>::rel,
+        action = <TypeDefs as super::Types>::action,
+        enc_type = <TypeDefs as super::Types>::enc_type,
+        method = <TypeDefs as super::Types>::method,
+        no_validate = <TypeDefs as super::Types>::no_validate,
+        target = <TypeDefs as super::Types>::target,
+        on_form_data = <TypeDefs as super::Types>::on_form_data,
+        on_reset = <TypeDefs as super::Types>::on_reset,
+        on_submit = Value,
     >;
 }
 mod trait_types {
@@ -411,6 +936,9 @@ mod trait_types {
         type method: crate::MaybeUpdateValueWithState<str>;
         type no_validate: crate::MaybeUpdateValueWithState<bool>;
         type target: crate::MaybeUpdateValueWithState<str>;
+        type on_form_data;
+        type on_reset;
+        type on_submit;
     }
 }
 pub use trait_types::Types;
@@ -429,6 +957,9 @@ pub mod data_struct {
         pub method: TypeDefs::method,
         pub no_validate: TypeDefs::no_validate,
         pub target: TypeDefs::target,
+        pub on_form_data: TypeDefs::on_form_data,
+        pub on_reset: TypeDefs::on_reset,
+        pub on_submit: TypeDefs::on_submit,
     }
 }
 pub use data_struct::HtmlFormElementProps as Data;
@@ -449,6 +980,9 @@ mod types_initial {
         method = (),
         no_validate = (),
         target = (),
+        on_form_data = (),
+        on_reset = (),
+        on_submit = (),
     >;
 }
 pub use types_initial::TypesInitial;
@@ -468,6 +1002,9 @@ pub mod render_state {
         type method;
         type no_validate;
         type target;
+        type on_form_data;
+        type on_reset;
+        type on_submit;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
@@ -484,6 +1021,9 @@ pub mod render_state {
         pub method: TypeDefs::method,
         pub no_validate: TypeDefs::no_validate,
         pub target: TypeDefs::target,
+        pub on_form_data: TypeDefs::on_form_data,
+        pub on_reset: TypeDefs::on_reset,
+        pub on_submit: TypeDefs::on_submit,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -509,6 +1049,9 @@ pub mod render_state {
         pub method: &'__pin mut (TypeDefs::method),
         pub no_validate: &'__pin mut (TypeDefs::no_validate),
         pub target: &'__pin mut (TypeDefs::target),
+        pub on_form_data: &'__pin mut (TypeDefs::on_form_data),
+        pub on_reset: &'__pin mut (TypeDefs::on_reset),
+        pub on_submit: &'__pin mut (TypeDefs::on_submit),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -540,6 +1083,9 @@ pub mod render_state {
             pub method: &'__pin (TypeDefs::method),
             pub no_validate: &'__pin (TypeDefs::no_validate),
             pub target: &'__pin (TypeDefs::target),
+            pub on_form_data: &'__pin (TypeDefs::on_form_data),
+            pub on_reset: &'__pin (TypeDefs::on_reset),
+            pub on_submit: &'__pin (TypeDefs::on_submit),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -561,6 +1107,9 @@ pub mod render_state {
                         method,
                         no_validate,
                         target,
+                        on_form_data,
+                        on_reset,
+                        on_submit,
                     } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
@@ -576,6 +1125,9 @@ pub mod render_state {
                         method: method,
                         no_validate: no_validate,
                         target: target,
+                        on_form_data: on_form_data,
+                        on_reset: on_reset,
+                        on_submit: on_submit,
                     }
                 }
             }
@@ -595,6 +1147,9 @@ pub mod render_state {
                         method,
                         no_validate,
                         target,
+                        on_form_data,
+                        on_reset,
+                        on_submit,
                     } = self.get_ref();
                     ProjectionRef {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
@@ -610,6 +1165,9 @@ pub mod render_state {
                         method: method,
                         no_validate: no_validate,
                         target: target,
+                        on_form_data: on_form_data,
+                        on_reset: on_reset,
+                        on_submit: on_submit,
                     }
                 }
             }
@@ -631,6 +1189,9 @@ pub mod render_state {
             method: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::method>,
             no_validate: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::no_validate>,
             target: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::target>,
+            on_form_data: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_form_data>,
+            on_reset: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_reset>,
+            on_submit: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_submit>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -662,6 +1223,9 @@ pub mod render_state {
             let _ = &this.method;
             let _ = &this.no_validate;
             let _ = &this.target;
+            let _ = &this.on_form_data;
+            let _ = &this.on_reset;
+            let _ = &this.on_submit;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -717,6 +1281,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::class`]
@@ -739,6 +1306,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::id`]
@@ -761,6 +1331,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::part`]
@@ -783,6 +1356,900 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_cancel`]
+        #[inline(always)]
+        pub fn on_cancel<V>(
+            self,
+            on_cancel: V,
+        ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_error`]
+        #[inline(always)]
+        pub fn on_error<V>(
+            self,
+            on_error: V,
+        ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_scroll`]
+        #[inline(always)]
+        pub fn on_scroll<V>(
+            self,
+            on_scroll: V,
+        ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_security_policy_violation`]
+        #[inline(always)]
+        pub fn on_security_policy_violation<V>(
+            self,
+            on_security_policy_violation: V,
+        ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_security_policy_violation(on_security_policy_violation),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_select`]
+        #[inline(always)]
+        pub fn on_select<V>(
+            self,
+            on_select: V,
+        ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_wheel`]
+        #[inline(always)]
+        pub fn on_wheel<V>(
+            self,
+            on_wheel: V,
+        ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_copy`]
+        #[inline(always)]
+        pub fn on_copy<V>(
+            self,
+            on_copy: V,
+        ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_cut`]
+        #[inline(always)]
+        pub fn on_cut<V>(
+            self,
+            on_cut: V,
+        ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_paste`]
+        #[inline(always)]
+        pub fn on_paste<V>(
+            self,
+            on_paste: V,
+        ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_end`]
+        #[inline(always)]
+        pub fn on_composition_end<V>(
+            self,
+            on_composition_end: V,
+        ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_end(on_composition_end),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_start`]
+        #[inline(always)]
+        pub fn on_composition_start<V>(
+            self,
+            on_composition_start: V,
+        ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_start(on_composition_start),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_update`]
+        #[inline(always)]
+        pub fn on_composition_update<V>(
+            self,
+            on_composition_update: V,
+        ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_update(on_composition_update),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_blur`]
+        #[inline(always)]
+        pub fn on_blur<V>(
+            self,
+            on_blur: V,
+        ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus`]
+        #[inline(always)]
+        pub fn on_focus<V>(
+            self,
+            on_focus: V,
+        ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_in`]
+        #[inline(always)]
+        pub fn on_focus_in<V>(
+            self,
+            on_focus_in: V,
+        ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_out`]
+        #[inline(always)]
+        pub fn on_focus_out<V>(
+            self,
+            on_focus_out: V,
+        ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_change`]
+        #[inline(always)]
+        pub fn on_fullscreen_change<V>(
+            self,
+            on_fullscreen_change: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_change(on_fullscreen_change),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_error`]
+        #[inline(always)]
+        pub fn on_fullscreen_error<V>(
+            self,
+            on_fullscreen_error: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_error(on_fullscreen_error),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_down`]
+        #[inline(always)]
+        pub fn on_key_down<V>(
+            self,
+            on_key_down: V,
+        ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_up`]
+        #[inline(always)]
+        pub fn on_key_up<V>(
+            self,
+            on_key_up: V,
+        ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_aux_click`]
+        #[inline(always)]
+        pub fn on_aux_click<V>(
+            self,
+            on_aux_click: V,
+        ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_click`]
+        #[inline(always)]
+        pub fn on_click<V>(
+            self,
+            on_click: V,
+        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_context_menu`]
+        #[inline(always)]
+        pub fn on_context_menu<V>(
+            self,
+            on_context_menu: V,
+        ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_context_menu(on_context_menu),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_double_click`]
+        #[inline(always)]
+        pub fn on_double_click<V>(
+            self,
+            on_double_click: V,
+        ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_double_click(on_double_click),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_down`]
+        #[inline(always)]
+        pub fn on_mouse_down<V>(
+            self,
+            on_mouse_down: V,
+        ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_down(on_mouse_down),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_enter`]
+        #[inline(always)]
+        pub fn on_mouse_enter<V>(
+            self,
+            on_mouse_enter: V,
+        ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_enter(on_mouse_enter),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_leave`]
+        #[inline(always)]
+        pub fn on_mouse_leave<V>(
+            self,
+            on_mouse_leave: V,
+        ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_leave(on_mouse_leave),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_move`]
+        #[inline(always)]
+        pub fn on_mouse_move<V>(
+            self,
+            on_mouse_move: V,
+        ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_move(on_mouse_move),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_out`]
+        #[inline(always)]
+        pub fn on_mouse_out<V>(
+            self,
+            on_mouse_out: V,
+        ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_over`]
+        #[inline(always)]
+        pub fn on_mouse_over<V>(
+            self,
+            on_mouse_over: V,
+        ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_over(on_mouse_over),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_up`]
+        #[inline(always)]
+        pub fn on_mouse_up<V>(
+            self,
+            on_mouse_up: V,
+        ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_cancel`]
+        #[inline(always)]
+        pub fn on_touch_cancel<V>(
+            self,
+            on_touch_cancel: V,
+        ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_cancel(on_touch_cancel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_end`]
+        #[inline(always)]
+        pub fn on_touch_end<V>(
+            self,
+            on_touch_end: V,
+        ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_move`]
+        #[inline(always)]
+        pub fn on_touch_move<V>(
+            self,
+            on_touch_move: V,
+        ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_move(on_touch_move),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_start`]
+        #[inline(always)]
+        pub fn on_touch_start<V>(
+            self,
+            on_touch_start: V,
+        ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_start(on_touch_start),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::access_key`]
@@ -805,6 +2272,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::auto_capitalize`]
@@ -828,6 +2298,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::auto_focus`]
@@ -850,6 +2323,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::content_editable`]
@@ -873,6 +2349,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::context_menu`]
@@ -895,6 +2374,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::dir`]
@@ -917,6 +2399,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::draggable`]
@@ -939,6 +2424,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::enter_key_hint`]
@@ -962,6 +2450,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::hidden`]
@@ -984,6 +2475,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::inert`]
@@ -1006,6 +2500,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::input_mode`]
@@ -1028,6 +2525,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::is`]
@@ -1050,6 +2550,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::item_id`]
@@ -1072,6 +2575,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::item_prop`]
@@ -1094,6 +2600,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::item_ref`]
@@ -1116,6 +2625,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::item_scope`]
@@ -1138,6 +2650,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::item_type`]
@@ -1160,6 +2675,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::lang`]
@@ -1182,6 +2700,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::nonce`]
@@ -1204,6 +2725,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::role`]
@@ -1226,6 +2750,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::slot`]
@@ -1248,6 +2775,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::spellcheck`]
@@ -1270,6 +2800,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::style`]
@@ -1292,6 +2825,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::tab_index`]
@@ -1314,6 +2850,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::title`]
@@ -1336,6 +2875,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::translate`]
@@ -1358,6 +2900,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
@@ -1381,17 +2926,20 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
-        ///See [`HtmlElementProps::on_click`]
+        ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
-        pub fn on_click<V>(
+        pub fn on_invalid<V>(
             self,
-            on_click: V,
-        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            on_invalid: V,
+        ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Building(super::Data {
                 HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
                 ),
                 accept: self.0.accept,
                 accept_charset: self.0.accept_charset,
@@ -1403,6 +2951,731 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_cancel`]
+        #[inline(always)]
+        pub fn on_animation_cancel<V>(
+            self,
+            on_animation_cancel: V,
+        ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_cancel(on_animation_cancel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_end`]
+        #[inline(always)]
+        pub fn on_animation_end<V>(
+            self,
+            on_animation_end: V,
+        ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_end(on_animation_end),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_iteration`]
+        #[inline(always)]
+        pub fn on_animation_iteration<V>(
+            self,
+            on_animation_iteration: V,
+        ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_iteration(on_animation_iteration),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_start`]
+        #[inline(always)]
+        pub fn on_animation_start<V>(
+            self,
+            on_animation_start: V,
+        ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_start(on_animation_start),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_before_input`]
+        #[inline(always)]
+        pub fn on_before_input<V>(
+            self,
+            on_before_input: V,
+        ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_before_input(on_before_input),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_input`]
+        #[inline(always)]
+        pub fn on_input<V>(
+            self,
+            on_input: V,
+        ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_change`]
+        #[inline(always)]
+        pub fn on_change<V>(
+            self,
+            on_change: V,
+        ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_got_pointer_capture`]
+        #[inline(always)]
+        pub fn on_got_pointer_capture<V>(
+            self,
+            on_got_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_got_pointer_capture(on_got_pointer_capture),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_lost_pointer_capture`]
+        #[inline(always)]
+        pub fn on_lost_pointer_capture<V>(
+            self,
+            on_lost_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_lost_pointer_capture(on_lost_pointer_capture),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_cancel`]
+        #[inline(always)]
+        pub fn on_pointer_cancel<V>(
+            self,
+            on_pointer_cancel: V,
+        ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_cancel(on_pointer_cancel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_down`]
+        #[inline(always)]
+        pub fn on_pointer_down<V>(
+            self,
+            on_pointer_down: V,
+        ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_down(on_pointer_down),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_enter`]
+        #[inline(always)]
+        pub fn on_pointer_enter<V>(
+            self,
+            on_pointer_enter: V,
+        ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_enter(on_pointer_enter),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_leave`]
+        #[inline(always)]
+        pub fn on_pointer_leave<V>(
+            self,
+            on_pointer_leave: V,
+        ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_leave(on_pointer_leave),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_move`]
+        #[inline(always)]
+        pub fn on_pointer_move<V>(
+            self,
+            on_pointer_move: V,
+        ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_move(on_pointer_move),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_out`]
+        #[inline(always)]
+        pub fn on_pointer_out<V>(
+            self,
+            on_pointer_out: V,
+        ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_out(on_pointer_out),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_over`]
+        #[inline(always)]
+        pub fn on_pointer_over<V>(
+            self,
+            on_pointer_over: V,
+        ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_over(on_pointer_over),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_up`]
+        #[inline(always)]
+        pub fn on_pointer_up<V>(
+            self,
+            on_pointer_up: V,
+        ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_up(on_pointer_up),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_cancel`]
+        #[inline(always)]
+        pub fn on_transition_cancel<V>(
+            self,
+            on_transition_cancel: V,
+        ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_cancel(on_transition_cancel),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_end`]
+        #[inline(always)]
+        pub fn on_transition_end<V>(
+            self,
+            on_transition_end: V,
+        ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_end(on_transition_end),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_run`]
+        #[inline(always)]
+        pub fn on_transition_run<V>(
+            self,
+            on_transition_run: V,
+        ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_run(on_transition_run),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_start`]
+        #[inline(always)]
+        pub fn on_transition_start<V>(
+            self,
+            on_transition_start: V,
+        ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_start(on_transition_start),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag`]
+        #[inline(always)]
+        pub fn on_drag<V>(
+            self,
+            on_drag: V,
+        ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_end`]
+        #[inline(always)]
+        pub fn on_drag_end<V>(
+            self,
+            on_drag_end: V,
+        ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_enter`]
+        #[inline(always)]
+        pub fn on_drag_enter<V>(
+            self,
+            on_drag_enter: V,
+        ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_enter(on_drag_enter),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_leave`]
+        #[inline(always)]
+        pub fn on_drag_leave<V>(
+            self,
+            on_drag_leave: V,
+        ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_leave(on_drag_leave),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_over`]
+        #[inline(always)]
+        pub fn on_drag_over<V>(
+            self,
+            on_drag_over: V,
+        ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_start`]
+        #[inline(always)]
+        pub fn on_drag_start<V>(
+            self,
+            on_drag_start: V,
+        ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_start(on_drag_start),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        ///See [`HtmlElementProps::on_drop`]
+        #[inline(always)]
+        pub fn on_drop<V>(
+            self,
+            on_drop: V,
+        ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
+                ),
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
@@ -1423,6 +3696,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1442,6 +3718,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1461,6 +3740,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1480,6 +3762,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1499,6 +3784,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1518,6 +3806,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1537,6 +3828,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1556,6 +3850,9 @@ mod builder_and_replacer {
                 method,
                 no_validate: self.0.no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1575,6 +3872,9 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate,
                 target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
             })
         }
         #[inline(always)]
@@ -1594,6 +3894,75 @@ mod builder_and_replacer {
                 method: self.0.method,
                 no_validate: self.0.no_validate,
                 target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        #[inline(always)]
+        pub fn on_form_data<V>(
+            self,
+            on_form_data: V,
+        ) -> super::Building<super::overwrite::on_form_data<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        #[inline(always)]
+        pub fn on_reset<V>(
+            self,
+            on_reset: V,
+        ) -> super::Building<super::overwrite::on_reset<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset,
+                on_submit: self.0.on_submit,
+            })
+        }
+        #[inline(always)]
+        pub fn on_submit<V>(
+            self,
+            on_submit: V,
+        ) -> super::Building<super::overwrite::on_submit<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                accept: self.0.accept,
+                accept_charset: self.0.accept_charset,
+                auto_complete: self.0.auto_complete,
+                name: self.0.name,
+                rel: self.0.rel,
+                action: self.0.action,
+                enc_type: self.0.enc_type,
+                method: self.0.method,
+                no_validate: self.0.no_validate,
+                target: self.0.target,
+                on_form_data: self.0.on_form_data,
+                on_reset: self.0.on_reset,
+                on_submit,
             })
         }
     }
@@ -1607,6 +3976,9 @@ mod impl_update_element {
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
+        TypeDefs::on_form_data: crate::props::UpdateDomEventListener<events::FormData>,
+        TypeDefs::on_reset: crate::props::UpdateDomEventListener<events::Reset>,
+        TypeDefs::on_submit: crate::props::UpdateDomEventListener<events::Submit>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -1642,6 +4014,15 @@ mod impl_update_element {
                 >>::State,
                 target = <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
                     str,
+                >>::State,
+                on_form_data = <TypeDefs::on_form_data as crate::props::UpdateDomEventListener<
+                    events::FormData,
+                >>::State,
+                on_reset = <TypeDefs::on_reset as crate::props::UpdateDomEventListener<
+                    events::Reset,
+                >>::State,
+                on_submit = <TypeDefs::on_submit as crate::props::UpdateDomEventListener<
+                    events::Submit,
                 >>::State,
             >,
         >;
@@ -1735,6 +4116,15 @@ mod impl_update_element {
                     |v| element.set_target(v),
                     || dom_element.remove_attribute("target").unwrap(),
                 ),
+                on_form_data: crate::props::UpdateDomEventListener::<
+                    events::FormData,
+                >::initialize_dom_event_listener_state(this.on_form_data, element),
+                on_reset: crate::props::UpdateDomEventListener::<
+                    events::Reset,
+                >::initialize_dom_event_listener_state(this.on_reset, element),
+                on_submit: crate::props::UpdateDomEventListener::<
+                    events::Submit,
+                >::initialize_dom_event_listener_state(this.on_submit, element),
             }
         }
         fn update_element(
@@ -1838,6 +4228,21 @@ mod impl_update_element {
                 state.target,
                 |v| element.set_target(v),
                 || dom_element.remove_attribute("target").unwrap(),
+            );
+            crate::props::UpdateDomEventListener::<events::FormData>::update_dom_event_listener(
+                this.on_form_data,
+                element,
+                state.on_form_data,
+            );
+            crate::props::UpdateDomEventListener::<events::Reset>::update_dom_event_listener(
+                this.on_reset,
+                element,
+                state.on_reset,
+            );
+            crate::props::UpdateDomEventListener::<events::Submit>::update_dom_event_listener(
+                this.on_submit,
+                element,
+                state.on_submit,
             );
         }
     }

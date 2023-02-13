@@ -55,6 +55,251 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type on_cancel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_cancel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_error<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_error<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_scroll<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_scroll<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_security_policy_violation<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_security_policy_violation<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_select<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_select<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_wheel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_wheel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_copy<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_copy<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cut<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_cut<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_paste<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_paste<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_end<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_composition_end<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_composition_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_update<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_composition_update<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_blur<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_blur<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_focus<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_in<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_focus_in<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_out<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_focus_out<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_change<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_fullscreen_change<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_error<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_fullscreen_error<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_down<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_key_down<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_up<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_key_up<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_aux_click<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_aux_click<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_click<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_click<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_context_menu<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_context_menu<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_double_click<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_double_click<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_down<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_down<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_enter<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_enter<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_leave<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_leave<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_move<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_move<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_out<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_out<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_over<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_over<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_up<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_mouse_up<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_cancel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_touch_cancel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_end<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_touch_end<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_move<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_touch_move<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_touch_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
     pub type access_key<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
         super::super::HtmlMediaElementProps::overwrite::access_key<
@@ -244,9 +489,205 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type on_click<TypeDefs, Value> = self::HtmlMediaElementProps<
+    pub type on_invalid<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
-        super::super::HtmlMediaElementProps::overwrite::on_click<
+        super::super::HtmlMediaElementProps::overwrite::on_invalid<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_cancel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_animation_cancel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_end<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_animation_end<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_iteration<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_animation_iteration<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_animation_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_before_input<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_before_input<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_input<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_input<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_change<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_change<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_got_pointer_capture<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_got_pointer_capture<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_lost_pointer_capture<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_lost_pointer_capture<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_cancel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_cancel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_down<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_down<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_enter<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_enter<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_leave<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_leave<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_move<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_move<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_out<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_out<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_over<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_over<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_up<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pointer_up<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_cancel<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_transition_cancel<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_end<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_transition_end<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_run<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_transition_run<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_transition_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_end<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag_end<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_enter<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag_enter<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_leave<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag_leave<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_over<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag_over<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drag_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drop<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_drop<
             <TypeDefs as super::Types>::HtmlMediaElementProps,
             Value,
         >,
@@ -296,6 +737,160 @@ pub mod overwrite {
     pub type src<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
         super::super::HtmlMediaElementProps::overwrite::src<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_abort<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_abort<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_can_play<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_can_play<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_can_play_through<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_can_play_through<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_duration_change<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_duration_change<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_emptied<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_emptied<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_ended<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_ended<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_loaded_data<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_loaded_data<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_loaded_metadata<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_loaded_metadata<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_load_start<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_load_start<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pause<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_pause<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_play<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_play<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_playing<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_playing<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_progress<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_progress<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_rate_change<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_rate_change<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_resize<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_resize<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_seeked<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_seeked<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_seeking<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_seeking<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_stalled<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_stalled<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_suspend<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_suspend<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_time_update<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_time_update<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_volume_change<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_volume_change<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
+    pub type on_waiting<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::on_waiting<
             <TypeDefs as super::Types>::HtmlMediaElementProps,
             Value,
         >,
@@ -538,6 +1133,493 @@ mod builder_and_replacer {
             super::Building(super::Data {
                 HtmlMediaElementProps: HtmlMediaElementProps::build(
                     HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).part(part),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_cancel`]
+        #[inline(always)]
+        pub fn on_cancel<V>(
+            self,
+            on_cancel: V,
+        ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_cancel(on_cancel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_error`]
+        #[inline(always)]
+        pub fn on_error<V>(
+            self,
+            on_error: V,
+        ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_error(on_error),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_scroll`]
+        #[inline(always)]
+        pub fn on_scroll<V>(
+            self,
+            on_scroll: V,
+        ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_scroll(on_scroll),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_security_policy_violation`]
+        #[inline(always)]
+        pub fn on_security_policy_violation<V>(
+            self,
+            on_security_policy_violation: V,
+        ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_security_policy_violation(on_security_policy_violation),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_select`]
+        #[inline(always)]
+        pub fn on_select<V>(
+            self,
+            on_select: V,
+        ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_select(on_select),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_wheel`]
+        #[inline(always)]
+        pub fn on_wheel<V>(
+            self,
+            on_wheel: V,
+        ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_wheel(on_wheel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_copy`]
+        #[inline(always)]
+        pub fn on_copy<V>(
+            self,
+            on_copy: V,
+        ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_copy(on_copy),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_cut`]
+        #[inline(always)]
+        pub fn on_cut<V>(
+            self,
+            on_cut: V,
+        ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_cut(on_cut),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_paste`]
+        #[inline(always)]
+        pub fn on_paste<V>(
+            self,
+            on_paste: V,
+        ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_paste(on_paste),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_composition_end`]
+        #[inline(always)]
+        pub fn on_composition_end<V>(
+            self,
+            on_composition_end: V,
+        ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_composition_end(on_composition_end),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_composition_start`]
+        #[inline(always)]
+        pub fn on_composition_start<V>(
+            self,
+            on_composition_start: V,
+        ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_composition_start(on_composition_start),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_composition_update`]
+        #[inline(always)]
+        pub fn on_composition_update<V>(
+            self,
+            on_composition_update: V,
+        ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_composition_update(on_composition_update),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_blur`]
+        #[inline(always)]
+        pub fn on_blur<V>(
+            self,
+            on_blur: V,
+        ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_blur(on_blur),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_focus`]
+        #[inline(always)]
+        pub fn on_focus<V>(
+            self,
+            on_focus: V,
+        ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_focus(on_focus),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_focus_in`]
+        #[inline(always)]
+        pub fn on_focus_in<V>(
+            self,
+            on_focus_in: V,
+        ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_focus_in(on_focus_in),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_focus_out`]
+        #[inline(always)]
+        pub fn on_focus_out<V>(
+            self,
+            on_focus_out: V,
+        ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_focus_out(on_focus_out),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_fullscreen_change`]
+        #[inline(always)]
+        pub fn on_fullscreen_change<V>(
+            self,
+            on_fullscreen_change: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_fullscreen_change(on_fullscreen_change),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_fullscreen_error`]
+        #[inline(always)]
+        pub fn on_fullscreen_error<V>(
+            self,
+            on_fullscreen_error: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_fullscreen_error(on_fullscreen_error),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_key_down`]
+        #[inline(always)]
+        pub fn on_key_down<V>(
+            self,
+            on_key_down: V,
+        ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_key_down(on_key_down),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_key_up`]
+        #[inline(always)]
+        pub fn on_key_up<V>(
+            self,
+            on_key_up: V,
+        ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_key_up(on_key_up),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_aux_click`]
+        #[inline(always)]
+        pub fn on_aux_click<V>(
+            self,
+            on_aux_click: V,
+        ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_aux_click(on_aux_click),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_click`]
+        #[inline(always)]
+        pub fn on_click<V>(
+            self,
+            on_click: V,
+        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_click(on_click),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_context_menu`]
+        #[inline(always)]
+        pub fn on_context_menu<V>(
+            self,
+            on_context_menu: V,
+        ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_context_menu(on_context_menu),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_double_click`]
+        #[inline(always)]
+        pub fn on_double_click<V>(
+            self,
+            on_double_click: V,
+        ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_double_click(on_double_click),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_down`]
+        #[inline(always)]
+        pub fn on_mouse_down<V>(
+            self,
+            on_mouse_down: V,
+        ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_down(on_mouse_down),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_enter`]
+        #[inline(always)]
+        pub fn on_mouse_enter<V>(
+            self,
+            on_mouse_enter: V,
+        ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_enter(on_mouse_enter),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_leave`]
+        #[inline(always)]
+        pub fn on_mouse_leave<V>(
+            self,
+            on_mouse_leave: V,
+        ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_leave(on_mouse_leave),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_move`]
+        #[inline(always)]
+        pub fn on_mouse_move<V>(
+            self,
+            on_mouse_move: V,
+        ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_move(on_mouse_move),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_out`]
+        #[inline(always)]
+        pub fn on_mouse_out<V>(
+            self,
+            on_mouse_out: V,
+        ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_out(on_mouse_out),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_over`]
+        #[inline(always)]
+        pub fn on_mouse_over<V>(
+            self,
+            on_mouse_over: V,
+        ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_over(on_mouse_over),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_mouse_up`]
+        #[inline(always)]
+        pub fn on_mouse_up<V>(
+            self,
+            on_mouse_up: V,
+        ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_mouse_up(on_mouse_up),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_touch_cancel`]
+        #[inline(always)]
+        pub fn on_touch_cancel<V>(
+            self,
+            on_touch_cancel: V,
+        ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_touch_cancel(on_touch_cancel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_touch_end`]
+        #[inline(always)]
+        pub fn on_touch_end<V>(
+            self,
+            on_touch_end: V,
+        ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_touch_end(on_touch_end),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_touch_move`]
+        #[inline(always)]
+        pub fn on_touch_move<V>(
+            self,
+            on_touch_move: V,
+        ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_touch_move(on_touch_move),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_touch_start`]
+        #[inline(always)]
+        pub fn on_touch_start<V>(
+            self,
+            on_touch_start: V,
+        ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_touch_start(on_touch_start),
                 ),
                 __: self.0.__,
             })
@@ -909,16 +1991,406 @@ mod builder_and_replacer {
                 __: self.0.__,
             })
         }
-        ///See [`HtmlMediaElementProps::on_click`]
+        ///See [`HtmlMediaElementProps::on_invalid`]
         #[inline(always)]
-        pub fn on_click<V>(
+        pub fn on_invalid<V>(
             self,
-            on_click: V,
-        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            on_invalid: V,
+        ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Building(super::Data {
                 HtmlMediaElementProps: HtmlMediaElementProps::build(
                     HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
-                        .on_click(on_click),
+                        .on_invalid(on_invalid),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_animation_cancel`]
+        #[inline(always)]
+        pub fn on_animation_cancel<V>(
+            self,
+            on_animation_cancel: V,
+        ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_animation_cancel(on_animation_cancel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_animation_end`]
+        #[inline(always)]
+        pub fn on_animation_end<V>(
+            self,
+            on_animation_end: V,
+        ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_animation_end(on_animation_end),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_animation_iteration`]
+        #[inline(always)]
+        pub fn on_animation_iteration<V>(
+            self,
+            on_animation_iteration: V,
+        ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_animation_iteration(on_animation_iteration),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_animation_start`]
+        #[inline(always)]
+        pub fn on_animation_start<V>(
+            self,
+            on_animation_start: V,
+        ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_animation_start(on_animation_start),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_before_input`]
+        #[inline(always)]
+        pub fn on_before_input<V>(
+            self,
+            on_before_input: V,
+        ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_before_input(on_before_input),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_input`]
+        #[inline(always)]
+        pub fn on_input<V>(
+            self,
+            on_input: V,
+        ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_input(on_input),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_change`]
+        #[inline(always)]
+        pub fn on_change<V>(
+            self,
+            on_change: V,
+        ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_change(on_change),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_got_pointer_capture`]
+        #[inline(always)]
+        pub fn on_got_pointer_capture<V>(
+            self,
+            on_got_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_got_pointer_capture(on_got_pointer_capture),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_lost_pointer_capture`]
+        #[inline(always)]
+        pub fn on_lost_pointer_capture<V>(
+            self,
+            on_lost_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_lost_pointer_capture(on_lost_pointer_capture),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_cancel`]
+        #[inline(always)]
+        pub fn on_pointer_cancel<V>(
+            self,
+            on_pointer_cancel: V,
+        ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_cancel(on_pointer_cancel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_down`]
+        #[inline(always)]
+        pub fn on_pointer_down<V>(
+            self,
+            on_pointer_down: V,
+        ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_down(on_pointer_down),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_enter`]
+        #[inline(always)]
+        pub fn on_pointer_enter<V>(
+            self,
+            on_pointer_enter: V,
+        ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_enter(on_pointer_enter),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_leave`]
+        #[inline(always)]
+        pub fn on_pointer_leave<V>(
+            self,
+            on_pointer_leave: V,
+        ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_leave(on_pointer_leave),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_move`]
+        #[inline(always)]
+        pub fn on_pointer_move<V>(
+            self,
+            on_pointer_move: V,
+        ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_move(on_pointer_move),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_out`]
+        #[inline(always)]
+        pub fn on_pointer_out<V>(
+            self,
+            on_pointer_out: V,
+        ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_out(on_pointer_out),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_over`]
+        #[inline(always)]
+        pub fn on_pointer_over<V>(
+            self,
+            on_pointer_over: V,
+        ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_over(on_pointer_over),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pointer_up`]
+        #[inline(always)]
+        pub fn on_pointer_up<V>(
+            self,
+            on_pointer_up: V,
+        ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pointer_up(on_pointer_up),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_transition_cancel`]
+        #[inline(always)]
+        pub fn on_transition_cancel<V>(
+            self,
+            on_transition_cancel: V,
+        ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_transition_cancel(on_transition_cancel),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_transition_end`]
+        #[inline(always)]
+        pub fn on_transition_end<V>(
+            self,
+            on_transition_end: V,
+        ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_transition_end(on_transition_end),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_transition_run`]
+        #[inline(always)]
+        pub fn on_transition_run<V>(
+            self,
+            on_transition_run: V,
+        ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_transition_run(on_transition_run),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_transition_start`]
+        #[inline(always)]
+        pub fn on_transition_start<V>(
+            self,
+            on_transition_start: V,
+        ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_transition_start(on_transition_start),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag`]
+        #[inline(always)]
+        pub fn on_drag<V>(
+            self,
+            on_drag: V,
+        ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_drag(on_drag),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag_end`]
+        #[inline(always)]
+        pub fn on_drag_end<V>(
+            self,
+            on_drag_end: V,
+        ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_drag_end(on_drag_end),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag_enter`]
+        #[inline(always)]
+        pub fn on_drag_enter<V>(
+            self,
+            on_drag_enter: V,
+        ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_drag_enter(on_drag_enter),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag_leave`]
+        #[inline(always)]
+        pub fn on_drag_leave<V>(
+            self,
+            on_drag_leave: V,
+        ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_drag_leave(on_drag_leave),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag_over`]
+        #[inline(always)]
+        pub fn on_drag_over<V>(
+            self,
+            on_drag_over: V,
+        ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_drag_over(on_drag_over),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drag_start`]
+        #[inline(always)]
+        pub fn on_drag_start<V>(
+            self,
+            on_drag_start: V,
+        ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_drag_start(on_drag_start),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_drop`]
+        #[inline(always)]
+        pub fn on_drop<V>(
+            self,
+            on_drop: V,
+        ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_drop(on_drop),
                 ),
                 __: self.0.__,
             })
@@ -1013,6 +2485,313 @@ mod builder_and_replacer {
             super::Building(super::Data {
                 HtmlMediaElementProps: HtmlMediaElementProps::build(
                     HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).src(src),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_abort`]
+        #[inline(always)]
+        pub fn on_abort<V>(
+            self,
+            on_abort: V,
+        ) -> super::Building<super::overwrite::on_abort<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_abort(on_abort),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_can_play`]
+        #[inline(always)]
+        pub fn on_can_play<V>(
+            self,
+            on_can_play: V,
+        ) -> super::Building<super::overwrite::on_can_play<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_can_play(on_can_play),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_can_play_through`]
+        #[inline(always)]
+        pub fn on_can_play_through<V>(
+            self,
+            on_can_play_through: V,
+        ) -> super::Building<super::overwrite::on_can_play_through<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_can_play_through(on_can_play_through),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_duration_change`]
+        #[inline(always)]
+        pub fn on_duration_change<V>(
+            self,
+            on_duration_change: V,
+        ) -> super::Building<super::overwrite::on_duration_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_duration_change(on_duration_change),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_emptied`]
+        #[inline(always)]
+        pub fn on_emptied<V>(
+            self,
+            on_emptied: V,
+        ) -> super::Building<super::overwrite::on_emptied<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_emptied(on_emptied),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_ended`]
+        #[inline(always)]
+        pub fn on_ended<V>(
+            self,
+            on_ended: V,
+        ) -> super::Building<super::overwrite::on_ended<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_ended(on_ended),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_loaded_data`]
+        #[inline(always)]
+        pub fn on_loaded_data<V>(
+            self,
+            on_loaded_data: V,
+        ) -> super::Building<super::overwrite::on_loaded_data<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_loaded_data(on_loaded_data),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_loaded_metadata`]
+        #[inline(always)]
+        pub fn on_loaded_metadata<V>(
+            self,
+            on_loaded_metadata: V,
+        ) -> super::Building<super::overwrite::on_loaded_metadata<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_loaded_metadata(on_loaded_metadata),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_load_start`]
+        #[inline(always)]
+        pub fn on_load_start<V>(
+            self,
+            on_load_start: V,
+        ) -> super::Building<super::overwrite::on_load_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_load_start(on_load_start),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_pause`]
+        #[inline(always)]
+        pub fn on_pause<V>(
+            self,
+            on_pause: V,
+        ) -> super::Building<super::overwrite::on_pause<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_pause(on_pause),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_play`]
+        #[inline(always)]
+        pub fn on_play<V>(
+            self,
+            on_play: V,
+        ) -> super::Building<super::overwrite::on_play<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps).on_play(on_play),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_playing`]
+        #[inline(always)]
+        pub fn on_playing<V>(
+            self,
+            on_playing: V,
+        ) -> super::Building<super::overwrite::on_playing<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_playing(on_playing),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_progress`]
+        #[inline(always)]
+        pub fn on_progress<V>(
+            self,
+            on_progress: V,
+        ) -> super::Building<super::overwrite::on_progress<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_progress(on_progress),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_rate_change`]
+        #[inline(always)]
+        pub fn on_rate_change<V>(
+            self,
+            on_rate_change: V,
+        ) -> super::Building<super::overwrite::on_rate_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_rate_change(on_rate_change),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_resize`]
+        #[inline(always)]
+        pub fn on_resize<V>(
+            self,
+            on_resize: V,
+        ) -> super::Building<super::overwrite::on_resize<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_resize(on_resize),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_seeked`]
+        #[inline(always)]
+        pub fn on_seeked<V>(
+            self,
+            on_seeked: V,
+        ) -> super::Building<super::overwrite::on_seeked<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_seeked(on_seeked),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_seeking`]
+        #[inline(always)]
+        pub fn on_seeking<V>(
+            self,
+            on_seeking: V,
+        ) -> super::Building<super::overwrite::on_seeking<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_seeking(on_seeking),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_stalled`]
+        #[inline(always)]
+        pub fn on_stalled<V>(
+            self,
+            on_stalled: V,
+        ) -> super::Building<super::overwrite::on_stalled<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_stalled(on_stalled),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_suspend`]
+        #[inline(always)]
+        pub fn on_suspend<V>(
+            self,
+            on_suspend: V,
+        ) -> super::Building<super::overwrite::on_suspend<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_suspend(on_suspend),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_time_update`]
+        #[inline(always)]
+        pub fn on_time_update<V>(
+            self,
+            on_time_update: V,
+        ) -> super::Building<super::overwrite::on_time_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_time_update(on_time_update),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_volume_change`]
+        #[inline(always)]
+        pub fn on_volume_change<V>(
+            self,
+            on_volume_change: V,
+        ) -> super::Building<super::overwrite::on_volume_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_volume_change(on_volume_change),
+                ),
+                __: self.0.__,
+            })
+        }
+        ///See [`HtmlMediaElementProps::on_waiting`]
+        #[inline(always)]
+        pub fn on_waiting<V>(
+            self,
+            on_waiting: V,
+        ) -> super::Building<super::overwrite::on_waiting<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlMediaElementProps: HtmlMediaElementProps::build(
+                    HtmlMediaElementProps::Building(self.0.HtmlMediaElementProps)
+                        .on_waiting(on_waiting),
                 ),
                 __: self.0.__,
             })

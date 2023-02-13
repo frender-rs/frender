@@ -12,6 +12,28 @@ pub fn HtmlMediaElementProps() -> Building<TypesInitial> {
         muted: (),
         preload: (),
         src: (),
+        on_abort: (),
+        on_can_play: (),
+        on_can_play_through: (),
+        on_duration_change: (),
+        on_emptied: (),
+        on_ended: (),
+        on_loaded_data: (),
+        on_loaded_metadata: (),
+        on_load_start: (),
+        on_pause: (),
+        on_play: (),
+        on_playing: (),
+        on_progress: (),
+        on_rate_change: (),
+        on_resize: (),
+        on_seeked: (),
+        on_seeking: (),
+        on_stalled: (),
+        on_suspend: (),
+        on_time_update: (),
+        on_volume_change: (),
+        on_waiting: (),
     })
 }
 pub mod prelude {}
@@ -26,6 +48,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
@@ -58,6 +102,251 @@ pub mod overwrite {
     pub type part<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::part<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_scroll<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_scroll<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_security_policy_violation<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_security_policy_violation<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_select<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_select<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_wheel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_wheel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_copy<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_copy<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cut<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cut<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_paste<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_paste<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_update<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_update<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_blur<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_blur<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_in<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_in<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_aux_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_aux_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_context_menu<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_context_menu<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_double_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_double_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_start<
             <TypeDefs as super::Types>::HtmlElementProps,
             Value,
         >,
@@ -251,9 +540,205 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+    pub type on_invalid<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
-        super::super::HtmlElementProps::overwrite::on_click<
+        super::super::HtmlElementProps::overwrite::on_invalid<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_iteration<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_iteration<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_before_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_before_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_got_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_got_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_lost_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_lost_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_run<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_run<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drop<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drop<
             <TypeDefs as super::Types>::HtmlElementProps,
             Value,
         >,
@@ -267,6 +752,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type controls<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -277,6 +784,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type cross_origin<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -287,6 +816,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type loop_<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -297,6 +848,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type muted<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -307,6 +880,28 @@ pub mod overwrite {
         muted = Value,
         preload = <TypeDefs as super::Types>::preload,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type preload<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -317,6 +912,28 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = Value,
         src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
     >;
     pub type src<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -327,6 +944,732 @@ pub mod overwrite {
         muted = <TypeDefs as super::Types>::muted,
         preload = <TypeDefs as super::Types>::preload,
         src = Value,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_abort<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = Value,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_can_play<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = Value,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_can_play_through<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = Value,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_duration_change<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = Value,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_emptied<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = Value,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_ended<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = Value,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_loaded_data<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = Value,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_loaded_metadata<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = Value,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_load_start<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = Value,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_pause<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = Value,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_play<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = Value,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_playing<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = Value,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_progress<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = Value,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_rate_change<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = Value,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_resize<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = Value,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_seeked<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = Value,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_seeking<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = Value,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_stalled<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = Value,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_suspend<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = Value,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_time_update<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = Value,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_volume_change<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = Value,
+        on_waiting = <TypeDefs as super::Types>::on_waiting,
+    >;
+    pub type on_waiting<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        auto_play = <TypeDefs as super::Types>::auto_play,
+        controls = <TypeDefs as super::Types>::controls,
+        cross_origin = <TypeDefs as super::Types>::cross_origin,
+        loop_ = <TypeDefs as super::Types>::loop_,
+        muted = <TypeDefs as super::Types>::muted,
+        preload = <TypeDefs as super::Types>::preload,
+        src = <TypeDefs as super::Types>::src,
+        on_abort = <TypeDefs as super::Types>::on_abort,
+        on_can_play = <TypeDefs as super::Types>::on_can_play,
+        on_can_play_through = <TypeDefs as super::Types>::on_can_play_through,
+        on_duration_change = <TypeDefs as super::Types>::on_duration_change,
+        on_emptied = <TypeDefs as super::Types>::on_emptied,
+        on_ended = <TypeDefs as super::Types>::on_ended,
+        on_loaded_data = <TypeDefs as super::Types>::on_loaded_data,
+        on_loaded_metadata = <TypeDefs as super::Types>::on_loaded_metadata,
+        on_load_start = <TypeDefs as super::Types>::on_load_start,
+        on_pause = <TypeDefs as super::Types>::on_pause,
+        on_play = <TypeDefs as super::Types>::on_play,
+        on_playing = <TypeDefs as super::Types>::on_playing,
+        on_progress = <TypeDefs as super::Types>::on_progress,
+        on_rate_change = <TypeDefs as super::Types>::on_rate_change,
+        on_resize = <TypeDefs as super::Types>::on_resize,
+        on_seeked = <TypeDefs as super::Types>::on_seeked,
+        on_seeking = <TypeDefs as super::Types>::on_seeking,
+        on_stalled = <TypeDefs as super::Types>::on_stalled,
+        on_suspend = <TypeDefs as super::Types>::on_suspend,
+        on_time_update = <TypeDefs as super::Types>::on_time_update,
+        on_volume_change = <TypeDefs as super::Types>::on_volume_change,
+        on_waiting = Value,
     >;
 }
 mod trait_types {
@@ -342,6 +1685,28 @@ mod trait_types {
         type muted: crate::MaybeUpdateValueWithState<bool>;
         type preload: crate::MaybeUpdateValueWithState<str>;
         type src: crate::MaybeUpdateValueWithState<str>;
+        type on_abort;
+        type on_can_play;
+        type on_can_play_through;
+        type on_duration_change;
+        type on_emptied;
+        type on_ended;
+        type on_loaded_data;
+        type on_loaded_metadata;
+        type on_load_start;
+        type on_pause;
+        type on_play;
+        type on_playing;
+        type on_progress;
+        type on_rate_change;
+        type on_resize;
+        type on_seeked;
+        type on_seeking;
+        type on_stalled;
+        type on_suspend;
+        type on_time_update;
+        type on_volume_change;
+        type on_waiting;
     }
 }
 pub use trait_types::Types;
@@ -357,6 +1722,28 @@ pub mod data_struct {
         pub muted: TypeDefs::muted,
         pub preload: TypeDefs::preload,
         pub src: TypeDefs::src,
+        pub on_abort: TypeDefs::on_abort,
+        pub on_can_play: TypeDefs::on_can_play,
+        pub on_can_play_through: TypeDefs::on_can_play_through,
+        pub on_duration_change: TypeDefs::on_duration_change,
+        pub on_emptied: TypeDefs::on_emptied,
+        pub on_ended: TypeDefs::on_ended,
+        pub on_loaded_data: TypeDefs::on_loaded_data,
+        pub on_loaded_metadata: TypeDefs::on_loaded_metadata,
+        pub on_load_start: TypeDefs::on_load_start,
+        pub on_pause: TypeDefs::on_pause,
+        pub on_play: TypeDefs::on_play,
+        pub on_playing: TypeDefs::on_playing,
+        pub on_progress: TypeDefs::on_progress,
+        pub on_rate_change: TypeDefs::on_rate_change,
+        pub on_resize: TypeDefs::on_resize,
+        pub on_seeked: TypeDefs::on_seeked,
+        pub on_seeking: TypeDefs::on_seeking,
+        pub on_stalled: TypeDefs::on_stalled,
+        pub on_suspend: TypeDefs::on_suspend,
+        pub on_time_update: TypeDefs::on_time_update,
+        pub on_volume_change: TypeDefs::on_volume_change,
+        pub on_waiting: TypeDefs::on_waiting,
     }
 }
 pub use data_struct::HtmlMediaElementProps as Data;
@@ -374,6 +1761,28 @@ mod types_initial {
         muted = (),
         preload = (),
         src = (),
+        on_abort = (),
+        on_can_play = (),
+        on_can_play_through = (),
+        on_duration_change = (),
+        on_emptied = (),
+        on_ended = (),
+        on_loaded_data = (),
+        on_loaded_metadata = (),
+        on_load_start = (),
+        on_pause = (),
+        on_play = (),
+        on_playing = (),
+        on_progress = (),
+        on_rate_change = (),
+        on_resize = (),
+        on_seeked = (),
+        on_seeking = (),
+        on_stalled = (),
+        on_suspend = (),
+        on_time_update = (),
+        on_volume_change = (),
+        on_waiting = (),
     >;
 }
 pub use types_initial::TypesInitial;
@@ -390,6 +1799,28 @@ pub mod render_state {
         type muted;
         type preload;
         type src;
+        type on_abort;
+        type on_can_play;
+        type on_can_play_through;
+        type on_duration_change;
+        type on_emptied;
+        type on_ended;
+        type on_loaded_data;
+        type on_loaded_metadata;
+        type on_load_start;
+        type on_pause;
+        type on_play;
+        type on_playing;
+        type on_progress;
+        type on_rate_change;
+        type on_resize;
+        type on_seeked;
+        type on_seeking;
+        type on_stalled;
+        type on_suspend;
+        type on_time_update;
+        type on_volume_change;
+        type on_waiting;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
@@ -403,6 +1834,28 @@ pub mod render_state {
         pub muted: TypeDefs::muted,
         pub preload: TypeDefs::preload,
         pub src: TypeDefs::src,
+        pub on_abort: TypeDefs::on_abort,
+        pub on_can_play: TypeDefs::on_can_play,
+        pub on_can_play_through: TypeDefs::on_can_play_through,
+        pub on_duration_change: TypeDefs::on_duration_change,
+        pub on_emptied: TypeDefs::on_emptied,
+        pub on_ended: TypeDefs::on_ended,
+        pub on_loaded_data: TypeDefs::on_loaded_data,
+        pub on_loaded_metadata: TypeDefs::on_loaded_metadata,
+        pub on_load_start: TypeDefs::on_load_start,
+        pub on_pause: TypeDefs::on_pause,
+        pub on_play: TypeDefs::on_play,
+        pub on_playing: TypeDefs::on_playing,
+        pub on_progress: TypeDefs::on_progress,
+        pub on_rate_change: TypeDefs::on_rate_change,
+        pub on_resize: TypeDefs::on_resize,
+        pub on_seeked: TypeDefs::on_seeked,
+        pub on_seeking: TypeDefs::on_seeking,
+        pub on_stalled: TypeDefs::on_stalled,
+        pub on_suspend: TypeDefs::on_suspend,
+        pub on_time_update: TypeDefs::on_time_update,
+        pub on_volume_change: TypeDefs::on_volume_change,
+        pub on_waiting: TypeDefs::on_waiting,
     }
     #[allow(dead_code)]
     #[allow(single_use_lifetimes)]
@@ -425,6 +1878,28 @@ pub mod render_state {
         pub muted: &'__pin mut (TypeDefs::muted),
         pub preload: &'__pin mut (TypeDefs::preload),
         pub src: &'__pin mut (TypeDefs::src),
+        pub on_abort: &'__pin mut (TypeDefs::on_abort),
+        pub on_can_play: &'__pin mut (TypeDefs::on_can_play),
+        pub on_can_play_through: &'__pin mut (TypeDefs::on_can_play_through),
+        pub on_duration_change: &'__pin mut (TypeDefs::on_duration_change),
+        pub on_emptied: &'__pin mut (TypeDefs::on_emptied),
+        pub on_ended: &'__pin mut (TypeDefs::on_ended),
+        pub on_loaded_data: &'__pin mut (TypeDefs::on_loaded_data),
+        pub on_loaded_metadata: &'__pin mut (TypeDefs::on_loaded_metadata),
+        pub on_load_start: &'__pin mut (TypeDefs::on_load_start),
+        pub on_pause: &'__pin mut (TypeDefs::on_pause),
+        pub on_play: &'__pin mut (TypeDefs::on_play),
+        pub on_playing: &'__pin mut (TypeDefs::on_playing),
+        pub on_progress: &'__pin mut (TypeDefs::on_progress),
+        pub on_rate_change: &'__pin mut (TypeDefs::on_rate_change),
+        pub on_resize: &'__pin mut (TypeDefs::on_resize),
+        pub on_seeked: &'__pin mut (TypeDefs::on_seeked),
+        pub on_seeking: &'__pin mut (TypeDefs::on_seeking),
+        pub on_stalled: &'__pin mut (TypeDefs::on_stalled),
+        pub on_suspend: &'__pin mut (TypeDefs::on_suspend),
+        pub on_time_update: &'__pin mut (TypeDefs::on_time_update),
+        pub on_volume_change: &'__pin mut (TypeDefs::on_volume_change),
+        pub on_waiting: &'__pin mut (TypeDefs::on_waiting),
     }
     #[allow(explicit_outlives_requirements)]
     #[allow(single_use_lifetimes)]
@@ -453,6 +1928,28 @@ pub mod render_state {
             pub muted: &'__pin (TypeDefs::muted),
             pub preload: &'__pin (TypeDefs::preload),
             pub src: &'__pin (TypeDefs::src),
+            pub on_abort: &'__pin (TypeDefs::on_abort),
+            pub on_can_play: &'__pin (TypeDefs::on_can_play),
+            pub on_can_play_through: &'__pin (TypeDefs::on_can_play_through),
+            pub on_duration_change: &'__pin (TypeDefs::on_duration_change),
+            pub on_emptied: &'__pin (TypeDefs::on_emptied),
+            pub on_ended: &'__pin (TypeDefs::on_ended),
+            pub on_loaded_data: &'__pin (TypeDefs::on_loaded_data),
+            pub on_loaded_metadata: &'__pin (TypeDefs::on_loaded_metadata),
+            pub on_load_start: &'__pin (TypeDefs::on_load_start),
+            pub on_pause: &'__pin (TypeDefs::on_pause),
+            pub on_play: &'__pin (TypeDefs::on_play),
+            pub on_playing: &'__pin (TypeDefs::on_playing),
+            pub on_progress: &'__pin (TypeDefs::on_progress),
+            pub on_rate_change: &'__pin (TypeDefs::on_rate_change),
+            pub on_resize: &'__pin (TypeDefs::on_resize),
+            pub on_seeked: &'__pin (TypeDefs::on_seeked),
+            pub on_seeking: &'__pin (TypeDefs::on_seeking),
+            pub on_stalled: &'__pin (TypeDefs::on_stalled),
+            pub on_suspend: &'__pin (TypeDefs::on_suspend),
+            pub on_time_update: &'__pin (TypeDefs::on_time_update),
+            pub on_volume_change: &'__pin (TypeDefs::on_volume_change),
+            pub on_waiting: &'__pin (TypeDefs::on_waiting),
         }
         impl<TypeDefs: RenderStateTypes> RenderState<TypeDefs>
         where
@@ -471,6 +1968,28 @@ pub mod render_state {
                         muted,
                         preload,
                         src,
+                        on_abort,
+                        on_can_play,
+                        on_can_play_through,
+                        on_duration_change,
+                        on_emptied,
+                        on_ended,
+                        on_loaded_data,
+                        on_loaded_metadata,
+                        on_load_start,
+                        on_pause,
+                        on_play,
+                        on_playing,
+                        on_progress,
+                        on_rate_change,
+                        on_resize,
+                        on_seeked,
+                        on_seeking,
+                        on_stalled,
+                        on_suspend,
+                        on_time_update,
+                        on_volume_change,
+                        on_waiting,
                     } = self.get_unchecked_mut();
                     RenderStateProj {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
@@ -483,6 +2002,28 @@ pub mod render_state {
                         muted: muted,
                         preload: preload,
                         src: src,
+                        on_abort: on_abort,
+                        on_can_play: on_can_play,
+                        on_can_play_through: on_can_play_through,
+                        on_duration_change: on_duration_change,
+                        on_emptied: on_emptied,
+                        on_ended: on_ended,
+                        on_loaded_data: on_loaded_data,
+                        on_loaded_metadata: on_loaded_metadata,
+                        on_load_start: on_load_start,
+                        on_pause: on_pause,
+                        on_play: on_play,
+                        on_playing: on_playing,
+                        on_progress: on_progress,
+                        on_rate_change: on_rate_change,
+                        on_resize: on_resize,
+                        on_seeked: on_seeked,
+                        on_seeking: on_seeking,
+                        on_stalled: on_stalled,
+                        on_suspend: on_suspend,
+                        on_time_update: on_time_update,
+                        on_volume_change: on_volume_change,
+                        on_waiting: on_waiting,
                     }
                 }
             }
@@ -499,6 +2040,28 @@ pub mod render_state {
                         muted,
                         preload,
                         src,
+                        on_abort,
+                        on_can_play,
+                        on_can_play_through,
+                        on_duration_change,
+                        on_emptied,
+                        on_ended,
+                        on_loaded_data,
+                        on_loaded_metadata,
+                        on_load_start,
+                        on_pause,
+                        on_play,
+                        on_playing,
+                        on_progress,
+                        on_rate_change,
+                        on_resize,
+                        on_seeked,
+                        on_seeking,
+                        on_stalled,
+                        on_suspend,
+                        on_time_update,
+                        on_volume_change,
+                        on_waiting,
                     } = self.get_ref();
                     ProjectionRef {
                         HtmlElementProps: ::pin_project_lite::__private::Pin::new_unchecked(
@@ -511,6 +2074,28 @@ pub mod render_state {
                         muted: muted,
                         preload: preload,
                         src: src,
+                        on_abort: on_abort,
+                        on_can_play: on_can_play,
+                        on_can_play_through: on_can_play_through,
+                        on_duration_change: on_duration_change,
+                        on_emptied: on_emptied,
+                        on_ended: on_ended,
+                        on_loaded_data: on_loaded_data,
+                        on_loaded_metadata: on_loaded_metadata,
+                        on_load_start: on_load_start,
+                        on_pause: on_pause,
+                        on_play: on_play,
+                        on_playing: on_playing,
+                        on_progress: on_progress,
+                        on_rate_change: on_rate_change,
+                        on_resize: on_resize,
+                        on_seeked: on_seeked,
+                        on_seeking: on_seeking,
+                        on_stalled: on_stalled,
+                        on_suspend: on_suspend,
+                        on_time_update: on_time_update,
+                        on_volume_change: on_volume_change,
+                        on_waiting: on_waiting,
                     }
                 }
             }
@@ -529,6 +2114,32 @@ pub mod render_state {
             muted: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::muted>,
             preload: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::preload>,
             src: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::src>,
+            on_abort: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_abort>,
+            on_can_play: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_can_play>,
+            on_can_play_through:
+                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_can_play_through>,
+            on_duration_change:
+                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_duration_change>,
+            on_emptied: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_emptied>,
+            on_ended: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_ended>,
+            on_loaded_data: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_loaded_data>,
+            on_loaded_metadata:
+                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_loaded_metadata>,
+            on_load_start: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_load_start>,
+            on_pause: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_pause>,
+            on_play: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_play>,
+            on_playing: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_playing>,
+            on_progress: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_progress>,
+            on_rate_change: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_rate_change>,
+            on_resize: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_resize>,
+            on_seeked: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_seeked>,
+            on_seeking: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_seeking>,
+            on_stalled: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_stalled>,
+            on_suspend: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_suspend>,
+            on_time_update: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_time_update>,
+            on_volume_change:
+                ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_volume_change>,
+            on_waiting: ::pin_project_lite::__private::AlwaysUnpin<TypeDefs::on_waiting>,
         }
         impl<'__pin, TypeDefs: RenderStateTypes> ::pin_project_lite::__private::Unpin
             for RenderState<TypeDefs>
@@ -557,6 +2168,28 @@ pub mod render_state {
             let _ = &this.muted;
             let _ = &this.preload;
             let _ = &this.src;
+            let _ = &this.on_abort;
+            let _ = &this.on_can_play;
+            let _ = &this.on_can_play_through;
+            let _ = &this.on_duration_change;
+            let _ = &this.on_emptied;
+            let _ = &this.on_ended;
+            let _ = &this.on_loaded_data;
+            let _ = &this.on_loaded_metadata;
+            let _ = &this.on_load_start;
+            let _ = &this.on_pause;
+            let _ = &this.on_play;
+            let _ = &this.on_playing;
+            let _ = &this.on_progress;
+            let _ = &this.on_rate_change;
+            let _ = &this.on_resize;
+            let _ = &this.on_seeked;
+            let _ = &this.on_seeking;
+            let _ = &this.on_stalled;
+            let _ = &this.on_suspend;
+            let _ = &this.on_time_update;
+            let _ = &this.on_volume_change;
+            let _ = &this.on_waiting;
         }
     };
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -609,6 +2242,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::class`]
@@ -628,6 +2283,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::id`]
@@ -647,6 +2324,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::part`]
@@ -666,6 +2365,1479 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_cancel`]
+        #[inline(always)]
+        pub fn on_cancel<V>(
+            self,
+            on_cancel: V,
+        ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_error`]
+        #[inline(always)]
+        pub fn on_error<V>(
+            self,
+            on_error: V,
+        ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_scroll`]
+        #[inline(always)]
+        pub fn on_scroll<V>(
+            self,
+            on_scroll: V,
+        ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_security_policy_violation`]
+        #[inline(always)]
+        pub fn on_security_policy_violation<V>(
+            self,
+            on_security_policy_violation: V,
+        ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_security_policy_violation(on_security_policy_violation),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_select`]
+        #[inline(always)]
+        pub fn on_select<V>(
+            self,
+            on_select: V,
+        ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_wheel`]
+        #[inline(always)]
+        pub fn on_wheel<V>(
+            self,
+            on_wheel: V,
+        ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_copy`]
+        #[inline(always)]
+        pub fn on_copy<V>(
+            self,
+            on_copy: V,
+        ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_cut`]
+        #[inline(always)]
+        pub fn on_cut<V>(
+            self,
+            on_cut: V,
+        ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_paste`]
+        #[inline(always)]
+        pub fn on_paste<V>(
+            self,
+            on_paste: V,
+        ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_end`]
+        #[inline(always)]
+        pub fn on_composition_end<V>(
+            self,
+            on_composition_end: V,
+        ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_end(on_composition_end),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_start`]
+        #[inline(always)]
+        pub fn on_composition_start<V>(
+            self,
+            on_composition_start: V,
+        ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_start(on_composition_start),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_update`]
+        #[inline(always)]
+        pub fn on_composition_update<V>(
+            self,
+            on_composition_update: V,
+        ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_update(on_composition_update),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_blur`]
+        #[inline(always)]
+        pub fn on_blur<V>(
+            self,
+            on_blur: V,
+        ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus`]
+        #[inline(always)]
+        pub fn on_focus<V>(
+            self,
+            on_focus: V,
+        ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_in`]
+        #[inline(always)]
+        pub fn on_focus_in<V>(
+            self,
+            on_focus_in: V,
+        ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_out`]
+        #[inline(always)]
+        pub fn on_focus_out<V>(
+            self,
+            on_focus_out: V,
+        ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_change`]
+        #[inline(always)]
+        pub fn on_fullscreen_change<V>(
+            self,
+            on_fullscreen_change: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_change(on_fullscreen_change),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_error`]
+        #[inline(always)]
+        pub fn on_fullscreen_error<V>(
+            self,
+            on_fullscreen_error: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_error(on_fullscreen_error),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_down`]
+        #[inline(always)]
+        pub fn on_key_down<V>(
+            self,
+            on_key_down: V,
+        ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_up`]
+        #[inline(always)]
+        pub fn on_key_up<V>(
+            self,
+            on_key_up: V,
+        ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_aux_click`]
+        #[inline(always)]
+        pub fn on_aux_click<V>(
+            self,
+            on_aux_click: V,
+        ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_click`]
+        #[inline(always)]
+        pub fn on_click<V>(
+            self,
+            on_click: V,
+        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_context_menu`]
+        #[inline(always)]
+        pub fn on_context_menu<V>(
+            self,
+            on_context_menu: V,
+        ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_context_menu(on_context_menu),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_double_click`]
+        #[inline(always)]
+        pub fn on_double_click<V>(
+            self,
+            on_double_click: V,
+        ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_double_click(on_double_click),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_down`]
+        #[inline(always)]
+        pub fn on_mouse_down<V>(
+            self,
+            on_mouse_down: V,
+        ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_down(on_mouse_down),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_enter`]
+        #[inline(always)]
+        pub fn on_mouse_enter<V>(
+            self,
+            on_mouse_enter: V,
+        ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_enter(on_mouse_enter),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_leave`]
+        #[inline(always)]
+        pub fn on_mouse_leave<V>(
+            self,
+            on_mouse_leave: V,
+        ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_leave(on_mouse_leave),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_move`]
+        #[inline(always)]
+        pub fn on_mouse_move<V>(
+            self,
+            on_mouse_move: V,
+        ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_move(on_mouse_move),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_out`]
+        #[inline(always)]
+        pub fn on_mouse_out<V>(
+            self,
+            on_mouse_out: V,
+        ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_over`]
+        #[inline(always)]
+        pub fn on_mouse_over<V>(
+            self,
+            on_mouse_over: V,
+        ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_over(on_mouse_over),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_up`]
+        #[inline(always)]
+        pub fn on_mouse_up<V>(
+            self,
+            on_mouse_up: V,
+        ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_cancel`]
+        #[inline(always)]
+        pub fn on_touch_cancel<V>(
+            self,
+            on_touch_cancel: V,
+        ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_cancel(on_touch_cancel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_end`]
+        #[inline(always)]
+        pub fn on_touch_end<V>(
+            self,
+            on_touch_end: V,
+        ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_move`]
+        #[inline(always)]
+        pub fn on_touch_move<V>(
+            self,
+            on_touch_move: V,
+        ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_move(on_touch_move),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_start`]
+        #[inline(always)]
+        pub fn on_touch_start<V>(
+            self,
+            on_touch_start: V,
+        ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_start(on_touch_start),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::access_key`]
@@ -685,6 +3857,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::auto_capitalize`]
@@ -705,6 +3899,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::auto_focus`]
@@ -724,6 +3940,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::content_editable`]
@@ -744,6 +3982,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::context_menu`]
@@ -763,6 +4023,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::dir`]
@@ -782,6 +4064,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::draggable`]
@@ -801,6 +4105,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::enter_key_hint`]
@@ -821,6 +4147,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::hidden`]
@@ -840,6 +4188,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::inert`]
@@ -859,6 +4229,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::input_mode`]
@@ -878,6 +4270,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::is`]
@@ -897,6 +4311,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::item_id`]
@@ -916,6 +4352,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::item_prop`]
@@ -935,6 +4393,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::item_ref`]
@@ -954,6 +4434,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::item_scope`]
@@ -973,6 +4475,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::item_type`]
@@ -992,6 +4516,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::lang`]
@@ -1011,6 +4557,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::nonce`]
@@ -1030,6 +4598,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::role`]
@@ -1049,6 +4639,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::slot`]
@@ -1068,6 +4680,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::spellcheck`]
@@ -1087,6 +4721,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::style`]
@@ -1106,6 +4762,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::tab_index`]
@@ -1125,6 +4803,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::title`]
@@ -1144,6 +4844,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::translate`]
@@ -1163,6 +4885,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
@@ -1183,17 +4927,39 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
-        ///See [`HtmlElementProps::on_click`]
+        ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
-        pub fn on_click<V>(
+        pub fn on_invalid<V>(
             self,
-            on_click: V,
-        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            on_invalid: V,
+        ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Building(super::Data {
                 HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
                 ),
                 auto_play: self.0.auto_play,
                 controls: self.0.controls,
@@ -1202,6 +4968,1198 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_cancel`]
+        #[inline(always)]
+        pub fn on_animation_cancel<V>(
+            self,
+            on_animation_cancel: V,
+        ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_cancel(on_animation_cancel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_end`]
+        #[inline(always)]
+        pub fn on_animation_end<V>(
+            self,
+            on_animation_end: V,
+        ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_end(on_animation_end),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_iteration`]
+        #[inline(always)]
+        pub fn on_animation_iteration<V>(
+            self,
+            on_animation_iteration: V,
+        ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_iteration(on_animation_iteration),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_start`]
+        #[inline(always)]
+        pub fn on_animation_start<V>(
+            self,
+            on_animation_start: V,
+        ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_start(on_animation_start),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_before_input`]
+        #[inline(always)]
+        pub fn on_before_input<V>(
+            self,
+            on_before_input: V,
+        ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_before_input(on_before_input),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_input`]
+        #[inline(always)]
+        pub fn on_input<V>(
+            self,
+            on_input: V,
+        ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_change`]
+        #[inline(always)]
+        pub fn on_change<V>(
+            self,
+            on_change: V,
+        ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_got_pointer_capture`]
+        #[inline(always)]
+        pub fn on_got_pointer_capture<V>(
+            self,
+            on_got_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_got_pointer_capture(on_got_pointer_capture),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_lost_pointer_capture`]
+        #[inline(always)]
+        pub fn on_lost_pointer_capture<V>(
+            self,
+            on_lost_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_lost_pointer_capture(on_lost_pointer_capture),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_cancel`]
+        #[inline(always)]
+        pub fn on_pointer_cancel<V>(
+            self,
+            on_pointer_cancel: V,
+        ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_cancel(on_pointer_cancel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_down`]
+        #[inline(always)]
+        pub fn on_pointer_down<V>(
+            self,
+            on_pointer_down: V,
+        ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_down(on_pointer_down),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_enter`]
+        #[inline(always)]
+        pub fn on_pointer_enter<V>(
+            self,
+            on_pointer_enter: V,
+        ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_enter(on_pointer_enter),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_leave`]
+        #[inline(always)]
+        pub fn on_pointer_leave<V>(
+            self,
+            on_pointer_leave: V,
+        ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_leave(on_pointer_leave),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_move`]
+        #[inline(always)]
+        pub fn on_pointer_move<V>(
+            self,
+            on_pointer_move: V,
+        ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_move(on_pointer_move),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_out`]
+        #[inline(always)]
+        pub fn on_pointer_out<V>(
+            self,
+            on_pointer_out: V,
+        ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_out(on_pointer_out),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_over`]
+        #[inline(always)]
+        pub fn on_pointer_over<V>(
+            self,
+            on_pointer_over: V,
+        ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_over(on_pointer_over),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_up`]
+        #[inline(always)]
+        pub fn on_pointer_up<V>(
+            self,
+            on_pointer_up: V,
+        ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_up(on_pointer_up),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_cancel`]
+        #[inline(always)]
+        pub fn on_transition_cancel<V>(
+            self,
+            on_transition_cancel: V,
+        ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_cancel(on_transition_cancel),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_end`]
+        #[inline(always)]
+        pub fn on_transition_end<V>(
+            self,
+            on_transition_end: V,
+        ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_end(on_transition_end),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_run`]
+        #[inline(always)]
+        pub fn on_transition_run<V>(
+            self,
+            on_transition_run: V,
+        ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_run(on_transition_run),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_start`]
+        #[inline(always)]
+        pub fn on_transition_start<V>(
+            self,
+            on_transition_start: V,
+        ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_start(on_transition_start),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag`]
+        #[inline(always)]
+        pub fn on_drag<V>(
+            self,
+            on_drag: V,
+        ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_end`]
+        #[inline(always)]
+        pub fn on_drag_end<V>(
+            self,
+            on_drag_end: V,
+        ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_enter`]
+        #[inline(always)]
+        pub fn on_drag_enter<V>(
+            self,
+            on_drag_enter: V,
+        ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_enter(on_drag_enter),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_leave`]
+        #[inline(always)]
+        pub fn on_drag_leave<V>(
+            self,
+            on_drag_leave: V,
+        ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_leave(on_drag_leave),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_over`]
+        #[inline(always)]
+        pub fn on_drag_over<V>(
+            self,
+            on_drag_over: V,
+        ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_start`]
+        #[inline(always)]
+        pub fn on_drag_start<V>(
+            self,
+            on_drag_start: V,
+        ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_start(on_drag_start),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        ///See [`HtmlElementProps::on_drop`]
+        #[inline(always)]
+        pub fn on_drop<V>(
+            self,
+            on_drop: V,
+        ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
+                ),
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1218,6 +6176,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1234,6 +6214,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1250,6 +6252,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1266,6 +6290,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1282,6 +6328,28 @@ mod builder_and_replacer {
                 muted,
                 preload: self.0.preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1298,6 +6366,28 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload,
                 src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
             })
         }
         #[inline(always)]
@@ -1314,6 +6404,864 @@ mod builder_and_replacer {
                 muted: self.0.muted,
                 preload: self.0.preload,
                 src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_abort<V>(
+            self,
+            on_abort: V,
+        ) -> super::Building<super::overwrite::on_abort<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_can_play<V>(
+            self,
+            on_can_play: V,
+        ) -> super::Building<super::overwrite::on_can_play<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_can_play_through<V>(
+            self,
+            on_can_play_through: V,
+        ) -> super::Building<super::overwrite::on_can_play_through<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_duration_change<V>(
+            self,
+            on_duration_change: V,
+        ) -> super::Building<super::overwrite::on_duration_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_emptied<V>(
+            self,
+            on_emptied: V,
+        ) -> super::Building<super::overwrite::on_emptied<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_ended<V>(
+            self,
+            on_ended: V,
+        ) -> super::Building<super::overwrite::on_ended<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_loaded_data<V>(
+            self,
+            on_loaded_data: V,
+        ) -> super::Building<super::overwrite::on_loaded_data<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_loaded_metadata<V>(
+            self,
+            on_loaded_metadata: V,
+        ) -> super::Building<super::overwrite::on_loaded_metadata<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_load_start<V>(
+            self,
+            on_load_start: V,
+        ) -> super::Building<super::overwrite::on_load_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_pause<V>(
+            self,
+            on_pause: V,
+        ) -> super::Building<super::overwrite::on_pause<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_play<V>(
+            self,
+            on_play: V,
+        ) -> super::Building<super::overwrite::on_play<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_playing<V>(
+            self,
+            on_playing: V,
+        ) -> super::Building<super::overwrite::on_playing<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_progress<V>(
+            self,
+            on_progress: V,
+        ) -> super::Building<super::overwrite::on_progress<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_rate_change<V>(
+            self,
+            on_rate_change: V,
+        ) -> super::Building<super::overwrite::on_rate_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_resize<V>(
+            self,
+            on_resize: V,
+        ) -> super::Building<super::overwrite::on_resize<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_seeked<V>(
+            self,
+            on_seeked: V,
+        ) -> super::Building<super::overwrite::on_seeked<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_seeking<V>(
+            self,
+            on_seeking: V,
+        ) -> super::Building<super::overwrite::on_seeking<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_stalled<V>(
+            self,
+            on_stalled: V,
+        ) -> super::Building<super::overwrite::on_stalled<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_suspend<V>(
+            self,
+            on_suspend: V,
+        ) -> super::Building<super::overwrite::on_suspend<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_time_update<V>(
+            self,
+            on_time_update: V,
+        ) -> super::Building<super::overwrite::on_time_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_volume_change<V>(
+            self,
+            on_volume_change: V,
+        ) -> super::Building<super::overwrite::on_volume_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change,
+                on_waiting: self.0.on_waiting,
+            })
+        }
+        #[inline(always)]
+        pub fn on_waiting<V>(
+            self,
+            on_waiting: V,
+        ) -> super::Building<super::overwrite::on_waiting<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: self.0.HtmlElementProps,
+                auto_play: self.0.auto_play,
+                controls: self.0.controls,
+                cross_origin: self.0.cross_origin,
+                loop_: self.0.loop_,
+                muted: self.0.muted,
+                preload: self.0.preload,
+                src: self.0.src,
+                on_abort: self.0.on_abort,
+                on_can_play: self.0.on_can_play,
+                on_can_play_through: self.0.on_can_play_through,
+                on_duration_change: self.0.on_duration_change,
+                on_emptied: self.0.on_emptied,
+                on_ended: self.0.on_ended,
+                on_loaded_data: self.0.on_loaded_data,
+                on_loaded_metadata: self.0.on_loaded_metadata,
+                on_load_start: self.0.on_load_start,
+                on_pause: self.0.on_pause,
+                on_play: self.0.on_play,
+                on_playing: self.0.on_playing,
+                on_progress: self.0.on_progress,
+                on_rate_change: self.0.on_rate_change,
+                on_resize: self.0.on_resize,
+                on_seeked: self.0.on_seeked,
+                on_seeking: self.0.on_seeking,
+                on_stalled: self.0.on_stalled,
+                on_suspend: self.0.on_suspend,
+                on_time_update: self.0.on_time_update,
+                on_volume_change: self.0.on_volume_change,
+                on_waiting,
             })
         }
     }
@@ -1327,6 +7275,28 @@ mod impl_update_element {
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::props::UpdateElement<web_sys::HtmlElement>,
+        TypeDefs::on_abort: crate::props::UpdateDomEventListener<events::Abort>,
+        TypeDefs::on_can_play: crate::props::UpdateDomEventListener<events::CanPlay>,
+        TypeDefs::on_can_play_through: crate::props::UpdateDomEventListener<events::CanPlayThrough>,
+        TypeDefs::on_duration_change: crate::props::UpdateDomEventListener<events::DurationChange>,
+        TypeDefs::on_emptied: crate::props::UpdateDomEventListener<events::Emptied>,
+        TypeDefs::on_ended: crate::props::UpdateDomEventListener<events::Ended>,
+        TypeDefs::on_loaded_data: crate::props::UpdateDomEventListener<events::LoadedData>,
+        TypeDefs::on_loaded_metadata: crate::props::UpdateDomEventListener<events::LoadedMetadata>,
+        TypeDefs::on_load_start: crate::props::UpdateDomEventListener<events::LoadStart>,
+        TypeDefs::on_pause: crate::props::UpdateDomEventListener<events::Pause>,
+        TypeDefs::on_play: crate::props::UpdateDomEventListener<events::Play>,
+        TypeDefs::on_playing: crate::props::UpdateDomEventListener<events::Playing>,
+        TypeDefs::on_progress: crate::props::UpdateDomEventListener<events::Progress>,
+        TypeDefs::on_rate_change: crate::props::UpdateDomEventListener<events::RateChange>,
+        TypeDefs::on_resize: crate::props::UpdateDomEventListener<events::Resize>,
+        TypeDefs::on_seeked: crate::props::UpdateDomEventListener<events::Seeked>,
+        TypeDefs::on_seeking: crate::props::UpdateDomEventListener<events::Seeking>,
+        TypeDefs::on_stalled: crate::props::UpdateDomEventListener<events::Stalled>,
+        TypeDefs::on_suspend: crate::props::UpdateDomEventListener<events::Suspend>,
+        TypeDefs::on_time_update: crate::props::UpdateDomEventListener<events::TimeUpdate>,
+        TypeDefs::on_volume_change: crate::props::UpdateDomEventListener<events::VolumeChange>,
+        TypeDefs::on_waiting: crate::props::UpdateDomEventListener<events::Waiting>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -1353,6 +7323,72 @@ mod impl_update_element {
                 >>::State,
                 src = <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
                     str,
+                >>::State,
+                on_abort = <TypeDefs::on_abort as crate::props::UpdateDomEventListener<
+                    events::Abort,
+                >>::State,
+                on_can_play = <TypeDefs::on_can_play as crate::props::UpdateDomEventListener<
+                    events::CanPlay,
+                >>::State,
+                on_can_play_through = <TypeDefs::on_can_play_through as crate::props::UpdateDomEventListener<
+                    events::CanPlayThrough,
+                >>::State,
+                on_duration_change = <TypeDefs::on_duration_change as crate::props::UpdateDomEventListener<
+                    events::DurationChange,
+                >>::State,
+                on_emptied = <TypeDefs::on_emptied as crate::props::UpdateDomEventListener<
+                    events::Emptied,
+                >>::State,
+                on_ended = <TypeDefs::on_ended as crate::props::UpdateDomEventListener<
+                    events::Ended,
+                >>::State,
+                on_loaded_data = <TypeDefs::on_loaded_data as crate::props::UpdateDomEventListener<
+                    events::LoadedData,
+                >>::State,
+                on_loaded_metadata = <TypeDefs::on_loaded_metadata as crate::props::UpdateDomEventListener<
+                    events::LoadedMetadata,
+                >>::State,
+                on_load_start = <TypeDefs::on_load_start as crate::props::UpdateDomEventListener<
+                    events::LoadStart,
+                >>::State,
+                on_pause = <TypeDefs::on_pause as crate::props::UpdateDomEventListener<
+                    events::Pause,
+                >>::State,
+                on_play = <TypeDefs::on_play as crate::props::UpdateDomEventListener<
+                    events::Play,
+                >>::State,
+                on_playing = <TypeDefs::on_playing as crate::props::UpdateDomEventListener<
+                    events::Playing,
+                >>::State,
+                on_progress = <TypeDefs::on_progress as crate::props::UpdateDomEventListener<
+                    events::Progress,
+                >>::State,
+                on_rate_change = <TypeDefs::on_rate_change as crate::props::UpdateDomEventListener<
+                    events::RateChange,
+                >>::State,
+                on_resize = <TypeDefs::on_resize as crate::props::UpdateDomEventListener<
+                    events::Resize,
+                >>::State,
+                on_seeked = <TypeDefs::on_seeked as crate::props::UpdateDomEventListener<
+                    events::Seeked,
+                >>::State,
+                on_seeking = <TypeDefs::on_seeking as crate::props::UpdateDomEventListener<
+                    events::Seeking,
+                >>::State,
+                on_stalled = <TypeDefs::on_stalled as crate::props::UpdateDomEventListener<
+                    events::Stalled,
+                >>::State,
+                on_suspend = <TypeDefs::on_suspend as crate::props::UpdateDomEventListener<
+                    events::Suspend,
+                >>::State,
+                on_time_update = <TypeDefs::on_time_update as crate::props::UpdateDomEventListener<
+                    events::TimeUpdate,
+                >>::State,
+                on_volume_change = <TypeDefs::on_volume_change as crate::props::UpdateDomEventListener<
+                    events::VolumeChange,
+                >>::State,
+                on_waiting = <TypeDefs::on_waiting as crate::props::UpdateDomEventListener<
+                    events::Waiting,
                 >>::State,
             >,
         >;
@@ -1421,6 +7457,75 @@ mod impl_update_element {
                     |v| element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
+                on_abort: crate::props::UpdateDomEventListener::<
+                    events::Abort,
+                >::initialize_dom_event_listener_state(this.on_abort, element),
+                on_can_play: crate::props::UpdateDomEventListener::<
+                    events::CanPlay,
+                >::initialize_dom_event_listener_state(this.on_can_play, element),
+                on_can_play_through: crate::props::UpdateDomEventListener::<
+                    events::CanPlayThrough,
+                >::initialize_dom_event_listener_state(
+                    this.on_can_play_through,
+                    element,
+                ),
+                on_duration_change: crate::props::UpdateDomEventListener::<
+                    events::DurationChange,
+                >::initialize_dom_event_listener_state(this.on_duration_change, element),
+                on_emptied: crate::props::UpdateDomEventListener::<
+                    events::Emptied,
+                >::initialize_dom_event_listener_state(this.on_emptied, element),
+                on_ended: crate::props::UpdateDomEventListener::<
+                    events::Ended,
+                >::initialize_dom_event_listener_state(this.on_ended, element),
+                on_loaded_data: crate::props::UpdateDomEventListener::<
+                    events::LoadedData,
+                >::initialize_dom_event_listener_state(this.on_loaded_data, element),
+                on_loaded_metadata: crate::props::UpdateDomEventListener::<
+                    events::LoadedMetadata,
+                >::initialize_dom_event_listener_state(this.on_loaded_metadata, element),
+                on_load_start: crate::props::UpdateDomEventListener::<
+                    events::LoadStart,
+                >::initialize_dom_event_listener_state(this.on_load_start, element),
+                on_pause: crate::props::UpdateDomEventListener::<
+                    events::Pause,
+                >::initialize_dom_event_listener_state(this.on_pause, element),
+                on_play: crate::props::UpdateDomEventListener::<
+                    events::Play,
+                >::initialize_dom_event_listener_state(this.on_play, element),
+                on_playing: crate::props::UpdateDomEventListener::<
+                    events::Playing,
+                >::initialize_dom_event_listener_state(this.on_playing, element),
+                on_progress: crate::props::UpdateDomEventListener::<
+                    events::Progress,
+                >::initialize_dom_event_listener_state(this.on_progress, element),
+                on_rate_change: crate::props::UpdateDomEventListener::<
+                    events::RateChange,
+                >::initialize_dom_event_listener_state(this.on_rate_change, element),
+                on_resize: crate::props::UpdateDomEventListener::<
+                    events::Resize,
+                >::initialize_dom_event_listener_state(this.on_resize, element),
+                on_seeked: crate::props::UpdateDomEventListener::<
+                    events::Seeked,
+                >::initialize_dom_event_listener_state(this.on_seeked, element),
+                on_seeking: crate::props::UpdateDomEventListener::<
+                    events::Seeking,
+                >::initialize_dom_event_listener_state(this.on_seeking, element),
+                on_stalled: crate::props::UpdateDomEventListener::<
+                    events::Stalled,
+                >::initialize_dom_event_listener_state(this.on_stalled, element),
+                on_suspend: crate::props::UpdateDomEventListener::<
+                    events::Suspend,
+                >::initialize_dom_event_listener_state(this.on_suspend, element),
+                on_time_update: crate::props::UpdateDomEventListener::<
+                    events::TimeUpdate,
+                >::initialize_dom_event_listener_state(this.on_time_update, element),
+                on_volume_change: crate::props::UpdateDomEventListener::<
+                    events::VolumeChange,
+                >::initialize_dom_event_listener_state(this.on_volume_change, element),
+                on_waiting: crate::props::UpdateDomEventListener::<
+                    events::Waiting,
+                >::initialize_dom_event_listener_state(this.on_waiting, element),
             }
         }
         fn update_element(
@@ -1496,6 +7601,122 @@ mod impl_update_element {
                 state.src,
                 |v| element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
+            );
+            crate::props::UpdateDomEventListener::<events::Abort>::update_dom_event_listener(
+                this.on_abort,
+                element,
+                state.on_abort,
+            );
+            crate::props::UpdateDomEventListener::<events::CanPlay>::update_dom_event_listener(
+                this.on_can_play,
+                element,
+                state.on_can_play,
+            );
+            crate::props::UpdateDomEventListener::<
+                events::CanPlayThrough,
+            >::update_dom_event_listener(
+                this.on_can_play_through,
+                element,
+                state.on_can_play_through,
+            );
+            crate::props::UpdateDomEventListener::<
+                events::DurationChange,
+            >::update_dom_event_listener(
+                this.on_duration_change,
+                element,
+                state.on_duration_change,
+            );
+            crate::props::UpdateDomEventListener::<events::Emptied>::update_dom_event_listener(
+                this.on_emptied,
+                element,
+                state.on_emptied,
+            );
+            crate::props::UpdateDomEventListener::<events::Ended>::update_dom_event_listener(
+                this.on_ended,
+                element,
+                state.on_ended,
+            );
+            crate::props::UpdateDomEventListener::<events::LoadedData>::update_dom_event_listener(
+                this.on_loaded_data,
+                element,
+                state.on_loaded_data,
+            );
+            crate::props::UpdateDomEventListener::<
+                events::LoadedMetadata,
+            >::update_dom_event_listener(
+                this.on_loaded_metadata,
+                element,
+                state.on_loaded_metadata,
+            );
+            crate::props::UpdateDomEventListener::<events::LoadStart>::update_dom_event_listener(
+                this.on_load_start,
+                element,
+                state.on_load_start,
+            );
+            crate::props::UpdateDomEventListener::<events::Pause>::update_dom_event_listener(
+                this.on_pause,
+                element,
+                state.on_pause,
+            );
+            crate::props::UpdateDomEventListener::<events::Play>::update_dom_event_listener(
+                this.on_play,
+                element,
+                state.on_play,
+            );
+            crate::props::UpdateDomEventListener::<events::Playing>::update_dom_event_listener(
+                this.on_playing,
+                element,
+                state.on_playing,
+            );
+            crate::props::UpdateDomEventListener::<events::Progress>::update_dom_event_listener(
+                this.on_progress,
+                element,
+                state.on_progress,
+            );
+            crate::props::UpdateDomEventListener::<events::RateChange>::update_dom_event_listener(
+                this.on_rate_change,
+                element,
+                state.on_rate_change,
+            );
+            crate::props::UpdateDomEventListener::<events::Resize>::update_dom_event_listener(
+                this.on_resize,
+                element,
+                state.on_resize,
+            );
+            crate::props::UpdateDomEventListener::<events::Seeked>::update_dom_event_listener(
+                this.on_seeked,
+                element,
+                state.on_seeked,
+            );
+            crate::props::UpdateDomEventListener::<events::Seeking>::update_dom_event_listener(
+                this.on_seeking,
+                element,
+                state.on_seeking,
+            );
+            crate::props::UpdateDomEventListener::<events::Stalled>::update_dom_event_listener(
+                this.on_stalled,
+                element,
+                state.on_stalled,
+            );
+            crate::props::UpdateDomEventListener::<events::Suspend>::update_dom_event_listener(
+                this.on_suspend,
+                element,
+                state.on_suspend,
+            );
+            crate::props::UpdateDomEventListener::<events::TimeUpdate>::update_dom_event_listener(
+                this.on_time_update,
+                element,
+                state.on_time_update,
+            );
+            crate::props::UpdateDomEventListener::<events::VolumeChange>::update_dom_event_listener(
+                this.on_volume_change,
+                element,
+                state.on_volume_change,
+            );
+            crate::props::UpdateDomEventListener::<events::Waiting>::update_dom_event_listener(
+                this.on_waiting,
+                element,
+                state.on_waiting,
             );
         }
     }

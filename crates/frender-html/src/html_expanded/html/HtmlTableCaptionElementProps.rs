@@ -48,6 +48,251 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type on_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_scroll<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_scroll<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_security_policy_violation<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_security_policy_violation<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_select<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_select<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_wheel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_wheel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_copy<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_copy<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_cut<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_cut<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_paste<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_paste<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_composition_update<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_composition_update<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_blur<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_blur<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_in<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_in<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_focus_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_focus_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_fullscreen_error<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_fullscreen_error<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_key_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_key_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_aux_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_aux_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_context_menu<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_context_menu<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_double_click<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_double_click<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_mouse_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_mouse_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_touch_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_touch_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type access_key<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::access_key<
@@ -237,9 +482,205 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type on_click<TypeDefs, Value> = self::HtmlElementProps<
+    pub type on_invalid<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
-        super::super::HtmlElementProps::overwrite::on_click<
+        super::super::HtmlElementProps::overwrite::on_invalid<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_iteration<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_iteration<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_animation_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_animation_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_before_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_before_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_input<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_input<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_change<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_change<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_got_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_got_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_lost_pointer_capture<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_lost_pointer_capture<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_down<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_down<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_move<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_move<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_out<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_out<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_pointer_up<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_pointer_up<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_cancel<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_cancel<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_run<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_run<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_transition_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_transition_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_end<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_end<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_enter<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_enter<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_leave<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_leave<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_over<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_over<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drag_start<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drag_start<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
+    pub type on_drop<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::on_drop<
             <TypeDefs as super::Types>::HtmlElementProps,
             Value,
         >,
@@ -480,6 +921,477 @@ mod builder_and_replacer {
             super::Building(super::Data {
                 HtmlElementProps: HtmlElementProps::build(
                     HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_cancel`]
+        #[inline(always)]
+        pub fn on_cancel<V>(
+            self,
+            on_cancel: V,
+        ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_error`]
+        #[inline(always)]
+        pub fn on_error<V>(
+            self,
+            on_error: V,
+        ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_scroll`]
+        #[inline(always)]
+        pub fn on_scroll<V>(
+            self,
+            on_scroll: V,
+        ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_security_policy_violation`]
+        #[inline(always)]
+        pub fn on_security_policy_violation<V>(
+            self,
+            on_security_policy_violation: V,
+        ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_security_policy_violation(on_security_policy_violation),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_select`]
+        #[inline(always)]
+        pub fn on_select<V>(
+            self,
+            on_select: V,
+        ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_wheel`]
+        #[inline(always)]
+        pub fn on_wheel<V>(
+            self,
+            on_wheel: V,
+        ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_copy`]
+        #[inline(always)]
+        pub fn on_copy<V>(
+            self,
+            on_copy: V,
+        ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_cut`]
+        #[inline(always)]
+        pub fn on_cut<V>(
+            self,
+            on_cut: V,
+        ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_paste`]
+        #[inline(always)]
+        pub fn on_paste<V>(
+            self,
+            on_paste: V,
+        ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_end`]
+        #[inline(always)]
+        pub fn on_composition_end<V>(
+            self,
+            on_composition_end: V,
+        ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_end(on_composition_end),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_start`]
+        #[inline(always)]
+        pub fn on_composition_start<V>(
+            self,
+            on_composition_start: V,
+        ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_start(on_composition_start),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_composition_update`]
+        #[inline(always)]
+        pub fn on_composition_update<V>(
+            self,
+            on_composition_update: V,
+        ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_composition_update(on_composition_update),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_blur`]
+        #[inline(always)]
+        pub fn on_blur<V>(
+            self,
+            on_blur: V,
+        ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus`]
+        #[inline(always)]
+        pub fn on_focus<V>(
+            self,
+            on_focus: V,
+        ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_in`]
+        #[inline(always)]
+        pub fn on_focus_in<V>(
+            self,
+            on_focus_in: V,
+        ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_focus_out`]
+        #[inline(always)]
+        pub fn on_focus_out<V>(
+            self,
+            on_focus_out: V,
+        ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_change`]
+        #[inline(always)]
+        pub fn on_fullscreen_change<V>(
+            self,
+            on_fullscreen_change: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_change(on_fullscreen_change),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_fullscreen_error`]
+        #[inline(always)]
+        pub fn on_fullscreen_error<V>(
+            self,
+            on_fullscreen_error: V,
+        ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_fullscreen_error(on_fullscreen_error),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_down`]
+        #[inline(always)]
+        pub fn on_key_down<V>(
+            self,
+            on_key_down: V,
+        ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_key_up`]
+        #[inline(always)]
+        pub fn on_key_up<V>(
+            self,
+            on_key_up: V,
+        ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_aux_click`]
+        #[inline(always)]
+        pub fn on_aux_click<V>(
+            self,
+            on_aux_click: V,
+        ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_click`]
+        #[inline(always)]
+        pub fn on_click<V>(
+            self,
+            on_click: V,
+        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_context_menu`]
+        #[inline(always)]
+        pub fn on_context_menu<V>(
+            self,
+            on_context_menu: V,
+        ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_context_menu(on_context_menu),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_double_click`]
+        #[inline(always)]
+        pub fn on_double_click<V>(
+            self,
+            on_double_click: V,
+        ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_double_click(on_double_click),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_down`]
+        #[inline(always)]
+        pub fn on_mouse_down<V>(
+            self,
+            on_mouse_down: V,
+        ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_down(on_mouse_down),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_enter`]
+        #[inline(always)]
+        pub fn on_mouse_enter<V>(
+            self,
+            on_mouse_enter: V,
+        ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_enter(on_mouse_enter),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_leave`]
+        #[inline(always)]
+        pub fn on_mouse_leave<V>(
+            self,
+            on_mouse_leave: V,
+        ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_leave(on_mouse_leave),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_move`]
+        #[inline(always)]
+        pub fn on_mouse_move<V>(
+            self,
+            on_mouse_move: V,
+        ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_move(on_mouse_move),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_out`]
+        #[inline(always)]
+        pub fn on_mouse_out<V>(
+            self,
+            on_mouse_out: V,
+        ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_over`]
+        #[inline(always)]
+        pub fn on_mouse_over<V>(
+            self,
+            on_mouse_over: V,
+        ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_mouse_over(on_mouse_over),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_mouse_up`]
+        #[inline(always)]
+        pub fn on_mouse_up<V>(
+            self,
+            on_mouse_up: V,
+        ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_cancel`]
+        #[inline(always)]
+        pub fn on_touch_cancel<V>(
+            self,
+            on_touch_cancel: V,
+        ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_cancel(on_touch_cancel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_end`]
+        #[inline(always)]
+        pub fn on_touch_end<V>(
+            self,
+            on_touch_end: V,
+        ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_move`]
+        #[inline(always)]
+        pub fn on_touch_move<V>(
+            self,
+            on_touch_move: V,
+        ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_move(on_touch_move),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_touch_start`]
+        #[inline(always)]
+        pub fn on_touch_start<V>(
+            self,
+            on_touch_start: V,
+        ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_touch_start(on_touch_start),
                 ),
                 align: self.0.align,
             })
@@ -839,15 +1751,401 @@ mod builder_and_replacer {
                 align: self.0.align,
             })
         }
-        ///See [`HtmlElementProps::on_click`]
+        ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
-        pub fn on_click<V>(
+        pub fn on_invalid<V>(
             self,
-            on_click: V,
-        ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
+            on_invalid: V,
+        ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Building(super::Data {
                 HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_cancel`]
+        #[inline(always)]
+        pub fn on_animation_cancel<V>(
+            self,
+            on_animation_cancel: V,
+        ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_cancel(on_animation_cancel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_end`]
+        #[inline(always)]
+        pub fn on_animation_end<V>(
+            self,
+            on_animation_end: V,
+        ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_end(on_animation_end),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_iteration`]
+        #[inline(always)]
+        pub fn on_animation_iteration<V>(
+            self,
+            on_animation_iteration: V,
+        ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_iteration(on_animation_iteration),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_animation_start`]
+        #[inline(always)]
+        pub fn on_animation_start<V>(
+            self,
+            on_animation_start: V,
+        ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_animation_start(on_animation_start),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_before_input`]
+        #[inline(always)]
+        pub fn on_before_input<V>(
+            self,
+            on_before_input: V,
+        ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_before_input(on_before_input),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_input`]
+        #[inline(always)]
+        pub fn on_input<V>(
+            self,
+            on_input: V,
+        ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_change`]
+        #[inline(always)]
+        pub fn on_change<V>(
+            self,
+            on_change: V,
+        ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_got_pointer_capture`]
+        #[inline(always)]
+        pub fn on_got_pointer_capture<V>(
+            self,
+            on_got_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_got_pointer_capture(on_got_pointer_capture),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_lost_pointer_capture`]
+        #[inline(always)]
+        pub fn on_lost_pointer_capture<V>(
+            self,
+            on_lost_pointer_capture: V,
+        ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_lost_pointer_capture(on_lost_pointer_capture),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_cancel`]
+        #[inline(always)]
+        pub fn on_pointer_cancel<V>(
+            self,
+            on_pointer_cancel: V,
+        ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_cancel(on_pointer_cancel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_down`]
+        #[inline(always)]
+        pub fn on_pointer_down<V>(
+            self,
+            on_pointer_down: V,
+        ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_down(on_pointer_down),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_enter`]
+        #[inline(always)]
+        pub fn on_pointer_enter<V>(
+            self,
+            on_pointer_enter: V,
+        ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_enter(on_pointer_enter),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_leave`]
+        #[inline(always)]
+        pub fn on_pointer_leave<V>(
+            self,
+            on_pointer_leave: V,
+        ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_leave(on_pointer_leave),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_move`]
+        #[inline(always)]
+        pub fn on_pointer_move<V>(
+            self,
+            on_pointer_move: V,
+        ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_move(on_pointer_move),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_out`]
+        #[inline(always)]
+        pub fn on_pointer_out<V>(
+            self,
+            on_pointer_out: V,
+        ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_out(on_pointer_out),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_over`]
+        #[inline(always)]
+        pub fn on_pointer_over<V>(
+            self,
+            on_pointer_over: V,
+        ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_over(on_pointer_over),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_pointer_up`]
+        #[inline(always)]
+        pub fn on_pointer_up<V>(
+            self,
+            on_pointer_up: V,
+        ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_pointer_up(on_pointer_up),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_cancel`]
+        #[inline(always)]
+        pub fn on_transition_cancel<V>(
+            self,
+            on_transition_cancel: V,
+        ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_cancel(on_transition_cancel),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_end`]
+        #[inline(always)]
+        pub fn on_transition_end<V>(
+            self,
+            on_transition_end: V,
+        ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_end(on_transition_end),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_run`]
+        #[inline(always)]
+        pub fn on_transition_run<V>(
+            self,
+            on_transition_run: V,
+        ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_run(on_transition_run),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_transition_start`]
+        #[inline(always)]
+        pub fn on_transition_start<V>(
+            self,
+            on_transition_start: V,
+        ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_transition_start(on_transition_start),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag`]
+        #[inline(always)]
+        pub fn on_drag<V>(
+            self,
+            on_drag: V,
+        ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_end`]
+        #[inline(always)]
+        pub fn on_drag_end<V>(
+            self,
+            on_drag_end: V,
+        ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_enter`]
+        #[inline(always)]
+        pub fn on_drag_enter<V>(
+            self,
+            on_drag_enter: V,
+        ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_enter(on_drag_enter),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_leave`]
+        #[inline(always)]
+        pub fn on_drag_leave<V>(
+            self,
+            on_drag_leave: V,
+        ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_leave(on_drag_leave),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_over`]
+        #[inline(always)]
+        pub fn on_drag_over<V>(
+            self,
+            on_drag_over: V,
+        ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drag_start`]
+        #[inline(always)]
+        pub fn on_drag_start<V>(
+            self,
+            on_drag_start: V,
+        ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps)
+                        .on_drag_start(on_drag_start),
+                ),
+                align: self.0.align,
+            })
+        }
+        ///See [`HtmlElementProps::on_drop`]
+        #[inline(always)]
+        pub fn on_drop<V>(
+            self,
+            on_drop: V,
+        ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
+            super::Building(super::Data {
+                HtmlElementProps: HtmlElementProps::build(
+                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
                 ),
                 align: self.0.align,
             })
