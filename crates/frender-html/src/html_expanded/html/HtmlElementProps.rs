@@ -1106,7 +1106,7 @@ pub mod render_state {
         type title;
         type translate;
         type virtual_keyboard_policy;
-        type on_click: std::any::Any;
+        type on_click;
     }
     pub struct RenderState<TypeDefs: RenderStateTypes>
     where
