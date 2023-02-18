@@ -45,7 +45,7 @@ fn Main(ctx: _) {
     ))
 }
 
-fn main() {
+pub fn main() {
     frender::hook_element::frender_dom::spawn_mount_get_element_to_dom_element_by_id(
         || rsx!(Main()),
         "frender-root",
