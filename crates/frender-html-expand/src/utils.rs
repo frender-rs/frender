@@ -1,6 +1,6 @@
 use std::{
     io::{self, Write},
-    path::{PathBuf},
+    path::PathBuf,
 };
 
 pub fn format_item(item: syn::Item) -> String {

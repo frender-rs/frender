@@ -117,8 +117,7 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
         _: impl FnOnce(),
     ) {
         match (state, this) {
-            (Some(state), this) if *this == **state => {
-            }
+            (Some(state), this) if *this == **state => {}
             (state, std::borrow::Cow::Owned(this)) => {
                 update(&this);
                 *state = Some(this);

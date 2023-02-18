@@ -7,8 +7,6 @@ use wasm_bindgen::{JsCast, JsValue};
 
 use crate::Dom;
 
-
-
 pub struct State<Cache> {
     node: web_sys::Text,
     cache: Cache,

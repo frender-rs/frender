@@ -518,9 +518,7 @@ fn infer_field_type_and_builder(
         _ => {
             return Err(syn::Error::new(
                 span,
-                format!(
-                    "Can't infer type for prop {name}. Please specify the field type."
-                ),
+                format!("Can't infer type for prop {name}. Please specify the field type."),
             ))
         }
     };
