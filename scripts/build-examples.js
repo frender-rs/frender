@@ -93,6 +93,7 @@ async function main() {
   for (const { name, indexFile } of examples) {
     const child = spawn("trunk", [
       "build",
+      "--release",
       "-d",
       `dist/examples/${name}`,
       "--public-url",
