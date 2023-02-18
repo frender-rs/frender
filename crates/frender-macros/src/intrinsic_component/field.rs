@@ -59,7 +59,7 @@ impl Field {
             if *field == name {
                 name.into_token_stream()
             } else {
-                quote!(#field: self.0.#field)
+                quote!(#field: self.#field)
             }
         });
         quote! {
@@ -71,11 +71,9 @@ impl Field {
             ) -> super::Building<
                 super::overwrite::#name<TypeDefs, V>,
             > {
-                super::Building(
-                    super::Data {
-                        #(#new_value),*
-                    }
-                )
+                super::Data {
+                    #(#new_value),*
+                }
             }
         }
     }

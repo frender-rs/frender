@@ -90,12 +90,10 @@ impl FieldDeclarationInherit {
                 let new_value = all_fields.iter().map(|field| {
                     if *field == this_field_name {
                         quote! {
-                            #field: #from_path ::build(
-                                #from_path ::Building(self.0. #field). #name(#name),
-                            )
+                            #field: self.#field. #name(#name)
                         }
                     } else {
-                        quote!(#field: self.0.#field)
+                        quote!(#field: self.#field)
                     }
                 });
 
@@ -108,11 +106,9 @@ impl FieldDeclarationInherit {
                     ) -> super::Building<
                         super::overwrite::#name<TypeDefs, V>,
                     > {
-                        super::Building(
-                            super::Data {
-                                #(#new_value),*
-                            }
-                        )
+                        super::Data {
+                            #(#new_value),*
+                        }
                     }
                 }
             })

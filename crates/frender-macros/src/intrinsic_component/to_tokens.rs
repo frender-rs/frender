@@ -546,11 +546,9 @@ impl IntrinsicComponentPropsData {
                 #vis fn #name () -> Building<TypesInitial> {
                     #[allow(unused_imports)]
                     use super::*;
-                    self::Building(
-                        self::Data {
-                            #(#fields_initial_value ,)*
-                        }
-                    )
+                    self::Building {
+                        #(#fields_initial_value ,)*
+                    }
                 }
 
                 pub mod prelude {}
@@ -581,10 +579,9 @@ impl IntrinsicComponentPropsData {
                 }
 
                 pub use data_struct::#name as Data;
-
-                pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(
-                    pub Data<TypeDefs>
-                );
+                pub use data_struct::#name as Building;
+                pub use ::core::convert::identity as Building;
+                pub use ::core::convert::identity as build;
 
                 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(
                     pub Data<TypeDefs>
@@ -603,11 +600,6 @@ impl IntrinsicComponentPropsData {
 
                 #[cfg(feature = "dom")]
                 #mod_render_state
-
-                #[inline(always)]
-                pub fn build<TypeDefs: ?::core::marker::Sized + Types>(building: Building<TypeDefs>) -> Data::<TypeDefs> {
-                    building.0
-                }
 
                 mod builder_and_replacer {
                     #[allow(unused_imports)]
