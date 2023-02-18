@@ -3,14 +3,14 @@
 pub fn HtmlTrackElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
-    self::Building(self::Data {
+    self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         default: (),
         kind: (),
         label: (),
         src: (),
         src_lang: (),
-    })
+    }
 }
 pub mod prelude {}
 pub mod overwrite {
@@ -762,8 +762,10 @@ pub mod data_struct {
         pub src_lang: TypeDefs::src_lang,
     }
 }
+pub use ::core::convert::identity as Building;
+pub use ::core::convert::identity as build;
 pub use data_struct::HtmlTrackElementProps as Data;
-pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
+pub use data_struct::HtmlTrackElementProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
@@ -963,12 +965,6 @@ pub mod render_state {
         }
     }
 }
-#[inline(always)]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
-    building: Building<TypeDefs>,
-) -> Data<TypeDefs> {
-    building.0
-}
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -979,16 +975,14 @@ mod builder_and_replacer {
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).children(children),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.children(children),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
@@ -996,16 +990,14 @@ mod builder_and_replacer {
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).class(class),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.class(class),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
@@ -1013,16 +1005,14 @@ mod builder_and_replacer {
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).id(id),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.id(id),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
@@ -1030,16 +1020,14 @@ mod builder_and_replacer {
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.part(part),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_cancel`]
         #[inline(always)]
@@ -1047,16 +1035,14 @@ mod builder_and_replacer {
             self,
             on_cancel: V,
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_error`]
         #[inline(always)]
@@ -1064,16 +1050,14 @@ mod builder_and_replacer {
             self,
             on_error: V,
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_error(on_error),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_scroll`]
         #[inline(always)]
@@ -1081,16 +1065,14 @@ mod builder_and_replacer {
             self,
             on_scroll: V,
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
         #[inline(always)]
@@ -1098,17 +1080,16 @@ mod builder_and_replacer {
             self,
             on_security_policy_violation: V,
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_security_policy_violation(on_security_policy_violation),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_security_policy_violation(on_security_policy_violation),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_select`]
         #[inline(always)]
@@ -1116,16 +1097,14 @@ mod builder_and_replacer {
             self,
             on_select: V,
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_select(on_select),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_wheel`]
         #[inline(always)]
@@ -1133,16 +1112,14 @@ mod builder_and_replacer {
             self,
             on_wheel: V,
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_copy`]
         #[inline(always)]
@@ -1150,16 +1127,14 @@ mod builder_and_replacer {
             self,
             on_copy: V,
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_cut`]
         #[inline(always)]
@@ -1167,16 +1142,14 @@ mod builder_and_replacer {
             self,
             on_cut: V,
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_paste`]
         #[inline(always)]
@@ -1184,16 +1157,14 @@ mod builder_and_replacer {
             self,
             on_paste: V,
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_composition_end`]
         #[inline(always)]
@@ -1201,17 +1172,14 @@ mod builder_and_replacer {
             self,
             on_composition_end: V,
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_end(on_composition_end),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_composition_start`]
         #[inline(always)]
@@ -1219,17 +1187,16 @@ mod builder_and_replacer {
             self,
             on_composition_start: V,
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_start(on_composition_start),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_start(on_composition_start),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_composition_update`]
         #[inline(always)]
@@ -1237,17 +1204,16 @@ mod builder_and_replacer {
             self,
             on_composition_update: V,
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_update(on_composition_update),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_update(on_composition_update),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_blur`]
         #[inline(always)]
@@ -1255,16 +1221,14 @@ mod builder_and_replacer {
             self,
             on_blur: V,
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_focus`]
         #[inline(always)]
@@ -1272,16 +1236,14 @@ mod builder_and_replacer {
             self,
             on_focus: V,
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_focus_in`]
         #[inline(always)]
@@ -1289,16 +1251,14 @@ mod builder_and_replacer {
             self,
             on_focus_in: V,
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_focus_out`]
         #[inline(always)]
@@ -1306,16 +1266,14 @@ mod builder_and_replacer {
             self,
             on_focus_out: V,
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
         #[inline(always)]
@@ -1323,17 +1281,16 @@ mod builder_and_replacer {
             self,
             on_fullscreen_change: V,
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_change(on_fullscreen_change),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_change(on_fullscreen_change),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
         #[inline(always)]
@@ -1341,17 +1298,16 @@ mod builder_and_replacer {
             self,
             on_fullscreen_error: V,
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_error(on_fullscreen_error),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_error(on_fullscreen_error),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_key_down`]
         #[inline(always)]
@@ -1359,16 +1315,14 @@ mod builder_and_replacer {
             self,
             on_key_down: V,
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_key_up`]
         #[inline(always)]
@@ -1376,16 +1330,14 @@ mod builder_and_replacer {
             self,
             on_key_up: V,
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_aux_click`]
         #[inline(always)]
@@ -1393,16 +1345,14 @@ mod builder_and_replacer {
             self,
             on_aux_click: V,
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_click`]
         #[inline(always)]
@@ -1410,16 +1360,14 @@ mod builder_and_replacer {
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_click(on_click),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_context_menu`]
         #[inline(always)]
@@ -1427,17 +1375,14 @@ mod builder_and_replacer {
             self,
             on_context_menu: V,
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_context_menu(on_context_menu),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_double_click`]
         #[inline(always)]
@@ -1445,17 +1390,14 @@ mod builder_and_replacer {
             self,
             on_double_click: V,
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_double_click(on_double_click),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
         #[inline(always)]
@@ -1463,17 +1405,14 @@ mod builder_and_replacer {
             self,
             on_mouse_down: V,
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_down(on_mouse_down),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
         #[inline(always)]
@@ -1481,17 +1420,14 @@ mod builder_and_replacer {
             self,
             on_mouse_enter: V,
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_enter(on_mouse_enter),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
         #[inline(always)]
@@ -1499,17 +1435,14 @@ mod builder_and_replacer {
             self,
             on_mouse_leave: V,
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_leave(on_mouse_leave),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
         #[inline(always)]
@@ -1517,17 +1450,14 @@ mod builder_and_replacer {
             self,
             on_mouse_move: V,
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_move(on_mouse_move),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
         #[inline(always)]
@@ -1535,16 +1465,14 @@ mod builder_and_replacer {
             self,
             on_mouse_out: V,
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
         #[inline(always)]
@@ -1552,17 +1480,14 @@ mod builder_and_replacer {
             self,
             on_mouse_over: V,
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_over(on_mouse_over),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
         #[inline(always)]
@@ -1570,16 +1495,14 @@ mod builder_and_replacer {
             self,
             on_mouse_up: V,
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
         #[inline(always)]
@@ -1587,17 +1510,14 @@ mod builder_and_replacer {
             self,
             on_touch_cancel: V,
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_cancel(on_touch_cancel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_touch_end`]
         #[inline(always)]
@@ -1605,16 +1525,14 @@ mod builder_and_replacer {
             self,
             on_touch_end: V,
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_touch_move`]
         #[inline(always)]
@@ -1622,17 +1540,14 @@ mod builder_and_replacer {
             self,
             on_touch_move: V,
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_move(on_touch_move),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_touch_start`]
         #[inline(always)]
@@ -1640,17 +1555,14 @@ mod builder_and_replacer {
             self,
             on_touch_start: V,
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_start(on_touch_start),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
@@ -1658,16 +1570,14 @@ mod builder_and_replacer {
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).access_key(access_key),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.access_key(access_key),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
@@ -1675,17 +1585,14 @@ mod builder_and_replacer {
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .auto_capitalize(auto_capitalize),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
@@ -1693,16 +1600,14 @@ mod builder_and_replacer {
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).auto_focus(auto_focus),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::content_editable`]
         #[inline(always)]
@@ -1710,17 +1615,14 @@ mod builder_and_replacer {
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .content_editable(content_editable),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
@@ -1728,16 +1630,14 @@ mod builder_and_replacer {
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).context_menu(context_menu),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
@@ -1745,16 +1645,14 @@ mod builder_and_replacer {
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).dir(dir),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.dir(dir),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
@@ -1762,16 +1660,14 @@ mod builder_and_replacer {
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).draggable(draggable),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.draggable(draggable),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
@@ -1779,17 +1675,14 @@ mod builder_and_replacer {
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .enter_key_hint(enter_key_hint),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
@@ -1797,16 +1690,14 @@ mod builder_and_replacer {
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).hidden(hidden),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.hidden(hidden),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
@@ -1814,16 +1705,14 @@ mod builder_and_replacer {
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).inert(inert),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.inert(inert),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
@@ -1831,16 +1720,14 @@ mod builder_and_replacer {
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).input_mode(input_mode),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
@@ -1848,16 +1735,14 @@ mod builder_and_replacer {
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).is(is),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.is(is),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
@@ -1865,16 +1750,14 @@ mod builder_and_replacer {
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_id(item_id),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_id(item_id),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
@@ -1882,16 +1765,14 @@ mod builder_and_replacer {
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_prop(item_prop),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
@@ -1899,16 +1780,14 @@ mod builder_and_replacer {
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_ref(item_ref),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
@@ -1916,16 +1795,14 @@ mod builder_and_replacer {
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_scope(item_scope),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
@@ -1933,16 +1810,14 @@ mod builder_and_replacer {
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_type(item_type),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_type(item_type),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
@@ -1950,16 +1825,14 @@ mod builder_and_replacer {
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).lang(lang),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.lang(lang),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
@@ -1967,16 +1840,14 @@ mod builder_and_replacer {
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).nonce(nonce),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.nonce(nonce),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
@@ -1984,16 +1855,14 @@ mod builder_and_replacer {
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).role(role),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.role(role),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
@@ -2001,16 +1870,14 @@ mod builder_and_replacer {
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).slot(slot),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.slot(slot),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
@@ -2018,16 +1885,14 @@ mod builder_and_replacer {
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).spellcheck(spellcheck),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
@@ -2035,16 +1900,14 @@ mod builder_and_replacer {
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).style(style),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.style(style),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
@@ -2052,16 +1915,14 @@ mod builder_and_replacer {
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).tab_index(tab_index),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
@@ -2069,16 +1930,14 @@ mod builder_and_replacer {
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).title(title),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.title(title),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
@@ -2086,16 +1945,14 @@ mod builder_and_replacer {
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).translate(translate),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.translate(translate),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
@@ -2103,17 +1960,16 @@ mod builder_and_replacer {
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .virtual_keyboard_policy(virtual_keyboard_policy),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .virtual_keyboard_policy(virtual_keyboard_policy),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
@@ -2121,16 +1977,14 @@ mod builder_and_replacer {
             self,
             on_invalid: V,
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
         #[inline(always)]
@@ -2138,17 +1992,16 @@ mod builder_and_replacer {
             self,
             on_animation_cancel: V,
         ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_cancel(on_animation_cancel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_cancel(on_animation_cancel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_animation_end`]
         #[inline(always)]
@@ -2156,17 +2009,14 @@ mod builder_and_replacer {
             self,
             on_animation_end: V,
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_end(on_animation_end),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
         #[inline(always)]
@@ -2174,17 +2024,16 @@ mod builder_and_replacer {
             self,
             on_animation_iteration: V,
         ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_iteration(on_animation_iteration),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_iteration(on_animation_iteration),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_animation_start`]
         #[inline(always)]
@@ -2192,17 +2041,14 @@ mod builder_and_replacer {
             self,
             on_animation_start: V,
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_start(on_animation_start),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_before_input`]
         #[inline(always)]
@@ -2210,17 +2056,14 @@ mod builder_and_replacer {
             self,
             on_before_input: V,
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_before_input(on_before_input),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_input`]
         #[inline(always)]
@@ -2228,16 +2071,14 @@ mod builder_and_replacer {
             self,
             on_input: V,
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_input(on_input),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_change`]
         #[inline(always)]
@@ -2245,16 +2086,14 @@ mod builder_and_replacer {
             self,
             on_change: V,
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_change(on_change),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
         #[inline(always)]
@@ -2262,17 +2101,16 @@ mod builder_and_replacer {
             self,
             on_got_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_got_pointer_capture(on_got_pointer_capture),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_got_pointer_capture(on_got_pointer_capture),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
         #[inline(always)]
@@ -2280,17 +2118,16 @@ mod builder_and_replacer {
             self,
             on_lost_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_lost_pointer_capture(on_lost_pointer_capture),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_lost_pointer_capture(on_lost_pointer_capture),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
         #[inline(always)]
@@ -2298,17 +2135,14 @@ mod builder_and_replacer {
             self,
             on_pointer_cancel: V,
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_cancel(on_pointer_cancel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
         #[inline(always)]
@@ -2316,17 +2150,14 @@ mod builder_and_replacer {
             self,
             on_pointer_down: V,
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_down(on_pointer_down),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
         #[inline(always)]
@@ -2334,17 +2165,14 @@ mod builder_and_replacer {
             self,
             on_pointer_enter: V,
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_enter(on_pointer_enter),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
         #[inline(always)]
@@ -2352,17 +2180,14 @@ mod builder_and_replacer {
             self,
             on_pointer_leave: V,
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_leave(on_pointer_leave),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
         #[inline(always)]
@@ -2370,17 +2195,14 @@ mod builder_and_replacer {
             self,
             on_pointer_move: V,
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_move(on_pointer_move),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
         #[inline(always)]
@@ -2388,17 +2210,14 @@ mod builder_and_replacer {
             self,
             on_pointer_out: V,
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_out(on_pointer_out),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
         #[inline(always)]
@@ -2406,17 +2225,14 @@ mod builder_and_replacer {
             self,
             on_pointer_over: V,
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_over(on_pointer_over),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
         #[inline(always)]
@@ -2424,17 +2240,14 @@ mod builder_and_replacer {
             self,
             on_pointer_up: V,
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_up(on_pointer_up),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
         #[inline(always)]
@@ -2442,17 +2255,16 @@ mod builder_and_replacer {
             self,
             on_transition_cancel: V,
         ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_cancel(on_transition_cancel),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_cancel(on_transition_cancel),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_transition_end`]
         #[inline(always)]
@@ -2460,17 +2272,14 @@ mod builder_and_replacer {
             self,
             on_transition_end: V,
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_end(on_transition_end),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_transition_run`]
         #[inline(always)]
@@ -2478,17 +2287,14 @@ mod builder_and_replacer {
             self,
             on_transition_run: V,
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_run(on_transition_run),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_transition_start`]
         #[inline(always)]
@@ -2496,17 +2302,16 @@ mod builder_and_replacer {
             self,
             on_transition_start: V,
         ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_start(on_transition_start),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_start(on_transition_start),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag`]
         #[inline(always)]
@@ -2514,16 +2319,14 @@ mod builder_and_replacer {
             self,
             on_drag: V,
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag_end`]
         #[inline(always)]
@@ -2531,16 +2334,14 @@ mod builder_and_replacer {
             self,
             on_drag_end: V,
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
         #[inline(always)]
@@ -2548,17 +2349,14 @@ mod builder_and_replacer {
             self,
             on_drag_enter: V,
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_enter(on_drag_enter),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
         #[inline(always)]
@@ -2566,17 +2364,14 @@ mod builder_and_replacer {
             self,
             on_drag_leave: V,
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_leave(on_drag_leave),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag_over`]
         #[inline(always)]
@@ -2584,16 +2379,14 @@ mod builder_and_replacer {
             self,
             on_drag_over: V,
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drag_start`]
         #[inline(always)]
@@ -2601,17 +2394,14 @@ mod builder_and_replacer {
             self,
             on_drag_start: V,
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_start(on_drag_start),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         ///See [`HtmlElementProps::on_drop`]
         #[inline(always)]
@@ -2619,86 +2409,84 @@ mod builder_and_replacer {
             self,
             on_drop: V,
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
-                ),
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         #[inline(always)]
         pub fn default<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             default: V,
         ) -> super::Building<super::overwrite::default<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
                 default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         #[inline(always)]
         pub fn kind<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             kind: V,
         ) -> super::Building<super::overwrite::kind<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                default: self.0.default,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                default: self.default,
                 kind,
-                label: self.0.label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+                label: self.label,
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         #[inline(always)]
         pub fn label<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             label: V,
         ) -> super::Building<super::overwrite::label<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                default: self.0.default,
-                kind: self.0.kind,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                default: self.default,
+                kind: self.kind,
                 label,
-                src: self.0.src,
-                src_lang: self.0.src_lang,
-            })
+                src: self.src,
+                src_lang: self.src_lang,
+            }
         }
         #[inline(always)]
         pub fn src<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
                 src,
-                src_lang: self.0.src_lang,
-            })
+                src_lang: self.src_lang,
+            }
         }
         #[inline(always)]
         pub fn src_lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             src_lang: V,
         ) -> super::Building<super::overwrite::src_lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                default: self.0.default,
-                kind: self.0.kind,
-                label: self.0.label,
-                src: self.0.src,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                default: self.default,
+                kind: self.kind,
+                label: self.label,
+                src: self.src,
                 src_lang,
-            })
+            }
         }
     }
 }

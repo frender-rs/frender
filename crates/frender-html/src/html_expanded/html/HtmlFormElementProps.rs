@@ -3,7 +3,7 @@
 pub fn HtmlFormElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
-    self::Building(self::Data {
+    self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         accept: (),
         accept_charset: (),
@@ -18,7 +18,7 @@ pub fn HtmlFormElementProps() -> Building<TypesInitial> {
         on_form_data: (),
         on_reset: (),
         on_submit: (),
-    })
+    }
 }
 pub mod prelude {}
 pub mod overwrite {
@@ -962,8 +962,10 @@ pub mod data_struct {
         pub on_submit: TypeDefs::on_submit,
     }
 }
+pub use ::core::convert::identity as Building;
+pub use ::core::convert::identity as build;
 pub use data_struct::HtmlFormElementProps as Data;
-pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
+pub use data_struct::HtmlFormElementProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
@@ -1251,12 +1253,6 @@ pub mod render_state {
         }
     }
 }
-#[inline(always)]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
-    building: Building<TypeDefs>,
-) -> Data<TypeDefs> {
-    building.0
-}
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -1267,24 +1263,22 @@ mod builder_and_replacer {
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).children(children),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.children(children),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
@@ -1292,24 +1286,22 @@ mod builder_and_replacer {
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).class(class),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.class(class),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
@@ -1317,24 +1309,22 @@ mod builder_and_replacer {
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).id(id),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.id(id),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
@@ -1342,24 +1332,22 @@ mod builder_and_replacer {
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.part(part),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_cancel`]
         #[inline(always)]
@@ -1367,24 +1355,22 @@ mod builder_and_replacer {
             self,
             on_cancel: V,
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_error`]
         #[inline(always)]
@@ -1392,24 +1378,22 @@ mod builder_and_replacer {
             self,
             on_error: V,
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_error(on_error),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_scroll`]
         #[inline(always)]
@@ -1417,24 +1401,22 @@ mod builder_and_replacer {
             self,
             on_scroll: V,
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
         #[inline(always)]
@@ -1442,25 +1424,24 @@ mod builder_and_replacer {
             self,
             on_security_policy_violation: V,
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_security_policy_violation(on_security_policy_violation),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_security_policy_violation(on_security_policy_violation),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_select`]
         #[inline(always)]
@@ -1468,24 +1449,22 @@ mod builder_and_replacer {
             self,
             on_select: V,
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_select(on_select),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_wheel`]
         #[inline(always)]
@@ -1493,24 +1472,22 @@ mod builder_and_replacer {
             self,
             on_wheel: V,
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_copy`]
         #[inline(always)]
@@ -1518,24 +1495,22 @@ mod builder_and_replacer {
             self,
             on_copy: V,
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_cut`]
         #[inline(always)]
@@ -1543,24 +1518,22 @@ mod builder_and_replacer {
             self,
             on_cut: V,
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_paste`]
         #[inline(always)]
@@ -1568,24 +1541,22 @@ mod builder_and_replacer {
             self,
             on_paste: V,
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_composition_end`]
         #[inline(always)]
@@ -1593,25 +1564,22 @@ mod builder_and_replacer {
             self,
             on_composition_end: V,
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_end(on_composition_end),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_composition_start`]
         #[inline(always)]
@@ -1619,25 +1587,24 @@ mod builder_and_replacer {
             self,
             on_composition_start: V,
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_start(on_composition_start),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_start(on_composition_start),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_composition_update`]
         #[inline(always)]
@@ -1645,25 +1612,24 @@ mod builder_and_replacer {
             self,
             on_composition_update: V,
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_update(on_composition_update),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_update(on_composition_update),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_blur`]
         #[inline(always)]
@@ -1671,24 +1637,22 @@ mod builder_and_replacer {
             self,
             on_blur: V,
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_focus`]
         #[inline(always)]
@@ -1696,24 +1660,22 @@ mod builder_and_replacer {
             self,
             on_focus: V,
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_focus_in`]
         #[inline(always)]
@@ -1721,24 +1683,22 @@ mod builder_and_replacer {
             self,
             on_focus_in: V,
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_focus_out`]
         #[inline(always)]
@@ -1746,24 +1706,22 @@ mod builder_and_replacer {
             self,
             on_focus_out: V,
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
         #[inline(always)]
@@ -1771,25 +1729,24 @@ mod builder_and_replacer {
             self,
             on_fullscreen_change: V,
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_change(on_fullscreen_change),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_change(on_fullscreen_change),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
         #[inline(always)]
@@ -1797,25 +1754,24 @@ mod builder_and_replacer {
             self,
             on_fullscreen_error: V,
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_error(on_fullscreen_error),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_error(on_fullscreen_error),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_key_down`]
         #[inline(always)]
@@ -1823,24 +1779,22 @@ mod builder_and_replacer {
             self,
             on_key_down: V,
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_key_up`]
         #[inline(always)]
@@ -1848,24 +1802,22 @@ mod builder_and_replacer {
             self,
             on_key_up: V,
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_aux_click`]
         #[inline(always)]
@@ -1873,24 +1825,22 @@ mod builder_and_replacer {
             self,
             on_aux_click: V,
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_click`]
         #[inline(always)]
@@ -1898,24 +1848,22 @@ mod builder_and_replacer {
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_click(on_click),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_context_menu`]
         #[inline(always)]
@@ -1923,25 +1871,22 @@ mod builder_and_replacer {
             self,
             on_context_menu: V,
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_context_menu(on_context_menu),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_double_click`]
         #[inline(always)]
@@ -1949,25 +1894,22 @@ mod builder_and_replacer {
             self,
             on_double_click: V,
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_double_click(on_double_click),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
         #[inline(always)]
@@ -1975,25 +1917,22 @@ mod builder_and_replacer {
             self,
             on_mouse_down: V,
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_down(on_mouse_down),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
         #[inline(always)]
@@ -2001,25 +1940,22 @@ mod builder_and_replacer {
             self,
             on_mouse_enter: V,
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_enter(on_mouse_enter),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
         #[inline(always)]
@@ -2027,25 +1963,22 @@ mod builder_and_replacer {
             self,
             on_mouse_leave: V,
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_leave(on_mouse_leave),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
         #[inline(always)]
@@ -2053,25 +1986,22 @@ mod builder_and_replacer {
             self,
             on_mouse_move: V,
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_move(on_mouse_move),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
         #[inline(always)]
@@ -2079,24 +2009,22 @@ mod builder_and_replacer {
             self,
             on_mouse_out: V,
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
         #[inline(always)]
@@ -2104,25 +2032,22 @@ mod builder_and_replacer {
             self,
             on_mouse_over: V,
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_over(on_mouse_over),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
         #[inline(always)]
@@ -2130,24 +2055,22 @@ mod builder_and_replacer {
             self,
             on_mouse_up: V,
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
         #[inline(always)]
@@ -2155,25 +2078,22 @@ mod builder_and_replacer {
             self,
             on_touch_cancel: V,
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_cancel(on_touch_cancel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_touch_end`]
         #[inline(always)]
@@ -2181,24 +2101,22 @@ mod builder_and_replacer {
             self,
             on_touch_end: V,
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_touch_move`]
         #[inline(always)]
@@ -2206,25 +2124,22 @@ mod builder_and_replacer {
             self,
             on_touch_move: V,
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_move(on_touch_move),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_touch_start`]
         #[inline(always)]
@@ -2232,25 +2147,22 @@ mod builder_and_replacer {
             self,
             on_touch_start: V,
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_start(on_touch_start),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
@@ -2258,24 +2170,22 @@ mod builder_and_replacer {
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).access_key(access_key),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.access_key(access_key),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
@@ -2283,25 +2193,22 @@ mod builder_and_replacer {
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .auto_capitalize(auto_capitalize),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
@@ -2309,24 +2216,22 @@ mod builder_and_replacer {
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).auto_focus(auto_focus),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::content_editable`]
         #[inline(always)]
@@ -2334,25 +2239,22 @@ mod builder_and_replacer {
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .content_editable(content_editable),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
@@ -2360,24 +2262,22 @@ mod builder_and_replacer {
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).context_menu(context_menu),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
@@ -2385,24 +2285,22 @@ mod builder_and_replacer {
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).dir(dir),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.dir(dir),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
@@ -2410,24 +2308,22 @@ mod builder_and_replacer {
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).draggable(draggable),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.draggable(draggable),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
@@ -2435,25 +2331,22 @@ mod builder_and_replacer {
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .enter_key_hint(enter_key_hint),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
@@ -2461,24 +2354,22 @@ mod builder_and_replacer {
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).hidden(hidden),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.hidden(hidden),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
@@ -2486,24 +2377,22 @@ mod builder_and_replacer {
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).inert(inert),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.inert(inert),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
@@ -2511,24 +2400,22 @@ mod builder_and_replacer {
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).input_mode(input_mode),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
@@ -2536,24 +2423,22 @@ mod builder_and_replacer {
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).is(is),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.is(is),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
@@ -2561,24 +2446,22 @@ mod builder_and_replacer {
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_id(item_id),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_id(item_id),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
@@ -2586,24 +2469,22 @@ mod builder_and_replacer {
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_prop(item_prop),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
@@ -2611,24 +2492,22 @@ mod builder_and_replacer {
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_ref(item_ref),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
@@ -2636,24 +2515,22 @@ mod builder_and_replacer {
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_scope(item_scope),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
@@ -2661,24 +2538,22 @@ mod builder_and_replacer {
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_type(item_type),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_type(item_type),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
@@ -2686,24 +2561,22 @@ mod builder_and_replacer {
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).lang(lang),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.lang(lang),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
@@ -2711,24 +2584,22 @@ mod builder_and_replacer {
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).nonce(nonce),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.nonce(nonce),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
@@ -2736,24 +2607,22 @@ mod builder_and_replacer {
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).role(role),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.role(role),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
@@ -2761,24 +2630,22 @@ mod builder_and_replacer {
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).slot(slot),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.slot(slot),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
@@ -2786,24 +2653,22 @@ mod builder_and_replacer {
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).spellcheck(spellcheck),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
@@ -2811,24 +2676,22 @@ mod builder_and_replacer {
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).style(style),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.style(style),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
@@ -2836,24 +2699,22 @@ mod builder_and_replacer {
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).tab_index(tab_index),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
@@ -2861,24 +2722,22 @@ mod builder_and_replacer {
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).title(title),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.title(title),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
@@ -2886,24 +2745,22 @@ mod builder_and_replacer {
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).translate(translate),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.translate(translate),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
@@ -2911,25 +2768,24 @@ mod builder_and_replacer {
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .virtual_keyboard_policy(virtual_keyboard_policy),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .virtual_keyboard_policy(virtual_keyboard_policy),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
@@ -2937,24 +2793,22 @@ mod builder_and_replacer {
             self,
             on_invalid: V,
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
         #[inline(always)]
@@ -2962,25 +2816,24 @@ mod builder_and_replacer {
             self,
             on_animation_cancel: V,
         ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_cancel(on_animation_cancel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_cancel(on_animation_cancel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_animation_end`]
         #[inline(always)]
@@ -2988,25 +2841,22 @@ mod builder_and_replacer {
             self,
             on_animation_end: V,
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_end(on_animation_end),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
         #[inline(always)]
@@ -3014,25 +2864,24 @@ mod builder_and_replacer {
             self,
             on_animation_iteration: V,
         ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_iteration(on_animation_iteration),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_iteration(on_animation_iteration),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_animation_start`]
         #[inline(always)]
@@ -3040,25 +2889,22 @@ mod builder_and_replacer {
             self,
             on_animation_start: V,
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_start(on_animation_start),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_before_input`]
         #[inline(always)]
@@ -3066,25 +2912,22 @@ mod builder_and_replacer {
             self,
             on_before_input: V,
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_before_input(on_before_input),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_input`]
         #[inline(always)]
@@ -3092,24 +2935,22 @@ mod builder_and_replacer {
             self,
             on_input: V,
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_input(on_input),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_change`]
         #[inline(always)]
@@ -3117,24 +2958,22 @@ mod builder_and_replacer {
             self,
             on_change: V,
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_change(on_change),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
         #[inline(always)]
@@ -3142,25 +2981,24 @@ mod builder_and_replacer {
             self,
             on_got_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_got_pointer_capture(on_got_pointer_capture),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_got_pointer_capture(on_got_pointer_capture),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
         #[inline(always)]
@@ -3168,25 +3006,24 @@ mod builder_and_replacer {
             self,
             on_lost_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_lost_pointer_capture(on_lost_pointer_capture),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_lost_pointer_capture(on_lost_pointer_capture),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
         #[inline(always)]
@@ -3194,25 +3031,22 @@ mod builder_and_replacer {
             self,
             on_pointer_cancel: V,
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_cancel(on_pointer_cancel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
         #[inline(always)]
@@ -3220,25 +3054,22 @@ mod builder_and_replacer {
             self,
             on_pointer_down: V,
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_down(on_pointer_down),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
         #[inline(always)]
@@ -3246,25 +3077,22 @@ mod builder_and_replacer {
             self,
             on_pointer_enter: V,
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_enter(on_pointer_enter),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
         #[inline(always)]
@@ -3272,25 +3100,22 @@ mod builder_and_replacer {
             self,
             on_pointer_leave: V,
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_leave(on_pointer_leave),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
         #[inline(always)]
@@ -3298,25 +3123,22 @@ mod builder_and_replacer {
             self,
             on_pointer_move: V,
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_move(on_pointer_move),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
         #[inline(always)]
@@ -3324,25 +3146,22 @@ mod builder_and_replacer {
             self,
             on_pointer_out: V,
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_out(on_pointer_out),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
         #[inline(always)]
@@ -3350,25 +3169,22 @@ mod builder_and_replacer {
             self,
             on_pointer_over: V,
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_over(on_pointer_over),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
         #[inline(always)]
@@ -3376,25 +3192,22 @@ mod builder_and_replacer {
             self,
             on_pointer_up: V,
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_up(on_pointer_up),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
         #[inline(always)]
@@ -3402,25 +3215,24 @@ mod builder_and_replacer {
             self,
             on_transition_cancel: V,
         ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_cancel(on_transition_cancel),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_cancel(on_transition_cancel),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_transition_end`]
         #[inline(always)]
@@ -3428,25 +3240,22 @@ mod builder_and_replacer {
             self,
             on_transition_end: V,
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_end(on_transition_end),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_transition_run`]
         #[inline(always)]
@@ -3454,25 +3263,22 @@ mod builder_and_replacer {
             self,
             on_transition_run: V,
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_run(on_transition_run),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_transition_start`]
         #[inline(always)]
@@ -3480,25 +3286,24 @@ mod builder_and_replacer {
             self,
             on_transition_start: V,
         ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_start(on_transition_start),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_start(on_transition_start),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag`]
         #[inline(always)]
@@ -3506,24 +3311,22 @@ mod builder_and_replacer {
             self,
             on_drag: V,
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag_end`]
         #[inline(always)]
@@ -3531,24 +3334,22 @@ mod builder_and_replacer {
             self,
             on_drag_end: V,
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
         #[inline(always)]
@@ -3556,25 +3357,22 @@ mod builder_and_replacer {
             self,
             on_drag_enter: V,
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_enter(on_drag_enter),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
         #[inline(always)]
@@ -3582,25 +3380,22 @@ mod builder_and_replacer {
             self,
             on_drag_leave: V,
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_leave(on_drag_leave),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag_over`]
         #[inline(always)]
@@ -3608,24 +3403,22 @@ mod builder_and_replacer {
             self,
             on_drag_over: V,
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drag_start`]
         #[inline(always)]
@@ -3633,25 +3426,22 @@ mod builder_and_replacer {
             self,
             on_drag_start: V,
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_start(on_drag_start),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         ///See [`HtmlElementProps::on_drop`]
         #[inline(always)]
@@ -3659,24 +3449,22 @@ mod builder_and_replacer {
             self,
             on_drop: V,
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
-                ),
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
         #[inline(always)]
@@ -3684,286 +3472,286 @@ mod builder_and_replacer {
             self,
             accept: V,
         ) -> super::Building<super::overwrite::accept<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
                 accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn accept_charset<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             accept_charset: V,
         ) -> super::Building<super::overwrite::accept_charset<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
                 accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn auto_complete<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_complete: V,
         ) -> super::Building<super::overwrite::auto_complete<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
                 auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn name<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             name: V,
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
                 name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn rel<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
                 rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn action<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             action: V,
         ) -> super::Building<super::overwrite::action<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
                 action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn enc_type<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             enc_type: V,
         ) -> super::Building<super::overwrite::enc_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
                 enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn method<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             method: V,
         ) -> super::Building<super::overwrite::method<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
                 method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn no_validate<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             no_validate: V,
         ) -> super::Building<super::overwrite::no_validate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
                 no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn target<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             target: V,
         ) -> super::Building<super::overwrite::target<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
                 target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn on_form_data<V>(
             self,
             on_form_data: V,
         ) -> super::Building<super::overwrite::on_form_data<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
                 on_form_data,
-                on_reset: self.0.on_reset,
-                on_submit: self.0.on_submit,
-            })
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn on_reset<V>(
             self,
             on_reset: V,
         ) -> super::Building<super::overwrite::on_reset<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
                 on_reset,
-                on_submit: self.0.on_submit,
-            })
+                on_submit: self.on_submit,
+            }
         }
         #[inline(always)]
         pub fn on_submit<V>(
             self,
             on_submit: V,
         ) -> super::Building<super::overwrite::on_submit<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                accept: self.0.accept,
-                accept_charset: self.0.accept_charset,
-                auto_complete: self.0.auto_complete,
-                name: self.0.name,
-                rel: self.0.rel,
-                action: self.0.action,
-                enc_type: self.0.enc_type,
-                method: self.0.method,
-                no_validate: self.0.no_validate,
-                target: self.0.target,
-                on_form_data: self.0.on_form_data,
-                on_reset: self.0.on_reset,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
                 on_submit,
-            })
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
 pub fn HtmlTextAreaElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
-    self::Building(self::Data {
+    self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         auto_complete: (),
         auto_correct: (),
@@ -18,7 +18,7 @@ pub fn HtmlTextAreaElementProps() -> Building<TypesInitial> {
         required: (),
         rows: (),
         wrap: (),
-    })
+    }
 }
 pub mod prelude {}
 pub mod overwrite {
@@ -962,8 +962,10 @@ pub mod data_struct {
         pub wrap: TypeDefs::wrap,
     }
 }
+pub use ::core::convert::identity as Building;
+pub use ::core::convert::identity as build;
 pub use data_struct::HtmlTextAreaElementProps as Data;
-pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
+pub use data_struct::HtmlTextAreaElementProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
@@ -1251,12 +1253,6 @@ pub mod render_state {
         }
     }
 }
-#[inline(always)]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
-    building: Building<TypeDefs>,
-) -> Data<TypeDefs> {
-    building.0
-}
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -1267,24 +1263,22 @@ mod builder_and_replacer {
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).children(children),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.children(children),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
@@ -1292,24 +1286,22 @@ mod builder_and_replacer {
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).class(class),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.class(class),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
@@ -1317,24 +1309,22 @@ mod builder_and_replacer {
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).id(id),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.id(id),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
@@ -1342,24 +1332,22 @@ mod builder_and_replacer {
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.part(part),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_cancel`]
         #[inline(always)]
@@ -1367,24 +1355,22 @@ mod builder_and_replacer {
             self,
             on_cancel: V,
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_error`]
         #[inline(always)]
@@ -1392,24 +1378,22 @@ mod builder_and_replacer {
             self,
             on_error: V,
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_error(on_error),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_scroll`]
         #[inline(always)]
@@ -1417,24 +1401,22 @@ mod builder_and_replacer {
             self,
             on_scroll: V,
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
         #[inline(always)]
@@ -1442,25 +1424,24 @@ mod builder_and_replacer {
             self,
             on_security_policy_violation: V,
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_security_policy_violation(on_security_policy_violation),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_security_policy_violation(on_security_policy_violation),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_select`]
         #[inline(always)]
@@ -1468,24 +1449,22 @@ mod builder_and_replacer {
             self,
             on_select: V,
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_select(on_select),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_wheel`]
         #[inline(always)]
@@ -1493,24 +1472,22 @@ mod builder_and_replacer {
             self,
             on_wheel: V,
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_copy`]
         #[inline(always)]
@@ -1518,24 +1495,22 @@ mod builder_and_replacer {
             self,
             on_copy: V,
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_cut`]
         #[inline(always)]
@@ -1543,24 +1518,22 @@ mod builder_and_replacer {
             self,
             on_cut: V,
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_paste`]
         #[inline(always)]
@@ -1568,24 +1541,22 @@ mod builder_and_replacer {
             self,
             on_paste: V,
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_composition_end`]
         #[inline(always)]
@@ -1593,25 +1564,22 @@ mod builder_and_replacer {
             self,
             on_composition_end: V,
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_end(on_composition_end),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_composition_start`]
         #[inline(always)]
@@ -1619,25 +1587,24 @@ mod builder_and_replacer {
             self,
             on_composition_start: V,
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_start(on_composition_start),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_start(on_composition_start),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_composition_update`]
         #[inline(always)]
@@ -1645,25 +1612,24 @@ mod builder_and_replacer {
             self,
             on_composition_update: V,
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_update(on_composition_update),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_update(on_composition_update),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_blur`]
         #[inline(always)]
@@ -1671,24 +1637,22 @@ mod builder_and_replacer {
             self,
             on_blur: V,
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_focus`]
         #[inline(always)]
@@ -1696,24 +1660,22 @@ mod builder_and_replacer {
             self,
             on_focus: V,
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_focus_in`]
         #[inline(always)]
@@ -1721,24 +1683,22 @@ mod builder_and_replacer {
             self,
             on_focus_in: V,
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_focus_out`]
         #[inline(always)]
@@ -1746,24 +1706,22 @@ mod builder_and_replacer {
             self,
             on_focus_out: V,
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
         #[inline(always)]
@@ -1771,25 +1729,24 @@ mod builder_and_replacer {
             self,
             on_fullscreen_change: V,
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_change(on_fullscreen_change),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_change(on_fullscreen_change),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
         #[inline(always)]
@@ -1797,25 +1754,24 @@ mod builder_and_replacer {
             self,
             on_fullscreen_error: V,
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_error(on_fullscreen_error),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_error(on_fullscreen_error),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_key_down`]
         #[inline(always)]
@@ -1823,24 +1779,22 @@ mod builder_and_replacer {
             self,
             on_key_down: V,
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_key_up`]
         #[inline(always)]
@@ -1848,24 +1802,22 @@ mod builder_and_replacer {
             self,
             on_key_up: V,
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_aux_click`]
         #[inline(always)]
@@ -1873,24 +1825,22 @@ mod builder_and_replacer {
             self,
             on_aux_click: V,
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_click`]
         #[inline(always)]
@@ -1898,24 +1848,22 @@ mod builder_and_replacer {
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_click(on_click),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_context_menu`]
         #[inline(always)]
@@ -1923,25 +1871,22 @@ mod builder_and_replacer {
             self,
             on_context_menu: V,
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_context_menu(on_context_menu),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_double_click`]
         #[inline(always)]
@@ -1949,25 +1894,22 @@ mod builder_and_replacer {
             self,
             on_double_click: V,
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_double_click(on_double_click),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
         #[inline(always)]
@@ -1975,25 +1917,22 @@ mod builder_and_replacer {
             self,
             on_mouse_down: V,
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_down(on_mouse_down),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
         #[inline(always)]
@@ -2001,25 +1940,22 @@ mod builder_and_replacer {
             self,
             on_mouse_enter: V,
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_enter(on_mouse_enter),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
         #[inline(always)]
@@ -2027,25 +1963,22 @@ mod builder_and_replacer {
             self,
             on_mouse_leave: V,
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_leave(on_mouse_leave),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
         #[inline(always)]
@@ -2053,25 +1986,22 @@ mod builder_and_replacer {
             self,
             on_mouse_move: V,
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_move(on_mouse_move),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
         #[inline(always)]
@@ -2079,24 +2009,22 @@ mod builder_and_replacer {
             self,
             on_mouse_out: V,
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
         #[inline(always)]
@@ -2104,25 +2032,22 @@ mod builder_and_replacer {
             self,
             on_mouse_over: V,
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_over(on_mouse_over),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
         #[inline(always)]
@@ -2130,24 +2055,22 @@ mod builder_and_replacer {
             self,
             on_mouse_up: V,
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
         #[inline(always)]
@@ -2155,25 +2078,22 @@ mod builder_and_replacer {
             self,
             on_touch_cancel: V,
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_cancel(on_touch_cancel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_touch_end`]
         #[inline(always)]
@@ -2181,24 +2101,22 @@ mod builder_and_replacer {
             self,
             on_touch_end: V,
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_touch_move`]
         #[inline(always)]
@@ -2206,25 +2124,22 @@ mod builder_and_replacer {
             self,
             on_touch_move: V,
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_move(on_touch_move),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_touch_start`]
         #[inline(always)]
@@ -2232,25 +2147,22 @@ mod builder_and_replacer {
             self,
             on_touch_start: V,
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_start(on_touch_start),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
@@ -2258,24 +2170,22 @@ mod builder_and_replacer {
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).access_key(access_key),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.access_key(access_key),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
@@ -2283,25 +2193,22 @@ mod builder_and_replacer {
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .auto_capitalize(auto_capitalize),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
@@ -2309,24 +2216,22 @@ mod builder_and_replacer {
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).auto_focus(auto_focus),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::content_editable`]
         #[inline(always)]
@@ -2334,25 +2239,22 @@ mod builder_and_replacer {
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .content_editable(content_editable),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
@@ -2360,24 +2262,22 @@ mod builder_and_replacer {
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).context_menu(context_menu),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
@@ -2385,24 +2285,22 @@ mod builder_and_replacer {
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).dir(dir),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.dir(dir),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
@@ -2410,24 +2308,22 @@ mod builder_and_replacer {
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).draggable(draggable),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.draggable(draggable),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
@@ -2435,25 +2331,22 @@ mod builder_and_replacer {
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .enter_key_hint(enter_key_hint),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
@@ -2461,24 +2354,22 @@ mod builder_and_replacer {
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).hidden(hidden),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.hidden(hidden),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
@@ -2486,24 +2377,22 @@ mod builder_and_replacer {
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).inert(inert),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.inert(inert),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
@@ -2511,24 +2400,22 @@ mod builder_and_replacer {
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).input_mode(input_mode),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
@@ -2536,24 +2423,22 @@ mod builder_and_replacer {
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).is(is),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.is(is),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
@@ -2561,24 +2446,22 @@ mod builder_and_replacer {
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_id(item_id),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_id(item_id),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
@@ -2586,24 +2469,22 @@ mod builder_and_replacer {
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_prop(item_prop),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
@@ -2611,24 +2492,22 @@ mod builder_and_replacer {
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_ref(item_ref),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
@@ -2636,24 +2515,22 @@ mod builder_and_replacer {
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_scope(item_scope),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
@@ -2661,24 +2538,22 @@ mod builder_and_replacer {
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_type(item_type),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_type(item_type),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
@@ -2686,24 +2561,22 @@ mod builder_and_replacer {
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).lang(lang),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.lang(lang),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
@@ -2711,24 +2584,22 @@ mod builder_and_replacer {
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).nonce(nonce),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.nonce(nonce),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
@@ -2736,24 +2607,22 @@ mod builder_and_replacer {
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).role(role),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.role(role),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
@@ -2761,24 +2630,22 @@ mod builder_and_replacer {
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).slot(slot),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.slot(slot),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
@@ -2786,24 +2653,22 @@ mod builder_and_replacer {
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).spellcheck(spellcheck),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
@@ -2811,24 +2676,22 @@ mod builder_and_replacer {
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).style(style),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.style(style),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
@@ -2836,24 +2699,22 @@ mod builder_and_replacer {
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).tab_index(tab_index),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
@@ -2861,24 +2722,22 @@ mod builder_and_replacer {
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).title(title),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.title(title),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
@@ -2886,24 +2745,22 @@ mod builder_and_replacer {
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).translate(translate),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.translate(translate),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
@@ -2911,25 +2768,24 @@ mod builder_and_replacer {
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .virtual_keyboard_policy(virtual_keyboard_policy),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .virtual_keyboard_policy(virtual_keyboard_policy),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
@@ -2937,24 +2793,22 @@ mod builder_and_replacer {
             self,
             on_invalid: V,
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
         #[inline(always)]
@@ -2962,25 +2816,24 @@ mod builder_and_replacer {
             self,
             on_animation_cancel: V,
         ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_cancel(on_animation_cancel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_cancel(on_animation_cancel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_animation_end`]
         #[inline(always)]
@@ -2988,25 +2841,22 @@ mod builder_and_replacer {
             self,
             on_animation_end: V,
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_end(on_animation_end),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
         #[inline(always)]
@@ -3014,25 +2864,24 @@ mod builder_and_replacer {
             self,
             on_animation_iteration: V,
         ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_iteration(on_animation_iteration),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_iteration(on_animation_iteration),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_animation_start`]
         #[inline(always)]
@@ -3040,25 +2889,22 @@ mod builder_and_replacer {
             self,
             on_animation_start: V,
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_start(on_animation_start),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_before_input`]
         #[inline(always)]
@@ -3066,25 +2912,22 @@ mod builder_and_replacer {
             self,
             on_before_input: V,
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_before_input(on_before_input),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_input`]
         #[inline(always)]
@@ -3092,24 +2935,22 @@ mod builder_and_replacer {
             self,
             on_input: V,
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_input(on_input),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_change`]
         #[inline(always)]
@@ -3117,24 +2958,22 @@ mod builder_and_replacer {
             self,
             on_change: V,
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_change(on_change),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
         #[inline(always)]
@@ -3142,25 +2981,24 @@ mod builder_and_replacer {
             self,
             on_got_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_got_pointer_capture(on_got_pointer_capture),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_got_pointer_capture(on_got_pointer_capture),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
         #[inline(always)]
@@ -3168,25 +3006,24 @@ mod builder_and_replacer {
             self,
             on_lost_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_lost_pointer_capture(on_lost_pointer_capture),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_lost_pointer_capture(on_lost_pointer_capture),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
         #[inline(always)]
@@ -3194,25 +3031,22 @@ mod builder_and_replacer {
             self,
             on_pointer_cancel: V,
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_cancel(on_pointer_cancel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
         #[inline(always)]
@@ -3220,25 +3054,22 @@ mod builder_and_replacer {
             self,
             on_pointer_down: V,
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_down(on_pointer_down),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
         #[inline(always)]
@@ -3246,25 +3077,22 @@ mod builder_and_replacer {
             self,
             on_pointer_enter: V,
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_enter(on_pointer_enter),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
         #[inline(always)]
@@ -3272,25 +3100,22 @@ mod builder_and_replacer {
             self,
             on_pointer_leave: V,
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_leave(on_pointer_leave),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
         #[inline(always)]
@@ -3298,25 +3123,22 @@ mod builder_and_replacer {
             self,
             on_pointer_move: V,
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_move(on_pointer_move),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
         #[inline(always)]
@@ -3324,25 +3146,22 @@ mod builder_and_replacer {
             self,
             on_pointer_out: V,
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_out(on_pointer_out),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
         #[inline(always)]
@@ -3350,25 +3169,22 @@ mod builder_and_replacer {
             self,
             on_pointer_over: V,
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_over(on_pointer_over),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
         #[inline(always)]
@@ -3376,25 +3192,22 @@ mod builder_and_replacer {
             self,
             on_pointer_up: V,
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_up(on_pointer_up),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
         #[inline(always)]
@@ -3402,25 +3215,24 @@ mod builder_and_replacer {
             self,
             on_transition_cancel: V,
         ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_cancel(on_transition_cancel),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_cancel(on_transition_cancel),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_transition_end`]
         #[inline(always)]
@@ -3428,25 +3240,22 @@ mod builder_and_replacer {
             self,
             on_transition_end: V,
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_end(on_transition_end),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_transition_run`]
         #[inline(always)]
@@ -3454,25 +3263,22 @@ mod builder_and_replacer {
             self,
             on_transition_run: V,
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_run(on_transition_run),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_transition_start`]
         #[inline(always)]
@@ -3480,25 +3286,24 @@ mod builder_and_replacer {
             self,
             on_transition_start: V,
         ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_start(on_transition_start),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_start(on_transition_start),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag`]
         #[inline(always)]
@@ -3506,24 +3311,22 @@ mod builder_and_replacer {
             self,
             on_drag: V,
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag_end`]
         #[inline(always)]
@@ -3531,24 +3334,22 @@ mod builder_and_replacer {
             self,
             on_drag_end: V,
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
         #[inline(always)]
@@ -3556,25 +3357,22 @@ mod builder_and_replacer {
             self,
             on_drag_enter: V,
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_enter(on_drag_enter),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
         #[inline(always)]
@@ -3582,25 +3380,22 @@ mod builder_and_replacer {
             self,
             on_drag_leave: V,
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_leave(on_drag_leave),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag_over`]
         #[inline(always)]
@@ -3608,24 +3403,22 @@ mod builder_and_replacer {
             self,
             on_drag_over: V,
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drag_start`]
         #[inline(always)]
@@ -3633,25 +3426,22 @@ mod builder_and_replacer {
             self,
             on_drag_start: V,
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_start(on_drag_start),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         ///See [`HtmlElementProps::on_drop`]
         #[inline(always)]
@@ -3659,310 +3449,308 @@ mod builder_and_replacer {
             self,
             on_drop: V,
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
-                ),
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn auto_complete<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_complete: V,
         ) -> super::Building<super::overwrite::auto_complete<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
                 auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn auto_correct<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             auto_correct: V,
         ) -> super::Building<super::overwrite::auto_correct<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
                 auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn cols<V: crate::MaybeUpdateValueWithState<u32>>(
             self,
             cols: V,
         ) -> super::Building<super::overwrite::cols<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
                 cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn disabled<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             disabled: V,
         ) -> super::Building<super::overwrite::disabled<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
                 disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn form<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             form: V,
         ) -> super::Building<super::overwrite::form<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
                 form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn max_length<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             max_length: V,
         ) -> super::Building<super::overwrite::max_length<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
                 max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn min_length<V: crate::MaybeUpdateValueWithState<i32>>(
             self,
             min_length: V,
         ) -> super::Building<super::overwrite::min_length<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
                 min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn name<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             name: V,
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
                 name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn placeholder<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             placeholder: V,
         ) -> super::Building<super::overwrite::placeholder<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
                 placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn read_only<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             read_only: V,
         ) -> super::Building<super::overwrite::read_only<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
                 read_only,
-                required: self.0.required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn required<V: crate::MaybeUpdateValueWithState<bool>>(
             self,
             required: V,
         ) -> super::Building<super::overwrite::required<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
                 required,
-                rows: self.0.rows,
-                wrap: self.0.wrap,
-            })
+                rows: self.rows,
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn rows<V: crate::MaybeUpdateValueWithState<u32>>(
             self,
             rows: V,
         ) -> super::Building<super::overwrite::rows<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
                 rows,
-                wrap: self.0.wrap,
-            })
+                wrap: self.wrap,
+            }
         }
         #[inline(always)]
         pub fn wrap<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             wrap: V,
         ) -> super::Building<super::overwrite::wrap<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                auto_complete: self.0.auto_complete,
-                auto_correct: self.0.auto_correct,
-                cols: self.0.cols,
-                disabled: self.0.disabled,
-                form: self.0.form,
-                max_length: self.0.max_length,
-                min_length: self.0.min_length,
-                name: self.0.name,
-                placeholder: self.0.placeholder,
-                read_only: self.0.read_only,
-                required: self.0.required,
-                rows: self.0.rows,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
                 wrap,
-            })
+            }
         }
     }
 }

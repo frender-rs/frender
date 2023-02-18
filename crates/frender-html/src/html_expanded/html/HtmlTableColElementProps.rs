@@ -3,7 +3,7 @@
 pub fn HtmlTableColElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
-    self::Building(self::Data {
+    self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         align: (),
         bg_color: (),
@@ -12,7 +12,7 @@ pub fn HtmlTableColElementProps() -> Building<TypesInitial> {
         v_align: (),
         span: (),
         width: (),
-    })
+    }
 }
 pub mod prelude {}
 pub mod overwrite {
@@ -800,8 +800,10 @@ pub mod data_struct {
         pub width: TypeDefs::width,
     }
 }
+pub use ::core::convert::identity as Building;
+pub use ::core::convert::identity as build;
 pub use data_struct::HtmlTableColElementProps as Data;
-pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
+pub use data_struct::HtmlTableColElementProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
@@ -1023,12 +1025,6 @@ pub mod render_state {
         }
     }
 }
-#[inline(always)]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
-    building: Building<TypeDefs>,
-) -> Data<TypeDefs> {
-    building.0
-}
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -1039,18 +1035,16 @@ mod builder_and_replacer {
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).children(children),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.children(children),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
@@ -1058,18 +1052,16 @@ mod builder_and_replacer {
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).class(class),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.class(class),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
@@ -1077,18 +1069,16 @@ mod builder_and_replacer {
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).id(id),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.id(id),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
@@ -1096,18 +1086,16 @@ mod builder_and_replacer {
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.part(part),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_cancel`]
         #[inline(always)]
@@ -1115,18 +1103,16 @@ mod builder_and_replacer {
             self,
             on_cancel: V,
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_error`]
         #[inline(always)]
@@ -1134,18 +1120,16 @@ mod builder_and_replacer {
             self,
             on_error: V,
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_error(on_error),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_scroll`]
         #[inline(always)]
@@ -1153,18 +1137,16 @@ mod builder_and_replacer {
             self,
             on_scroll: V,
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
         #[inline(always)]
@@ -1172,19 +1154,18 @@ mod builder_and_replacer {
             self,
             on_security_policy_violation: V,
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_security_policy_violation(on_security_policy_violation),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_security_policy_violation(on_security_policy_violation),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_select`]
         #[inline(always)]
@@ -1192,18 +1173,16 @@ mod builder_and_replacer {
             self,
             on_select: V,
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_select(on_select),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_wheel`]
         #[inline(always)]
@@ -1211,18 +1190,16 @@ mod builder_and_replacer {
             self,
             on_wheel: V,
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_copy`]
         #[inline(always)]
@@ -1230,18 +1207,16 @@ mod builder_and_replacer {
             self,
             on_copy: V,
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_cut`]
         #[inline(always)]
@@ -1249,18 +1224,16 @@ mod builder_and_replacer {
             self,
             on_cut: V,
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_paste`]
         #[inline(always)]
@@ -1268,18 +1241,16 @@ mod builder_and_replacer {
             self,
             on_paste: V,
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_composition_end`]
         #[inline(always)]
@@ -1287,19 +1258,16 @@ mod builder_and_replacer {
             self,
             on_composition_end: V,
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_end(on_composition_end),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_composition_start`]
         #[inline(always)]
@@ -1307,19 +1275,18 @@ mod builder_and_replacer {
             self,
             on_composition_start: V,
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_start(on_composition_start),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_start(on_composition_start),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_composition_update`]
         #[inline(always)]
@@ -1327,19 +1294,18 @@ mod builder_and_replacer {
             self,
             on_composition_update: V,
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_update(on_composition_update),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_update(on_composition_update),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_blur`]
         #[inline(always)]
@@ -1347,18 +1313,16 @@ mod builder_and_replacer {
             self,
             on_blur: V,
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_focus`]
         #[inline(always)]
@@ -1366,18 +1330,16 @@ mod builder_and_replacer {
             self,
             on_focus: V,
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_focus_in`]
         #[inline(always)]
@@ -1385,18 +1347,16 @@ mod builder_and_replacer {
             self,
             on_focus_in: V,
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_focus_out`]
         #[inline(always)]
@@ -1404,18 +1364,16 @@ mod builder_and_replacer {
             self,
             on_focus_out: V,
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
         #[inline(always)]
@@ -1423,19 +1381,18 @@ mod builder_and_replacer {
             self,
             on_fullscreen_change: V,
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_change(on_fullscreen_change),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_change(on_fullscreen_change),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
         #[inline(always)]
@@ -1443,19 +1400,18 @@ mod builder_and_replacer {
             self,
             on_fullscreen_error: V,
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_error(on_fullscreen_error),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_error(on_fullscreen_error),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_key_down`]
         #[inline(always)]
@@ -1463,18 +1419,16 @@ mod builder_and_replacer {
             self,
             on_key_down: V,
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_key_up`]
         #[inline(always)]
@@ -1482,18 +1436,16 @@ mod builder_and_replacer {
             self,
             on_key_up: V,
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_aux_click`]
         #[inline(always)]
@@ -1501,18 +1453,16 @@ mod builder_and_replacer {
             self,
             on_aux_click: V,
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_click`]
         #[inline(always)]
@@ -1520,18 +1470,16 @@ mod builder_and_replacer {
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_click(on_click),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_context_menu`]
         #[inline(always)]
@@ -1539,19 +1487,16 @@ mod builder_and_replacer {
             self,
             on_context_menu: V,
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_context_menu(on_context_menu),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_double_click`]
         #[inline(always)]
@@ -1559,19 +1504,16 @@ mod builder_and_replacer {
             self,
             on_double_click: V,
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_double_click(on_double_click),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
         #[inline(always)]
@@ -1579,19 +1521,16 @@ mod builder_and_replacer {
             self,
             on_mouse_down: V,
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_down(on_mouse_down),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
         #[inline(always)]
@@ -1599,19 +1538,16 @@ mod builder_and_replacer {
             self,
             on_mouse_enter: V,
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_enter(on_mouse_enter),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
         #[inline(always)]
@@ -1619,19 +1555,16 @@ mod builder_and_replacer {
             self,
             on_mouse_leave: V,
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_leave(on_mouse_leave),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
         #[inline(always)]
@@ -1639,19 +1572,16 @@ mod builder_and_replacer {
             self,
             on_mouse_move: V,
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_move(on_mouse_move),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
         #[inline(always)]
@@ -1659,18 +1589,16 @@ mod builder_and_replacer {
             self,
             on_mouse_out: V,
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
         #[inline(always)]
@@ -1678,19 +1606,16 @@ mod builder_and_replacer {
             self,
             on_mouse_over: V,
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_over(on_mouse_over),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
         #[inline(always)]
@@ -1698,18 +1623,16 @@ mod builder_and_replacer {
             self,
             on_mouse_up: V,
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
         #[inline(always)]
@@ -1717,19 +1640,16 @@ mod builder_and_replacer {
             self,
             on_touch_cancel: V,
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_cancel(on_touch_cancel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_touch_end`]
         #[inline(always)]
@@ -1737,18 +1657,16 @@ mod builder_and_replacer {
             self,
             on_touch_end: V,
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_touch_move`]
         #[inline(always)]
@@ -1756,19 +1674,16 @@ mod builder_and_replacer {
             self,
             on_touch_move: V,
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_move(on_touch_move),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_touch_start`]
         #[inline(always)]
@@ -1776,19 +1691,16 @@ mod builder_and_replacer {
             self,
             on_touch_start: V,
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_start(on_touch_start),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
@@ -1796,18 +1708,16 @@ mod builder_and_replacer {
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).access_key(access_key),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.access_key(access_key),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
@@ -1815,19 +1725,16 @@ mod builder_and_replacer {
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .auto_capitalize(auto_capitalize),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
@@ -1835,18 +1742,16 @@ mod builder_and_replacer {
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).auto_focus(auto_focus),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::content_editable`]
         #[inline(always)]
@@ -1854,19 +1759,16 @@ mod builder_and_replacer {
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .content_editable(content_editable),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
@@ -1874,18 +1776,16 @@ mod builder_and_replacer {
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).context_menu(context_menu),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
@@ -1893,18 +1793,16 @@ mod builder_and_replacer {
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).dir(dir),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.dir(dir),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
@@ -1912,18 +1810,16 @@ mod builder_and_replacer {
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).draggable(draggable),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.draggable(draggable),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
@@ -1931,19 +1827,16 @@ mod builder_and_replacer {
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .enter_key_hint(enter_key_hint),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
@@ -1951,18 +1844,16 @@ mod builder_and_replacer {
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).hidden(hidden),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.hidden(hidden),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
@@ -1970,18 +1861,16 @@ mod builder_and_replacer {
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).inert(inert),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.inert(inert),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
@@ -1989,18 +1878,16 @@ mod builder_and_replacer {
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).input_mode(input_mode),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
@@ -2008,18 +1895,16 @@ mod builder_and_replacer {
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).is(is),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.is(is),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
@@ -2027,18 +1912,16 @@ mod builder_and_replacer {
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_id(item_id),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_id(item_id),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
@@ -2046,18 +1929,16 @@ mod builder_and_replacer {
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_prop(item_prop),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
@@ -2065,18 +1946,16 @@ mod builder_and_replacer {
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_ref(item_ref),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
@@ -2084,18 +1963,16 @@ mod builder_and_replacer {
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_scope(item_scope),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
@@ -2103,18 +1980,16 @@ mod builder_and_replacer {
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_type(item_type),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_type(item_type),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
@@ -2122,18 +1997,16 @@ mod builder_and_replacer {
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).lang(lang),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.lang(lang),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
@@ -2141,18 +2014,16 @@ mod builder_and_replacer {
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).nonce(nonce),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.nonce(nonce),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
@@ -2160,18 +2031,16 @@ mod builder_and_replacer {
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).role(role),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.role(role),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
@@ -2179,18 +2048,16 @@ mod builder_and_replacer {
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).slot(slot),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.slot(slot),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
@@ -2198,18 +2065,16 @@ mod builder_and_replacer {
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).spellcheck(spellcheck),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
@@ -2217,18 +2082,16 @@ mod builder_and_replacer {
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).style(style),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.style(style),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
@@ -2236,18 +2099,16 @@ mod builder_and_replacer {
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).tab_index(tab_index),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
@@ -2255,18 +2116,16 @@ mod builder_and_replacer {
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).title(title),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.title(title),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
@@ -2274,18 +2133,16 @@ mod builder_and_replacer {
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).translate(translate),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.translate(translate),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
@@ -2293,19 +2150,18 @@ mod builder_and_replacer {
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .virtual_keyboard_policy(virtual_keyboard_policy),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .virtual_keyboard_policy(virtual_keyboard_policy),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
@@ -2313,18 +2169,16 @@ mod builder_and_replacer {
             self,
             on_invalid: V,
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
         #[inline(always)]
@@ -2332,19 +2186,18 @@ mod builder_and_replacer {
             self,
             on_animation_cancel: V,
         ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_cancel(on_animation_cancel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_cancel(on_animation_cancel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_animation_end`]
         #[inline(always)]
@@ -2352,19 +2205,16 @@ mod builder_and_replacer {
             self,
             on_animation_end: V,
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_end(on_animation_end),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
         #[inline(always)]
@@ -2372,19 +2222,18 @@ mod builder_and_replacer {
             self,
             on_animation_iteration: V,
         ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_iteration(on_animation_iteration),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_iteration(on_animation_iteration),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_animation_start`]
         #[inline(always)]
@@ -2392,19 +2241,16 @@ mod builder_and_replacer {
             self,
             on_animation_start: V,
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_start(on_animation_start),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_before_input`]
         #[inline(always)]
@@ -2412,19 +2258,16 @@ mod builder_and_replacer {
             self,
             on_before_input: V,
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_before_input(on_before_input),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_input`]
         #[inline(always)]
@@ -2432,18 +2275,16 @@ mod builder_and_replacer {
             self,
             on_input: V,
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_input(on_input),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_change`]
         #[inline(always)]
@@ -2451,18 +2292,16 @@ mod builder_and_replacer {
             self,
             on_change: V,
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_change(on_change),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
         #[inline(always)]
@@ -2470,19 +2309,18 @@ mod builder_and_replacer {
             self,
             on_got_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_got_pointer_capture(on_got_pointer_capture),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_got_pointer_capture(on_got_pointer_capture),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
         #[inline(always)]
@@ -2490,19 +2328,18 @@ mod builder_and_replacer {
             self,
             on_lost_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_lost_pointer_capture(on_lost_pointer_capture),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_lost_pointer_capture(on_lost_pointer_capture),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
         #[inline(always)]
@@ -2510,19 +2347,16 @@ mod builder_and_replacer {
             self,
             on_pointer_cancel: V,
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_cancel(on_pointer_cancel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
         #[inline(always)]
@@ -2530,19 +2364,16 @@ mod builder_and_replacer {
             self,
             on_pointer_down: V,
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_down(on_pointer_down),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
         #[inline(always)]
@@ -2550,19 +2381,16 @@ mod builder_and_replacer {
             self,
             on_pointer_enter: V,
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_enter(on_pointer_enter),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
         #[inline(always)]
@@ -2570,19 +2398,16 @@ mod builder_and_replacer {
             self,
             on_pointer_leave: V,
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_leave(on_pointer_leave),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
         #[inline(always)]
@@ -2590,19 +2415,16 @@ mod builder_and_replacer {
             self,
             on_pointer_move: V,
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_move(on_pointer_move),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
         #[inline(always)]
@@ -2610,19 +2432,16 @@ mod builder_and_replacer {
             self,
             on_pointer_out: V,
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_out(on_pointer_out),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
         #[inline(always)]
@@ -2630,19 +2449,16 @@ mod builder_and_replacer {
             self,
             on_pointer_over: V,
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_over(on_pointer_over),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
         #[inline(always)]
@@ -2650,19 +2466,16 @@ mod builder_and_replacer {
             self,
             on_pointer_up: V,
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_up(on_pointer_up),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
         #[inline(always)]
@@ -2670,19 +2483,18 @@ mod builder_and_replacer {
             self,
             on_transition_cancel: V,
         ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_cancel(on_transition_cancel),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_cancel(on_transition_cancel),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_transition_end`]
         #[inline(always)]
@@ -2690,19 +2502,16 @@ mod builder_and_replacer {
             self,
             on_transition_end: V,
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_end(on_transition_end),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_transition_run`]
         #[inline(always)]
@@ -2710,19 +2519,16 @@ mod builder_and_replacer {
             self,
             on_transition_run: V,
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_run(on_transition_run),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_transition_start`]
         #[inline(always)]
@@ -2730,19 +2536,18 @@ mod builder_and_replacer {
             self,
             on_transition_start: V,
         ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_start(on_transition_start),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_start(on_transition_start),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag`]
         #[inline(always)]
@@ -2750,18 +2555,16 @@ mod builder_and_replacer {
             self,
             on_drag: V,
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag_end`]
         #[inline(always)]
@@ -2769,18 +2572,16 @@ mod builder_and_replacer {
             self,
             on_drag_end: V,
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
         #[inline(always)]
@@ -2788,19 +2589,16 @@ mod builder_and_replacer {
             self,
             on_drag_enter: V,
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_enter(on_drag_enter),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
         #[inline(always)]
@@ -2808,19 +2606,16 @@ mod builder_and_replacer {
             self,
             on_drag_leave: V,
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_leave(on_drag_leave),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag_over`]
         #[inline(always)]
@@ -2828,18 +2623,16 @@ mod builder_and_replacer {
             self,
             on_drag_over: V,
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drag_start`]
         #[inline(always)]
@@ -2847,19 +2640,16 @@ mod builder_and_replacer {
             self,
             on_drag_start: V,
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_start(on_drag_start),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         ///See [`HtmlElementProps::on_drop`]
         #[inline(always)]
@@ -2867,18 +2657,16 @@ mod builder_and_replacer {
             self,
             on_drop: V,
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
-                ),
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2886,16 +2674,16 @@ mod builder_and_replacer {
             self,
             align: V,
         ) -> super::Building<super::overwrite::align<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
                 align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2903,16 +2691,16 @@ mod builder_and_replacer {
             self,
             bg_color: V,
         ) -> super::Building<super::overwrite::bg_color<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
                 bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2920,16 +2708,16 @@ mod builder_and_replacer {
             self,
             char: V,
         ) -> super::Building<super::overwrite::char<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
-                bg_color: self.0.bg_color,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
+                bg_color: self.bg_color,
                 char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2937,16 +2725,16 @@ mod builder_and_replacer {
             self,
             char_off: V,
         ) -> super::Building<super::overwrite::char_off<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
                 char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+                v_align: self.v_align,
+                span: self.span,
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2954,32 +2742,32 @@ mod builder_and_replacer {
             self,
             v_align: V,
         ) -> super::Building<super::overwrite::v_align<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
                 v_align,
-                span: self.0.span,
-                width: self.0.width,
-            })
+                span: self.span,
+                width: self.width,
+            }
         }
         #[inline(always)]
         pub fn span<V: crate::MaybeUpdateValueWithState<u32>>(
             self,
             span: V,
         ) -> super::Building<super::overwrite::span<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
                 span,
-                width: self.0.width,
-            })
+                width: self.width,
+            }
         }
         #[deprecated]
         #[inline(always)]
@@ -2987,16 +2775,16 @@ mod builder_and_replacer {
             self,
             width: V,
         ) -> super::Building<super::overwrite::width<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                align: self.0.align,
-                bg_color: self.0.bg_color,
-                char: self.0.char,
-                char_off: self.0.char_off,
-                v_align: self.0.v_align,
-                span: self.0.span,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                align: self.align,
+                bg_color: self.bg_color,
+                char: self.char,
+                char_off: self.char_off,
+                v_align: self.v_align,
+                span: self.span,
                 width,
-            })
+            }
         }
     }
 }

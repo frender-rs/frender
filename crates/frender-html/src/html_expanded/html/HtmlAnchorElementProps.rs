@@ -3,7 +3,7 @@
 pub fn HtmlAnchorElementProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
-    self::Building(self::Data {
+    self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         download: (),
         href: (),
@@ -13,7 +13,7 @@ pub fn HtmlAnchorElementProps() -> Building<TypesInitial> {
         target: (),
         href_lang: (),
         type_: (),
-    })
+    }
 }
 pub mod prelude {}
 pub mod overwrite {
@@ -822,8 +822,10 @@ pub mod data_struct {
         pub type_: TypeDefs::type_,
     }
 }
+pub use ::core::convert::identity as Building;
+pub use ::core::convert::identity as build;
 pub use data_struct::HtmlAnchorElementProps as Data;
-pub struct Building<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
+pub use data_struct::HtmlAnchorElementProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
@@ -1056,12 +1058,6 @@ pub mod render_state {
         }
     }
 }
-#[inline(always)]
-pub fn build<TypeDefs: ?::core::marker::Sized + Types>(
-    building: Building<TypeDefs>,
-) -> Data<TypeDefs> {
-    building.0
-}
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -1072,19 +1068,17 @@ mod builder_and_replacer {
             self,
             children: V,
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).children(children),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.children(children),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
@@ -1092,19 +1086,17 @@ mod builder_and_replacer {
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).class(class),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.class(class),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
@@ -1112,19 +1104,17 @@ mod builder_and_replacer {
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).id(id),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.id(id),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
@@ -1132,19 +1122,17 @@ mod builder_and_replacer {
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).part(part),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.part(part),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_cancel`]
         #[inline(always)]
@@ -1152,19 +1140,17 @@ mod builder_and_replacer {
             self,
             on_cancel: V,
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cancel(on_cancel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_error`]
         #[inline(always)]
@@ -1172,19 +1158,17 @@ mod builder_and_replacer {
             self,
             on_error: V,
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_error(on_error),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_error(on_error),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_scroll`]
         #[inline(always)]
@@ -1192,19 +1176,17 @@ mod builder_and_replacer {
             self,
             on_scroll: V,
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_scroll(on_scroll),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
         #[inline(always)]
@@ -1212,20 +1194,19 @@ mod builder_and_replacer {
             self,
             on_security_policy_violation: V,
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_security_policy_violation(on_security_policy_violation),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_security_policy_violation(on_security_policy_violation),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_select`]
         #[inline(always)]
@@ -1233,19 +1214,17 @@ mod builder_and_replacer {
             self,
             on_select: V,
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_select(on_select),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_select(on_select),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_wheel`]
         #[inline(always)]
@@ -1253,19 +1232,17 @@ mod builder_and_replacer {
             self,
             on_wheel: V,
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_wheel(on_wheel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_copy`]
         #[inline(always)]
@@ -1273,19 +1250,17 @@ mod builder_and_replacer {
             self,
             on_copy: V,
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_copy(on_copy),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_cut`]
         #[inline(always)]
@@ -1293,19 +1268,17 @@ mod builder_and_replacer {
             self,
             on_cut: V,
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_cut(on_cut),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_paste`]
         #[inline(always)]
@@ -1313,19 +1286,17 @@ mod builder_and_replacer {
             self,
             on_paste: V,
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_paste(on_paste),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_composition_end`]
         #[inline(always)]
@@ -1333,20 +1304,17 @@ mod builder_and_replacer {
             self,
             on_composition_end: V,
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_end(on_composition_end),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_composition_start`]
         #[inline(always)]
@@ -1354,20 +1322,19 @@ mod builder_and_replacer {
             self,
             on_composition_start: V,
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_start(on_composition_start),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_start(on_composition_start),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_composition_update`]
         #[inline(always)]
@@ -1375,20 +1342,19 @@ mod builder_and_replacer {
             self,
             on_composition_update: V,
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_composition_update(on_composition_update),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_composition_update(on_composition_update),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_blur`]
         #[inline(always)]
@@ -1396,19 +1362,17 @@ mod builder_and_replacer {
             self,
             on_blur: V,
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_blur(on_blur),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_focus`]
         #[inline(always)]
@@ -1416,19 +1380,17 @@ mod builder_and_replacer {
             self,
             on_focus: V,
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus(on_focus),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_focus_in`]
         #[inline(always)]
@@ -1436,19 +1398,17 @@ mod builder_and_replacer {
             self,
             on_focus_in: V,
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_in(on_focus_in),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_focus_out`]
         #[inline(always)]
@@ -1456,19 +1416,17 @@ mod builder_and_replacer {
             self,
             on_focus_out: V,
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_focus_out(on_focus_out),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
         #[inline(always)]
@@ -1476,20 +1434,19 @@ mod builder_and_replacer {
             self,
             on_fullscreen_change: V,
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_change(on_fullscreen_change),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_change(on_fullscreen_change),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
         #[inline(always)]
@@ -1497,20 +1454,19 @@ mod builder_and_replacer {
             self,
             on_fullscreen_error: V,
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_fullscreen_error(on_fullscreen_error),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_fullscreen_error(on_fullscreen_error),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_key_down`]
         #[inline(always)]
@@ -1518,19 +1474,17 @@ mod builder_and_replacer {
             self,
             on_key_down: V,
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_down(on_key_down),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_key_up`]
         #[inline(always)]
@@ -1538,19 +1492,17 @@ mod builder_and_replacer {
             self,
             on_key_up: V,
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_key_up(on_key_up),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_aux_click`]
         #[inline(always)]
@@ -1558,19 +1510,17 @@ mod builder_and_replacer {
             self,
             on_aux_click: V,
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_aux_click(on_aux_click),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_click`]
         #[inline(always)]
@@ -1578,19 +1528,17 @@ mod builder_and_replacer {
             self,
             on_click: V,
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_click(on_click),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_click(on_click),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_context_menu`]
         #[inline(always)]
@@ -1598,20 +1546,17 @@ mod builder_and_replacer {
             self,
             on_context_menu: V,
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_context_menu(on_context_menu),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_double_click`]
         #[inline(always)]
@@ -1619,20 +1564,17 @@ mod builder_and_replacer {
             self,
             on_double_click: V,
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_double_click(on_double_click),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
         #[inline(always)]
@@ -1640,20 +1582,17 @@ mod builder_and_replacer {
             self,
             on_mouse_down: V,
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_down(on_mouse_down),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
         #[inline(always)]
@@ -1661,20 +1600,17 @@ mod builder_and_replacer {
             self,
             on_mouse_enter: V,
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_enter(on_mouse_enter),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
         #[inline(always)]
@@ -1682,20 +1618,17 @@ mod builder_and_replacer {
             self,
             on_mouse_leave: V,
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_leave(on_mouse_leave),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
         #[inline(always)]
@@ -1703,20 +1636,17 @@ mod builder_and_replacer {
             self,
             on_mouse_move: V,
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_move(on_mouse_move),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
         #[inline(always)]
@@ -1724,19 +1654,17 @@ mod builder_and_replacer {
             self,
             on_mouse_out: V,
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_out(on_mouse_out),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
         #[inline(always)]
@@ -1744,20 +1672,17 @@ mod builder_and_replacer {
             self,
             on_mouse_over: V,
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_mouse_over(on_mouse_over),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
         #[inline(always)]
@@ -1765,19 +1690,17 @@ mod builder_and_replacer {
             self,
             on_mouse_up: V,
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_mouse_up(on_mouse_up),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
         #[inline(always)]
@@ -1785,20 +1708,17 @@ mod builder_and_replacer {
             self,
             on_touch_cancel: V,
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_cancel(on_touch_cancel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_touch_end`]
         #[inline(always)]
@@ -1806,19 +1726,17 @@ mod builder_and_replacer {
             self,
             on_touch_end: V,
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_touch_end(on_touch_end),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_touch_move`]
         #[inline(always)]
@@ -1826,20 +1744,17 @@ mod builder_and_replacer {
             self,
             on_touch_move: V,
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_move(on_touch_move),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_touch_start`]
         #[inline(always)]
@@ -1847,20 +1762,17 @@ mod builder_and_replacer {
             self,
             on_touch_start: V,
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_touch_start(on_touch_start),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
@@ -1868,19 +1780,17 @@ mod builder_and_replacer {
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).access_key(access_key),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.access_key(access_key),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
@@ -1888,20 +1798,17 @@ mod builder_and_replacer {
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .auto_capitalize(auto_capitalize),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
@@ -1909,19 +1816,17 @@ mod builder_and_replacer {
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).auto_focus(auto_focus),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::content_editable`]
         #[inline(always)]
@@ -1929,20 +1834,17 @@ mod builder_and_replacer {
             self,
             content_editable: V,
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .content_editable(content_editable),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
@@ -1950,19 +1852,17 @@ mod builder_and_replacer {
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).context_menu(context_menu),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
@@ -1970,19 +1870,17 @@ mod builder_and_replacer {
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).dir(dir),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.dir(dir),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
@@ -1990,19 +1888,17 @@ mod builder_and_replacer {
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).draggable(draggable),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.draggable(draggable),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
@@ -2010,20 +1906,17 @@ mod builder_and_replacer {
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .enter_key_hint(enter_key_hint),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
@@ -2031,19 +1924,17 @@ mod builder_and_replacer {
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).hidden(hidden),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.hidden(hidden),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
@@ -2051,19 +1942,17 @@ mod builder_and_replacer {
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).inert(inert),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.inert(inert),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
@@ -2071,19 +1960,17 @@ mod builder_and_replacer {
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).input_mode(input_mode),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
@@ -2091,19 +1978,17 @@ mod builder_and_replacer {
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).is(is),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.is(is),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
@@ -2111,19 +1996,17 @@ mod builder_and_replacer {
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_id(item_id),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_id(item_id),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
@@ -2131,19 +2014,17 @@ mod builder_and_replacer {
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_prop(item_prop),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
@@ -2151,19 +2032,17 @@ mod builder_and_replacer {
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_ref(item_ref),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
@@ -2171,19 +2050,17 @@ mod builder_and_replacer {
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_scope(item_scope),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
@@ -2191,19 +2068,17 @@ mod builder_and_replacer {
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).item_type(item_type),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.item_type(item_type),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
@@ -2211,19 +2086,17 @@ mod builder_and_replacer {
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).lang(lang),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.lang(lang),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
@@ -2231,19 +2104,17 @@ mod builder_and_replacer {
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).nonce(nonce),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.nonce(nonce),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
@@ -2251,19 +2122,17 @@ mod builder_and_replacer {
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).role(role),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.role(role),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
@@ -2271,19 +2140,17 @@ mod builder_and_replacer {
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).slot(slot),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.slot(slot),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
@@ -2291,19 +2158,17 @@ mod builder_and_replacer {
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).spellcheck(spellcheck),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
@@ -2311,19 +2176,17 @@ mod builder_and_replacer {
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).style(style),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.style(style),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
@@ -2331,19 +2194,17 @@ mod builder_and_replacer {
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).tab_index(tab_index),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
@@ -2351,19 +2212,17 @@ mod builder_and_replacer {
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).title(title),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.title(title),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
@@ -2371,19 +2230,17 @@ mod builder_and_replacer {
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).translate(translate),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.translate(translate),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
@@ -2391,20 +2248,19 @@ mod builder_and_replacer {
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .virtual_keyboard_policy(virtual_keyboard_policy),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .virtual_keyboard_policy(virtual_keyboard_policy),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_invalid`]
         #[inline(always)]
@@ -2412,19 +2268,17 @@ mod builder_and_replacer {
             self,
             on_invalid: V,
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_invalid(on_invalid),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
         #[inline(always)]
@@ -2432,20 +2286,19 @@ mod builder_and_replacer {
             self,
             on_animation_cancel: V,
         ) -> super::Building<super::overwrite::on_animation_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_cancel(on_animation_cancel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_cancel(on_animation_cancel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_animation_end`]
         #[inline(always)]
@@ -2453,20 +2306,17 @@ mod builder_and_replacer {
             self,
             on_animation_end: V,
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_end(on_animation_end),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
         #[inline(always)]
@@ -2474,20 +2324,19 @@ mod builder_and_replacer {
             self,
             on_animation_iteration: V,
         ) -> super::Building<super::overwrite::on_animation_iteration<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_iteration(on_animation_iteration),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_animation_iteration(on_animation_iteration),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_animation_start`]
         #[inline(always)]
@@ -2495,20 +2344,17 @@ mod builder_and_replacer {
             self,
             on_animation_start: V,
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_animation_start(on_animation_start),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_before_input`]
         #[inline(always)]
@@ -2516,20 +2362,17 @@ mod builder_and_replacer {
             self,
             on_before_input: V,
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_before_input(on_before_input),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_input`]
         #[inline(always)]
@@ -2537,19 +2380,17 @@ mod builder_and_replacer {
             self,
             on_input: V,
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_input(on_input),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_input(on_input),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_change`]
         #[inline(always)]
@@ -2557,19 +2398,17 @@ mod builder_and_replacer {
             self,
             on_change: V,
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_change(on_change),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_change(on_change),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
         #[inline(always)]
@@ -2577,20 +2416,19 @@ mod builder_and_replacer {
             self,
             on_got_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_got_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_got_pointer_capture(on_got_pointer_capture),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_got_pointer_capture(on_got_pointer_capture),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
         #[inline(always)]
@@ -2598,20 +2436,19 @@ mod builder_and_replacer {
             self,
             on_lost_pointer_capture: V,
         ) -> super::Building<super::overwrite::on_lost_pointer_capture<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_lost_pointer_capture(on_lost_pointer_capture),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_lost_pointer_capture(on_lost_pointer_capture),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
         #[inline(always)]
@@ -2619,20 +2456,17 @@ mod builder_and_replacer {
             self,
             on_pointer_cancel: V,
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_cancel(on_pointer_cancel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
         #[inline(always)]
@@ -2640,20 +2474,17 @@ mod builder_and_replacer {
             self,
             on_pointer_down: V,
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_down(on_pointer_down),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
         #[inline(always)]
@@ -2661,20 +2492,17 @@ mod builder_and_replacer {
             self,
             on_pointer_enter: V,
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_enter(on_pointer_enter),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
         #[inline(always)]
@@ -2682,20 +2510,17 @@ mod builder_and_replacer {
             self,
             on_pointer_leave: V,
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_leave(on_pointer_leave),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
         #[inline(always)]
@@ -2703,20 +2528,17 @@ mod builder_and_replacer {
             self,
             on_pointer_move: V,
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_move(on_pointer_move),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
         #[inline(always)]
@@ -2724,20 +2546,17 @@ mod builder_and_replacer {
             self,
             on_pointer_out: V,
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_out(on_pointer_out),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
         #[inline(always)]
@@ -2745,20 +2564,17 @@ mod builder_and_replacer {
             self,
             on_pointer_over: V,
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_over(on_pointer_over),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
         #[inline(always)]
@@ -2766,20 +2582,17 @@ mod builder_and_replacer {
             self,
             on_pointer_up: V,
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_pointer_up(on_pointer_up),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
         #[inline(always)]
@@ -2787,20 +2600,19 @@ mod builder_and_replacer {
             self,
             on_transition_cancel: V,
         ) -> super::Building<super::overwrite::on_transition_cancel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_cancel(on_transition_cancel),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_cancel(on_transition_cancel),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_transition_end`]
         #[inline(always)]
@@ -2808,20 +2620,17 @@ mod builder_and_replacer {
             self,
             on_transition_end: V,
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_end(on_transition_end),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_transition_run`]
         #[inline(always)]
@@ -2829,20 +2638,17 @@ mod builder_and_replacer {
             self,
             on_transition_run: V,
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_run(on_transition_run),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_transition_start`]
         #[inline(always)]
@@ -2850,20 +2656,19 @@ mod builder_and_replacer {
             self,
             on_transition_start: V,
         ) -> super::Building<super::overwrite::on_transition_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_transition_start(on_transition_start),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self
+                    .HtmlElementProps
+                    .on_transition_start(on_transition_start),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag`]
         #[inline(always)]
@@ -2871,19 +2676,17 @@ mod builder_and_replacer {
             self,
             on_drag: V,
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag(on_drag),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag_end`]
         #[inline(always)]
@@ -2891,19 +2694,17 @@ mod builder_and_replacer {
             self,
             on_drag_end: V,
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_end(on_drag_end),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
         #[inline(always)]
@@ -2911,20 +2712,17 @@ mod builder_and_replacer {
             self,
             on_drag_enter: V,
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_enter(on_drag_enter),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
         #[inline(always)]
@@ -2932,20 +2730,17 @@ mod builder_and_replacer {
             self,
             on_drag_leave: V,
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_leave(on_drag_leave),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag_over`]
         #[inline(always)]
@@ -2953,19 +2748,17 @@ mod builder_and_replacer {
             self,
             on_drag_over: V,
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drag_over(on_drag_over),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drag_start`]
         #[inline(always)]
@@ -2973,20 +2766,17 @@ mod builder_and_replacer {
             self,
             on_drag_start: V,
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps)
-                        .on_drag_start(on_drag_start),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         ///See [`HtmlElementProps::on_drop`]
         #[inline(always)]
@@ -2994,155 +2784,153 @@ mod builder_and_replacer {
             self,
             on_drop: V,
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: HtmlElementProps::build(
-                    HtmlElementProps::Building(self.0.HtmlElementProps).on_drop(on_drop),
-                ),
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn download<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             download: V,
         ) -> super::Building<super::overwrite::download<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
                 download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn href<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             href: V,
         ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
                 href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn ping<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             ping: V,
         ) -> super::Building<super::overwrite::ping<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
                 ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn referrer_policy<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
                 referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn rel<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
                 rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                target: self.target,
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn target<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             target: V,
         ) -> super::Building<super::overwrite::target<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
                 target,
-                href_lang: self.0.href_lang,
-                type_: self.0.type_,
-            })
+                href_lang: self.href_lang,
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn href_lang<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             href_lang: V,
         ) -> super::Building<super::overwrite::href_lang<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
                 href_lang,
-                type_: self.0.type_,
-            })
+                type_: self.type_,
+            }
         }
         #[inline(always)]
         pub fn type_<V: crate::MaybeUpdateValueWithState<str>>(
             self,
             type_: V,
         ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
-            super::Building(super::Data {
-                HtmlElementProps: self.0.HtmlElementProps,
-                download: self.0.download,
-                href: self.0.href,
-                ping: self.0.ping,
-                referrer_policy: self.0.referrer_policy,
-                rel: self.0.rel,
-                target: self.0.target,
-                href_lang: self.0.href_lang,
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                href_lang: self.href_lang,
                 type_,
-            })
+            }
         }
     }
 }
