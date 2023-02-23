@@ -69,3 +69,53 @@ mod impl_update_render_state_dom {
         }
     }
 }
+#[cfg(feature = "ssr")]
+mod impl_update_render_state_ssr {
+    use super::super::*;
+    impl<
+            TypeDefs: ?::core::marker::Sized + link::Types,
+            ComponentType: crate::props::IntrinsicComponent,
+            W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+        > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
+        for link::Data<TypeDefs, ComponentType>
+    where
+        HtmlLinkElementProps::Data<TypeDefs>: ::frender_ssr::IntoSsrData<W>,
+    {
+        type State = ::frender_ssr::element::html::HtmlElementRenderState<
+            'static,
+            <<HtmlLinkElementProps::Data<
+                TypeDefs,
+            > as ::frender_ssr::IntoSsrData<
+                W,
+            >>::Children as ::frender_core::UpdateRenderState<
+                ::frender_ssr::SsrContext<W>,
+            >>::State,
+            <HtmlLinkElementProps::Data<
+                TypeDefs,
+            > as ::frender_ssr::IntoSsrData<W>>::Attrs,
+            W,
+        >;
+        fn initialize_render_state(self, ctx: &mut ::frender_ssr::SsrContext<W>) -> Self::State {
+            let (children, attributes) = ::frender_ssr::IntoSsrData::<W>::into_ssr_data(self.0);
+            ::frender_ssr::element::html::HtmlElement {
+                tag: ComponentType::INTRINSIC_TAG.into(),
+                attributes,
+                children: ::frender_ssr::element::html::HtmlElementChildren::Children(children),
+            }
+            .initialize_render_state(ctx)
+        }
+        fn update_render_state(
+            self,
+            ctx: &mut ::frender_ssr::SsrContext<W>,
+            state: std::pin::Pin<&mut Self::State>,
+        ) {
+            let (children, attributes) = ::frender_ssr::IntoSsrData::<W>::into_ssr_data(self.0);
+            ::frender_ssr::element::html::HtmlElement {
+                tag: ComponentType::INTRINSIC_TAG.into(),
+                attributes,
+                children: ::frender_ssr::element::html::HtmlElementChildren::Children(children),
+            }
+            .update_render_state(ctx, state)
+        }
+    }
+}

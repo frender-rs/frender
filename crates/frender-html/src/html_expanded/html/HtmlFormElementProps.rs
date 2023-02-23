@@ -4035,3 +4035,176 @@ mod impl_update_element {
         }
     }
 }
+#[cfg(feature = "ssr")]
+mod impl_into_ssr_data {
+    #[allow(unused_imports)]
+    use super::super::*;
+    impl<
+            TypeDefs: ?::core::marker::Sized + super::Types,
+            W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+        > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
+    where
+        HtmlElementProps::Data<TypeDefs::HtmlElementProps>: ::frender_ssr::IntoSsrData<W>,
+    {
+        type Children = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::Children;
+        type ChildrenRenderState = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::ChildrenRenderState;
+        type Attrs = ::core::iter::Chain<
+            <HtmlElementProps::Data<
+                TypeDefs::HtmlElementProps,
+            > as ::frender_ssr::IntoSsrData<W>>::Attrs,
+            ::frender_ssr::utils::filter::FilterArray<
+                ::frender_ssr::element::html::HtmlAttrPair<'static>,
+                10usize,
+            >,
+        >;
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+            let (children, attrs) =
+                ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlElementProps);
+            (
+                children,
+                attrs
+                    .chain(
+                        ::frender_ssr::utils::filter::FilterIdentity(
+                            [
+                                <TypeDefs::accept as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.accept)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("accept"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::accept_charset as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.accept_charset)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("accept-charset"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::auto_complete as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.auto_complete)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("autocomplete"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.name)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("name"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::rel as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.rel)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("rel"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::action as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.action)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("action"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::enc_type as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.enc_type)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("enctype"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::method as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.method)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("method"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::no_validate as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    bool,
+                                >>::maybe_into_html_attribute_value(this.no_validate)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("novalidate"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.target)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("target"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                            ]
+                                .into_iter(),
+                        ),
+                    ),
+            )
+        }
+    }
+}

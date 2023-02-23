@@ -2016,3 +2016,59 @@ mod impl_update_element {
         }
     }
 }
+#[cfg(feature = "ssr")]
+mod impl_into_ssr_data {
+    #[allow(unused_imports)]
+    use super::super::*;
+    impl<
+            TypeDefs: ?::core::marker::Sized + super::Types,
+            W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+        > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
+    where
+        HtmlElementProps::Data<TypeDefs::HtmlElementProps>: ::frender_ssr::IntoSsrData<W>,
+    {
+        type Children = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::Children;
+        type ChildrenRenderState = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::ChildrenRenderState;
+        type Attrs = ::core::iter::Chain<
+            <HtmlElementProps::Data<
+                TypeDefs::HtmlElementProps,
+            > as ::frender_ssr::IntoSsrData<W>>::Attrs,
+            ::frender_ssr::utils::filter::FilterArray<
+                ::frender_ssr::element::html::HtmlAttrPair<'static>,
+                1usize,
+            >,
+        >;
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+            let (children, attrs) =
+                ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlElementProps);
+            (
+                children,
+                attrs
+                    .chain(
+                        ::frender_ssr::utils::filter::FilterIdentity(
+                            [
+                                <TypeDefs::value as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    i32,
+                                >>::maybe_into_html_attribute_value(this.value)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("value"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                            ]
+                                .into_iter(),
+                        ),
+                    ),
+            )
+        }
+    }
+}

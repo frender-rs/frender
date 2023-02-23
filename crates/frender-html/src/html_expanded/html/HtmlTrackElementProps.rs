@@ -2628,3 +2628,111 @@ mod impl_update_element {
         }
     }
 }
+#[cfg(feature = "ssr")]
+mod impl_into_ssr_data {
+    #[allow(unused_imports)]
+    use super::super::*;
+    impl<
+            TypeDefs: ?::core::marker::Sized + super::Types,
+            W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+        > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
+    where
+        HtmlElementProps::Data<TypeDefs::HtmlElementProps>: ::frender_ssr::IntoSsrData<W>,
+    {
+        type Children = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::Children;
+        type ChildrenRenderState = <HtmlElementProps::Data<
+            TypeDefs::HtmlElementProps,
+        > as ::frender_ssr::IntoSsrData<W>>::ChildrenRenderState;
+        type Attrs = ::core::iter::Chain<
+            <HtmlElementProps::Data<
+                TypeDefs::HtmlElementProps,
+            > as ::frender_ssr::IntoSsrData<W>>::Attrs,
+            ::frender_ssr::utils::filter::FilterArray<
+                ::frender_ssr::element::html::HtmlAttrPair<'static>,
+                5usize,
+            >,
+        >;
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+            let (children, attrs) =
+                ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlElementProps);
+            (
+                children,
+                attrs
+                    .chain(
+                        ::frender_ssr::utils::filter::FilterIdentity(
+                            [
+                                <TypeDefs::default as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    bool,
+                                >>::maybe_into_html_attribute_value(this.default)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("default"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::kind as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.kind)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("kind"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::label as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.label)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("label"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.src)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("src"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::src_lang as ::frender_dom::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.src_lang)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("srclang"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                            ]
+                                .into_iter(),
+                        ),
+                    ),
+            )
+        }
+    }
+}

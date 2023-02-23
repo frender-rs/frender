@@ -4709,3 +4709,78 @@ mod impl_update_element {
         }
     }
 }
+#[cfg(feature = "ssr")]
+mod impl_into_ssr_data {
+    #[allow(unused_imports)]
+    use super::super::*;
+    impl<
+        TypeDefs: ?::core::marker::Sized + super::Types,
+        W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+    > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
+    where
+        TypeDefs::children: ::frender_core::UpdateRenderState<
+            ::frender_ssr::SsrContext<W>,
+        >,
+        <TypeDefs::children as ::frender_core::UpdateRenderState<
+            ::frender_ssr::SsrContext<W>,
+        >>::State: ::core::marker::Unpin,
+    {
+        type Children = TypeDefs::children;
+        type ChildrenRenderState = <TypeDefs::children as ::frender_core::UpdateRenderState<
+            ::frender_ssr::SsrContext<W>,
+        >>::State;
+        type Attrs = ::frender_ssr::utils::filter::FilterArray<
+            ::frender_ssr::element::html::HtmlAttrPair<'static>,
+            3usize,
+        >;
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+            (
+                this.children,
+                ::frender_ssr::utils::filter::FilterIdentity(
+                    [
+                        <TypeDefs::class as ::frender_dom::props::MaybeUpdateValueWithState<
+                            str,
+                        >>::maybe_into_html_attribute_value(this.class)
+                            .map(|value| (
+                                ::std::borrow::Cow::Borrowed("class"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                        value,
+                                    )
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )),
+                        <TypeDefs::id as ::frender_dom::props::MaybeUpdateValueWithState<
+                            str,
+                        >>::maybe_into_html_attribute_value(this.id)
+                            .map(|value| (
+                                ::std::borrow::Cow::Borrowed("id"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                        value,
+                                    )
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )),
+                        <TypeDefs::part as ::frender_dom::props::MaybeUpdateValueWithState<
+                            str,
+                        >>::maybe_into_html_attribute_value(this.part)
+                            .map(|value| (
+                                ::std::borrow::Cow::Borrowed("part"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                        value,
+                                    )
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )),
+                    ]
+                        .into_iter(),
+                ),
+            )
+        }
+    }
+}
