@@ -5,3 +5,4 @@ syn::custom_keyword!(bounds);
 syn::custom_keyword!(state);
 syn::custom_keyword!(initialize);
 syn::custom_keyword!(pin);
+syn::custom_keyword!(ssr);

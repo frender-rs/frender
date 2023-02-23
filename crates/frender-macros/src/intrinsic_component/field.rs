@@ -94,4 +94,37 @@ impl Field {
             _ => self.to_builder_fn(all_fields, crate_path),
         }
     }
+
+    pub fn to_ssr_attr(&self) -> Option<TokenStream> {
+        let Self {
+            name, declaration, ..
+        } = self;
+        if name == "children" {
+            return None;
+        }
+
+        match &declaration {
+            super::FieldDeclaration::Maybe(m) => {
+                let ty = &m.ty;
+                let prop_name = m.to_html_prop_name(name);
+                Some(quote! {
+                    <TypeDefs::#name as ::frender_dom::props::MaybeUpdateValueWithState<#ty>>::maybe_into_html_attribute_value(
+                        this.#name
+                    ).map(|value|
+                        (
+                            ::std::borrow::Cow::Borrowed(#prop_name),
+                            if let Some(value) = value {
+                                ::frender_ssr::element::html::HtmlAttributeValue::String(value)
+                            } else {
+                                ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                            }
+                        )
+                    )
+                })
+            }
+            super::FieldDeclaration::EventListener(_) => None,
+            super::FieldDeclaration::Full(_) => None, // TODO:
+            super::FieldDeclaration::Inherit(_) => None,
+        }
+    }
 }

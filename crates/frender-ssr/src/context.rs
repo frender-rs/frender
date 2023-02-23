@@ -12,7 +12,15 @@ pub enum WriterOrError<W> {
 }
 
 pub struct SsrContext<W: AsyncWrite + Unpin> {
-    pub writer_or_error: Option<WriterOrError<W>>,
+    writer_or_error: Option<WriterOrError<W>>,
+}
+
+impl<W: AsyncWrite + Unpin> SsrContext<W> {
+    pub fn expect_to_take_writer(&mut self) -> WriterOrError<W> {
+        self.writer_or_error
+            .take()
+            .expect("writer_or_error is available")
+    }
 }
 
 impl<W: AsyncWrite + Unpin> Default for SsrContext<W> {

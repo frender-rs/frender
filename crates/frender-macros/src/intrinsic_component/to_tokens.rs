@@ -109,6 +109,38 @@ impl FieldDeclaration {
         }
     }
 
+    pub fn ssr_bounds(
+        &self,
+        crate_path: &impl ToTokens,
+        field_name: &syn::Ident,
+    ) -> Option<TokenStream> {
+        if field_name == "children" {
+            return Some(quote! {
+                TypeDefs::#field_name: ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>,
+                <TypeDefs::#field_name as ::frender_core::UpdateRenderState<
+                    ::frender_ssr::SsrContext<W>,
+                >>::State: ::core::marker::Unpin
+            });
+        }
+
+        match self {
+            FieldDeclaration::Maybe(_) => None,
+            FieldDeclaration::Full(_) => None,
+            FieldDeclaration::EventListener(v) => {
+                // let simple_bounds = v.to_ts_dom_bounds(crate_path);
+
+                // Some(quote! { TypeDefs::#field_name : #simple_bounds }) // TODO:
+                None
+            }
+            FieldDeclaration::Inherit(v) => {
+                let base = &v.from_path;
+                Some(quote!(
+                    #base ::Data<TypeDefs::#field_name>: ::frender_ssr::IntoSsrData<W>
+                ))
+            }
+        }
+    }
+
     pub fn dom_state<'a>(
         &'a self,
         crate_path: &impl ToTokens,
@@ -363,11 +395,19 @@ impl IntrinsicComponentPropsData {
             .filter_map(|f| f.declaration.dom_state(&crate_path, &f.name))
             .collect::<Vec<_>>();
 
+        // Only one field and this field is inherited.
         let only_one_inherit_field;
         let state_init;
         let dom_state_type;
         let dom_state_initialize;
         let mod_render_state;
+
+        let ssr_attrs: Vec<_> = fields.iter().filter_map(Field::to_ssr_attr).collect();
+
+        let ssr_ty_children;
+        let ssr_ty_children_state;
+        let ssr_ty_attrs;
+        let impl_into_ssr_data;
 
         if let (
             true,
@@ -395,6 +435,11 @@ impl IntrinsicComponentPropsData {
                 )
             };
             mod_render_state = quote!(pub use super::#inherit_path::render_state;);
+
+            ssr_ty_children = todo!();
+            ssr_ty_children_state = todo!();
+            ssr_ty_attrs = todo!();
+            impl_into_ssr_data = todo!();
         } else {
             only_one_inherit_field = false;
             state_init = Some(quote!( let state = state.pin_project(); ));
@@ -480,7 +525,73 @@ impl IntrinsicComponentPropsData {
                         }
                     }
                 }
-            }
+            };
+
+            let first_inherit_field = fields.iter().find_map(|f| {
+                if let Some(d) = f.declaration.as_inherit() {
+                    Some((&f.name, d))
+                } else {
+                    None
+                }
+            });
+            if let Some((name, d)) = first_inherit_field {
+                let from_path = &d.from_path;
+                ssr_ty_children = quote! {
+                    <#from_path::Data<TypeDefs::#name> as ::frender_ssr::IntoSsrData<W>>::Children
+                };
+                ssr_ty_children_state = quote! {
+                    <#from_path::Data<TypeDefs::#name> as ::frender_ssr::IntoSsrData<W>>::ChildrenRenderState
+                };
+
+                let attrs_count = ssr_attrs.len();
+
+                ssr_ty_attrs = quote! {
+                    ::core::iter::Chain<
+                        <#from_path::Data<TypeDefs::#name> as ::frender_ssr::IntoSsrData<W>>::Attrs,
+                        ::frender_ssr::utils::filter::FilterArray<
+                            ::frender_ssr::element::html::HtmlAttrPair<'static>,
+                            #attrs_count,
+                        >,
+                    >
+                };
+                impl_into_ssr_data = quote! {
+                    let (children, attrs) = ::frender_ssr::IntoSsrData::into_ssr_data(this.#name);
+
+                    (
+                        children,
+                        attrs.chain(::frender_ssr::utils::filter::FilterIdentity(
+                            [
+                                #(#ssr_attrs),*
+                            ].into_iter()
+                        )),
+                    )
+                };
+            } else {
+                ssr_ty_children = quote!(TypeDefs::children);
+                ssr_ty_children_state = quote! {
+                    <TypeDefs::children as ::frender_core::UpdateRenderState<
+                        ::frender_ssr::SsrContext<W>,
+                    >>::State
+                };
+
+                let attrs_count = ssr_attrs.len();
+
+                ssr_ty_attrs = quote! {
+                    ::frender_ssr::utils::filter::FilterArray<
+                        ::frender_ssr::element::html::HtmlAttrPair<'static>,
+                        #attrs_count,
+                    >
+                };
+
+                impl_into_ssr_data = quote! {
+                    (
+                        this.children,
+                        ::frender_ssr::utils::filter::FilterIdentity([
+                            #(#ssr_attrs),*
+                        ].into_iter())
+                    )
+                }
+            };
         }
 
         let impl_builder_fn = fields
@@ -490,6 +601,11 @@ impl IntrinsicComponentPropsData {
         let dom_bounds = fields
             .iter()
             .map(|f| f.declaration.dom_bounds(&crate_path, &f.name))
+            .filter_map(std::convert::identity);
+
+        let ssr_bounds = fields
+            .iter()
+            .map(|f| f.declaration.ssr_bounds(&crate_path, &f.name))
             .filter_map(std::convert::identity);
 
         let dom_implementations = fields.iter().map(|f| {
@@ -637,6 +753,28 @@ impl IntrinsicComponentPropsData {
                             let dom_element: &::web_sys::Element = element.as_ref();
 
                             #(#dom_implementations)*
+                        }
+                    }
+                }
+
+                #[cfg(feature = "ssr")]
+                mod impl_into_ssr_data {
+                    #[allow(unused_imports)]
+                    use super::super::*;
+                    impl<
+                            TypeDefs: ?::core::marker::Sized + super::Types,
+                            W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
+                        > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
+                    where
+                        #(#ssr_bounds),*
+                    {
+                        type Children = #ssr_ty_children;
+                        type ChildrenRenderState = #ssr_ty_children_state;
+
+                        type Attrs = #ssr_ty_attrs;
+
+                        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+                            #impl_into_ssr_data
                         }
                     }
                 }

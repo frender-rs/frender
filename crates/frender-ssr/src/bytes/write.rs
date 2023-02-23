@@ -36,3 +36,24 @@ impl AsyncWritableBytes for &[u8] {
         *self = rest;
     }
 }
+
+pub trait AsyncWritableByteChunks {
+    type Chunk: AsyncWritableBytes;
+    fn as_mut_current_chunk(&mut self) -> Option<&mut Self::Chunk>;
+    fn go_to_next_chunk(&mut self);
+
+    fn poll_write_byte_chunks<W: crate::AsyncWrite>(
+        &mut self,
+        mut writer: Pin<&mut W>,
+        cx: &mut Context<'_>,
+    ) -> Poll<io::Result<()>> {
+        while let Some(current_chunk) = self.as_mut_current_chunk() {
+            match current_chunk.poll_write_bytes(writer.as_mut(), cx) {
+                Poll::Ready(Ok(_)) => self.go_to_next_chunk(),
+                res => return res,
+            }
+        }
+
+        Poll::Ready(Ok(()))
+    }
+}

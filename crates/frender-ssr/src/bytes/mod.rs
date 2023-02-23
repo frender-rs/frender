@@ -1,6 +1,11 @@
 mod write;
 pub use write::*;
 
+mod iter;
+mod written;
+pub use iter::*;
+pub use written::*;
+
 mod sliced;
 pub use sliced::*;
 

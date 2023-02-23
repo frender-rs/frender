@@ -73,10 +73,7 @@ impl<B: IntoAsyncWritableBytes, W: crate::AsyncWrite + ::core::marker::Unpin>
         crate::element::bytes::State<W, <B as crate::bytes::IntoAsyncWritableBytes>::Bytes>;
     fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
         State {
-            writer_or_error: ctx
-                .writer_or_error
-                .take()
-                .expect("ssr context has no writer"),
+            writer_or_error: ctx.expect_to_take_writer(),
             buf: <B as crate::bytes::IntoAsyncWritableBytes>::into_async_writable_bytes(self.0),
         }
     }
