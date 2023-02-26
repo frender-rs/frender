@@ -9,20 +9,12 @@ edition = "2021"
 bg = "0.2.0"
 convert-js = "1.0.0-alpha.15"
 frender-core = { path = "../frender-core", version = "0.1.0" }
-frender-dom = { path = "../frender-dom", version = "0.1.0", optional = true }
-frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
 futures-lite = { version = "1.12.0", default-features = false, optional = true }
 ghost-lite = "0.1.2"
 gloo = { version = "0.8.0", optional = true }
 html-escape = { version = "0.2.13", optional = true }
 pin-project-lite = "0.2.9"
 wasm-bindgen = { version = "0.2.83", optional = true }
-
-[dependencies.frender-macros]
-version = "1.0.0-alpha.8"
-path = "../frender-macros"
-optional = true
-features = ["intrinsic-component"]
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -116,6 +108,5 @@ features = [
 
 [features]
 default = ["dom", "ssr"]
-dom = ["dep:frender-dom", "dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
-ssr = ["dep:frender-ssr", "dep:html-escape", "dep:futures-lite"]
-html_macro_not_expand = ["dep:frender-macros"]
+dom = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
+ssr = ["dep:html-escape", "dep:futures-lite"]

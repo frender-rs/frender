@@ -2,8 +2,14 @@
 
 use crate::props::events;
 
+mod __private {
+    pub use frender_core;
+    pub use frender_dom;
+    pub use pin_project_lite::pin_project;
+}
+
 crate::def_intrinsic_component_props! {
-    @[crate]
+    @[__private]
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {

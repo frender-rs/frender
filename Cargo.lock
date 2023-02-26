@@ -237,9 +237,6 @@ dependencies = [
  "bg",
  "convert-js",
  "frender-core",
- "frender-dom",
- "frender-macros",
- "frender-ssr",
  "futures-lite",
  "ghost-lite",
  "gloo",
@@ -247,6 +244,17 @@ dependencies = [
  "pin-project-lite",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "frender-html-components"
+version = "0.1.0"
+dependencies = [
+ "frender-core",
+ "frender-dom",
+ "frender-html",
+ "frender-macros",
+ "frender-ssr",
 ]
 
 [[package]]
