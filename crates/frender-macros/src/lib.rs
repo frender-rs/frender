@@ -1,5 +1,6 @@
 mod auto_intrinsic;
 mod component_data;
+mod component_macro;
 mod component_to_tokens;
 mod err;
 mod hook_component;
@@ -19,10 +20,11 @@ mod intrinsic_component;
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     use component_data::*;
     let attr_args = parse_macro_input!(args as syn::AttributeArgs);
+    let item_fn = parse_macro_input!(input as syn::ItemFn);
 
-    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, input);
+    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, item_fn);
 
-    comp.into_ts()
+    comp.into_ts().into()
 }
 
 #[proc_macro]

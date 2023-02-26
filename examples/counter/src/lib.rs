@@ -6,9 +6,9 @@ mod my_timer;
 use my_counter::MyCounter;
 use my_timer::MyTimer;
 
-#[component(only_dom)]
-fn Main(ctx: _) {
-    ctx.render(rsx!(
+#[component(only_dom, main(get_dom_element = "frender-root"))]
+pub fn Main() {
+    rsx!(
         <div style=r#"
             margin: auto;
             padding: 16px;
@@ -42,12 +42,5 @@ fn Main(ctx: _) {
                 </div>
             </main>
         </div>
-    ))
-}
-
-pub fn main() {
-    frender::hook_element::frender_dom::spawn_mount_get_element_to_dom_element_by_id(
-        || rsx!(Main()),
-        "frender-root",
-    );
+    )
 }

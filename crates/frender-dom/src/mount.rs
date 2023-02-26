@@ -2,50 +2,48 @@ use frender_core::UpdateRenderState;
 
 use crate::Dom;
 
-pub fn mount_to_dom_element_by_id<E: UpdateRenderState<Dom> + Copy>(
-    element: E,
-    id: &str,
-) -> impl std::future::Future<Output = ()> {
-    let window = web_sys::window().unwrap();
+pub trait GetDomElement {
+    fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element;
+}
 
-    let document = window.document().unwrap();
-    let current_parent = document.get_element_by_id(id).unwrap();
-
-    async move {
-        Dom::new(document, current_parent)
-            .render_element(element, std::future::pending())
-            .await
+impl GetDomElement for &str {
+    fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element {
+        document
+            .get_element_by_id(self)
+            .expect("document should have an element with the specified id")
     }
 }
 
-pub fn mount_get_element_to_dom_element_by_id<E: UpdateRenderState<Dom>>(
-    get_element: impl FnMut() -> E,
-    id: &str,
-) -> impl std::future::Future<Output = ()> {
+impl<F> GetDomElement for F
+where
+    F: FnOnce(&web_sys::Document) -> web_sys::Element,
+{
+    #[inline(always)]
+    fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element {
+        self(document)
+    }
+}
+
+pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom>>(
+    get_element: impl FnMut() -> E + 'e,
+    get_dom_element: impl GetDomElement,
+) -> impl std::future::Future<Output = ()> + 'e {
     let window = web_sys::window().unwrap();
 
     let document = window.document().unwrap();
-    let current_parent = document.get_element_by_id(id).unwrap();
+    let current_parent = get_dom_element.get_dom_element(&document);
 
     async move {
         Dom::new(document, current_parent)
-            .render_get_element(get_element, std::future::pending())
+            .render_element(get_element, std::future::pending())
             .await
     }
 }
 
 #[cfg(feature = "spawn")]
-pub fn spawn_mount_to_dom_element_by_id<E: UpdateRenderState<Dom> + Copy + 'static>(
-    element: E,
-    id: &str,
-) {
-    wasm_bindgen_futures::spawn_local(mount_to_dom_element_by_id(element, id))
-}
-
-#[cfg(feature = "spawn")]
-pub fn spawn_mount_get_element_to_dom_element_by_id<E: UpdateRenderState<Dom> + 'static>(
+pub fn spawn_mount_to_dom_element<E: UpdateRenderState<Dom> + 'static>(
     get_element: impl FnMut() -> E + 'static,
-    id: &str,
+    get_dom_element: impl GetDomElement,
 ) {
-    wasm_bindgen_futures::spawn_local(mount_get_element_to_dom_element_by_id(get_element, id))
+    wasm_bindgen_futures::spawn_local(mount_to_dom_element(get_element, get_dom_element))
 }

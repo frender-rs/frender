@@ -1,8 +1,11 @@
 use std::pin::Pin;
 
-use crate::{utils::pin_as_deref_mut, UpdateRenderState};
+use crate::{
+    utils::{pin_as_deref_mut, pin_downcast_mut},
+    UpdateRenderState,
+};
 
-pub struct BoxState<E, const DYN: bool>(pub E);
+pub struct BoxState<E, const DYN: bool = true>(pub E);
 
 impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, false> {
     type State = Pin<Box<E::State>>;
@@ -18,10 +21,19 @@ impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, fals
     }
 }
 
-// impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, true> {
-//     type State = Pin<Box<dyn RenderState>>;
+impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, true>
+where
+    E::State: std::any::Any,
+{
+    type State = Pin<Box<dyn crate::AnyRenderState>>;
 
-//     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-//         todo!()
-//     }
-// }
+    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
+        let state = pin_downcast_mut(pin_as_deref_mut(state).pin_as_mut_any())
+            .expect("state type should match");
+        E::update_render_state(self.0, ctx, state)
+    }
+
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        Box::pin(E::initialize_render_state(self.0, ctx))
+    }
+}

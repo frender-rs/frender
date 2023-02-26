@@ -1,14 +1,17 @@
-use darling::FromMeta;
+use darling::{util::WithOriginal, FromMeta};
 use syn::{punctuated::Pair, spanned::Spanned};
 
-use crate::err::{
-    maybe_with_error, OptionCombineExt, OutputError, RecordError, ResultUnwrapValueAndErrorExt,
-    ResultUnwrapValueExt,
+use crate::{
+    err::{
+        maybe_with_error, OptionCombineExt, OutputError, RecordError, ResultUnwrapValueAndErrorExt,
+        ResultUnwrapValueExt,
+    },
+    utils::value_or_path::ValueOrPath,
 };
 
 #[derive(Debug, FromMeta)]
 pub struct ComponentMainOptions {
-    pub mount_element_id: String,
+    pub get_dom_element: WithOriginal<ValueOrPath<syn::LitStr>, syn::Meta>,
 }
 
 pub enum RenderCtx {
@@ -17,43 +20,38 @@ pub enum RenderCtx {
     SsrAndDom,
 }
 
-impl RenderCtx {
-    pub fn macro_name(self) -> &'static str {
-        match self {
-            RenderCtx::Ssr => "component_only_ssr",
-            RenderCtx::Dom => "component_only_dom",
-            RenderCtx::SsrAndDom => "component_ssr_dom",
-        }
-    }
-}
+pub type MainOptionsWithOriginal = darling::util::WithOriginal<ComponentMainOptions, syn::Meta>;
 
 #[derive(Debug, FromMeta, Default)]
 pub struct ComponentOptionsInput {
     #[darling(default)]
-    pub main: Option<darling::util::SpannedValue<ComponentMainOptions>>,
+    pub main: Option<MainOptionsWithOriginal>,
     pub hook_element_path: Option<syn::Path>,
     pub only_ssr: darling::util::Flag,
     pub only_dom: darling::util::Flag,
+    #[darling(rename = "FnOnce")]
+    pub use_fn_once: darling::util::Flag,
+    pub bg: darling::util::Flag,
 }
 
 pub struct ComponentOptions {
-    pub main: Option<darling::util::SpannedValue<ComponentMainOptions>>,
+    pub main: Option<MainOptionsWithOriginal>,
     // Defaults to `::frender::hook_element`
     pub hook_element_path: Option<syn::Path>,
     pub render_ctx: RenderCtx,
+    /// use `FnOnce` instead of `FnMut`
+    pub use_fn_once: darling::util::Flag,
+    pub bg: darling::util::Flag,
 }
 
 pub struct ComponentDefinition {
     pub errors: Vec<darling::Error>,
     pub options: ComponentOptions,
-    pub item_fn: proc_macro::TokenStream,
+    pub item_fn: syn::ItemFn,
 }
 
 impl ComponentDefinition {
-    pub fn from_attrs_and_fn(
-        attr_args: syn::AttributeArgs,
-        item_fn: proc_macro::TokenStream,
-    ) -> Self {
+    pub fn from_attrs_and_fn(attr_args: syn::AttributeArgs, item_fn: syn::ItemFn) -> Self {
         let mut errors = vec![];
         let options = match ComponentOptionsInput::from_list(&attr_args) {
             Ok(v) => v,
@@ -82,6 +80,8 @@ impl ComponentDefinition {
             main: options.main,
             hook_element_path: options.hook_element_path,
             render_ctx,
+            use_fn_once: options.use_fn_once,
+            bg: options.bg,
         };
 
         Self {

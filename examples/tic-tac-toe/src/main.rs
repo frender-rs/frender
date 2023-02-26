@@ -5,64 +5,67 @@ pub mod data;
 
 use frender::prelude::*;
 
-bg::builder! {
-    pub struct SquareProps {
-        value[impl frender::UpdateRenderState<frender::Dom> + 'static],
-        on_click[impl frender::UpdateDomEventListener<frender::events::Click>],
-    }
+pub struct Square<V, OnClick> {
+    value: V,
+    on_click: OnClick,
 }
 
-#[component(only_dom)]
-fn Square(ctx: _, props: SquareProps) {
-    ctx.render(rsx!(
-        <button class="square" on_click={props.on_click}>
-            {props.value}
-        </button>
-    ))
-}
-
-bg::builder! {
-    pub struct BoardProps {
-        board: data::Board,
-        on_click[impl Fn(usize) + 'static + Clone],
-    }
-}
-
-#[component(only_dom)]
-fn Board(ctx: _, props: BoardProps) {
-    let render_square = |i: usize| {
-        let on_click = props.on_click.clone();
+impl<V, OnClick> Square<V, OnClick>
+where
+    V: frender::UpdateRenderState<frender::Dom>,
+    OnClick: frender::UpdateDomEventListener<frender::events::Click>,
+{
+    #[component(only_dom, FnOnce)]
+    fn into_element(self) {
         rsx!(
-            <Square
-                value={props.board.squares[i].to_str()}
-                on_click={move |_: &_| on_click(i)}
-            />
+            <button class="square" on_click={self.on_click}>
+                {self.value}
+            </button>
         )
-    };
+    }
+}
 
-    ctx.render(rsx!(
-        <div>
-            <div class="board-row">
-                {render_square(0)}
-                {render_square(1)}
-                {render_square(2)}
+pub struct Board<OnClick: Fn(usize) + 'static + Clone> {
+    board: data::Board,
+    on_click: OnClick,
+}
+
+impl<OnClick: Fn(usize) + 'static + Clone> Board<OnClick> {
+    #[component(only_dom)]
+    fn into_element(self) {
+        let render_square = |i: usize| {
+            let on_click = self.on_click.clone();
+            Square {
+                value: self.board.squares[i].to_str(),
+                on_click: move |_: &_| on_click(i),
+            }
+            .into_element()
+        };
+
+        rsx!(
+            <div>
+                <div class="board-row">
+                    {render_square(0)}
+                    {render_square(1)}
+                    {render_square(2)}
+                </div>
+                <div class="board-row">
+                    {render_square(3)}
+                    {render_square(4)}
+                    {render_square(5)}
+                </div>
+                <div class="board-row">
+                    {render_square(6)}
+                    {render_square(7)}
+                    {render_square(8)}
+                </div>
             </div>
-            <div class="board-row">
-                {render_square(3)}
-                {render_square(4)}
-                {render_square(5)}
-            </div>
-            <div class="board-row">
-                {render_square(6)}
-                {render_square(7)}
-                {render_square(8)}
-            </div>
-        </div>
-    ))
+        )
+    }
 }
 
 #[component(only_dom)]
-fn Game(ctx: _) {
+fn Game() {
     let (state, state_setter) = hooks::use_state_with(data::Game::new);
 
     let current = state.current();
@@ -106,25 +109,27 @@ fn Game(ctx: _) {
         })
         .collect::<Vec<_>>();
 
-    ctx.render(rsx!(
+    rsx!(
         <div class="game">
             <div class="game-board">
-                <Board
-                    board={*current}
-                    on_click={on_click}
-                />
+                {
+                    Board {
+                        board: *current,
+                        on_click,
+                    }.into_element()
+                }
             </div>
             <div class="game-info">
                 <div>{status}</div>
                 <ol>{moves}</ol>
             </div>
         </div>
-    ))
+    )
 }
 
-#[component(only_dom)]
-fn Main(ctx: _) {
-    ctx.render(rsx!(
+#[component(only_dom, main(get_dom_element = "frender-root"))]
+fn Main() {
+    rsx!(
         <div style=r#"
             margin: auto;
             padding: 16px;
@@ -144,15 +149,8 @@ fn Main(ctx: _) {
                 <a href="https://codepen.io/gaearon/pen/gWWZgR?editors=0010" target="_blank">"ReactJs Tic Tac Toe"</a>
             </p>
             <main style="margin-top: 32px">
-                <Game />
+                {Game()}
             </main>
         </div>
-    ))
-}
-
-fn main() {
-    ::frender::hook_element::frender_dom::spawn_mount_get_element_to_dom_element_by_id(
-        || rsx!(Main()),
-        "frender-root",
-    );
+    )
 }

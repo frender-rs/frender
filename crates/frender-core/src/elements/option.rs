@@ -34,16 +34,18 @@ where
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
         match self {
             Some(this) => Some(this.initialize_render_state(ctx)),
-            None => todo!(),
+            None => None,
         }
     }
 
     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-        match (self, state.get_mut()) {
-            (Some(this), Some(state)) => this.update_render_state(ctx, Pin::new(state)),
-            (Some(this), state @ None) => *state = Some(this.initialize_render_state(ctx)),
-            (None, Some(state)) => Pin::new(state).unmount(),
-            (None, None) => {}
+        if let Some(this) = self {
+            match state.get_mut() {
+                Some(state) => this.update_render_state(ctx, Pin::new(state)),
+                state => *state = Some(this.initialize_render_state(ctx)),
+            };
+        } else {
+            <Option<E::State> as RenderState>::unmount(state)
         }
     }
 }

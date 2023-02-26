@@ -6,8 +6,8 @@ bg::builder! {
     }
 }
 
-#[component(only_dom)]
-pub fn MyTimer(ctx: _, props: &MyTimerProps) {
+#[component(only_dom, bg)]
+pub fn MyTimer(props: MyTimerProps) {
     // store the initial_interval value,
     // so that the value never changes in the component life.
     let ref_initial_interval = hooks::use_mut_default::<Option<u32>>();
@@ -47,7 +47,7 @@ pub fn MyTimer(ctx: _, props: &MyTimerProps) {
     let stopped_setter = stopped_setter.clone();
     let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
 
-    render!(ctx =>
+    rsx!(
         <div>
             "Timer(initial_interval="{initial_interval}"): "
             {state}

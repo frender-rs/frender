@@ -9,6 +9,13 @@ pub enum NextNodePosition {
 }
 
 impl NextNodePosition {
+    pub fn as_js_debug(&self) -> (&'static str, &web_sys::Node) {
+        match self {
+            NextNodePosition::FirstChildOf(v) => ("FirstChildOf", v),
+            NextNodePosition::InsertAfter(v) => ("InsertAfter", v),
+        }
+    }
+
     pub fn set_as_insert_after(&mut self, node: web_sys::Node) {
         *self = Self::InsertAfter(node);
     }
@@ -84,15 +91,7 @@ impl Dom {
         out
     }
 
-    pub async fn render_element<E: UpdateRenderState<Dom> + Copy>(
-        &mut self,
-        element: E,
-        stop: impl IntoFuture<Output = ()>,
-    ) {
-        self.render_get_element(|| element, stop).await
-    }
-
-    pub async fn render_get_element<E: UpdateRenderState<Dom>>(
+    pub async fn render_element<E: UpdateRenderState<Dom>>(
         &mut self,
         mut get_element: impl FnMut() -> E,
         stop: impl IntoFuture<Output = ()>,
