@@ -2,6 +2,7 @@
 
 use frender_html::props::events;
 
+#[cfg(feature = "html_macro_not_expand")]
 pub mod element_macros;
 
 mod props_macros;

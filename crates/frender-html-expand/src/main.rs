@@ -12,9 +12,10 @@ fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
     let src_root = workspace_root.join("crates/frender-html-components/src");
 
-    let code = utils::cargo_expand_html()?.replace(
+    let code = utils::cargo_expand_html()?.replacen(
         r#"#[cfg(feature = "html_macro_not_expand")]"#,
         "#[allow(warnings)]",
+        1,
     );
 
     let code = syn::parse_str::<syn::File>(&code).map_err(utils::io_error_other)?;
