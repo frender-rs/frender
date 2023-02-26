@@ -186,6 +186,7 @@ dependencies = [
  "frender-core",
  "frender-hook-element",
  "frender-html",
+ "frender-html-components",
  "frender-macros",
  "js-sys",
  "wasm-bindgen",
@@ -241,7 +242,6 @@ dependencies = [
  "ghost-lite",
  "gloo",
  "html-escape",
- "pin-project-lite",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -255,6 +255,8 @@ dependencies = [
  "frender-html",
  "frender-macros",
  "frender-ssr",
+ "pin-project-lite",
+ "web-sys",
 ]
 
 [[package]]

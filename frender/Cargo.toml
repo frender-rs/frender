@@ -26,6 +26,10 @@ version = "0.1.0"
 path = "../crates/frender-html"
 version = "0.1.0"
 
+[dependencies.frender-html-components]
+path = "../crates/frender-html-components"
+version = "0.1.0"
+
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
 path = "../crates/frender-macros"

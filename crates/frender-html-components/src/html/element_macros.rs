@@ -1,5 +1,4 @@
-#[macro_export]
-macro_rules! __impl_def_intrinsic_component {
+macro_rules! def_intrinsic_component {
     (
         $vis:vis
         $component_name:ident
@@ -25,7 +24,7 @@ macro_rules! __impl_def_intrinsic_component {
 
             pub struct ComponentType;
 
-            impl $crate::props::IntrinsicComponent for ComponentType {
+            impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
                 const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
             }
 
@@ -34,7 +33,7 @@ macro_rules! __impl_def_intrinsic_component {
                 #[allow(non_camel_case_types)]
                 pub struct $component_name <
                     TypeDefs: ?::core::marker::Sized + $props_name ::Types,
-                    ComponentType: $crate::props::IntrinsicComponent = super::ComponentType,
+                    ComponentType: crate::imports::frender_html::props::IntrinsicComponent = super::ComponentType,
                 >(
                     pub $props_name ::Data<TypeDefs>,
                     pub ComponentType,
@@ -67,7 +66,7 @@ macro_rules! __impl_def_intrinsic_component {
                 use super::super::*;
                 impl<
                     TypeDefs: ?::core::marker::Sized + $component_name::Types,
-                    ComponentType: $crate::props::IntrinsicComponent,
+                    ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
                 >
                     ::frender_core::UpdateRenderState<::frender_dom::Dom>
                     for $component_name::Data<TypeDefs, ComponentType>
@@ -113,7 +112,7 @@ macro_rules! __impl_def_intrinsic_component {
                 use super::super::*;
                 impl<
                         TypeDefs: ?::core::marker::Sized + $component_name::Types,
-                        ComponentType: crate::props::IntrinsicComponent,
+                        ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
                         W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
                     > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
                     for $component_name::Data<TypeDefs, ComponentType>
@@ -171,7 +170,7 @@ macro_rules! __impl_def_intrinsic_component {
 
                 pub struct ComponentType;
 
-                impl $crate::props::IntrinsicComponent for ComponentType {
+                impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
                     const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($alias_component_name);
                 }
 
@@ -201,3 +200,5 @@ macro_rules! __impl_def_intrinsic_component {
         )*
     };
 }
+
+pub(crate) use def_intrinsic_component;

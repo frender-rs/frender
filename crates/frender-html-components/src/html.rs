@@ -1,15 +1,13 @@
 #![allow(non_camel_case_types)]
 
-use crate::props::events;
+use frender_html::props::events;
 
-mod __private {
-    pub use frender_core;
-    pub use frender_dom;
-    pub use pin_project_lite::pin_project;
-}
+pub mod element_macros;
 
-crate::def_intrinsic_component_props! {
-    @[__private]
+mod props_macros;
+
+frender_macros::def_intrinsic_component_props! {
+    @[crate::imports]
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {
@@ -120,7 +118,7 @@ crate::def_intrinsic_component_props! {
             access_key ? &str {"accesskey" set_access_key},
             auto_capitalize ? &str {"autocapitalize"},
             auto_focus ? bool {"autofocus"},
-            content_editable [crate::props::MaybeInherit<bool>] : () = () => {
+            content_editable [frender_html::props::MaybeInherit<bool>] : () = () => {
                 dom {
                     impl {
                         // TODO:

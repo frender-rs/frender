@@ -6,6 +6,33 @@ mod html_expanded;
 #[cfg(not(feature = "html_macro_not_expand"))]
 pub use html_expanded::html;
 
+mod imports {
+    pub use frender_core;
+    pub use frender_html;
+    pub use pin_project_lite::pin_project;
+
+    #[cfg(feature = "dom")]
+    pub use frender_dom;
+
+    #[cfg(feature = "ssr")]
+    pub use frender_ssr;
+
+    #[cfg(feature = "html_macro_not_expand")]
+    pub(crate) use super::html::element_macros::def_intrinsic_component;
+
+    // TODO: refactor
+    pub use frender_dom::props::MaybeUpdateValueWithState;
+    pub mod props {
+        pub use frender_dom::props::*;
+        pub use frender_html::props::*;
+    }
+    pub mod __private {
+        pub use frender_core::RenderState;
+        pub use pin_project_lite::pin_project;
+    }
+    pub(crate) use def_intrinsic_component as __impl_def_intrinsic_component;
+}
+
 pub mod html_components {
     pub use super::html::{
         //
