@@ -5,12 +5,9 @@ pub use frender_core::{Keyed, RenderState, StaticText, UpdateRenderState};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "dom")]
-pub use frender_hook_element::frender_dom::Dom;
+pub use frender_hook_element::frender_dom::{props::UpdateDomEventListener, Dom};
 
-pub use frender_html::{
-    intrinsic_components,
-    props::{events, UpdateDomEventListener},
-};
+pub use frender_html::{intrinsic_components, props::events};
 
 pub use frender_hook_element as hook_element;
 

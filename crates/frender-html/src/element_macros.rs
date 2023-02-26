@@ -72,12 +72,12 @@ macro_rules! __impl_def_intrinsic_component {
                     ::frender_core::UpdateRenderState<::frender_dom::Dom>
                     for $component_name::Data<TypeDefs, ComponentType>
                 where
-                    $props_name::Data<TypeDefs>: $crate::props::UpdateElement<$dom_element_ty>,
+                    $props_name::Data<TypeDefs>: ::frender_dom::props::UpdateElement<$dom_element_ty>,
                 {
                     type State =
-                        $crate::props::IntrinsicComponentRenderState<
+                        ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
                             $dom_element_ty,
-                            <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                            <$props_name::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                                 $dom_element_ty,
                             >>::State,
                         >;
@@ -96,11 +96,10 @@ macro_rules! __impl_def_intrinsic_component {
                         state: ::core::pin::Pin<&mut Self::State>,
                     ) {
                         let (node_and_mounted, state) = state.pin_project();
-                        $crate::utils::dom::update_element(
-                            node_and_mounted,
+                        node_and_mounted.update(
                             ctx,
                             |element, children_ctx| {
-                                <$props_name::Data<TypeDefs> as $crate::props::UpdateElement<
+                                <$props_name::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                                     $dom_element_ty,
                                 >>::update_element(self.0, element, children_ctx, state)
                             },

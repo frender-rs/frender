@@ -6,13 +6,6 @@ pub use element_macros::*;
 #[cfg(feature = "html_macro_not_expand")]
 use frender_macros::def_intrinsic_component_props;
 
-pub use frender_dom::props::{MaybeUpdateValue, MaybeUpdateValueByRef, MaybeUpdateValueWithState};
-
-pub mod __private {
-    pub use frender_core::RenderState;
-    pub use pin_project_lite::pin_project;
-}
-
 mod data_types;
 pub use data_types::*;
 
@@ -25,8 +18,6 @@ pub mod html;
 mod html_expanded;
 #[cfg(not(feature = "html_macro_not_expand"))]
 pub use html_expanded::html;
-
-mod utils;
 
 pub mod html_components {
     pub use super::html::{

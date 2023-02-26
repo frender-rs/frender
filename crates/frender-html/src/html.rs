@@ -2,8 +2,22 @@
 
 use crate::props::events;
 
+mod __private {
+    pub use crate::__impl_def_intrinsic_component;
+    pub use frender_core::RenderState;
+    pub use frender_dom::props;
+    pub use frender_dom::props::{
+        MaybeUpdateValue, MaybeUpdateValueByRef, MaybeUpdateValueWithState,
+    };
+
+    pub mod __private {
+        pub use frender_core::RenderState;
+        pub use pin_project_lite::pin_project;
+    }
+}
+
 crate::def_intrinsic_component_props! {
-    @[crate]
+    @[crate::html::__private]
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {

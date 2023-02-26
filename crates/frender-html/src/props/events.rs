@@ -1,3 +1,5 @@
+use ::frender_dom::props::StaticEventType;
+
 macro_rules! def_event_types {
     (
         $(
@@ -9,7 +11,7 @@ macro_rules! def_event_types {
             $(#$attr)*
             pub enum $event_enum {}
 
-            impl super::StaticEventType for $event_enum {
+            impl StaticEventType for $event_enum {
                 const EVENT_TYPE: &'static str = $event_type_str;
 
                 type Event = $event_type;
