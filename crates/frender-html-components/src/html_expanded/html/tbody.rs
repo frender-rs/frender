@@ -8,7 +8,7 @@ mod reuse {
 }
 pub use reuse::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "tbody";
 }
 mod struct_data {
@@ -16,7 +16,8 @@ mod struct_data {
     #[allow(non_camel_case_types)]
     pub struct tbody<
         TypeDefs: ?::core::marker::Sized + HtmlTableSectionElementProps::Types,
-        ComponentType: crate::props::IntrinsicComponent = super::ComponentType,
+        ComponentType: crate::imports::frender_html::props::IntrinsicComponent
+            = super::ComponentType,
     >(
         pub HtmlTableSectionElementProps::Data<TypeDefs>,
         pub ComponentType,
@@ -46,16 +47,16 @@ mod impl_update_render_state_dom {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + tbody::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
         > ::frender_core::UpdateRenderState<::frender_dom::Dom>
         for tbody::Data<TypeDefs, ComponentType>
     where
         HtmlTableSectionElementProps::Data<TypeDefs>:
-            crate::props::UpdateElement<web_sys::HtmlTableSectionElement>,
+            ::frender_dom::props::UpdateElement<web_sys::HtmlTableSectionElement>,
     {
-        type State = crate::props::IntrinsicComponentRenderState<
+        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
             web_sys::HtmlTableSectionElement,
-            <HtmlTableSectionElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            <HtmlTableSectionElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                 web_sys::HtmlTableSectionElement,
             >>::State,
         >;
@@ -68,10 +69,12 @@ mod impl_update_render_state_dom {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let (node_and_mounted, state) = state.pin_project();
-            crate::utils::dom::update_element(node_and_mounted, ctx, |element, children_ctx| {
-                <HtmlTableSectionElementProps::Data<TypeDefs> as crate::props::UpdateElement<
-                    web_sys::HtmlTableSectionElement,
-                >>::update_element(self.0, element, children_ctx, state)
+            node_and_mounted.update(ctx, |element, children_ctx| {
+                <HtmlTableSectionElementProps::Data<
+                            TypeDefs,
+                        > as ::frender_dom::props::UpdateElement<
+                            web_sys::HtmlTableSectionElement,
+                        >>::update_element(self.0, element, children_ctx, state)
             })
         }
     }
@@ -81,7 +84,7 @@ mod impl_update_render_state_ssr {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + tbody::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
             W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
         > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
         for tbody::Data<TypeDefs, ComponentType>

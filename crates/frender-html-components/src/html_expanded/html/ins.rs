@@ -4,7 +4,7 @@ pub fn ins() -> Building<TypesInitial> {
 }
 pub use super::del::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "ins";
 }
 pub type Data<TypeDefs> = super::del::Data<TypeDefs, ComponentType>;

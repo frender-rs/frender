@@ -4,7 +4,7 @@ pub fn h2() -> Building<TypesInitial> {
 }
 pub use super::abbr::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "h2";
 }
 pub type Data<TypeDefs> = super::abbr::Data<TypeDefs, ComponentType>;

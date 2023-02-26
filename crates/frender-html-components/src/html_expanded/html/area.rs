@@ -8,7 +8,7 @@ mod reuse {
 }
 pub use reuse::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "area";
 }
 mod struct_data {
@@ -16,8 +16,12 @@ mod struct_data {
     #[allow(non_camel_case_types)]
     pub struct area<
         TypeDefs: ?::core::marker::Sized + HtmlAreaElementProps::Types,
-        ComponentType: crate::props::IntrinsicComponent = super::ComponentType,
-    >(pub HtmlAreaElementProps::Data<TypeDefs>, pub ComponentType);
+        ComponentType: crate::imports::frender_html::props::IntrinsicComponent
+            = super::ComponentType,
+    >(
+        pub HtmlAreaElementProps::Data<TypeDefs>,
+        pub ComponentType,
+    );
 }
 pub use struct_data::area as Data;
 pub type DataInitial = Data<TypesInitial>;
@@ -40,15 +44,16 @@ mod impl_update_render_state_dom {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + area::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
         > ::frender_core::UpdateRenderState<::frender_dom::Dom>
         for area::Data<TypeDefs, ComponentType>
     where
-        HtmlAreaElementProps::Data<TypeDefs>: crate::props::UpdateElement<web_sys::HtmlAreaElement>,
+        HtmlAreaElementProps::Data<TypeDefs>:
+            ::frender_dom::props::UpdateElement<web_sys::HtmlAreaElement>,
     {
-        type State = crate::props::IntrinsicComponentRenderState<
+        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
             web_sys::HtmlAreaElement,
-            <HtmlAreaElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            <HtmlAreaElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                 web_sys::HtmlAreaElement,
             >>::State,
         >;
@@ -61,8 +66,8 @@ mod impl_update_render_state_dom {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let (node_and_mounted, state) = state.pin_project();
-            crate::utils::dom::update_element(node_and_mounted, ctx, |element, children_ctx| {
-                <HtmlAreaElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            node_and_mounted.update(ctx, |element, children_ctx| {
+                <HtmlAreaElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                     web_sys::HtmlAreaElement,
                 >>::update_element(self.0, element, children_ctx, state)
             })
@@ -74,7 +79,7 @@ mod impl_update_render_state_ssr {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + area::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
             W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
         > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
         for area::Data<TypeDefs, ComponentType>

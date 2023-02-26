@@ -15,7 +15,7 @@ pub fn cargo_expand_html() -> io::Result<String> {
     let output = std::process::Command::new("cargo")
         .arg("expand")
         .arg("-p")
-        .arg("frender-html")
+        .arg("frender-html-components")
         .arg("html")
         .arg("--features")
         .arg("html_macro_not_expand")

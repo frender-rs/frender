@@ -8,7 +8,7 @@ mod reuse {
 }
 pub use reuse::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "meter";
 }
 mod struct_data {
@@ -16,8 +16,12 @@ mod struct_data {
     #[allow(non_camel_case_types)]
     pub struct meter<
         TypeDefs: ?::core::marker::Sized + HtmlMeterElementProps::Types,
-        ComponentType: crate::props::IntrinsicComponent = super::ComponentType,
-    >(pub HtmlMeterElementProps::Data<TypeDefs>, pub ComponentType);
+        ComponentType: crate::imports::frender_html::props::IntrinsicComponent
+            = super::ComponentType,
+    >(
+        pub HtmlMeterElementProps::Data<TypeDefs>,
+        pub ComponentType,
+    );
 }
 pub use struct_data::meter as Data;
 pub type DataInitial = Data<TypesInitial>;
@@ -40,16 +44,16 @@ mod impl_update_render_state_dom {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + meter::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
         > ::frender_core::UpdateRenderState<::frender_dom::Dom>
         for meter::Data<TypeDefs, ComponentType>
     where
         HtmlMeterElementProps::Data<TypeDefs>:
-            crate::props::UpdateElement<web_sys::HtmlMeterElement>,
+            ::frender_dom::props::UpdateElement<web_sys::HtmlMeterElement>,
     {
-        type State = crate::props::IntrinsicComponentRenderState<
+        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
             web_sys::HtmlMeterElement,
-            <HtmlMeterElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            <HtmlMeterElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                 web_sys::HtmlMeterElement,
             >>::State,
         >;
@@ -62,8 +66,8 @@ mod impl_update_render_state_dom {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let (node_and_mounted, state) = state.pin_project();
-            crate::utils::dom::update_element(node_and_mounted, ctx, |element, children_ctx| {
-                <HtmlMeterElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            node_and_mounted.update(ctx, |element, children_ctx| {
+                <HtmlMeterElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                     web_sys::HtmlMeterElement,
                 >>::update_element(self.0, element, children_ctx, state)
             })
@@ -75,7 +79,7 @@ mod impl_update_render_state_ssr {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + meter::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
             W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
         > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
         for meter::Data<TypeDefs, ComponentType>

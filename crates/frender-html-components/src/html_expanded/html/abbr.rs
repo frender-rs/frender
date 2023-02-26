@@ -8,7 +8,7 @@ mod reuse {
 }
 pub use reuse::{prelude, Building, Types, TypesInitial, ValidTypes};
 pub struct ComponentType;
-impl crate::props::IntrinsicComponent for ComponentType {
+impl crate::imports::frender_html::props::IntrinsicComponent for ComponentType {
     const INTRINSIC_TAG: &'static ::core::primitive::str = "abbr";
 }
 mod struct_data {
@@ -16,8 +16,12 @@ mod struct_data {
     #[allow(non_camel_case_types)]
     pub struct abbr<
         TypeDefs: ?::core::marker::Sized + HtmlElementProps::Types,
-        ComponentType: crate::props::IntrinsicComponent = super::ComponentType,
-    >(pub HtmlElementProps::Data<TypeDefs>, pub ComponentType);
+        ComponentType: crate::imports::frender_html::props::IntrinsicComponent
+            = super::ComponentType,
+    >(
+        pub HtmlElementProps::Data<TypeDefs>,
+        pub ComponentType,
+    );
 }
 pub use struct_data::abbr as Data;
 pub type DataInitial = Data<TypesInitial>;
@@ -40,15 +44,15 @@ mod impl_update_render_state_dom {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + abbr::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
         > ::frender_core::UpdateRenderState<::frender_dom::Dom>
         for abbr::Data<TypeDefs, ComponentType>
     where
-        HtmlElementProps::Data<TypeDefs>: crate::props::UpdateElement<web_sys::HtmlElement>,
+        HtmlElementProps::Data<TypeDefs>: ::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
     {
-        type State = crate::props::IntrinsicComponentRenderState<
+        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
             web_sys::HtmlElement,
-            <HtmlElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            <HtmlElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                 web_sys::HtmlElement,
             >>::State,
         >;
@@ -61,8 +65,8 @@ mod impl_update_render_state_dom {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let (node_and_mounted, state) = state.pin_project();
-            crate::utils::dom::update_element(node_and_mounted, ctx, |element, children_ctx| {
-                <HtmlElementProps::Data<TypeDefs> as crate::props::UpdateElement<
+            node_and_mounted.update(ctx, |element, children_ctx| {
+                <HtmlElementProps::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::update_element(self.0, element, children_ctx, state)
             })
@@ -74,7 +78,7 @@ mod impl_update_render_state_ssr {
     use super::super::*;
     impl<
             TypeDefs: ?::core::marker::Sized + abbr::Types,
-            ComponentType: crate::props::IntrinsicComponent,
+            ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
             W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin,
         > ::frender_core::UpdateRenderState<::frender_ssr::SsrContext<W>>
         for abbr::Data<TypeDefs, ComponentType>

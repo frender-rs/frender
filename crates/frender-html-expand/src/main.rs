@@ -10,7 +10,7 @@ mod utils;
 
 fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
-    let src_root = workspace_root.join("crates/frender-html/src");
+    let src_root = workspace_root.join("crates/frender-html-components/src");
 
     let code = utils::cargo_expand_html()?.replace(
         r#"#[cfg(feature = "html_macro_not_expand")]"#,
@@ -23,7 +23,7 @@ fn main() -> io::Result<()> {
 
     write_mod_content_into_dir(&src_root, "html_expanded", code.attrs, code.items, 2)?;
 
-    utils::cargo_fmt_package("frender-html")
+    utils::cargo_fmt_package("frender-html-components")
 }
 
 pub fn write_mod_content_into_dir(

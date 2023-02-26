@@ -109,7 +109,7 @@ features = [
 ]
 
 [features]
-default = ["dom", "ssr", "html_macro_not_expand"]
+default = ["dom", "ssr"]
 dom = ["dep:frender-dom", "dep:web-sys"]
 ssr = ["dep:frender-ssr"]
 html_macro_not_expand = ["dep:frender-macros"]
