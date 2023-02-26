@@ -30,6 +30,7 @@ mod imports {
         pub use frender_core::RenderState;
         pub use pin_project_lite::pin_project;
     }
+    #[cfg(feature = "html_macro_not_expand")]
     pub(crate) use def_intrinsic_component as __impl_def_intrinsic_component;
 }
 
