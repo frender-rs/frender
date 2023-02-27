@@ -210,11 +210,13 @@ impl Parse for Fields {
     }
 }
 
+#[derive(Clone)]
 pub struct ComponentNames {
     pub colon_token: syn::Token![:],
     pub names: Punctuated<syn::Ident, syn::Token![,]>,
 }
 
+#[derive(Clone)]
 pub struct DomElement {
     pub ty: syn::Type,
     pub component_names: Option<ComponentNames>,
@@ -242,6 +244,7 @@ impl Parse for DomElement {
     }
 }
 
+#[derive(Clone)]
 pub struct IntrinsicComponentPropsData {
     pub attrs: Vec<syn::Attribute>,
     pub vis: syn::Visibility,
@@ -252,6 +255,7 @@ pub struct IntrinsicComponentPropsData {
     pub inherits: Vec<Bracketed<IntrinsicComponentProps>>,
 }
 
+#[derive(Clone)]
 pub enum IntrinsicComponentProps {
     Virtual(IntrinsicComponentPropsVirtual),
     Data(IntrinsicComponentPropsData),

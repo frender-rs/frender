@@ -4,5 +4,3 @@ use frender_html::props::events;
 pub mod element_macros;
 #[cfg(feature = "fully-typed")]
 pub mod fully_typed;
-#[cfg(feature = "html_macro_not_expand")]
-mod props_macros;

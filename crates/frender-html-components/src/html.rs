@@ -5,14 +5,12 @@ use frender_html::props::events;
 #[cfg(feature = "html_macro_not_expand")]
 pub mod element_macros;
 
-#[cfg(feature = "html_macro_not_expand")]
-mod props_macros;
-
-props_macros::def_props_fully_and_simply! {
-    pub full(fully_typed  "fully-typed")
-    pub simple(simply_typed "simply-typed")
-
+frender_macros::def_intrinsic_component_props! {
     @[crate::imports]
+
+    fully_typed (pub mod fully_typed  "fully-typed" )
+    simply_typed(pub mod simply_typed "simply-typed")
+
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {

@@ -4,8 +4,6 @@ use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::{quote, quote_spanned, ToTokens};
 use syn::parse_quote;
 
-use crate::utils::grouped::{Braced, Bracketed};
-
 use super::{
     kw, Field, FieldDeclaration, FieldDeclarationEventListener, FieldDeclarationInherit,
     FieldDeclarationMaybe, IntrinsicComponentProps, IntrinsicComponentPropsData,
@@ -68,12 +66,14 @@ impl FieldDeclaration {
                 } else {
                     quote!(state.#field_name)
                 };
-                Cow::Owned(quote!(#crate_path::frender_dom::props::UpdateElement::update_element(
-                    this.#field_name,
-                    element.as_ref(),
-                    children_ctx,
-                    #state
-                );))
+                Cow::Owned(quote!(
+                    #crate_path::frender_dom::props::UpdateElement::update_element(
+                        this.#field_name,
+                        element.as_ref(),
+                        children_ctx,
+                        #state
+                    );
+                ))
             }
         }
     }
@@ -262,7 +262,9 @@ impl FieldDeclaration {
                 } else {
                     quote!(MaybeUpdateValue)
                 };
-                Some(Cow::Owned(quote!(#crate_path::frender_html::props::#trait_name <#ty>)))
+                Some(Cow::Owned(quote!(
+                    #crate_path::frender_html::props::#trait_name <#ty>
+                )))
             }
             FieldDeclaration::Full(v) => v.bounds.as_ref().map(|b| &b.content).map(Cow::Borrowed),
             FieldDeclaration::EventListener(_) => None,
@@ -309,10 +311,7 @@ impl FieldDeclaration {
 }
 
 impl IntrinsicComponentPropsData {
-    pub fn into_ts(self, explicit_path: Option<&TokenStream>) -> TokenStream {
-        let crate_path =
-            explicit_path.map_or_else(|| Cow::Owned(quote!(::frender_html)), Cow::Borrowed);
-
+    pub fn into_ts_fully(self, crate_path: &TokenStream) -> TokenStream {
         let Self {
             attrs,
             vis,
@@ -630,7 +629,7 @@ impl IntrinsicComponentPropsData {
                 },
             );
 
-            inherit.into_ts(Some(&crate_path))
+            inherit.into_ts(&crate_path, Self::into_ts_fully)
         });
 
         let impl_components = dom_element
@@ -797,12 +796,16 @@ impl IntrinsicComponentProps {
         }
     }
 
-    pub fn into_ts(self, explicit_path: Option<&TokenStream>) -> TokenStream {
+    pub fn into_ts(
+        self,
+        explicit_path: &TokenStream,
+        mut data_into_ts: impl FnMut(IntrinsicComponentPropsData, &TokenStream) -> TokenStream,
+    ) -> TokenStream {
         self.try_unzip().map_or_else(
             |err| err.into_compile_error(),
             |data| {
                 data.into_iter()
-                    .map(|data| data.into_ts(explicit_path))
+                    .map(|data| data_into_ts(data, explicit_path))
                     .collect()
             },
         )

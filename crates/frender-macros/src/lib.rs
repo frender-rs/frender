@@ -75,10 +75,11 @@ pub fn __impl_auto_prepend_intrinsic_components(input: TokenStream) -> TokenStre
 #[cfg(feature = "intrinsic-component")]
 #[proc_macro]
 pub fn def_intrinsic_component_props(input: TokenStream) -> TokenStream {
-    let value: utils::prefix_path::PrefixPath<intrinsic_component::IntrinsicComponentPropsData> =
-        parse_macro_input!(input);
+    let value: utils::prefix_path::PrefixPath<
+        intrinsic_component::IntrinsicComponentPropsDataWithModInfo,
+    > = parse_macro_input!(input);
+
     value
-        .rest
-        .into_ts(value.path.as_ref().map(|p| &p.bracketed_path.content))
+        .map(intrinsic_component::IntrinsicComponentPropsDataWithModInfo::into_ts)
         .into()
 }

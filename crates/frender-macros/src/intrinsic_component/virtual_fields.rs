@@ -4,6 +4,7 @@ use crate::utils::grouped::{Braced, Bracketed};
 
 use super::{Fields, IntrinsicComponentProps};
 
+#[derive(Clone)]
 pub struct IntrinsicComponentPropsVirtual {
     pub virtual_token: syn::Token![virtual],
     pub fields: Braced<Fields>,
