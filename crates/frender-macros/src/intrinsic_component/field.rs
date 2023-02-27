@@ -27,13 +27,13 @@ impl Field {
 
         match &self.declaration {
             super::FieldDeclaration::Inherit(_) => Some(quote! {
-                #crate_path::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+                #crate_path::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                     self.project(). #name,
                     cx,
                 )
             }),
             _ if name == "children" => Some(quote! {
-                #crate_path::__private::RenderState::poll_reactive(
+                #crate_path::frender_core::RenderState::poll_reactive(
                     self.project(). #name,
                     cx
                 )
@@ -108,7 +108,7 @@ impl Field {
                 let ty = &m.ty;
                 let prop_name = m.to_html_prop_name(name);
                 Some(quote! {
-                    <TypeDefs::#name as ::frender_dom::props::MaybeUpdateValueWithState<#ty>>::maybe_into_html_attribute_value(
+                    <TypeDefs::#name as ::frender_html::props::MaybeUpdateValueWithState<#ty>>::maybe_into_html_attribute_value(
                         this.#name
                     ).map(|value|
                         (

@@ -59,7 +59,7 @@ impl FieldDeclaration {
             ),
             FieldDeclaration::EventListener(FieldDeclarationEventListener { ty, .. }) => {
                 Cow::Owned(quote! {
-                    #crate_path ::props::UpdateDomEventListener::<#ty>::update_dom_event_listener(this.#field_name, element, state.#field_name);
+                    #crate_path::frender_html::props::UpdateDomEventListener::<#ty>::update_dom_event_listener(this.#field_name, element, state.#field_name);
                 })
             }
             FieldDeclaration::Inherit(_) => {
@@ -68,7 +68,7 @@ impl FieldDeclaration {
                 } else {
                     quote!(state.#field_name)
                 };
-                Cow::Owned(quote!(#crate_path ::props::UpdateElement::update_element(
+                Cow::Owned(quote!(#crate_path::frender_dom::props::UpdateElement::update_element(
                     this.#field_name,
                     element.as_ref(),
                     children_ctx,
@@ -103,7 +103,7 @@ impl FieldDeclaration {
                 let base = &v.from_path;
                 let dom_element_ty = &v.dom_element_ty;
                 Some(quote!(
-                    #base ::Data<TypeDefs::#field_name>: #crate_path ::props::UpdateElement<#dom_element_ty>
+                    #base ::Data<TypeDefs::#field_name>: #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>
                 ))
             }
         }
@@ -156,7 +156,7 @@ impl FieldDeclaration {
                     pin: None,
                     field_name,
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
-                        <TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValueWithState<#ty>>::State
+                        <TypeDefs::#field_name as ::frender_html::props::MaybeUpdateValueWithState<#ty>>::State
                     })),
                     bounds: None,
                     initialize_state: Cow::Owned(
@@ -201,11 +201,11 @@ impl FieldDeclaration {
                     pin: None,
                     field_name,
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
-                            <TypeDefs::#field_name as #crate_path::props::UpdateDomEventListener<#ty>>::State
+                            <TypeDefs::#field_name as #crate_path::frender_html::props::UpdateDomEventListener<#ty>>::State
                     })),
                     bounds: None,
                     initialize_state: Cow::Owned(quote!(
-                        #crate_path::props::UpdateDomEventListener::<#ty>::initialize_dom_event_listener_state(
+                        #crate_path::frender_html::props::UpdateDomEventListener::<#ty>::initialize_dom_event_listener_state(
                             this.#field_name,
                             element,
                         )
@@ -221,13 +221,13 @@ impl FieldDeclaration {
                     pin: Some(Default::default()),
                     field_name,
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
-                        <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::State
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>>::State
                     })),
                     bounds: Some(Cow::Owned(quote! {
-                        #crate_path ::props::IntrinsicComponentPollReactive
+                        #crate_path::frender_dom::props::IntrinsicComponentPollReactive
                     })),
                     initialize_state: Cow::Owned(quote! {
-                        <#path ::Data<TypeDefs::#field_name> as #crate_path ::props::UpdateElement<#dom_element_ty>>::initialize_state(
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>>::initialize_state(
                             this.#field_name, element, children_ctx
                         )
                     }),
@@ -262,7 +262,7 @@ impl FieldDeclaration {
                 } else {
                     quote!(MaybeUpdateValue)
                 };
-                Some(Cow::Owned(quote!(#crate_path ::#trait_name <#ty>)))
+                Some(Cow::Owned(quote!(#crate_path::frender_html::props::#trait_name <#ty>)))
             }
             FieldDeclaration::Full(v) => v.bounds.as_ref().map(|b| &b.content).map(Cow::Borrowed),
             FieldDeclaration::EventListener(_) => None,
@@ -425,10 +425,10 @@ impl IntrinsicComponentPropsData {
             let dom_el_ty = &only_inherit.dom_element_ty;
 
             dom_state_type = quote! {
-                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::props::UpdateElement<#dom_el_ty>>::State
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_el_ty>>::State
             };
             dom_state_initialize = quote! {
-                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::props::UpdateElement<#dom_el_ty>>::initialize_state(
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_el_ty>>::initialize_state(
                     this.#field_name,
                     element,
                     children_ctx,
@@ -496,7 +496,7 @@ impl IntrinsicComponentPropsData {
                         #(#dom_state_type_items)*
                     }
 
-                    #crate_path ::__private::pin_project! {
+                    #crate_path ::pin_project! {
                         #[project = RenderStateProj]
                         pub struct RenderState<TypeDefs: RenderStateTypes>
                         where TypeDefs: ?::core::marker::Sized {
@@ -515,7 +515,7 @@ impl IntrinsicComponentPropsData {
 
                     impl <
                         TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > #crate_path ::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
+                    > #crate_path::frender_dom::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
                         #[inline]
                         fn intrinsic_component_poll_reactive(
                             self: ::core::pin::Pin<&mut Self>,
@@ -640,7 +640,7 @@ impl IntrinsicComponentPropsData {
                 let mut component_names = component_names.iter();
                 let component_name = component_names.next().unwrap(); // TODO: tolerant
                 quote! {
-                    #crate_path::__impl_def_intrinsic_component! {
+                    #crate_path::def_intrinsic_component! {
                         #vis
                         #component_name
                         // alias_component_name
@@ -733,7 +733,7 @@ impl IntrinsicComponentPropsData {
                     use super::super::*;
                     impl<
                         TypeDefs: ?::core::marker::Sized + super::Types,
-                    > #crate_path ::props::UpdateElement<#dom_element_type> for super::Data<TypeDefs>
+                    > #crate_path::frender_dom::props::UpdateElement<#dom_element_type> for super::Data<TypeDefs>
                     where
                         #(#dom_bounds),*
                     {

@@ -11,7 +11,7 @@ impl FieldDeclarationEventListener {
     pub fn to_ts_dom_bounds(&self, crate_path: impl ToTokens) -> proc_macro2::TokenStream {
         let Self { ty, .. } = self;
         quote! {
-            #crate_path ::props::UpdateDomEventListener<#ty>
+            #crate_path::frender_html::props::UpdateDomEventListener<#ty>
         }
     }
 }

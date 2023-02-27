@@ -72,7 +72,7 @@ impl FieldDeclarationMaybe {
                             }
                         } else {
                             quote! {
-                                #crate_path::props::UpdateElementAttribute::update_element_attribute(#deref_star v, dom_element, #html_prop_name)
+                                #crate_path::frender_dom::props::UpdateElementAttribute::update_element_attribute(#deref_star v, dom_element, #html_prop_name)
                             }
                         };
 
@@ -147,7 +147,7 @@ impl FieldDeclarationMaybe {
         let remove = self.to_ts_closure_remove(&html_prop_name);
 
         Some(quote! {
-            <TypeDefs::#field_name as ::frender_dom::props::MaybeUpdateValueWithState<#ty>>::initialize_state_and_update(
+            <TypeDefs::#field_name as ::frender_html::props::MaybeUpdateValueWithState<#ty>>::initialize_state_and_update(
                 this.#field_name,
                 #update,
                 #remove
@@ -197,7 +197,7 @@ impl FieldDeclarationMaybe {
         };
 
         quote! {
-            <TypeDefs::#field_name as ::frender_dom::props::#trait_name<#ty>>::#trait_method(
+            <TypeDefs::#field_name as ::frender_html::props::#trait_name<#ty>>::#trait_method(
                 #by_ref this.#field_name,
                 #state_and_comma
                 #update,
