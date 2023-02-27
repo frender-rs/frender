@@ -938,10 +938,10 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlMediaElementProps: ?::core::marker::Sized + HtmlMediaElementProps::Types;
-        type height: crate::imports::MaybeUpdateValueWithState<u32>;
-        type plays_inline: crate::imports::MaybeUpdateValueWithState<bool>;
-        type poster: crate::imports::MaybeUpdateValueWithState<str>;
-        type width: crate::imports::MaybeUpdateValueWithState<u32>;
+        type height: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
+        type plays_inline: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type poster: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
     }
 }
 pub use trait_types::Types;
@@ -979,7 +979,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlMediaElementProps: crate::imports::props::IntrinsicComponentPollReactive;
+        type HtmlMediaElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type height;
         type plays_inline;
         type poster;
@@ -1135,14 +1135,15 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        for RenderState<TypeDefs>
     {
         #[inline]
         fn intrinsic_component_poll_reactive(
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlMediaElementProps,
                 cx,
             )
@@ -1169,7 +1170,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -1183,7 +1184,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::id`]
         #[inline(always)]
-        pub fn id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -1197,7 +1198,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::part`]
         #[inline(always)]
-        pub fn part<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn part<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -1713,7 +1714,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::access_key`]
         #[inline(always)]
-        pub fn access_key<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn access_key<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -1727,7 +1730,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::auto_capitalize`]
         #[inline(always)]
-        pub fn auto_capitalize<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn auto_capitalize<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -1741,7 +1746,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::auto_focus`]
         #[inline(always)]
-        pub fn auto_focus<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_focus<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -1771,7 +1778,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::context_menu`]
         #[inline(always)]
-        pub fn context_menu<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn context_menu<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -1785,7 +1794,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::dir`]
         #[inline(always)]
-        pub fn dir<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn dir<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -1799,7 +1808,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::draggable`]
         #[inline(always)]
-        pub fn draggable<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn draggable<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -1813,7 +1824,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::enter_key_hint`]
         #[inline(always)]
-        pub fn enter_key_hint<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn enter_key_hint<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -1827,7 +1840,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::hidden`]
         #[inline(always)]
-        pub fn hidden<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn hidden<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -1841,7 +1854,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::inert`]
         #[inline(always)]
-        pub fn inert<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn inert<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -1855,7 +1868,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::input_mode`]
         #[inline(always)]
-        pub fn input_mode<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn input_mode<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -1869,7 +1884,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::is`]
         #[inline(always)]
-        pub fn is<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn is<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1883,7 +1898,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::item_id`]
         #[inline(always)]
-        pub fn item_id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1897,7 +1912,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::item_prop`]
         #[inline(always)]
-        pub fn item_prop<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_prop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1911,7 +1926,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::item_ref`]
         #[inline(always)]
-        pub fn item_ref<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_ref<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1925,7 +1940,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::item_scope`]
         #[inline(always)]
-        pub fn item_scope<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_scope<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1939,7 +1956,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::item_type`]
         #[inline(always)]
-        pub fn item_type<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1953,7 +1970,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::lang`]
         #[inline(always)]
-        pub fn lang<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn lang<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1967,7 +1984,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::nonce`]
         #[inline(always)]
-        pub fn nonce<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn nonce<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1981,7 +1998,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::role`]
         #[inline(always)]
-        pub fn role<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn role<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1995,7 +2012,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::slot`]
         #[inline(always)]
-        pub fn slot<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn slot<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -2009,7 +2026,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::spellcheck`]
         #[inline(always)]
-        pub fn spellcheck<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn spellcheck<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -2023,7 +2042,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::style`]
         #[inline(always)]
-        pub fn style<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn style<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -2037,7 +2056,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::tab_index`]
         #[inline(always)]
-        pub fn tab_index<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn tab_index<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -2051,7 +2070,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::title`]
         #[inline(always)]
-        pub fn title<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn title<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -2065,7 +2084,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::translate`]
         #[inline(always)]
-        pub fn translate<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn translate<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -2079,7 +2098,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::virtual_keyboard_policy`]
         #[inline(always)]
-        pub fn virtual_keyboard_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn virtual_keyboard_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -2527,7 +2548,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::auto_play`]
         #[inline(always)]
-        pub fn auto_play<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_play<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_play: V,
         ) -> super::Building<super::overwrite::auto_play<TypeDefs, V>> {
@@ -2541,7 +2564,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::controls`]
         #[inline(always)]
-        pub fn controls<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn controls<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             controls: V,
         ) -> super::Building<super::overwrite::controls<TypeDefs, V>> {
@@ -2555,7 +2578,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::cross_origin`]
         #[inline(always)]
-        pub fn cross_origin<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn cross_origin<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             cross_origin: V,
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
@@ -2569,7 +2594,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::loop_`]
         #[inline(always)]
-        pub fn loop_<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn loop_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             loop_: V,
         ) -> super::Building<super::overwrite::loop_<TypeDefs, V>> {
@@ -2583,7 +2608,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::muted`]
         #[inline(always)]
-        pub fn muted<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn muted<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             muted: V,
         ) -> super::Building<super::overwrite::muted<TypeDefs, V>> {
@@ -2597,7 +2622,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::preload`]
         #[inline(always)]
-        pub fn preload<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn preload<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             preload: V,
         ) -> super::Building<super::overwrite::preload<TypeDefs, V>> {
@@ -2611,7 +2636,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlMediaElementProps::src`]
         #[inline(always)]
-        pub fn src<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn src<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -2940,7 +2965,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn height<V: crate::imports::MaybeUpdateValueWithState<u32>>(
+        pub fn height<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>(
             self,
             height: V,
         ) -> super::Building<super::overwrite::height<TypeDefs, V>> {
@@ -2953,7 +2978,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn plays_inline<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn plays_inline<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             plays_inline: V,
         ) -> super::Building<super::overwrite::plays_inline<TypeDefs, V>> {
@@ -2966,7 +2993,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn poster<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn poster<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             poster: V,
         ) -> super::Building<super::overwrite::poster<TypeDefs, V>> {
@@ -2979,7 +3006,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn width<V: crate::imports::MaybeUpdateValueWithState<u32>>(
+        pub fn width<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>(
             self,
             width: V,
         ) -> super::Building<super::overwrite::width<TypeDefs, V>> {
@@ -2998,28 +3025,29 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::props::UpdateElement<web_sys::HtmlVideoElement> for super::Data<TypeDefs>
+        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlVideoElement>
+        for super::Data<TypeDefs>
     where
         HtmlMediaElementProps::Data<TypeDefs::HtmlMediaElementProps>:
-            crate::imports::props::UpdateElement<web_sys::HtmlMediaElement>,
+            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlMediaElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlMediaElementProps = <HtmlMediaElementProps::Data<
                     TypeDefs::HtmlMediaElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlMediaElement,
                 >>::State,
-                height = <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                height = <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::State,
-                plays_inline = <TypeDefs::plays_inline as ::frender_dom::props::MaybeUpdateValueWithState<
+                plays_inline = <TypeDefs::plays_inline as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                poster = <TypeDefs::poster as ::frender_dom::props::MaybeUpdateValueWithState<
+                poster = <TypeDefs::poster as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                width = <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                width = <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::State,
             >,
@@ -3033,35 +3061,35 @@ mod impl_update_element {
             super::render_state::RenderState {
                 HtmlMediaElementProps: <HtmlMediaElementProps::Data<
                     TypeDefs::HtmlMediaElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlMediaElement,
                 >>::initialize_state(this.HtmlMediaElementProps, element, children_ctx),
-                height: <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                height: <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::initialize_state_and_update(
                     this.height,
                     |v| element.set_height(*v),
                     || dom_element.remove_attribute("height").unwrap(),
                 ),
-                plays_inline: <TypeDefs::plays_inline as ::frender_dom::props::MaybeUpdateValueWithState<
+                plays_inline: <TypeDefs::plays_inline as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.plays_inline,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         *v,
                         dom_element,
                         "playsinline",
                     ),
                     || dom_element.remove_attribute("playsinline").unwrap(),
                 ),
-                poster: <TypeDefs::poster as ::frender_dom::props::MaybeUpdateValueWithState<
+                poster: <TypeDefs::poster as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.poster,
                     |v| element.set_poster(v),
                     || dom_element.remove_attribute("poster").unwrap(),
                 ),
-                width: <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                width: <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::initialize_state_and_update(
                     this.width,
@@ -3078,13 +3106,13 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::props::UpdateElement::update_element(
+            crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlMediaElementProps,
                 element.as_ref(),
                 children_ctx,
                 state.HtmlMediaElementProps,
             );
-            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                 u32,
             >>::maybe_update_value_with_state(
                 this.height,
@@ -3092,19 +3120,19 @@ mod impl_update_element {
                 |v| element.set_height(*v),
                 || dom_element.remove_attribute("height").unwrap(),
             );
-            <TypeDefs::plays_inline as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::plays_inline as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.plays_inline,
                 state.plays_inline,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     *v,
                     dom_element,
                     "playsinline",
                 ),
                 || dom_element.remove_attribute("playsinline").unwrap(),
             );
-            <TypeDefs::poster as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::poster as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.poster,
@@ -3112,7 +3140,7 @@ mod impl_update_element {
                 |v| element.set_poster(v),
                 || dom_element.remove_attribute("poster").unwrap(),
             );
-            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                 u32,
             >>::maybe_update_value_with_state(
                 this.width,
@@ -3158,7 +3186,7 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                                     u32,
                                 >>::maybe_into_html_attribute_value(this.height)
                                     .map(|value| (
@@ -3171,7 +3199,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::plays_inline as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::plays_inline as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.plays_inline)
                                     .map(|value| (
@@ -3184,7 +3212,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::poster as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::poster as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.poster)
                                     .map(|value| (
@@ -3197,7 +3225,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                                     u32,
                                 >>::maybe_into_html_attribute_value(this.width)
                                     .map(|value| (

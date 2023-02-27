@@ -926,19 +926,21 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type allow: crate::imports::MaybeUpdateValueWithState<str>;
-        type allow_fullscreen: crate::imports::MaybeUpdateValueWithState<bool>;
-        type allow_payment_request: crate::imports::MaybeUpdateValueWithState<bool>;
-        type csp: crate::imports::MaybeUpdateValueWithState<str>;
-        type fetch_priority: crate::imports::MaybeUpdateValueWithState<str>;
-        type height: crate::imports::MaybeUpdateValueWithState<str>;
-        type loading: crate::imports::MaybeUpdateValueWithState<str>;
-        type name: crate::imports::MaybeUpdateValueWithState<str>;
-        type referrer_policy: crate::imports::MaybeUpdateValueWithState<str>;
-        type sandbox: crate::imports::MaybeUpdateValueWithState<str>;
-        type src: crate::imports::MaybeUpdateValueWithState<str>;
-        type src_doc: crate::imports::MaybeUpdateValueWithState<str>;
-        type width: crate::imports::MaybeUpdateValueWithState<str>;
+        type allow: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type allow_fullscreen: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type allow_payment_request: crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            bool,
+        >;
+        type csp: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type fetch_priority: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type height: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type loading: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type name: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type sandbox: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type src: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type src_doc: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -993,7 +995,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlElementProps: crate::imports::props::IntrinsicComponentPollReactive;
+        type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type allow;
         type allow_fullscreen;
         type allow_payment_request;
@@ -1241,14 +1243,15 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        for RenderState<TypeDefs>
     {
         #[inline]
         fn intrinsic_component_poll_reactive(
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlElementProps,
                 cx,
             )
@@ -1284,7 +1287,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -1307,7 +1310,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
-        pub fn id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -1330,7 +1333,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
-        pub fn part<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn part<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -2168,7 +2171,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
-        pub fn access_key<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn access_key<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -2191,7 +2196,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
-        pub fn auto_capitalize<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn auto_capitalize<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -2214,7 +2221,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
-        pub fn auto_focus<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_focus<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -2260,7 +2269,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
-        pub fn context_menu<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn context_menu<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -2283,7 +2294,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
-        pub fn dir<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn dir<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -2306,7 +2317,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
-        pub fn draggable<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn draggable<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -2329,7 +2342,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
-        pub fn enter_key_hint<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn enter_key_hint<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -2352,7 +2367,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
-        pub fn hidden<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn hidden<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -2375,7 +2390,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
-        pub fn inert<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn inert<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -2398,7 +2413,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
-        pub fn input_mode<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn input_mode<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -2421,7 +2438,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
-        pub fn is<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn is<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -2444,7 +2461,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
-        pub fn item_id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -2467,7 +2484,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
-        pub fn item_prop<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_prop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -2490,7 +2507,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
-        pub fn item_ref<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_ref<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -2513,7 +2530,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
-        pub fn item_scope<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_scope<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -2536,7 +2555,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
-        pub fn item_type<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -2559,7 +2578,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
-        pub fn lang<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn lang<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -2582,7 +2601,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
-        pub fn nonce<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn nonce<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -2605,7 +2624,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
-        pub fn role<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn role<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -2628,7 +2647,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
-        pub fn slot<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn slot<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -2651,7 +2670,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
-        pub fn spellcheck<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn spellcheck<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -2674,7 +2695,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
-        pub fn style<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn style<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -2697,7 +2718,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
-        pub fn tab_index<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn tab_index<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -2720,7 +2741,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
-        pub fn title<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn title<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -2743,7 +2764,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
-        pub fn translate<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn translate<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -2766,7 +2787,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
-        pub fn virtual_keyboard_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn virtual_keyboard_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -3469,7 +3492,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn allow<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn allow<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             allow: V,
         ) -> super::Building<super::overwrite::allow<TypeDefs, V>> {
@@ -3491,7 +3514,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn allow_fullscreen<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn allow_fullscreen<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             allow_fullscreen: V,
         ) -> super::Building<super::overwrite::allow_fullscreen<TypeDefs, V>> {
@@ -3513,7 +3538,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn allow_payment_request<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn allow_payment_request<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             allow_payment_request: V,
         ) -> super::Building<super::overwrite::allow_payment_request<TypeDefs, V>> {
@@ -3535,7 +3562,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn csp<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn csp<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             csp: V,
         ) -> super::Building<super::overwrite::csp<TypeDefs, V>> {
@@ -3557,7 +3584,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn fetch_priority<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn fetch_priority<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             fetch_priority: V,
         ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>> {
@@ -3579,7 +3608,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn height<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn height<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             height: V,
         ) -> super::Building<super::overwrite::height<TypeDefs, V>> {
@@ -3601,7 +3630,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn loading<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn loading<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             loading: V,
         ) -> super::Building<super::overwrite::loading<TypeDefs, V>> {
@@ -3623,7 +3652,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn name<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn name<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             name: V,
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
@@ -3645,7 +3674,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn referrer_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn referrer_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
@@ -3667,7 +3698,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn sandbox<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn sandbox<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             sandbox: V,
         ) -> super::Building<super::overwrite::sandbox<TypeDefs, V>> {
@@ -3689,7 +3720,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn src<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn src<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -3711,7 +3742,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn src_doc<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn src_doc<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             src_doc: V,
         ) -> super::Building<super::overwrite::src_doc<TypeDefs, V>> {
@@ -3733,7 +3764,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn width<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn width<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             width: V,
         ) -> super::Building<super::overwrite::width<TypeDefs, V>> {
@@ -3761,53 +3792,56 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::props::UpdateElement<web_sys::HtmlIFrameElement> for super::Data<TypeDefs>
+        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlIFrameElement>
+        for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<web_sys::HtmlElement>>::State,
-                allow = <TypeDefs::allow as ::frender_dom::props::MaybeUpdateValueWithState<
+                > as crate::imports::frender_dom::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::State,
+                allow = <TypeDefs::allow as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                allow_fullscreen = <TypeDefs::allow_fullscreen as ::frender_dom::props::MaybeUpdateValueWithState<
+                allow_fullscreen = <TypeDefs::allow_fullscreen as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                allow_payment_request = <TypeDefs::allow_payment_request as ::frender_dom::props::MaybeUpdateValueWithState<
+                allow_payment_request = <TypeDefs::allow_payment_request as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                csp = <TypeDefs::csp as ::frender_dom::props::MaybeUpdateValueWithState<
+                csp = <TypeDefs::csp as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                fetch_priority = <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                fetch_priority = <TypeDefs::fetch_priority as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                height = <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                height = <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                loading = <TypeDefs::loading as ::frender_dom::props::MaybeUpdateValueWithState<
+                loading = <TypeDefs::loading as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                name = <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                name = <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                referrer_policy = <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                referrer_policy = <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                sandbox = <TypeDefs::sandbox as ::frender_dom::props::MaybeUpdateValueWithState<
+                sandbox = <TypeDefs::sandbox as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                src = <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                src = <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                src_doc = <TypeDefs::src_doc as ::frender_dom::props::MaybeUpdateValueWithState<
+                src_doc = <TypeDefs::src_doc as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                width = <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                width = <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
             >,
@@ -3821,114 +3855,114 @@ mod impl_update_element {
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                allow: <TypeDefs::allow as ::frender_dom::props::MaybeUpdateValueWithState<
+                allow: <TypeDefs::allow as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.allow,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "allow",
                     ),
                     || dom_element.remove_attribute("allow").unwrap(),
                 ),
-                allow_fullscreen: <TypeDefs::allow_fullscreen as ::frender_dom::props::MaybeUpdateValueWithState<
+                allow_fullscreen: <TypeDefs::allow_fullscreen as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.allow_fullscreen,
                     |v| element.set_allow_fullscreen(*v),
                     || dom_element.remove_attribute("allowfullscreen").unwrap(),
                 ),
-                allow_payment_request: <TypeDefs::allow_payment_request as ::frender_dom::props::MaybeUpdateValueWithState<
+                allow_payment_request: <TypeDefs::allow_payment_request as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.allow_payment_request,
                     |v| element.set_allow_payment_request(*v),
                     || { dom_element.remove_attribute("allowpaymentrequest").unwrap() },
                 ),
-                csp: <TypeDefs::csp as ::frender_dom::props::MaybeUpdateValueWithState<
+                csp: <TypeDefs::csp as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.csp,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "csp",
                     ),
                     || dom_element.remove_attribute("csp").unwrap(),
                 ),
-                fetch_priority: <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                fetch_priority: <TypeDefs::fetch_priority as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.fetch_priority,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "fetchpriority",
                     ),
                     || dom_element.remove_attribute("fetchpriority").unwrap(),
                 ),
-                height: <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                height: <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.height,
                     |v| element.set_height(v),
                     || dom_element.remove_attribute("height").unwrap(),
                 ),
-                loading: <TypeDefs::loading as ::frender_dom::props::MaybeUpdateValueWithState<
+                loading: <TypeDefs::loading as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.loading,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "loading",
                     ),
                     || dom_element.remove_attribute("loading").unwrap(),
                 ),
-                name: <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                name: <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.name,
                     |v| element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
-                referrer_policy: <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                referrer_policy: <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
                     |v| element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
-                sandbox: <TypeDefs::sandbox as ::frender_dom::props::MaybeUpdateValueWithState<
+                sandbox: <TypeDefs::sandbox as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.sandbox,
-                    |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "sandbox",
                     ),
                     || dom_element.remove_attribute("sandbox").unwrap(),
                 ),
-                src: <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                src: <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
                     |v| element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
-                src_doc: <TypeDefs::src_doc as ::frender_dom::props::MaybeUpdateValueWithState<
+                src_doc: <TypeDefs::src_doc as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src_doc,
                     |v| element.set_srcdoc(v),
                     || dom_element.remove_attribute("srcdoc").unwrap(),
                 ),
-                width: <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                width: <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.width,
@@ -3945,25 +3979,25 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::props::UpdateElement::update_element(
+            crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::allow as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::allow as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.allow,
                 state.allow,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "allow",
                 ),
                 || dom_element.remove_attribute("allow").unwrap(),
             );
-            <TypeDefs::allow_fullscreen as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::allow_fullscreen as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.allow_fullscreen,
@@ -3971,7 +4005,7 @@ mod impl_update_element {
                 |v| element.set_allow_fullscreen(*v),
                 || dom_element.remove_attribute("allowfullscreen").unwrap(),
             );
-            <TypeDefs::allow_payment_request as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::allow_payment_request as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.allow_payment_request,
@@ -3979,31 +4013,31 @@ mod impl_update_element {
                 |v| element.set_allow_payment_request(*v),
                 || dom_element.remove_attribute("allowpaymentrequest").unwrap(),
             );
-            <TypeDefs::csp as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::csp as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.csp,
                 state.csp,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "csp",
                 ),
                 || dom_element.remove_attribute("csp").unwrap(),
             );
-            <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::fetch_priority as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.fetch_priority,
                 state.fetch_priority,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "fetchpriority",
                 ),
                 || dom_element.remove_attribute("fetchpriority").unwrap(),
             );
-            <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.height,
@@ -4011,19 +4045,19 @@ mod impl_update_element {
                 |v| element.set_height(v),
                 || dom_element.remove_attribute("height").unwrap(),
             );
-            <TypeDefs::loading as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::loading as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.loading,
                 state.loading,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "loading",
                 ),
                 || dom_element.remove_attribute("loading").unwrap(),
             );
-            <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.name,
@@ -4031,7 +4065,7 @@ mod impl_update_element {
                 |v| element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
-            <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
@@ -4039,19 +4073,19 @@ mod impl_update_element {
                 |v| element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
-            <TypeDefs::sandbox as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::sandbox as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.sandbox,
                 state.sandbox,
-                |v| crate::imports::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "sandbox",
                 ),
                 || dom_element.remove_attribute("sandbox").unwrap(),
             );
-            <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.src,
@@ -4059,7 +4093,7 @@ mod impl_update_element {
                 |v| element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
-            <TypeDefs::src_doc as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::src_doc as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.src_doc,
@@ -4067,7 +4101,7 @@ mod impl_update_element {
                 |v| element.set_srcdoc(v),
                 || dom_element.remove_attribute("srcdoc").unwrap(),
             );
-            <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.width,
@@ -4113,7 +4147,7 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::allow as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::allow as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.allow)
                                     .map(|value| (
@@ -4126,7 +4160,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::allow_fullscreen as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::allow_fullscreen as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.allow_fullscreen)
                                     .map(|value| (
@@ -4139,7 +4173,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::allow_payment_request as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::allow_payment_request as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(
                                         this.allow_payment_request,
@@ -4154,7 +4188,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::csp as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::csp as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.csp)
                                     .map(|value| (
@@ -4167,7 +4201,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::fetch_priority as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::fetch_priority as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.fetch_priority)
                                     .map(|value| (
@@ -4180,7 +4214,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::height as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.height)
                                     .map(|value| (
@@ -4193,7 +4227,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::loading as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::loading as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.loading)
                                     .map(|value| (
@@ -4206,7 +4240,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::name as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.name)
                                     .map(|value| (
@@ -4219,7 +4253,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.referrer_policy)
                                     .map(|value| (
@@ -4232,7 +4266,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::sandbox as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::sandbox as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.sandbox)
                                     .map(|value| (
@@ -4245,7 +4279,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.src)
                                     .map(|value| (
@@ -4258,7 +4292,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::src_doc as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::src_doc as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.src_doc)
                                     .map(|value| (
@@ -4271,7 +4305,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::width as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.width)
                                     .map(|value| (

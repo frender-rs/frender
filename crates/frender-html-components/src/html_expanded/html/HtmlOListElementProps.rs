@@ -716,9 +716,9 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type reversed: crate::imports::MaybeUpdateValueWithState<bool>;
-        type start: crate::imports::MaybeUpdateValueWithState<i32>;
-        type type_: crate::imports::MaybeUpdateValueWithState<str>;
+        type reversed: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type start: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>;
+        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -753,7 +753,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlElementProps: crate::imports::props::IntrinsicComponentPollReactive;
+        type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type reversed;
         type start;
         type type_;
@@ -899,14 +899,15 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        for RenderState<TypeDefs>
     {
         #[inline]
         fn intrinsic_component_poll_reactive(
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlElementProps,
                 cx,
             )
@@ -932,7 +933,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -945,7 +946,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
-        pub fn id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -958,7 +959,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
-        pub fn part<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn part<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -1436,7 +1437,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
-        pub fn access_key<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn access_key<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -1449,7 +1452,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
-        pub fn auto_capitalize<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn auto_capitalize<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -1462,7 +1467,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
-        pub fn auto_focus<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_focus<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -1488,7 +1495,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
-        pub fn context_menu<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn context_menu<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -1501,7 +1510,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
-        pub fn dir<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn dir<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -1514,7 +1523,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
-        pub fn draggable<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn draggable<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -1527,7 +1538,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
-        pub fn enter_key_hint<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn enter_key_hint<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -1540,7 +1553,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
-        pub fn hidden<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn hidden<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -1553,7 +1566,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
-        pub fn inert<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn inert<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -1566,7 +1579,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
-        pub fn input_mode<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn input_mode<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -1579,7 +1594,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
-        pub fn is<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn is<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -1592,7 +1607,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
-        pub fn item_id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -1605,7 +1620,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
-        pub fn item_prop<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_prop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -1618,7 +1633,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
-        pub fn item_ref<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_ref<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -1631,7 +1646,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
-        pub fn item_scope<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_scope<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -1644,7 +1661,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
-        pub fn item_type<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -1657,7 +1674,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
-        pub fn lang<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn lang<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -1670,7 +1687,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
-        pub fn nonce<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn nonce<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -1683,7 +1700,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
-        pub fn role<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn role<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -1696,7 +1713,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
-        pub fn slot<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn slot<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -1709,7 +1726,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
-        pub fn spellcheck<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn spellcheck<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -1722,7 +1741,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
-        pub fn style<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn style<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -1735,7 +1754,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
-        pub fn tab_index<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn tab_index<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -1748,7 +1767,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
-        pub fn title<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn title<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -1761,7 +1780,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
-        pub fn translate<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn translate<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -1774,7 +1793,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
-        pub fn virtual_keyboard_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn virtual_keyboard_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -2177,7 +2198,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn reversed<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn reversed<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             reversed: V,
         ) -> super::Building<super::overwrite::reversed<TypeDefs, V>> {
@@ -2189,7 +2210,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn start<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn start<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             start: V,
         ) -> super::Building<super::overwrite::start<TypeDefs, V>> {
@@ -2201,7 +2222,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             type_: V,
         ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
@@ -2219,23 +2240,26 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::props::UpdateElement<web_sys::HtmlOListElement> for super::Data<TypeDefs>
+        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlOListElement>
+        for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<web_sys::HtmlElement>>::State,
-                reversed = <TypeDefs::reversed as ::frender_dom::props::MaybeUpdateValueWithState<
+                > as crate::imports::frender_dom::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::State,
+                reversed = <TypeDefs::reversed as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                start = <TypeDefs::start as ::frender_dom::props::MaybeUpdateValueWithState<
+                start = <TypeDefs::start as ::frender_html::props::MaybeUpdateValueWithState<
                     i32,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
             >,
@@ -2249,24 +2273,24 @@ mod impl_update_element {
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                reversed: <TypeDefs::reversed as ::frender_dom::props::MaybeUpdateValueWithState<
+                reversed: <TypeDefs::reversed as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.reversed,
                     |v| element.set_reversed(*v),
                     || dom_element.remove_attribute("reversed").unwrap(),
                 ),
-                start: <TypeDefs::start as ::frender_dom::props::MaybeUpdateValueWithState<
+                start: <TypeDefs::start as ::frender_html::props::MaybeUpdateValueWithState<
                     i32,
                 >>::initialize_state_and_update(
                     this.start,
                     |v| element.set_start(*v),
                     || dom_element.remove_attribute("start").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                type_: <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.type_,
@@ -2283,13 +2307,13 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::props::UpdateElement::update_element(
+            crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::reversed as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::reversed as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.reversed,
@@ -2297,7 +2321,7 @@ mod impl_update_element {
                 |v| element.set_reversed(*v),
                 || dom_element.remove_attribute("reversed").unwrap(),
             );
-            <TypeDefs::start as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::start as ::frender_html::props::MaybeUpdateValueWithState<
                 i32,
             >>::maybe_update_value_with_state(
                 this.start,
@@ -2305,7 +2329,7 @@ mod impl_update_element {
                 |v| element.set_start(*v),
                 || dom_element.remove_attribute("start").unwrap(),
             );
-            <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.type_,
@@ -2347,53 +2371,50 @@ mod impl_into_ssr_data {
                 ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlElementProps);
             (
                 children,
-                attrs
-                    .chain(
-                        ::frender_ssr::utils::filter::FilterIdentity(
-                            [
-                                <TypeDefs::reversed as ::frender_dom::props::MaybeUpdateValueWithState<
-                                    bool,
-                                >>::maybe_into_html_attribute_value(this.reversed)
-                                    .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("reversed"),
-                                        if let Some(value) = value {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                                value,
-                                            )
-                                        } else {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                        },
-                                    )),
-                                <TypeDefs::start as ::frender_dom::props::MaybeUpdateValueWithState<
-                                    i32,
-                                >>::maybe_into_html_attribute_value(this.start)
-                                    .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("start"),
-                                        if let Some(value) = value {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                                value,
-                                            )
-                                        } else {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                        },
-                                    )),
-                                <TypeDefs::type_ as ::frender_dom::props::MaybeUpdateValueWithState<
-                                    str,
-                                >>::maybe_into_html_attribute_value(this.type_)
-                                    .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("type"),
-                                        if let Some(value) = value {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                                value,
-                                            )
-                                        } else {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                        },
-                                    )),
-                            ]
-                                .into_iter(),
-                        ),
-                    ),
+                attrs.chain(::frender_ssr::utils::filter::FilterIdentity(
+                    [
+                        <TypeDefs::reversed as ::frender_html::props::MaybeUpdateValueWithState<
+                            bool,
+                        >>::maybe_into_html_attribute_value(this.reversed)
+                        .map(|value| {
+                            (
+                                ::std::borrow::Cow::Borrowed("reversed"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(value)
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )
+                        }),
+                        <TypeDefs::start as ::frender_html::props::MaybeUpdateValueWithState<
+                            i32,
+                        >>::maybe_into_html_attribute_value(this.start)
+                        .map(|value| {
+                            (
+                                ::std::borrow::Cow::Borrowed("start"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(value)
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )
+                        }),
+                        <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                            str,
+                        >>::maybe_into_html_attribute_value(this.type_)
+                        .map(|value| {
+                            (
+                                ::std::borrow::Cow::Borrowed("type"),
+                                if let Some(value) = value {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::String(value)
+                                } else {
+                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                },
+                            )
+                        }),
+                    ]
+                    .into_iter(),
+                )),
             )
         }
     }

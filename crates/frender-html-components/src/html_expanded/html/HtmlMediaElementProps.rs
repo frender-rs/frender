@@ -1678,13 +1678,13 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type auto_play: crate::imports::MaybeUpdateValueWithState<bool>;
-        type controls: crate::imports::MaybeUpdateValueWithState<bool>;
-        type cross_origin: crate::imports::MaybeUpdateValueWithState<str>;
-        type loop_: crate::imports::MaybeUpdateValueWithState<bool>;
-        type muted: crate::imports::MaybeUpdateValueWithState<bool>;
-        type preload: crate::imports::MaybeUpdateValueWithState<str>;
-        type src: crate::imports::MaybeUpdateValueWithState<str>;
+        type auto_play: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type controls: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type cross_origin: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type loop_: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type muted: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
+        type preload: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type src: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type on_abort;
         type on_can_play;
         type on_can_play_through;
@@ -1793,7 +1793,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlElementProps: crate::imports::props::IntrinsicComponentPollReactive;
+        type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type auto_play;
         type controls;
         type cross_origin;
@@ -2203,14 +2203,15 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        for RenderState<TypeDefs>
     {
         #[inline]
         fn intrinsic_component_poll_reactive(
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlElementProps,
                 cx,
             )
@@ -2262,7 +2263,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2301,7 +2302,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
-        pub fn id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -2340,7 +2341,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
-        pub fn part<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn part<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -3754,7 +3755,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
-        pub fn access_key<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn access_key<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -3793,7 +3796,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
-        pub fn auto_capitalize<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn auto_capitalize<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -3832,7 +3837,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
-        pub fn auto_focus<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_focus<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -3910,7 +3917,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
-        pub fn context_menu<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn context_menu<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -3949,7 +3958,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
-        pub fn dir<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn dir<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -3988,7 +3997,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
-        pub fn draggable<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn draggable<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -4027,7 +4038,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
-        pub fn enter_key_hint<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn enter_key_hint<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -4066,7 +4079,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
-        pub fn hidden<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn hidden<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -4105,7 +4118,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
-        pub fn inert<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn inert<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -4144,7 +4157,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
-        pub fn input_mode<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn input_mode<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -4183,7 +4198,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
-        pub fn is<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn is<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -4222,7 +4237,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
-        pub fn item_id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -4261,7 +4276,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
-        pub fn item_prop<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_prop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -4300,7 +4315,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
-        pub fn item_ref<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_ref<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -4339,7 +4354,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
-        pub fn item_scope<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_scope<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -4378,7 +4395,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
-        pub fn item_type<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -4417,7 +4434,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
-        pub fn lang<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn lang<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -4456,7 +4473,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
-        pub fn nonce<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn nonce<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -4495,7 +4512,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
-        pub fn role<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn role<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -4534,7 +4551,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
-        pub fn slot<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn slot<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -4573,7 +4590,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
-        pub fn spellcheck<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn spellcheck<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -4612,7 +4631,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
-        pub fn style<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn style<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -4651,7 +4670,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
-        pub fn tab_index<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn tab_index<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -4690,7 +4709,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
-        pub fn title<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn title<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -4729,7 +4748,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
-        pub fn translate<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn translate<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -4768,7 +4787,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
-        pub fn virtual_keyboard_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn virtual_keyboard_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -5951,7 +5972,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn auto_play<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_play<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_play: V,
         ) -> super::Building<super::overwrite::auto_play<TypeDefs, V>> {
@@ -5989,7 +6012,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn controls<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn controls<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             controls: V,
         ) -> super::Building<super::overwrite::controls<TypeDefs, V>> {
@@ -6027,7 +6050,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn cross_origin<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn cross_origin<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             cross_origin: V,
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
@@ -6065,7 +6090,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn loop_<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn loop_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             loop_: V,
         ) -> super::Building<super::overwrite::loop_<TypeDefs, V>> {
@@ -6103,7 +6128,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn muted<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn muted<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             muted: V,
         ) -> super::Building<super::overwrite::muted<TypeDefs, V>> {
@@ -6141,7 +6166,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn preload<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn preload<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             preload: V,
         ) -> super::Building<super::overwrite::preload<TypeDefs, V>> {
@@ -6179,7 +6204,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn src<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn src<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             src: V,
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
@@ -7059,127 +7084,148 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::props::UpdateElement<web_sys::HtmlMediaElement> for super::Data<TypeDefs>
+        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlMediaElement>
+        for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::props::UpdateElement<web_sys::HtmlElement>,
-        TypeDefs::on_abort: crate::imports::props::UpdateDomEventListener<events::Abort>,
-        TypeDefs::on_can_play: crate::imports::props::UpdateDomEventListener<events::CanPlay>,
+            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
+        TypeDefs::on_abort:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Abort>,
+        TypeDefs::on_can_play:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::CanPlay>,
         TypeDefs::on_can_play_through:
-            crate::imports::props::UpdateDomEventListener<events::CanPlayThrough>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::CanPlayThrough>,
         TypeDefs::on_duration_change:
-            crate::imports::props::UpdateDomEventListener<events::DurationChange>,
-        TypeDefs::on_emptied: crate::imports::props::UpdateDomEventListener<events::Emptied>,
-        TypeDefs::on_ended: crate::imports::props::UpdateDomEventListener<events::Ended>,
-        TypeDefs::on_loaded_data: crate::imports::props::UpdateDomEventListener<events::LoadedData>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::DurationChange>,
+        TypeDefs::on_emptied:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Emptied>,
+        TypeDefs::on_ended:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Ended>,
+        TypeDefs::on_loaded_data:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadedData>,
         TypeDefs::on_loaded_metadata:
-            crate::imports::props::UpdateDomEventListener<events::LoadedMetadata>,
-        TypeDefs::on_load_start: crate::imports::props::UpdateDomEventListener<events::LoadStart>,
-        TypeDefs::on_pause: crate::imports::props::UpdateDomEventListener<events::Pause>,
-        TypeDefs::on_play: crate::imports::props::UpdateDomEventListener<events::Play>,
-        TypeDefs::on_playing: crate::imports::props::UpdateDomEventListener<events::Playing>,
-        TypeDefs::on_progress: crate::imports::props::UpdateDomEventListener<events::Progress>,
-        TypeDefs::on_rate_change: crate::imports::props::UpdateDomEventListener<events::RateChange>,
-        TypeDefs::on_resize: crate::imports::props::UpdateDomEventListener<events::Resize>,
-        TypeDefs::on_seeked: crate::imports::props::UpdateDomEventListener<events::Seeked>,
-        TypeDefs::on_seeking: crate::imports::props::UpdateDomEventListener<events::Seeking>,
-        TypeDefs::on_stalled: crate::imports::props::UpdateDomEventListener<events::Stalled>,
-        TypeDefs::on_suspend: crate::imports::props::UpdateDomEventListener<events::Suspend>,
-        TypeDefs::on_time_update: crate::imports::props::UpdateDomEventListener<events::TimeUpdate>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadedMetadata>,
+        TypeDefs::on_load_start:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadStart>,
+        TypeDefs::on_pause:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Pause>,
+        TypeDefs::on_play:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Play>,
+        TypeDefs::on_playing:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Playing>,
+        TypeDefs::on_progress:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Progress>,
+        TypeDefs::on_rate_change:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::RateChange>,
+        TypeDefs::on_resize:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Resize>,
+        TypeDefs::on_seeked:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Seeked>,
+        TypeDefs::on_seeking:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Seeking>,
+        TypeDefs::on_stalled:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Stalled>,
+        TypeDefs::on_suspend:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Suspend>,
+        TypeDefs::on_time_update:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TimeUpdate>,
         TypeDefs::on_volume_change:
-            crate::imports::props::UpdateDomEventListener<events::VolumeChange>,
-        TypeDefs::on_waiting: crate::imports::props::UpdateDomEventListener<events::Waiting>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::VolumeChange>,
+        TypeDefs::on_waiting:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Waiting>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<web_sys::HtmlElement>>::State,
-                auto_play = <TypeDefs::auto_play as ::frender_dom::props::MaybeUpdateValueWithState<
+                > as crate::imports::frender_dom::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::State,
+                auto_play = <TypeDefs::auto_play as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                controls = <TypeDefs::controls as ::frender_dom::props::MaybeUpdateValueWithState<
+                controls = <TypeDefs::controls as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                cross_origin = <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                cross_origin = <TypeDefs::cross_origin as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                loop_ = <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                loop_ = <TypeDefs::loop_ as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                muted = <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValueWithState<
+                muted = <TypeDefs::muted as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::State,
-                preload = <TypeDefs::preload as ::frender_dom::props::MaybeUpdateValueWithState<
+                preload = <TypeDefs::preload as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                src = <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                src = <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                on_abort = <TypeDefs::on_abort as crate::imports::props::UpdateDomEventListener<
+                on_abort = <TypeDefs::on_abort as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Abort,
                 >>::State,
-                on_can_play = <TypeDefs::on_can_play as crate::imports::props::UpdateDomEventListener<
+                on_can_play = <TypeDefs::on_can_play as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::CanPlay,
                 >>::State,
-                on_can_play_through = <TypeDefs::on_can_play_through as crate::imports::props::UpdateDomEventListener<
+                on_can_play_through = <TypeDefs::on_can_play_through as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::CanPlayThrough,
                 >>::State,
-                on_duration_change = <TypeDefs::on_duration_change as crate::imports::props::UpdateDomEventListener<
+                on_duration_change = <TypeDefs::on_duration_change as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::DurationChange,
                 >>::State,
-                on_emptied = <TypeDefs::on_emptied as crate::imports::props::UpdateDomEventListener<
+                on_emptied = <TypeDefs::on_emptied as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Emptied,
                 >>::State,
-                on_ended = <TypeDefs::on_ended as crate::imports::props::UpdateDomEventListener<
+                on_ended = <TypeDefs::on_ended as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Ended,
                 >>::State,
-                on_loaded_data = <TypeDefs::on_loaded_data as crate::imports::props::UpdateDomEventListener<
+                on_loaded_data = <TypeDefs::on_loaded_data as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::LoadedData,
                 >>::State,
-                on_loaded_metadata = <TypeDefs::on_loaded_metadata as crate::imports::props::UpdateDomEventListener<
+                on_loaded_metadata = <TypeDefs::on_loaded_metadata as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::LoadedMetadata,
                 >>::State,
-                on_load_start = <TypeDefs::on_load_start as crate::imports::props::UpdateDomEventListener<
+                on_load_start = <TypeDefs::on_load_start as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::LoadStart,
                 >>::State,
-                on_pause = <TypeDefs::on_pause as crate::imports::props::UpdateDomEventListener<
+                on_pause = <TypeDefs::on_pause as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Pause,
                 >>::State,
-                on_play = <TypeDefs::on_play as crate::imports::props::UpdateDomEventListener<
+                on_play = <TypeDefs::on_play as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Play,
                 >>::State,
-                on_playing = <TypeDefs::on_playing as crate::imports::props::UpdateDomEventListener<
+                on_playing = <TypeDefs::on_playing as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Playing,
                 >>::State,
-                on_progress = <TypeDefs::on_progress as crate::imports::props::UpdateDomEventListener<
+                on_progress = <TypeDefs::on_progress as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Progress,
                 >>::State,
-                on_rate_change = <TypeDefs::on_rate_change as crate::imports::props::UpdateDomEventListener<
+                on_rate_change = <TypeDefs::on_rate_change as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::RateChange,
                 >>::State,
-                on_resize = <TypeDefs::on_resize as crate::imports::props::UpdateDomEventListener<
+                on_resize = <TypeDefs::on_resize as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Resize,
                 >>::State,
-                on_seeked = <TypeDefs::on_seeked as crate::imports::props::UpdateDomEventListener<
+                on_seeked = <TypeDefs::on_seeked as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Seeked,
                 >>::State,
-                on_seeking = <TypeDefs::on_seeking as crate::imports::props::UpdateDomEventListener<
+                on_seeking = <TypeDefs::on_seeking as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Seeking,
                 >>::State,
-                on_stalled = <TypeDefs::on_stalled as crate::imports::props::UpdateDomEventListener<
+                on_stalled = <TypeDefs::on_stalled as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Stalled,
                 >>::State,
-                on_suspend = <TypeDefs::on_suspend as crate::imports::props::UpdateDomEventListener<
+                on_suspend = <TypeDefs::on_suspend as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Suspend,
                 >>::State,
-                on_time_update = <TypeDefs::on_time_update as crate::imports::props::UpdateDomEventListener<
+                on_time_update = <TypeDefs::on_time_update as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::TimeUpdate,
                 >>::State,
-                on_volume_change = <TypeDefs::on_volume_change as crate::imports::props::UpdateDomEventListener<
+                on_volume_change = <TypeDefs::on_volume_change as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::VolumeChange,
                 >>::State,
-                on_waiting = <TypeDefs::on_waiting as crate::imports::props::UpdateDomEventListener<
+                on_waiting = <TypeDefs::on_waiting as crate::imports::frender_html::props::UpdateDomEventListener<
                     events::Waiting,
                 >>::State,
             >,
@@ -7193,24 +7239,24 @@ mod impl_update_element {
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                auto_play: <TypeDefs::auto_play as ::frender_dom::props::MaybeUpdateValueWithState<
+                auto_play: <TypeDefs::auto_play as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.auto_play,
                     |v| element.set_autoplay(*v),
                     || dom_element.remove_attribute("autoplay").unwrap(),
                 ),
-                controls: <TypeDefs::controls as ::frender_dom::props::MaybeUpdateValueWithState<
+                controls: <TypeDefs::controls as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.controls,
                     |v| element.set_controls(*v),
                     || dom_element.remove_attribute("controls").unwrap(),
                 ),
-                cross_origin: <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                cross_origin: <TypeDefs::cross_origin as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
@@ -7221,101 +7267,101 @@ mod impl_update_element {
                         el => || el.set_cross_origin(None),
                     },
                 ),
-                loop_: <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                loop_: <TypeDefs::loop_ as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.loop_,
                     |v| element.set_loop(*v),
                     || dom_element.remove_attribute("loop").unwrap(),
                 ),
-                muted: <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValueWithState<
+                muted: <TypeDefs::muted as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.muted,
                     |v| element.set_muted(*v),
                     || dom_element.remove_attribute("muted").unwrap(),
                 ),
-                preload: <TypeDefs::preload as ::frender_dom::props::MaybeUpdateValueWithState<
+                preload: <TypeDefs::preload as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.preload,
                     |v| element.set_preload(v),
                     || dom_element.remove_attribute("preload").unwrap(),
                 ),
-                src: <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                src: <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
                     |v| element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
-                on_abort: crate::imports::props::UpdateDomEventListener::<
+                on_abort: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Abort,
                 >::initialize_dom_event_listener_state(this.on_abort, element),
-                on_can_play: crate::imports::props::UpdateDomEventListener::<
+                on_can_play: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::CanPlay,
                 >::initialize_dom_event_listener_state(this.on_can_play, element),
-                on_can_play_through: crate::imports::props::UpdateDomEventListener::<
+                on_can_play_through: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::CanPlayThrough,
                 >::initialize_dom_event_listener_state(
                     this.on_can_play_through,
                     element,
                 ),
-                on_duration_change: crate::imports::props::UpdateDomEventListener::<
+                on_duration_change: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::DurationChange,
                 >::initialize_dom_event_listener_state(this.on_duration_change, element),
-                on_emptied: crate::imports::props::UpdateDomEventListener::<
+                on_emptied: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Emptied,
                 >::initialize_dom_event_listener_state(this.on_emptied, element),
-                on_ended: crate::imports::props::UpdateDomEventListener::<
+                on_ended: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Ended,
                 >::initialize_dom_event_listener_state(this.on_ended, element),
-                on_loaded_data: crate::imports::props::UpdateDomEventListener::<
+                on_loaded_data: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::LoadedData,
                 >::initialize_dom_event_listener_state(this.on_loaded_data, element),
-                on_loaded_metadata: crate::imports::props::UpdateDomEventListener::<
+                on_loaded_metadata: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::LoadedMetadata,
                 >::initialize_dom_event_listener_state(this.on_loaded_metadata, element),
-                on_load_start: crate::imports::props::UpdateDomEventListener::<
+                on_load_start: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::LoadStart,
                 >::initialize_dom_event_listener_state(this.on_load_start, element),
-                on_pause: crate::imports::props::UpdateDomEventListener::<
+                on_pause: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Pause,
                 >::initialize_dom_event_listener_state(this.on_pause, element),
-                on_play: crate::imports::props::UpdateDomEventListener::<
+                on_play: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Play,
                 >::initialize_dom_event_listener_state(this.on_play, element),
-                on_playing: crate::imports::props::UpdateDomEventListener::<
+                on_playing: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Playing,
                 >::initialize_dom_event_listener_state(this.on_playing, element),
-                on_progress: crate::imports::props::UpdateDomEventListener::<
+                on_progress: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Progress,
                 >::initialize_dom_event_listener_state(this.on_progress, element),
-                on_rate_change: crate::imports::props::UpdateDomEventListener::<
+                on_rate_change: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::RateChange,
                 >::initialize_dom_event_listener_state(this.on_rate_change, element),
-                on_resize: crate::imports::props::UpdateDomEventListener::<
+                on_resize: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Resize,
                 >::initialize_dom_event_listener_state(this.on_resize, element),
-                on_seeked: crate::imports::props::UpdateDomEventListener::<
+                on_seeked: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Seeked,
                 >::initialize_dom_event_listener_state(this.on_seeked, element),
-                on_seeking: crate::imports::props::UpdateDomEventListener::<
+                on_seeking: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Seeking,
                 >::initialize_dom_event_listener_state(this.on_seeking, element),
-                on_stalled: crate::imports::props::UpdateDomEventListener::<
+                on_stalled: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Stalled,
                 >::initialize_dom_event_listener_state(this.on_stalled, element),
-                on_suspend: crate::imports::props::UpdateDomEventListener::<
+                on_suspend: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Suspend,
                 >::initialize_dom_event_listener_state(this.on_suspend, element),
-                on_time_update: crate::imports::props::UpdateDomEventListener::<
+                on_time_update: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::TimeUpdate,
                 >::initialize_dom_event_listener_state(this.on_time_update, element),
-                on_volume_change: crate::imports::props::UpdateDomEventListener::<
+                on_volume_change: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::VolumeChange,
                 >::initialize_dom_event_listener_state(this.on_volume_change, element),
-                on_waiting: crate::imports::props::UpdateDomEventListener::<
+                on_waiting: crate::imports::frender_html::props::UpdateDomEventListener::<
                     events::Waiting,
                 >::initialize_dom_event_listener_state(this.on_waiting, element),
             }
@@ -7328,13 +7374,13 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::props::UpdateElement::update_element(
+            crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::auto_play as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::auto_play as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.auto_play,
@@ -7342,7 +7388,7 @@ mod impl_update_element {
                 |v| element.set_autoplay(*v),
                 || dom_element.remove_attribute("autoplay").unwrap(),
             );
-            <TypeDefs::controls as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::controls as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.controls,
@@ -7350,7 +7396,7 @@ mod impl_update_element {
                 |v| element.set_controls(*v),
                 || dom_element.remove_attribute("controls").unwrap(),
             );
-            <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::cross_origin as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.cross_origin,
@@ -7362,7 +7408,7 @@ mod impl_update_element {
                     el => || el.set_cross_origin(None),
                 },
             );
-            <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::loop_ as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.loop_,
@@ -7370,7 +7416,7 @@ mod impl_update_element {
                 |v| element.set_loop(*v),
                 || dom_element.remove_attribute("loop").unwrap(),
             );
-            <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::muted as ::frender_html::props::MaybeUpdateValueWithState<
                 bool,
             >>::maybe_update_value_with_state(
                 this.muted,
@@ -7378,7 +7424,7 @@ mod impl_update_element {
                 |v| element.set_muted(*v),
                 || dom_element.remove_attribute("muted").unwrap(),
             );
-            <TypeDefs::preload as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::preload as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.preload,
@@ -7386,7 +7432,7 @@ mod impl_update_element {
                 |v| element.set_preload(v),
                 || dom_element.remove_attribute("preload").unwrap(),
             );
-            <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.src,
@@ -7394,102 +7440,102 @@ mod impl_update_element {
                 |v| element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Abort,
             >::update_dom_event_listener(this.on_abort, element, state.on_abort);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::CanPlay,
             >::update_dom_event_listener(this.on_can_play, element, state.on_can_play);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::CanPlayThrough,
             >::update_dom_event_listener(
                 this.on_can_play_through,
                 element,
                 state.on_can_play_through,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::DurationChange,
             >::update_dom_event_listener(
                 this.on_duration_change,
                 element,
                 state.on_duration_change,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Emptied,
             >::update_dom_event_listener(this.on_emptied, element, state.on_emptied);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Ended,
             >::update_dom_event_listener(this.on_ended, element, state.on_ended);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::LoadedData,
             >::update_dom_event_listener(
                 this.on_loaded_data,
                 element,
                 state.on_loaded_data,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::LoadedMetadata,
             >::update_dom_event_listener(
                 this.on_loaded_metadata,
                 element,
                 state.on_loaded_metadata,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::LoadStart,
             >::update_dom_event_listener(
                 this.on_load_start,
                 element,
                 state.on_load_start,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Pause,
             >::update_dom_event_listener(this.on_pause, element, state.on_pause);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Play,
             >::update_dom_event_listener(this.on_play, element, state.on_play);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Playing,
             >::update_dom_event_listener(this.on_playing, element, state.on_playing);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Progress,
             >::update_dom_event_listener(this.on_progress, element, state.on_progress);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::RateChange,
             >::update_dom_event_listener(
                 this.on_rate_change,
                 element,
                 state.on_rate_change,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Resize,
             >::update_dom_event_listener(this.on_resize, element, state.on_resize);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Seeked,
             >::update_dom_event_listener(this.on_seeked, element, state.on_seeked);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Seeking,
             >::update_dom_event_listener(this.on_seeking, element, state.on_seeking);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Stalled,
             >::update_dom_event_listener(this.on_stalled, element, state.on_stalled);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Suspend,
             >::update_dom_event_listener(this.on_suspend, element, state.on_suspend);
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::TimeUpdate,
             >::update_dom_event_listener(
                 this.on_time_update,
                 element,
                 state.on_time_update,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::VolumeChange,
             >::update_dom_event_listener(
                 this.on_volume_change,
                 element,
                 state.on_volume_change,
             );
-            crate::imports::props::UpdateDomEventListener::<
+            crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Waiting,
             >::update_dom_event_listener(this.on_waiting, element, state.on_waiting);
         }
@@ -7530,7 +7576,7 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::auto_play as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::auto_play as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.auto_play)
                                     .map(|value| (
@@ -7543,7 +7589,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::controls as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::controls as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.controls)
                                     .map(|value| (
@@ -7556,7 +7602,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::cross_origin as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::cross_origin as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.cross_origin)
                                     .map(|value| (
@@ -7569,7 +7615,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::loop_ as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::loop_ as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.loop_)
                                     .map(|value| (
@@ -7582,7 +7628,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::muted as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::muted as ::frender_html::props::MaybeUpdateValueWithState<
                                     bool,
                                 >>::maybe_into_html_attribute_value(this.muted)
                                     .map(|value| (
@@ -7595,7 +7641,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::preload as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::preload as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.preload)
                                     .map(|value| (
@@ -7608,7 +7654,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::src as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.src)
                                     .map(|value| (

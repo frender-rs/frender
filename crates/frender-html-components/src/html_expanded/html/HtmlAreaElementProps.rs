@@ -818,15 +818,15 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type download: crate::imports::MaybeUpdateValueWithState<str>;
-        type href: crate::imports::MaybeUpdateValueWithState<str>;
-        type ping: crate::imports::MaybeUpdateValueWithState<str>;
-        type referrer_policy: crate::imports::MaybeUpdateValueWithState<str>;
-        type rel: crate::imports::MaybeUpdateValueWithState<str>;
-        type target: crate::imports::MaybeUpdateValueWithState<str>;
-        type alt: crate::imports::MaybeUpdateValueWithState<str>;
-        type coords: crate::imports::MaybeUpdateValueWithState<str>;
-        type shape: crate::imports::MaybeUpdateValueWithState<str>;
+        type download: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type href: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type ping: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type rel: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type target: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type alt: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type coords: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type shape: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -873,7 +873,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlElementProps: crate::imports::props::IntrinsicComponentPollReactive;
+        type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type download;
         type href;
         type ping;
@@ -1079,14 +1079,15 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::props::IntrinsicComponentPollReactive for RenderState<TypeDefs>
+        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        for RenderState<TypeDefs>
     {
         #[inline]
         fn intrinsic_component_poll_reactive(
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlElementProps,
                 cx,
             )
@@ -1118,7 +1119,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -1137,7 +1138,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::id`]
         #[inline(always)]
-        pub fn id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             id: V,
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
@@ -1156,7 +1157,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::part`]
         #[inline(always)]
-        pub fn part<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn part<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             part: V,
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
@@ -1850,7 +1851,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::access_key`]
         #[inline(always)]
-        pub fn access_key<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn access_key<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             access_key: V,
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
@@ -1869,7 +1872,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_capitalize`]
         #[inline(always)]
-        pub fn auto_capitalize<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn auto_capitalize<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             auto_capitalize: V,
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
@@ -1888,7 +1893,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::auto_focus`]
         #[inline(always)]
-        pub fn auto_focus<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn auto_focus<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             auto_focus: V,
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
@@ -1926,7 +1933,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::context_menu`]
         #[inline(always)]
-        pub fn context_menu<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn context_menu<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             context_menu: V,
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
@@ -1945,7 +1954,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::dir`]
         #[inline(always)]
-        pub fn dir<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn dir<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             dir: V,
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
@@ -1964,7 +1973,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::draggable`]
         #[inline(always)]
-        pub fn draggable<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn draggable<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             draggable: V,
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
@@ -1983,7 +1994,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::enter_key_hint`]
         #[inline(always)]
-        pub fn enter_key_hint<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn enter_key_hint<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             enter_key_hint: V,
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
@@ -2002,7 +2015,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::hidden`]
         #[inline(always)]
-        pub fn hidden<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn hidden<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             hidden: V,
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
@@ -2021,7 +2034,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::inert`]
         #[inline(always)]
-        pub fn inert<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn inert<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
             inert: V,
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
@@ -2040,7 +2053,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::input_mode`]
         #[inline(always)]
-        pub fn input_mode<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn input_mode<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             input_mode: V,
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
@@ -2059,7 +2074,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::is`]
         #[inline(always)]
-        pub fn is<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn is<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             is: V,
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
@@ -2078,7 +2093,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_id`]
         #[inline(always)]
-        pub fn item_id<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_id<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_id: V,
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
@@ -2097,7 +2112,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_prop`]
         #[inline(always)]
-        pub fn item_prop<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_prop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_prop: V,
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
@@ -2116,7 +2131,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_ref`]
         #[inline(always)]
-        pub fn item_ref<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_ref<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_ref: V,
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
@@ -2135,7 +2150,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_scope`]
         #[inline(always)]
-        pub fn item_scope<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_scope<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             item_scope: V,
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
@@ -2154,7 +2171,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::item_type`]
         #[inline(always)]
-        pub fn item_type<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn item_type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             item_type: V,
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
@@ -2173,7 +2190,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::lang`]
         #[inline(always)]
-        pub fn lang<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn lang<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             lang: V,
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
@@ -2192,7 +2209,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::nonce`]
         #[inline(always)]
-        pub fn nonce<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn nonce<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             nonce: V,
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
@@ -2211,7 +2228,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::role`]
         #[inline(always)]
-        pub fn role<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn role<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             role: V,
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
@@ -2230,7 +2247,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::slot`]
         #[inline(always)]
-        pub fn slot<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn slot<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             slot: V,
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
@@ -2249,7 +2266,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::spellcheck`]
         #[inline(always)]
-        pub fn spellcheck<V: crate::imports::MaybeUpdateValueWithState<bool>>(
+        pub fn spellcheck<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
+        >(
             self,
             spellcheck: V,
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
@@ -2268,7 +2287,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::style`]
         #[inline(always)]
-        pub fn style<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn style<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             style: V,
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
@@ -2287,7 +2306,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::tab_index`]
         #[inline(always)]
-        pub fn tab_index<V: crate::imports::MaybeUpdateValueWithState<i32>>(
+        pub fn tab_index<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>(
             self,
             tab_index: V,
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
@@ -2306,7 +2325,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::title`]
         #[inline(always)]
-        pub fn title<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn title<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             title: V,
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
@@ -2325,7 +2344,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::translate`]
         #[inline(always)]
-        pub fn translate<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn translate<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             translate: V,
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
@@ -2344,7 +2363,9 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
         #[inline(always)]
-        pub fn virtual_keyboard_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn virtual_keyboard_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             virtual_keyboard_policy: V,
         ) -> super::Building<super::overwrite::virtual_keyboard_policy<TypeDefs, V>> {
@@ -2927,7 +2948,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn download<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn download<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             download: V,
         ) -> super::Building<super::overwrite::download<TypeDefs, V>> {
@@ -2945,7 +2966,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn href<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn href<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             href: V,
         ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
@@ -2963,7 +2984,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn ping<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn ping<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             ping: V,
         ) -> super::Building<super::overwrite::ping<TypeDefs, V>> {
@@ -2981,7 +3002,9 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn referrer_policy<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn referrer_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
             self,
             referrer_policy: V,
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
@@ -2999,7 +3022,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn rel<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn rel<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
@@ -3017,7 +3040,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn target<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn target<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             target: V,
         ) -> super::Building<super::overwrite::target<TypeDefs, V>> {
@@ -3035,7 +3058,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn alt<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn alt<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             alt: V,
         ) -> super::Building<super::overwrite::alt<TypeDefs, V>> {
@@ -3053,7 +3076,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn coords<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn coords<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             coords: V,
         ) -> super::Building<super::overwrite::coords<TypeDefs, V>> {
@@ -3071,7 +3094,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn shape<V: crate::imports::MaybeUpdateValueWithState<str>>(
+        pub fn shape<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
             shape: V,
         ) -> super::Building<super::overwrite::shape<TypeDefs, V>> {
@@ -3095,41 +3118,44 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::props::UpdateElement<web_sys::HtmlAreaElement> for super::Data<TypeDefs>
+        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlAreaElement>
+        for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<web_sys::HtmlElement>>::State,
-                download = <TypeDefs::download as ::frender_dom::props::MaybeUpdateValueWithState<
+                > as crate::imports::frender_dom::props::UpdateElement<
+                    web_sys::HtmlElement,
+                >>::State,
+                download = <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                href = <TypeDefs::href as ::frender_dom::props::MaybeUpdateValueWithState<
+                href = <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                ping = <TypeDefs::ping as ::frender_dom::props::MaybeUpdateValueWithState<
+                ping = <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                referrer_policy = <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                referrer_policy = <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                rel = <TypeDefs::rel as ::frender_dom::props::MaybeUpdateValueWithState<
+                rel = <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                target = <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
+                target = <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                alt = <TypeDefs::alt as ::frender_dom::props::MaybeUpdateValueWithState<
+                alt = <TypeDefs::alt as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                coords = <TypeDefs::coords as ::frender_dom::props::MaybeUpdateValueWithState<
+                coords = <TypeDefs::coords as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                shape = <TypeDefs::shape as ::frender_dom::props::MaybeUpdateValueWithState<
+                shape = <TypeDefs::shape as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
             >,
@@ -3143,66 +3169,66 @@ mod impl_update_element {
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::props::UpdateElement<
+                > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                download: <TypeDefs::download as ::frender_dom::props::MaybeUpdateValueWithState<
+                download: <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.download,
                     |v| element.set_download(v),
                     || dom_element.remove_attribute("download").unwrap(),
                 ),
-                href: <TypeDefs::href as ::frender_dom::props::MaybeUpdateValueWithState<
+                href: <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.href,
                     |v| element.set_href(v),
                     || dom_element.remove_attribute("href").unwrap(),
                 ),
-                ping: <TypeDefs::ping as ::frender_dom::props::MaybeUpdateValueWithState<
+                ping: <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.ping,
                     |v| element.set_ping(v),
                     || dom_element.remove_attribute("ping").unwrap(),
                 ),
-                referrer_policy: <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                referrer_policy: <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
                     |v| element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
-                rel: <TypeDefs::rel as ::frender_dom::props::MaybeUpdateValueWithState<
+                rel: <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.rel,
                     |v| element.set_rel(v),
                     || dom_element.remove_attribute("rel").unwrap(),
                 ),
-                target: <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
+                target: <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.target,
                     |v| element.set_target(v),
                     || dom_element.remove_attribute("target").unwrap(),
                 ),
-                alt: <TypeDefs::alt as ::frender_dom::props::MaybeUpdateValueWithState<
+                alt: <TypeDefs::alt as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.alt,
                     |v| element.set_alt(v),
                     || dom_element.remove_attribute("alt").unwrap(),
                 ),
-                coords: <TypeDefs::coords as ::frender_dom::props::MaybeUpdateValueWithState<
+                coords: <TypeDefs::coords as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.coords,
                     |v| element.set_coords(v),
                     || dom_element.remove_attribute("coords").unwrap(),
                 ),
-                shape: <TypeDefs::shape as ::frender_dom::props::MaybeUpdateValueWithState<
+                shape: <TypeDefs::shape as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.shape,
@@ -3219,13 +3245,13 @@ mod impl_update_element {
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::props::UpdateElement::update_element(
+            crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::download as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.download,
@@ -3233,7 +3259,7 @@ mod impl_update_element {
                 |v| element.set_download(v),
                 || dom_element.remove_attribute("download").unwrap(),
             );
-            <TypeDefs::href as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.href,
@@ -3241,7 +3267,7 @@ mod impl_update_element {
                 |v| element.set_href(v),
                 || dom_element.remove_attribute("href").unwrap(),
             );
-            <TypeDefs::ping as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.ping,
@@ -3249,7 +3275,7 @@ mod impl_update_element {
                 |v| element.set_ping(v),
                 || dom_element.remove_attribute("ping").unwrap(),
             );
-            <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
@@ -3257,7 +3283,7 @@ mod impl_update_element {
                 |v| element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
-            <TypeDefs::rel as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.rel,
@@ -3265,7 +3291,7 @@ mod impl_update_element {
                 |v| element.set_rel(v),
                 || dom_element.remove_attribute("rel").unwrap(),
             );
-            <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.target,
@@ -3273,7 +3299,7 @@ mod impl_update_element {
                 |v| element.set_target(v),
                 || dom_element.remove_attribute("target").unwrap(),
             );
-            <TypeDefs::alt as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::alt as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.alt,
@@ -3281,7 +3307,7 @@ mod impl_update_element {
                 |v| element.set_alt(v),
                 || dom_element.remove_attribute("alt").unwrap(),
             );
-            <TypeDefs::coords as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::coords as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.coords,
@@ -3289,7 +3315,7 @@ mod impl_update_element {
                 |v| element.set_coords(v),
                 || dom_element.remove_attribute("coords").unwrap(),
             );
-            <TypeDefs::shape as ::frender_dom::props::MaybeUpdateValueWithState<
+            <TypeDefs::shape as ::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.shape,
@@ -3335,7 +3361,7 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::download as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.download)
                                     .map(|value| (
@@ -3348,7 +3374,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::href as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.href)
                                     .map(|value| (
@@ -3361,7 +3387,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::ping as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.ping)
                                     .map(|value| (
@@ -3374,7 +3400,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::referrer_policy as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.referrer_policy)
                                     .map(|value| (
@@ -3387,7 +3413,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::rel as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.rel)
                                     .map(|value| (
@@ -3400,7 +3426,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::target as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.target)
                                     .map(|value| (
@@ -3413,7 +3439,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::alt as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::alt as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.alt)
                                     .map(|value| (
@@ -3426,7 +3452,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::coords as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::coords as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.coords)
                                     .map(|value| (
@@ -3439,7 +3465,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::shape as ::frender_dom::props::MaybeUpdateValueWithState<
+                                <TypeDefs::shape as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.shape)
                                     .map(|value| (
