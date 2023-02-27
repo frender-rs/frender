@@ -109,7 +109,9 @@ features = [
 ]
 
 [features]
-default = ["dom", "ssr"]
+default = ["dom", "ssr", "fully-typed"]
 dom = ["dep:frender-dom", "dep:web-sys"]
 ssr = ["dep:frender-ssr"]
 html_macro_not_expand = ["dep:frender-macros"]
+fully-typed = []
+simply-typed = []

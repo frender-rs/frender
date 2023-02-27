@@ -21,8 +21,11 @@ mod imports {
     pub(crate) use super::html::element_macros::def_intrinsic_component;
 }
 
+#[cfg(feature = "fully-typed")]
+pub use html::fully_typed;
+
 pub mod html_components {
-    pub use super::html::{
+    pub use super::fully_typed::{
         //
         a,
         abbr,

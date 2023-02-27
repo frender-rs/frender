@@ -11750,7 +11750,7 @@ mod impl_update_element {
                     dom_element,
                     "virtualkeyboardpolicy",
                 ),
-                || dom_element.remove_attribute("virtualkeyboardpolicy").unwrap(),
+                || { dom_element.remove_attribute("virtualkeyboardpolicy").unwrap() },
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
                 events::Invalid,
