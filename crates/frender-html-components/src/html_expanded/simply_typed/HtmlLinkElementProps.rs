@@ -1957,76 +1957,13 @@ mod builder_and_replacer {
     }
 }
 #[cfg(feature = "dom")]
-mod impl_update_element {
-    #[allow(unused_imports)]
-    use super::super::*;
-    impl<E, Children, Props> crate::imports::frender_dom::props::UpdateElement<E>
-        for super::Data<Children, Props>
-    where
-        crate::imports::frender_html_simple::ElementProps<Children, Props>:
-            crate::imports::frender_dom::props::UpdateElement<E>,
-    {
-        type State = <crate::imports::frender_html_simple::ElementProps<
-            Children,
-            Props,
-        > as crate::imports::frender_dom::props::UpdateElement<E>>::State;
-        #[inline(always)]
-        fn initialize_state(
-            this: Self,
-            element: &E,
-            children_ctx: &mut ::frender_dom::Dom,
-        ) -> Self::State {
-            crate::imports::frender_html_simple::ElementProps::<Children, Props>::initialize_state(
-                this.props,
-                element,
-                children_ctx,
-            )
-        }
-        #[inline(always)]
-        fn update_element(
-            this: Self,
-            element: &E,
-            children_ctx: &mut ::frender_dom::Dom,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            crate::imports::frender_html_simple::ElementProps::<Children, Props>::update_element(
-                this.props,
-                element,
-                children_ctx,
-                state,
-            )
-        }
-    }
-}
+impl_dom! {}
 #[cfg(feature = "ssr")]
-mod impl_into_ssr_data {
-    #[allow(unused_imports)]
-    use super::super::*;
-    impl<W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin, Children, Props>
-        crate::imports::frender_ssr::IntoSsrData<W> for super::Data<Children, Props>
-    where
-        crate::imports::frender_html_simple::ElementProps<Children, Props>:
-            crate::imports::frender_ssr::IntoSsrData<W>,
-    {
-        type Children = <crate::imports::frender_html_simple::ElementProps<
-            Children,
-            Props,
-        > as crate::imports::frender_ssr::IntoSsrData<W>>::Children;
-        type ChildrenRenderState = <crate::imports::frender_html_simple::ElementProps<
-            Children,
-            Props,
-        > as crate::imports::frender_ssr::IntoSsrData<W>>::ChildrenRenderState;
-        type Attrs = <crate::imports::frender_html_simple::ElementProps<
-            Children,
-            Props,
-        > as crate::imports::frender_ssr::IntoSsrData<W>>::Attrs;
-        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
-            crate::imports::frender_ssr::IntoSsrData::<W>::into_ssr_data(this.props)
-        }
-    }
-}
+impl_ssr! {}
 mod imports {
     use super::super::*;
-    pub(super) use crate::imports::frender_html_simple::{def_props, inherit_props_from};
+    pub(super) use crate::imports::frender_html_simple::{
+        def_props, impl_dom, impl_ssr, inherit_props_from,
+    };
 }
-use imports::{def_props, inherit_props_from};
+use imports::{def_props, impl_dom, impl_ssr, inherit_props_from};
