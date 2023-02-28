@@ -2,9 +2,7 @@
 
 use frender_html::props::events;
 
-#[cfg(feature = "html_macro_not_expand")]
-pub mod element_macros;
-
+#[cfg(not(frender_macro_def_intrinsic_component_props))] // this attribute is for identifying when expanding this macro
 frender_macros::def_intrinsic_component_props! {
     @[crate::imports]
 
@@ -121,13 +119,13 @@ frender_macros::def_intrinsic_component_props! {
             access_key ? &str {"accesskey" set_access_key},
             auto_capitalize ? &str {"autocapitalize"},
             auto_focus ? bool {"autofocus"},
-            content_editable [frender_html::props::MaybeInherit<bool>] : () = () => {
-                dom {
-                    impl {
-                        // TODO:
-                    }
-                }
-            },
+            // content_editable [frender_html::props::MaybeInherit<bool>] : () = () => {
+            //     dom {
+            //         impl {
+            //             // TODO:
+            //         }
+            //     }
+            // },
             #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
             context_menu ? &str {"contextmenu"},
             dir ? &str {set_dir},

@@ -145,14 +145,12 @@ impl RsxElementChildren {
     }
 }
 
-impl OptionalCratePathAndRsxChild {
-    pub fn into_ts(self) -> proc_macro2::TokenStream {
+impl RsxChild {
+    pub fn into_ts(self, crate_path: Option<proc_macro2::TokenStream>) -> proc_macro2::TokenStream {
         let mut errors: Vec<syn::Error> = vec![];
 
-        let crate_path = self
-            .path
-            .map_or_else(|| quote::quote!(::frender), |v| v.bracketed_path.content);
-        let value = self.rest.try_into_ts(&crate_path, &mut errors);
+        let crate_path = crate_path.unwrap_or_else(|| quote::quote!(::frender));
+        let value = self.try_into_ts(&crate_path, &mut errors);
         if errors.is_empty() {
             value
         } else {

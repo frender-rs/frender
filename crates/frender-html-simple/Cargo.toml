@@ -1,0 +1,18 @@
+[package]
+name = "frender-html-simple"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frender-core = { version = "0.1.0", path = "../frender-core" }
+frender-dom = { version = "0.1.0", path = "../frender-dom", optional = true }
+frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+pin-project-lite = "0.2.9"
+
+[features]
+default = ["dom", "ssr"]  # TODO: remove
+dom = ["dep:frender-dom"]
+ssr = ["dep:frender-ssr"]

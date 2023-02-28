@@ -3,6 +3,8 @@ use std::{
     path::PathBuf,
 };
 
+use syn::visit_mut::VisitMut;
+
 pub fn format_item(item: syn::Item) -> String {
     prettyplease::unparse(&syn::File {
         shebang: None,
@@ -11,27 +13,14 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html() -> io::Result<String> {
-    let output = std::process::Command::new("cargo")
-        .arg("expand")
-        .arg("-p")
-        .arg("frender-html-components")
-        .arg("html")
-        .arg("--features")
-        .arg("html_macro_not_expand")
-        .output()?;
-
-    if !output.status.success() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "Failed to run cargo expand".to_string(),
-        ));
-    }
-
-    io::stderr().write_all(&output.stderr)?;
-
-    let output = output.stdout;
-    string_from_utf8(output)
+pub fn cargo_expand_html(file_path: impl AsRef<std::path::Path>) -> io::Result<syn::File> {
+    let content = std::fs::read_to_string(file_path)?;
+    let mut code = syn::parse_file(&content).expect("file content is valid rust code");
+    let mut visitor = crate::expand::ExpandIntrinsicComponentMacro::new();
+    visitor.visit_file_mut(&mut code);
+    let ref mut items = visitor.finish().map_err(crate::utils::io_error_other)?;
+    code.items.append(items);
+    Ok(code)
 }
 
 pub fn locate_cargo_workspace_root() -> io::Result<PathBuf> {

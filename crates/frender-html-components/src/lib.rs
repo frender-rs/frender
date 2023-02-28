@@ -1,14 +1,18 @@
 #[cfg(feature = "html_macro_not_expand")]
 pub mod html;
 
+// #[cfg(feature = "html_macro_not_expand")]
+pub mod element_macros;
+
 #[cfg(not(feature = "html_macro_not_expand"))]
-mod html_expanded;
+pub mod html_expanded;
 #[cfg(not(feature = "html_macro_not_expand"))]
-pub use html_expanded::html;
+pub use html_expanded as html;
 
 mod imports {
     pub use frender_core;
     pub use frender_html;
+    pub use frender_html_simple;
     pub use pin_project_lite::pin_project;
 
     #[cfg(feature = "dom")]
@@ -17,15 +21,16 @@ mod imports {
     #[cfg(feature = "ssr")]
     pub use frender_ssr;
 
-    #[cfg(feature = "html_macro_not_expand")]
-    pub(crate) use super::html::element_macros::def_intrinsic_component;
+    // #[cfg(feature = "html_macro_not_expand")]
+    pub(crate) use super::element_macros::*;
 }
 
 #[cfg(feature = "fully-typed")]
 pub use html::fully_typed;
 
+#[cfg(feature = "simply-typed")]
 pub mod html_components {
-    pub use super::fully_typed::{
+    pub use super::html::simply_typed::{
         //
         a,
         abbr,
@@ -141,6 +146,7 @@ pub mod html_components {
     };
 }
 
+#[cfg(feature = "simply-typed")]
 pub mod intrinsic_components {
     pub use super::html_components::*;
 }

@@ -8,3 +8,6 @@ pub mod props;
 
 mod mount;
 pub use mount::*;
+
+pub use wasm_bindgen;
+pub use web_sys;

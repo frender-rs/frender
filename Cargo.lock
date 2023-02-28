@@ -238,12 +238,21 @@ dependencies = [
  "bg",
  "convert-js",
  "frender-core",
+ "frender-html-common",
  "futures-lite",
  "ghost-lite",
  "gloo",
  "html-escape",
+ "pin-project-lite",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "frender-html-common"
+version = "0.1.0"
+dependencies = [
+ "frender-core",
 ]
 
 [[package]]
@@ -253,6 +262,7 @@ dependencies = [
  "frender-core",
  "frender-dom",
  "frender-html",
+ "frender-html-simple",
  "frender-macros",
  "frender-ssr",
  "pin-project-lite",
@@ -263,7 +273,43 @@ dependencies = [
 name = "frender-html-expand"
 version = "0.1.0"
 dependencies = [
+ "frender-intrinsic-component-macro",
  "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "frender-html-simple"
+version = "0.1.0"
+dependencies = [
+ "frender-core",
+ "frender-dom",
+ "frender-html-common",
+ "frender-ssr",
+ "pin-project-lite",
+]
+
+[[package]]
+name = "frender-intrinsic-component-macro"
+version = "0.1.0"
+dependencies = [
+ "darling 0.14.3",
+ "frender-macro-utils",
+ "hooks-derive-core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "frender-macro-utils"
+version = "0.1.0"
+dependencies = [
+ "darling 0.14.3",
+ "hooks-derive-core",
+ "proc-macro2",
  "quote",
  "syn",
 ]
@@ -273,6 +319,8 @@ name = "frender-macros"
 version = "1.0.0-alpha.8"
 dependencies = [
  "darling 0.14.3",
+ "frender-intrinsic-component-macro",
+ "frender-macro-utils",
  "hooks-derive-core",
  "proc-macro2",
  "quote",

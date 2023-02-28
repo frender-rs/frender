@@ -6,23 +6,18 @@ use std::{
 
 use quote::ToTokens;
 
+mod expand;
 mod utils;
 
 fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
     let src_root = workspace_root.join("crates/frender-html-components/src");
 
-    let code = utils::cargo_expand_html()?.replacen(
-        r#"#[cfg(feature = "html_macro_not_expand")]"#,
-        "#[allow(warnings)]",
-        1,
-    );
-
-    let code = syn::parse_str::<syn::File>(&code).map_err(utils::io_error_other)?;
+    let code = utils::cargo_expand_html(src_root.join("html.rs"))?;
 
     assert!(code.shebang.is_none());
 
-    write_mod_content_into_dir(&src_root, "html_expanded", code.attrs, code.items, 3)?;
+    write_mod_content_into_dir(&src_root, "html_expanded", code.attrs, code.items, 2)?;
 
     utils::cargo_fmt_package("frender-html-components")
 }

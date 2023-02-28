@@ -36,3 +36,11 @@ where
         self
     }
 }
+
+pub fn join_poll_reactive_results(a: Poll<bool>, b: Poll<bool>) -> Poll<bool> {
+    match (a, b) {
+        (Poll::Ready(false), Poll::Ready(false)) => Poll::Ready(false),
+        (Poll::Ready(false) | Poll::Pending, Poll::Ready(false) | Poll::Pending) => Poll::Pending,
+        _ => Poll::Ready(true),
+    }
+}

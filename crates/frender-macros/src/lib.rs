@@ -8,13 +8,11 @@ mod props_data;
 mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
-mod utils;
 
 use proc_macro::TokenStream;
 use syn::parse_macro_input;
 
-#[cfg(feature = "intrinsic-component")]
-mod intrinsic_component;
+use frender_macro_utils as utils;
 
 #[proc_macro_attribute]
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
@@ -55,7 +53,7 @@ pub fn rsx_xml_with_full_path(input: TokenStream) -> TokenStream {
         }
     };
 
-    value.into_ts().into()
+    value.map(rsx_data::RsxChild::into_ts).into()
 }
 
 #[proc_macro]
@@ -75,11 +73,5 @@ pub fn __impl_auto_prepend_intrinsic_components(input: TokenStream) -> TokenStre
 #[cfg(feature = "intrinsic-component")]
 #[proc_macro]
 pub fn def_intrinsic_component_props(input: TokenStream) -> TokenStream {
-    let value: utils::prefix_path::PrefixPath<
-        intrinsic_component::IntrinsicComponentPropsDataWithModInfo,
-    > = parse_macro_input!(input);
-
-    value
-        .map(intrinsic_component::IntrinsicComponentPropsDataWithModInfo::into_ts)
-        .into()
+    frender_intrinsic_component_macro::into_ts(parse_macro_input!(input)).into()
 }

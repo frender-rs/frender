@@ -1,4 +1,5 @@
 pub trait UpdateElementAttribute {
+    // TODO: change to this
     fn update_element_attribute(self, element: &web_sys::Element, attribute_name: &str);
 }
 
