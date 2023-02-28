@@ -102,3 +102,17 @@ macro_rules! impl_ssr {
         }
     };
 }
+
+#[macro_export]
+macro_rules! impl_prop_children {
+    ($method_name:ident) => {
+        impl<Props> Building<$crate::AllowChildren, Props> {
+            #[inline(always)]
+            pub fn $method_name<Children>(self, children: Children) -> Building<Children, Props> {
+                Building(Data {
+                    props: self.0.props.children(children),
+                })
+            }
+        }
+    };
+}

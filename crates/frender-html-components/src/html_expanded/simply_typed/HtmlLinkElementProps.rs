@@ -747,17 +747,10 @@ mod props_impl_ssr {
     #[allow(unused_imports)]
     use super::super::*;
 }
+impl_prop_children!(children);
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
-    impl<Props> super::Building<crate::imports::frender_html_simple::AllowChildren, Props> {
-        #[inline(always)]
-        pub fn children<Children>(self, children: Children) -> super::Building<Children, Props> {
-            super::Building(super::Data {
-                props: self.0.props.children(children),
-            })
-        }
-    }
     impl<Children, Props> super::Building<Children, Props> {
         #[inline(always)]
         pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
@@ -1963,7 +1956,7 @@ impl_ssr! {}
 mod imports {
     use super::super::*;
     pub(super) use crate::imports::frender_html_simple::{
-        def_props, impl_dom, impl_ssr, inherit_props_from,
+        def_props, impl_dom, impl_prop_children, impl_ssr, inherit_props_from,
     };
 }
-use imports::{def_props, impl_dom, impl_ssr, inherit_props_from};
+use imports::{def_props, impl_dom, impl_prop_children, impl_ssr, inherit_props_from};

@@ -161,21 +161,10 @@ impl IntrinsicComponentPropsData {
                     #props_impl_ssr
                 }
 
+                impl_prop_children!(children);
                 mod builder_and_replacer {
                     #[allow(unused_imports)]
                     use super::super::*;
-
-                    impl<Props> super::Building<
-                        #crate_path::frender_html_simple::AllowChildren,
-                        Props
-                    > {
-                        #[inline(always)]
-                        pub fn children<Children>(self, children: Children) -> super::Building<Children, Props> {
-                            super::Building(super::Data {
-                                props: self.0.props.children(children)
-                            })
-                        }
-                    }
 
                     impl<Children, Props>
                     super::Building<Children, Props> {
@@ -195,11 +184,13 @@ impl IntrinsicComponentPropsData {
                     pub(super) use #crate_path::frender_html_simple::{
                         def_props, inherit_props_from,
                         impl_dom, impl_ssr,
+                        impl_prop_children,
                     };
                 }
                 use imports::{
                     def_props, inherit_props_from,
                     impl_dom, impl_ssr,
+                    impl_prop_children,
                 };
             }
 
