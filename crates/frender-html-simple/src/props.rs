@@ -3,15 +3,12 @@ use frender_core::UpdateRenderState;
 use super::ElementPropsStates;
 
 #[derive(Debug, Clone, Copy, Default)]
-pub struct AllowChildren;
-
-#[derive(Debug, Clone, Copy, Default)]
 pub struct ElementProps<Children, Props> {
     pub children: Children,
     pub other_props: Props,
 }
 
-impl<Props> ElementProps<AllowChildren, Props> {
+impl<Props> ElementProps<(), Props> {
     #[inline(always)]
     pub fn children<C>(self, children: C) -> ElementProps<C, Props> {
         ElementProps {

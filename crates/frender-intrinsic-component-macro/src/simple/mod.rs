@@ -9,7 +9,7 @@ use field_as_simple_prop::*;
 impl IntrinsicComponentPropsData {
     pub fn into_ts_simply(self, crate_path: &TokenStream) -> TokenStream {
         let Self {
-            attrs,
+            attrs: mut fn_attrs,
             vis,
             struct_token: _,
             name,
@@ -18,6 +18,12 @@ impl IntrinsicComponentPropsData {
             inherits,
         } = self;
         let span = name.span();
+
+        for fn_attr in &mut fn_attrs {
+            assert!(matches!(fn_attr.style, syn::AttrStyle::Outer));
+
+            fn_attr.style = syn::AttrStyle::Inner(syn::Token![!](span));
+        }
 
         let dom_element_type = &dom_element.content.ty;
 
@@ -59,26 +65,7 @@ impl IntrinsicComponentPropsData {
                 }
             });
 
-        let props_inherits = fields
-            .iter()
-            .filter_map(|f| f.declaration.as_inherit().map(|v| (&f.name, v)))
-            .map(|(_name, f)| {
-                let from_path = &f.from_path;
-                quote! {
-                    super::inherit_props_from!(#from_path);
-                }
-            });
-        let props_structs = fields
-            .iter()
-            .filter(|f| !f.declaration.is_inherit())
-            .map(|f| &f.name);
-        let props_structs = quote! {
-            super::def_props!(
-                #( #props_structs , )*
-            );
-        };
-
-        let mut impl_builder_fn = TokenStream::new();
+        let mut all_field_info = TokenStream::new();
         let mut props_impl_dom = TokenStream::new();
         let mut props_impl_ssr = TokenStream::new();
 
@@ -92,61 +79,23 @@ impl IntrinsicComponentPropsData {
         }) {
             props_impl_dom.extend(p.impl_dom);
             props_impl_ssr.extend(p.impl_ssr);
-            impl_builder_fn.extend(p.builder_fns);
+            all_field_info.extend(p.field_info);
         }
 
         quote_spanned! {span=>
             #[allow(non_snake_case)]
             #vis mod #name {
-                #(#attrs)*
-                #[allow(non_snake_case)]
-                #[inline(always)]
-                #vis fn #name () -> Building {
-                    Building(Default::default())
-                }
-
-                pub mod data_struct {
-                    #[allow(unused_imports)]
-                    use super::super::*;
-
+                def_props_type!(
+                    #(#fn_attrs)*
                     #[derive(Debug, Clone, Copy, Default)]
-                    #[repr(transparent)]
-                    pub struct #name<
-                        Children = #crate_path::frender_html_simple::AllowChildren,
-                        Props = (),
-                    > {
-                        pub props: #crate_path::frender_html_simple::ElementProps<Children, Props>
-                    }
-                }
-
-                pub mod building_struct {
-                    #[allow(unused_imports)]
-                    use super::super::*;
-                    #[repr(transparent)]
-                    pub struct #name<
-                        Children = #crate_path::frender_html_simple::AllowChildren,
-                        Props = (),
-                    >(pub super::Data<Children, Props>);
-                }
-
-                pub use data_struct::#name as Data;
-                pub use building_struct::#name as Building;
-                pub type DataInitial = data_struct::#name;
-                pub mod prelude {}
-
-                #[inline(always)]
-                pub fn build<Children, Props>(building: Building<Children, Props>) -> Data<Children, Props> {
-                    building.0
-                }
-                pub use build as valid;
-
-                pub mod props {
-                    #(#props_inherits)*
-                    #props_structs
-                }
+                    #name [
+                        #all_field_info
+                    ]
+                );
 
                 #[cfg(feature = "dom")]
-                mod props_impl_dom {
+                mod impl_dom_for_props {
+                    #![allow(unused_variables)]
                     #[allow(unused_imports)]
                     use super::super::*;
 
@@ -154,44 +103,20 @@ impl IntrinsicComponentPropsData {
                 }
 
                 #[cfg(feature = "ssr")]
-                mod props_impl_ssr {
+                mod impl_ssr_for_props {
+                    #![allow(unused_variables)]
                     #[allow(unused_imports)]
                     use super::super::*;
 
                     #props_impl_ssr
                 }
 
-                impl_prop_children!(children);
-                mod builder_and_replacer {
+                mod imports {
                     #[allow(unused_imports)]
                     use super::super::*;
-
-                    impl<Children, Props>
-                    super::Building<Children, Props> {
-                        #impl_builder_fn
-                    }
+                    pub(super) use #crate_path::frender_html_simple::def_props_type;
                 }
-
-                #[cfg(feature = "dom")]
-                impl_dom! {}
-
-                #[cfg(feature = "ssr")]
-                impl_ssr! {}
-
-                mod imports {
-                    use super::super::*;
-
-                    pub(super) use #crate_path::frender_html_simple::{
-                        def_props, inherit_props_from,
-                        impl_dom, impl_ssr,
-                        impl_prop_children,
-                    };
-                }
-                use imports::{
-                    def_props, inherit_props_from,
-                    impl_dom, impl_ssr,
-                    impl_prop_children,
-                };
+                use imports::def_props_type;
             }
 
             #vis use #name::#name;

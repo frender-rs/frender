@@ -9,7 +9,7 @@ use crate::{Field, FieldDeclaration};
 pub struct FieldToSimpleProp {
     pub impl_dom: Option<TokenStream>,
     pub impl_ssr: Option<TokenStream>,
-    pub builder_fns: Option<TokenStream>,
+    pub field_info: TokenStream,
 }
 
 pub struct FieldAsSimpleProp<'a> {
@@ -39,11 +39,10 @@ impl FieldAsSimpleProp<'_> {
                 assert!(m.no_cache.is_none(), "simply typed prop must have state");
                 let ty = &m.ty;
                 builder_fn_bounds = Some(quote! {
-                    : #crate_path::frender_html::props::MaybeUpdateValueWithState<#ty>
+                    #crate_path::frender_html::props::MaybeUpdateValueWithState<#ty>
                 });
-                let bounds = builder_fn_bounds.as_ref().unwrap();
-                dom_bounds = Some(Cow::Borrowed(bounds));
-                ssr_bounds = Some(Cow::Borrowed(bounds));
+                dom_bounds = Some(quote!(: #builder_fn_bounds));
+                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
                 dom_state_ty = {
                     // let
                     quote! {
@@ -67,9 +66,9 @@ impl FieldAsSimpleProp<'_> {
             FieldDeclaration::EventListener(e) => {
                 //
                 let ty = &e.ty;
-                dom_bounds = Some(Cow::Owned(quote! {
+                dom_bounds = Some(quote! {
                     : #crate_path::frender_html::props::UpdateDomEventListener<#ty>
-                }));
+                });
                 dom_state_ty = {
                     quote! {
                         V::State
@@ -90,7 +89,7 @@ impl FieldAsSimpleProp<'_> {
                 return FieldToSimpleProp {
                     impl_dom: None,
                     impl_ssr: None,
-                    builder_fns: None,
+                    field_info: quote!(children,),
                 };
             }
             FieldDeclaration::Inherit(f) => {
@@ -98,8 +97,9 @@ impl FieldAsSimpleProp<'_> {
                 return FieldToSimpleProp {
                     impl_dom: None,
                     impl_ssr: None,
-                    builder_fns: Some(
-                        f.fields
+                    field_info: {
+                        let fields = f
+                            .fields
                             .iter()
                             .map(|field| FieldAsSimpleProp {
                                 crate_path,
@@ -107,9 +107,13 @@ impl FieldAsSimpleProp<'_> {
                                 dom_element_ty: &f.dom_element_ty,
                             })
                             .map(FieldAsSimpleProp::into_simple_prop)
-                            .filter_map(|p| p.builder_fns)
-                            .collect(),
-                    ),
+                            .map(|p| p.field_info);
+                        quote! {
+                            ..#from_path [
+                                #(#fields)*
+                            ],
+                        }
+                    },
                 };
             }
         }
@@ -148,17 +152,12 @@ impl FieldAsSimpleProp<'_> {
             impl_ssr: Some(quote! {
                 // TODO:
             }),
-            builder_fns: Some(quote! {
-                #[inline(always)]
-                pub fn #name<V #builder_fn_bounds>(self, #name: V) -> super::Building<
-                    Children,
-                    (Props, super::props::#name<V>)
-                > {
-                    super::Building(super::Data {
-                        props: self.0.props.chain_prop(super::props::#name(#name))
-                    })
+            field_info: {
+                let bounds = builder_fn_bounds.map(|b| quote!(: bounds![#b]));
+                quote! {
+                    #name #bounds,
                 }
-            }),
+            },
         }
     }
 }
