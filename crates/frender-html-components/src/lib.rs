@@ -23,10 +23,15 @@ mod imports {
 
     // #[cfg(feature = "html_macro_not_expand")]
     pub(crate) use super::element_macros::*;
+
+    #[cfg(feature = "fully-typed")]
+    pub(crate) use crate::ignore_first_ty::ignore_first_ty;
 }
 
 #[cfg(feature = "fully-typed")]
 pub use html::fully_typed;
+#[cfg(feature = "fully-typed")]
+pub mod ignore_first_ty;
 
 #[cfg(feature = "simply-typed")]
 pub mod html_components {

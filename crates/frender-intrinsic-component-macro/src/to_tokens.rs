@@ -352,6 +352,7 @@ impl IntrinsicComponentPropsData {
             })
             .unzip();
 
+        let only_one_field = fields.len() == 1;
         let impl_field_overwrite = fields.iter().enumerate().map(|(i, field)| {
             let field_name = &field.name;
             let fields = field_names.iter().enumerate().map(|(cur, name)| {
@@ -376,10 +377,20 @@ impl IntrinsicComponentPropsData {
                 _ => None::<TokenStream>,
             };
 
-            quote! {
-                pub type #field_name < TypeDefs, Value > = dyn super::Types<
+            let mut ty = quote! {
+                dyn super::Types<
                     #(#fields),*
-                >;
+                >
+            };
+
+            if only_one_field {
+                ty = quote! {
+                    #crate_path::ignore_first_ty![TypeDefs, #ty]
+                }
+            }
+
+            quote! {
+                pub type #field_name < TypeDefs, Value > = #ty;
                 #overwrite_sub_fields
             }
         });
@@ -435,10 +446,15 @@ impl IntrinsicComponentPropsData {
             };
             mod_render_state = quote!(pub use super::#inherit_path::render_state;);
 
-            ssr_ty_children = todo!();
-            ssr_ty_children_state = todo!();
-            ssr_ty_attrs = todo!();
-            impl_into_ssr_data = todo!();
+            let ty_ssr = quote! {
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_ssr::IntoSsrData::<W>>
+            };
+            ssr_ty_children = quote!(#ty_ssr::Children);
+            ssr_ty_children_state = quote!(#ty_ssr::ChildrenRenderState);
+            ssr_ty_attrs = quote!(#ty_ssr::Attrs);
+            impl_into_ssr_data = quote!(
+                #ty_ssr::into_ssr_data(this.#field_name)
+            );
         } else {
             only_one_inherit_field = false;
             state_init = Some(quote!( let state = state.pin_project(); ));

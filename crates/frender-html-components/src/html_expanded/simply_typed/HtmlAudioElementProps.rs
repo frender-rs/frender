@@ -157,7 +157,6 @@ def_props_type!(
             on_volume_change,
             on_waiting,
         ),
-        __: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
     )
 );
 #[cfg(feature = "dom")]
@@ -165,55 +164,6 @@ mod impl_dom_for_props {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlAudioElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E> for super::props::__<V>
-    {
-        type State = super::props::__<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::__(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "__",
-                    ),
-                    || dom_element.remove_attribute("__").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
-                    v,
-                    dom_element,
-                    "__",
-                ),
-                || dom_element.remove_attribute("__").unwrap(),
-            );
-        }
-    }
 }
 #[cfg(feature = "ssr")]
 mod impl_ssr_for_props {

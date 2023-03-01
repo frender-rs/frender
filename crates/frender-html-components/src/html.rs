@@ -237,7 +237,6 @@ frender_macros::def_intrinsic_component_props! {
                 on_waiting @ events::Waiting,
             } [
                 pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement : audio) {
-                    __ ? &str, // TODO: optimize for direct inherited struct
                 }
             ][
                 pub struct HtmlVideoElementProps(web_sys::HtmlVideoElement : video) {

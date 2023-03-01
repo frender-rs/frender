@@ -5,14 +5,13 @@ pub fn HtmlAudioElementProps() -> Building<TypesInitial> {
     use super::*;
     self::Building {
         HtmlMediaElementProps: HtmlMediaElementProps::build(HtmlMediaElementProps()),
-        __: (),
     }
 }
 pub mod prelude {}
 pub mod overwrite {
     #![allow(non_camel_case_types)]
     pub type HtmlMediaElementProps<TypeDefs, Value> =
-        dyn super::Types<HtmlMediaElementProps = Value, __ = <TypeDefs as super::Types>::__>;
+        crate::imports::ignore_first_ty![TypeDefs, dyn super::Types<HtmlMediaElementProps = Value>];
     pub type HtmlElementProps<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
         super::super::HtmlMediaElementProps::overwrite::HtmlElementProps<
@@ -888,10 +887,6 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type __<TypeDefs, Value> = dyn super::Types<
-        HtmlMediaElementProps = <TypeDefs as super::Types>::HtmlMediaElementProps,
-        __ = Value,
-    >;
 }
 mod trait_types {
     #[allow(unused_imports)]
@@ -899,7 +894,6 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlMediaElementProps: ?::core::marker::Sized + HtmlMediaElementProps::Types;
-        type __: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -909,7 +903,6 @@ pub mod data_struct {
     pub struct HtmlAudioElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
         pub HtmlMediaElementProps:
             super::super::HtmlMediaElementProps::Data<TypeDefs::HtmlMediaElementProps>,
-        pub __: TypeDefs::__,
     }
 }
 pub use ::core::convert::identity as Building;
@@ -921,46 +914,12 @@ mod types_initial {
     #[allow(unused_imports)]
     use super::super::*;
     pub type TypesInitial =
-        dyn super::Types<HtmlMediaElementProps = HtmlMediaElementProps::TypesInitial, __ = ()>;
+        dyn super::Types<HtmlMediaElementProps = HtmlMediaElementProps::TypesInitial>;
 }
 pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
 #[cfg(feature = "dom")]
-pub mod render_state {
-    #[allow(non_camel_case_types)]
-    pub trait RenderStateTypes {
-        type HtmlMediaElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
-        type __;
-    }
-    crate::imports::pin_project! {
-        #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
-        > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlMediaElementProps :
-        TypeDefs::HtmlMediaElementProps, pub __ : TypeDefs::__, }
-    }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
-        #[inline(always)]
-        pub(crate) fn pin_project(
-            self: ::core::pin::Pin<&mut Self>,
-        ) -> RenderStateProj<'_, TypeDefs> {
-            self.project()
-        }
-    }
-    impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
-        for RenderState<TypeDefs>
-    {
-        #[inline]
-        fn intrinsic_component_poll_reactive(
-            self: ::core::pin::Pin<&mut Self>,
-            cx: &mut ::core::task::Context<'_>,
-        ) -> ::core::task::Poll<bool> {
-            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
-                self.project().HtmlMediaElementProps,
-                cx,
-            )
-        }
-    }
-}
+pub use super::HtmlMediaElementProps::render_state;
 mod builder_and_replacer {
     #[allow(unused_imports)]
     use super::super::*;
@@ -973,7 +932,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.children(children),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::class`]
@@ -984,7 +942,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.class(class),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::id`]
@@ -995,7 +952,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.id(id),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::part`]
@@ -1006,7 +962,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.part(part),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_cancel`]
@@ -1017,7 +972,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_cancel(on_cancel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_error`]
@@ -1028,7 +982,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_error(on_error),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_scroll`]
@@ -1039,7 +992,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_scroll(on_scroll),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_security_policy_violation`]
@@ -1052,7 +1004,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_security_policy_violation(on_security_policy_violation),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_select`]
@@ -1063,7 +1014,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_select(on_select),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_wheel`]
@@ -1074,7 +1024,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_wheel(on_wheel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_copy`]
@@ -1085,7 +1034,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_copy(on_copy),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_cut`]
@@ -1096,7 +1044,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_cut(on_cut),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_paste`]
@@ -1107,7 +1054,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_paste(on_paste),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_composition_end`]
@@ -1120,7 +1066,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_composition_end(on_composition_end),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_composition_start`]
@@ -1133,7 +1078,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_composition_start(on_composition_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_composition_update`]
@@ -1146,7 +1090,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_composition_update(on_composition_update),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_blur`]
@@ -1157,7 +1100,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_blur(on_blur),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_focus`]
@@ -1168,7 +1110,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_focus(on_focus),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_focus_in`]
@@ -1179,7 +1120,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_focus_in(on_focus_in),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_focus_out`]
@@ -1190,7 +1130,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_focus_out(on_focus_out),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_fullscreen_change`]
@@ -1203,7 +1142,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_fullscreen_change(on_fullscreen_change),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_fullscreen_error`]
@@ -1216,7 +1154,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_fullscreen_error(on_fullscreen_error),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_key_down`]
@@ -1227,7 +1164,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_key_down(on_key_down),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_key_up`]
@@ -1238,7 +1174,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_key_up(on_key_up),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_aux_click`]
@@ -1249,7 +1184,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_aux_click(on_aux_click),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_click`]
@@ -1260,7 +1194,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_click(on_click),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_context_menu`]
@@ -1271,7 +1204,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_context_menu(on_context_menu),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_double_click`]
@@ -1282,7 +1214,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_double_click(on_double_click),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_down`]
@@ -1293,7 +1224,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_down(on_mouse_down),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_enter`]
@@ -1304,7 +1234,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_enter(on_mouse_enter),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_leave`]
@@ -1315,7 +1244,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_leave(on_mouse_leave),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_move`]
@@ -1326,7 +1254,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_move(on_mouse_move),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_out`]
@@ -1337,7 +1264,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_out(on_mouse_out),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_over`]
@@ -1348,7 +1274,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_over(on_mouse_over),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_mouse_up`]
@@ -1359,7 +1284,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_mouse_up(on_mouse_up),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_touch_cancel`]
@@ -1370,7 +1294,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_touch_cancel(on_touch_cancel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_touch_end`]
@@ -1381,7 +1304,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_touch_end(on_touch_end),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_touch_move`]
@@ -1392,7 +1314,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_touch_move(on_touch_move),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_touch_start`]
@@ -1403,7 +1324,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_touch_start(on_touch_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::access_key`]
@@ -1416,7 +1336,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.access_key(access_key),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::auto_capitalize`]
@@ -1429,7 +1348,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.auto_capitalize(auto_capitalize),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::auto_focus`]
@@ -1442,7 +1360,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.auto_focus(auto_focus),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::context_menu`]
@@ -1455,7 +1372,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.context_menu(context_menu),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::dir`]
@@ -1466,7 +1382,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.dir(dir),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::draggable`]
@@ -1479,7 +1394,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.draggable(draggable),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::enter_key_hint`]
@@ -1492,7 +1406,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.enter_key_hint(enter_key_hint),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::hidden`]
@@ -1503,7 +1416,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.hidden(hidden),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::inert`]
@@ -1514,7 +1426,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.inert(inert),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::input_mode`]
@@ -1527,7 +1438,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.input_mode(input_mode),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::is`]
@@ -1538,7 +1448,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.is(is),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::item_id`]
@@ -1549,7 +1458,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.item_id(item_id),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::item_prop`]
@@ -1560,7 +1468,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.item_prop(item_prop),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::item_ref`]
@@ -1571,7 +1478,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.item_ref(item_ref),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::item_scope`]
@@ -1584,7 +1490,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.item_scope(item_scope),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::item_type`]
@@ -1595,7 +1500,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.item_type(item_type),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::lang`]
@@ -1606,7 +1510,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.lang(lang),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::nonce`]
@@ -1617,7 +1520,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.nonce(nonce),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::role`]
@@ -1628,7 +1530,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.role(role),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::slot`]
@@ -1639,7 +1540,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.slot(slot),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::spellcheck`]
@@ -1652,7 +1552,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.spellcheck(spellcheck),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::style`]
@@ -1663,7 +1562,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.style(style),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::tab_index`]
@@ -1674,7 +1572,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.tab_index(tab_index),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::title`]
@@ -1685,7 +1582,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.title(title),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::translate`]
@@ -1696,7 +1592,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.translate(translate),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::virtual_keyboard_policy`]
@@ -1711,7 +1606,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .virtual_keyboard_policy(virtual_keyboard_policy),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_invalid`]
@@ -1722,7 +1616,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_invalid(on_invalid),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_animation_cancel`]
@@ -1735,7 +1628,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_animation_cancel(on_animation_cancel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_animation_end`]
@@ -1748,7 +1640,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_animation_end(on_animation_end),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_animation_iteration`]
@@ -1761,7 +1652,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_animation_iteration(on_animation_iteration),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_animation_start`]
@@ -1774,7 +1664,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_animation_start(on_animation_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_before_input`]
@@ -1785,7 +1674,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_before_input(on_before_input),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_input`]
@@ -1796,7 +1684,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_input(on_input),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_change`]
@@ -1807,7 +1694,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_change(on_change),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_got_pointer_capture`]
@@ -1820,7 +1706,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_got_pointer_capture(on_got_pointer_capture),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_lost_pointer_capture`]
@@ -1833,7 +1718,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_lost_pointer_capture(on_lost_pointer_capture),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_cancel`]
@@ -1846,7 +1730,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_pointer_cancel(on_pointer_cancel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_down`]
@@ -1857,7 +1740,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pointer_down(on_pointer_down),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_enter`]
@@ -1870,7 +1752,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_pointer_enter(on_pointer_enter),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_leave`]
@@ -1883,7 +1764,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_pointer_leave(on_pointer_leave),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_move`]
@@ -1894,7 +1774,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pointer_move(on_pointer_move),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_out`]
@@ -1905,7 +1784,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pointer_out(on_pointer_out),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_over`]
@@ -1916,7 +1794,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pointer_over(on_pointer_over),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pointer_up`]
@@ -1927,7 +1804,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pointer_up(on_pointer_up),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_transition_cancel`]
@@ -1940,7 +1816,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_transition_cancel(on_transition_cancel),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_transition_end`]
@@ -1953,7 +1828,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_transition_end(on_transition_end),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_transition_run`]
@@ -1966,7 +1840,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_transition_run(on_transition_run),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_transition_start`]
@@ -1979,7 +1852,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_transition_start(on_transition_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag`]
@@ -1990,7 +1862,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag(on_drag),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag_end`]
@@ -2001,7 +1872,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag_end(on_drag_end),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag_enter`]
@@ -2012,7 +1882,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag_enter(on_drag_enter),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag_leave`]
@@ -2023,7 +1892,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag_leave(on_drag_leave),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag_over`]
@@ -2034,7 +1902,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag_over(on_drag_over),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drag_start`]
@@ -2045,7 +1912,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drag_start(on_drag_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_drop`]
@@ -2056,7 +1922,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_drop(on_drop),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::auto_play`]
@@ -2069,7 +1934,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_play<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.auto_play(auto_play),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::controls`]
@@ -2080,7 +1944,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::controls<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.controls(controls),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::cross_origin`]
@@ -2093,7 +1956,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.cross_origin(cross_origin),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::loop_`]
@@ -2104,7 +1966,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::loop_<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.loop_(loop_),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::muted`]
@@ -2115,7 +1976,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::muted<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.muted(muted),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::preload`]
@@ -2126,7 +1986,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::preload<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.preload(preload),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::src`]
@@ -2137,7 +1996,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::src<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.src(src),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_abort`]
@@ -2148,7 +2006,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_abort<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_abort(on_abort),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_can_play`]
@@ -2159,7 +2016,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_can_play<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_can_play(on_can_play),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_can_play_through`]
@@ -2172,7 +2028,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_can_play_through(on_can_play_through),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_duration_change`]
@@ -2185,7 +2040,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_duration_change(on_duration_change),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_emptied`]
@@ -2196,7 +2050,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_emptied<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_emptied(on_emptied),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_ended`]
@@ -2207,7 +2060,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_ended<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_ended(on_ended),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_loaded_data`]
@@ -2218,7 +2070,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_loaded_data<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_loaded_data(on_loaded_data),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_loaded_metadata`]
@@ -2231,7 +2082,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_loaded_metadata(on_loaded_metadata),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_load_start`]
@@ -2242,7 +2092,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_load_start<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_load_start(on_load_start),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_pause`]
@@ -2253,7 +2102,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pause<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_pause(on_pause),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_play`]
@@ -2264,7 +2112,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_play<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_play(on_play),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_playing`]
@@ -2275,7 +2122,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_playing<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_playing(on_playing),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_progress`]
@@ -2286,7 +2132,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_progress<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_progress(on_progress),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_rate_change`]
@@ -2297,7 +2142,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_rate_change<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_rate_change(on_rate_change),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_resize`]
@@ -2308,7 +2152,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_resize<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_resize(on_resize),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_seeked`]
@@ -2319,7 +2162,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_seeked<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_seeked(on_seeked),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_seeking`]
@@ -2330,7 +2172,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_seeking<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_seeking(on_seeking),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_stalled`]
@@ -2341,7 +2182,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_stalled<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_stalled(on_stalled),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_suspend`]
@@ -2352,7 +2192,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_suspend<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_suspend(on_suspend),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_time_update`]
@@ -2363,7 +2202,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_time_update<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_time_update(on_time_update),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_volume_change`]
@@ -2376,7 +2214,6 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self
                     .HtmlMediaElementProps
                     .on_volume_change(on_volume_change),
-                __: self.__,
             }
         }
         ///See [`HtmlMediaElementProps::on_waiting`]
@@ -2387,17 +2224,6 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_waiting<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.on_waiting(on_waiting),
-                __: self.__,
-            }
-        }
-        #[inline(always)]
-        pub fn __<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
-            self,
-            __: V,
-        ) -> super::Building<super::overwrite::__<TypeDefs, V>> {
-            super::Data {
-                HtmlMediaElementProps: self.HtmlMediaElementProps,
-                __,
             }
         }
     }
@@ -2413,40 +2239,22 @@ mod impl_update_element {
         HtmlMediaElementProps::Data<TypeDefs::HtmlMediaElementProps>:
             crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlMediaElement>,
     {
-        type State = super::render_state::RenderState<
-            dyn super::render_state::RenderStateTypes<
-                HtmlMediaElementProps = <HtmlMediaElementProps::Data<
-                    TypeDefs::HtmlMediaElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
-                    web_sys::HtmlMediaElement,
-                >>::State,
-                __ = <TypeDefs::__ as ::frender_html::props::MaybeUpdateValueWithState<str>>::State,
-            >,
-        >;
+        type State = <HtmlMediaElementProps::Data<
+            TypeDefs::HtmlMediaElementProps,
+        > as crate::imports::frender_dom::props::UpdateElement<
+            web_sys::HtmlMediaElement,
+        >>::State;
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlAudioElement,
             children_ctx: &mut ::frender_dom::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
-            super::render_state::RenderState {
-                HtmlMediaElementProps: <HtmlMediaElementProps::Data<
-                    TypeDefs::HtmlMediaElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
-                    web_sys::HtmlMediaElement,
-                >>::initialize_state(this.HtmlMediaElementProps, element, children_ctx),
-                __: <TypeDefs::__ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.__,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "__",
-                    ),
-                    || dom_element.remove_attribute("__").unwrap(),
-                ),
-            }
+            <HtmlMediaElementProps::Data<
+                TypeDefs::HtmlMediaElementProps,
+            > as crate::imports::frender_dom::props::UpdateElement<
+                web_sys::HtmlMediaElement,
+            >>::initialize_state(this.HtmlMediaElementProps, element, children_ctx)
         }
         fn update_element(
             this: Self,
@@ -2454,25 +2262,12 @@ mod impl_update_element {
             children_ctx: &mut ::frender_dom::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
-            let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
             crate::imports::frender_dom::props::UpdateElement::update_element(
                 this.HtmlMediaElementProps,
                 element.as_ref(),
                 children_ctx,
-                state.HtmlMediaElementProps,
-            );
-            <TypeDefs::__ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.__,
-                state.__,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
-                    v,
-                    dom_element,
-                    "__",
-                ),
-                || dom_element.remove_attribute("__").unwrap(),
+                state,
             );
         }
     }
@@ -2490,46 +2285,19 @@ mod impl_into_ssr_data {
     {
         type Children = <HtmlMediaElementProps::Data<
             TypeDefs::HtmlMediaElementProps,
-        > as ::frender_ssr::IntoSsrData<W>>::Children;
+        > as crate::imports::frender_ssr::IntoSsrData::<W>>::Children;
         type ChildrenRenderState = <HtmlMediaElementProps::Data<
             TypeDefs::HtmlMediaElementProps,
-        > as ::frender_ssr::IntoSsrData<W>>::ChildrenRenderState;
-        type Attrs = ::core::iter::Chain<
+        > as crate::imports::frender_ssr::IntoSsrData::<W>>::ChildrenRenderState;
+        type Attrs = <HtmlMediaElementProps::Data<
+            TypeDefs::HtmlMediaElementProps,
+        > as crate::imports::frender_ssr::IntoSsrData::<W>>::Attrs;
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
             <HtmlMediaElementProps::Data<
                 TypeDefs::HtmlMediaElementProps,
-            > as ::frender_ssr::IntoSsrData<W>>::Attrs,
-            ::frender_ssr::utils::filter::FilterArray<
-                ::frender_ssr::element::html::HtmlAttrPair<'static>,
-                1usize,
-            >,
-        >;
-        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
-            let (children, attrs) =
-                ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlMediaElementProps);
-            (
-                children,
-                attrs
-                    .chain(
-                        ::frender_ssr::utils::filter::FilterIdentity(
-                            [
-                                <TypeDefs::__ as ::frender_html::props::MaybeUpdateValueWithState<
-                                    str,
-                                >>::maybe_into_html_attribute_value(this.__)
-                                    .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("__"),
-                                        if let Some(value) = value {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                                value,
-                                            )
-                                        } else {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                        },
-                                    )),
-                            ]
-                                .into_iter(),
-                        ),
-                    ),
-            )
+            > as crate::imports::frender_ssr::IntoSsrData::<
+                W,
+            >>::into_ssr_data(this.HtmlMediaElementProps)
         }
     }
 }
