@@ -7,8 +7,19 @@ pub use frender_macros::{component, def_props};
 #[cfg(feature = "dom")]
 pub use frender_hook_element::frender_dom::Dom;
 
-pub use frender_html::props::{events, UpdateDomEventListener};
-pub use frender_html_components::intrinsic_components;
+#[cfg(feature = "html")]
+pub mod html {
+    pub use frender_html::*;
+
+    #[cfg(feature = "html-components")]
+    pub use frender_html_components as components;
+
+    #[cfg(feature = "html-components-simply-typed")]
+    pub use frender_html_components::intrinsic_components;
+}
+
+#[cfg(feature = "html")]
+pub use html::props::{events, UpdateDomEventListener};
 
 pub use frender_hook_element as hook_element;
 
@@ -19,8 +30,10 @@ pub mod prelude {
     pub use crate::{render, rsx};
 
     pub use frender_core::{Keyed, StaticText};
-    pub use frender_html_components::intrinsic_components;
     pub use frender_macros::component;
+
+    #[cfg(feature = "html-components-simply-typed")]
+    pub use frender_html_components::intrinsic_components;
 }
 
 #[macro_export]
