@@ -109,9 +109,9 @@ impl FieldAsSimpleProp<'_> {
                             .map(FieldAsSimpleProp::into_simple_prop)
                             .map(|p| p.field_info);
                         quote! {
-                            ..#from_path [
+                            ..#from_path (
                                 #(#fields)*
-                            ],
+                            ),
                         }
                     },
                 };

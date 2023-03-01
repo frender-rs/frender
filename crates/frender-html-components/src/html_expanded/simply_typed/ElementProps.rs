@@ -1,15 +1,46 @@
 def_props_type!(
-    #[derive(Debug, Clone, Copy, Default)] ElementProps[children, class : bounds![crate
-    ::imports::frender_html::props::MaybeUpdateValueWithState < str >], id :
-    bounds![crate ::imports::frender_html::props::MaybeUpdateValueWithState < str >],
-    part : bounds![crate ::imports::frender_html::props::MaybeUpdateValueWithState < str
-    >], on_cancel, on_error, on_scroll, on_security_policy_violation, on_select,
-    on_wheel, on_copy, on_cut, on_paste, on_composition_end, on_composition_start,
-    on_composition_update, on_blur, on_focus, on_focus_in, on_focus_out,
-    on_fullscreen_change, on_fullscreen_error, on_key_down, on_key_up, on_aux_click,
-    on_click, on_context_menu, on_double_click, on_mouse_down, on_mouse_enter,
-    on_mouse_leave, on_mouse_move, on_mouse_out, on_mouse_over, on_mouse_up,
-    on_touch_cancel, on_touch_end, on_touch_move, on_touch_start,]
+    #[derive(Debug, Clone, Copy, Default)]
+    ElementProps(
+        children,
+        class: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        id: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        part: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        on_cancel,
+        on_error,
+        on_scroll,
+        on_security_policy_violation,
+        on_select,
+        on_wheel,
+        on_copy,
+        on_cut,
+        on_paste,
+        on_composition_end,
+        on_composition_start,
+        on_composition_update,
+        on_blur,
+        on_focus,
+        on_focus_in,
+        on_focus_out,
+        on_fullscreen_change,
+        on_fullscreen_error,
+        on_key_down,
+        on_key_up,
+        on_aux_click,
+        on_click,
+        on_context_menu,
+        on_double_click,
+        on_mouse_down,
+        on_mouse_enter,
+        on_mouse_leave,
+        on_mouse_move,
+        on_mouse_out,
+        on_mouse_over,
+        on_mouse_up,
+        on_touch_cancel,
+        on_touch_end,
+        on_touch_move,
+        on_touch_start,
+    )
 );
 #[cfg(feature = "dom")]
 mod impl_dom_for_props {

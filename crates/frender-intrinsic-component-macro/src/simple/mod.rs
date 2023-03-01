@@ -88,9 +88,9 @@ impl IntrinsicComponentPropsData {
                 def_props_type!(
                     #(#fn_attrs)*
                     #[derive(Debug, Clone, Copy, Default)]
-                    #name [
+                    #name (
                         #all_field_info
-                    ]
+                    )
                 );
 
                 #[cfg(feature = "dom")]
