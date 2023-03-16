@@ -31,4 +31,4 @@ impl<W: AsyncWrite + Unpin> Default for SsrContext<W> {
     }
 }
 
-pub type AnySsrContext = SsrContext<std::pin::Pin<Box<dyn AsyncWrite>>>;
+pub type AnySsrContext<'a> = SsrContext<std::pin::Pin<&'a mut dyn AsyncWrite>>;
