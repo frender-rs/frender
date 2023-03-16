@@ -1,13 +1,13 @@
 use frender::prelude::*;
 use hooks::ShareValue;
 
-bg::builder! {
+frender::bg::builder! {
     pub struct MyCounterProps {
         initial_value[? u32],
     }
 }
 
-#[component(only_dom, bg)]
+#[component(only_dom, bg = "frender::bg")]
 pub fn MyCounter(ctx: _, props: MyCounterProps) {
     let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
     let shared_state = hooks::use_shared_state(initial_value);
@@ -16,13 +16,13 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
         let shared_state = shared_state.clone();
         // clone state so that the cloned value can be moved into the following closure
         move |_: &_| {
-            shared_state.replace_from_ref(|v| *v + 1);
+            shared_state.replace_with(|v| *v + 1);
         }
     };
     let on_decrement = {
         let shared_state = shared_state.clone();
         move |_: &_| {
-            shared_state.replace_from_ref(|v| *v - 1);
+            shared_state.replace_with(|v| *v - 1);
         }
     };
 

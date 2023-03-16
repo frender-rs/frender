@@ -1,6 +1,6 @@
 use frender::prelude::*;
 
-bg::builder! {
+frender::bg::builder! {
     pub struct MyTimerProps {
         initial_interval: u32 = 0,
     }

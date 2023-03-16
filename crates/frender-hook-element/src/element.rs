@@ -1,78 +1,82 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_core::{RenderState, UpdateRenderState};
-use hooks_core::HookPollNextUpdate;
+use hooks_core::{HookPollNextUpdate, HookUnmount};
 
 use crate::{ContextAndState, ContextAndStateData, HookContext, Rendered};
 
-pub struct FnHookElement<HookData: HookPollNextUpdate, U, S: RenderState> {
-    hook_data: HookData,
+pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U, S: RenderState> {
     use_hook: U,
-    _phantom_state: PhantomData<S>,
+    _phantom: PhantomData<(HookData, S)>,
 }
 
-impl<HookData: HookPollNextUpdate, U, S: RenderState>
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, S: RenderState>
     FnHookElement<HookData, fn_wrapper::FnMut<U>, S>
 {
     #[allow(non_snake_case)]
-    pub fn FnMut<Ctx>(hook_data: HookData, use_hook: U) -> Self
+    pub fn FnMut<Ctx>(use_hook: U) -> Self
     where
         U: FnMut(Pin<&mut HookData>, ContextAndState<'_, Ctx, S>) -> Rendered<S>,
     {
         Self {
-            hook_data,
             use_hook: fn_wrapper::FnMut(use_hook),
-            _phantom_state: PhantomData,
+            _phantom: PhantomData,
         }
     }
 }
 
-impl<HookData: HookPollNextUpdate, U>
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U>
     FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>, ()>
 {
     #[allow(non_snake_case)]
-    pub fn FnMutOutputElement<Ctx, E: UpdateRenderState<Ctx>>(
-        hook_data: HookData,
-        use_hook: U,
-    ) -> Self
+    pub fn FnMutOutputElement<Ctx, E: UpdateRenderState<Ctx>>(use_hook: U) -> Self
     where
         U: FnMut(Pin<&mut HookData>) -> E,
     {
         Self {
-            hook_data,
             use_hook: fn_wrapper::FnMutOutputElement(use_hook),
-            _phantom_state: PhantomData,
+            _phantom: PhantomData,
         }
     }
 }
 
-impl<HookData: HookPollNextUpdate, U>
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U>
     FnHookElement<HookData, fn_wrapper::FnOnceOutputElement<U>, ()>
 {
     #[allow(non_snake_case)]
-    pub fn FnOnceOutputElement<Ctx, E: UpdateRenderState<Ctx>>(
-        hook_data: HookData,
-        use_hook: U,
-    ) -> Self
+    pub fn FnOnceOutputElement<Ctx, E: UpdateRenderState<Ctx>>(use_hook: U) -> Self
     where
         HookData: Unpin,
         U: FnOnce(Pin<&mut HookData>) -> E,
     {
         Self {
-            hook_data,
             use_hook: fn_wrapper::FnOnceOutputElement(use_hook),
-            _phantom_state: PhantomData,
+            _phantom: PhantomData,
         }
     }
 }
 
-pin_project_lite::pin_project! {
-    pub struct FnMutHookElementState<HookData, U, Ctx, S> {
+pin_project_lite::pin_project!(
+    pub struct FnMutHookElementState<HookData, U, Ctx, S>
+    where
+        HookData: HookPollNextUpdate,
+        HookData: HookUnmount,
+    {
         #[pin]
         hook_data: HookData,
         #[pin]
         ctx_and_state: ContextAndStateData<Ctx, S>,
         use_hook: U,
+    }
+);
+
+impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx, S: RenderState>
+    FnMutHookElementState<HookData, U, Ctx, S>
+{
+    pub fn impl_unmount(self: Pin<&mut Self>) {
+        let this = self.project();
+        this.hook_data.unmount();
+        this.ctx_and_state.unmount();
     }
 }
 
@@ -84,13 +88,14 @@ pub mod fn_wrapper {
     pub struct FnOnceOutputElement<U>(pub U);
 }
 
-impl<HookData: HookPollNextUpdate, U, Ctx: HookContext, S: RenderState> RenderState
+impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx: HookContext, S: RenderState> RenderState
     for FnMutHookElementState<HookData, fn_wrapper::FnMut<U>, Ctx, S>
 where
     U: FnMut(Pin<&mut HookData>, ContextAndState<'_, Ctx, S>) -> Rendered<S>,
 {
+    #[inline]
     fn unmount(self: Pin<&mut Self>) {
-        self.project().ctx_and_state.unmount()
+        self.impl_unmount()
     }
 
     fn poll_reactive(
@@ -121,13 +126,19 @@ where
     }
 }
 
-impl<HookData: HookPollNextUpdate, U, Ctx: HookContext, E: UpdateRenderState<Ctx>> RenderState
+impl<
+        HookData: HookPollNextUpdate + HookUnmount,
+        U,
+        Ctx: HookContext,
+        E: UpdateRenderState<Ctx>,
+    > RenderState
     for FnMutHookElementState<HookData, fn_wrapper::FnMutOutputElement<U>, Ctx, E::State>
 where
     U: FnMut(Pin<&mut HookData>) -> E,
 {
+    #[inline]
     fn unmount(self: Pin<&mut Self>) {
-        self.project().ctx_and_state.unmount()
+        self.impl_unmount()
     }
 
     fn poll_reactive(
@@ -162,7 +173,7 @@ where
 impl<HookData, U, S, Ctx> UpdateRenderState<Ctx>
     for FnHookElement<HookData, fn_wrapper::FnMut<U>, S>
 where
-    HookData: HookPollNextUpdate,
+    HookData: HookPollNextUpdate + HookUnmount + Default,
     Ctx: HookContext,
     S: RenderState,
     U: FnMut(Pin<&mut HookData>, ContextAndState<'_, Ctx, S>) -> Rendered<S>,
@@ -171,7 +182,7 @@ where
 
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
         FnMutHookElementState {
-            hook_data: self.hook_data,
+            hook_data: Default::default(),
             ctx_and_state: ContextAndStateData::new(HookContext::take_context(ctx)),
             use_hook: self.use_hook,
         }
@@ -193,7 +204,7 @@ where
 impl<HookData, U, E: UpdateRenderState<Ctx>, Ctx> UpdateRenderState<Ctx>
     for FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>, ()>
 where
-    HookData: HookPollNextUpdate,
+    HookData: HookPollNextUpdate + HookUnmount + Default,
     Ctx: HookContext,
     U: FnMut(Pin<&mut HookData>) -> E,
 {
@@ -201,7 +212,7 @@ where
 
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
         FnMutHookElementState {
-            hook_data: self.hook_data,
+            hook_data: Default::default(),
             ctx_and_state: ContextAndStateData::new(HookContext::take_context(ctx)),
             use_hook: self.use_hook,
         }
@@ -275,16 +286,17 @@ mod fn_once {
 impl<HookData, U, E: UpdateRenderState<Ctx>, Ctx> UpdateRenderState<Ctx>
     for FnHookElement<HookData, fn_wrapper::FnOnceOutputElement<U>, ()>
 where
-    HookData: HookPollNextUpdate + Unpin,
+    HookData: HookPollNextUpdate + HookUnmount + Default + Unpin,
     Ctx: HookContext,
     U: FnOnce(Pin<&mut HookData>) -> E,
 {
     type State = fn_once::HookElementState<HookData, E::State>;
 
-    fn initialize_render_state(mut self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        let mut hook_data: HookData = Default::default();
         fn_once::HookElementState {
-            state: (self.use_hook.0)(Pin::new(&mut self.hook_data)).initialize_render_state(ctx),
-            hook_data: self.hook_data,
+            state: (self.use_hook.0)(Pin::new(&mut hook_data)).initialize_render_state(ctx),
+            hook_data,
         }
     }
 

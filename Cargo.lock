@@ -221,10 +221,8 @@ dependencies = [
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
- "bg",
  "frender-core",
  "frender-dom",
- "frender-macros",
  "frender-ssr",
  "hooks-core",
  "lazy-pinned",
@@ -297,7 +295,6 @@ version = "0.1.0"
 dependencies = [
  "darling 0.14.4",
  "frender-macro-utils",
- "hooks-derive-core",
  "proc-macro2",
  "quote",
  "syn",
@@ -321,7 +318,7 @@ dependencies = [
  "darling 0.14.4",
  "frender-intrinsic-component-macro",
  "frender-macro-utils",
- "hooks-derive-core",
+ "hooks-macro-core",
  "proc-macro2",
  "quote",
  "syn",
@@ -549,33 +546,24 @@ dependencies = [
 
 [[package]]
 name = "hooks"
-version = "1.0.1-alpha.21"
+version = "2.0.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00da85dc63c7531ae6078940ea0958c69e708b3a373493a6bafc96c19af00a4d"
+checksum = "0cfd6d562388f4e8158eb915e6ec92f18003da1a3a06daebd9f3feec4b7bf794"
 dependencies = [
  "hooks-core",
- "hooks-derive",
+ "lazy-pinned",
  "pin-project-lite",
  "smallvec",
 ]
 
 [[package]]
 name = "hooks-core"
-version = "1.0.0-alpha.10"
+version = "2.0.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "009dd3839c097849815617830df0d4a68e8158ef2597faf2884dc249d3e1b5f6"
+checksum = "8db6d8af10ff08e61481193d8f356bf68dbd27fea7364be03b8070add7192956"
 dependencies = [
  "futures-core",
  "pin-project-lite",
-]
-
-[[package]]
-name = "hooks-derive"
-version = "1.0.1-alpha.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6710b5e69b9887eaad0933ab4fecc9fcf755d514deb073db09d0e9c6a29970c7"
-dependencies = [
- "hooks-derive-core",
 ]
 
 [[package]]
@@ -583,6 +571,18 @@ name = "hooks-derive-core"
 version = "1.1.0-alpha.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2af60c08fb7648bbbfa460312c83d55d0102aa86cc6eba3357b1cc839c50d9f2"
+dependencies = [
+ "darling 0.14.4",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "hooks-macro-core"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1f7b5e3ed55f22e16075389450fb04f491cbbaf635a104227705b908e8016df"
 dependencies = [
  "darling 0.14.4",
  "proc-macro2",

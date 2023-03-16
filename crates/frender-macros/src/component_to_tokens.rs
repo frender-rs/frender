@@ -27,8 +27,7 @@ impl ComponentDefinition {
 
         // let span = item_fn.sig.fn_token.span;
 
-        let hook_element_path = hook_element_path
-            .map_or_else(default_hook_element_path, |path| path.into_token_stream());
+        let hook_element_path = hook_element_path.unwrap_or_else(default_hook_element_path);
 
         let main_block = main.map(|main| {
             let span = main.original.path().span();
@@ -38,7 +37,7 @@ impl ComponentDefinition {
                 hook_element_path: &hook_element_path,
                 options: &main.parsed,
                 vis: &item_fn.vis,
-                expr_get_element: if bg.is_present() {
+                expr_get_element: if bg.is_some() {
                     todo!("bg")
                 } else {
                     &item_fn.sig.ident
@@ -47,12 +46,13 @@ impl ComponentDefinition {
             .into_ts()
         });
 
-        let mut tokens = if bg.is_present() {
+        let mut tokens = if let Some(bg) = bg {
             ItemFnToBg {
                 span_default: item_fn.sig.fn_token.span,
-                span_bg: bg.span(),
+                span_bg: bg.span,
                 errors: &mut errors,
                 hook_element_path: &hook_element_path,
+                bg_path: &bg.path_to_ts(),
                 item_fn,
                 render_ctx,
                 use_fn_once,
@@ -83,6 +83,13 @@ impl ComponentDefinition {
 }
 
 /// `::frender::hook_element`
-fn default_hook_element_path() -> TokenStream {
-    quote!(::frender::hook_element)
+fn default_hook_element_path() -> syn::Path {
+    let span = proc_macro2::Span::call_site();
+    syn::Path {
+        leading_colon: Some(Default::default()),
+        segments: FromIterator::from_iter([
+            syn::PathSegment::from(syn::Ident::new("frender", span)),
+            syn::Ident::new("hook_element", span).into(),
+        ]),
+    }
 }

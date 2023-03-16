@@ -11,7 +11,8 @@ pub struct ItemFnToBg<'a> {
     pub span_default: Span,
     pub span_bg: Span,
     pub errors: &'a mut Vec<darling::Error>,
-    pub hook_element_path: &'a TokenStream,
+    pub hook_element_path: &'a syn::Path,
+    pub bg_path: &'a TokenStream,
     pub item_fn: syn::ItemFn,
     pub render_ctx: RenderCtx,
     pub use_fn_once: darling::util::Flag,
@@ -21,7 +22,8 @@ fn before_stmts(
     item_fn: &mut syn::ItemFn,
     errors: &mut Vec<darling::Error>,
     span_bg: Span,
-    hook_element_path: &TokenStream,
+    hook_element_path: &impl ToTokens,
+    bg_path: impl ToTokens,
     out_props_path: &mut TokenStream,
 ) -> Option<TokenStream> {
     let sig = &mut item_fn.sig;
@@ -100,7 +102,7 @@ fn before_stmts(
     };
 
     let props_path = resolve_props_path_from_ty(&pt.ty, errors)
-        .unwrap_or_else(|| default_props_path(span_bg, hook_element_path));
+        .unwrap_or_else(|| default_props_path(span_bg, bg_path));
     *pt.ty = syn::Type::Verbatim(quote_spanned!(props_path.span()=>
         #props_path ::Data<TypesDef>
     ));
@@ -121,6 +123,7 @@ impl ItemFnToBg<'_> {
             span_bg,
             errors,
             hook_element_path,
+            bg_path,
             mut item_fn,
             render_ctx,
             use_fn_once,
@@ -149,7 +152,14 @@ impl ItemFnToBg<'_> {
             render_ctx,
             use_fn_once,
             |item_fn, errors| {
-                before_stmts(item_fn, errors, span_bg, hook_element_path, &mut props_path)
+                before_stmts(
+                    item_fn,
+                    errors,
+                    span_bg,
+                    hook_element_path,
+                    bg_path,
+                    &mut props_path,
+                )
             },
         );
 
@@ -162,7 +172,7 @@ impl ItemFnToBg<'_> {
                 #item_fn
             }
 
-            #hook_element_path::bg::builder! {
+            #bg_path::builder! {
                 #(#outer_attrs)*
                 #vis struct #name(#props_path);
 
@@ -213,7 +223,7 @@ fn default_props_pat_type(
     attrs: Vec<syn::Attribute>,
     span: Span,
     span_bg: Span,
-    hook_element_path: &TokenStream,
+    bg_path: impl ToTokens,
 ) -> syn::PatType {
     syn::PatType {
         attrs,
@@ -222,15 +232,12 @@ fn default_props_pat_type(
             underscore_token: syn::Token![_](span),
         })),
         colon_token: syn::Token![:](span),
-        ty: Box::new(syn::Type::Verbatim(default_props_path(
-            span_bg,
-            hook_element_path,
-        ))),
+        ty: Box::new(syn::Type::Verbatim(default_props_path(span_bg, bg_path))),
     }
 }
 
-fn default_props_path(span_bg: Span, hook_element_path: &TokenStream) -> TokenStream {
+fn default_props_path(span_bg: Span, bg_path: impl ToTokens) -> TokenStream {
     quote_spanned!(span_bg=>
-        #hook_element_path ::bg::Empty
+        #bg_path::Empty
     )
 }

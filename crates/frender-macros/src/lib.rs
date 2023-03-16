@@ -1,9 +1,9 @@
 mod auto_intrinsic;
+mod bg;
 mod component_data;
 mod component_macro;
 mod component_to_tokens;
 mod err;
-mod hook_component;
 mod props_data;
 mod props_to_tokens;
 mod rsx_data;
@@ -23,20 +23,6 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     let comp = ComponentDefinition::from_attrs_and_fn(attr_args, item_fn);
 
     comp.into_ts().into()
-}
-
-#[proc_macro]
-pub fn detect_hooks(input: TokenStream) -> TokenStream {
-    let value: utils::prefix_path::PrefixPath<hook_component::DetectHooks> =
-        parse_macro_input!(input);
-
-    value
-        .rest
-        .into_ts(value.path.map_or_else(
-            || quote::quote!(::hooks::core),
-            |p| p.bracketed_path.content,
-        ))
-        .into()
 }
 
 /// intrinsic components are not auto prepend with `self::intrinsic_components::`

@@ -1,5 +1,5 @@
 use darling::ToTokens;
-use hooks_derive_core::DetectedHooksTokens;
+use hooks_macro_core::DetectedHooksTokens;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
 
@@ -85,7 +85,7 @@ fn report_context_arg_attrs(
 pub fn transform_item_fn(
     item_fn: &mut syn::ItemFn,
     errors: &mut Vec<darling::Error>,
-    hook_element_path: &impl ToTokens,
+    hook_element_path: &syn::Path,
     render_ctx: RenderCtx,
     use_fn_once: darling::util::Flag,
 ) {
@@ -102,7 +102,7 @@ pub fn transform_item_fn(
 pub fn transform_item_fn_with(
     item_fn: &mut syn::ItemFn,
     errors: &mut Vec<darling::Error>,
-    hook_element_path: &impl ToTokens,
+    hook_element_path: &syn::Path,
     render_ctx: RenderCtx,
     use_fn_once: darling::util::Flag,
     before_stmts: impl FnOnce(
@@ -184,23 +184,25 @@ pub fn transform_item_fn_with(
         }
     };
 
-    let hooks_core_path = quote!( #hook_element_path::__private::hooks_core );
+    // #hook_element_path::__private::hooks_core
+    let hooks_core_path = {
+        let span = hook_element_path.span();
+        let mut p = hook_element_path.clone();
+        p.segments.extend(
+            ["__private", "hooks_core"]
+                .map(|ident| syn::PathSegment::from(syn::Ident::new(ident, span))),
+        );
+        p
+    };
 
     let mut stmts = std::mem::replace(&mut item_fn.block.stmts, Vec::with_capacity(1));
 
-    let detected_hooks = hooks_derive_core::detect_hooks(stmts.iter_mut(), &hooks_core_path);
-    let expr_no_data = quote!( #hook_element_path::NoData );
+    let detected_hooks = hooks_macro_core::detect_hooks(stmts.iter_mut(), &hooks_core_path);
     let DetectedHooksTokens {
-        data_expr,
         fn_arg_data_pat,
         fn_stmts_extract_data,
-    } = hooks_derive_core::detected_hooks_to_tokens(
-        detected_hooks,
-        hooks_core_path,
-        expr_no_data.clone(),
-        Some(expr_no_data),
-        span,
-    );
+    } = hooks_macro_core::detected_hooks_to_tokens(detected_hooks.hooks, hooks_core_path, span);
+    // TODO: link #[not_hook]
 
     let method_name;
     let method_span;
@@ -237,7 +239,6 @@ pub fn transform_item_fn_with(
         .stmts
         .push(syn::Stmt::Expr(syn::Expr::Verbatim(quote_spanned! {span=>
             #hook_element_path::FnHookElement::#method_name #method_generics (
-                #data_expr,
                 move |#fn_arg_data_pat, #ctx_arg_pat| {
 
                     #fn_stmts_extract_data

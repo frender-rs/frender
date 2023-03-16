@@ -8,7 +8,7 @@ use crate::component_data::ComponentMainOptions;
 pub struct MainItem<'a> {
     pub span_default: Span,
     pub span_fn_ident: Span,
-    pub hook_element_path: &'a TokenStream,
+    pub hook_element_path: &'a syn::Path,
     pub options: &'a ComponentMainOptions,
     pub vis: &'a syn::Visibility,
     pub expr_get_element: &'a dyn ToTokens,

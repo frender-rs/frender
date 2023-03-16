@@ -23,8 +23,11 @@ pub use html::props::{events, UpdateDomEventListener};
 
 pub use frender_hook_element as hook_element;
 
+#[cfg(feature = "bg")]
+pub use bg;
+
 pub mod prelude {
-    pub use bg;
+    #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
     pub use crate::{render, rsx};
@@ -131,7 +134,7 @@ macro_rules! rsx_build_element {
         $($t:tt)*
     ) => {
         $crate::__private::__impl_auto_prepend_intrinsic_components! {
-            [$crate::prelude::bg::finish_builder_with]
+            [$crate::bg::finish_builder_with]
             [[build_element]]
             $maybe_intrinsic
             ($($inner)*)
@@ -141,7 +144,7 @@ macro_rules! rsx_build_element {
     (
         $($t:tt)*
     ) => {
-        $crate::prelude::bg::finish_builder_with!(
+        $crate::bg::finish_builder_with!(
             [build_element]
             $($t)*
         )
