@@ -13,11 +13,8 @@ pin-project-lite = "0.2.9"
 bg = "0.2.0"
 frender-macros = { version = "1.0.0-alpha.8", path = "../frender-macros" }
 lazy-pinned = "0.1.0"
+hooks-core = { version = "1.0.0-alpha.10", default-features = false }
 
-[dependencies.hooks]
-version = "1.0.1-alpha.20"
-default-features = false
-features = ["derive"]
 
 [features]
 dom = ["frender-dom"]

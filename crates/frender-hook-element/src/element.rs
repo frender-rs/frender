@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_core::{RenderState, UpdateRenderState};
-use hooks::HookPollNextUpdate;
+use hooks_core::HookPollNextUpdate;
 
 use crate::{ContextAndState, ContextAndStateData, HookContext, Rendered};
 
@@ -228,7 +228,7 @@ mod fn_once {
     use std::pin::Pin;
 
     use frender_core::RenderState;
-    use hooks::HookPollNextUpdate;
+    use hooks_core::HookPollNextUpdate;
 
     pin_project_lite::pin_project! {
         pub struct HookElementState<HookData, S> {

@@ -18,5 +18,5 @@ pub use frender_dom;
 pub use frender_ssr;
 
 pub mod __private {
-    pub use hooks::core as hooks_core;
+    pub use hooks_core;
 }
