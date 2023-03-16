@@ -233,7 +233,6 @@ dependencies = [
 name = "frender-html"
 version = "0.1.0"
 dependencies = [
- "bg",
  "convert-js",
  "frender-core",
  "frender-html-common",

@@ -11,13 +11,6 @@ impl<V> MaybeInherit<V> for V {
     }
 }
 
-impl<V> MaybeInherit<V> for bg::Unspecified<V> {
-    #[inline]
-    fn into_maybe_inheritable(self) -> Option<Inheritable<V>> {
-        None
-    }
-}
-
 impl<V> MaybeInherit<V> for Inheritable<V> {
     #[inline]
     fn into_maybe_inheritable(self) -> Option<Inheritable<V>> {
