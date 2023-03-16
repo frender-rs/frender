@@ -226,7 +226,7 @@ dependencies = [
  "frender-dom",
  "frender-macros",
  "frender-ssr",
- "hooks",
+ "hooks-core",
  "lazy-pinned",
  "pin-project-lite",
 ]
