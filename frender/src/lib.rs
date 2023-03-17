@@ -30,20 +30,13 @@ pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
-    pub use crate::{render, rsx};
+    pub use crate::rsx;
 
     pub use frender_core::{Keyed, StaticText};
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components-simply-typed")]
     pub use frender_html_components::intrinsic_components;
-}
-
-#[macro_export]
-macro_rules! render {
-    ($ctx:expr => $($t:tt)*) => {
-        $crate::__private::frender_hook_element::ContextAndState::render($ctx, $crate::rsx!($($t)*))
-    };
 }
 
 #[macro_export]

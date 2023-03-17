@@ -28,7 +28,7 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
 
     let state = shared_state.get();
 
-    render!(ctx=>
+    ctx.render(rsx!(
         <div>
             <button on_click={on_decrement} disabled={state == 0}>
                 " - "
@@ -40,5 +40,5 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
                 " + "
             </button>
         </div>
-    )
+    ))
 }
