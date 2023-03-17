@@ -35,9 +35,10 @@ impl RsxElement {
             key,
             props,
             children,
-            start_lt: _,
+            start_lt,
         } = self;
 
+        let start_lt_span = start_lt.span;
         let start_gt_span = children.start_gt().span;
 
         let element = match component_type {
@@ -85,8 +86,19 @@ impl RsxElement {
                     }
                 });
 
-                quote_spanned! {start_gt_span=>
-                    #crate_path ::rsx_build_element! {
+                let element_or_intrinsic = if component_path
+                    .get_ident()
+                    .map_or(false, ident_is_intrinsic_component)
+                {
+                    "intrinsic"
+                } else {
+                    "element"
+                };
+
+                let element_or_intrinsic = syn::Ident::new(element_or_intrinsic, start_lt_span);
+
+                quote_spanned! {start_lt_span=>
+                    #crate_path :: #element_or_intrinsic ! {
                         #component_path ()
                             #props_chain
                             #props_children

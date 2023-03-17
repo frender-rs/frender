@@ -263,7 +263,7 @@ impl RsxComponentType {
 }
 
 #[inline]
-fn ident_is_intrinsic_component(ident: &syn::Ident) -> bool {
+pub fn ident_is_intrinsic_component(ident: &syn::Ident) -> bool {
     let s = ident.to_string();
     let c = s.chars().next().unwrap();
     ('a'..='z').contains(&c)

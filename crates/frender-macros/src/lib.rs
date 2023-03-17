@@ -1,4 +1,3 @@
-mod auto_intrinsic;
 mod bg;
 mod component_data;
 mod component_macro;
@@ -25,9 +24,8 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     comp.into_ts().into()
 }
 
-/// intrinsic components are not auto prepend with `self::intrinsic_components::`
 #[proc_macro]
-pub fn rsx_xml_with_full_path(input: TokenStream) -> TokenStream {
+pub fn rsx(input: TokenStream) -> TokenStream {
     let value = match syn::parse::<rsx_data::OptionalCratePathAndRsxChild>(input) {
         Ok(v) => v,
         Err(err) => {
@@ -49,11 +47,6 @@ pub fn def_props(input: TokenStream) -> TokenStream {
     let mut ts = proc_macro2::TokenStream::new();
     value.into_tokens(&mut ts);
     ts.into()
-}
-
-#[proc_macro]
-pub fn __impl_auto_prepend_intrinsic_components(input: TokenStream) -> TokenStream {
-    auto_intrinsic::auto_intrinsic(input)
 }
 
 #[cfg(feature = "intrinsic-component")]

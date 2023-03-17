@@ -40,23 +40,6 @@ pub mod prelude {
 }
 
 #[macro_export]
-macro_rules! rsx_xml {
-    (< $name:ident $next:tt $($t:tt)*) => {
-        $crate::__impl_rsx_xml_ident_next! {
-            $next
-            $name
-            $next
-            $($t)*
-        }
-    };
-    (< $($t:tt)*) => {
-        $crate::__private::rsx_xml_with_full_path! {
-            < $($t)*
-        }
-    }
-}
-
-#[macro_export]
 macro_rules! render {
     ($ctx:expr => $($t:tt)*) => {
         $crate::__private::frender_hook_element::ContextAndState::render($ctx, $crate::rsx!($($t)*))
@@ -65,17 +48,12 @@ macro_rules! render {
 
 #[macro_export]
 macro_rules! rsx {
-    (< $($t:tt)*) => {
-        $crate::rsx_xml! {
-            < $($t)*
+    ($($rest:tt)*) => {
+        // specify crate path is `$crate`
+        $crate::__private::impl_rsx! {
+            @[$crate]
+            $($rest)*
         }
-    };
-    ($lit:literal) => { $lit };
-    ({ $($braced:tt)* }) => { $($braced)* };
-    (
-        $($t:tt)*
-    ) => {
-        $crate::rsx_build_element! { $($t)* }
     };
 }
 
@@ -83,70 +61,5 @@ macro_rules! rsx {
 pub mod __private {
     pub use frender_hook_element;
 
-    pub use frender_macros::rsx_xml_with_full_path;
-
-    pub use frender_macros::__impl_auto_prepend_intrinsic_components;
-}
-
-#[macro_export]
-macro_rules! __impl_rsx_xml_ident_next {
-    (
-        / $($t:tt)*
-    ) => {
-        $crate::__private::__impl_auto_prepend_intrinsic_components! {
-            [$crate::__private::rsx_xml_with_full_path]
-            [<]
-            $($t)*
-        }
-    };
-    (
-        > $($t:tt)*
-    ) => {
-        $crate::__private::__impl_auto_prepend_intrinsic_components! {
-            [$crate::__private::rsx_xml_with_full_path]
-            [<]
-            $($t)*
-        }
-    };
-    (
-        $_prop:ident $($t:tt)*
-    ) => {
-        $crate::__private::__impl_auto_prepend_intrinsic_components! {
-            [$crate::__private::rsx_xml_with_full_path]
-            [<]
-            $($t)*
-        }
-    };
-    (
-        $($t:tt)*
-    ) => {
-        $crate::__private::rsx_xml_with_full_path! {
-            < $($t)*
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! rsx_build_element {
-    (
-        $maybe_intrinsic:ident
-        ($($inner:tt)*)
-        $($t:tt)*
-    ) => {
-        $crate::__private::__impl_auto_prepend_intrinsic_components! {
-            [$crate::bg::finish_builder_with]
-            [[build_element]]
-            $maybe_intrinsic
-            ($($inner)*)
-            $($t)*
-        }
-    };
-    (
-        $($t:tt)*
-    ) => {
-        $crate::bg::finish_builder_with!(
-            [build_element]
-            $($t)*
-        )
-    };
+    pub use frender_macros::rsx as impl_rsx;
 }
