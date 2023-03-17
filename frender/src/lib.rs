@@ -1,7 +1,7 @@
 mod debug;
 pub use debug::*;
 
-pub use frender_core::{Keyed, RenderState, StaticText, UpdateRenderState};
+pub use frender_core::{element, intrinsic, Keyed, RenderState, StaticText, UpdateRenderState};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "dom")]
