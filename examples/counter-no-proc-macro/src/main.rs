@@ -95,31 +95,28 @@ fn DivCode(code: Element![csr], children: Element![csr]) -> Element![csr] {
     intrinsic!(div[[code.children(code), { children }]])
 }
 
-#[allow(non_snake_case)]
-fn Main() -> Element![csr] {
-    intrinsic!(
-        div.style(
-            r#"margin: auto;
+component_fn!(
+    #[component(csr, main)]
+    fn Main() {
+        intrinsic!(
+            div.style(
+                r#"margin: auto;
 padding: 16px;
 max-width: 768px;
 "#
-        )[[
-            h1[[
-                "Counter & Timer (without proc-macro) - ",
-                i[[a.href("https://github.com/frender-rs/frender")
-                    .target("_blank")[[b.children("f"), "render"]]]]
-            ]],
-            main.children((
-                DivCode("Counter(0)", Counter(0)),
-                DivCode("Counter(3)", Counter(3)),
-                DivCode("MyTimer(1000)", MyTimer(1000)),
-                DivCode("MyTimer(500)", MyTimer(500)),
-            ))
-        ]]
-    )
-}
-
-// TODO: macro
-fn main() {
-    frender::hook_element::frender_dom::spawn_mount_to_dom_element(|| Main(), "frender-root")
-}
+            )[[
+                h1[[
+                    "Counter & Timer (without proc-macro) - ",
+                    i[[a.href("https://github.com/frender-rs/frender")
+                        .target("_blank")[[b.children("f"), "render"]]]]
+                ]],
+                main.children((
+                    DivCode("Counter(0)", Counter(0)),
+                    DivCode("Counter(3)", Counter(3)),
+                    DivCode("MyTimer(1000)", MyTimer(1000)),
+                    DivCode("MyTimer(500)", MyTimer(500)),
+                ))
+            ]]
+        )
+    }
+);

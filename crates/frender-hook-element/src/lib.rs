@@ -18,15 +18,59 @@ pub use frender_ssr;
 pub mod __private {
     pub use hooks_core;
     pub use hooks_core::transform_hook_fn_body_as_closure;
-    pub use syn_lite::parse_item_fn;
+    pub use syn_lite::{expand_or, parse_item_fn};
 
     pub use frender_core::{RenderState, UpdateRenderState};
 
     #[cfg(feature = "csr")]
     pub use frender_dom::Dom as csr;
 
+    pub mod main {
+        #[cfg(all(feature = "csr", feature = "spawn"))]
+        pub use frender_dom::spawn_mount_to_dom_element;
+    }
+
     #[cfg(feature = "ssr")]
     pub use frender_ssr::AnySsrContext as ssr;
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_unexpected {
+    () => {};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_main_fn {
+    (
+        vis! { $vis:vis }
+        component_fn_name! { $name:ident }
+        main! {
+            $main:ident
+            $((
+                get_dom_element
+                $(( $($get_dom_element:tt)* ))?
+                $( = $get_dom_element_id:literal )?
+                $(,)?
+            ))?
+            $(= $element_id:literal)?
+        }
+    ) => {
+        $vis fn $main () {
+            $crate::__private::main::spawn_mount_to_dom_element(
+                ||  $name(),
+                $crate::__private::expand_or!(
+                    [
+                        $($($get_dom_element)*)?
+                        $($get_dom_element_id)?
+                        $($element_id)?
+                    ]
+                    "frender-root"
+                )
+            )
+        }
+    };
 }
 
 #[doc(hidden)]
@@ -35,6 +79,8 @@ macro_rules! __impl_component_fn_options_parsed {
     (
         component_options! {
             ctxs! { $($ctxs:ident)* }
+            mains! { $($mains:tt)* }
+            other_items! { $($other_items:tt)* }
         }
         item_fn! {
             outer_attrs! { $($outer_attrs:tt)* }
@@ -48,7 +94,7 @@ macro_rules! __impl_component_fn_options_parsed {
                     params_name! $params_name:tt
                 }
                 paren_inputs! { $paren_inputs:tt }
-                output! {}
+                output! { $(-> $output_ty:ty)? }
                 where_clause! { $($where_clause:tt)* }
             }
             inner_attrs! { $($inner_attrs:tt)* }
@@ -57,7 +103,9 @@ macro_rules! __impl_component_fn_options_parsed {
     ) => {
         $($outer_attrs)*
         #[allow(non_snake_case)]
-        $vis fn $ident $paren_inputs -> $crate::Element![$($ctxs),*] {
+        $vis fn $ident $paren_inputs ->
+            $crate::__private::expand_or![[$($output_ty)?] $crate::Element![$($ctxs),*]]
+        {
             $($inner_attrs)*
 
             $crate::new_fn_hook_element $(:: $ctxs)* (
@@ -67,6 +115,136 @@ macro_rules! __impl_component_fn_options_parsed {
                 }
             )
         }
+
+        $(
+            $crate::__impl_main_fn! {
+                vis! { $vis }
+                component_fn_name! { $ident }
+                main! $mains
+            }
+        )*
+
+        $($other_items)*
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_parse_component_options {
+    // END
+    (
+        ($(,)?) ($(,)?) // inputs
+        $options:tt
+        $item_fn:tt
+    ) => {
+        $crate::__impl_component_fn_options_parsed! {
+            component_options! $options
+            item_fn!           $item_fn
+        }
+    };
+    // , ...
+    (
+        (, $($inputs:tt)+) $_inputs:tt
+        $options:tt
+        $item_fn:tt
+    ) => {
+        $crate::__impl_parse_component_options! {
+            ($($inputs)*) ($($inputs)*)
+            $options
+            $item_fn
+        }
+    };
+    // main = "element-id" ...
+    (
+        ( main        =         $_main_id:literal $($_inputs:tt)*)
+        ($main:ident $assign:tt $main_id:literal  $($inputs:tt)* )
+        {
+            ctxs! $ctxs:tt
+            mains! { $($mains:tt)* }
+            other_items! $other_items:tt
+        }
+        $item_fn:tt
+    ) => {
+        $crate::__impl_parse_component_options! {
+            ($($inputs)*) ($($inputs)*)
+            {
+                ctxs! $ctxs
+                mains! {
+                    $($mains)*
+                    { $main $assign $main_id }
+                }
+                other_items! $other_items
+            }
+            $item_fn
+        }
+    };
+    // main() ...
+    (
+        (main ($($_main_options:tt)*) $($_inputs:tt)*)
+        ($main:ident $main_options:tt $($inputs:tt)* )
+        {
+            ctxs! $ctxs:tt
+            mains! { $($mains:tt)* }
+            other_items! $other_items:tt
+        }
+        $item_fn:tt
+    ) => {
+        $crate::__impl_parse_component_options! {
+            ($($inputs)*) ($($inputs)*)
+            {
+                ctxs! $ctxs
+                mains! {
+                    $($mains)*
+                    { $main $main_options }
+                }
+                other_items! $other_items
+            }
+            $item_fn
+        }
+    };
+    // main ...
+    (
+        ( main       $($_inputs:tt)*)
+        ($main:ident $($inputs:tt)* )
+        {
+            ctxs! $ctxs:tt
+            mains! { $($mains:tt)* }
+            other_items! $other_items:tt
+        }
+        $item_fn:tt
+    ) => {
+        $crate::__impl_parse_component_options! {
+            ($($inputs)*) ($($inputs)*)
+            {
+                ctxs! $ctxs
+                mains! {
+                    $($mains)*
+                    { $main }
+                }
+                other_items! $other_items
+            }
+            $item_fn
+        }
+    };
+    // $ctx_path ...
+    (
+        ($ctx_path:ident $($inputs:tt)*) $_inputs:tt
+        {
+            ctxs! { $($ctxs:tt)* }
+            mains! $mains:tt
+            other_items! $other_items:tt
+        }
+        $item_fn:tt
+    ) => {
+        $crate::__impl_parse_component_options! {
+            ($($inputs)*) ($($inputs)*)
+            {
+                ctxs! { $($ctxs)* $ctx_path }
+                mains! $mains
+                other_items! $other_items
+            }
+            $item_fn
+        }
     };
 }
 
@@ -75,16 +253,38 @@ macro_rules! __impl_component_fn_options_parsed {
 macro_rules! __impl_component_fn_parse_options {
     (
         {
-            #[component $(($($ctx_path:ident),* $(,)?))?]
+            #[component $(())?]
             $($outer_attrs:tt)*
         }
         [$($item_fn_rest:tt)*]
     ) => {
         $crate::__impl_component_fn_options_parsed! {
             component_options! {
-                ctxs! { $($($ctx_path)* )? }
+                ctxs! {}
+                mains! {}
+                other_items! {}
             }
             item_fn! {
+                outer_attrs! { $($outer_attrs)* }
+                $($item_fn_rest)*
+            }
+        }
+    };
+    (
+        {
+            #[component $component_options:tt]
+            $($outer_attrs:tt)*
+        }
+        [$($item_fn_rest:tt)*]
+    ) => {
+        $crate::__impl_parse_component_options! {
+            $component_options $component_options
+            {
+                ctxs! {}
+                mains! {}
+                other_items! {}
+            }
+            {
                 outer_attrs! { $($outer_attrs)* }
                 $($item_fn_rest)*
             }
@@ -97,6 +297,8 @@ macro_rules! __impl_component_fn_parse_options {
         $crate::__impl_component_fn_options_parsed! {
             component_options! {
                 ctxs! {}
+                mains! {}
+                other_items! {}
             }
             item_fn! {
                 outer_attrs! $outer_attrs
