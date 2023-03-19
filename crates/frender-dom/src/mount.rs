@@ -24,8 +24,8 @@ where
     }
 }
 
-pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom>>(
-    get_element: impl FnMut() -> E + 'e,
+pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom> + 'e>(
+    element: E,
     get_dom_element: impl GetDomElement,
 ) -> impl std::future::Future<Output = ()> + 'e {
     let window = web_sys::window().unwrap();
@@ -35,14 +35,14 @@ pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom>>(
 
     async move {
         Dom::new(document, current_parent)
-            .render_element(get_element, std::future::pending())
+            .render_element(element, std::future::pending())
             .await
     }
 }
 
 #[cfg(feature = "spawn")]
 pub fn spawn_mount_to_dom_element<E: UpdateRenderState<Dom> + 'static>(
-    get_element: impl FnMut() -> E + 'static,
+    get_element: E,
     get_dom_element: impl GetDomElement,
 ) {
     wasm_bindgen_futures::spawn_local(mount_to_dom_element(get_element, get_dom_element))

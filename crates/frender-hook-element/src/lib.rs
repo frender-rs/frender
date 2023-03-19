@@ -59,7 +59,7 @@ macro_rules! __impl_main_fn {
     ) => {
         $vis fn $main () {
             $crate::__private::main::spawn_mount_to_dom_element(
-                ||  $name(),
+                $name(),
                 $crate::__private::expand_or!(
                     [
                         $($($get_dom_element)*)?

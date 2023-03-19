@@ -93,10 +93,10 @@ impl Dom {
 
     pub async fn render_element<E: UpdateRenderState<Dom>>(
         &mut self,
-        mut get_element: impl FnMut() -> E,
+        element: E,
         stop: impl IntoFuture<Output = ()>,
     ) {
-        let state = get_element().initialize_render_state(self);
+        let state = element.initialize_render_state(self);
 
         futures_lite::pin!(state);
 

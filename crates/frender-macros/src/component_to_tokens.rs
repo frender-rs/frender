@@ -1,5 +1,5 @@
-use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use proc_macro2::{Span, TokenStream};
+use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
 
 use crate::{
@@ -31,17 +31,23 @@ impl ComponentDefinition {
 
         let main_block = main.map(|main| {
             let span = main.original.path().span();
+            let expr_element;
+
+            if bg.is_some() {
+                todo!("bg")
+            } else {
+                let name = &item_fn.sig.ident;
+                let span = Span::call_site().located_at(name.span());
+                expr_element = quote_spanned!(span => #name() )
+            }
+
             MainItem {
                 span_default: span,
                 span_fn_ident: span,
                 hook_element_path: &hook_element_path,
                 options: &main.parsed,
                 vis: &item_fn.vis,
-                expr_get_element: if bg.is_some() {
-                    todo!("bg")
-                } else {
-                    &item_fn.sig.ident
-                },
+                expr_element,
             }
             .into_ts()
         });

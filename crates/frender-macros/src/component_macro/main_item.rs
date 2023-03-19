@@ -1,4 +1,3 @@
-use darling::ToTokens;
 use proc_macro2::{Span, TokenStream};
 use quote::quote_spanned;
 use syn::spanned::Spanned;
@@ -11,7 +10,7 @@ pub struct MainItem<'a> {
     pub hook_element_path: &'a syn::Path,
     pub options: &'a ComponentMainOptions,
     pub vis: &'a syn::Visibility,
-    pub expr_get_element: &'a dyn ToTokens,
+    pub expr_element: TokenStream,
 }
 
 impl<'a> MainItem<'a> {
@@ -26,7 +25,7 @@ impl<'a> MainItem<'a> {
                     get_dom_element,
                 },
             vis,
-            expr_get_element,
+            expr_element,
         } = self;
 
         let ident = proc_macro2::Ident::new("main", span_fn_ident);
@@ -39,7 +38,7 @@ impl<'a> MainItem<'a> {
         quote_spanned! {span_default=>
             #vis fn #ident() {
                 #hook_element_path #path_dom(
-                    #expr_get_element,
+                    #expr_element,
                     #get_dom_element
                 )
             }
