@@ -49,6 +49,7 @@ macro_rules! element {
         $(:: $component_path:ident)*
         $(($($base:tt)*))?
         $( . $method:ident $(($($method_arg:tt)*))? )*
+        $([[$($children:tt)*]])?
         $(,)?
     ) => {
         $crate::__impl_element_one! {
@@ -57,6 +58,7 @@ macro_rules! element {
             $(:: $component_path)*
             $(($($base)*))?
             $( . $method $(($($method_arg)*))? )*
+            $(.children($crate::element![$($children)*]))?
         }
     };
     (
@@ -66,6 +68,7 @@ macro_rules! element {
             $(:: $component_path:ident)*
             $(($($base:tt)*))?
             $( . $method:ident $(($($method_arg:tt)*))? )*
+            $([[$($children:tt)*]])?
         ),+ $(,)?
     ) => {
         ($(
@@ -75,6 +78,7 @@ macro_rules! element {
                 $(:: $component_path)*
                 $(($($base)*))?
                 $( . $method $(($($method_arg)*))? )*
+                $(.children($crate::element![$($children)*]))?
             }
             ,
         )+)
@@ -106,12 +110,14 @@ macro_rules! intrinsic {
         $first:tt // may be `{}` `div` `$literal`
         $(($($inner:tt)*))?
         $( . $method:ident $(($($method_arg:tt)*))? )*
+        $([[$($children:tt)*]])?
         $(,)?
     ) => {
         $crate::__impl_intrinsic_one! {
             $first
             $(($($inner)*))?
             $( . $method $(($($method_arg)*))? )*
+            $(.children($crate::intrinsic![$($children)*]))?
         }
     };
     (
@@ -119,6 +125,7 @@ macro_rules! intrinsic {
             $first:tt // may be `{}` `div` `$literal`
             $(($($inner:tt)*))?
             $( . $method:ident $(($($method_arg:tt)*))? )*
+            $([[$($children:tt)*]])?
         ),+ $(,)?
     ) => {
         ($(
@@ -126,6 +133,7 @@ macro_rules! intrinsic {
                 $first
                 $(($($inner)*))?
                 $( . $method $(($($method_arg)*))? )*
+                $(.children($crate::intrinsic![$($children)*]))?
             },
         )+)
     };

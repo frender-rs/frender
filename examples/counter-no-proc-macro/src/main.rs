@@ -21,19 +21,15 @@ component_fn!(
 
         let state = state.get();
 
-        intrinsic!(div.children(intrinsic!(
-            button
-                .on_click(decrement)
-                .disabled(state == 0)
-                .children("-"),
-            " ",
-            { state },
-            " ",
-            button
-                .on_click(increment)
-                .disabled(state == u32::MAX)
-                .children("+")
-        )))
+        intrinsic!(
+            div[[
+                button.on_click(decrement).disabled(state == 0)[["-"]],
+                " ",
+                { state },
+                " ",
+                button.on_click(increment).disabled(state == u32::MAX)[["+"]]
+            ]]
+        )
     }
 );
 
@@ -77,48 +73,50 @@ component_fn!(
         let stopped_setter = stopped_setter.clone();
         let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
 
-        intrinsic!(div.children(intrinsic!(
-            "Timer(initial_interval=",
-            { initial_interval },
-            "): ",
-            { state },
-            " ",
-            button
-                .on_click(toggle_stopped)
-                .children(if stopped { " RESUME " } else { "  STOP  " })
-        )))
+        intrinsic!(
+            div[[
+                "Timer(initial_interval=",
+                { initial_interval },
+                "): ",
+                { state },
+                " ",
+                button.on_click(toggle_stopped).children(if stopped {
+                    " RESUME "
+                } else {
+                    "  STOP  "
+                }),
+            ]]
+        )
     }
 );
 
 #[allow(non_snake_case)]
 fn DivCode(code: Element![csr], children: Element![csr]) -> Element![csr] {
-    intrinsic!(div.children(intrinsic!(code.children(code), { children })))
+    intrinsic!(div[[code.children(code), { children }]])
 }
 
 #[allow(non_snake_case)]
 fn Main() -> Element![csr] {
-    intrinsic!(div
-        .style(
+    intrinsic!(
+        div.style(
             r#"margin: auto;
 padding: 16px;
 max-width: 768px;
 "#
-        )
-        .children(intrinsic!(
-            h1.children(intrinsic!(
+        )[[
+            h1[[
                 "Counter & Timer (without proc-macro) - ",
-                i.children(intrinsic!(a
-                    .href("https://github.com/frender-rs/frender")
-                    .target("_blank")
-                    .children(intrinsic!(b.children("f"), "render"))))
-            )),
+                i[[a.href("https://github.com/frender-rs/frender")
+                    .target("_blank")[[b.children("f"), "render"]]]]
+            ]],
             main.children((
                 DivCode("Counter(0)", Counter(0)),
                 DivCode("Counter(3)", Counter(3)),
                 DivCode("MyTimer(1000)", MyTimer(1000)),
                 DivCode("MyTimer(500)", MyTimer(500)),
             ))
-        )))
+        ]]
+    )
 }
 
 // TODO: macro
