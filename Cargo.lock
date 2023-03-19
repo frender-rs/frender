@@ -88,6 +88,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "counter-no-proc-macro"
+version = "0.1.0"
+dependencies = [
+ "frender",
+ "gloo",
+ "hooks",
+]
+
+[[package]]
 name = "darling"
 version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -227,6 +236,7 @@ dependencies = [
  "hooks-core",
  "lazy-pinned",
  "pin-project-lite",
+ "syn-lite 0.1.0",
 ]
 
 [[package]]
@@ -545,9 +555,9 @@ dependencies = [
 
 [[package]]
 name = "hooks"
-version = "2.0.0-alpha"
+version = "2.0.2-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cfd6d562388f4e8158eb915e6ec92f18003da1a3a06daebd9f3feec4b7bf794"
+checksum = "8a52b9d036acd3582e36f80fc6b62fe06c06ac922dd9cfe6c56a38ce17f82477"
 dependencies = [
  "hooks-core",
  "lazy-pinned",
@@ -557,12 +567,13 @@ dependencies = [
 
 [[package]]
 name = "hooks-core"
-version = "2.0.0-alpha"
+version = "2.1.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8db6d8af10ff08e61481193d8f356bf68dbd27fea7364be03b8070add7192956"
+checksum = "5460c39c5d39cd3fbfbbe2a0cd88822e86fea092d0628145506840ced5662950"
 dependencies = [
  "futures-core",
  "pin-project-lite",
+ "syn-lite 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -810,6 +821,16 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "syn-lite"
+version = "0.1.0"
+
+[[package]]
+name = "syn-lite"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a5f753fd99e0542b34bf88c9c2e0f7846e1773d46c5b1bf320e319979456eec"
 
 [[package]]
 name = "thiserror"
