@@ -22,6 +22,7 @@ pub mod html {
 pub use html::props::{events, UpdateDomEventListener};
 
 pub use frender_hook_element as hook_element;
+pub use frender_hook_element::{component_fn, Element};
 
 #[cfg(feature = "bg")]
 pub use bg;
@@ -32,7 +33,9 @@ pub mod prelude {
 
     pub use crate::rsx;
 
-    pub use frender_core::{Keyed, StaticText};
+    pub use frender_hook_element::{component_fn, Element};
+
+    pub use frender_core::{element, intrinsic, Keyed, StaticText};
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components-simply-typed")]

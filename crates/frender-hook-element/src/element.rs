@@ -5,6 +5,38 @@ use hooks_core::{HookPollNextUpdate, HookUnmount};
 
 use crate::{ContextAndState, ContextAndStateData, HookContext, Rendered};
 
+mod prelude_names {
+    pub(super) use std::pin::Pin;
+
+    pub(super) use frender_core::{RenderState, UpdateRenderState};
+    pub(super) use hooks_core::{HookPollNextUpdate, HookUnmount};
+
+    #[cfg(feature = "csr")]
+    pub(super) use frender_dom::Dom;
+
+    pub(super) use super::{fn_wrapper, prelude_names, FnHookElement};
+    pub(super) use crate::{ContextAndState, Rendered};
+}
+
+pub mod new_fn_hook_element {
+    use super::prelude_names::*;
+
+    #[inline]
+    pub fn csr<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: UpdateRenderState<Dom>>(
+        use_hook: U,
+    ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>, ()>
+    where
+        U: FnMut(Pin<&mut HookData>) -> E,
+    {
+        FnHookElement {
+            use_hook: fn_wrapper::FnMutOutputElement(use_hook),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+}
+#[cfg(all(feature = "csr", feature = "ssr"))]
+pub fn new_fn_hook_element() {}
+
 pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U, S: RenderState> {
     use_hook: U,
     _phantom: PhantomData<(HookData, S)>,

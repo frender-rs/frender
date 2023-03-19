@@ -12,8 +12,11 @@ frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 hooks-core = { version = "2.1.0-alpha", default-features = false }
+syn-lite = { version = "0.1.0", path = "../../../syn-lite" }
 
 [features]
+default = ["csr", "ssr"]       # TODO: remove
 dom = ["frender-dom"]
 spawn = ["frender-dom?/spawn"]
 ssr = ["dep:frender-ssr"]
+csr = ["dom"]                  # TODO: remove
