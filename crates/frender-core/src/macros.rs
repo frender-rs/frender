@@ -16,6 +16,9 @@ macro_rules! __expand_base_expr {
 
 #[macro_export]
 macro_rules! __impl_element_one {
+    ($lit:literal) => {
+        $lit
+    };
     ({$($non_builder:tt)*}) => {
         $($non_builder)*
     };
@@ -41,7 +44,7 @@ macro_rules! __impl_element_one {
 #[macro_export]
 macro_rules! element {
     (
-        $first:tt // may be `{}` `::` `div`
+        $first:tt // may be `{}` `::` `div` `$literal`
         $($component_path_start:ident)?
         $(:: $component_path:ident)*
         $(($($base:tt)*))?
@@ -80,6 +83,9 @@ macro_rules! element {
 
 #[macro_export]
 macro_rules! __impl_intrinsic_one {
+    ($lit:literal) => {
+        $lit
+    };
     ({$($non_builder:tt)*}) => {
         $($non_builder)*
     };
@@ -97,7 +103,7 @@ macro_rules! __impl_intrinsic_one {
 #[macro_export]
 macro_rules! intrinsic {
     (
-        $first:tt // may be `{}` `div`
+        $first:tt // may be `{}` `div` `$literal`
         $(($($inner:tt)*))?
         $( . $method:ident $(($($method_arg:tt)*))? )*
         $(,)?
@@ -110,7 +116,7 @@ macro_rules! intrinsic {
     };
     (
         $(
-            $first:tt // may be `{}` `div`
+            $first:tt // may be `{}` `div` `$literal`
             $(($($inner:tt)*))?
             $( . $method:ident $(($($method_arg:tt)*))? )*
         ),+ $(,)?
