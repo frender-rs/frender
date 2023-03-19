@@ -15,8 +15,8 @@ where
     V: frender::UpdateRenderState<frender::Dom>,
     OnClick: frender::UpdateDomEventListener<frender::events::Click>,
 {
-    #[component(only_dom, FnOnce)]
-    fn into_element(self) {
+    // #[component(only_dom)] // TODO: optimize with zero hooks
+    fn into_element(self) -> Element![csr] {
         rsx!(
             <button class="square" on_click={self.on_click}>
                 {self.value}

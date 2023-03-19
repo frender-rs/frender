@@ -18,14 +18,11 @@ impl<S: RenderState> RenderState for PreservedOptionState<S> {
         self.project().inner.as_pin_mut().map(S::unmount);
     }
 
-    fn poll_reactive(
-        self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         self.project()
             .inner
             .as_pin_mut()
-            .map_or(std::task::Poll::Ready(false), |s| S::poll_reactive(s, cx))
+            .map_or(std::task::Poll::Ready(()), |s| S::poll_reactive(s, cx))
     }
 }
 

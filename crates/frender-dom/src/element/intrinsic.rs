@@ -61,10 +61,7 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
     }
 
     #[inline]
-    fn poll_reactive(
-        self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         S::intrinsic_component_poll_reactive(self.project().render_state, cx)
     }
 }

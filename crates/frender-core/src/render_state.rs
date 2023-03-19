@@ -6,9 +6,9 @@ pub trait RenderState {
     fn unmount(self: Pin<&mut Self>);
 
     #[inline]
-    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<()> {
         let _ = cx;
-        Poll::Ready(false)
+        Poll::Ready(())
     }
 }
 
@@ -19,7 +19,7 @@ impl<S: RenderState + ?Sized> RenderState for Pin<Box<S>> {
     }
 
     #[inline]
-    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<()> {
         S::poll_reactive(pin_as_deref_mut(self), cx)
     }
 }
@@ -37,10 +37,10 @@ where
     }
 }
 
-pub fn join_poll_reactive_results(a: Poll<bool>, b: Poll<bool>) -> Poll<bool> {
+// TODO: remove
+pub fn join_poll_reactive_results(a: Poll<()>, b: Poll<()>) -> Poll<()> {
     match (a, b) {
-        (Poll::Ready(false), Poll::Ready(false)) => Poll::Ready(false),
-        (Poll::Ready(false) | Poll::Pending, Poll::Ready(false) | Poll::Pending) => Poll::Pending,
-        _ => Poll::Ready(true),
+        (Poll::Ready(()), Poll::Ready(())) => Poll::Ready(()),
+        _ => Poll::Pending,
     }
 }

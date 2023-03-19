@@ -51,16 +51,11 @@ where
         }
     }
 
-    fn poll_reactive(
-        self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         self.project()
             .state
             .as_pin_mut()
-            .map_or(std::task::Poll::Ready(true), |s| {
-                State::poll_reactive(s, cx)
-            })
+            .map_or(std::task::Poll::Ready(()), |s| State::poll_reactive(s, cx))
     }
 }
 

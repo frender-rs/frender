@@ -24,16 +24,15 @@ impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
-        let mut res = std::task::Poll::Ready(false);
+    ) -> std::task::Poll<()> {
+        let mut res = std::task::Poll::Ready(());
 
         let values = self.get_mut().states.values_mut();
         for state in values {
             match S::poll_reactive(std::pin::Pin::new(state), cx) {
-                std::task::Poll::Ready(false) => {}
-                v @ std::task::Poll::Ready(true) => res = v,
+                std::task::Poll::Ready(()) => {}
                 v @ std::task::Poll::Pending => {
-                    if let std::task::Poll::Ready(false) = res {
+                    if let std::task::Poll::Ready(()) = res {
                         res = v;
                     }
                 }

@@ -100,25 +100,16 @@ impl Dom {
 
         futures_lite::pin!(state);
 
-        let root_position = self.next_node_position.clone();
+        // let root_position = self.next_node_position.clone();
 
         let stop = crate::utils::reentrant(stop.into_future());
 
         futures_lite::pin!(stop);
 
-        futures_lite::future::or(stop.as_mut(), async {
-            while futures_lite::future::zip(
-                std::future::poll_fn(|cx| state.as_mut().poll_reactive(cx)),
-                gloo::timers::future::TimeoutFuture::new(0),
-            )
-            .await
-            .0
-            {
-                web_sys::console::log_1(&"update_render_state".into());
-                self.next_node_position = root_position.clone();
-                get_element().update_render_state(self, state.as_mut());
-            }
-        })
+        futures_lite::future::or(
+            stop.as_mut(),
+            std::future::poll_fn(|cx| state.as_mut().poll_reactive(cx)),
+        )
         .await;
 
         web_sys::console::log_1(&"stopped or non-dynamic".into());

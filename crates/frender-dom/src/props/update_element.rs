@@ -19,7 +19,7 @@ pub trait IntrinsicComponentPollReactive {
     fn intrinsic_component_poll_reactive(
         self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool>;
+    ) -> std::task::Poll<()>;
 }
 
 pub trait UpdateElementNonReactive<E> {

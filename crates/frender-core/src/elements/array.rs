@@ -9,14 +9,13 @@ impl<S: RenderState, const N: usize> RenderState for [S; N] {
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
-        let mut res = std::task::Poll::Ready(false);
+    ) -> std::task::Poll<()> {
+        let mut res = std::task::Poll::Ready(());
 
         pin_project_map_array(self, |state| match S::poll_reactive(state, cx) {
-            std::task::Poll::Ready(false) => {}
-            v @ std::task::Poll::Ready(true) => res = v,
+            std::task::Poll::Ready(()) => {}
             v @ std::task::Poll::Pending => {
-                if let std::task::Poll::Ready(false) = res {
+                if let std::task::Poll::Ready(()) = res {
                     res = v;
                 }
             }

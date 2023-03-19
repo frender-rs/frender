@@ -190,12 +190,12 @@ impl<
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    ) -> std::task::Poll<()> {
         let this = self.get_mut();
 
         let writer = match &mut this.writer_or_error {
             WriterOrError::Writer(w) => w,
-            WriterOrError::Error(_) => return Poll::Ready(false),
+            WriterOrError::Error(_) => return Poll::Ready(()),
         };
 
         let data = &mut this.data;
@@ -206,7 +206,7 @@ impl<
                     Poll::Ready(Ok(())) => {}
                     Poll::Ready(Err(error)) => {
                         this.writer_or_error = WriterOrError::Error(error);
-                        return Poll::Ready(false);
+                        return Poll::Ready(());
                     }
                     Poll::Pending => return Poll::Pending,
                 }
@@ -219,7 +219,7 @@ impl<
 
         if let Some(children) = &mut data.children {
             match Pin::new(children).poll_reactive(cx) {
-                Poll::Ready(false) => {}
+                Poll::Ready(()) => {}
                 res => return res,
             }
         }
@@ -228,7 +228,7 @@ impl<
             .after_children
             .poll_write_byte_chunks(Pin::new(writer), cx));
 
-        Poll::Ready(false)
+        Poll::Ready(())
     }
 }
 

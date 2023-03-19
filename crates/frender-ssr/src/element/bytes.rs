@@ -17,21 +17,21 @@ impl<W, B> Unpin for State<W, B> {}
 impl<W: crate::AsyncWrite + Unpin, B: AsyncWritableBytes> RenderState for State<W, B> {
     fn unmount(self: Pin<&mut Self>) {}
 
-    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<()> {
         let State {
             writer_or_error,
             buf,
         } = self.get_mut();
         match writer_or_error {
             WriterOrError::Writer(writer) => match buf.poll_write_bytes(Pin::new(writer), cx) {
-                Poll::Ready(Ok(_)) => Poll::Ready(false),
+                Poll::Ready(Ok(_)) => Poll::Ready(()),
                 Poll::Ready(Err(error)) => {
                     *writer_or_error = WriterOrError::Error(error);
-                    Poll::Pending
+                    Poll::Ready(())
                 }
                 Poll::Pending => Poll::Pending,
             },
-            WriterOrError::Error(_) => Poll::Ready(false),
+            WriterOrError::Error(_) => Poll::Ready(()),
         }
     }
 }

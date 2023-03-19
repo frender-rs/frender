@@ -32,7 +32,7 @@ mod dom {
         fn intrinsic_component_poll_reactive(
             self: std::pin::Pin<&mut Self>,
             cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<bool> {
+        ) -> std::task::Poll<()> {
             self.project().children.poll_reactive(cx)
         }
     }

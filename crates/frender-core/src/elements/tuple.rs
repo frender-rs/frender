@@ -48,14 +48,12 @@ macro_rules! impl_render_for_tuple {
                 }
 
                 #[inline]
-                fn poll_reactive(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<bool> {
+                fn poll_reactive(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
                     let this = self.project();
                     match ($($field::poll_reactive(this.$field, cx) ,)+) {
                         #[allow(unused_variables)]
-                        ( $(std::task::Poll::Ready($field @ false),)+ ) => std::task::Poll::Ready(false),
-                        #[allow(unused_variables)]
-                        ( $($field @ (std::task::Poll::Pending | std::task::Poll::Ready(false)),)+ ) => std::task::Poll::Pending,
-                        _ => std::task::Poll::Ready(true),
+                        ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
+                        _ => std::task::Poll::Pending,
                     }
                 }
             }

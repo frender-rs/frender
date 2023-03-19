@@ -14,13 +14,10 @@ impl<S: RenderState + Unpin> RenderState for Option<S> {
         *this = None;
     }
 
-    fn poll_reactive(
-        self: Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         match self.get_mut() {
             Some(s) => S::poll_reactive(Pin::new(s), cx),
-            None => std::task::Poll::Ready(false),
+            None => std::task::Poll::Ready(()),
         }
     }
 }
