@@ -585,6 +585,189 @@ mod impl_ssr_for_props {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::r#async<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("r#async"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::cross_origin<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("crossorigin"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::defer<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("defer"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::fetch_priority<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("fetchpriority"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::integrity<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("integrity"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::no_module<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("nomodule"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::referrer_policy<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("referrerpolicy"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::src<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("src"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::type_<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("type_"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::blocking<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("blocking"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
 }
 mod imports {
     #[allow(unused_imports)]

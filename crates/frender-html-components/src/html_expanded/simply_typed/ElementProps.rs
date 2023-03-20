@@ -1107,6 +1107,369 @@ mod impl_ssr_for_props {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::class<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("class"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::id<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("id"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::part<V>
+    {
+        type IntoIterAttrs =
+            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            V::maybe_into_html_attribute_value(this.0)
+                .map(|attr_value| (
+                    ::std::borrow::Cow::Borrowed("part"),
+                    attr_value
+                        .map_or(
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
+                        ),
+                ))
+                .into_iter()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_cancel<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_error<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_scroll<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_security_policy_violation<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_select<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_wheel<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_copy<V> {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_cut<V> {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_paste<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_composition_end<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_composition_start<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_composition_update<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_blur<V> {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_focus<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_focus_in<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_focus_out<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_fullscreen_change<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_fullscreen_error<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_key_down<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_key_up<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_aux_click<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_click<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_context_menu<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_double_click<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_down<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_enter<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_leave<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_move<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_out<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_over<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_mouse_up<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_touch_cancel<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_touch_end<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_touch_move<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+        for super::props::on_touch_start<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
 }
 mod imports {
     #[allow(unused_imports)]
