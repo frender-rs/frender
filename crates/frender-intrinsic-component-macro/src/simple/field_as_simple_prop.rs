@@ -34,6 +34,9 @@ impl FieldAsSimpleProp<'_> {
         let dom_init;
         let dom_update;
         let mut ssr_bounds = None;
+        let ssr_attrs_ty;
+        let ssr_attrs_impl;
+
         match &field.declaration {
             FieldDeclaration::Maybe(m) => {
                 assert!(m.no_cache.is_none(), "simply typed prop must have state");
@@ -62,6 +65,23 @@ impl FieldAsSimpleProp<'_> {
                     quote!(this.0),
                     quote!(&mut state.get_mut().0),
                 );
+
+                ssr_attrs_ty = quote! {
+                    ::core::option::IntoIter<
+                        #crate_path::frender_ssr::element::html::HtmlAttrPair<'a>
+                    >
+                };
+
+                let attr_name = m.to_html_prop_name(name);
+
+                ssr_attrs_impl = quote! {
+                    V::maybe_into_html_attribute_value(
+                        this.0
+                    ).map(|attr_value| (::std::borrow::Cow::Borrowed(#attr_name), attr_value.map_or(
+                            #crate_path::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
+                            #crate_path::frender_ssr::element::html::HtmlAttributeValue::String,
+                    ))).into_iter()
+                };
             }
             FieldDeclaration::EventListener(e) => {
                 //
@@ -79,6 +99,16 @@ impl FieldAsSimpleProp<'_> {
                 };
                 dom_update = quote! {
                     V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+                };
+
+                ssr_attrs_ty = quote! {
+                    ::core::iter::Empty<
+                        #crate_path::frender_ssr::element::html::HtmlAttrPair<'a>
+                    >
+                };
+
+                ssr_attrs_impl = quote! {
+                    ::core::iter::empty()
                 };
             }
             FieldDeclaration::Full(_) => {
@@ -150,7 +180,14 @@ impl FieldAsSimpleProp<'_> {
                 }
             }),
             impl_ssr: Some(quote! {
-                // TODO:
+                impl<'a, V #ssr_bounds>
+                    #crate_path::frender_ssr::attrs::IntoIteratorAttrs<'a>
+                for super::props::#name<V> {
+                    type IntoIterAttrs = #ssr_attrs_ty;
+                    fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+                        #ssr_attrs_impl
+                    }
+                }
             }),
             field_info: {
                 let bounds = builder_fn_bounds.map(|b| quote!(: bounds![#b]));

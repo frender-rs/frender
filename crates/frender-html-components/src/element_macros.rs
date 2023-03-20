@@ -264,6 +264,16 @@ mod simple {
                     }
                 }
 
+                #[cfg(feature = "ssr")]
+                mod impl_ssr {
+                    #[allow(unused_imports)]
+                    use super::super::*;
+
+                    impl<Children> crate::imports::frender_html_simple::IntrinsicComponentSupportChildren<Children> for super::ComponentType {
+                        // TODO: some components are void or self closing
+                    }
+                }
+
                 #[inline(always)]
                 pub fn build<Children, Props>(
                     building: Building<Children, Props>,

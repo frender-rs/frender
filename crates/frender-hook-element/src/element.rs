@@ -14,6 +14,9 @@ mod prelude_names {
     #[cfg(feature = "csr")]
     pub(super) use frender_dom::Dom;
 
+    #[cfg(feature = "ssr")]
+    pub(super) use frender_ssr::AnySsrContext;
+
     pub(super) use super::{fn_wrapper, prelude_names, FnHookElement};
     pub(super) use crate::{ContextAndState, Rendered};
 }
@@ -22,7 +25,26 @@ pub mod new_fn_hook_element {
     use super::prelude_names::*;
 
     #[inline]
+    #[cfg(feature = "csr")]
     pub fn csr<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: UpdateRenderState<Dom>>(
+        use_hook: U,
+    ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>, ()>
+    where
+        U: FnMut(Pin<&mut HookData>) -> E,
+    {
+        FnHookElement {
+            use_hook: fn_wrapper::FnMutOutputElement(use_hook),
+            _phantom: std::marker::PhantomData,
+        }
+    }
+
+    #[inline]
+    #[cfg(feature = "ssr")]
+    pub fn ssr<
+        HookData: HookPollNextUpdate + HookUnmount + Default,
+        U,
+        E: for<'a> UpdateRenderState<AnySsrContext<'a>>,
+    >(
         use_hook: U,
     ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>, ()>
     where

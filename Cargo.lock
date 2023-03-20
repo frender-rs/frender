@@ -338,8 +338,10 @@ name = "frender-ssr"
 version = "0.1.0"
 dependencies = [
  "frender-core",
+ "frender-html-common",
  "futures-io",
  "html-escape",
+ "pin-project-lite",
 ]
 
 [[package]]

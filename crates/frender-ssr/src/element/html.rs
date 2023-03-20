@@ -8,6 +8,7 @@ use crate::{
     WriterOrError,
 };
 
+// TODO: use html_common::
 pub enum HtmlAttributeValue<'a> {
     String(Cow<'a, str>),
     /// If a boolean attribute is present, its value is true, and if it's absent, its value is false.
@@ -19,6 +20,7 @@ pub enum HtmlAttributeValue<'a> {
     BooleanTrue,
 }
 
+// TODO: use html_common
 pub enum HtmlElementChildren<Children> {
     /// See [void element]
     ///

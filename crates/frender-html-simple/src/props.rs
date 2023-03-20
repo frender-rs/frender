@@ -75,3 +75,27 @@ mod dom {
         }
     }
 }
+
+#[cfg(feature = "ssr")]
+mod ssr {
+    use frender_core::UpdateRenderState;
+    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, IntoSsrData, SsrContext};
+
+    impl<W: AsyncWrite + Unpin, Children, Props> IntoSsrData<W> for super::ElementProps<Children, Props>
+    where
+        Children: UpdateRenderState<SsrContext<W>>,
+        Children::State: Unpin, // TODO: remove this restriction
+        Props: IntoIteratorAttrs<'static>,
+        Props::IntoIterAttrs: Unpin, // TODO: remove this restriction
+    {
+        type Children = Children;
+
+        type ChildrenRenderState = Children::State;
+
+        type Attrs = Props::IntoIterAttrs;
+
+        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
+            (this.children, Props::into_iter_attrs(this.other_props))
+        }
+    }
+}

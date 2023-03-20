@@ -1,11 +1,19 @@
+#[cfg(feature = "dom")]
 pub trait IntrinsicComponentWithElementType {
     type Element;
 }
 
-pub struct IntrinsicComponent<
-    C: frender_html_common::IntrinsicComponent + IntrinsicComponentWithElementType,
-    P,
->(pub C, pub P);
+#[cfg(feature = "ssr")]
+pub trait IntrinsicComponentSupportChildren<Children> {
+    #[inline]
+    fn wrap_children(
+        children: Children,
+    ) -> frender_ssr::element::html::HtmlElementChildren<Children> {
+        frender_ssr::element::html::HtmlElementChildren::Children(children)
+    }
+}
+
+pub struct IntrinsicComponent<C: frender_html_common::IntrinsicComponent, P>(pub C, pub P);
 
 #[cfg(feature = "dom")]
 mod dom {
@@ -34,6 +42,55 @@ mod dom {
             node_and_mounted.update(ctx, |element, children_ctx| {
                 P::update_element(self.1, element, children_ctx, state)
             })
+        }
+    }
+}
+
+#[cfg(feature = "ssr")]
+mod ssr {
+    use std::borrow::Cow;
+
+    use frender_core::UpdateRenderState;
+    use frender_html_common::IntrinsicComponent;
+    use frender_ssr::{AsyncWrite, IntoSsrData, SsrContext};
+
+    use super::IntrinsicComponentSupportChildren;
+
+    impl<W: AsyncWrite + Unpin, C: IntrinsicComponent, P> UpdateRenderState<SsrContext<W>>
+        for super::IntrinsicComponent<C, P>
+    where
+        C: IntrinsicComponentSupportChildren<P::Children>,
+        P: IntoSsrData<W>,
+    {
+        type State = ::frender_ssr::element::html::HtmlElementRenderState<
+            'static,
+            P::ChildrenRenderState,
+            P::Attrs,
+            W,
+        >;
+
+        fn initialize_render_state(self, ctx: &mut SsrContext<W>) -> Self::State {
+            let (children, attributes) = IntoSsrData::into_ssr_data(self.1);
+            ::frender_ssr::element::html::HtmlElement {
+                tag: Cow::Borrowed(C::INTRINSIC_TAG),
+                attributes,
+                children: C::wrap_children(children),
+            }
+            .initialize_render_state(ctx)
+        }
+
+        fn update_render_state(
+            self,
+            ctx: &mut SsrContext<W>,
+            state: std::pin::Pin<&mut Self::State>,
+        ) {
+            let (children, attributes) = IntoSsrData::into_ssr_data(self.1);
+            ::frender_ssr::element::html::HtmlElement {
+                tag: Cow::Borrowed(C::INTRINSIC_TAG),
+                attributes,
+                children: C::wrap_children(children),
+            }
+            .update_render_state(ctx, state)
         }
     }
 }
