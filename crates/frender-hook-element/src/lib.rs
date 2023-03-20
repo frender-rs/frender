@@ -377,22 +377,22 @@ macro_rules! __impl_element_type {
     ([ssr][$ssr:ident]) => {
         impl for<'ssr> $crate::__private::UpdateRenderState<
             $crate::__private::$ssr<'ssr>,
-            State = impl $crate::__private::RenderState
+            // State = impl $crate::__private::RenderState
         >
     };
     ([csr][$csr:ident]) => {
         impl $crate::__private::UpdateRenderState<
             $crate::__private::$csr,
-            State = impl $crate::__private::RenderState
+            // State = impl $crate::__private::RenderState
         >
     };
     ([ssr,csr][$ssr:ident,$csr:ident]) => {
         impl for<'ssr> $crate::__private::UpdateRenderState<
             $crate::__private::$ssr<'ssr>,
-            State = impl $crate::__private::RenderState
+            // State = impl $crate::__private::RenderState
         > + $crate::__private::UpdateRenderState<
             $crate::__private::$csr,
-            State = impl $crate::__private::RenderState
+            // State = impl $crate::__private::RenderState
         >
     };
     ([csr,ssr][$csr:ident,$ssr:ident] $($rest:tt)*) => {
