@@ -21,7 +21,7 @@ impl AsRef<[u8]> for SlicedBytes {
 
 impl super::AsyncWritableBytes for SlicedBytes {
     fn truncate_start_at(&mut self, n: usize) {
-        assert!(n < self.inner.len());
+        assert!(n + self.start <= self.inner.len());
         self.start += n;
     }
 }
