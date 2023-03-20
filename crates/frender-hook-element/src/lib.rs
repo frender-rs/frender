@@ -374,26 +374,26 @@ macro_rules! __impl_element_type {
     ([][] $($rest:tt)*) => {
         $crate::__impl_element_type! {[ssr,csr][ssr,csr] $($rest)*}
     };
-    ([ssr][$ssr:ident]) => {
+    ([ssr][$ssr:ident] $($($rest:tt)+)?) => {
         impl for<'ssr> $crate::__private::UpdateRenderState<
             $crate::__private::$ssr<'ssr>,
             // State = impl $crate::__private::RenderState
-        >
+        > $(+ $($rest)+)?
     };
-    ([csr][$csr:ident]) => {
+    ([csr][$csr:ident] $($($rest:tt)+)?) => {
         impl $crate::__private::UpdateRenderState<
             $crate::__private::$csr,
             // State = impl $crate::__private::RenderState
-        >
+        > $(+ $($rest)+)?
     };
-    ([ssr,csr][$ssr:ident,$csr:ident]) => {
+    ([ssr,csr][$ssr:ident,$csr:ident] $($($rest:tt)+)?) => {
         impl for<'ssr> $crate::__private::UpdateRenderState<
             $crate::__private::$ssr<'ssr>,
             // State = impl $crate::__private::RenderState
         > + $crate::__private::UpdateRenderState<
             $crate::__private::$csr,
             // State = impl $crate::__private::RenderState
-        >
+        > $(+ $($rest)+)?
     };
     ([csr,ssr][$csr:ident,$ssr:ident] $($rest:tt)*) => {
         $crate::__impl_element_type! {[$ssr,$csr][$ssr,$csr] $($rest)*}
