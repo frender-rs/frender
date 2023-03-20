@@ -16,6 +16,14 @@ pub struct SsrContext<W: AsyncWrite + Unpin> {
 }
 
 impl<W: AsyncWrite + Unpin> SsrContext<W> {
+    pub fn new(writer: W) -> Self {
+        Self {
+            writer_or_error: Some(WriterOrError::Writer(writer)),
+        }
+    }
+}
+
+impl<W: AsyncWrite + Unpin> SsrContext<W> {
     pub fn expect_to_take_writer(&mut self) -> WriterOrError<W> {
         self.writer_or_error
             .take()
