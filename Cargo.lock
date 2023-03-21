@@ -245,7 +245,7 @@ dependencies = [
  "hooks-core",
  "lazy-pinned",
  "pin-project-lite",
- "syn-lite 0.1.0",
+ "syn-lite",
 ]
 
 [[package]]
@@ -589,7 +589,7 @@ checksum = "5460c39c5d39cd3fbfbbe2a0cd88822e86fea092d0628145506840ced5662950"
 dependencies = [
  "futures-core",
  "pin-project-lite",
- "syn-lite 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn-lite",
 ]
 
 [[package]]
@@ -866,10 +866,6 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
-
-[[package]]
-name = "syn-lite"
-version = "0.1.0"
 
 [[package]]
 name = "syn-lite"
