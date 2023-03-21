@@ -5,7 +5,7 @@ use futures_io::AsyncWrite;
 
 use crate::{
     bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
-    SsrContext, WriterOrError,
+    SsrContext, WriterOrError, WritingState,
 };
 
 // TODO: use html_common::
@@ -116,6 +116,11 @@ impl<'a, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Iterator for AttrsIntoByteChu
     }
 }
 
+pub struct HtmlElementRenderStateChildren<Children> {
+    children_writing_state: WritingState,
+    children: Children,
+}
+
 pub struct HtmlElementRenderStateData<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
     pub before_children: IterByteChunks<
         core::iter::Chain<
@@ -126,7 +131,7 @@ pub struct HtmlElementRenderStateData<'a, Children, Attrs: Iterator<Item = HtmlA
             core::array::IntoIter<CowSlicedBytes<'a>, 3>,
         >,
     >,
-    pub children: Option<Children>,
+    pub children: Option<HtmlElementRenderStateChildren<Children>>,
     pub after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
 }
 
@@ -163,6 +168,11 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
                 .chain(start_tag_end),
         );
 
+        let children = children.map(|children| HtmlElementRenderStateChildren {
+            children_writing_state: Default::default(),
+            children,
+        });
+
         Self {
             before_children,
             children,
@@ -173,7 +183,80 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
 
 pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
     data: HtmlElementRenderStateData<'a, Children, Attrs>,
-    is_writing: bool, // TODO: use an enum with Finished state
+    writing_state: WritingState,
+}
+
+impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
+    HtmlElementRenderStateData<'a, Children, Attrs>
+{
+    fn impl_poll<W: AsyncWrite + Unpin>(
+        &mut self,
+        ctx: &mut SsrContext<W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()>
+    where
+        Children: RenderState<SsrContext<W>> + Unpin, // TODO: remove Unpin
+    {
+        #[cfg(debug_assertions)]
+        assert!(ctx.busy);
+
+        let writer = match &mut ctx.writer_or_error {
+            WriterOrError::Writer(w) => w,
+            WriterOrError::Error(_) => return Poll::Ready(()),
+        };
+
+        macro_rules! ready_ok {
+            ($e:expr) => {
+                match $e {
+                    Poll::Ready(Ok(())) => {}
+                    Poll::Ready(Err(error)) => {
+                        ctx.writer_or_error = WriterOrError::Error(error);
+                        return Poll::Ready(());
+                    }
+                    Poll::Pending => return Poll::Pending,
+                }
+            };
+        }
+
+        ready_ok!(self
+            .before_children
+            .poll_write_byte_chunks(Pin::new(writer), cx));
+
+        if let Some(HtmlElementRenderStateChildren {
+            children_writing_state,
+            children,
+        }) = &mut self.children
+        {
+            if !children_writing_state.is_finished() {
+                #[cfg(debug_assertions)]
+                assert!(ctx.busy);
+
+                if children_writing_state.is_ready_to_start() {
+                    ctx.busy = false;
+                    *children_writing_state = WritingState::Writing;
+                }
+                if let Poll::Ready(()) = Pin::new(children).poll_reactive(ctx, cx) {
+                    #[cfg(debug_assertions)]
+                    assert!(!ctx.busy);
+
+                    ctx.busy = true;
+                    *children_writing_state = WritingState::Finished;
+                    cx.waker().wake_by_ref();
+                }
+
+                #[cfg(debug_assertions)]
+                assert!(ctx.busy);
+
+                return Poll::Pending;
+            }
+        }
+
+        ready_ok!(self
+            .after_children
+            .poll_write_byte_chunks(Pin::new(writer), cx));
+
+        Poll::Ready(())
+    }
 }
 
 impl<
@@ -184,9 +267,7 @@ impl<
     > RenderState<SsrContext<W>> for HtmlElementRenderState<'a, Children, Attrs>
 {
     fn unmount(self: std::pin::Pin<&mut Self>) {
-        if let Some(children) = &mut self.get_mut().data.children {
-            Children::unmount(Pin::new(children))
-        }
+        panic!("ssr cannot be unmounted");
     }
 
     fn poll_reactive(
@@ -194,64 +275,12 @@ impl<
         ctx: &mut SsrContext<W>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        let this = self.get_mut();
+        let Self {
+            data,
+            writing_state,
+        } = self.get_mut();
 
-        let writer_or_error = match ctx.use_writer_and_mark_busy(&mut this.is_writing) {
-            Some(w) => w,
-            None => return Poll::Pending,
-        };
-
-        let writer = match writer_or_error {
-            WriterOrError::Writer(w) => w,
-            WriterOrError::Error(_) => {
-                this.is_writing = false;
-                ctx.busy = false;
-                return Poll::Ready(());
-            }
-        };
-
-        let data = &mut this.data;
-
-        macro_rules! ready_ok {
-            ($e:expr) => {
-                match $e {
-                    Poll::Ready(Ok(())) => {}
-                    Poll::Ready(Err(error)) => {
-                        this.is_writing = false;
-                        *writer_or_error = WriterOrError::Error(error);
-                        return Poll::Ready(());
-                    }
-                    Poll::Pending => return Poll::Pending,
-                }
-            };
-        }
-
-        ready_ok!(data
-            .before_children
-            .poll_write_byte_chunks(Pin::new(writer), cx));
-
-        if let Some(children) = &mut data.children {
-            ctx.busy = false;
-            if let Poll::Ready(()) = Pin::new(children).poll_reactive(ctx, cx) {
-                #[cfg(debug_assertions)]
-                assert!(!ctx.busy);
-
-                ctx.busy = true;
-                data.children = None; // TODO: do not remove the children as drop might do something
-                cx.waker().wake_by_ref();
-            }
-
-            return std::task::Poll::Pending;
-        }
-
-        ready_ok!(data
-            .after_children
-            .poll_write_byte_chunks(Pin::new(writer), cx));
-
-        this.is_writing = false;
-        ctx.busy = false;
-
-        Poll::Ready(())
+        ctx.map(writing_state, |ctx, cx| data.impl_poll(ctx, cx), cx)
     }
 }
 
@@ -271,32 +300,11 @@ where
                 self.children
                     .map_children(|children| children.initialize_render_state(ctx)),
             ),
-            is_writing: false,
+            writing_state: Default::default(),
         }
     }
 
     fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
-        let state = state.get_mut();
-
-        if ctx.busy && state.is_writing {
-            ctx.busy = false;
-            state.is_writing = false;
-            // TODO: warn
-        }
-
-        let old_children_state = state.data.children.take();
-
-        state.data = HtmlElementRenderStateData::new(
-            self.tag,
-            self.attributes,
-            self.children.map_children(|children| {
-                if let Some(mut old_children_state) = old_children_state {
-                    children.update_render_state(ctx, Pin::new(&mut old_children_state));
-                    old_children_state
-                } else {
-                    children.initialize_render_state(ctx)
-                }
-            }),
-        );
+        panic!("ssr element can not be updated");
     }
 }
