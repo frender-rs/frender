@@ -1,6 +1,6 @@
 use crate::{utils::pin_project_map_array, RenderState, UpdateRenderState};
 
-impl<S: RenderState, const N: usize> RenderState for [S; N] {
+impl<Ctx, S: RenderState<Ctx>, const N: usize> RenderState<Ctx> for [S; N] {
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {
         pin_project_map_array(self, S::unmount)
@@ -8,11 +8,12 @@ impl<S: RenderState, const N: usize> RenderState for [S; N] {
 
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
+        ctx: &mut Ctx,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
-        pin_project_map_array(self, |state| match S::poll_reactive(state, cx) {
+        pin_project_map_array(self, |state| match S::poll_reactive(state, ctx, cx) {
             std::task::Poll::Ready(()) => {}
             v @ std::task::Poll::Pending => {
                 if let std::task::Poll::Ready(()) = res {

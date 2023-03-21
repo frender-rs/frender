@@ -26,14 +26,19 @@ mod dom {
     impl<ChildrenState, PropsState> IntrinsicComponentPollReactive
         for ElementPropsStates<ChildrenState, PropsState>
     where
-        ChildrenState: RenderState,
+        ChildrenState: RenderState<frender_dom::Dom>,
     {
+        fn intrinsic_component_unmount(self: Pin<&mut Self>) {
+            self.project().children.unmount()
+        }
+
         #[inline(always)]
         fn intrinsic_component_poll_reactive(
             self: std::pin::Pin<&mut Self>,
+            ctx: &mut frender_dom::Dom,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            self.project().children.poll_reactive(cx)
+            self.project().children.poll_reactive(ctx, cx)
         }
     }
 }

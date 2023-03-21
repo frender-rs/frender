@@ -49,19 +49,36 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 }
 
-impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
+impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState<crate::Dom>
     for IntrinsicComponentRenderState<E, S>
 {
     fn unmount(self: Pin<&mut Self>) {
-        let ElementAndMounted { element, mounted } = self.project().element_and_mounted;
+        let this = self.project();
+        let ElementAndMounted { element, mounted } = this.element_and_mounted;
         if *mounted {
             *mounted = false;
             element.as_ref().remove();
+            this.render_state.intrinsic_component_unmount(); // TODO: unmount_when_parent_unmounted
         }
     }
 
     #[inline]
-    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-        S::intrinsic_component_poll_reactive(self.project().render_state, cx)
+    fn poll_reactive(
+        self: Pin<&mut Self>,
+        ctx: &mut crate::Dom,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        let this = self.project();
+        let element = this.element_and_mounted.element.as_ref().clone();
+
+        let node: &web_sys::Node = element.as_ref();
+        let node = node.clone();
+
+        ctx.next_node_position = crate::NextNodePosition::FirstChildOf(element);
+        let result = S::intrinsic_component_poll_reactive(this.render_state, ctx, cx);
+
+        ctx.next_node_position.set_as_insert_after(node);
+
+        result
     }
 }

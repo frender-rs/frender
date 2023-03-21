@@ -5,7 +5,7 @@ macro_rules! impl_render_scalar {
         $for_ty:ty
     ),* $(,)?) => {$(
         impl<W: $crate::AsyncWrite + Unpin> UpdateRenderState<$crate::SsrContext<W>> for $for_ty {
-            type State = super::bytes::State<W, $crate::bytes::SlicedBytes>;
+            type State = super::bytes::State<$crate::bytes::SlicedBytes>;
 
             #[inline]
             fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {

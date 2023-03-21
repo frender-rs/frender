@@ -23,9 +23,10 @@ impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, fals
 
 impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, true>
 where
+    Ctx: 'static, // TODO: why this is required
     E::State: std::any::Any,
 {
-    type State = Pin<Box<dyn crate::AnyRenderState>>;
+    type State = Pin<Box<dyn crate::AnyRenderState<Ctx>>>;
 
     fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
         let state = pin_downcast_mut(pin_as_deref_mut(state).pin_as_mut_any())

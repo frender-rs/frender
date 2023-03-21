@@ -3,7 +3,7 @@ use std::pin::Pin;
 use crate::RenderState;
 
 pub trait UpdateRenderState<Ctx> {
-    type State: RenderState;
+    type State: RenderState<Ctx>;
 
     fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State;
 

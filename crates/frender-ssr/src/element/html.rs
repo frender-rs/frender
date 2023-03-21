@@ -5,7 +5,7 @@ use futures_io::AsyncWrite;
 
 use crate::{
     bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
-    WriterOrError,
+    SsrContext, WriterOrError,
 };
 
 // TODO: use html_common::
@@ -171,17 +171,17 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     }
 }
 
-pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>, W> {
+pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
     data: HtmlElementRenderStateData<'a, Children, Attrs>,
-    writer_or_error: WriterOrError<W>,
+    is_writing: bool, // TODO: use an enum with Finished state
 }
 
 impl<
         'a,
-        Children: RenderState + Unpin,
+        Children: RenderState<SsrContext<W>> + Unpin,
         Attrs: Unpin + Iterator<Item = HtmlAttrPair<'a>>,
         W: AsyncWrite + Unpin,
-    > RenderState for HtmlElementRenderState<'a, Children, Attrs, W>
+    > RenderState<SsrContext<W>> for HtmlElementRenderState<'a, Children, Attrs>
 {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         if let Some(children) = &mut self.get_mut().data.children {
@@ -191,13 +191,23 @@ impl<
 
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
+        ctx: &mut SsrContext<W>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let this = self.get_mut();
 
-        let writer = match &mut this.writer_or_error {
+        let writer_or_error = match ctx.use_writer_and_mark_busy(&mut this.is_writing) {
+            Some(w) => w,
+            None => return Poll::Pending,
+        };
+
+        let writer = match writer_or_error {
             WriterOrError::Writer(w) => w,
-            WriterOrError::Error(_) => return Poll::Ready(()),
+            WriterOrError::Error(_) => {
+                this.is_writing = false;
+                ctx.busy = false;
+                return Poll::Ready(());
+            }
         };
 
         let data = &mut this.data;
@@ -207,7 +217,8 @@ impl<
                 match $e {
                     Poll::Ready(Ok(())) => {}
                     Poll::Ready(Err(error)) => {
-                        this.writer_or_error = WriterOrError::Error(error);
+                        this.is_writing = false;
+                        *writer_or_error = WriterOrError::Error(error);
                         return Poll::Ready(());
                     }
                     Poll::Pending => return Poll::Pending,
@@ -220,15 +231,25 @@ impl<
             .poll_write_byte_chunks(Pin::new(writer), cx));
 
         if let Some(children) = &mut data.children {
-            match Pin::new(children).poll_reactive(cx) {
-                Poll::Ready(()) => {}
-                res => return res,
+            ctx.busy = false;
+            if let Poll::Ready(()) = Pin::new(children).poll_reactive(ctx, cx) {
+                #[cfg(debug_assertions)]
+                assert!(!ctx.busy);
+
+                ctx.busy = true;
+                data.children = None; // TODO: do not remove the children as drop might do something
+                cx.waker().wake_by_ref();
             }
+
+            return std::task::Poll::Pending;
         }
 
         ready_ok!(data
             .after_children
             .poll_write_byte_chunks(Pin::new(writer), cx));
+
+        this.is_writing = false;
+        ctx.busy = false;
 
         Poll::Ready(())
     }
@@ -240,11 +261,9 @@ where
     Children::State: Unpin,
     Attrs: Unpin + Iterator<Item = HtmlAttrPair<'a>>,
 {
-    type State = HtmlElementRenderState<'a, Children::State, Attrs, W>;
+    type State = HtmlElementRenderState<'a, Children::State, Attrs>;
 
     fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
-        let writer_or_error = ctx.expect_to_take_writer();
-
         HtmlElementRenderState {
             data: HtmlElementRenderStateData::new(
                 self.tag,
@@ -252,15 +271,18 @@ where
                 self.children
                     .map_children(|children| children.initialize_render_state(ctx)),
             ),
-            writer_or_error,
+            is_writing: false,
         }
     }
 
     fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
         let state = state.get_mut();
-        let writer_or_error = ctx.expect_to_take_writer();
 
-        state.writer_or_error = writer_or_error;
+        if ctx.busy && state.is_writing {
+            ctx.busy = false;
+            state.is_writing = false;
+            // TODO: warn
+        }
 
         let old_children_state = state.data.children.take();
 

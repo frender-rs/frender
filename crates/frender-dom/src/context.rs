@@ -96,11 +96,11 @@ impl Dom {
         element: E,
         stop: impl IntoFuture<Output = ()>,
     ) {
+        let root_position = self.next_node_position.clone();
+
         let state = element.initialize_render_state(self);
 
         futures_lite::pin!(state);
-
-        // let root_position = self.next_node_position.clone();
 
         let stop = crate::utils::reentrant(stop.into_future());
 
@@ -108,7 +108,10 @@ impl Dom {
 
         futures_lite::future::or(
             stop.as_mut(),
-            std::future::poll_fn(|cx| state.as_mut().poll_reactive(cx)),
+            std::future::poll_fn(|cx| {
+                self.next_node_position = root_position.clone();
+                state.as_mut().poll_reactive(self, cx)
+            }),
         )
         .await;
 

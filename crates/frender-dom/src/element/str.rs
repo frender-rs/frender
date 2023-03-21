@@ -133,9 +133,13 @@ impl<Cache> State<Cache> {
             self.node.set_data(&data);
             S::update_cache(&mut self.cache, data);
         }
-        dom_ctx
-            .next_node_position
-            .set_as_insert_after(self.node.clone().into());
+
+        let node = self.node.clone().into();
+        if self.unmounted {
+            dom_ctx.next_node_position.add_node(node)
+        } else {
+            dom_ctx.next_node_position.set_as_insert_after(node);
+        }
     }
 
     pub fn initialize_with_str<S>(data: S, dom_ctx: &mut Dom) -> Self
@@ -218,11 +222,20 @@ impl<Cache> State<Cache> {
 
 impl<Cache> Unpin for State<Cache> {}
 
-impl<Cache> RenderState for State<Cache> {
+impl<Cache> RenderState<Dom> for State<Cache> {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         let this = self.get_mut();
         this.unmounted = true;
         this.node.remove();
+    }
+
+    #[inline]
+    fn poll_reactive(
+        self: std::pin::Pin<&mut Self>,
+        ctx: &mut Dom,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        std::task::Poll::Ready(())
     }
 }
 

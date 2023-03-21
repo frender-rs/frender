@@ -113,32 +113,11 @@ pub fn transform_item_fn_with(
     let span = item_fn.sig.fn_token.span;
 
     let mut ctx_arg_pat = None;
-
-    let state_it;
-    if let Some((c, syn::TypeImplTrait { impl_token, bounds })) =
-        extract_ctx_arg_and_state_impl_trait(item_fn, errors)
-    {
+    let mut state_it = None;
+    if let Some((c, state_impl_trait)) = extract_ctx_arg_and_state_impl_trait(item_fn, errors) {
         ctx_arg_pat = Some(c);
-        let span = impl_token.span;
-
-        let plus = if bounds.is_empty() {
-            None
-        } else {
-            Some(syn::Token![+](span))
-        };
-
-        state_it = quote_spanned! {span=>
-            #impl_token
-            #hook_element_path::frender_core::RenderState
-            #plus
-            #bounds
-        };
-    } else {
-        state_it = quote_spanned! {span=>
-            impl
-            #hook_element_path::frender_core::RenderState
-        };
-    }
+        state_it = Some(state_impl_trait);
+    };
 
     match &mut item_fn.sig.output {
         output @ syn::ReturnType::Default => {
@@ -148,7 +127,7 @@ pub fn transform_item_fn_with(
                     span,
                     hook_element_path,
                     None,
-                    &state_it,
+                    state_it.as_ref(),
                 ))),
             );
         }
@@ -179,7 +158,7 @@ pub fn transform_item_fn_with(
                 span,
                 hook_element_path,
                 bounds.as_ref(),
-                &state_it,
+                state_it.as_ref(),
             ));
         }
     };

@@ -12,29 +12,41 @@ pub enum WriterOrError<W> {
 }
 
 pub struct SsrContext<W: AsyncWrite + Unpin> {
-    writer_or_error: Option<WriterOrError<W>>,
+    writer_or_error: WriterOrError<W>,
+    pub(crate) busy: bool,
 }
 
 impl<W: AsyncWrite + Unpin> SsrContext<W> {
     pub fn new(writer: W) -> Self {
         Self {
-            writer_or_error: Some(WriterOrError::Writer(writer)),
+            writer_or_error: WriterOrError::Writer(writer),
+            busy: false,
         }
     }
 }
 
 impl<W: AsyncWrite + Unpin> SsrContext<W> {
-    pub fn expect_to_take_writer(&mut self) -> WriterOrError<W> {
-        self.writer_or_error
-            .take()
-            .expect("writer_or_error is available")
-    }
-}
+    pub fn finish(self) -> std::io::Result<()> {
+        if self.busy {
+            return Err(std::io::ErrorKind::Other.into()); // TODO: better error type
+        }
 
-impl<W: AsyncWrite + Unpin> Default for SsrContext<W> {
-    fn default() -> Self {
-        Self {
-            writer_or_error: None,
+        match self.writer_or_error {
+            crate::WriterOrError::Writer(_) => Ok(()),
+            crate::WriterOrError::Error(error) => Err(error),
+        }
+    }
+
+    pub(crate) fn use_writer_and_mark_busy(
+        &mut self,
+        is_writing: &mut bool,
+    ) -> Option<&mut WriterOrError<W>> {
+        if self.busy && !*is_writing {
+            None
+        } else {
+            self.busy = true;
+            *is_writing = true;
+            Some(&mut self.writer_or_error)
         }
     }
 }

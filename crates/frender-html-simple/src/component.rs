@@ -66,7 +66,6 @@ mod ssr {
             'static,
             P::ChildrenRenderState,
             P::Attrs,
-            W,
         >;
 
         fn initialize_render_state(self, ctx: &mut SsrContext<W>) -> Self::State {

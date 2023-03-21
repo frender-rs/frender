@@ -2,9 +2,19 @@
 
 use crate::{RenderState, UpdateRenderState};
 
-impl RenderState for () {
+impl<Ctx> RenderState<Ctx> for () {
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {}
+
+    #[inline]
+    fn poll_reactive(
+        self: std::pin::Pin<&mut Self>,
+        ctx: &mut Ctx,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        let _ = cx;
+        std::task::Poll::Ready(())
+    }
 }
 
 impl<Ctx> UpdateRenderState<Ctx> for () {
@@ -41,16 +51,20 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<$($field: RenderState),+> RenderState for $name<$($field),+> {
+            impl<Ctx, $($field: RenderState<Ctx>),+> RenderState<Ctx> for $name<$($field),+> {
                 fn unmount(self: ::core::pin::Pin<&mut Self>) {
                     let this = self.project();
                     $( this.$field.unmount(); )+
                 }
 
                 #[inline]
-                fn poll_reactive(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+                fn poll_reactive(
+                    self: std::pin::Pin<&mut Self>,
+                    ctx: &mut Ctx,
+                    cx: &mut std::task::Context<'_>,
+                ) -> std::task::Poll<()> {
                     let this = self.project();
-                    match ($($field::poll_reactive(this.$field, cx) ,)+) {
+                    match ($($field::poll_reactive(this.$field, ctx, cx) ,)+) {
                         #[allow(unused_variables)]
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
                         _ => std::task::Poll::Pending,

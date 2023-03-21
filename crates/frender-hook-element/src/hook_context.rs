@@ -1,30 +1,32 @@
 pub trait HookContext: Sized {
-    fn take_context(this: &mut Self) -> Self;
-    fn with_context(this: &mut Self, f: impl FnOnce(&mut Self));
+    type ContextData;
+
+    fn get_context_data(this: &Self) -> Self::ContextData;
+
+    fn replace_context_data(this: &mut Self, old_context: Self::ContextData);
 }
 
 #[cfg(feature = "dom")]
 impl HookContext for frender_dom::Dom {
+    type ContextData = frender_dom::NextNodePosition;
+
     #[inline]
-    fn take_context(this: &mut Self) -> Self {
-        this.clone()
+    fn get_context_data(this: &Self) -> Self::ContextData {
+        this.next_node_position.clone()
     }
 
     #[inline]
-    fn with_context(this: &mut Self, f: impl FnOnce(&mut Self)) {
-        this.with_position(f)
+    fn replace_context_data(this: &mut Self, old_context: Self::ContextData) {
+        this.next_node_position = old_context
     }
 }
 
 #[cfg(feature = "ssr")]
 impl<W: frender_ssr::AsyncWrite + Unpin> HookContext for frender_ssr::SsrContext<W> {
-    #[inline]
-    fn take_context(this: &mut Self) -> Self {
-        std::mem::take(this)
-    }
+    type ContextData = ();
 
     #[inline]
-    fn with_context(this: &mut Self, f: impl FnOnce(&mut Self)) {
-        f(this)
-    }
+    fn get_context_data(_: &Self) -> Self::ContextData {}
+
+    fn replace_context_data(_: &mut Self, _: Self::ContextData) {}
 }

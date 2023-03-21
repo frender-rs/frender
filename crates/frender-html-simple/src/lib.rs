@@ -10,8 +10,6 @@ pub use component::*;
 pub use props::*;
 pub use states::*;
 
-pub mod utils;
-
 #[cfg(feature = "dom")]
 pub use frender_dom;
 

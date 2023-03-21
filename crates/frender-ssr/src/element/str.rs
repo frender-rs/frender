@@ -26,7 +26,7 @@ impl_ssr_for_bytes! {
 }
 
 impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for Cow<'_, str> {
-    type State = State<W, SlicedBytes>;
+    type State = State<SlicedBytes>;
 
     fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
         match self {
@@ -44,7 +44,7 @@ impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for C
 }
 
 impl<W: crate::AsyncWrite + Unpin> UpdateRenderState<crate::SsrContext<W>> for StaticText<String> {
-    type State = State<W, SlicedBytes>;
+    type State = State<SlicedBytes>;
 
     fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
         self.0.initialize_render_state(ctx)

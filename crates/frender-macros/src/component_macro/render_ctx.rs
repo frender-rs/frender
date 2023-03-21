@@ -9,7 +9,7 @@ fn ts_bounds(
     span: Span,
     hook_element_path: impl ToTokens,
     bounds: Option<&TokenStream>,
-    state_it: &TokenStream,
+    state_it: Option<&syn::TypeImplTrait>,
 ) -> TokenStream {
     let plus = if bounds.is_some() {
         Some(quote_spanned!(span=> +))
@@ -17,10 +17,25 @@ fn ts_bounds(
         None
     };
 
+    let state_eq_it = match state_it {
+        Some(syn::TypeImplTrait { impl_token, bounds }) if !bounds.is_empty() => {
+            let span = impl_token.span;
+
+            Some(quote_spanned! {span=>
+                State =
+                #impl_token
+                #hook_element_path::frender_core::RenderState
+                +
+                #bounds
+            })
+        }
+        _ => None,
+    };
+
     quote_spanned! {span=>
         #hook_element_path::frender_core::UpdateRenderState<
             #hook_element_path #ctx_type,
-            State = #state_it
+            #state_eq_it
         >
         #plus
         #bounds
@@ -74,7 +89,7 @@ impl RenderCtx {
         span: Span,
         hook_element_path: &impl ToTokens,
         bounds: Option<&TokenStream>,
-        state_it: &TokenStream,
+        state_it: Option<&syn::TypeImplTrait>,
     ) -> TokenStream {
         let mut out = quote_spanned!(span=> impl);
 

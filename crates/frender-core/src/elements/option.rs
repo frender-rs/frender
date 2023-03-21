@@ -2,7 +2,7 @@ use std::pin::Pin;
 
 use crate::{RenderState, UpdateRenderState};
 
-impl<S: RenderState + Unpin> RenderState for Option<S> {
+impl<Ctx, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for Option<S> {
     fn unmount(self: Pin<&mut Self>) {
         let this = self.get_mut();
         match this {
@@ -14,9 +14,13 @@ impl<S: RenderState + Unpin> RenderState for Option<S> {
         *this = None;
     }
 
-    fn poll_reactive(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_reactive(
+        self: Pin<&mut Self>,
+        ctx: &mut Ctx,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
         match self.get_mut() {
-            Some(s) => S::poll_reactive(Pin::new(s), cx),
+            Some(s) => S::poll_reactive(Pin::new(s), ctx, cx),
             None => std::task::Poll::Ready(()),
         }
     }
@@ -42,7 +46,7 @@ where
                 state => *state = Some(this.initialize_render_state(ctx)),
             };
         } else {
-            <Option<E::State> as RenderState>::unmount(state)
+            <Option<E::State> as RenderState<Ctx>>::unmount(state)
         }
     }
 }

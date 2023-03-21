@@ -15,9 +15,13 @@ pub trait UpdateElement<E> {
     );
 }
 
+// TODO: remove this
 pub trait IntrinsicComponentPollReactive {
+    fn intrinsic_component_unmount(self: Pin<&mut Self>);
+
     fn intrinsic_component_poll_reactive(
         self: Pin<&mut Self>,
+        ctx: &mut Dom,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()>;
 }

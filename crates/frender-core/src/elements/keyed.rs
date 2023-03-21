@@ -14,7 +14,7 @@ pub struct KeyedElementsState<K, S> {
 
 impl<K, S> Unpin for KeyedElementsState<K, S> {}
 
-impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
+impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsState<K, S> {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         for state in self.get_mut().states.values_mut().map(std::pin::Pin::new) {
             S::unmount(state)
@@ -23,13 +23,14 @@ impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
 
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
+        ctx: &mut Ctx,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
         let values = self.get_mut().states.values_mut();
         for state in values {
-            match S::poll_reactive(std::pin::Pin::new(state), cx) {
+            match S::poll_reactive(std::pin::Pin::new(state), ctx, cx) {
                 std::task::Poll::Ready(()) => {}
                 v @ std::task::Poll::Pending => {
                     if let std::task::Poll::Ready(()) = res {

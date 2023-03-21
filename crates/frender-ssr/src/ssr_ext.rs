@@ -5,6 +5,7 @@ use futures_io::AsyncWrite;
 
 use crate::{AnySsrContext, SsrContext};
 
+#[cfg(prototyping)]
 pin_project_lite::pin_project!(
     pub struct RenderIntoWriter<S: RenderState> {
         #[pin]
@@ -12,6 +13,7 @@ pin_project_lite::pin_project!(
     }
 );
 
+#[cfg(prototyping)]
 impl<S: RenderState> Future for RenderIntoWriter<S> {
     type Output = Poll<()>;
 
@@ -45,24 +47,16 @@ pub async fn render_to_writer<
 >(
     element: E,
     writer: &'a mut W,
-) {
+) -> io::Result<()> {
     let writer = Pin::new(writer);
     let mut ctx: AnySsrContext = SsrContext::new(writer);
     let state = element.initialize_render_state(&mut ctx);
 
     let mut state = std::pin::pin!(state);
 
-    let _: () = std::future::poll_fn(|cx| state.as_mut().poll_reactive(cx)).await;
+    let _: () = std::future::poll_fn(|cx| state.as_mut().poll_reactive(&mut ctx, cx)).await;
 
-    // TODO: this function should return io::Result<()>.
-    // However, the WriterOrError is taken into state, and we cannot take the error back.
-    // There are 3 ways to fix this:
-    // 1. Make RenderState::poll_reactive fallible (it output Poll<Result<(), Ctx::Error>> instead of Poll(())).
-    //    This also requires Ctx to have associated Error Type
-    // 2. Make RenderState generic over Ctx: RenderState<Ctx> and poll_reactive(ctx)
-    //    so that RenderState don't need to take ctx.
-    //    This would also allow RenderIntoWriter to be implemented
-    // 3. Add a method like `take_context` to RenderState, which returns the taken context.
+    ctx.finish()
 }
 
 pub async fn render_to_string<E: for<'a> UpdateRenderState<AnySsrContext<'a>>>(
@@ -70,8 +64,7 @@ pub async fn render_to_string<E: for<'a> UpdateRenderState<AnySsrContext<'a>>>(
 ) -> io::Result<String> {
     let mut buf = Vec::<u8>::new();
 
-    render_to_writer(element, &mut buf).await;
-    // TODO: process error
+    render_to_writer(element, &mut buf).await?;
 
     // Writing is implemented by this crate and should write utf8.
     // Thus, just unwrap.
