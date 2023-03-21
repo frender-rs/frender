@@ -91,6 +91,13 @@ async function main() {
   await fsp.mkdir(DIST_EXAMPLES_DIR, { recursive: true });
   const examples = await listExamples("examples");
   for (const { name, indexFile } of examples) {
+    try {
+      await fsp.access(indexFile);
+    } catch (error) {
+      console.warn(`[Example skipped] ${name} doesn't have index.html`);
+      continue;
+    }
+
     const child = spawn("trunk", [
       "build",
       "--release",
