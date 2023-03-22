@@ -106,6 +106,9 @@ macro_rules! __impl_component_fn_options_parsed {
         $vis fn $ident $paren_inputs ->
             $crate::__private::expand_or![[$($output_ty)?] $crate::Element![$($ctxs),*]]
         {
+            #[allow(unused_imports)]
+            use $crate::__private::hooks_core::prelude_h::*;
+
             $($inner_attrs)*
 
             $crate::new_fn_hook_element $(:: $ctxs)* (
