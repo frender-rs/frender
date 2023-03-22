@@ -59,9 +59,28 @@ pub mod new_fn_hook_element {
             _phantom: std::marker::PhantomData,
         }
     }
+
+    #[inline]
+    #[cfg(all(feature = "csr", feature = "ssr"))]
+    pub fn ssr_and_csr<
+        HookData: HookPollNextUpdate + HookUnmount + Default,
+        U,
+        E: UpdateRenderState<Dom> + for<'a> UpdateRenderState<AnySsrContext<'a>>,
+    >(
+        use_hook: U,
+    ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>>
+    where
+        U: FnMut(Pin<&mut HookData>) -> E,
+    {
+        FnHookElement {
+            use_hook: fn_wrapper::FnMutOutputElement(use_hook),
+            _phantom: std::marker::PhantomData,
+        }
+    }
 }
+
 #[cfg(all(feature = "csr", feature = "ssr"))]
-pub fn new_fn_hook_element() {}
+pub use new_fn_hook_element::ssr_and_csr as new_fn_hook_element;
 
 pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U> {
     use_hook: U,
