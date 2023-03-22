@@ -79,8 +79,12 @@ macro_rules! __impl_ssr {
 
 #[macro_export]
 macro_rules! __impl_children_fn {
-    ([children] $method_name:ident $($t:tt)*) => {
+    (
+        [children]
+        [$($attrs:tt)*]
+        $method_name:ident $($t:tt)*) => {
         impl<Props> Building<(), Props> {
+            $($attrs)*
             #[inline(always)]
             pub fn $method_name<Children>(self, children: Children) -> Building<Children, Props> {
                 Building(Data {
@@ -102,6 +106,7 @@ macro_rules! __impl_children_fns {
             ,
         )*
         $(
+            $(#$attr:tt)*
             $name:ident
             $(:)?
             $( $field_macro:ident ! $field_macro_tt:tt )*
@@ -115,7 +120,9 @@ macro_rules! __impl_children_fns {
 
         $(
             $crate::__impl_children_fn! {
-                [$name] $name : $( $field_macro ! $field_macro_tt )*
+                [$name]
+                [$(#$attr)*]
+                $name : $( $field_macro ! $field_macro_tt )*
             }
         )*
     };
@@ -124,14 +131,17 @@ macro_rules! __impl_children_fns {
 #[macro_export]
 macro_rules! __impl_builder_fn {
     (
+        $(#$attr:tt)*
         children
         $($t:tt)*
     ) => {};
     (
+        $(#$attr:tt)*
         $name:ident
         $(:)?
         $(bounds![ $($bounds:tt)+ ])?
     ) => {
+        $(#$attr)*
         #[inline(always)]
         pub fn $name<V $(: $($bounds)+)? >(
             self,
@@ -154,6 +164,7 @@ macro_rules! __impl_builder_fns {
             ,
         )*
         $(
+            $(#$attr:tt)*
             $name:ident
             $(:)?
             $( $field_macro:ident ! $field_macro_tt:tt )*
@@ -166,6 +177,7 @@ macro_rules! __impl_builder_fns {
 
         $(
             $crate::__impl_builder_fn! {
+                $(#$attr)*
                 $name : $( $field_macro ! $field_macro_tt )*
             }
         )*
@@ -192,6 +204,7 @@ macro_rules! __impl_mod_props {
             ,
         )*
         $(
+            $(#$attr:tt)* // not appended to prop structs
             $name:ident
             $(:)?
             $( $field_macro:ident ! $field_macro_tt:tt )*
