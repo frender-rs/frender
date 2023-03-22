@@ -109,7 +109,7 @@ macro_rules! __impl_children_fns {
             $(#$attr:tt)*
             $name:ident
             $(:)?
-            $( $field_macro:ident ! $field_macro_tt:tt )*
+            $( $field_macro:ident ! $field_macro_tt:tt $(+)? )*
             ,
         )*
     ) => {
@@ -139,18 +139,45 @@ macro_rules! __impl_builder_fn {
         $(#$attr:tt)*
         $name:ident
         $(:)?
-        $(bounds![ $($bounds:tt)+ ])?
+        $( alias![ $($alias:ident),+ $(,)? ] $(+)? )?
+        $(bounds! $bounds:tt)?
     ) => {
-        $(#$attr)*
+        $crate::__impl_builder_fn_with_prop_name! {
+            [$(#$attr)*][$($bounds)?]
+            { $name }
+            $name $($($alias)+)?
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! __impl_builder_fn_with_prop_name {
+    (
+        @[$($attrs:tt)*][$([ $($bounds:tt)+ ])?]
+        $name:ident($prop_name:ident)
+    ) => {
+        $($attrs)*
         #[inline(always)]
         pub fn $name<V $(: $($bounds)+)? >(
             self,
             $name: V,
-        ) -> super::Building<Children, (Props, super::props::$name<V>)> {
+        ) -> super::Building<Children, (Props, super::props::$prop_name<V>)> {
             super::Building(super::Data {
-                props: self.0.props.chain_prop(super::props::$name($name)),
+                props: self.0.props.chain_prop(super::props::$prop_name($name)),
             })
         }
+    };
+    (
+        $attrs:tt $bounds:tt
+        { $prop_name:ident }
+        $($method_name:ident)+
+    ) => {
+        $(
+            $crate::__impl_builder_fn_with_prop_name! {
+                @ $attrs $bounds
+                $method_name($prop_name)
+            }
+        )+
     };
 }
 
@@ -167,7 +194,7 @@ macro_rules! __impl_builder_fns {
             $(#$attr:tt)*
             $name:ident
             $(:)?
-            $( $field_macro:ident ! $field_macro_tt:tt )*
+            $( $field_macro:ident ! $field_macro_tt:tt $(+)? )*
             ,
         )*
     ) => {
@@ -207,7 +234,7 @@ macro_rules! __impl_mod_props {
             $(#$attr:tt)* // not appended to prop structs
             $name:ident
             $(:)?
-            $( $field_macro:ident ! $field_macro_tt:tt )*
+            $( $field_macro:ident ! $field_macro_tt:tt $(+)? )*
             ,
         )*
     ) => {
