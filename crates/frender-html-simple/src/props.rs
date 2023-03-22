@@ -84,9 +84,7 @@ mod ssr {
     impl<W: AsyncWrite + Unpin, Children, Props> IntoSsrData<W> for super::ElementProps<Children, Props>
     where
         Children: UpdateRenderState<SsrContext<W>>,
-        Children::State: Unpin, // TODO: remove this restriction
         Props: IntoIteratorAttrs<'static>,
-        Props::IntoIterAttrs: Unpin, // TODO: remove this restriction
     {
         type Children = Children;
 

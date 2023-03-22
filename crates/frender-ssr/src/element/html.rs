@@ -116,24 +116,30 @@ impl<'a, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Iterator for AttrsIntoByteChu
     }
 }
 
-pub struct HtmlElementRenderStateChildren<Children> {
-    children_writing_state: WritingState,
-    children: Children,
-}
+pin_project_lite::pin_project!(
+    pub struct HtmlElementRenderStateChildren<Children> {
+        children_writing_state: WritingState,
+        #[pin]
+        children: Children,
+    }
+);
 
-pub struct HtmlElementRenderStateData<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
-    pub before_children: IterByteChunks<
-        core::iter::Chain<
+pin_project_lite::pin_project!(
+    pub struct HtmlElementRenderStateData<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
+        pub before_children: IterByteChunks<
             core::iter::Chain<
-                core::array::IntoIter<CowSlicedBytes<'a>, 2>,
-                core::iter::Flatten<AttrsIntoByteChunks<Attrs>>,
+                core::iter::Chain<
+                    core::array::IntoIter<CowSlicedBytes<'a>, 2>,
+                    core::iter::Flatten<AttrsIntoByteChunks<Attrs>>,
+                >,
+                core::array::IntoIter<CowSlicedBytes<'a>, 3>,
             >,
-            core::array::IntoIter<CowSlicedBytes<'a>, 3>,
         >,
-    >,
-    pub children: Option<HtmlElementRenderStateChildren<Children>>,
-    pub after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
-}
+        #[pin]
+        pub children: Option<HtmlElementRenderStateChildren<Children>>,
+        pub after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
+    }
+);
 
 impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     HtmlElementRenderStateData<'a, Children, Attrs>
@@ -181,21 +187,24 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     }
 }
 
-pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
-    data: HtmlElementRenderStateData<'a, Children, Attrs>,
-    writing_state: WritingState,
-}
+pin_project_lite::pin_project!(
+    pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
+        #[pin]
+        data: HtmlElementRenderStateData<'a, Children, Attrs>,
+        writing_state: WritingState,
+    }
+);
 
 impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     HtmlElementRenderStateData<'a, Children, Attrs>
 {
     fn impl_poll<W: AsyncWrite + Unpin>(
-        &mut self,
+        self: Pin<&mut Self>,
         ctx: &mut SsrContext<W>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>
     where
-        Children: RenderState<SsrContext<W>> + Unpin, // TODO: remove Unpin
+        Children: RenderState<SsrContext<W>>,
     {
         #[cfg(debug_assertions)]
         assert!(ctx.busy);
@@ -218,15 +227,17 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
             };
         }
 
-        ready_ok!(self
+        let this = self.project();
+
+        ready_ok!(this
             .before_children
             .poll_write_byte_chunks(Pin::new(writer), cx));
 
-        if let Some(HtmlElementRenderStateChildren {
-            children_writing_state,
-            children,
-        }) = &mut self.children
-        {
+        if let Some(children) = this.children.as_pin_mut() {
+            let children = children.project();
+            let children_writing_state = children.children_writing_state;
+            let children = children.children;
+
             if !children_writing_state.is_finished() {
                 #[cfg(debug_assertions)]
                 assert!(ctx.busy);
@@ -235,7 +246,7 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
                     ctx.busy = false;
                     *children_writing_state = WritingState::Writing;
                 }
-                if let Poll::Ready(()) = Pin::new(children).poll_reactive(ctx, cx) {
+                if let Poll::Ready(()) = children.poll_reactive(ctx, cx) {
                     #[cfg(debug_assertions)]
                     assert!(!ctx.busy);
 
@@ -251,7 +262,7 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
             }
         }
 
-        ready_ok!(self
+        ready_ok!(this
             .after_children
             .poll_write_byte_chunks(Pin::new(writer), cx));
 
@@ -261,8 +272,8 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
 
 impl<
         'a,
-        Children: RenderState<SsrContext<W>> + Unpin,
-        Attrs: Unpin + Iterator<Item = HtmlAttrPair<'a>>,
+        Children: RenderState<SsrContext<W>>,
+        Attrs: Iterator<Item = HtmlAttrPair<'a>>,
         W: AsyncWrite + Unpin,
     > RenderState<SsrContext<W>> for HtmlElementRenderState<'a, Children, Attrs>
 {
@@ -275,10 +286,9 @@ impl<
         ctx: &mut SsrContext<W>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        let Self {
-            data,
-            writing_state,
-        } = self.get_mut();
+        let this = self.project();
+        let writing_state = this.writing_state;
+        let data = this.data;
 
         ctx.map(writing_state, |ctx, cx| data.impl_poll(ctx, cx), cx)
     }
@@ -287,8 +297,7 @@ impl<
 impl<'a, Children: UpdateRenderState<crate::SsrContext<W>>, Attrs, W: AsyncWrite + Unpin>
     UpdateRenderState<crate::SsrContext<W>> for HtmlElement<'a, Children, Attrs>
 where
-    Children::State: Unpin,
-    Attrs: Unpin + Iterator<Item = HtmlAttrPair<'a>>,
+    Attrs: Iterator<Item = HtmlAttrPair<'a>>,
 {
     type State = HtmlElementRenderState<'a, Children::State, Attrs>;
 
