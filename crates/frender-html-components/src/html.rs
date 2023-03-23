@@ -195,7 +195,8 @@ frender_macros::def_intrinsic_component_props! {
             } [
                 pub struct HtmlAnchorElementProps(web_sys::HtmlAnchorElement : a) {
                     href_lang ? &str { "hreflang" set_hreflang },
-                    type_ ? &str {"type" set_type},
+                    #[intrinsic_component(alias(type_))]
+                    r#type ? &str {"type" set_type},
                 }
             ][
                 pub struct HtmlAreaElementProps(web_sys::HtmlAreaElement : area) {
@@ -209,7 +210,8 @@ frender_macros::def_intrinsic_component_props! {
                 auto_play ? bool {"autoplay" set_autoplay},
                 controls ? bool {set_controls},
                 cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
-                loop_ ? bool {"loop" set_loop},
+                #[intrinsic_component(alias(loop_))]
+                r#loop ? bool {"loop" set_loop},
                 muted ? bool {set_muted},
                 preload ? &str {set_preload},
                 src ? &str {set_src},
@@ -277,7 +279,8 @@ frender_macros::def_intrinsic_component_props! {
                 form_no_validate ? bool {"formnovalidate" set_form_no_validate},
                 form_target ? &str {"formtarget" set_form_target},
                 name ? &str {set_name},
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
                 value ? &str {set_value},
             }
         ][
@@ -311,7 +314,8 @@ frender_macros::def_intrinsic_component_props! {
             pub struct HtmlEmbedElementProps(web_sys::HtmlEmbedElement : embed) {
                 height ? &str {set_height},
                 src ? &str {set_src},
-                type_ ? &str {set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {set_type},
                 width ? &str {set_width},
             }
         ][
@@ -405,7 +409,8 @@ frender_macros::def_intrinsic_component_props! {
                 size ? u32 {set_size},
                 src ? &str {set_src},
                 step ? &str {set_step},
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
                 value ? &str {set_value},
                 width ? u32 {set_width},
             }
@@ -419,7 +424,8 @@ frender_macros::def_intrinsic_component_props! {
             }
         ][
             pub struct HtmlLinkElementProps(web_sys::HtmlLinkElement : link) {
-                as_ ? &str {"as" set_as},
+                #[intrinsic_component(alias(as_))]
+                r#as ? &str {"as" set_as},
                 cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
                 fetch_priority ? &str {"fetchpriority"},
                 href ? &str { set_href },
@@ -432,7 +438,8 @@ frender_macros::def_intrinsic_component_props! {
                 referrer_policy ? &str {"referrerpolicy" set_referrer_policy},
                 rel ? &str { set_rel },
                 sizes ? &str,
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
                 blocking ? &str,
             }
         ][
@@ -461,7 +468,8 @@ frender_macros::def_intrinsic_component_props! {
                 form ? &str,
                 height ? &str {set_height},
                 name ? &str {set_name},
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
                 use_map ? &str {"usemap" set_use_map},
                 width ? &str {set_width},
             }
@@ -469,7 +477,8 @@ frender_macros::def_intrinsic_component_props! {
             pub struct HtmlOListElementProps(web_sys::HtmlOListElement : ol) {
                 reversed ? bool {set_reversed},
                 start ? i32 {set_start},
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
             }
         ][
             pub struct HtmlOptGroupElementProps(web_sys::HtmlOptGroupElement : optgroup) {
@@ -504,7 +513,8 @@ frender_macros::def_intrinsic_component_props! {
                 no_module ? bool {"nomodule" set_no_module},
                 referrer_policy ? &str {"referrerpolicy"},
                 src ? &str {set_src},
-                type_ ? &str {set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {set_type},
                 blocking ? &str,
             }
         ][
@@ -523,7 +533,8 @@ frender_macros::def_intrinsic_component_props! {
             }
         ][
             pub struct HtmlSourceElementProps(web_sys::HtmlSourceElement : source) {
-                type_ ? &str {set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {set_type},
                 src ? &str {set_src},
                 srcset ? &str {set_srcset},
                 sizes ? &str {set_sizes},
@@ -536,7 +547,8 @@ frender_macros::def_intrinsic_component_props! {
                 media ? &str {set_media},
                 blocking ? &str,
                 #[deprecated = "This attribute should not be provided: if it is, the only permitted values are the empty string or a case-insensitive match for \"text/css.\""]
-                type_ ? &str {set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {set_type},
             }
         ][
             pub struct HtmlTableElementProps(web_sys::HtmlTableElement : table) {
@@ -633,7 +645,8 @@ frender_macros::def_intrinsic_component_props! {
                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
                 compact ? bool {set_compact},
                 #[deprecated = "Do not use this attribute, as it has been deprecated; use the CSS list-style-type property instead."]
-                type_ ? &str {"type" set_type},
+                #[intrinsic_component(alias(type_))]
+                r#type ? &str {"type" set_type},
             }
         ]
     ]
