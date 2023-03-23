@@ -109,7 +109,8 @@ def_props_type!(
             on_drag_start,
             on_drop,
         ),
-        type_: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        r#type: alias![type_]
+            + bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         src: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         srcset: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         sizes: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
@@ -127,9 +128,9 @@ mod impl_dom_for_props {
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlSourceElement>,
         > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
-        for super::props::type_<V>
+        for super::props::r#type<V>
     {
-        type State = super::props::type_<V::State>;
+        type State = super::props::r#type<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
@@ -137,13 +138,13 @@ mod impl_dom_for_props {
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
-            super::props::type_(
+            super::props::r#type(
                 <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.0,
                     |v| element.set_type(v),
-                    || dom_element.remove_attribute("type_").unwrap(),
+                    || dom_element.remove_attribute("r#type").unwrap(),
                 ),
             )
         }
@@ -161,7 +162,7 @@ mod impl_dom_for_props {
                 this.0,
                 &mut state.get_mut().0,
                 |v| element.set_type(v),
-                || dom_element.remove_attribute("type_").unwrap(),
+                || dom_element.remove_attribute("r#type").unwrap(),
             );
         }
     }
@@ -439,14 +440,14 @@ mod impl_ssr_for_props {
     #[allow(unused_imports)]
     use super::super::*;
     impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::type_<V>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::r#type<V>
     {
         type IntoIterAttrs =
             ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
         fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
             V::maybe_into_html_attribute_value(this.0)
                 .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("type_"),
+                    ::std::borrow::Cow::Borrowed("r#type"),
                     attr_value
                         .map_or(
                             crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,

@@ -5,7 +5,7 @@ pub fn HtmlLinkElementProps() -> Building<TypesInitial> {
     use super::*;
     self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
-        as_: (),
+        r#as: (),
         cross_origin: (),
         fetch_priority: (),
         href: (),
@@ -18,7 +18,7 @@ pub fn HtmlLinkElementProps() -> Building<TypesInitial> {
         referrer_policy: (),
         rel: (),
         sizes: (),
-        type_: (),
+        r#type: (),
         blocking: (),
     }
 }
@@ -27,7 +27,7 @@ pub mod overwrite {
     #![allow(non_camel_case_types)]
     pub type HtmlElementProps<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = Value,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -40,7 +40,7 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
@@ -708,9 +708,9 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type as_<TypeDefs, Value> = dyn super::Types<
+    pub type r#as<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = Value,
+        r#as = Value,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -723,12 +723,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type cross_origin<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = Value,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -741,12 +741,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type fetch_priority<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = Value,
         href = <TypeDefs as super::Types>::href,
@@ -759,12 +759,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type href<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = Value,
@@ -777,12 +777,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type href_lang<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -795,12 +795,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type image_sizes<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -813,12 +813,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type image_src_set<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -831,12 +831,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type integrity<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -849,12 +849,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type media<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -867,12 +867,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type prefetch<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -885,12 +885,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type referrer_policy<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -903,12 +903,12 @@ pub mod overwrite {
         referrer_policy = Value,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type rel<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -921,12 +921,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = Value,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type sizes<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -939,12 +939,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -957,12 +957,12 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = Value,
+        r#type = Value,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type blocking<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        as_ = <TypeDefs as super::Types>::as_,
+        r#as = <TypeDefs as super::Types>::r#as,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
         fetch_priority = <TypeDefs as super::Types>::fetch_priority,
         href = <TypeDefs as super::Types>::href,
@@ -975,7 +975,7 @@ pub mod overwrite {
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         rel = <TypeDefs as super::Types>::rel,
         sizes = <TypeDefs as super::Types>::sizes,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = Value,
     >;
 }
@@ -985,7 +985,7 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type as_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#as: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type cross_origin: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type fetch_priority: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type href: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
@@ -998,7 +998,7 @@ mod trait_types {
         type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type rel: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type sizes: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type blocking: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
@@ -1008,7 +1008,7 @@ pub mod data_struct {
     #[non_exhaustive]
     pub struct HtmlLinkElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
         pub HtmlElementProps: super::super::HtmlElementProps::Data<TypeDefs::HtmlElementProps>,
-        pub as_: TypeDefs::as_,
+        pub r#as: TypeDefs::r#as,
         pub cross_origin: TypeDefs::cross_origin,
         pub fetch_priority: TypeDefs::fetch_priority,
         pub href: TypeDefs::href,
@@ -1021,7 +1021,7 @@ pub mod data_struct {
         pub referrer_policy: TypeDefs::referrer_policy,
         pub rel: TypeDefs::rel,
         pub sizes: TypeDefs::sizes,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub blocking: TypeDefs::blocking,
     }
 }
@@ -1035,7 +1035,7 @@ mod types_initial {
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
         HtmlElementProps = HtmlElementProps::TypesInitial,
-        as_ = (),
+        r#as = (),
         cross_origin = (),
         fetch_priority = (),
         href = (),
@@ -1048,7 +1048,7 @@ mod types_initial {
         referrer_policy = (),
         rel = (),
         sizes = (),
-        type_ = (),
+        r#type = (),
         blocking = (),
     >;
 }
@@ -1059,7 +1059,7 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
-        type as_;
+        type r#as;
         type cross_origin;
         type fetch_priority;
         type href;
@@ -1072,19 +1072,19 @@ pub mod render_state {
         type referrer_policy;
         type rel;
         type sizes;
-        type type_;
+        type r#type;
         type blocking;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
-        TypeDefs::HtmlElementProps, pub as_ : TypeDefs::as_, pub cross_origin :
+        TypeDefs::HtmlElementProps, pub r#as : TypeDefs::r#as, pub cross_origin :
         TypeDefs::cross_origin, pub fetch_priority : TypeDefs::fetch_priority, pub href :
         TypeDefs::href, pub href_lang : TypeDefs::href_lang, pub image_sizes :
         TypeDefs::image_sizes, pub image_src_set : TypeDefs::image_src_set, pub integrity
         : TypeDefs::integrity, pub media : TypeDefs::media, pub prefetch :
         TypeDefs::prefetch, pub referrer_policy : TypeDefs::referrer_policy, pub rel :
-        TypeDefs::rel, pub sizes : TypeDefs::sizes, pub type_ : TypeDefs::type_, pub
+        TypeDefs::rel, pub sizes : TypeDefs::sizes, pub r#type : TypeDefs::r#type, pub
         blocking : TypeDefs::blocking, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -1123,7 +1123,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1136,7 +1136,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1148,7 +1148,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.class(class),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1161,7 +1161,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1173,7 +1173,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.id(id),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1186,7 +1186,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1198,7 +1198,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.part(part),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1211,7 +1211,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1223,7 +1223,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1236,7 +1236,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1248,7 +1248,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_error(on_error),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1261,7 +1261,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1273,7 +1273,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1286,7 +1286,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1300,7 +1300,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_security_policy_violation(on_security_policy_violation),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1313,7 +1313,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1325,7 +1325,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_select(on_select),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1338,7 +1338,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1350,7 +1350,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1363,7 +1363,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1375,7 +1375,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1388,7 +1388,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1400,7 +1400,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1413,7 +1413,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1425,7 +1425,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1438,7 +1438,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1450,7 +1450,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1463,7 +1463,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1477,7 +1477,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_start(on_composition_start),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1490,7 +1490,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1504,7 +1504,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_update(on_composition_update),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1517,7 +1517,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1529,7 +1529,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1542,7 +1542,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1554,7 +1554,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1567,7 +1567,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1579,7 +1579,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1592,7 +1592,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1604,7 +1604,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1617,7 +1617,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1631,7 +1631,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_change(on_fullscreen_change),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1644,7 +1644,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1658,7 +1658,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_error(on_fullscreen_error),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1671,7 +1671,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1683,7 +1683,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1696,7 +1696,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1708,7 +1708,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1721,7 +1721,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1733,7 +1733,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1746,7 +1746,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1758,7 +1758,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_click(on_click),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1771,7 +1771,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1783,7 +1783,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1796,7 +1796,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1808,7 +1808,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1821,7 +1821,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1833,7 +1833,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1846,7 +1846,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1858,7 +1858,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1871,7 +1871,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1883,7 +1883,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1896,7 +1896,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1908,7 +1908,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1921,7 +1921,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1933,7 +1933,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1946,7 +1946,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1958,7 +1958,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1971,7 +1971,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1983,7 +1983,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -1996,7 +1996,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2008,7 +2008,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2021,7 +2021,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2033,7 +2033,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2046,7 +2046,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2058,7 +2058,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2071,7 +2071,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2083,7 +2083,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2096,7 +2096,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2110,7 +2110,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.access_key(access_key),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2123,7 +2123,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2137,7 +2137,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2150,7 +2150,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2164,7 +2164,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2177,7 +2177,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2191,7 +2191,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2204,7 +2204,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2216,7 +2216,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.dir(dir),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2229,7 +2229,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2243,7 +2243,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.draggable(draggable),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2256,7 +2256,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2270,7 +2270,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2283,7 +2283,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2295,7 +2295,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.hidden(hidden),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2308,7 +2308,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2320,7 +2320,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.inert(inert),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2333,7 +2333,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2347,7 +2347,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2360,7 +2360,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2372,7 +2372,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.is(is),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2385,7 +2385,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2397,7 +2397,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_id(item_id),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2410,7 +2410,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2422,7 +2422,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2435,7 +2435,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2447,7 +2447,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2460,7 +2460,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2474,7 +2474,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2487,7 +2487,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2499,7 +2499,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_type(item_type),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2512,7 +2512,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2524,7 +2524,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.lang(lang),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2537,7 +2537,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2549,7 +2549,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.nonce(nonce),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2562,7 +2562,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2574,7 +2574,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.role(role),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2587,7 +2587,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2599,7 +2599,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.slot(slot),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2612,7 +2612,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2626,7 +2626,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2639,7 +2639,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2651,7 +2651,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.style(style),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2664,7 +2664,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2676,7 +2676,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2689,7 +2689,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2701,7 +2701,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.title(title),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2714,7 +2714,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2726,7 +2726,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.translate(translate),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2739,7 +2739,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2755,7 +2755,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .virtual_keyboard_policy(virtual_keyboard_policy),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2768,7 +2768,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2780,7 +2780,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2793,7 +2793,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2807,7 +2807,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_cancel(on_animation_cancel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2820,7 +2820,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2832,7 +2832,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2845,7 +2845,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2859,7 +2859,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_iteration(on_animation_iteration),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2872,7 +2872,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2884,7 +2884,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2897,7 +2897,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2909,7 +2909,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2922,7 +2922,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2934,7 +2934,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_input(on_input),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2947,7 +2947,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2959,7 +2959,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_change(on_change),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2972,7 +2972,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2986,7 +2986,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_got_pointer_capture(on_got_pointer_capture),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -2999,7 +2999,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3013,7 +3013,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_lost_pointer_capture(on_lost_pointer_capture),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3026,7 +3026,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3038,7 +3038,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3051,7 +3051,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3063,7 +3063,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3076,7 +3076,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3088,7 +3088,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3101,7 +3101,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3113,7 +3113,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3126,7 +3126,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3138,7 +3138,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3151,7 +3151,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3163,7 +3163,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3176,7 +3176,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3188,7 +3188,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3201,7 +3201,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3213,7 +3213,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3226,7 +3226,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3240,7 +3240,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_cancel(on_transition_cancel),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3253,7 +3253,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3265,7 +3265,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3278,7 +3278,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3290,7 +3290,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3303,7 +3303,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3317,7 +3317,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_start(on_transition_start),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3330,7 +3330,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3342,7 +3342,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3355,7 +3355,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3367,7 +3367,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3380,7 +3380,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3392,7 +3392,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3405,7 +3405,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3417,7 +3417,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3430,7 +3430,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3442,7 +3442,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3455,7 +3455,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3467,7 +3467,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3480,7 +3480,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3492,7 +3492,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3505,18 +3505,18 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
         #[inline(always)]
-        pub fn as_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#as<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            as_: V,
-        ) -> super::Building<super::overwrite::as_<TypeDefs, V>> {
+            r#as: V,
+        ) -> super::Building<super::overwrite::r#as<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_,
+                r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3529,7 +3529,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3542,7 +3542,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::cross_origin<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3555,7 +3555,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3568,7 +3568,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::fetch_priority<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority,
                 href: self.href,
@@ -3581,7 +3581,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3592,7 +3592,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href,
@@ -3605,7 +3605,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3616,7 +3616,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::href_lang<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3629,7 +3629,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3642,7 +3642,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::image_sizes<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3655,7 +3655,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3668,7 +3668,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::image_src_set<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3681,7 +3681,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3692,7 +3692,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::integrity<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3705,7 +3705,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3716,7 +3716,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::media<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3729,7 +3729,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3740,7 +3740,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::prefetch<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3753,7 +3753,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3766,7 +3766,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3779,7 +3779,7 @@ mod builder_and_replacer {
                 referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3790,7 +3790,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3803,7 +3803,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3814,7 +3814,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::sizes<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3827,18 +3827,18 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3851,7 +3851,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_,
+                r#type,
                 blocking: self.blocking,
             }
         }
@@ -3862,7 +3862,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::blocking<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                as_: self.as_,
+                r#as: self.r#as,
                 cross_origin: self.cross_origin,
                 fetch_priority: self.fetch_priority,
                 href: self.href,
@@ -3875,7 +3875,7 @@ mod builder_and_replacer {
                 referrer_policy: self.referrer_policy,
                 rel: self.rel,
                 sizes: self.sizes,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking,
             }
         }
@@ -3899,7 +3899,7 @@ mod impl_update_element {
                 > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::State,
-                as_ = <TypeDefs::as_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#as = <TypeDefs::r#as as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 cross_origin = <TypeDefs::cross_origin as ::frender_html::props::MaybeUpdateValueWithState<
@@ -3938,7 +3938,7 @@ mod impl_update_element {
                 sizes = <TypeDefs::sizes as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 blocking = <TypeDefs::blocking as ::frender_html::props::MaybeUpdateValueWithState<
@@ -3958,10 +3958,10 @@ mod impl_update_element {
                 > as crate::imports::frender_dom::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                as_: <TypeDefs::as_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#as: <TypeDefs::r#as as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.as_,
+                    this.r#as,
                     |v| element.set_as(v),
                     || dom_element.remove_attribute("as").unwrap(),
                 ),
@@ -4073,10 +4073,10 @@ mod impl_update_element {
                     ),
                     || dom_element.remove_attribute("sizes").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
@@ -4107,11 +4107,11 @@ mod impl_update_element {
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::as_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#as as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.as_,
-                state.as_,
+                this.r#as,
+                state.r#as,
                 |v| element.set_as(v),
                 || dom_element.remove_attribute("as").unwrap(),
             );
@@ -4237,11 +4237,11 @@ mod impl_update_element {
                 },
                 || dom_element.remove_attribute("sizes").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
@@ -4295,9 +4295,9 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::as_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#as as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.as_)
+                                >>::maybe_into_html_attribute_value(this.r#as)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("as"),
                                         if let Some(value) = value {
@@ -4464,9 +4464,9 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("type"),
                                         if let Some(value) = value {

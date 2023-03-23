@@ -9,7 +9,7 @@ pub fn HtmlObjectElementProps() -> Building<TypesInitial> {
         form: (),
         height: (),
         name: (),
-        type_: (),
+        r#type: (),
         use_map: (),
         width: (),
     }
@@ -23,7 +23,7 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -698,7 +698,7 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -708,7 +708,7 @@ pub mod overwrite {
         form = Value,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -718,7 +718,7 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = Value,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -728,17 +728,17 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         data = <TypeDefs as super::Types>::data,
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = Value,
+        r#type = Value,
         use_map = <TypeDefs as super::Types>::use_map,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -748,7 +748,7 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = Value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -758,7 +758,7 @@ pub mod overwrite {
         form = <TypeDefs as super::Types>::form,
         height = <TypeDefs as super::Types>::height,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         use_map = <TypeDefs as super::Types>::use_map,
         width = Value,
     >;
@@ -773,7 +773,7 @@ mod trait_types {
         type form: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type height: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type name: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type use_map: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
@@ -788,7 +788,7 @@ pub mod data_struct {
         pub form: TypeDefs::form,
         pub height: TypeDefs::height,
         pub name: TypeDefs::name,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub use_map: TypeDefs::use_map,
         pub width: TypeDefs::width,
     }
@@ -807,7 +807,7 @@ mod types_initial {
         form = (),
         height = (),
         name = (),
-        type_ = (),
+        r#type = (),
         use_map = (),
         width = (),
     >;
@@ -823,7 +823,7 @@ pub mod render_state {
         type form;
         type height;
         type name;
-        type type_;
+        type r#type;
         type use_map;
         type width;
     }
@@ -831,8 +831,8 @@ pub mod render_state {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
         TypeDefs::HtmlElementProps, pub data : TypeDefs::data, pub form : TypeDefs::form,
-        pub height : TypeDefs::height, pub name : TypeDefs::name, pub type_ :
-        TypeDefs::type_, pub use_map : TypeDefs::use_map, pub width : TypeDefs::width, }
+        pub height : TypeDefs::height, pub name : TypeDefs::name, pub r#type :
+        TypeDefs::r#type, pub use_map : TypeDefs::use_map, pub width : TypeDefs::width, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -874,7 +874,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -891,7 +891,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -908,7 +908,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -925,7 +925,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -942,7 +942,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -959,7 +959,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -976,7 +976,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -995,7 +995,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1012,7 +1012,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1029,7 +1029,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1046,7 +1046,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1063,7 +1063,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1080,7 +1080,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1097,7 +1097,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1116,7 +1116,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1135,7 +1135,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1152,7 +1152,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1169,7 +1169,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1186,7 +1186,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1203,7 +1203,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1222,7 +1222,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1241,7 +1241,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1258,7 +1258,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1275,7 +1275,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1292,7 +1292,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1309,7 +1309,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1326,7 +1326,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1343,7 +1343,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1360,7 +1360,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1377,7 +1377,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1394,7 +1394,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1411,7 +1411,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1428,7 +1428,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1445,7 +1445,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1462,7 +1462,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1479,7 +1479,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1496,7 +1496,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1513,7 +1513,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1530,7 +1530,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1549,7 +1549,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1568,7 +1568,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1587,7 +1587,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1606,7 +1606,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1623,7 +1623,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1642,7 +1642,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1661,7 +1661,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1678,7 +1678,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1695,7 +1695,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1714,7 +1714,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1731,7 +1731,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1748,7 +1748,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1765,7 +1765,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1782,7 +1782,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1801,7 +1801,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1818,7 +1818,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1835,7 +1835,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1852,7 +1852,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1869,7 +1869,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1886,7 +1886,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1905,7 +1905,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1922,7 +1922,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1939,7 +1939,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1956,7 +1956,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1973,7 +1973,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -1994,7 +1994,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2011,7 +2011,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2030,7 +2030,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2047,7 +2047,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2066,7 +2066,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2083,7 +2083,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2100,7 +2100,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2117,7 +2117,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2134,7 +2134,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2153,7 +2153,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2172,7 +2172,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2189,7 +2189,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2206,7 +2206,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2223,7 +2223,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2240,7 +2240,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2257,7 +2257,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2274,7 +2274,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2291,7 +2291,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2308,7 +2308,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2327,7 +2327,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2344,7 +2344,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2361,7 +2361,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2380,7 +2380,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2397,7 +2397,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2414,7 +2414,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2431,7 +2431,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2448,7 +2448,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2465,7 +2465,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2482,7 +2482,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2499,7 +2499,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2515,7 +2515,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2531,7 +2531,7 @@ mod builder_and_replacer {
                 form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2547,7 +2547,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2563,23 +2563,23 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 data: self.data,
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_,
+                r#type,
                 use_map: self.use_map,
                 width: self.width,
             }
@@ -2595,7 +2595,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map,
                 width: self.width,
             }
@@ -2611,7 +2611,7 @@ mod builder_and_replacer {
                 form: self.form,
                 height: self.height,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 use_map: self.use_map,
                 width,
             }
@@ -2648,7 +2648,7 @@ mod impl_update_element {
                 name = <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 use_map = <TypeDefs::use_map as ::frender_html::props::MaybeUpdateValueWithState<
@@ -2703,10 +2703,10 @@ mod impl_update_element {
                     |v| element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
@@ -2778,11 +2778,11 @@ mod impl_update_element {
                 |v| element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
@@ -2892,9 +2892,9 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("type"),
                                         if let Some(value) = value {

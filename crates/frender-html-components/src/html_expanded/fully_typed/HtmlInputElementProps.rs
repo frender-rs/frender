@@ -33,7 +33,7 @@ pub fn HtmlInputElementProps() -> Building<TypesInitial> {
         size: (),
         src: (),
         step: (),
-        type_: (),
+        r#type: (),
         value: (),
         width: (),
     }
@@ -71,7 +71,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -770,7 +770,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -804,7 +804,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -838,7 +838,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -872,7 +872,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -906,7 +906,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -940,7 +940,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -974,7 +974,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1008,7 +1008,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1042,7 +1042,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1076,7 +1076,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1110,7 +1110,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1144,7 +1144,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1178,7 +1178,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1212,7 +1212,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1246,7 +1246,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1280,7 +1280,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1314,7 +1314,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1348,7 +1348,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1382,7 +1382,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1416,7 +1416,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1450,7 +1450,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1484,7 +1484,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1518,7 +1518,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1552,7 +1552,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1586,7 +1586,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1620,7 +1620,7 @@ pub mod overwrite {
         size = Value,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1654,7 +1654,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = Value,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1688,11 +1688,11 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         accept = <TypeDefs as super::Types>::accept,
         alt = <TypeDefs as super::Types>::alt,
@@ -1722,7 +1722,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = Value,
+        r#type = Value,
         value = <TypeDefs as super::Types>::value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1756,7 +1756,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = Value,
         width = <TypeDefs as super::Types>::width,
     >;
@@ -1790,7 +1790,7 @@ pub mod overwrite {
         size = <TypeDefs as super::Types>::size,
         src = <TypeDefs as super::Types>::src,
         step = <TypeDefs as super::Types>::step,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
         width = Value,
     >;
@@ -1829,7 +1829,7 @@ mod trait_types {
         type size: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
         type src: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type step: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type value: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
     }
@@ -1868,7 +1868,7 @@ pub mod data_struct {
         pub size: TypeDefs::size,
         pub src: TypeDefs::src,
         pub step: TypeDefs::step,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub value: TypeDefs::value,
         pub width: TypeDefs::width,
     }
@@ -1911,7 +1911,7 @@ mod types_initial {
         size = (),
         src = (),
         step = (),
-        type_ = (),
+        r#type = (),
         value = (),
         width = (),
     >;
@@ -1951,7 +1951,7 @@ pub mod render_state {
         type size;
         type src;
         type step;
-        type type_;
+        type r#type;
         type value;
         type width;
     }
@@ -1971,8 +1971,8 @@ pub mod render_state {
         TypeDefs::multiple, pub name : TypeDefs::name, pub pattern : TypeDefs::pattern,
         pub placeholder : TypeDefs::placeholder, pub read_only : TypeDefs::read_only, pub
         required : TypeDefs::required, pub size : TypeDefs::size, pub src :
-        TypeDefs::src, pub step : TypeDefs::step, pub type_ : TypeDefs::type_, pub value
-        : TypeDefs::value, pub width : TypeDefs::width, }
+        TypeDefs::src, pub step : TypeDefs::step, pub r#type : TypeDefs::r#type, pub
+        value : TypeDefs::value, pub width : TypeDefs::width, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -2038,7 +2038,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2079,7 +2079,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2120,7 +2120,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2161,7 +2161,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2202,7 +2202,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2243,7 +2243,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2284,7 +2284,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2327,7 +2327,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2368,7 +2368,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2409,7 +2409,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2450,7 +2450,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2491,7 +2491,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2532,7 +2532,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2573,7 +2573,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2616,7 +2616,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2659,7 +2659,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2700,7 +2700,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2741,7 +2741,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2782,7 +2782,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2823,7 +2823,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2866,7 +2866,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2909,7 +2909,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2950,7 +2950,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -2991,7 +2991,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3032,7 +3032,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3073,7 +3073,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3114,7 +3114,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3155,7 +3155,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3196,7 +3196,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3237,7 +3237,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3278,7 +3278,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3319,7 +3319,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3360,7 +3360,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3401,7 +3401,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3442,7 +3442,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3483,7 +3483,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3524,7 +3524,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3565,7 +3565,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3606,7 +3606,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3649,7 +3649,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3692,7 +3692,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3735,7 +3735,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3778,7 +3778,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3819,7 +3819,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3862,7 +3862,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3905,7 +3905,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3946,7 +3946,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -3987,7 +3987,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4030,7 +4030,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4071,7 +4071,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4112,7 +4112,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4153,7 +4153,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4194,7 +4194,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4237,7 +4237,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4278,7 +4278,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4319,7 +4319,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4360,7 +4360,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4401,7 +4401,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4442,7 +4442,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4485,7 +4485,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4526,7 +4526,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4567,7 +4567,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4608,7 +4608,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4649,7 +4649,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4694,7 +4694,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4735,7 +4735,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4778,7 +4778,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4819,7 +4819,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4862,7 +4862,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4903,7 +4903,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4944,7 +4944,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -4985,7 +4985,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5026,7 +5026,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5069,7 +5069,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5112,7 +5112,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5153,7 +5153,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5194,7 +5194,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5235,7 +5235,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5276,7 +5276,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5317,7 +5317,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5358,7 +5358,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5399,7 +5399,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5440,7 +5440,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5483,7 +5483,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5524,7 +5524,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5565,7 +5565,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5608,7 +5608,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5649,7 +5649,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5690,7 +5690,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5731,7 +5731,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5772,7 +5772,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5813,7 +5813,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5854,7 +5854,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5895,7 +5895,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5935,7 +5935,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -5975,7 +5975,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6017,7 +6017,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6057,7 +6057,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6097,7 +6097,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6137,7 +6137,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6177,7 +6177,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6217,7 +6217,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6259,7 +6259,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6301,7 +6301,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6343,7 +6343,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6385,7 +6385,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6427,7 +6427,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6467,7 +6467,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6507,7 +6507,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6547,7 +6547,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6589,7 +6589,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6629,7 +6629,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6671,7 +6671,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6711,7 +6711,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6751,7 +6751,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6791,7 +6791,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6833,7 +6833,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6875,7 +6875,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6915,7 +6915,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6955,7 +6955,7 @@ mod builder_and_replacer {
                 size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -6995,7 +6995,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -7035,16 +7035,16 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width: self.width,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 accept: self.accept,
@@ -7075,7 +7075,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_,
+                r#type,
                 value: self.value,
                 width: self.width,
             }
@@ -7115,7 +7115,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value,
                 width: self.width,
             }
@@ -7155,7 +7155,7 @@ mod builder_and_replacer {
                 size: self.size,
                 src: self.src,
                 step: self.step,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
                 width,
             }
@@ -7264,7 +7264,7 @@ mod impl_update_element {
                 step = <TypeDefs::step as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 value = <TypeDefs::value as ::frender_html::props::MaybeUpdateValueWithState<
@@ -7499,10 +7499,10 @@ mod impl_update_element {
                     |v| element.set_step(v),
                     || dom_element.remove_attribute("step").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
@@ -7784,11 +7784,11 @@ mod impl_update_element {
                 |v| element.set_step(v),
                 || dom_element.remove_attribute("step").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
@@ -8210,9 +8210,9 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("type"),
                                         if let Some(value) = value {

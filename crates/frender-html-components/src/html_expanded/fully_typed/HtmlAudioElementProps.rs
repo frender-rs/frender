@@ -705,9 +705,9 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type loop_<TypeDefs, Value> = self::HtmlMediaElementProps<
+    pub type r#loop<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
-        super::super::HtmlMediaElementProps::overwrite::loop_<
+        super::super::HtmlMediaElementProps::overwrite::r#loop<
             <TypeDefs as super::Types>::HtmlMediaElementProps,
             Value,
         >,
@@ -1958,14 +1958,14 @@ mod builder_and_replacer {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.cross_origin(cross_origin),
             }
         }
-        ///See [`HtmlMediaElementProps::loop_`]
+        ///See [`HtmlMediaElementProps::r#loop`]
         #[inline(always)]
-        pub fn loop_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
+        pub fn r#loop<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>(
             self,
-            loop_: V,
-        ) -> super::Building<super::overwrite::loop_<TypeDefs, V>> {
+            r#loop: V,
+        ) -> super::Building<super::overwrite::r#loop<TypeDefs, V>> {
             super::Data {
-                HtmlMediaElementProps: self.HtmlMediaElementProps.loop_(loop_),
+                HtmlMediaElementProps: self.HtmlMediaElementProps.r#loop(r#loop),
             }
         }
         ///See [`HtmlMediaElementProps::muted`]

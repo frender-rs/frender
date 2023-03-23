@@ -12,7 +12,7 @@ pub fn HtmlAnchorElementProps() -> Building<TypesInitial> {
         rel: (),
         target: (),
         href_lang: (),
-        type_: (),
+        r#type: (),
     }
 }
 pub mod prelude {}
@@ -27,7 +27,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
@@ -703,7 +703,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type href<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -714,7 +714,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type ping<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -725,7 +725,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type referrer_policy<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -736,7 +736,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type rel<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -747,7 +747,7 @@ pub mod overwrite {
         rel = Value,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type target<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -758,7 +758,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = Value,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type href_lang<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
@@ -769,9 +769,9 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         download = <TypeDefs as super::Types>::download,
         href = <TypeDefs as super::Types>::href,
@@ -780,7 +780,7 @@ pub mod overwrite {
         rel = <TypeDefs as super::Types>::rel,
         target = <TypeDefs as super::Types>::target,
         href_lang = <TypeDefs as super::Types>::href_lang,
-        type_ = Value,
+        r#type = Value,
     >;
 }
 mod trait_types {
@@ -796,7 +796,7 @@ mod trait_types {
         type rel: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type target: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type href_lang: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -812,7 +812,7 @@ pub mod data_struct {
         pub rel: TypeDefs::rel,
         pub target: TypeDefs::target,
         pub href_lang: TypeDefs::href_lang,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
     }
 }
 pub use ::core::convert::identity as Building;
@@ -832,7 +832,7 @@ mod types_initial {
         rel = (),
         target = (),
         href_lang = (),
-        type_ = (),
+        r#type = (),
     >;
 }
 pub use types_initial::TypesInitial;
@@ -849,7 +849,7 @@ pub mod render_state {
         type rel;
         type target;
         type href_lang;
-        type type_;
+        type r#type;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
@@ -857,8 +857,8 @@ pub mod render_state {
         TypeDefs::HtmlElementProps, pub download : TypeDefs::download, pub href :
         TypeDefs::href, pub ping : TypeDefs::ping, pub referrer_policy :
         TypeDefs::referrer_policy, pub rel : TypeDefs::rel, pub target :
-        TypeDefs::target, pub href_lang : TypeDefs::href_lang, pub type_ :
-        TypeDefs::type_, }
+        TypeDefs::target, pub href_lang : TypeDefs::href_lang, pub r#type :
+        TypeDefs::r#type, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -903,7 +903,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::class`]
@@ -921,7 +921,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::id`]
@@ -939,7 +939,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::part`]
@@ -957,7 +957,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_cancel`]
@@ -975,7 +975,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_error`]
@@ -993,7 +993,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_scroll`]
@@ -1011,7 +1011,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
@@ -1031,7 +1031,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_select`]
@@ -1049,7 +1049,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_wheel`]
@@ -1067,7 +1067,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_copy`]
@@ -1085,7 +1085,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_cut`]
@@ -1103,7 +1103,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_paste`]
@@ -1121,7 +1121,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_end`]
@@ -1139,7 +1139,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_start`]
@@ -1159,7 +1159,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_update`]
@@ -1179,7 +1179,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_blur`]
@@ -1197,7 +1197,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus`]
@@ -1215,7 +1215,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus_in`]
@@ -1233,7 +1233,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus_out`]
@@ -1251,7 +1251,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
@@ -1271,7 +1271,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
@@ -1291,7 +1291,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_key_down`]
@@ -1309,7 +1309,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_key_up`]
@@ -1327,7 +1327,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_aux_click`]
@@ -1345,7 +1345,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_click`]
@@ -1363,7 +1363,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_context_menu`]
@@ -1381,7 +1381,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_double_click`]
@@ -1399,7 +1399,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
@@ -1417,7 +1417,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
@@ -1435,7 +1435,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
@@ -1453,7 +1453,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
@@ -1471,7 +1471,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
@@ -1489,7 +1489,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
@@ -1507,7 +1507,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
@@ -1525,7 +1525,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
@@ -1543,7 +1543,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_end`]
@@ -1561,7 +1561,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_move`]
@@ -1579,7 +1579,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_start`]
@@ -1597,7 +1597,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::access_key`]
@@ -1617,7 +1617,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
@@ -1637,7 +1637,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::auto_focus`]
@@ -1657,7 +1657,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::context_menu`]
@@ -1677,7 +1677,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::dir`]
@@ -1695,7 +1695,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::draggable`]
@@ -1715,7 +1715,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
@@ -1735,7 +1735,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::hidden`]
@@ -1753,7 +1753,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::inert`]
@@ -1771,7 +1771,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::input_mode`]
@@ -1791,7 +1791,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::is`]
@@ -1809,7 +1809,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_id`]
@@ -1827,7 +1827,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_prop`]
@@ -1845,7 +1845,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_ref`]
@@ -1863,7 +1863,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_scope`]
@@ -1883,7 +1883,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_type`]
@@ -1901,7 +1901,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::lang`]
@@ -1919,7 +1919,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::nonce`]
@@ -1937,7 +1937,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::role`]
@@ -1955,7 +1955,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::slot`]
@@ -1973,7 +1973,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::spellcheck`]
@@ -1993,7 +1993,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::style`]
@@ -2011,7 +2011,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::tab_index`]
@@ -2029,7 +2029,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::title`]
@@ -2047,7 +2047,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::translate`]
@@ -2065,7 +2065,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
@@ -2087,7 +2087,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_invalid`]
@@ -2105,7 +2105,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
@@ -2125,7 +2125,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_end`]
@@ -2143,7 +2143,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
@@ -2163,7 +2163,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_start`]
@@ -2181,7 +2181,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_before_input`]
@@ -2199,7 +2199,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_input`]
@@ -2217,7 +2217,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_change`]
@@ -2235,7 +2235,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
@@ -2255,7 +2255,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
@@ -2275,7 +2275,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
@@ -2293,7 +2293,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
@@ -2311,7 +2311,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
@@ -2329,7 +2329,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
@@ -2347,7 +2347,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
@@ -2365,7 +2365,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
@@ -2383,7 +2383,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
@@ -2401,7 +2401,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
@@ -2419,7 +2419,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
@@ -2439,7 +2439,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_end`]
@@ -2457,7 +2457,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_run`]
@@ -2475,7 +2475,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_start`]
@@ -2495,7 +2495,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag`]
@@ -2513,7 +2513,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_end`]
@@ -2531,7 +2531,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
@@ -2549,7 +2549,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
@@ -2567,7 +2567,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_over`]
@@ -2585,7 +2585,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_start`]
@@ -2603,7 +2603,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drop`]
@@ -2621,7 +2621,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2638,7 +2638,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2655,7 +2655,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2672,7 +2672,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2691,7 +2691,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2708,7 +2708,7 @@ mod builder_and_replacer {
                 rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2725,7 +2725,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target,
                 href_lang: self.href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2742,14 +2742,14 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 download: self.download,
@@ -2759,7 +2759,7 @@ mod builder_and_replacer {
                 rel: self.rel,
                 target: self.target,
                 href_lang: self.href_lang,
-                type_,
+                r#type,
             }
         }
     }
@@ -2803,7 +2803,7 @@ mod impl_update_element {
                 href_lang = <TypeDefs::href_lang as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
             >,
@@ -2869,10 +2869,10 @@ mod impl_update_element {
                     |v| element.set_hreflang(v),
                     || dom_element.remove_attribute("hreflang").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
@@ -2948,11 +2948,11 @@ mod impl_update_element {
                 |v| element.set_hreflang(v),
                 || dom_element.remove_attribute("hreflang").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
@@ -3085,9 +3085,9 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("type"),
                                         if let Some(value) = value {

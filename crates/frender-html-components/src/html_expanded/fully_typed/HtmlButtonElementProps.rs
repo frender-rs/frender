@@ -13,7 +13,7 @@ pub fn HtmlButtonElementProps() -> Building<TypesInitial> {
         form_no_validate: (),
         form_target: (),
         name: (),
-        type_: (),
+        r#type: (),
         value: (),
     }
 }
@@ -30,7 +30,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
@@ -708,7 +708,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form<TypeDefs, Value> = dyn super::Types<
@@ -721,7 +721,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form_action<TypeDefs, Value> = dyn super::Types<
@@ -734,7 +734,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form_enc_type<TypeDefs, Value> = dyn super::Types<
@@ -747,7 +747,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form_method<TypeDefs, Value> = dyn super::Types<
@@ -760,7 +760,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form_no_validate<TypeDefs, Value> = dyn super::Types<
@@ -773,7 +773,7 @@ pub mod overwrite {
         form_no_validate = Value,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type form_target<TypeDefs, Value> = dyn super::Types<
@@ -786,7 +786,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = Value,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type name<TypeDefs, Value> = dyn super::Types<
@@ -799,10 +799,10 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = <TypeDefs as super::Types>::value,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         disabled = <TypeDefs as super::Types>::disabled,
         form = <TypeDefs as super::Types>::form,
@@ -812,7 +812,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = Value,
+        r#type = Value,
         value = <TypeDefs as super::Types>::value,
     >;
     pub type value<TypeDefs, Value> = dyn super::Types<
@@ -825,7 +825,7 @@ pub mod overwrite {
         form_no_validate = <TypeDefs as super::Types>::form_no_validate,
         form_target = <TypeDefs as super::Types>::form_target,
         name = <TypeDefs as super::Types>::name,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         value = Value,
     >;
 }
@@ -843,7 +843,7 @@ mod trait_types {
         type form_no_validate: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
         type form_target: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type name: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type value: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
@@ -861,7 +861,7 @@ pub mod data_struct {
         pub form_no_validate: TypeDefs::form_no_validate,
         pub form_target: TypeDefs::form_target,
         pub name: TypeDefs::name,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub value: TypeDefs::value,
     }
 }
@@ -883,7 +883,7 @@ mod types_initial {
         form_no_validate = (),
         form_target = (),
         name = (),
-        type_ = (),
+        r#type = (),
         value = (),
     >;
 }
@@ -902,7 +902,7 @@ pub mod render_state {
         type form_no_validate;
         type form_target;
         type name;
-        type type_;
+        type r#type;
         type value;
     }
     crate::imports::pin_project! {
@@ -912,7 +912,7 @@ pub mod render_state {
         TypeDefs::form, pub form_action : TypeDefs::form_action, pub form_enc_type :
         TypeDefs::form_enc_type, pub form_method : TypeDefs::form_method, pub
         form_no_validate : TypeDefs::form_no_validate, pub form_target :
-        TypeDefs::form_target, pub name : TypeDefs::name, pub type_ : TypeDefs::type_,
+        TypeDefs::form_target, pub name : TypeDefs::name, pub r#type : TypeDefs::r#type,
         pub value : TypeDefs::value, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -959,7 +959,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -979,7 +979,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -999,7 +999,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1019,7 +1019,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1039,7 +1039,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1059,7 +1059,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1079,7 +1079,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1101,7 +1101,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1121,7 +1121,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1141,7 +1141,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1161,7 +1161,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1181,7 +1181,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1201,7 +1201,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1221,7 +1221,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1243,7 +1243,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1265,7 +1265,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1285,7 +1285,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1305,7 +1305,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1325,7 +1325,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1345,7 +1345,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1367,7 +1367,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1389,7 +1389,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1409,7 +1409,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1429,7 +1429,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1449,7 +1449,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1469,7 +1469,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1489,7 +1489,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1509,7 +1509,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1529,7 +1529,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1549,7 +1549,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1569,7 +1569,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1589,7 +1589,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1609,7 +1609,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1629,7 +1629,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1649,7 +1649,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1669,7 +1669,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1689,7 +1689,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1709,7 +1709,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1729,7 +1729,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1751,7 +1751,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1773,7 +1773,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1795,7 +1795,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1817,7 +1817,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1837,7 +1837,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1859,7 +1859,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1881,7 +1881,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1901,7 +1901,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1921,7 +1921,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1943,7 +1943,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1963,7 +1963,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -1983,7 +1983,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2003,7 +2003,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2023,7 +2023,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2045,7 +2045,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2065,7 +2065,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2085,7 +2085,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2105,7 +2105,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2125,7 +2125,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2145,7 +2145,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2167,7 +2167,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2187,7 +2187,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2207,7 +2207,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2227,7 +2227,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2247,7 +2247,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2271,7 +2271,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2291,7 +2291,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2313,7 +2313,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2333,7 +2333,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2355,7 +2355,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2375,7 +2375,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2395,7 +2395,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2415,7 +2415,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2435,7 +2435,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2457,7 +2457,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2479,7 +2479,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2499,7 +2499,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2519,7 +2519,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2539,7 +2539,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2559,7 +2559,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2579,7 +2579,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2599,7 +2599,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2619,7 +2619,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2639,7 +2639,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2661,7 +2661,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2681,7 +2681,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2701,7 +2701,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2723,7 +2723,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2743,7 +2743,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2763,7 +2763,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2783,7 +2783,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2803,7 +2803,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2823,7 +2823,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2843,7 +2843,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2863,7 +2863,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2882,7 +2882,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2901,7 +2901,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2922,7 +2922,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2943,7 +2943,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2964,7 +2964,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -2985,7 +2985,7 @@ mod builder_and_replacer {
                 form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -3006,7 +3006,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
@@ -3025,15 +3025,15 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value: self.value,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 disabled: self.disabled,
@@ -3044,7 +3044,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_,
+                r#type,
                 value: self.value,
             }
         }
@@ -3063,7 +3063,7 @@ mod builder_and_replacer {
                 form_no_validate: self.form_no_validate,
                 form_target: self.form_target,
                 name: self.name,
-                type_: self.type_,
+                r#type: self.r#type,
                 value,
             }
         }
@@ -3111,7 +3111,7 @@ mod impl_update_element {
                 name = <TypeDefs::name as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 value = <TypeDefs::value as ::frender_html::props::MaybeUpdateValueWithState<
@@ -3191,10 +3191,10 @@ mod impl_update_element {
                     |v| element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
@@ -3291,11 +3291,11 @@ mod impl_update_element {
                 |v| element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
@@ -3449,9 +3449,9 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("type"),
                                         if let Some(value) = value {

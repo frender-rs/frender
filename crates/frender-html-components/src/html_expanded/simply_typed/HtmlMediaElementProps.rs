@@ -112,7 +112,8 @@ def_props_type!(
         auto_play: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
         controls: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
         cross_origin: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        loop_: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
+        r#loop: alias![loop_]
+            + bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
         muted: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
         preload: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         src: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
@@ -283,9 +284,9 @@ mod impl_dom_for_props {
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
             E: ::core::convert::AsRef<web_sys::HtmlMediaElement>,
         > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
-        for super::props::loop_<V>
+        for super::props::r#loop<V>
     {
-        type State = super::props::loop_<V::State>;
+        type State = super::props::r#loop<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
@@ -293,7 +294,7 @@ mod impl_dom_for_props {
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
-            super::props::loop_(
+            super::props::r#loop(
                 <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
@@ -1079,7 +1080,7 @@ mod impl_ssr_for_props {
         }
     }
     impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::loop_<V>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::r#loop<V>
     {
         type IntoIterAttrs =
             ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;

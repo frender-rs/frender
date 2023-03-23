@@ -130,7 +130,8 @@ def_props_type!(
             controls: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
             cross_origin:
                 bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            loop_: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
+            r#loop: alias![loop_]
+                + bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
             muted: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
             preload: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
             src: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],

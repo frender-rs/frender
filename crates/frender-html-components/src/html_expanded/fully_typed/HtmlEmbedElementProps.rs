@@ -7,7 +7,7 @@ pub fn HtmlEmbedElementProps() -> Building<TypesInitial> {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         height: (),
         src: (),
-        type_: (),
+        r#type: (),
         width: (),
     }
 }
@@ -18,7 +18,7 @@ pub mod overwrite {
         HtmlElementProps = Value,
         height = <TypeDefs as super::Types>::height,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         width = <TypeDefs as super::Types>::width,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
@@ -690,28 +690,28 @@ pub mod overwrite {
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         height = Value,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         width = <TypeDefs as super::Types>::width,
     >;
     pub type src<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         height = <TypeDefs as super::Types>::height,
         src = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         width = <TypeDefs as super::Types>::width,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         height = <TypeDefs as super::Types>::height,
         src = <TypeDefs as super::Types>::src,
-        type_ = Value,
+        r#type = Value,
         width = <TypeDefs as super::Types>::width,
     >;
     pub type width<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         height = <TypeDefs as super::Types>::height,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         width = Value,
     >;
 }
@@ -723,7 +723,7 @@ mod trait_types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
         type height: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type src: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
@@ -735,7 +735,7 @@ pub mod data_struct {
         pub HtmlElementProps: super::super::HtmlElementProps::Data<TypeDefs::HtmlElementProps>,
         pub height: TypeDefs::height,
         pub src: TypeDefs::src,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub width: TypeDefs::width,
     }
 }
@@ -751,7 +751,7 @@ mod types_initial {
         HtmlElementProps = HtmlElementProps::TypesInitial,
         height = (),
         src = (),
-        type_ = (),
+        r#type = (),
         width = (),
     >;
 }
@@ -764,14 +764,14 @@ pub mod render_state {
         type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type height;
         type src;
-        type type_;
+        type r#type;
         type width;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
         TypeDefs::HtmlElementProps, pub height : TypeDefs::height, pub src :
-        TypeDefs::src, pub type_ : TypeDefs::type_, pub width : TypeDefs::width, }
+        TypeDefs::src, pub r#type : TypeDefs::r#type, pub width : TypeDefs::width, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -811,7 +811,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.children(children),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -825,7 +825,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.class(class),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -839,7 +839,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.id(id),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -853,7 +853,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.part(part),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -867,7 +867,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -881,7 +881,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_error(on_error),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -895,7 +895,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -911,7 +911,7 @@ mod builder_and_replacer {
                     .on_security_policy_violation(on_security_policy_violation),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -925,7 +925,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_select(on_select),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -939,7 +939,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -953,7 +953,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -967,7 +967,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -981,7 +981,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -995,7 +995,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1011,7 +1011,7 @@ mod builder_and_replacer {
                     .on_composition_start(on_composition_start),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1027,7 +1027,7 @@ mod builder_and_replacer {
                     .on_composition_update(on_composition_update),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1041,7 +1041,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1055,7 +1055,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1069,7 +1069,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1083,7 +1083,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1099,7 +1099,7 @@ mod builder_and_replacer {
                     .on_fullscreen_change(on_fullscreen_change),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1115,7 +1115,7 @@ mod builder_and_replacer {
                     .on_fullscreen_error(on_fullscreen_error),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1129,7 +1129,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1143,7 +1143,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1157,7 +1157,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1171,7 +1171,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_click(on_click),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1185,7 +1185,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1199,7 +1199,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1213,7 +1213,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1227,7 +1227,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1241,7 +1241,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1255,7 +1255,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1269,7 +1269,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1283,7 +1283,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1297,7 +1297,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1311,7 +1311,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1325,7 +1325,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1339,7 +1339,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1353,7 +1353,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1369,7 +1369,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.access_key(access_key),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1385,7 +1385,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1401,7 +1401,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1417,7 +1417,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1431,7 +1431,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.dir(dir),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1447,7 +1447,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.draggable(draggable),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1463,7 +1463,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1477,7 +1477,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.hidden(hidden),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1491,7 +1491,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.inert(inert),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1507,7 +1507,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1521,7 +1521,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.is(is),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1535,7 +1535,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_id(item_id),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1549,7 +1549,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1563,7 +1563,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1579,7 +1579,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1593,7 +1593,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_type(item_type),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1607,7 +1607,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.lang(lang),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1621,7 +1621,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.nonce(nonce),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1635,7 +1635,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.role(role),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1649,7 +1649,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.slot(slot),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1665,7 +1665,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1679,7 +1679,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.style(style),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1693,7 +1693,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1707,7 +1707,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.title(title),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1721,7 +1721,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.translate(translate),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1739,7 +1739,7 @@ mod builder_and_replacer {
                     .virtual_keyboard_policy(virtual_keyboard_policy),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1753,7 +1753,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1769,7 +1769,7 @@ mod builder_and_replacer {
                     .on_animation_cancel(on_animation_cancel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1783,7 +1783,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1799,7 +1799,7 @@ mod builder_and_replacer {
                     .on_animation_iteration(on_animation_iteration),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1813,7 +1813,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1827,7 +1827,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1841,7 +1841,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_input(on_input),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1855,7 +1855,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_change(on_change),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1871,7 +1871,7 @@ mod builder_and_replacer {
                     .on_got_pointer_capture(on_got_pointer_capture),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1887,7 +1887,7 @@ mod builder_and_replacer {
                     .on_lost_pointer_capture(on_lost_pointer_capture),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1901,7 +1901,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1915,7 +1915,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1929,7 +1929,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1943,7 +1943,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1957,7 +1957,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1971,7 +1971,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1985,7 +1985,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -1999,7 +1999,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2015,7 +2015,7 @@ mod builder_and_replacer {
                     .on_transition_cancel(on_transition_cancel),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2029,7 +2029,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2043,7 +2043,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2059,7 +2059,7 @@ mod builder_and_replacer {
                     .on_transition_start(on_transition_start),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2073,7 +2073,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2087,7 +2087,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2101,7 +2101,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2115,7 +2115,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2129,7 +2129,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2143,7 +2143,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2157,7 +2157,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2170,7 +2170,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps,
                 height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
@@ -2183,20 +2183,20 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps,
                 height: self.height,
                 src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width: self.width,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 height: self.height,
                 src: self.src,
-                type_,
+                r#type,
                 width: self.width,
             }
         }
@@ -2209,7 +2209,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps,
                 height: self.height,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 width,
             }
         }
@@ -2239,7 +2239,7 @@ mod impl_update_element {
                 src = <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 width = <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
@@ -2273,12 +2273,12 @@ mod impl_update_element {
                     |v| element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
-                    || dom_element.remove_attribute("type_").unwrap(),
+                    || dom_element.remove_attribute("r#type").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -2319,13 +2319,13 @@ mod impl_update_element {
                 |v| element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
-                || dom_element.remove_attribute("type_").unwrap(),
+                || dom_element.remove_attribute("r#type").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
@@ -2399,11 +2399,11 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("type_"),
+                                        ::std::borrow::Cow::Borrowed("r#type"),
                                         if let Some(value) = value {
                                             ::frender_ssr::element::html::HtmlAttributeValue::String(
                                                 value,

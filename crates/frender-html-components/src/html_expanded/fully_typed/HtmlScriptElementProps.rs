@@ -13,7 +13,7 @@ pub fn HtmlScriptElementProps() -> Building<TypesInitial> {
         no_module: (),
         referrer_policy: (),
         src: (),
-        type_: (),
+        r#type: (),
         blocking: (),
     }
 }
@@ -30,7 +30,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
@@ -708,7 +708,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type cross_origin<TypeDefs, Value> = dyn super::Types<
@@ -721,7 +721,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type defer<TypeDefs, Value> = dyn super::Types<
@@ -734,7 +734,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type fetch_priority<TypeDefs, Value> = dyn super::Types<
@@ -747,7 +747,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type integrity<TypeDefs, Value> = dyn super::Types<
@@ -760,7 +760,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type no_module<TypeDefs, Value> = dyn super::Types<
@@ -773,7 +773,7 @@ pub mod overwrite {
         no_module = Value,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type referrer_policy<TypeDefs, Value> = dyn super::Types<
@@ -786,7 +786,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = Value,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type src<TypeDefs, Value> = dyn super::Types<
@@ -799,10 +799,10 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         r#async = <TypeDefs as super::Types>::r#async,
         cross_origin = <TypeDefs as super::Types>::cross_origin,
@@ -812,7 +812,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = Value,
+        r#type = Value,
         blocking = <TypeDefs as super::Types>::blocking,
     >;
     pub type blocking<TypeDefs, Value> = dyn super::Types<
@@ -825,7 +825,7 @@ pub mod overwrite {
         no_module = <TypeDefs as super::Types>::no_module,
         referrer_policy = <TypeDefs as super::Types>::referrer_policy,
         src = <TypeDefs as super::Types>::src,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
         blocking = Value,
     >;
 }
@@ -843,7 +843,7 @@ mod trait_types {
         type no_module: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>;
         type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type src: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type blocking: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
@@ -861,7 +861,7 @@ pub mod data_struct {
         pub no_module: TypeDefs::no_module,
         pub referrer_policy: TypeDefs::referrer_policy,
         pub src: TypeDefs::src,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
         pub blocking: TypeDefs::blocking,
     }
 }
@@ -883,7 +883,7 @@ mod types_initial {
         no_module = (),
         referrer_policy = (),
         src = (),
-        type_ = (),
+        r#type = (),
         blocking = (),
     >;
 }
@@ -902,7 +902,7 @@ pub mod render_state {
         type no_module;
         type referrer_policy;
         type src;
-        type type_;
+        type r#type;
         type blocking;
     }
     crate::imports::pin_project! {
@@ -912,7 +912,8 @@ pub mod render_state {
         TypeDefs::cross_origin, pub defer : TypeDefs::defer, pub fetch_priority :
         TypeDefs::fetch_priority, pub integrity : TypeDefs::integrity, pub no_module :
         TypeDefs::no_module, pub referrer_policy : TypeDefs::referrer_policy, pub src :
-        TypeDefs::src, pub type_ : TypeDefs::type_, pub blocking : TypeDefs::blocking, }
+        TypeDefs::src, pub r#type : TypeDefs::r#type, pub blocking : TypeDefs::blocking,
+        }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -958,7 +959,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -978,7 +979,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -998,7 +999,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1018,7 +1019,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1038,7 +1039,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1058,7 +1059,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1078,7 +1079,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1100,7 +1101,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1120,7 +1121,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1140,7 +1141,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1160,7 +1161,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1180,7 +1181,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1200,7 +1201,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1220,7 +1221,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1242,7 +1243,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1264,7 +1265,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1284,7 +1285,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1304,7 +1305,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1324,7 +1325,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1344,7 +1345,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1366,7 +1367,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1388,7 +1389,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1408,7 +1409,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1428,7 +1429,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1448,7 +1449,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1468,7 +1469,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1488,7 +1489,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1508,7 +1509,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1528,7 +1529,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1548,7 +1549,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1568,7 +1569,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1588,7 +1589,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1608,7 +1609,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1628,7 +1629,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1648,7 +1649,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1668,7 +1669,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1688,7 +1689,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1708,7 +1709,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1728,7 +1729,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1750,7 +1751,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1772,7 +1773,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1794,7 +1795,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1816,7 +1817,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1836,7 +1837,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1858,7 +1859,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1880,7 +1881,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1900,7 +1901,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1920,7 +1921,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1942,7 +1943,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1962,7 +1963,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -1982,7 +1983,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2002,7 +2003,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2022,7 +2023,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2044,7 +2045,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2064,7 +2065,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2084,7 +2085,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2104,7 +2105,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2124,7 +2125,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2144,7 +2145,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2166,7 +2167,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2186,7 +2187,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2206,7 +2207,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2226,7 +2227,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2246,7 +2247,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2270,7 +2271,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2290,7 +2291,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2312,7 +2313,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2332,7 +2333,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2354,7 +2355,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2374,7 +2375,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2394,7 +2395,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2414,7 +2415,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2434,7 +2435,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2456,7 +2457,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2478,7 +2479,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2498,7 +2499,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2518,7 +2519,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2538,7 +2539,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2558,7 +2559,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2578,7 +2579,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2598,7 +2599,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2618,7 +2619,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2638,7 +2639,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2660,7 +2661,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2680,7 +2681,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2700,7 +2701,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2722,7 +2723,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2742,7 +2743,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2762,7 +2763,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2782,7 +2783,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2802,7 +2803,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2822,7 +2823,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2842,7 +2843,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2862,7 +2863,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2881,7 +2882,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2902,7 +2903,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2921,7 +2922,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2942,7 +2943,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2961,7 +2962,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -2982,7 +2983,7 @@ mod builder_and_replacer {
                 no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3003,7 +3004,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
@@ -3022,15 +3023,15 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking: self.blocking,
             }
         }
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 r#async: self.r#async,
@@ -3041,7 +3042,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_,
+                r#type,
                 blocking: self.blocking,
             }
         }
@@ -3060,7 +3061,7 @@ mod builder_and_replacer {
                 no_module: self.no_module,
                 referrer_policy: self.referrer_policy,
                 src: self.src,
-                type_: self.type_,
+                r#type: self.r#type,
                 blocking,
             }
         }
@@ -3108,7 +3109,7 @@ mod impl_update_element {
                 src = <TypeDefs::src as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 blocking = <TypeDefs::blocking as ::frender_html::props::MaybeUpdateValueWithState<
@@ -3196,12 +3197,12 @@ mod impl_update_element {
                     |v| element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
-                    || dom_element.remove_attribute("type_").unwrap(),
+                    || dom_element.remove_attribute("r#type").unwrap(),
                 ),
                 blocking: <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -3306,13 +3307,13 @@ mod impl_update_element {
                 |v| element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
-                || dom_element.remove_attribute("type_").unwrap(),
+                || dom_element.remove_attribute("r#type").unwrap(),
             );
             <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
@@ -3468,11 +3469,11 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.type_)
+                                >>::maybe_into_html_attribute_value(this.r#type)
                                     .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("type_"),
+                                        ::std::borrow::Cow::Borrowed("r#type"),
                                         if let Some(value) = value {
                                             ::frender_ssr::element::html::HtmlAttributeValue::String(
                                                 value,

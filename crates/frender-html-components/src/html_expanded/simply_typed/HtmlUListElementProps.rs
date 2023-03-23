@@ -110,7 +110,8 @@ def_props_type!(
             on_drop,
         ),
         compact: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-        type_: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        r#type: alias![type_]
+            + bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
     )
 );
 #[cfg(feature = "dom")]
@@ -164,9 +165,9 @@ mod impl_dom_for_props {
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlUListElement>,
         > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
-        for super::props::type_<V>
+        for super::props::r#type<V>
     {
-        type State = super::props::type_<V::State>;
+        type State = super::props::r#type<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
@@ -174,7 +175,7 @@ mod impl_dom_for_props {
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
-            super::props::type_(
+            super::props::r#type(
                 <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
@@ -227,7 +228,7 @@ mod impl_ssr_for_props {
         }
     }
     impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::type_<V>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::r#type<V>
     {
         type IntoIterAttrs =
             ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;

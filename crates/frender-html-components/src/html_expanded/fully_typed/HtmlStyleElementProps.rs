@@ -7,7 +7,7 @@ pub fn HtmlStyleElementProps() -> Building<TypesInitial> {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
         media: (),
         blocking: (),
-        type_: (),
+        r#type: (),
     }
 }
 pub mod prelude {}
@@ -17,7 +17,7 @@ pub mod overwrite {
         HtmlElementProps = Value,
         media = <TypeDefs as super::Types>::media,
         blocking = <TypeDefs as super::Types>::blocking,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
@@ -688,19 +688,19 @@ pub mod overwrite {
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         media = Value,
         blocking = <TypeDefs as super::Types>::blocking,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
     pub type blocking<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         media = <TypeDefs as super::Types>::media,
         blocking = Value,
-        type_ = <TypeDefs as super::Types>::type_,
+        r#type = <TypeDefs as super::Types>::r#type,
     >;
-    pub type type_<TypeDefs, Value> = dyn super::Types<
+    pub type r#type<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
         media = <TypeDefs as super::Types>::media,
         blocking = <TypeDefs as super::Types>::blocking,
-        type_ = Value,
+        r#type = Value,
     >;
 }
 mod trait_types {
@@ -711,7 +711,7 @@ mod trait_types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
         type media: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type blocking: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type type_: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
@@ -722,7 +722,7 @@ pub mod data_struct {
         pub HtmlElementProps: super::super::HtmlElementProps::Data<TypeDefs::HtmlElementProps>,
         pub media: TypeDefs::media,
         pub blocking: TypeDefs::blocking,
-        pub type_: TypeDefs::type_,
+        pub r#type: TypeDefs::r#type,
     }
 }
 pub use ::core::convert::identity as Building;
@@ -737,7 +737,7 @@ mod types_initial {
         HtmlElementProps = HtmlElementProps::TypesInitial,
         media = (),
         blocking = (),
-        type_ = (),
+        r#type = (),
     >;
 }
 pub use types_initial::TypesInitial;
@@ -749,13 +749,13 @@ pub mod render_state {
         type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
         type media;
         type blocking;
-        type type_;
+        type r#type;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
         TypeDefs::HtmlElementProps, pub media : TypeDefs::media, pub blocking :
-        TypeDefs::blocking, pub type_ : TypeDefs::type_, }
+        TypeDefs::blocking, pub r#type : TypeDefs::r#type, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -795,7 +795,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.children(children),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::class`]
@@ -808,7 +808,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.class(class),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::id`]
@@ -821,7 +821,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.id(id),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::part`]
@@ -834,7 +834,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.part(part),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_cancel`]
@@ -847,7 +847,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_error`]
@@ -860,7 +860,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_error(on_error),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_scroll`]
@@ -873,7 +873,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
@@ -888,7 +888,7 @@ mod builder_and_replacer {
                     .on_security_policy_violation(on_security_policy_violation),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_select`]
@@ -901,7 +901,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_select(on_select),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_wheel`]
@@ -914,7 +914,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_copy`]
@@ -927,7 +927,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_cut`]
@@ -940,7 +940,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_paste`]
@@ -953,7 +953,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_end`]
@@ -966,7 +966,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_start`]
@@ -981,7 +981,7 @@ mod builder_and_replacer {
                     .on_composition_start(on_composition_start),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_composition_update`]
@@ -996,7 +996,7 @@ mod builder_and_replacer {
                     .on_composition_update(on_composition_update),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_blur`]
@@ -1009,7 +1009,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus`]
@@ -1022,7 +1022,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus_in`]
@@ -1035,7 +1035,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_focus_out`]
@@ -1048,7 +1048,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
@@ -1063,7 +1063,7 @@ mod builder_and_replacer {
                     .on_fullscreen_change(on_fullscreen_change),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
@@ -1078,7 +1078,7 @@ mod builder_and_replacer {
                     .on_fullscreen_error(on_fullscreen_error),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_key_down`]
@@ -1091,7 +1091,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_key_up`]
@@ -1104,7 +1104,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_aux_click`]
@@ -1117,7 +1117,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_click`]
@@ -1130,7 +1130,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_click(on_click),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_context_menu`]
@@ -1143,7 +1143,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_double_click`]
@@ -1156,7 +1156,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
@@ -1169,7 +1169,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
@@ -1182,7 +1182,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
@@ -1195,7 +1195,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
@@ -1208,7 +1208,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
@@ -1221,7 +1221,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
@@ -1234,7 +1234,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
@@ -1247,7 +1247,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
@@ -1260,7 +1260,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_end`]
@@ -1273,7 +1273,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_move`]
@@ -1286,7 +1286,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_touch_start`]
@@ -1299,7 +1299,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::access_key`]
@@ -1314,7 +1314,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.access_key(access_key),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
@@ -1329,7 +1329,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::auto_focus`]
@@ -1344,7 +1344,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::context_menu`]
@@ -1359,7 +1359,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::dir`]
@@ -1372,7 +1372,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.dir(dir),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::draggable`]
@@ -1387,7 +1387,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.draggable(draggable),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
@@ -1402,7 +1402,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::hidden`]
@@ -1415,7 +1415,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.hidden(hidden),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::inert`]
@@ -1428,7 +1428,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.inert(inert),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::input_mode`]
@@ -1443,7 +1443,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::is`]
@@ -1456,7 +1456,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.is(is),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_id`]
@@ -1469,7 +1469,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_id(item_id),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_prop`]
@@ -1482,7 +1482,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_ref`]
@@ -1495,7 +1495,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_scope`]
@@ -1510,7 +1510,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::item_type`]
@@ -1523,7 +1523,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.item_type(item_type),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::lang`]
@@ -1536,7 +1536,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.lang(lang),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::nonce`]
@@ -1549,7 +1549,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.nonce(nonce),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::role`]
@@ -1562,7 +1562,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.role(role),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::slot`]
@@ -1575,7 +1575,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.slot(slot),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::spellcheck`]
@@ -1590,7 +1590,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::style`]
@@ -1603,7 +1603,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.style(style),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::tab_index`]
@@ -1616,7 +1616,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::title`]
@@ -1629,7 +1629,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.title(title),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::translate`]
@@ -1642,7 +1642,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.translate(translate),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
@@ -1659,7 +1659,7 @@ mod builder_and_replacer {
                     .virtual_keyboard_policy(virtual_keyboard_policy),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_invalid`]
@@ -1672,7 +1672,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
@@ -1687,7 +1687,7 @@ mod builder_and_replacer {
                     .on_animation_cancel(on_animation_cancel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_end`]
@@ -1700,7 +1700,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
@@ -1715,7 +1715,7 @@ mod builder_and_replacer {
                     .on_animation_iteration(on_animation_iteration),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_animation_start`]
@@ -1728,7 +1728,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_before_input`]
@@ -1741,7 +1741,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_input`]
@@ -1754,7 +1754,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_input(on_input),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_change`]
@@ -1767,7 +1767,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_change(on_change),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
@@ -1782,7 +1782,7 @@ mod builder_and_replacer {
                     .on_got_pointer_capture(on_got_pointer_capture),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
@@ -1797,7 +1797,7 @@ mod builder_and_replacer {
                     .on_lost_pointer_capture(on_lost_pointer_capture),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
@@ -1810,7 +1810,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
@@ -1823,7 +1823,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
@@ -1836,7 +1836,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
@@ -1849,7 +1849,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
@@ -1862,7 +1862,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
@@ -1875,7 +1875,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
@@ -1888,7 +1888,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
@@ -1901,7 +1901,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
@@ -1916,7 +1916,7 @@ mod builder_and_replacer {
                     .on_transition_cancel(on_transition_cancel),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_end`]
@@ -1929,7 +1929,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_run`]
@@ -1942,7 +1942,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_transition_start`]
@@ -1957,7 +1957,7 @@ mod builder_and_replacer {
                     .on_transition_start(on_transition_start),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag`]
@@ -1970,7 +1970,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_end`]
@@ -1983,7 +1983,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
@@ -1996,7 +1996,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
@@ -2009,7 +2009,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_over`]
@@ -2022,7 +2022,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drag_start`]
@@ -2035,7 +2035,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         ///See [`HtmlElementProps::on_drop`]
@@ -2048,7 +2048,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
                 media: self.media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2060,7 +2060,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps,
                 media,
                 blocking: self.blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[inline(always)]
@@ -2072,20 +2072,20 @@ mod builder_and_replacer {
                 HtmlElementProps: self.HtmlElementProps,
                 media: self.media,
                 blocking,
-                type_: self.type_,
+                r#type: self.r#type,
             }
         }
         #[deprecated = "This attribute should not be provided: if it is, the only permitted values are the empty string or a case-insensitive match for \"text/css.\""]
         #[inline(always)]
-        pub fn type_<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#type<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            type_: V,
-        ) -> super::Building<super::overwrite::type_<TypeDefs, V>> {
+            r#type: V,
+        ) -> super::Building<super::overwrite::r#type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
                 media: self.media,
                 blocking: self.blocking,
-                type_,
+                r#type,
             }
         }
     }
@@ -2114,7 +2114,7 @@ mod impl_update_element {
                 blocking = <TypeDefs::blocking as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                type_ = <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
             >,
@@ -2149,12 +2149,12 @@ mod impl_update_element {
                     ),
                     || dom_element.remove_attribute("blocking").unwrap(),
                 ),
-                type_: <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.type_,
+                    this.r#type,
                     |v| element.set_type(v),
-                    || dom_element.remove_attribute("type_").unwrap(),
+                    || dom_element.remove_attribute("r#type").unwrap(),
                 ),
             }
         }
@@ -2192,13 +2192,13 @@ mod impl_update_element {
                 ),
                 || dom_element.remove_attribute("blocking").unwrap(),
             );
-            <TypeDefs::type_ as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.type_,
-                state.type_,
+                this.r#type,
+                state.r#type,
                 |v| element.set_type(v),
-                || dom_element.remove_attribute("type_").unwrap(),
+                || dom_element.remove_attribute("r#type").unwrap(),
             );
         }
     }
@@ -2262,12 +2262,12 @@ mod impl_into_ssr_data {
                                 },
                             )
                         }),
-                        <TypeDefs::type_ as ::frender_html::props::MaybeUpdateValueWithState<
+                        <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
                             str,
-                        >>::maybe_into_html_attribute_value(this.type_)
+                        >>::maybe_into_html_attribute_value(this.r#type)
                         .map(|value| {
                             (
-                                ::std::borrow::Cow::Borrowed("type_"),
+                                ::std::borrow::Cow::Borrowed("r#type"),
                                 if let Some(value) = value {
                                     ::frender_ssr::element::html::HtmlAttributeValue::String(value)
                                 } else {
