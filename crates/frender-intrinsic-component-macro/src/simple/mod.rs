@@ -43,6 +43,7 @@ impl IntrinsicComponentPropsData {
                         dom_element_ty: dom_element_type.clone(),
                         fields: fields.iter().map(Clone::clone).collect(),
                     }),
+                    options: Default::default(),
                 },
             );
 

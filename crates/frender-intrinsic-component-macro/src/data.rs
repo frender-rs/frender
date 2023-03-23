@@ -1,3 +1,4 @@
+use darling::{FromAttributes, FromMeta};
 use proc_macro2::TokenStream;
 use syn::{
     parse::{Parse, ParseStream},
@@ -182,14 +183,74 @@ pub struct Field {
     pub attrs: Vec<syn::Attribute>,
     pub name: syn::Ident,
     pub declaration: FieldDeclaration,
+    pub options: FieldOptions,
+}
+
+#[derive(darling::FromAttributes, Default, Clone)]
+#[darling(default, attributes(intrinsic_component))]
+pub struct FieldOptions {
+    pub alias: IdentList,
+}
+
+#[derive(Clone, Default)]
+pub struct IdentList(pub Vec<syn::Ident>);
+
+impl FromMeta for IdentList {
+    fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
+        let mut ident_list = Vec::with_capacity(items.len());
+        let mut errors = darling::error::Accumulator::default();
+        for item in items {
+            if let syn::NestedMeta::Meta(syn::Meta::Path(p)) = item {
+                if let Some(ident) = p.get_ident() {
+                    ident_list.push(ident.clone());
+                    continue;
+                }
+            }
+
+            errors.push(darling::Error::custom("expect ident list").with_span(item));
+        }
+
+        errors.finish_with(Self(ident_list))
+    }
 }
 
 impl Parse for Field {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let mut attrs = input.call(syn::Attribute::parse_outer)?;
+        let mut options_attrs = vec![];
+
+        attrs.retain_mut(|attr| {
+            if attr
+                .path
+                .get_ident()
+                .map_or(false, |p| p == "intrinsic_component")
+            {
+                options_attrs.push(std::mem::replace(
+                    attr,
+                    syn::Attribute {
+                        pound_token: Default::default(),
+                        style: syn::AttrStyle::Outer,
+                        bracket_token: Default::default(),
+                        path: syn::Path {
+                            leading_colon: None,
+                            segments: Default::default(),
+                        },
+                        tokens: Default::default(),
+                    },
+                ));
+                false
+            } else {
+                true
+            }
+        });
+
+        let options = FieldOptions::from_attributes(&options_attrs)?;
+
         Ok(Self {
-            attrs: input.call(syn::Attribute::parse_outer)?,
+            attrs,
             name: input.parse()?,
             declaration: input.parse()?,
+            options,
         })
     }
 }

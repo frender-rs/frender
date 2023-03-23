@@ -190,9 +190,32 @@ impl FieldAsSimpleProp<'_> {
                 }
             }),
             field_info: {
-                let bounds = builder_fn_bounds.map(|b| quote!(: bounds![#b]));
+                let data = syn::punctuated::Punctuated::<TokenStream, syn::Token![+]>::from_iter(
+                    [
+                        if field.options.alias.0.is_empty() {
+                            None
+                        } else {
+                            let alias =
+                                field.options.alias.0.iter().enumerate().map(|(i, ident)| {
+                                    let comma = if i == 0 { None } else { Some(quote!(,)) };
+                                    quote!(#comma #ident)
+                                });
+                            Some(quote!(alias![#(#alias)*]))
+                        },
+                        builder_fn_bounds.map(|b| quote!(bounds![#b])),
+                    ]
+                    .into_iter()
+                    .filter_map(std::convert::identity),
+                );
+
+                let colon = if data.is_empty() {
+                    None
+                } else {
+                    Some(quote!(:))
+                };
+
                 quote! {
-                    #name #bounds,
+                    #name #colon #data,
                 }
             },
         }

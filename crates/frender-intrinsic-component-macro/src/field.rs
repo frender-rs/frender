@@ -51,6 +51,7 @@ impl Field {
             attrs,
             name,
             declaration,
+            options, // TODO: use options
         } = self;
         let bounds = declaration
             .bounds(crate_path)
