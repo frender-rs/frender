@@ -4,12 +4,12 @@ macro_rules! __impl_dom {
         mod impl_update_element {
             #[allow(unused_imports)]
             use super::super::*;
-            impl<E, Children, Props> $crate::frender_dom::props::UpdateElement<E>
-                for super::Data<Children, Props>
+            impl<E, Children, Attrs> $crate::frender_dom::props::UpdateElement<E>
+                for super::Data<Children, Attrs>
             where
-                $crate::ElementProps<Children, Props>: $crate::frender_dom::props::UpdateElement<E>,
+                $crate::ElementProps<Children, Attrs>: $crate::frender_dom::props::UpdateElement<E>,
             {
-                type State = <$crate::ElementProps<Children, Props> as $crate::frender_dom::props::UpdateElement<E>>::State;
+                type State = <$crate::ElementProps<Children, Attrs> as $crate::frender_dom::props::UpdateElement<E>>::State;
 
                 #[inline(always)]
                 fn initialize_state(
@@ -17,7 +17,7 @@ macro_rules! __impl_dom {
                     element: &E,
                     children_ctx: &mut ::frender_dom::Dom,
                 ) -> Self::State {
-                    $crate::ElementProps::<Children, Props>::initialize_state(
+                    $crate::ElementProps::<Children, Attrs>::initialize_state(
                         this.props,
                         element,
                         children_ctx,
@@ -31,7 +31,7 @@ macro_rules! __impl_dom {
                     children_ctx: &mut ::frender_dom::Dom,
                     state: ::core::pin::Pin<&mut Self::State>,
                 ) {
-                    $crate::ElementProps::<Children, Props>::update_element(
+                    $crate::ElementProps::<Children, Attrs>::update_element(
                         this.props,
                         element,
                         children_ctx,
@@ -49,23 +49,23 @@ macro_rules! __impl_ssr {
         mod impl_ssr {
             #[allow(unused_imports)]
             use super::super::*;
-            impl<W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin, Children, Props>
-                $crate::frender_ssr::IntoSsrData<W> for super::Data<Children, Props>
+            impl<W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin, Children, Attrs>
+                $crate::frender_ssr::IntoSsrData<W> for super::Data<Children, Attrs>
             where
-                $crate::ElementProps<Children, Props>: $crate::frender_ssr::IntoSsrData<W>,
+                $crate::ElementProps<Children, Attrs>: $crate::frender_ssr::IntoSsrData<W>,
             {
                 type Children =
-                    <$crate::ElementProps<Children, Props> as $crate::frender_ssr::IntoSsrData<
+                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
                         W,
                     >>::Children;
 
                 type ChildrenRenderState =
-                    <$crate::ElementProps<Children, Props> as $crate::frender_ssr::IntoSsrData<
+                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
                         W,
                     >>::ChildrenRenderState;
 
                 type Attrs =
-                    <$crate::ElementProps<Children, Props> as $crate::frender_ssr::IntoSsrData<
+                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
                         W,
                     >>::Attrs;
 
@@ -83,10 +83,10 @@ macro_rules! __impl_children_fn {
         [children]
         [$($attrs:tt)*]
         $method_name:ident $($t:tt)*) => {
-        impl<Props> Building<(), Props> {
+        impl<Attrs> Building<(), Attrs> {
             $($attrs)*
             #[inline(always)]
-            pub fn $method_name<Children>(self, children: Children) -> Building<Children, Props> {
+            pub fn $method_name<Children>(self, children: Children) -> Building<Children, Attrs> {
                 Building(Data {
                     props: self.0.props.children(children),
                 })
@@ -161,7 +161,7 @@ macro_rules! __impl_builder_fn_with_prop_name {
         pub fn $name<V $(: $($bounds)+)? >(
             self,
             $name: V,
-        ) -> super::Building<Children, (Props, super::props::$prop_name<V>)> {
+        ) -> super::Building<Children, (Attrs, super::props::$prop_name<V>)> {
             super::Building(super::Data {
                 props: self.0.props.chain_prop(super::props::$prop_name($name)),
             })
@@ -262,8 +262,8 @@ macro_rules! __impl_props_type {
 
             $(#$struct_attr)*
             #[repr(transparent)]
-            pub struct $name<Children = (), Props = ()> {
-                pub props: $crate::ElementProps<Children, Props>,
+            pub struct $name<Children = (), Attrs = ()> {
+                pub props: $crate::ElementProps<Children, Attrs>,
             }
         }
 
@@ -271,7 +271,7 @@ macro_rules! __impl_props_type {
             #[allow(unused_imports)]
             use super::super::*;
             #[repr(transparent)]
-            pub struct $name<Children = (), Props = ()>(pub super::Data<Children, Props>);
+            pub struct $name<Children = (), Attrs = ()>(pub super::Data<Children, Attrs>);
         }
 
         pub use building_struct::$name as Building;
@@ -280,9 +280,9 @@ macro_rules! __impl_props_type {
         pub mod prelude {}
 
         #[inline(always)]
-        pub fn build<Children, Props>(
-            building: Building<Children, Props>,
-        ) -> Data<Children, Props> {
+        pub fn build<Children, Attrs>(
+            building: Building<Children, Attrs>,
+        ) -> Data<Children, Attrs> {
             building.0
         }
         pub use build as valid;
@@ -317,7 +317,7 @@ macro_rules! def_props_type {
             #[allow(unused_imports)]
             use super::super::*;
 
-            impl<Children, Props> super::Building<Children, Props> {
+            impl<Children, Attrs> super::Building<Children, Attrs> {
                 $crate::__impl_builder_fns! $fields ;
             }
         }
