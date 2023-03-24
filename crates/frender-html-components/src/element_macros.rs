@@ -236,7 +236,7 @@ mod simple {
                     super::$props_name ()
                 }
 
-                pub type Data<Children, Props> = ::frender_html_simple::IntrinsicComponent<
+                pub type Data<Children, Props> = ::frender_html_simple::IntrinsicElement<
                     ComponentType,
                     super::$props_name::Data<Children, Props>,
                 >;
@@ -279,7 +279,7 @@ mod simple {
                     building: Building<Children, Props>,
                 ) -> Data<Children, Props> {
                     use super::*;
-                    ::frender_html_simple::IntrinsicComponent(
+                    ::frender_html_simple::IntrinsicElement(
                         self::ComponentType,
                         $props_name ::build(building),
                     )

@@ -13,7 +13,7 @@ pub trait IntrinsicComponentSupportChildren<Children> {
     }
 }
 
-pub struct IntrinsicComponent<C: frender_html_common::IntrinsicComponent, P>(pub C, pub P);
+pub struct IntrinsicElement<C: frender_html_common::IntrinsicComponent, P>(pub C, pub P);
 
 #[cfg(feature = "dom")]
 mod dom {
@@ -26,7 +26,7 @@ mod dom {
     impl<
             C: IntrinsicComponent + IntrinsicComponentWithElementType,
             P: UpdateElement<C::Element>,
-        > UpdateRenderState<Dom> for super::IntrinsicComponent<C, P>
+        > UpdateRenderState<Dom> for super::IntrinsicElement<C, P>
     where
         C::Element: AsRef<frender_dom::web_sys::Element> + frender_dom::wasm_bindgen::JsCast,
     {
@@ -57,7 +57,7 @@ mod ssr {
     use super::IntrinsicComponentSupportChildren;
 
     impl<W: AsyncWrite + Unpin, C: IntrinsicComponent, P> UpdateRenderState<SsrContext<W>>
-        for super::IntrinsicComponent<C, P>
+        for super::IntrinsicElement<C, P>
     where
         C: IntrinsicComponentSupportChildren<P::Children>,
         P: IntoSsrData<W>,
