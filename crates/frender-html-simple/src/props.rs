@@ -3,27 +3,27 @@ use frender_core::UpdateRenderState;
 use super::ElementPropsStates;
 
 #[derive(Debug, Clone, Copy, Default)]
-pub struct ElementProps<Children, Props> {
+pub struct ElementProps<Children, Attrs> {
     pub children: Children,
-    pub other_props: Props,
+    pub attributes: Attrs,
 }
 
-impl<Props> ElementProps<(), Props> {
+impl<Attrs> ElementProps<(), Attrs> {
     #[inline(always)]
-    pub fn children<C>(self, children: C) -> ElementProps<C, Props> {
+    pub fn children<C>(self, children: C) -> ElementProps<C, Attrs> {
         ElementProps {
             children,
-            other_props: self.other_props,
+            attributes: self.attributes,
         }
     }
 }
 
-impl<Children, Props> ElementProps<Children, Props> {
+impl<Children, Attrs> ElementProps<Children, Attrs> {
     #[inline(always)]
-    pub fn chain_prop<P>(self, prop: P) -> ElementProps<Children, (Props, P)> {
+    pub fn chain_prop<P>(self, prop: P) -> ElementProps<Children, (Attrs, P)> {
         ElementProps {
             children: self.children,
-            other_props: (self.other_props, prop),
+            attributes: (self.attributes, prop),
         }
     }
 }
@@ -38,18 +38,18 @@ mod dom {
         Dom,
     };
 
-    impl<E, Children, Props> UpdateElement<E> for ElementProps<Children, Props>
+    impl<E, Children, Attrs> UpdateElement<E> for ElementProps<Children, Attrs>
     where
         Children: UpdateRenderState<Dom>,
-        Props: UpdateElementNonReactive<E>,
+        Attrs: UpdateElementNonReactive<E>,
     {
-        type State = ElementPropsStates<Children::State, Props::State>;
+        type State = ElementPropsStates<Children::State, Attrs::State>;
 
         fn initialize_state(this: Self, element: &E, children_ctx: &mut Dom) -> Self::State {
             ElementPropsStates {
                 children: this.children.initialize_render_state(children_ctx),
-                other_state: Props::initialize_state_non_reactive(
-                    this.other_props,
+                other_state: Attrs::initialize_state_non_reactive(
+                    this.attributes,
                     element,
                     children_ctx,
                 ),
@@ -66,12 +66,7 @@ mod dom {
             this.children
                 .update_render_state(children_ctx, children_state);
 
-            Props::update_element_non_reactive(
-                this.other_props,
-                element,
-                children_ctx,
-                other_state,
-            );
+            Attrs::update_element_non_reactive(this.attributes, element, children_ctx, other_state);
         }
     }
 }
@@ -81,19 +76,19 @@ mod ssr {
     use frender_core::UpdateRenderState;
     use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, IntoSsrData, SsrContext};
 
-    impl<W: AsyncWrite + Unpin, Children, Props> IntoSsrData<W> for super::ElementProps<Children, Props>
+    impl<W: AsyncWrite + Unpin, Children, Attrs> IntoSsrData<W> for super::ElementProps<Children, Attrs>
     where
         Children: UpdateRenderState<SsrContext<W>>,
-        Props: IntoIteratorAttrs<'static>,
+        Attrs: IntoIteratorAttrs<'static>,
     {
         type Children = Children;
 
         type ChildrenRenderState = Children::State;
 
-        type Attrs = Props::IntoIterAttrs;
+        type Attrs = Attrs::IntoIterAttrs;
 
         fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
-            (this.children, Props::into_iter_attrs(this.other_props))
+            (this.children, Attrs::into_iter_attrs(this.attributes))
         }
     }
 }
