@@ -38,8 +38,11 @@ pub struct UnsafeRawHtmlBytes<B: IntoAsyncWritableBytes>(pub B);
 #[macro_export]
 macro_rules! impl_ssr_for_bytes {
     ($(
-        $(@[$($generic:tt)+])?
-        $for_ty:ty => $buffer_ty:ty |$self_ident:ident| $expr:expr
+        const _: fn($for_ty:ty) -> $buffer_ty:ty
+        = |
+            $self_ident:ident
+            $(, generics: __![$($generic:tt)+])?
+        | $expr:expr
     );* $(;)?) => {$(
         impl<
             $($($generic)+ ,)?
@@ -49,7 +52,7 @@ macro_rules! impl_ssr_for_bytes {
             type State = $crate::element::bytes::State<<$buffer_ty as $crate::bytes::IntoAsyncWritableBytes>::Bytes>;
 
             fn initialize_render_state($self_ident, ctx: &mut $crate::SsrContext<W>) -> Self::State {
-                $crate::element::bytes::UnsafeRawHtmlBytes($expr).initialize_render_state(ctx)
+                $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).initialize_render_state(ctx)
             }
 
             fn update_render_state(
@@ -57,7 +60,7 @@ macro_rules! impl_ssr_for_bytes {
                 ctx: &mut $crate::SsrContext<W>,
                 state: ::core::pin::Pin<&mut Self::State>,
             ) {
-                $crate::element::bytes::UnsafeRawHtmlBytes($expr).update_render_state(ctx, state)
+                $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).update_render_state(ctx, state)
             }
         }
     )*};

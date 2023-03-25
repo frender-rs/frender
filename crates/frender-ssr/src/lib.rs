@@ -1,6 +1,9 @@
 mod context;
 pub use context::*;
 
+mod escape_safe;
+pub use escape_safe::*;
+
 mod ssr_ext;
 pub use ssr_ext::*;
 
@@ -10,6 +13,7 @@ pub use truncate_start_at::*;
 pub mod bytes;
 
 pub use futures_io::AsyncWrite;
+pub use html_escape;
 
 pub mod element;
 
