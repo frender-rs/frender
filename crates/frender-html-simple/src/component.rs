@@ -1,46 +1,117 @@
+use frender_core::{RenderState, UpdateRenderState};
+use frender_html_common::IntrinsicComponent;
+
+use crate::IntoElementProps;
+
 #[cfg(feature = "dom")]
-pub trait IntrinsicComponentWithElementType {
-    type Element;
+pub trait DomIntrinsicComponent {
+    type Element: AsRef<frender_dom::web_sys::Element> + frender_dom::wasm_bindgen::JsCast;
+}
+
+pub trait IntrinsicComponentWithChildren<Ctx, Children> {
+    type ChildrenState: RenderState<Ctx>;
+
+    fn initialize_children_state(self, children: Children, ctx: &mut Ctx) -> Self::ChildrenState;
+    fn update_children_state(
+        self,
+        children: Children,
+        ctx: &mut Ctx,
+        children_state: std::pin::Pin<&mut Self::ChildrenState>,
+    );
+}
+
+pub struct IntrinsicChildrenAsElement<C, Children> {
+    pub component_type: C,
+    pub children: Children,
+}
+
+impl<C, Children, Ctx> UpdateRenderState<Ctx> for IntrinsicChildrenAsElement<C, Children>
+where
+    C: IntrinsicComponentWithChildren<Ctx, Children>,
+{
+    type State = C::ChildrenState;
+
+    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+        C::initialize_children_state(self.component_type, self.children, ctx)
+    }
+
+    fn update_render_state(self, ctx: &mut Ctx, children_state: std::pin::Pin<&mut Self::State>) {
+        C::update_children_state(self.component_type, self.children, ctx, children_state)
+    }
 }
 
 #[cfg(feature = "ssr")]
-pub trait IntrinsicComponentSupportChildren<Children> {
+pub trait SsrIntrinsicComponent {
     #[inline]
-    fn wrap_children(
+    fn wrap_children<Children>(
         children: Children,
     ) -> frender_ssr::element::html::HtmlElementChildren<Children> {
         frender_ssr::element::html::HtmlElementChildren::Children(children)
     }
 }
 
-pub struct IntrinsicElement<C: frender_html_common::IntrinsicComponent, P>(pub C, pub P);
+pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, pub P);
 
 #[cfg(feature = "dom")]
 mod dom {
     use frender_core::UpdateRenderState;
-    use frender_dom::{props::UpdateElement, Dom};
+    use frender_dom::{props::UpdateElementNonReactive, Dom};
     use frender_html_common::IntrinsicComponent;
 
-    use super::IntrinsicComponentWithElementType;
+    use crate::{states::ElementPropsStates, ElementProps};
 
-    impl<
-            C: IntrinsicComponent + IntrinsicComponentWithElementType,
-            P: UpdateElement<C::Element>,
-        > UpdateRenderState<Dom> for super::IntrinsicElement<C, P>
+    use super::{DomIntrinsicComponent, IntoElementProps};
+
+    impl<C: IntrinsicComponent, P: IntoElementProps> UpdateRenderState<Dom>
+        for super::IntrinsicElement<C, P>
     where
-        C::Element: AsRef<frender_dom::web_sys::Element> + frender_dom::wasm_bindgen::JsCast,
+        C: DomIntrinsicComponent,
+        C: crate::IntrinsicComponentWithChildren<Dom, P::Children>,
+        P::Attrs: UpdateElementNonReactive<C::Element>,
     {
-        type State =
-            ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<C::Element, P::State>;
+        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
+            C::Element,
+            ElementPropsStates<
+                C::ChildrenState,
+                <P::Attrs as UpdateElementNonReactive<C::Element>>::State,
+            >,
+        >;
 
         fn initialize_render_state(self, ctx: &mut Dom) -> Self::State {
-            Self::State::initialize_with_tag(self.1, ctx, C::INTRINSIC_TAG)
+            let ElementProps {
+                children,
+                attributes,
+            } = P::into_element_props(self.1);
+            Self::State::initialize_with_tag(
+                move |element, children_ctx| ElementPropsStates {
+                    children: C::initialize_children_state(self.0, children, children_ctx),
+                    other_state:
+                        UpdateElementNonReactive::<C::Element>::initialize_state_non_reactive(
+                            attributes,
+                            element,
+                            children_ctx,
+                        ),
+                },
+                ctx,
+                C::INTRINSIC_TAG,
+            )
         }
 
         fn update_render_state(self, ctx: &mut Dom, state: std::pin::Pin<&mut Self::State>) {
             let (node_and_mounted, state) = state.pin_project();
+            let (children_state, attrs_state) = state.pin_project();
             node_and_mounted.update(ctx, |element, children_ctx| {
-                P::update_element(self.1, element, children_ctx, state)
+                let ElementProps {
+                    children,
+                    attributes,
+                } = P::into_element_props(self.1);
+                UpdateElementNonReactive::<C::Element>::update_element_non_reactive(
+                    attributes,
+                    element,
+                    children_ctx,
+                    attrs_state,
+                );
+                C::update_children_state(self.0, children, children_ctx, children_state);
             })
         }
     }
@@ -52,30 +123,49 @@ mod ssr {
 
     use frender_core::UpdateRenderState;
     use frender_html_common::IntrinsicComponent;
-    use frender_ssr::{AsyncWrite, IntoSsrData, SsrContext};
+    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, SsrContext};
 
-    use super::IntrinsicComponentSupportChildren;
+    use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement};
 
-    impl<W: AsyncWrite + Unpin, C: IntrinsicComponent, P> UpdateRenderState<SsrContext<W>>
-        for super::IntrinsicElement<C, P>
+    use super::{IntrinsicComponentWithChildren, SsrIntrinsicComponent};
+
+    fn ssr_html_element<C: IntrinsicComponent + SsrIntrinsicComponent, P: IntoElementProps>(
+        element: super::IntrinsicElement<C, P>,
+    ) -> ::frender_ssr::element::html::HtmlElement<
+        'static,
+        IntrinsicChildrenAsElement<C, P::Children>,
+        P::Attrs,
+    > {
+        let ElementProps {
+            children,
+            attributes,
+        } = P::into_element_props(element.1);
+        let children = IntrinsicChildrenAsElement {
+            component_type: element.0,
+            children,
+        };
+        ::frender_ssr::element::html::HtmlElement {
+            tag: Cow::Borrowed(C::INTRINSIC_TAG),
+            attributes,
+            children: C::wrap_children(children),
+        }
+    }
+
+    impl<W: AsyncWrite + Unpin, C: IntrinsicComponent, P: IntoElementProps>
+        UpdateRenderState<SsrContext<W>> for super::IntrinsicElement<C, P>
     where
-        C: IntrinsicComponentSupportChildren<P::Children>,
-        P: IntoSsrData<W>,
+        C: SsrIntrinsicComponent,
+        C: IntrinsicComponentWithChildren<SsrContext<W>, P::Children>,
+        P::Attrs: IntoIteratorAttrs<'static>,
     {
         type State = ::frender_ssr::element::html::HtmlElementRenderState<
             'static,
-            P::ChildrenRenderState,
-            P::Attrs,
+            C::ChildrenState,
+            <P::Attrs as IntoIteratorAttrs<'static>>::IntoIterAttrs,
         >;
 
         fn initialize_render_state(self, ctx: &mut SsrContext<W>) -> Self::State {
-            let (children, attributes) = IntoSsrData::into_ssr_data(self.1);
-            ::frender_ssr::element::html::HtmlElement {
-                tag: Cow::Borrowed(C::INTRINSIC_TAG),
-                attributes,
-                children: C::wrap_children(children),
-            }
-            .initialize_render_state(ctx)
+            ssr_html_element(self).initialize_render_state(ctx)
         }
 
         fn update_render_state(
@@ -83,13 +173,7 @@ mod ssr {
             ctx: &mut SsrContext<W>,
             state: std::pin::Pin<&mut Self::State>,
         ) {
-            let (children, attributes) = IntoSsrData::into_ssr_data(self.1);
-            ::frender_ssr::element::html::HtmlElement {
-                tag: Cow::Borrowed(C::INTRINSIC_TAG),
-                attributes,
-                children: C::wrap_children(children),
-            }
-            .update_render_state(ctx, state)
+            ssr_html_element(self).update_render_state(ctx, state)
         }
     }
 }

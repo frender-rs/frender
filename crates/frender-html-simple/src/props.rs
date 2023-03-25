@@ -2,6 +2,13 @@ use frender_core::UpdateRenderState;
 
 use super::ElementPropsStates;
 
+pub trait IntoElementProps {
+    type Children;
+    type Attrs;
+
+    fn into_element_props(this: Self) -> ElementProps<Self::Children, Self::Attrs>;
+}
+
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ElementProps<Children, Attrs> {
     pub children: Children,

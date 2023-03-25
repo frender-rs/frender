@@ -1,83 +1,4 @@
 #[macro_export]
-macro_rules! __impl_dom {
-    () => {
-        mod impl_update_element {
-            #[allow(unused_imports)]
-            use super::super::*;
-            impl<E, Children, Attrs> $crate::frender_dom::props::UpdateElement<E>
-                for super::Data<Children, Attrs>
-            where
-                $crate::ElementProps<Children, Attrs>: $crate::frender_dom::props::UpdateElement<E>,
-            {
-                type State = <$crate::ElementProps<Children, Attrs> as $crate::frender_dom::props::UpdateElement<E>>::State;
-
-                #[inline(always)]
-                fn initialize_state(
-                    this: Self,
-                    element: &E,
-                    children_ctx: &mut ::frender_dom::Dom,
-                ) -> Self::State {
-                    $crate::ElementProps::<Children, Attrs>::initialize_state(
-                        this.props,
-                        element,
-                        children_ctx,
-                    )
-                }
-
-                #[inline(always)]
-                fn update_element(
-                    this: Self,
-                    element: &E,
-                    children_ctx: &mut ::frender_dom::Dom,
-                    state: ::core::pin::Pin<&mut Self::State>,
-                ) {
-                    $crate::ElementProps::<Children, Attrs>::update_element(
-                        this.props,
-                        element,
-                        children_ctx,
-                        state,
-                    )
-                }
-            }
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! __impl_ssr {
-    () => {
-        mod impl_ssr {
-            #[allow(unused_imports)]
-            use super::super::*;
-            impl<W: ::frender_ssr::AsyncWrite + ::core::marker::Unpin, Children, Attrs>
-                $crate::frender_ssr::IntoSsrData<W> for super::Data<Children, Attrs>
-            where
-                $crate::ElementProps<Children, Attrs>: $crate::frender_ssr::IntoSsrData<W>,
-            {
-                type Children =
-                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
-                        W,
-                    >>::Children;
-
-                type ChildrenRenderState =
-                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
-                        W,
-                    >>::ChildrenRenderState;
-
-                type Attrs =
-                    <$crate::ElementProps<Children, Attrs> as $crate::frender_ssr::IntoSsrData<
-                        W,
-                    >>::Attrs;
-
-                fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
-                    $crate::frender_ssr::IntoSsrData::<W>::into_ssr_data(this.props)
-                }
-            }
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! __impl_children_fn {
     (
         [children]
@@ -265,6 +186,15 @@ macro_rules! __impl_props_type {
             pub struct $name<Children = (), Attrs = ()> {
                 pub props: $crate::ElementProps<Children, Attrs>,
             }
+
+            impl<Children, Attrs> $crate::IntoElementProps for $name<Children, Attrs> {
+                type Children = Children;
+                type Attrs = Attrs;
+
+                fn into_element_props(this: Self) -> $crate::ElementProps<Children, Attrs> {
+                    this.props
+                }
+            }
         }
 
         pub mod building_struct {
@@ -286,12 +216,6 @@ macro_rules! __impl_props_type {
             building.0
         }
         pub use build as valid;
-
-        #[cfg(feature = "dom")]
-        $crate::__impl_dom! {}
-
-        #[cfg(feature = "ssr")]
-        $crate::__impl_ssr! {}
     };
 }
 
@@ -325,6 +249,36 @@ macro_rules! def_props_type {
         $crate::__impl_props_type! {
             $(#$struct_attr)*
             $name
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_intrinsic_element_with_any_children {
+    ($ty:ty) => {
+        impl<Ctx, Children: $crate::frender_core::UpdateRenderState<Ctx>>
+            $crate::IntrinsicComponentWithChildren<Ctx, Children> for $ty
+        {
+            type ChildrenState = Children::State;
+
+            #[inline(always)]
+            fn initialize_children_state(
+                self,
+                children: Children,
+                ctx: &mut Ctx,
+            ) -> Self::ChildrenState {
+                children.initialize_render_state(ctx)
+            }
+
+            #[inline(always)]
+            fn update_children_state(
+                self,
+                children: Children,
+                ctx: &mut Ctx,
+                children_state: std::pin::Pin<&mut Self::ChildrenState>,
+            ) {
+                children.update_render_state(ctx, children_state)
+            }
         }
     };
 }

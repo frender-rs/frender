@@ -10,6 +10,8 @@ pub use component::*;
 pub use props::*;
 pub use states::*;
 
+pub use frender_core;
+
 #[cfg(feature = "dom")]
 pub use frender_dom;
 

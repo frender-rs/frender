@@ -7,6 +7,14 @@ pub trait IntoIteratorAttrs<'a>: Sized {
     fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs;
 }
 
+impl<'a, const N: usize> IntoIteratorAttrs<'a> for [HtmlAttrPair<'a>; N] {
+    type IntoIterAttrs = std::array::IntoIter<HtmlAttrPair<'a>, N>;
+
+    fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+        this.into_iter()
+    }
+}
+
 impl<'a> IntoIteratorAttrs<'a> for () {
     type IntoIterAttrs = std::iter::Empty<HtmlAttrPair<'a>>;
 

@@ -29,8 +29,8 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
         (this.element_and_mounted, this.render_state)
     }
 
-    pub fn initialize_with_tag<D: crate::props::UpdateElement<E, State = S>>(
-        data: D,
+    pub fn initialize_with_tag(
+        initialize_state: impl FnOnce(&mut E, &mut crate::Dom) -> S,
         ctx: &mut crate::Dom,
         tag: &str,
     ) -> Self
@@ -38,9 +38,7 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
         E: wasm_bindgen::JsCast + AsRef<web_sys::Element>,
     {
         let (element_and_mounted, render_state) =
-            crate::utils::dom::initialize_element_with_tag(ctx, tag, |element, children_ctx| {
-                <D as crate::props::UpdateElement<E>>::initialize_state(data, element, children_ctx)
-            });
+            crate::utils::dom::initialize_element_with_tag(ctx, tag, initialize_state);
 
         Self {
             element_and_mounted,

@@ -2,6 +2,7 @@ use wasm_bindgen::JsCast;
 
 use crate::{element::intrinsic::ElementAndMounted, Dom, NextNodePosition};
 
+// TODO: inline
 pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(
     ctx: &mut Dom,
     tag: &str,

@@ -230,12 +230,6 @@ mod simple {
             $component_name:ident
         ) => {
             $vis mod $component_name {
-                #[inline(always)]
-                pub fn $component_name (
-                ) -> Building {
-                    super::$props_name ()
-                }
-
                 pub type Data<Children, Props> = ::frender_html_simple::IntrinsicElement<
                     ComponentType,
                     super::$props_name::Data<Children, Props>,
@@ -251,6 +245,8 @@ mod simple {
                     impl crate::imports::frender_html::props::IntrinsicComponent for $component_name {
                         const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
                     }
+
+                    ::frender_html_simple::impl_intrinsic_element_with_any_children! {$component_name}
                 }
                 pub use struct_component_type::$component_name as ComponentType;
 
@@ -259,7 +255,7 @@ mod simple {
                     #[allow(unused_imports)]
                     use super::super::*;
 
-                    impl crate::imports::frender_html_simple::IntrinsicComponentWithElementType for super::ComponentType {
+                    impl crate::imports::frender_html_simple::DomIntrinsicComponent for super::ComponentType {
                         $item_type_element
                     }
                 }
@@ -269,7 +265,7 @@ mod simple {
                     #[allow(unused_imports)]
                     use super::super::*;
 
-                    impl<Children> crate::imports::frender_html_simple::IntrinsicComponentSupportChildren<Children> for super::ComponentType {
+                    impl crate::imports::frender_html_simple::SsrIntrinsicComponent for super::ComponentType {
                         // TODO: some components are void or self closing
                     }
                 }
@@ -287,9 +283,15 @@ mod simple {
 
                 pub use build as build_element;
                 pub use build as valid;
+
+                pub use super::$props_name as Props;
             }
 
-            $vis use $component_name::$component_name;
+            #[inline(always)]
+            $vis fn $component_name (
+            ) -> $props_name::Building {
+                $props_name ()
+            }
         };
     }
 

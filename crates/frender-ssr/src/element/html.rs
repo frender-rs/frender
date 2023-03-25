@@ -4,6 +4,7 @@ use frender_core::{RenderState, UpdateRenderState};
 use futures_io::AsyncWrite;
 
 use crate::{
+    attrs::IntoIteratorAttrs,
     bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
     SsrContext, WriterOrError, WritingState,
 };
@@ -297,15 +298,15 @@ impl<
 impl<'a, Children: UpdateRenderState<crate::SsrContext<W>>, Attrs, W: AsyncWrite + Unpin>
     UpdateRenderState<crate::SsrContext<W>> for HtmlElement<'a, Children, Attrs>
 where
-    Attrs: Iterator<Item = HtmlAttrPair<'a>>,
+    Attrs: IntoIteratorAttrs<'a>,
 {
-    type State = HtmlElementRenderState<'a, Children::State, Attrs>;
+    type State = HtmlElementRenderState<'a, Children::State, Attrs::IntoIterAttrs>;
 
     fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
         HtmlElementRenderState {
             data: HtmlElementRenderStateData::new(
                 self.tag,
-                self.attributes,
+                Attrs::into_iter_attrs(self.attributes),
                 self.children
                     .map_children(|children| children.initialize_render_state(ctx)),
             ),
