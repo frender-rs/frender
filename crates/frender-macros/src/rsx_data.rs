@@ -1,6 +1,6 @@
 use darling::ToTokens;
 use proc_macro2::Span;
-use syn::{braced, parse::Parse, spanned::Spanned};
+use syn::{braced, ext::IdentExt, parse::Parse, spanned::Spanned};
 
 pub struct RsxElement {
     pub start_lt: syn::Token![<],
@@ -320,6 +320,7 @@ impl Parse for RsxKeyOrProp {
                     value,
                 }))
             } else {
+                // TODO: record the error and fallback
                 Err(syn::Error::new(
                     prop.name.span(),
                     "value of key must be provided",
@@ -336,9 +337,36 @@ pub struct RsxPropValue {
     pub value: LitOrBraced,
 }
 
+fn should_use_raw(ident_str: &str) -> bool {
+    match ident_str {
+        // Copied from https://docs.rs/proc-macro2/1.0.53/src/proc_macro2/fallback.rs.html#784-789
+        "_" | "super" | "self" | "Self" | "crate" => false,
+        #[rustfmt::skip]
+        // Copied from https://docs.rs/syn/2.0.5/src/syn/ident.rs.html#57-71
+        // Based on https://doc.rust-lang.org/1.65.0/reference/keywords.html
+        "abstract" | "as" | "async" | "await" | "become" | "box" | "break" |
+        "const" | "continue" | "crate" | "do" | "dyn" | "else" | "enum" |
+        "extern" | "false" | "final" | "fn" | "for" | "if" | "impl" | "in" |
+        "let" | "loop" | "macro" | "match" | "mod" | "move" | "mut" |
+        "override" | "priv" | "pub" | "ref" | "return" | "Self" | "self" |
+        "static" | "struct" | "super" | "trait" | "true" | "try" | "type" |
+        "typeof" | "unsafe" | "unsized" | "use" | "virtual" | "where" |
+        "while" | "yield" => true,
+        _ => false,
+    }
+}
+
 impl Parse for RsxProp {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let name: syn::Ident = input.parse()?;
+        let name: syn::Ident = {
+            let name = input.call(syn::Ident::parse_any)?;
+            let ident_str = name.to_string();
+            if should_use_raw(&ident_str) {
+                syn::Ident::new_raw(&ident_str, name.span())
+            } else {
+                name
+            }
+        };
 
         let value = {
             let eq: Option<syn::Token![=]> = input.parse()?;
