@@ -1,4 +1,4 @@
-use std::task::Poll;
+use std::{pin::Pin, task::Poll};
 
 use futures_io::AsyncWrite;
 
@@ -38,9 +38,19 @@ pub struct SsrWriter<W> {
     pub error: Option<std::io::Error>,
 }
 
+// TODO: remove
 pub enum WriterOrError<W> {
     Writer(W),
     Error(std::io::Error),
+}
+
+impl<W> Into<std::io::Result<W>> for WriterOrError<W> {
+    fn into(self) -> std::io::Result<W> {
+        match self {
+            WriterOrError::Writer(w) => Ok(w),
+            WriterOrError::Error(error) => Err(error),
+        }
+    }
 }
 
 pub struct SsrContext<W: AsyncWrite + Unpin> {
@@ -54,6 +64,35 @@ impl<W: AsyncWrite + Unpin> SsrContext<W> {
             writer_or_error: WriterOrError::Writer(writer),
             busy: false,
         }
+    }
+
+    pub(crate) fn write_as_any<Out, F>(&mut self, f: F) -> Out
+    where
+        F: FnOnce(&mut AnySsrContext<'_>) -> Out,
+    {
+        let writer_or_error = match &mut self.writer_or_error {
+            WriterOrError::Writer(writer) => {
+                let writer: Pin<&mut W> = Pin::new(writer);
+                WriterOrError::Writer(writer as Pin<&mut dyn AsyncWrite>)
+            }
+            WriterOrError::Error(_) => WriterOrError::Error(std::io::ErrorKind::Other.into()),
+        };
+
+        let mut context: AnySsrContext = SsrContext {
+            writer_or_error,
+            busy: self.busy,
+        };
+
+        let out = f(&mut context);
+        self.busy = context.busy;
+
+        if let WriterOrError::Error(error) = context.writer_or_error {
+            if let WriterOrError::Writer(_) = self.writer_or_error {
+                self.writer_or_error = WriterOrError::Error(error);
+            }
+        };
+
+        out
     }
 }
 
