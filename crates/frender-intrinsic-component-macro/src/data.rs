@@ -272,9 +272,28 @@ impl Parse for Fields {
 }
 
 #[derive(Clone)]
+pub struct ComponentNameWithOptions {
+    pub component_name: syn::Ident,
+    pub options: Option<proc_macro2::TokenTree>,
+}
+
+impl Parse for ComponentNameWithOptions {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            component_name: input.parse()?,
+            options: if input.is_empty() || input.peek(syn::Token![,]) {
+                None
+            } else {
+                Some(input.parse()?)
+            },
+        })
+    }
+}
+
+#[derive(Clone)]
 pub struct ComponentNames {
     pub colon_token: syn::Token![:],
-    pub names: Punctuated<syn::Ident, syn::Token![,]>,
+    pub names: Punctuated<ComponentNameWithOptions, syn::Token![,]>,
 }
 
 #[derive(Clone)]
@@ -284,7 +303,7 @@ pub struct DomElement {
 }
 
 impl DomElement {
-    pub fn component_names(&self) -> Option<&Punctuated<syn::Ident, syn::Token![,]>> {
+    pub fn component_names(&self) -> Option<&Punctuated<ComponentNameWithOptions, syn::Token![,]>> {
         self.component_names.as_ref().map(|v| &v.names)
     }
 }
@@ -296,7 +315,7 @@ impl Parse for DomElement {
             component_names: if let Some(colon_token) = input.parse()? {
                 Some(ComponentNames {
                     colon_token,
-                    names: input.parse_terminated(syn::Ident::parse)?,
+                    names: input.parse_terminated(Parse::parse)?,
                 })
             } else {
                 None

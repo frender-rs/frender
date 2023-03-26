@@ -653,7 +653,8 @@ impl IntrinsicComponentPropsData {
             .content
             .component_names()
             .map(|component_names| {
-                let mut component_names = component_names.iter();
+                // TODO: use component options
+                let mut component_names = component_names.iter().map(|c| &c.component_name);
                 let component_name = component_names.next().unwrap(); // TODO: tolerant
                 quote! {
                     #crate_path::def_intrinsic_component! {

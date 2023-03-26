@@ -54,13 +54,21 @@ impl IntrinsicComponentPropsData {
             .content
             .component_names()
             .map(|component_names| {
-                let component_names = component_names.iter();
+                let component_names = component_names.iter().map(|c| {
+                    let component_name = &c.component_name;
+                    let options_or_semi = c
+                        .options
+                        .as_ref()
+                        .map_or_else(|| quote!(;), darling::ToTokens::to_token_stream);
+
+                    quote!(#component_name #options_or_semi)
+                });
                 quote! {
                     #crate_path::def_intrinsic_component_simple!(
                         type Props = #name;
                         type Element = #dom_element_type;
                         #(
-                            #vis struct #component_names;
+                            #vis struct #component_names
                         )*
                     );
                 }
