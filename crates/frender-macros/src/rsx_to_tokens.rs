@@ -138,6 +138,10 @@ impl RsxElementChildren {
         errors: &mut impl RecordError<syn::Error>,
     ) -> Option<proc_macro2::TokenStream> {
         if let Some((children, span)) = self.unwrap_children_and_span() {
+            if children.len() == 1 {
+                let child = children.into_iter().next().unwrap();
+                return Some(child.try_into_ts(crate_path, errors));
+            }
             let mut group = proc_macro2::Group::new(
                 proc_macro2::Delimiter::Parenthesis,
                 children
