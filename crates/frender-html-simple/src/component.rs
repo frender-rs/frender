@@ -1,4 +1,4 @@
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{RenderContext, RenderState, UpdateRenderState};
 use frender_html_common::IntrinsicComponent;
 
 use crate::IntoElementProps;
@@ -8,14 +8,18 @@ pub trait DomIntrinsicComponent {
     type Element: AsRef<frender_dom::web_sys::Element> + frender_dom::wasm_bindgen::JsCast;
 }
 
-pub trait IntrinsicComponentWithChildren<Ctx, Children> {
+pub trait IntrinsicComponentWithChildren<Ctx: for<'ctx> RenderContext<'ctx>, Children> {
     type ChildrenState: RenderState<Ctx>;
 
-    fn initialize_children_state(self, children: Children, ctx: &mut Ctx) -> Self::ChildrenState;
+    fn initialize_children_state(
+        self,
+        children: Children,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::ChildrenState;
     fn update_children_state(
         self,
         children: Children,
-        ctx: &mut Ctx,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
         children_state: std::pin::Pin<&mut Self::ChildrenState>,
     );
 }
@@ -25,17 +29,25 @@ pub struct IntrinsicChildrenAsElement<C, Children> {
     pub children: Children,
 }
 
-impl<C, Children, Ctx> UpdateRenderState<Ctx> for IntrinsicChildrenAsElement<C, Children>
+impl<C, Children, Ctx: for<'ctx> RenderContext<'ctx>> UpdateRenderState<Ctx>
+    for IntrinsicChildrenAsElement<C, Children>
 where
     C: IntrinsicComponentWithChildren<Ctx, Children>,
 {
     type State = C::ChildrenState;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
         C::initialize_children_state(self.component_type, self.children, ctx)
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, children_state: std::pin::Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+        children_state: std::pin::Pin<&mut Self::State>,
+    ) {
         C::update_children_state(self.component_type, self.children, ctx, children_state)
     }
 }

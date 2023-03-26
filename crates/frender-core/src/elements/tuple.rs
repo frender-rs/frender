@@ -1,15 +1,15 @@
 #![allow(non_snake_case)]
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{RenderContext, RenderState, UpdateRenderState};
 
-impl<Ctx> RenderState<Ctx> for () {
+impl<Ctx: for<'ctx> RenderContext<'ctx>> RenderState<Ctx> for () {
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {}
 
     #[inline]
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let _ = cx;
@@ -17,26 +17,44 @@ impl<Ctx> RenderState<Ctx> for () {
     }
 }
 
-impl<Ctx> UpdateRenderState<Ctx> for () {
+impl<Ctx: for<'ctx> RenderContext<'ctx>> UpdateRenderState<Ctx> for () {
     type State = ();
 
     #[inline]
-    fn initialize_render_state(self, _ctx: &mut Ctx) -> Self::State {}
+    fn initialize_render_state(
+        self,
+        _: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
+    }
 
     #[inline]
-    fn update_render_state(self, _: &mut Ctx, _: std::pin::Pin<&mut Self::State>) {}
+    fn update_render_state(
+        self,
+        _: &mut <Ctx as RenderContext<'_>>::ContextData,
+        _: std::pin::Pin<&mut Self::State>,
+    ) {
+    }
 }
 
-impl<Ctx, R0: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for (R0,) {
+impl<Ctx: for<'ctx> RenderContext<'ctx>, R0: UpdateRenderState<Ctx>> UpdateRenderState<Ctx>
+    for (R0,)
+{
     type State = R0::State;
 
     #[inline]
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
         R0::initialize_render_state(self.0, ctx)
     }
 
     #[inline]
-    fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+        state: std::pin::Pin<&mut Self::State>,
+    ) {
         R0::update_render_state(self.0, ctx, state)
     }
 }
@@ -51,7 +69,7 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<Ctx, $($field: RenderState<Ctx>),+> RenderState<Ctx> for $name<$($field),+> {
+            impl<Ctx: for<'ctx> RenderContext<'ctx>, $($field: RenderState<Ctx>),+> RenderState<Ctx> for $name<$($field),+> {
                 fn unmount(self: ::core::pin::Pin<&mut Self>) {
                     let this = self.project();
                     $( this.$field.unmount(); )+
@@ -60,7 +78,7 @@ macro_rules! impl_render_for_tuple {
                 #[inline]
                 fn poll_reactive(
                     self: std::pin::Pin<&mut Self>,
-                    ctx: &mut Ctx,
+                    ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
                     cx: &mut std::task::Context<'_>,
                 ) -> std::task::Poll<()> {
                     let this = self.project();
@@ -72,11 +90,14 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<Ctx, $($field: UpdateRenderState<Ctx>),+> UpdateRenderState<Ctx> for ($($field),+) {
+            impl<Ctx: for<'ctx> RenderContext<'ctx>, $($field: UpdateRenderState<Ctx>),+> UpdateRenderState<Ctx> for ($($field),+) {
                 type State = $name <$($field::State),+>;
 
                 #[inline]
-                fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+                fn initialize_render_state(
+                    self,
+                    ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+                ) -> Self::State {
                     let ($($field,)+) = self;
 
                     $name {$(
@@ -85,7 +106,11 @@ macro_rules! impl_render_for_tuple {
                 }
 
                 #[inline]
-                fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
+                fn update_render_state(
+                    self,
+                    ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+                    state: std::pin::Pin<&mut Self::State>,
+                ) {
                     let state = state.project();
                     let ($($field,)+) = self;
                     $(

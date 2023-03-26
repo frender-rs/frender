@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{RenderContext, RenderState, UpdateRenderState};
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 use lazy_pinned::LazyPinned;
 
@@ -91,9 +91,9 @@ impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, S>
     FnHookElement<HookData, fn_wrapper::FnMutWithContextAndState<U, S>>
 {
     #[allow(non_snake_case)]
-    pub fn FnMut<Ctx>(use_hook: U) -> Self
+    pub fn FnMut<Ctx: for<'ctx> RenderContext<'ctx>>(use_hook: U) -> Self
     where
-        U: for<'a> FnMut(Pin<&'a mut HookData>, ContextAndState<'a, Ctx, S>) -> Rendered<S>,
+        U: for<'a> FnMut(Pin<&'a mut HookData>, ContextAndState<'a, '_, Ctx, S>) -> Rendered<S>,
         S: RenderState<Ctx>,
     {
         Self {
@@ -107,7 +107,9 @@ impl<HookData: HookPollNextUpdate + HookUnmount + Default, U>
     FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>>
 {
     #[allow(non_snake_case)]
-    pub fn FnMutOutputElement<Ctx, E: UpdateRenderState<Ctx>>(use_hook: U) -> Self
+    pub fn FnMutOutputElement<Ctx: for<'ctx> RenderContext<'ctx>, E: UpdateRenderState<Ctx>>(
+        use_hook: U,
+    ) -> Self
     where
         U: FnMut(Pin<&mut HookData>) -> E,
     {
@@ -134,7 +136,7 @@ pin_project_lite::pin_project!(
 );
 
 impl<HookData: HookPollNextUpdate + HookUnmount, U, S> FnMutHookElementState<HookData, U, S> {
-    pub fn impl_unmount<Ctx>(self: Pin<&mut Self>)
+    pub fn impl_unmount<Ctx: for<'ctx> RenderContext<'ctx>>(self: Pin<&mut Self>)
     where
         S: RenderState<Ctx>,
     {
@@ -151,20 +153,21 @@ pub mod fn_wrapper {
     pub struct FnMutOutputElement<U>(pub U);
 }
 
-pub trait UseRender<InnerHook, Ctx> {
+pub trait UseRender<InnerHook, Ctx: for<'ctx> RenderContext<'ctx>> {
     type State: RenderState<Ctx>;
 
     fn use_render<'a>(
         &'a mut self,
         inner_hook: Pin<&'a mut InnerHook>,
-        cs: ContextAndState<'a, Ctx, Self::State>,
+        cs: ContextAndState<'a, '_, Ctx, Self::State>,
     ) -> Rendered<Self::State>;
 }
 
-impl<InnerHook, Ctx, U, S> UseRender<InnerHook, Ctx> for fn_wrapper::FnMutWithContextAndState<U, S>
+impl<InnerHook, Ctx: for<'ctx> RenderContext<'ctx>, U, S> UseRender<InnerHook, Ctx>
+    for fn_wrapper::FnMutWithContextAndState<U, S>
 where
     S: RenderState<Ctx>,
-    U: for<'a> FnMut(Pin<&'a mut InnerHook>, ContextAndState<'a, Ctx, S>) -> Rendered<S>,
+    U: for<'a> FnMut(Pin<&'a mut InnerHook>, ContextAndState<'a, '_, Ctx, S>) -> Rendered<S>,
 {
     type State = S;
 
@@ -172,14 +175,14 @@ where
     fn use_render<'a>(
         &'a mut self,
         inner_hook: Pin<&'a mut InnerHook>,
-        cs: ContextAndState<'a, Ctx, S>,
+        cs: ContextAndState<'a, '_, Ctx, S>,
     ) -> Rendered<S> {
         (self.0)(inner_hook, cs)
     }
 }
 
-impl<InnerHook, Ctx, U, E: UpdateRenderState<Ctx>> UseRender<InnerHook, Ctx>
-    for fn_wrapper::FnMutOutputElement<U>
+impl<InnerHook, Ctx: for<'ctx> RenderContext<'ctx>, U, E: UpdateRenderState<Ctx>>
+    UseRender<InnerHook, Ctx> for fn_wrapper::FnMutOutputElement<U>
 where
     U: FnMut(Pin<&mut InnerHook>) -> E,
 {
@@ -189,17 +192,17 @@ where
     fn use_render<'a>(
         &'a mut self,
         inner_hook: Pin<&'a mut InnerHook>,
-        cs: ContextAndState<'a, Ctx, <E as UpdateRenderState<Ctx>>::State>,
+        cs: ContextAndState<'a, '_, Ctx, <E as UpdateRenderState<Ctx>>::State>,
     ) -> Rendered<<E as UpdateRenderState<Ctx>>::State> {
         let element = (self.0)(inner_hook);
         cs.render(element)
     }
 }
 
-impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx> RenderState<Ctx>
-    for FnMutHookElementState<HookData, U, U::State>
+impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx: for<'ctx> RenderContext<'ctx>>
+    RenderState<Ctx> for FnMutHookElementState<HookData, U, U::State>
 where
-    Ctx: HookContext,
+    for<'ctx> <Ctx as RenderContext<'ctx>>::ContextData: HookContext,
     U: UseRender<HookData, Ctx>,
 {
     #[inline]
@@ -209,7 +212,7 @@ where
 
     fn poll_reactive(
         self: Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut this = self.project();
@@ -220,7 +223,7 @@ where
             std::task::Poll::Ready(true)
         };
 
-        let old_context_data = Ctx::get_context_data(ctx);
+        let old_context_data = Ctx::ContextData::get_context_data(ctx);
 
         let r = lazy_pinned_state_poll_reactive(this.state.as_mut(), ctx, cx);
 
@@ -229,7 +232,7 @@ where
                 std::task::Poll::Ready(())
             }
             (std::task::Poll::Ready(true), _) => {
-                Ctx::replace_context_data(ctx, old_context_data);
+                Ctx::ContextData::replace_context_data(ctx, old_context_data);
 
                 let cs = ContextAndState::new(ctx, this.state);
                 let _: Rendered<U::State> = this.use_hook.use_render(this.hook_data, cs);
@@ -243,16 +246,19 @@ where
     }
 }
 
-impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx> UpdateRenderState<Ctx>
-    for FnHookElement<HookData, U>
+impl<HookData: HookPollNextUpdate + HookUnmount, U, Ctx: for<'ctx> RenderContext<'ctx>>
+    UpdateRenderState<Ctx> for FnHookElement<HookData, U>
 where
     HookData: Default,
-    Ctx: HookContext,
+    for<'ctx> <Ctx as RenderContext<'ctx>>::ContextData: HookContext,
     U: UseRender<HookData, Ctx>,
 {
     type State = FnMutHookElementState<HookData, U, U::State>;
 
-    fn initialize_render_state(self, _ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(
+        self,
+        _ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
         // TODO: eagerly initialize for Unpin HookData
         FnMutHookElementState {
             hook_data: Default::default(),
@@ -262,7 +268,11 @@ where
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+        state: std::pin::Pin<&mut Self::State>,
+    ) {
         let state = state.project();
 
         let cs = ContextAndState::new(ctx, state.state);

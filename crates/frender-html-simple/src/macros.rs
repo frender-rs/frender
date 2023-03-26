@@ -256,7 +256,7 @@ macro_rules! def_props_type {
 #[macro_export]
 macro_rules! impl_intrinsic_element_with_any_children {
     ($ty:ty) => {
-        impl<Ctx, Children: $crate::frender_core::UpdateRenderState<Ctx>>
+        impl<Ctx: for<'ctx> $crate::frender_core::RenderContext<'ctx>, Children: $crate::frender_core::UpdateRenderState<Ctx>>
             $crate::IntrinsicComponentWithChildren<Ctx, Children> for $ty
         {
             type ChildrenState = Children::State;
@@ -265,7 +265,7 @@ macro_rules! impl_intrinsic_element_with_any_children {
             fn initialize_children_state(
                 self,
                 children: Children,
-                ctx: &mut Ctx,
+                ctx: &mut <Ctx as $crate::frender_core::RenderContext<'_>>::ContextData,
             ) -> Self::ChildrenState {
                 children.initialize_render_state(ctx)
             }
@@ -274,7 +274,7 @@ macro_rules! impl_intrinsic_element_with_any_children {
             fn update_children_state(
                 self,
                 children: Children,
-                ctx: &mut Ctx,
+                ctx: &mut <Ctx as $crate::frender_core::RenderContext<'_>>::ContextData,
                 children_state: std::pin::Pin<&mut Self::ChildrenState>,
             ) {
                 children.update_render_state(ctx, children_state)

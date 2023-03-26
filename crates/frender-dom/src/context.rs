@@ -1,6 +1,6 @@
 use std::future::IntoFuture;
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{RenderContext, RenderState, UpdateRenderState};
 
 #[derive(Debug, Clone)]
 pub enum NextNodePosition {
@@ -40,6 +40,10 @@ impl NextNodePosition {
 pub struct Dom {
     pub document: web_sys::Document,
     pub next_node_position: NextNodePosition,
+}
+
+impl RenderContext<'_> for Dom {
+    type ContextData = Self;
 }
 
 impl Dom {

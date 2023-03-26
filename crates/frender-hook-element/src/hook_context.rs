@@ -1,5 +1,5 @@
 pub trait HookContext: Sized {
-    type ContextData;
+    type ContextData; // TODO: rename
 
     fn get_context_data(this: &Self) -> Self::ContextData;
 

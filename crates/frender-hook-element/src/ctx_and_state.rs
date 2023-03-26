@@ -1,9 +1,12 @@
 use std::pin::Pin;
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_core::{RenderContext, RenderState, UpdateRenderState};
 use lazy_pinned::LazyPinned;
 
-pub(crate) fn lazy_pinned_state_unmount<State: RenderState<Ctx>, Ctx>(
+pub(crate) fn lazy_pinned_state_unmount<
+    State: RenderState<Ctx>,
+    Ctx: for<'ctx> RenderContext<'ctx>,
+>(
     state: Pin<&mut LazyPinned<State>>,
 ) {
     if let Some(state) = state.as_pin_mut() {
@@ -11,9 +14,12 @@ pub(crate) fn lazy_pinned_state_unmount<State: RenderState<Ctx>, Ctx>(
     }
 }
 
-pub(crate) fn lazy_pinned_state_poll_reactive<State: RenderState<Ctx>, Ctx>(
+pub(crate) fn lazy_pinned_state_poll_reactive<
+    State: RenderState<Ctx>,
+    Ctx: for<'ctx> RenderContext<'ctx>,
+>(
     state: Pin<&mut LazyPinned<State>>,
-    ctx: &mut Ctx,
+    ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
     cx: &mut std::task::Context<'_>,
 ) -> std::task::Poll<()> {
     state.as_pin_mut().map_or(std::task::Poll::Ready(()), |s| {
@@ -23,24 +29,26 @@ pub(crate) fn lazy_pinned_state_poll_reactive<State: RenderState<Ctx>, Ctx>(
 
 pub struct Rendered<S>(std::marker::PhantomData<S>);
 
-pub struct ContextAndState<'a, Ctx, State> {
-    context: &'a mut Ctx,
+pub struct ContextAndState<'a, 'ctx, Ctx: RenderContext<'ctx>, State> {
+    context: &'a mut Ctx::ContextData,
     state: Pin<&'a mut LazyPinned<State>>,
 }
 
-impl<'a, Ctx, State> ContextAndState<'a, Ctx, State> {
-    pub fn context(&self) -> &Ctx {
+impl<'a, 'ctx, Ctx: RenderContext<'ctx>, State> ContextAndState<'a, 'ctx, Ctx, State> {
+    pub fn context(&self) -> &Ctx::ContextData {
         self.context
     }
 }
 
-impl<'a, Ctx, State> ContextAndState<'a, Ctx, State> {
-    pub fn new(context: &'a mut Ctx, state: Pin<&'a mut LazyPinned<State>>) -> Self {
+impl<'a, 'ctx, Ctx: RenderContext<'ctx>, State> ContextAndState<'a, 'ctx, Ctx, State> {
+    pub fn new(context: &'a mut Ctx::ContextData, state: Pin<&'a mut LazyPinned<State>>) -> Self {
         Self { context, state }
     }
 }
 
-impl<'a, Ctx, S: RenderState<Ctx>> ContextAndState<'a, Ctx, S> {
+impl<'a, 'ctx, Ctx: for<'c> RenderContext<'c>, S: RenderState<Ctx>>
+    ContextAndState<'a, 'ctx, Ctx, S>
+{
     pub fn render<E: UpdateRenderState<Ctx, State = S>>(self, element: E) -> Rendered<S> {
         self.state.use_pin_or_insert_with_data(
             (element, self.context),

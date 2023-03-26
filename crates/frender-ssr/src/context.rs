@@ -1,5 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
+use frender_core::RenderContext;
 use futures_io::AsyncWrite;
 
 #[derive(Clone, Copy)]
@@ -56,6 +57,10 @@ impl<W> Into<std::io::Result<W>> for WriterOrError<W> {
 pub struct SsrContext<W: AsyncWrite + Unpin> {
     pub(crate) writer_or_error: WriterOrError<W>,
     pub(crate) busy: bool,
+}
+
+impl<W: AsyncWrite + Unpin> RenderContext<'_> for SsrContext<W> {
+    type ContextData = Self;
 }
 
 impl<W: AsyncWrite + Unpin> SsrContext<W> {

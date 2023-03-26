@@ -2,7 +2,7 @@ use std::pin::Pin;
 
 use lazy_pinned::LazyPinned;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{RenderContext, RenderState, UpdateRenderState};
 
 use super::Preserved;
 
@@ -13,14 +13,16 @@ pin_project_lite::pin_project! {
     }
 }
 
-impl<Ctx, S: RenderState<Ctx>> RenderState<Ctx> for PreservedOptionState<S> {
+impl<Ctx: for<'ctx> RenderContext<'ctx>, S: RenderState<Ctx>> RenderState<Ctx>
+    for PreservedOptionState<S>
+{
     fn unmount(self: Pin<&mut Self>) {
         self.project().inner.as_pin_mut().map(S::unmount);
     }
 
     fn poll_reactive(
         self: Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         self.project()
@@ -30,16 +32,25 @@ impl<Ctx, S: RenderState<Ctx>> RenderState<Ctx> for PreservedOptionState<S> {
     }
 }
 
-impl<Ctx, R: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for Preserved<Option<R>> {
+impl<Ctx: for<'ctx> RenderContext<'ctx>, R: UpdateRenderState<Ctx>> UpdateRenderState<Ctx>
+    for Preserved<Option<R>>
+{
     type State = PreservedOptionState<R::State>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
         PreservedOptionState {
             inner: LazyPinned(self.0.map(|this| R::initialize_render_state(this, ctx))),
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+        state: Pin<&mut Self::State>,
+    ) {
         if let Some(element) = self.0 {
             state.project().inner.use_pin_or_insert_with_data(
                 (element, ctx),

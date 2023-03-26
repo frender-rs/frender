@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{RenderContext, RenderState, UpdateRenderState};
 
 /// TODO: `Keyed(element, key)`
 ///     - improve performance.
@@ -14,7 +14,9 @@ pub struct KeyedElementsState<K, S> {
 
 impl<K, S> Unpin for KeyedElementsState<K, S> {}
 
-impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsState<K, S> {
+impl<Ctx: for<'ctx> RenderContext<'ctx>, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx>
+    for KeyedElementsState<K, S>
+{
     fn unmount(self: std::pin::Pin<&mut Self>) {
         for state in self.get_mut().states.values_mut().map(std::pin::Pin::new) {
             S::unmount(state)
@@ -23,7 +25,7 @@ impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsStat
 
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
@@ -44,7 +46,7 @@ impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsStat
     }
 }
 
-impl<Ctx, K, E> UpdateRenderState<Ctx> for Vec<Keyed<K, E>>
+impl<Ctx: for<'ctx> RenderContext<'ctx>, K, E> UpdateRenderState<Ctx> for Vec<Keyed<K, E>>
 where
     K: std::hash::Hash + Eq,
     E: UpdateRenderState<Ctx>,
@@ -52,7 +54,10 @@ where
 {
     type State = KeyedElementsState<K, E::State>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn initialize_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+    ) -> Self::State {
         KeyedElementsState {
             states: self
                 .into_iter()
@@ -61,7 +66,11 @@ where
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, mut state: std::pin::Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut <Ctx as RenderContext<'_>>::ContextData,
+        mut state: std::pin::Pin<&mut Self::State>,
+    ) {
         state.as_mut().unmount();
         let states = &mut state.get_mut().states;
         let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
