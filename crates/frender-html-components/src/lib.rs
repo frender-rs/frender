@@ -9,6 +9,8 @@ pub mod html_expanded;
 #[cfg(not(feature = "html_macro_not_expand"))]
 pub use html_expanded as html;
 
+mod special_implementations;
+
 mod imports {
     pub use frender_core;
     pub use frender_html;

@@ -504,7 +504,12 @@ frender_macros::def_intrinsic_component_props! {
                 value ? f64 {set_value},
             }
         ][
-            pub struct HtmlScriptElementProps(web_sys::HtmlScriptElement : script) {
+            pub struct HtmlScriptElementProps(
+                web_sys::HtmlScriptElement :
+                    script {
+                        special_children: __,
+                    }
+            ) {
                 r#async ? bool {set_async},
                 cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
                 defer ? bool {set_defer},

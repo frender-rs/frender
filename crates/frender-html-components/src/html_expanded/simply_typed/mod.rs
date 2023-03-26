@@ -350,7 +350,9 @@ pub use HtmlScriptElementProps::HtmlScriptElementProps;
 crate::imports::def_intrinsic_component_simple!(
     type Props = HtmlScriptElementProps;
     type Element = web_sys::HtmlScriptElement;
-    pub struct script;
+    pub struct script {
+        special_children: __,
+    }
 );
 #[allow(non_snake_case)]
 pub mod HtmlSelectElementProps;

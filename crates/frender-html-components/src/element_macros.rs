@@ -210,7 +210,8 @@ mod simple {
             $item_type_element:item
 
             $(
-                $vis:vis struct $component_name:ident;
+                $vis:vis struct $component_name:ident
+                $component_options_or_semi:tt
             )*
         ) => {$(
             crate::element_macros::def_intrinsic_component_simple_one! {
@@ -218,6 +219,7 @@ mod simple {
                 $item_type_element
                 $vis
                 $component_name
+                $component_options_or_semi
             }
         )*};
     }
@@ -228,6 +230,7 @@ mod simple {
             $item_type_element:item
             $vis:vis
             $component_name:ident
+            $component_options_or_semi:tt
         ) => {
             $vis mod $component_name {
                 pub type Data<Children, Props> = ::frender_html_simple::IntrinsicElement<
@@ -246,7 +249,10 @@ mod simple {
                         const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
                     }
 
-                    ::frender_html_simple::impl_intrinsic_element_with_any_children! {$component_name}
+                    crate::element_macros::def_intrinsic_component_simple_with_children! {
+                        $component_options_or_semi
+                        $component_name
+                    }
                 }
                 pub use struct_component_type::$component_name as ComponentType;
 
@@ -295,8 +301,21 @@ mod simple {
         };
     }
 
+    macro_rules! def_intrinsic_component_simple_with_children {
+        (; $component_name:ident) => {
+            ::frender_html_simple::impl_intrinsic_element_with_any_children! {$component_name}
+        };
+        (
+            {
+                special_children: __ $(,)?
+            }
+            $component_name:ident
+        ) => {};
+    }
+
     pub(crate) use def_intrinsic_component_simple;
     pub(crate) use def_intrinsic_component_simple_one;
+    pub(crate) use def_intrinsic_component_simple_with_children;
 }
 
 #[cfg(feature = "fully-typed")]
