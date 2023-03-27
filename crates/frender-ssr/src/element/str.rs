@@ -1,4 +1,4 @@
-use std::{borrow::Cow, convert::identity};
+use std::{borrow::Cow, convert::identity, pin::Pin};
 
 use frender_core::{IntoStaticStr, StaticStr, StaticText};
 
@@ -44,17 +44,17 @@ impl<S: IntoStaticStr, E: EscapeSafe> EscapeStr<S, E> {
     }
 }
 
-impl<W: crate::AsyncWrite + Unpin, S: IntoStaticStr, E: EscapeSafe>
-    ::frender_core::UpdateRenderState<crate::SsrContext<W>> for EscapeStr<S, E>
+impl<W: crate::AsyncWrite + ?Sized, S: IntoStaticStr, E: EscapeSafe>
+    ::frender_core::UpdateRenderState<crate::Ssr<W>> for EscapeStr<S, E>
 {
     type State = State<CowSlicedBytes<'static>>;
-    fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
+    fn initialize_render_state(self, ctx: &mut crate::SsrContext<Pin<&mut W>>) -> Self::State {
         crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow())
             .initialize_render_state(ctx)
     }
     fn update_render_state(
         self,
-        ctx: &mut crate::SsrContext<W>,
+        ctx: &mut crate::SsrContext<Pin<&mut W>>,
         state: ::core::pin::Pin<&mut Self::State>,
     ) {
         crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow())

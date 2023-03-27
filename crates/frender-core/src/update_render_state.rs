@@ -2,7 +2,7 @@ use std::pin::Pin;
 
 use crate::RenderState;
 
-pub trait RenderContext<'ctx> {
+pub trait RenderContext<'ctx, ImplicitBounds = &'ctx Self> {
     type ContextData;
 }
 

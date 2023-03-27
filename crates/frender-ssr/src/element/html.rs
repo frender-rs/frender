@@ -6,7 +6,7 @@ use futures_io::AsyncWrite;
 use crate::{
     attrs::IntoIteratorAttrs,
     bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
-    SsrContext, WriterOrError, WritingState,
+    Ssr, SsrContext, WriterOrError, WritingState,
 };
 
 // TODO: use html_common::
@@ -199,13 +199,13 @@ pin_project_lite::pin_project!(
 impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     HtmlElementRenderStateData<'a, Children, Attrs>
 {
-    fn impl_poll<W: AsyncWrite + Unpin>(
+    fn impl_poll<W: AsyncWrite + ?Sized>(
         self: Pin<&mut Self>,
-        ctx: &mut SsrContext<W>,
+        ctx: &mut SsrContext<Pin<&mut W>>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>
     where
-        Children: RenderState<SsrContext<W>>,
+        Children: RenderState<Ssr<W>>,
     {
         #[cfg(debug_assertions)]
         assert!(ctx.busy);
@@ -273,10 +273,10 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
 
 impl<
         'a,
-        Children: RenderState<SsrContext<W>>,
+        Children: RenderState<Ssr<W>>,
         Attrs: Iterator<Item = HtmlAttrPair<'a>>,
-        W: AsyncWrite + Unpin,
-    > RenderState<SsrContext<W>> for HtmlElementRenderState<'a, Children, Attrs>
+        W: AsyncWrite + ?Sized,
+    > RenderState<Ssr<W>> for HtmlElementRenderState<'a, Children, Attrs>
 {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         panic!("ssr cannot be unmounted");
@@ -284,7 +284,7 @@ impl<
 
     fn poll_reactive(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut SsrContext<W>,
+        ctx: &mut SsrContext<Pin<&mut W>>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let this = self.project();
@@ -295,14 +295,14 @@ impl<
     }
 }
 
-impl<'a, Children: UpdateRenderState<crate::SsrContext<W>>, Attrs, W: AsyncWrite + Unpin>
-    UpdateRenderState<crate::SsrContext<W>> for HtmlElement<'a, Children, Attrs>
+impl<'a, Children: UpdateRenderState<crate::Ssr<W>>, Attrs, W: AsyncWrite + ?Sized>
+    UpdateRenderState<crate::Ssr<W>> for HtmlElement<'a, Children, Attrs>
 where
     Attrs: IntoIteratorAttrs<'a>,
 {
     type State = HtmlElementRenderState<'a, Children::State, Attrs::IntoIterAttrs>;
 
-    fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
+    fn initialize_render_state(self, ctx: &mut crate::SsrContext<Pin<&mut W>>) -> Self::State {
         HtmlElementRenderState {
             data: HtmlElementRenderStateData::new(
                 self.tag,
@@ -314,7 +314,11 @@ where
         }
     }
 
-    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
+    fn update_render_state(
+        self,
+        ctx: &mut crate::SsrContext<Pin<&mut W>>,
+        state: Pin<&mut Self::State>,
+    ) {
         panic!("ssr element can not be updated");
     }
 }

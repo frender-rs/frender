@@ -3,11 +3,11 @@ use std::{future::Future, io, pin::Pin, task::Poll};
 use frender_core::{RenderState, UpdateRenderState};
 use futures_io::AsyncWrite;
 
-use crate::{AnySsrContext, SsrContext};
+use crate::{AnySsr, AnySsrContext, SsrContext};
 
 pin_project_lite::pin_project!(
     #[must_use = "futures do nothing unless you `.await` or poll them"]
-    pub struct RenderToWriter<W: AsyncWrite, S: RenderState<SsrContext<W>>>
+    pub struct RenderToWriter<W: AsyncWrite, S: RenderState<AnySsr>>
     where
         W: Unpin,
     {
@@ -17,7 +17,7 @@ pin_project_lite::pin_project!(
     }
 );
 
-impl<W: AsyncWrite + Unpin, S: RenderState<SsrContext<W>>> Future for RenderToWriter<W, S> {
+impl<W: AsyncWrite + Unpin, S: RenderState<AnySsr>> Future for RenderToWriter<W, S> {
     type Output = io::Result<()>;
 
     fn poll(
@@ -25,15 +25,16 @@ impl<W: AsyncWrite + Unpin, S: RenderState<SsrContext<W>>> Future for RenderToWr
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
         let this = self.project();
-        match this.state.poll_reactive(this.context, cx) {
-            Poll::Ready(()) => Poll::Ready(match &mut this.context.writer_or_error {
-                crate::WriterOrError::Writer(_) => Ok(()),
-                crate::WriterOrError::Error(error) => {
-                    Err(std::mem::replace(error, io::ErrorKind::Other.into()))
-                }
-            }),
-            Poll::Pending => Poll::Pending,
-        }
+        this.context
+            .write_as_any(|ctx| match this.state.poll_reactive(ctx, cx) {
+                Poll::Ready(()) => Poll::Ready(match &mut ctx.writer_or_error {
+                    crate::WriterOrError::Writer(_) => Ok(()),
+                    crate::WriterOrError::Error(error) => {
+                        Err(std::mem::replace(error, io::ErrorKind::Other.into()))
+                    }
+                }),
+                Poll::Pending => Poll::Pending,
+            })
     }
 }
 
@@ -77,7 +78,7 @@ impl MapWriteResult<Vec<u8>> for BytesIntoString {
 }
 
 pin_project_lite::pin_project!(
-    pub struct RenderAs<M: MapWriteResult<W>, W: AsyncWrite, S>
+    pub struct RenderAs<M: MapWriteResult<W>, W: AsyncWrite, S: RenderState<AnySsr>>
     where
         W: Unpin,
     {
@@ -88,16 +89,14 @@ pin_project_lite::pin_project!(
     }
 );
 
-impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrContext<'c>>>
-    RenderAs<M, W, S>
-{
+impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: RenderState<AnySsr>> RenderAs<M, W, S> {
     fn from_element<E>(writer: W, element: E, map: M) -> Self
     where
-        E: for<'c> UpdateRenderState<AnySsrContext<'c>, State = S>,
+        E: UpdateRenderState<AnySsr, State = S>,
     {
         let mut context = SsrContext::new(writer);
 
-        let state = context.write_as_any(|ctx| element.initialize_render_state(ctx));
+        let state = context.write_as_any(|ctx| E::initialize_render_state(element, ctx));
 
         Self {
             map: Some(map),
@@ -107,7 +106,7 @@ impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrC
     }
 }
 
-impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrContext<'c>>> Future
+impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: RenderState<AnySsr>> Future
     for RenderAs<M, W, S>
 {
     type Output = M::Out;
@@ -133,58 +132,41 @@ impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrC
     }
 }
 
-pub trait SsrExt<'ctx>: Sized + UpdateRenderState<AnySsrContext<'ctx>> {
+pub trait SsrExt: Sized + UpdateRenderState<AnySsr> {
     fn render_to_writer<W: AsyncWrite + Unpin>(
         self,
-        writer: &'ctx mut W,
-    ) -> RenderToWriter<
-        Pin<&'ctx mut dyn AsyncWrite>,
-        <Self as UpdateRenderState<AnySsrContext<'ctx>>>::State,
-    > {
+        writer: &mut W,
+    ) -> RenderToWriter<Pin<&mut dyn AsyncWrite>, <Self as UpdateRenderState<AnySsr>>::State> {
         let writer = Pin::new(writer);
         let mut context: AnySsrContext = SsrContext::new(writer);
         let state = self.initialize_render_state(&mut context);
 
         RenderToWriter { context, state }
     }
-}
 
-pub trait AnySsrExt: for<'ctx> SsrExt<'ctx>
-where
-    for<'ctx> Self: UpdateRenderState<AnySsrContext<'ctx>, State = Self::SsrState>,
-{
-    type SsrState: for<'ctx> RenderState<AnySsrContext<'ctx>>;
-
-    fn render_as_bytes(self) -> RenderAs<Identity, Vec<u8>, Self::SsrState> {
+    fn render_as_bytes(
+        self,
+    ) -> RenderAs<Identity, Vec<u8>, <Self as UpdateRenderState<AnySsr>>::State> {
         RenderAs::from_element(vec![], self, Identity)
     }
 
-    fn render_as_string(self) -> RenderAs<BytesIntoString, Vec<u8>, Self::SsrState> {
+    fn render_as_string(
+        self,
+    ) -> RenderAs<BytesIntoString, Vec<u8>, <Self as UpdateRenderState<AnySsr>>::State> {
         RenderAs::from_element(vec![], self, BytesIntoString)
     }
 }
 
-impl<'ctx, E: UpdateRenderState<AnySsrContext<'ctx>>> SsrExt<'ctx> for E {}
-impl<S, E> AnySsrExt for E
-where
-    E: for<'ctx> UpdateRenderState<AnySsrContext<'ctx>, State = S>,
-    S: for<'ctx> RenderState<AnySsrContext<'ctx>>,
-{
-    type SsrState = S;
-}
+impl<E: UpdateRenderState<AnySsr>> SsrExt for E {}
 
-pub async fn render_to_writer<
-    'a,
-    W: AsyncWrite + Unpin,
-    E: UpdateRenderState<AnySsrContext<'a>>,
->(
+pub async fn render_to_writer<'a, W: AsyncWrite + Unpin, E: UpdateRenderState<AnySsr>>(
     element: E,
     writer: &'a mut W,
 ) -> io::Result<()> {
     element.render_to_writer(writer).await
 }
 
-pub async fn render_to_string<E: for<'a> UpdateRenderState<AnySsrContext<'a>>>(
+pub async fn render_to_string<E: for<'a> UpdateRenderState<AnySsr>>(
     element: E,
 ) -> io::Result<String> {
     let mut buf = Vec::<u8>::new();

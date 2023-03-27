@@ -4,7 +4,7 @@ use frender_core::RenderState;
 
 use crate::{
     bytes::{AsyncWritableBytes, IntoAsyncWritableBytes},
-    SsrContext, WritingState,
+    Ssr, SsrContext, WritingState,
 };
 
 pub struct State<B> {
@@ -14,14 +14,14 @@ pub struct State<B> {
 
 impl<B> Unpin for State<B> {}
 
-impl<W: crate::AsyncWrite + Unpin, B: AsyncWritableBytes> RenderState<SsrContext<W>> for State<B> {
+impl<W: crate::AsyncWrite + ?Sized, B: AsyncWritableBytes> RenderState<Ssr<W>> for State<B> {
     fn unmount(self: Pin<&mut Self>) {
         panic!("ssr element can not be unmounted");
     }
 
     fn poll_reactive(
         self: Pin<&mut Self>,
-        ctx: &mut SsrContext<W>,
+        ctx: &mut SsrContext<Pin<&mut W>>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         let State { buf, writing_state } = self.get_mut();
@@ -46,18 +46,21 @@ macro_rules! impl_ssr_for_bytes {
     );* $(;)?) => {$(
         impl<
             $($($generic)+ ,)?
-            W: $crate::AsyncWrite + ::core::marker::Unpin> ::frender_core::UpdateRenderState<$crate::SsrContext<W>
+            W: $crate::AsyncWrite + ?::core::marker::Sized> ::frender_core::UpdateRenderState<$crate::Ssr<W>
         > for $for_ty
         {
             type State = $crate::element::bytes::State<<$buffer_ty as $crate::bytes::IntoAsyncWritableBytes>::Bytes>;
 
-            fn initialize_render_state($self_ident, ctx: &mut $crate::SsrContext<W>) -> Self::State {
+            fn initialize_render_state(
+                $self_ident,
+                ctx: &mut $crate::SsrContext<::core::pin::Pin<&mut W>>,
+            ) -> Self::State {
                 $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).initialize_render_state(ctx)
             }
 
             fn update_render_state(
                 $self_ident,
-                ctx: &mut $crate::SsrContext<W>,
+                ctx: &mut $crate::SsrContext<::core::pin::Pin<&mut W>>,
                 state: ::core::pin::Pin<&mut Self::State>,
             ) {
                 $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).update_render_state(ctx, state)
@@ -66,11 +69,11 @@ macro_rules! impl_ssr_for_bytes {
     )*};
 }
 
-impl<B: IntoAsyncWritableBytes, W: crate::AsyncWrite + ::core::marker::Unpin>
-    ::frender_core::UpdateRenderState<crate::SsrContext<W>> for UnsafeRawHtmlBytes<B>
+impl<B: IntoAsyncWritableBytes, W: crate::AsyncWrite + ?Sized>
+    ::frender_core::UpdateRenderState<crate::Ssr<W>> for UnsafeRawHtmlBytes<B>
 {
     type State = crate::element::bytes::State<<B as crate::bytes::IntoAsyncWritableBytes>::Bytes>;
-    fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
+    fn initialize_render_state(self, ctx: &mut crate::SsrContext<Pin<&mut W>>) -> Self::State {
         State {
             buf: <B as crate::bytes::IntoAsyncWritableBytes>::into_async_writable_bytes(self.0),
             writing_state: Default::default(),
@@ -78,7 +81,7 @@ impl<B: IntoAsyncWritableBytes, W: crate::AsyncWrite + ::core::marker::Unpin>
     }
     fn update_render_state(
         self,
-        ctx: &mut crate::SsrContext<W>,
+        ctx: &mut crate::SsrContext<Pin<&mut W>>,
         state: ::core::pin::Pin<&mut Self::State>,
     ) {
         panic!("ssr element can not be updated");

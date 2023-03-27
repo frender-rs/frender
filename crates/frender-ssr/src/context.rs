@@ -1,4 +1,4 @@
-use std::{pin::Pin, task::Poll};
+use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_core::RenderContext;
 use futures_io::AsyncWrite;
@@ -59,8 +59,12 @@ pub struct SsrContext<W: AsyncWrite + Unpin> {
     pub(crate) busy: bool,
 }
 
-impl<W: AsyncWrite + Unpin> RenderContext<'_> for SsrContext<W> {
-    type ContextData = Self;
+pub struct Ssr<W: AsyncWrite + ?Sized> {
+    __: PhantomData<W>,
+}
+
+impl<'ctx, W: AsyncWrite + ?Sized> RenderContext<'ctx> for Ssr<W> {
+    type ContextData = SsrContext<Pin<&'ctx mut W>>;
 }
 
 impl<W: AsyncWrite + Unpin> SsrContext<W> {
@@ -180,3 +184,4 @@ impl<W: AsyncWrite + Unpin> SsrContext<W> {
 }
 
 pub type AnySsrContext<'a> = SsrContext<std::pin::Pin<&'a mut dyn AsyncWrite>>;
+pub type AnySsr = Ssr<dyn AsyncWrite>;
