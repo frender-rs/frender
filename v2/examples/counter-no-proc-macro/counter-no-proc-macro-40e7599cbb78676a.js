@@ -522,7 +522,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('counter-no-proc-macro-a63a58540024f34c_bg.wasm', import.meta.url);
+        input = new URL('counter-no-proc-macro-40e7599cbb78676a_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
