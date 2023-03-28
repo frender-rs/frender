@@ -1,4 +1,6 @@
 pub mod bytes;
+#[cfg(feature = "either")]
+pub mod either;
 pub mod html;
 pub mod intrinsic;
 pub mod option;

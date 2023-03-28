@@ -11,3 +11,4 @@ frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 futures-io = "0.3.25"
 html-escape = "0.2.13"
 pin-project-lite = "0.2.9"
+either = { version = "1.8.1", default-features = false, optional = true }
