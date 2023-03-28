@@ -37,6 +37,7 @@ impl<Children, Attrs> ElementProps<Children, Attrs> {
 
 // pub type ElementPropsEmpty = ElementProps<(), EmptyProps>;
 
+// TODO: remove
 #[cfg(feature = "dom")]
 mod dom {
     use super::*;
@@ -74,28 +75,6 @@ mod dom {
                 .update_render_state(children_ctx, children_state);
 
             Attrs::update_element_non_reactive(this.attributes, element, children_ctx, other_state);
-        }
-    }
-}
-
-#[cfg(feature = "ssr")]
-mod ssr {
-    use frender_core::UpdateRenderState;
-    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, IntoSsrData, SsrContext};
-
-    impl<W: AsyncWrite + Unpin, Children, Attrs> IntoSsrData<W> for super::ElementProps<Children, Attrs>
-    where
-        Children: UpdateRenderState<SsrContext<W>>,
-        Attrs: IntoIteratorAttrs<'static>,
-    {
-        type Children = Children;
-
-        type ChildrenRenderState = Children::State;
-
-        type Attrs = Attrs::IntoIterAttrs;
-
-        fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
-            (this.children, Attrs::into_iter_attrs(this.attributes))
         }
     }
 }

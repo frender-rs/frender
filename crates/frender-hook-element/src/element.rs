@@ -19,7 +19,7 @@ mod prelude_names {
     pub(super) use frender_dom::Dom;
 
     #[cfg(feature = "ssr")]
-    pub(super) use frender_ssr::AnySsrContext;
+    pub(super) use frender_ssr::Element as SsrElement;
 
     pub(super) use super::{fn_wrapper, prelude_names, FnHookElement};
     pub(super) use crate::{ContextAndState, Rendered};
@@ -44,11 +44,7 @@ pub mod new_fn_hook_element {
 
     #[inline]
     #[cfg(feature = "ssr")]
-    pub fn ssr<
-        HookData: HookPollNextUpdate + HookUnmount + Default,
-        U,
-        E: for<'a> UpdateRenderState<AnySsrContext<'a>>,
-    >(
+    pub fn ssr<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: SsrElement>(
         use_hook: U,
     ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>>
     where
@@ -65,7 +61,7 @@ pub mod new_fn_hook_element {
     pub fn ssr_and_csr<
         HookData: HookPollNextUpdate + HookUnmount + Default,
         U,
-        E: UpdateRenderState<Dom> + for<'a> UpdateRenderState<AnySsrContext<'a>>,
+        E: UpdateRenderState<Dom> + SsrElement,
     >(
         use_hook: U,
     ) -> FnHookElement<HookData, fn_wrapper::FnMutOutputElement<U>>
@@ -85,6 +81,44 @@ pub use new_fn_hook_element::ssr_and_csr as new_fn_hook_element;
 pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U> {
     use_hook: U,
     _phantom: PhantomData<HookData>,
+}
+
+#[cfg(feature = "ssr")]
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U> frender_ssr::RenderState
+    for FnMutHookElementState<HookData, U, U::SsrState, ()>
+where
+    U: ssr::UseSsr<HookData>,
+{
+    fn poll_render<W: frender_ssr::AsyncWrite + ?Sized>(
+        self: Pin<&mut Self>,
+        writer: Pin<&mut W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<std::io::Result<()>> {
+        let this = self.project();
+        let cs = ssr::SsrContextAndState::new(this.state);
+        let rendered: ssr::Rendered<U::SsrState> = this.use_hook.use_ssr(this.hook_data, cs);
+        let state = rendered.into_state();
+
+        state.poll_render(writer, cx)
+    }
+}
+
+#[cfg(feature = "ssr")]
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U> frender_ssr::Element
+    for FnHookElement<HookData, U>
+where
+    U: ssr::UseSsr<HookData>,
+{
+    type SsrState = FnMutHookElementState<HookData, U, U::SsrState, ()>;
+
+    fn into_ssr_state(self) -> Self::SsrState {
+        FnMutHookElementState {
+            hook_data: Default::default(),
+            state: Default::default(),
+            use_hook: self.use_hook,
+            initialized: (),
+        }
+    }
 }
 
 impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, S>
@@ -119,7 +153,7 @@ impl<HookData: HookPollNextUpdate + HookUnmount + Default, U>
 }
 
 pin_project_lite::pin_project!(
-    pub struct FnMutHookElementState<HookData, U, S>
+    pub struct FnMutHookElementState<HookData, U, S, I = bool>
     where
         HookData: HookPollNextUpdate,
         HookData: HookUnmount,
@@ -129,7 +163,7 @@ pin_project_lite::pin_project!(
         #[pin]
         state: LazyPinned<S>,
         use_hook: U,
-        initialized: bool,
+        initialized: I,
     }
 );
 
@@ -159,6 +193,86 @@ pub trait UseRender<InnerHook, Ctx> {
         inner_hook: Pin<&'a mut InnerHook>,
         cs: ContextAndState<'a, Ctx, Self::State>,
     ) -> Rendered<Self::State>;
+}
+
+#[cfg(feature = "ssr")]
+pub mod ssr {
+    use std::pin::Pin;
+
+    use frender_ssr::{Element, RenderState};
+    use lazy_pinned::LazyPinned;
+
+    use crate::fn_wrapper;
+
+    pub struct Rendered<'a, State> {
+        state: Pin<&'a mut State>,
+    }
+
+    impl<'a, State> Rendered<'a, State> {
+        pub fn into_state(self) -> Pin<&'a mut State> {
+            self.state
+        }
+    }
+
+    pub struct SsrContextAndState<'a, State> {
+        state: Pin<&'a mut LazyPinned<State>>,
+    }
+
+    impl<'a, State> SsrContextAndState<'a, State> {
+        pub fn new(state: Pin<&'a mut LazyPinned<State>>) -> Self {
+            Self { state }
+        }
+
+        fn render<E: Element<SsrState = State>>(self, element: E) -> Rendered<'a, State> {
+            Rendered {
+                state: self
+                    .state
+                    .pin_project_or_insert_with(|| element.into_ssr_state()),
+            }
+        }
+    }
+
+    pub trait UseSsr<InnerHook> {
+        type SsrState: RenderState;
+
+        fn use_ssr<'cs>(
+            &mut self,
+            inner_hook: Pin<&mut InnerHook>,
+            cs: SsrContextAndState<'cs, Self::SsrState>,
+        ) -> Rendered<'cs, Self::SsrState>;
+    }
+
+    impl<InnerHook, U, S> UseSsr<InnerHook> for fn_wrapper::FnMutWithContextAndState<U, S>
+    where
+        S: RenderState,
+        U: for<'cs> FnMut(Pin<&mut InnerHook>, SsrContextAndState<'cs, S>) -> Rendered<'cs, S>,
+    {
+        type SsrState = S;
+
+        fn use_ssr<'cs>(
+            &mut self,
+            inner_hook: Pin<&mut InnerHook>,
+            cs: SsrContextAndState<'cs, Self::SsrState>,
+        ) -> Rendered<'cs, Self::SsrState> {
+            (self.0)(inner_hook, cs)
+        }
+    }
+
+    impl<InnerHook, U, E: Element> UseSsr<InnerHook> for fn_wrapper::FnMutOutputElement<U>
+    where
+        U: FnMut(Pin<&mut InnerHook>) -> E,
+    {
+        type SsrState = E::SsrState;
+
+        fn use_ssr<'cs>(
+            &mut self,
+            inner_hook: Pin<&mut InnerHook>,
+            cs: SsrContextAndState<'cs, Self::SsrState>,
+        ) -> Rendered<'cs, Self::SsrState> {
+            let element = (self.0)(inner_hook);
+            cs.render(element)
+        }
+    }
 }
 
 impl<InnerHook, Ctx, U, S> UseRender<InnerHook, Ctx> for fn_wrapper::FnMutWithContextAndState<U, S>

@@ -1,4 +1,4 @@
-use frender::prelude::*;
+use frender::{prelude::*, SsrElementExt};
 
 component_fn!(
     #[component(ssr)]
@@ -20,9 +20,6 @@ max-width: 768px;
 
 fn main() {
     let element = Main("frender-root");
-    let output = futures_lite::future::block_on(
-        frender::hook_element::frender_ssr::render_to_string(element),
-    )
-    .unwrap();
+    let output = futures_lite::future::block_on(element.render_as_string()).unwrap();
     println!("{}", output);
 }

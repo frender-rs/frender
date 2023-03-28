@@ -20,13 +20,3 @@ impl HookContext for frender_dom::Dom {
         this.next_node_position = old_context
     }
 }
-
-#[cfg(feature = "ssr")]
-impl<W: frender_ssr::AsyncWrite + Unpin> HookContext for frender_ssr::SsrContext<W> {
-    type ContextData = ();
-
-    #[inline]
-    fn get_context_data(_: &Self) -> Self::ContextData {}
-
-    fn replace_context_data(_: &mut Self, _: Self::ContextData) {}
-}

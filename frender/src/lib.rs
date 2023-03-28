@@ -7,6 +7,9 @@ pub use frender_macros::{component, def_props};
 #[cfg(feature = "dom")]
 pub use frender_hook_element::frender_dom::Dom;
 
+#[cfg(feature = "ssr")]
+pub use frender_hook_element::frender_ssr::{Element as SsrElement, ElementExt as SsrElementExt};
+
 #[cfg(feature = "html")]
 pub mod html {
     pub use frender_html::*;

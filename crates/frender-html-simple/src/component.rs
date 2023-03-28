@@ -20,9 +20,28 @@ pub trait IntrinsicComponentWithChildren<Ctx, Children> {
     );
 }
 
+#[cfg(feature = "ssr")]
+pub trait SsrWithChildren<Children> {
+    type ChildrenSsrState: frender_ssr::RenderState;
+
+    fn into_children_ssr_state(self, children: Children) -> Self::ChildrenSsrState;
+}
+
 pub struct IntrinsicChildrenAsElement<C, Children> {
     pub component_type: C,
     pub children: Children,
+}
+
+#[cfg(feature = "ssr")]
+impl<C, Children> frender_ssr::Element for IntrinsicChildrenAsElement<C, Children>
+where
+    C: SsrWithChildren<Children>,
+{
+    type SsrState = C::ChildrenSsrState;
+
+    fn into_ssr_state(self) -> Self::SsrState {
+        self.component_type.into_children_ssr_state(self.children)
+    }
 }
 
 impl<C, Children, Ctx> UpdateRenderState<Ctx> for IntrinsicChildrenAsElement<C, Children>
@@ -123,57 +142,39 @@ mod ssr {
 
     use frender_core::UpdateRenderState;
     use frender_html_common::IntrinsicComponent;
-    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, SsrContext};
+    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, Element};
 
-    use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement};
+    use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};
 
     use super::{IntrinsicComponentWithChildren, SsrIntrinsicComponent};
 
-    fn ssr_html_element<C: IntrinsicComponent + SsrIntrinsicComponent, P: IntoElementProps>(
-        element: super::IntrinsicElement<C, P>,
-    ) -> ::frender_ssr::element::html::HtmlElement<
-        'static,
-        IntrinsicChildrenAsElement<C, P::Children>,
-        P::Attrs,
-    > {
-        let ElementProps {
-            children,
-            attributes,
-        } = P::into_element_props(element.1);
-        let children = IntrinsicChildrenAsElement {
-            component_type: element.0,
-            children,
-        };
-        ::frender_ssr::element::html::HtmlElement {
-            tag: Cow::Borrowed(C::INTRINSIC_TAG),
-            attributes,
-            children: C::wrap_children(children),
-        }
-    }
-
-    impl<W: AsyncWrite + Unpin, C: IntrinsicComponent, P: IntoElementProps>
-        UpdateRenderState<SsrContext<W>> for super::IntrinsicElement<C, P>
+    impl<C: IntrinsicComponent, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
     where
         C: SsrIntrinsicComponent,
-        C: IntrinsicComponentWithChildren<SsrContext<W>, P::Children>,
+        C: SsrWithChildren<P::Children>,
         P::Attrs: IntoIteratorAttrs<'static>,
     {
-        type State = ::frender_ssr::element::html::HtmlElementRenderState<
+        type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
             'static,
-            C::ChildrenState,
+            C::ChildrenSsrState,
             <P::Attrs as IntoIteratorAttrs<'static>>::IntoIterAttrs,
         >;
 
-        fn initialize_render_state(self, ctx: &mut SsrContext<W>) -> Self::State {
-            ssr_html_element(self).initialize_render_state(ctx)
-        }
-
-        fn update_render_state(
-            self,
-            ctx: &mut SsrContext<W>,
-            state: std::pin::Pin<&mut Self::State>,
-        ) {
-            ssr_html_element(self).update_render_state(ctx, state)
+        fn into_ssr_state(self) -> Self::SsrState {
+            let ElementProps {
+                children,
+                attributes,
+            } = P::into_element_props(self.1);
+            let children = IntrinsicChildrenAsElement {
+                component_type: self.0,
+                children,
+            };
+            ::frender_ssr::element::html::HtmlElement {
+                tag: Cow::Borrowed(C::INTRINSIC_TAG),
+                attributes,
+                children: C::wrap_children(children),
+            }
+            .into_ssr_state()
         }
     }
 }

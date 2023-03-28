@@ -1,20 +1,13 @@
-use frender_core::UpdateRenderState;
-
 macro_rules! impl_render_scalar {
     ($(
         $for_ty:ty
     ),* $(,)?) => {$(
-        impl<W: $crate::AsyncWrite + Unpin> UpdateRenderState<$crate::SsrContext<W>> for $for_ty {
-            type State = super::bytes::State<$crate::bytes::SlicedBytes>;
+        impl $crate::Element for $for_ty {
+            type SsrState = super::bytes::State<$crate::bytes::SlicedBytes>;
 
             #[inline]
-            fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
-                self.to_string().initialize_render_state(ctx)
-            }
-
-            #[inline]
-            fn update_render_state(self, ctx: &mut $crate::SsrContext<W>, state: std::pin::Pin<&mut Self::State>) {
-                self.to_string().update_render_state(ctx, state)
+            fn into_ssr_state(self) -> Self::SsrState {
+                self.to_string().into_ssr_state()
             }
         }
     )*};

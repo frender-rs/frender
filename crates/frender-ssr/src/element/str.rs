@@ -2,7 +2,7 @@ use std::{borrow::Cow, convert::identity};
 
 use frender_core::{IntoStaticStr, StaticStr, StaticText};
 
-use crate::{bytes::CowSlicedBytes, impl_ssr_for_bytes, EscapeSafe};
+use crate::{bytes::CowSlicedBytes, impl_ssr_for_bytes, Element, EscapeSafe};
 
 use super::bytes::State;
 
@@ -44,21 +44,10 @@ impl<S: IntoStaticStr, E: EscapeSafe> EscapeStr<S, E> {
     }
 }
 
-impl<W: crate::AsyncWrite + Unpin, S: IntoStaticStr, E: EscapeSafe>
-    ::frender_core::UpdateRenderState<crate::SsrContext<W>> for EscapeStr<S, E>
-{
-    type State = State<CowSlicedBytes<'static>>;
-    fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
-        crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow())
-            .initialize_render_state(ctx)
-    }
-    fn update_render_state(
-        self,
-        ctx: &mut crate::SsrContext<W>,
-        state: ::core::pin::Pin<&mut Self::State>,
-    ) {
-        crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow())
-            .update_render_state(ctx, state)
+impl<S: IntoStaticStr, E: EscapeSafe> Element for EscapeStr<S, E> {
+    type SsrState = State<CowSlicedBytes<'static>>;
+    fn into_ssr_state(self) -> Self::SsrState {
+        crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow()).into_ssr_state()
     }
 }
 

@@ -73,41 +73,24 @@ mod script {
 
         use frender_core::UpdateRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
-        use frender_html_simple::IntrinsicComponentWithChildren;
-        use frender_ssr::{element::str::EscapeStr, AsyncWrite, SsrContext};
+        use frender_html_simple::SsrWithChildren;
+        use frender_ssr::{element::str::EscapeStr, AsyncWrite, Element};
 
         fn maybe_str<S: MaybeUpdateValueWithState<str>>(s: S) -> Option<Cow<'static, str>> {
             S::maybe_into_html_attribute_value(s).map(Option::unwrap)
         }
 
-        impl<W: AsyncWrite + Unpin, S: MaybeUpdateValueWithState<str>>
-            IntrinsicComponentWithChildren<SsrContext<W>, S>
+        impl<S: MaybeUpdateValueWithState<str>> SsrWithChildren<S>
             for crate::html::simply_typed::script::ComponentType
         {
-            type ChildrenState = Option<
+            type ChildrenSsrState = Option<
                 frender_ssr::element::bytes::State<frender_ssr::bytes::CowSlicedBytes<'static>>,
             >;
 
-            fn initialize_children_state(
-                self,
-                children: S,
-                ctx: &mut SsrContext<W>,
-            ) -> Self::ChildrenState {
+            fn into_children_ssr_state(self, children: S) -> Self::ChildrenSsrState {
                 maybe_str(children).map(|children| {
-                    EscapeStr(children, frender_ssr::html_escape::encode_script)
-                        .initialize_render_state(ctx)
+                    EscapeStr(children, frender_ssr::html_escape::encode_script).into_ssr_state()
                 })
-            }
-
-            fn update_children_state(
-                self,
-                children: S,
-                ctx: &mut SsrContext<W>,
-                children_state: std::pin::Pin<&mut Self::ChildrenState>,
-            ) {
-                maybe_str(children)
-                    .map(|children| EscapeStr(children, frender_ssr::html_escape::encode_script))
-                    .update_render_state(ctx, children_state)
             }
         }
     }

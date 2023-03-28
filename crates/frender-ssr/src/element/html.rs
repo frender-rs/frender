@@ -1,12 +1,11 @@
 use std::{borrow::Cow, pin::Pin, task::Poll};
 
-use frender_core::{RenderState, UpdateRenderState};
 use futures_io::AsyncWrite;
 
 use crate::{
     attrs::IntoIteratorAttrs,
     bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
-    SsrContext, WriterOrError, WritingState,
+    ready_ok, Element, RenderState,
 };
 
 // TODO: use html_common::
@@ -118,15 +117,7 @@ impl<'a, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Iterator for AttrsIntoByteChu
 }
 
 pin_project_lite::pin_project!(
-    pub struct HtmlElementRenderStateChildren<Children> {
-        children_writing_state: WritingState,
-        #[pin]
-        children: Children,
-    }
-);
-
-pin_project_lite::pin_project!(
-    pub struct HtmlElementRenderStateData<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
+    pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
         pub before_children: IterByteChunks<
             core::iter::Chain<
                 core::iter::Chain<
@@ -137,13 +128,13 @@ pin_project_lite::pin_project!(
             >,
         >,
         #[pin]
-        pub children: Option<HtmlElementRenderStateChildren<Children>>,
+        pub children: Option<Children>,
         pub after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
     }
 );
 
 impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
-    HtmlElementRenderStateData<'a, Children, Attrs>
+    HtmlElementRenderState<'a, Children, Attrs>
 {
     pub fn new(tag: Cow<'a, str>, attrs: Attrs, children: HtmlElementChildren<Children>) -> Self {
         let mut start_tag_end = [
@@ -175,11 +166,6 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
                 .chain(start_tag_end),
         );
 
-        let children = children.map(|children| HtmlElementRenderStateChildren {
-            children_writing_state: Default::default(),
-            children,
-        });
-
         Self {
             before_children,
             children,
@@ -188,133 +174,42 @@ impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
     }
 }
 
-pin_project_lite::pin_project!(
-    pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
-        #[pin]
-        data: HtmlElementRenderStateData<'a, Children, Attrs>,
-        writing_state: WritingState,
-    }
-);
-
-impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
-    HtmlElementRenderStateData<'a, Children, Attrs>
+impl<'a, Children: RenderState, Attrs: Iterator<Item = HtmlAttrPair<'a>>> RenderState
+    for HtmlElementRenderState<'a, Children, Attrs>
 {
-    fn impl_poll<W: AsyncWrite + Unpin>(
+    fn poll_render<W: AsyncWrite + ?Sized>(
         self: Pin<&mut Self>,
-        ctx: &mut SsrContext<W>,
+        mut writer: Pin<&mut W>,
         cx: &mut std::task::Context<'_>,
-    ) -> Poll<()>
-    where
-        Children: RenderState<SsrContext<W>>,
-    {
-        #[cfg(debug_assertions)]
-        assert!(ctx.busy);
-
-        let writer = match &mut ctx.writer_or_error {
-            WriterOrError::Writer(w) => w,
-            WriterOrError::Error(_) => return Poll::Ready(()),
-        };
-
-        macro_rules! ready_ok {
-            ($e:expr) => {
-                match $e {
-                    Poll::Ready(Ok(())) => {}
-                    Poll::Ready(Err(error)) => {
-                        ctx.writer_or_error = WriterOrError::Error(error);
-                        return Poll::Ready(());
-                    }
-                    Poll::Pending => return Poll::Pending,
-                }
-            };
-        }
-
+    ) -> Poll<std::io::Result<()>> {
         let this = self.project();
 
         ready_ok!(this
             .before_children
-            .poll_write_byte_chunks(Pin::new(writer), cx));
+            .poll_write_byte_chunks(writer.as_mut(), cx));
 
         if let Some(children) = this.children.as_pin_mut() {
-            let children = children.project();
-            let children_writing_state = children.children_writing_state;
-            let children = children.children;
-
-            if !children_writing_state.is_finished() {
-                #[cfg(debug_assertions)]
-                assert!(ctx.busy);
-
-                if children_writing_state.is_ready_to_start() {
-                    ctx.busy = false;
-                    *children_writing_state = WritingState::Writing;
-                }
-                if let Poll::Ready(()) = children.poll_reactive(ctx, cx) {
-                    #[cfg(debug_assertions)]
-                    assert!(!ctx.busy);
-
-                    ctx.busy = true;
-                    *children_writing_state = WritingState::Finished;
-                    cx.waker().wake_by_ref();
-                }
-
-                #[cfg(debug_assertions)]
-                assert!(ctx.busy);
-
-                return Poll::Pending;
-            }
+            ready_ok!(children.poll_render(writer.as_mut(), cx));
         }
 
-        ready_ok!(this
-            .after_children
-            .poll_write_byte_chunks(Pin::new(writer), cx));
+        ready_ok!(this.after_children.poll_write_byte_chunks(writer, cx));
 
-        Poll::Ready(())
+        Poll::Ready(Ok(()))
     }
 }
 
-impl<
-        'a,
-        Children: RenderState<SsrContext<W>>,
-        Attrs: Iterator<Item = HtmlAttrPair<'a>>,
-        W: AsyncWrite + Unpin,
-    > RenderState<SsrContext<W>> for HtmlElementRenderState<'a, Children, Attrs>
-{
-    fn unmount(self: std::pin::Pin<&mut Self>) {
-        panic!("ssr cannot be unmounted");
-    }
-
-    fn poll_reactive(
-        self: std::pin::Pin<&mut Self>,
-        ctx: &mut SsrContext<W>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        let this = self.project();
-        let writing_state = this.writing_state;
-        let data = this.data;
-
-        ctx.map(writing_state, |ctx, cx| data.impl_poll(ctx, cx), cx)
-    }
-}
-
-impl<'a, Children: UpdateRenderState<crate::SsrContext<W>>, Attrs, W: AsyncWrite + Unpin>
-    UpdateRenderState<crate::SsrContext<W>> for HtmlElement<'a, Children, Attrs>
+impl<'a, Children: Element, Attrs> Element for HtmlElement<'a, Children, Attrs>
 where
     Attrs: IntoIteratorAttrs<'a>,
 {
-    type State = HtmlElementRenderState<'a, Children::State, Attrs::IntoIterAttrs>;
+    type SsrState = HtmlElementRenderState<'a, Children::SsrState, Attrs::IntoIterAttrs>;
 
-    fn initialize_render_state(self, ctx: &mut crate::SsrContext<W>) -> Self::State {
-        HtmlElementRenderState {
-            data: HtmlElementRenderStateData::new(
-                self.tag,
-                Attrs::into_iter_attrs(self.attributes),
-                self.children
-                    .map_children(|children| children.initialize_render_state(ctx)),
-            ),
-            writing_state: Default::default(),
-        }
-    }
-
-    fn update_render_state(self, ctx: &mut crate::SsrContext<W>, state: Pin<&mut Self::State>) {
-        panic!("ssr element can not be updated");
+    fn into_ssr_state(self) -> Self::SsrState {
+        HtmlElementRenderState::new(
+            self.tag,
+            Attrs::into_iter_attrs(self.attributes),
+            self.children
+                .map_children(|children| children.into_ssr_state()),
+        )
     }
 }

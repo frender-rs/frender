@@ -23,6 +23,12 @@ pub(crate) fn lazy_pinned_state_poll_reactive<State: RenderState<Ctx>, Ctx>(
 
 pub struct Rendered<S>(std::marker::PhantomData<S>);
 
+impl<S> Rendered<S> {
+    pub(crate) fn _new() -> Self {
+        Self(std::marker::PhantomData)
+    }
+}
+
 pub struct ContextAndState<'a, Ctx, State> {
     context: &'a mut Ctx,
     state: Pin<&'a mut LazyPinned<State>>,

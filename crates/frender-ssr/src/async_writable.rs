@@ -1,5 +1,3 @@
-#![cfg(prototyping)] // TODO: remove
-
 use std::{io, pin::Pin, task::Poll};
 
 use futures_io::AsyncWrite;

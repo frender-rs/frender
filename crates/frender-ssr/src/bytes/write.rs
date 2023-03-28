@@ -7,7 +7,7 @@ use std::{
 pub trait AsyncWritableBytes: AsRef<[u8]> {
     fn truncate_start_at(&mut self, n: usize);
 
-    fn poll_write_bytes<W: crate::AsyncWrite>(
+    fn poll_write_bytes<W: crate::AsyncWrite + ?Sized>(
         &mut self,
         mut writer: Pin<&mut W>,
         cx: &mut Context<'_>,
@@ -42,7 +42,7 @@ pub trait AsyncWritableByteChunks {
     fn as_mut_current_chunk(&mut self) -> Option<&mut Self::Chunk>;
     fn go_to_next_chunk(&mut self);
 
-    fn poll_write_byte_chunks<W: crate::AsyncWrite>(
+    fn poll_write_byte_chunks<W: crate::AsyncWrite + ?Sized>(
         &mut self,
         mut writer: Pin<&mut W>,
         cx: &mut Context<'_>,

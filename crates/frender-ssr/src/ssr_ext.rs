@@ -1,23 +1,20 @@
 use std::{future::Future, io, pin::Pin, task::Poll};
 
-use frender_core::{RenderState, UpdateRenderState};
 use futures_io::AsyncWrite;
 
-use crate::{AnySsrContext, SsrContext};
+use crate::{Element, RenderState};
 
 pin_project_lite::pin_project!(
     #[must_use = "futures do nothing unless you `.await` or poll them"]
-    pub struct RenderToWriter<W: AsyncWrite, S: RenderState<SsrContext<W>>>
-    where
-        W: Unpin,
-    {
-        context: SsrContext<W>,
+    pub struct RenderToWriter<W: AsyncWrite, S: RenderState> {
+        #[pin]
+        writer: W,
         #[pin]
         state: S,
     }
 );
 
-impl<W: AsyncWrite + Unpin, S: RenderState<SsrContext<W>>> Future for RenderToWriter<W, S> {
+impl<W: AsyncWrite, S: RenderState> Future for RenderToWriter<W, S> {
     type Output = io::Result<()>;
 
     fn poll(
@@ -25,15 +22,7 @@ impl<W: AsyncWrite + Unpin, S: RenderState<SsrContext<W>>> Future for RenderToWr
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
         let this = self.project();
-        match this.state.poll_reactive(this.context, cx) {
-            Poll::Ready(()) => Poll::Ready(match &mut this.context.writer_or_error {
-                crate::WriterOrError::Writer(_) => Ok(()),
-                crate::WriterOrError::Error(error) => {
-                    Err(std::mem::replace(error, io::ErrorKind::Other.into()))
-                }
-            }),
-            Poll::Pending => Poll::Pending,
-        }
+        this.state.poll_render(this.writer, cx)
     }
 }
 
@@ -77,53 +66,41 @@ impl MapWriteResult<Vec<u8>> for BytesIntoString {
 }
 
 pin_project_lite::pin_project!(
+    #[must_use = "futures do nothing unless you `.await` or poll them"]
     pub struct RenderAs<M: MapWriteResult<W>, W: AsyncWrite, S>
     where
         W: Unpin,
     {
-        map: Option<M>,
-        context: Option<SsrContext<W>>,
+        map_and_writer: Option<(M, W)>,
         #[pin]
         state: S,
     }
 );
 
-impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrContext<'c>>>
-    RenderAs<M, W, S>
-{
+impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: RenderState> RenderAs<M, W, S> {
     fn from_element<E>(writer: W, element: E, map: M) -> Self
     where
-        E: for<'c> UpdateRenderState<AnySsrContext<'c>, State = S>,
+        E: Element<SsrState = S>,
     {
-        let mut context = SsrContext::new(writer);
-
-        let state = context.write_as_any(|ctx| element.initialize_render_state(ctx));
+        let state = element.into_ssr_state();
 
         Self {
-            map: Some(map),
-            context: Some(context),
+            map_and_writer: Some((map, writer)),
             state,
         }
     }
 }
 
-impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrContext<'c>>> Future
-    for RenderAs<M, W, S>
-{
+impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: RenderState> Future for RenderAs<M, W, S> {
     type Output = M::Out;
 
     fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
         let this = self.project();
-        if let Some(context) = this.context {
-            match context.write_as_any(|ctx| this.state.poll_reactive(ctx, cx)) {
-                Poll::Ready(()) => {
-                    let context = this.context.take().unwrap();
-                    Poll::Ready(
-                        this.map
-                            .take()
-                            .unwrap()
-                            .map_write_result(context.writer_or_error.into()),
-                    )
+        if let Some((_, writer)) = this.map_and_writer {
+            match this.state.poll_render(Pin::new(writer), cx) {
+                Poll::Ready(res) => {
+                    let (map, writer) = this.map_and_writer.take().unwrap();
+                    Poll::Ready(map.map_write_result(res.and(Ok(writer))))
                 }
                 Poll::Pending => Poll::Pending,
             }
@@ -133,27 +110,15 @@ impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: for<'c> RenderState<AnySsrC
     }
 }
 
-pub trait SsrExt<'ctx>: Sized + UpdateRenderState<AnySsrContext<'ctx>> {
+pub trait ElementExt: Sized + Element {
     fn render_to_writer<W: AsyncWrite + Unpin>(
         self,
-        writer: &'ctx mut W,
-    ) -> RenderToWriter<
-        Pin<&'ctx mut dyn AsyncWrite>,
-        <Self as UpdateRenderState<AnySsrContext<'ctx>>>::State,
-    > {
-        let writer = Pin::new(writer);
-        let mut context: AnySsrContext = SsrContext::new(writer);
-        let state = self.initialize_render_state(&mut context);
+        writer: &mut W,
+    ) -> RenderToWriter<&mut W, Self::SsrState> {
+        let state = self.into_ssr_state();
 
-        RenderToWriter { context, state }
+        RenderToWriter { writer, state }
     }
-}
-
-pub trait AnySsrExt: for<'ctx> SsrExt<'ctx>
-where
-    for<'ctx> Self: UpdateRenderState<AnySsrContext<'ctx>, State = Self::SsrState>,
-{
-    type SsrState: for<'ctx> RenderState<AnySsrContext<'ctx>>;
 
     fn render_as_bytes(self) -> RenderAs<Identity, Vec<u8>, Self::SsrState> {
         RenderAs::from_element(vec![], self, Identity)
@@ -164,34 +129,4 @@ where
     }
 }
 
-impl<'ctx, E: UpdateRenderState<AnySsrContext<'ctx>>> SsrExt<'ctx> for E {}
-impl<S, E> AnySsrExt for E
-where
-    E: for<'ctx> UpdateRenderState<AnySsrContext<'ctx>, State = S>,
-    S: for<'ctx> RenderState<AnySsrContext<'ctx>>,
-{
-    type SsrState = S;
-}
-
-pub async fn render_to_writer<
-    'a,
-    W: AsyncWrite + Unpin,
-    E: UpdateRenderState<AnySsrContext<'a>>,
->(
-    element: E,
-    writer: &'a mut W,
-) -> io::Result<()> {
-    element.render_to_writer(writer).await
-}
-
-pub async fn render_to_string<E: for<'a> UpdateRenderState<AnySsrContext<'a>>>(
-    element: E,
-) -> io::Result<String> {
-    let mut buf = Vec::<u8>::new();
-
-    render_to_writer(element, &mut buf).await?;
-
-    // Writing is implemented by this crate and should write utf8.
-    // Thus, just unwrap.
-    Ok(String::from_utf8(buf).unwrap())
-}
+impl<E: Element> ElementExt for E {}

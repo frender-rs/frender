@@ -31,7 +31,7 @@ pub mod __private {
     }
 
     #[cfg(feature = "ssr")]
-    pub use frender_ssr::AnySsrContext as ssr;
+    pub use frender_ssr::Element as ssr;
 }
 
 #[doc(hidden)]
@@ -378,10 +378,7 @@ macro_rules! __impl_element_type {
         $crate::__impl_element_type! {[ssr,csr][ssr,csr] $($rest)*}
     };
     ([ssr][$ssr:ident] $($($rest:tt)+)?) => {
-        impl for<'ssr> $crate::__private::UpdateRenderState<
-            $crate::__private::$ssr<'ssr>,
-            // State = impl $crate::__private::RenderState
-        > $(+ $($rest)+)?
+        impl $crate::__private::$ssr $(+ $($rest)+)?
     };
     ([csr][$csr:ident] $($($rest:tt)+)?) => {
         impl $crate::__private::UpdateRenderState<
@@ -390,10 +387,7 @@ macro_rules! __impl_element_type {
         > $(+ $($rest)+)?
     };
     ([ssr,csr][$ssr:ident,$csr:ident] $($($rest:tt)+)?) => {
-        impl for<'ssr> $crate::__private::UpdateRenderState<
-            $crate::__private::$ssr<'ssr>,
-            // State = impl $crate::__private::RenderState
-        > + $crate::__private::UpdateRenderState<
+        impl $crate::__private::$ssr + $crate::__private::UpdateRenderState<
             $crate::__private::$csr,
             // State = impl $crate::__private::RenderState
         > $(+ $($rest)+)?

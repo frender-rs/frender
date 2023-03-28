@@ -1,3 +1,6 @@
+mod async_writable;
+pub use async_writable::*;
+
 mod context;
 pub use context::*;
 
@@ -17,11 +20,17 @@ pub use html_escape;
 
 pub mod element;
 
-mod into_ssr_data;
-pub use into_ssr_data::*;
-
 pub mod utils;
 
 pub mod attrs;
 
-pub mod async_writable;
+macro_rules! ready_ok {
+    ($e:expr) => {
+        match $e {
+            ::core::task::Poll::Ready(::core::result::Result::Ok(())) => {}
+            non_ready_ok => return non_ready_ok,
+        }
+    };
+}
+
+pub(crate) use ready_ok;

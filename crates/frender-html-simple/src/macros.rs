@@ -254,8 +254,31 @@ macro_rules! def_props_type {
 }
 
 #[macro_export]
+#[cfg(feature = "ssr")]
+macro_rules! impl_ssr_with_any_children {
+    ($ty:ty) => {
+        impl<Children: $crate::frender_ssr::Element> $crate::SsrWithChildren<Children> for $ty {
+            type ChildrenSsrState = Children::SsrState;
+
+            #[inline(always)]
+            fn into_children_ssr_state(self, children: Children) -> Self::ChildrenSsrState {
+                children.into_ssr_state()
+            }
+        }
+    };
+}
+
+#[macro_export]
+#[cfg(not(feature = "ssr"))]
+macro_rules! impl_ssr_with_any_children {
+    ($ty:ty) => {};
+}
+
+#[macro_export]
 macro_rules! impl_intrinsic_element_with_any_children {
     ($ty:ty) => {
+        $crate::impl_ssr_with_any_children!($ty);
+
         impl<Ctx, Children: $crate::frender_core::UpdateRenderState<Ctx>>
             $crate::IntrinsicComponentWithChildren<Ctx, Children> for $ty
         {
