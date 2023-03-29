@@ -918,7 +918,7 @@ mod types_initial {
 }
 pub use types_initial::TypesInitial;
 pub type DataInitial = Data<TypesInitial>;
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 pub use super::HtmlMediaElementProps::render_state;
 mod builder_and_replacer {
     #[allow(unused_imports)]
@@ -2228,7 +2228,7 @@ mod builder_and_replacer {
         }
     }
 }
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;

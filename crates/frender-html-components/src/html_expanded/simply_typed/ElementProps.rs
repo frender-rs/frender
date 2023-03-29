@@ -42,7 +42,7 @@ def_props_type!(
         on_touch_start,
     )
 );
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod impl_dom_for_props {
     #![allow(unused_variables)]
     #[allow(unused_imports)]

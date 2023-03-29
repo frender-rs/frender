@@ -115,7 +115,7 @@ def_props_type!(
         value: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
     )
 );
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod impl_dom_for_props {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
