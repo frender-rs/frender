@@ -72,7 +72,7 @@ impl FieldDeclarationMaybe {
                             }
                         } else {
                             quote! {
-                                #crate_path::frender_dom::props::UpdateElementAttribute::update_element_attribute(#deref_star v, dom_element, #html_prop_name)
+                                #crate_path::frender_csr::props::UpdateElementAttribute::update_element_attribute(#deref_star v, dom_element, #html_prop_name)
                             }
                         };
 

@@ -16,7 +16,7 @@ mod prelude_names {
     pub(super) use hooks_core::{HookPollNextUpdate, HookUnmount};
 
     #[cfg(feature = "csr")]
-    pub(super) use frender_dom::Dom;
+    pub(super) use frender_csr::Dom;
 
     #[cfg(feature = "ssr")]
     pub(super) use frender_ssr::Element as SsrElement;

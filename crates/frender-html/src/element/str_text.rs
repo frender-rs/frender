@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use frender_core::UpdateRenderState;
-use frender_dom::Dom;
+use frender_csr::Dom;
 use frender_ssr::{AsyncWrite, SsrContext};
 
 #[cfg(feature = "ssr")]

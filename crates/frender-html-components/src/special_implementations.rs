@@ -1,15 +1,15 @@
 #[cfg(feature = "dom")]
 mod dom {
-    use frender_dom::wasm_bindgen::JsCast;
+    use frender_csr::wasm_bindgen::JsCast;
     use frender_html::props::IntrinsicComponent;
     use frender_html_simple::DomIntrinsicComponent;
 
     pub(super) fn expect_context_is_first_child_of<
         C: IntrinsicComponent + DomIntrinsicComponent,
     >(
-        ctx: &frender_dom::Dom,
+        ctx: &frender_csr::Dom,
     ) -> &C::Element {
-        if let frender_dom::NextNodePosition::FirstChildOf(element) = &ctx.next_node_position {
+        if let frender_csr::NextNodePosition::FirstChildOf(element) = &ctx.next_node_position {
             if let Some(element) = element.dyn_ref() {
                 element
             } else {
@@ -32,7 +32,7 @@ mod script {
 
         use super::super::dom::expect_context_is_first_child_of;
 
-        impl<S: MaybeUpdateValueWithState<str>> IntrinsicComponentWithChildren<frender_dom::Dom, S>
+        impl<S: MaybeUpdateValueWithState<str>> IntrinsicComponentWithChildren<frender_csr::Dom, S>
             for crate::html::simply_typed::script::ComponentType
         {
             type ChildrenState = NonReactiveRenderState<S::State>;
@@ -40,7 +40,7 @@ mod script {
             fn initialize_children_state(
                 self,
                 children: S,
-                ctx: &mut frender_dom::Dom,
+                ctx: &mut frender_csr::Dom,
             ) -> Self::ChildrenState {
                 let element = expect_context_is_first_child_of::<Self>(ctx);
                 NonReactiveRenderState(S::initialize_state_and_update(
@@ -53,7 +53,7 @@ mod script {
             fn update_children_state(
                 self,
                 children: S,
-                ctx: &mut frender_dom::Dom,
+                ctx: &mut frender_csr::Dom,
                 children_state: std::pin::Pin<&mut Self::ChildrenState>,
             ) {
                 let element = expect_context_is_first_child_of::<Self>(ctx);

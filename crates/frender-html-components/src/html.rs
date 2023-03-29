@@ -12,9 +12,9 @@ frender_macros::def_intrinsic_component_props! {
     pub struct ElementProps (web_sys::Element) {
         children: () = () => {
             dom {
-                bounds[::frender_core::UpdateRenderState<::frender_dom::Dom>]
+                bounds[::frender_core::UpdateRenderState<::frender_csr::Dom>]
                 state pin
-                    < <TypeDefs::children as frender_core::UpdateRenderState<frender_dom::Dom>>::State >
+                    < <TypeDefs::children as frender_core::UpdateRenderState<frender_csr::Dom>>::State >
                     :[::frender_core::RenderState]
                     =(::frender_core::UpdateRenderState::initialize_render_state(this.children, children_ctx))
                 impl {

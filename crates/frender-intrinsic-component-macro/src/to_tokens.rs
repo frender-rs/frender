@@ -67,7 +67,7 @@ impl FieldDeclaration {
                     quote!(state.#field_name)
                 };
                 Cow::Owned(quote!(
-                    #crate_path::frender_dom::props::UpdateElement::update_element(
+                    #crate_path::frender_csr::props::UpdateElement::update_element(
                         this.#field_name,
                         element.as_ref(),
                         children_ctx,
@@ -103,7 +103,7 @@ impl FieldDeclaration {
                 let base = &v.from_path;
                 let dom_element_ty = &v.dom_element_ty;
                 Some(quote!(
-                    #base ::Data<TypeDefs::#field_name>: #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>
+                    #base ::Data<TypeDefs::#field_name>: #crate_path::frender_csr::props::UpdateElement<#dom_element_ty>
                 ))
             }
         }
@@ -221,13 +221,13 @@ impl FieldDeclaration {
                     pin: Some(Default::default()),
                     field_name,
                     ty: Cow::Owned(syn::Type::Verbatim(quote! {
-                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>>::State
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_csr::props::UpdateElement<#dom_element_ty>>::State
                     })),
                     bounds: Some(Cow::Owned(quote! {
-                        #crate_path::frender_dom::props::IntrinsicComponentPollReactive
+                        #crate_path::frender_csr::props::IntrinsicComponentPollReactive
                     })),
                     initialize_state: Cow::Owned(quote! {
-                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_element_ty>>::initialize_state(
+                        <#path ::Data<TypeDefs::#field_name> as #crate_path::frender_csr::props::UpdateElement<#dom_element_ty>>::initialize_state(
                             this.#field_name, element, children_ctx
                         )
                     }),
@@ -435,10 +435,10 @@ impl IntrinsicComponentPropsData {
             let dom_el_ty = &only_inherit.dom_element_ty;
 
             dom_state_type = quote! {
-                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_el_ty>>::State
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_csr::props::UpdateElement<#dom_el_ty>>::State
             };
             dom_state_initialize = quote! {
-                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_dom::props::UpdateElement<#dom_el_ty>>::initialize_state(
+                <#inherit_path::Data<TypeDefs::#field_name> as #crate_path::frender_csr::props::UpdateElement<#dom_el_ty>>::initialize_state(
                     this.#field_name,
                     element,
                     children_ctx,
@@ -530,7 +530,7 @@ impl IntrinsicComponentPropsData {
 
                     impl <
                         TypeDefs: ?::core::marker::Sized + RenderStateTypes,
-                    > #crate_path::frender_dom::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
+                    > #crate_path::frender_csr::props::IntrinsicComponentPollReactive for RenderState<TypeDefs> {
                         #[inline]
                         fn intrinsic_component_poll_reactive(
                             self: ::core::pin::Pin<&mut Self>,
@@ -750,13 +750,13 @@ impl IntrinsicComponentPropsData {
                     use super::super::*;
                     impl<
                         TypeDefs: ?::core::marker::Sized + super::Types,
-                    > #crate_path::frender_dom::props::UpdateElement<#dom_element_type> for super::Data<TypeDefs>
+                    > #crate_path::frender_csr::props::UpdateElement<#dom_element_type> for super::Data<TypeDefs>
                     where
                         #(#dom_bounds),*
                     {
                         type State = #dom_state_type;
 
-                        fn initialize_state(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_dom::Dom) -> Self::State {
+                        fn initialize_state(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_csr::Dom) -> Self::State {
                             let dom_element: &::web_sys::Element = element.as_ref();
 
                             #(#dom_initialize)*
@@ -764,7 +764,7 @@ impl IntrinsicComponentPropsData {
                             #dom_state_initialize
                         }
 
-                        fn update_element(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_dom::Dom, state: ::core::pin::Pin<&mut Self::State>) {
+                        fn update_element(this: Self, element: &#dom_element_type, children_ctx: &mut ::frender_csr::Dom, state: ::core::pin::Pin<&mut Self::State>) {
                             #state_init
 
                             let dom_element: &::web_sys::Element = element.as_ref();

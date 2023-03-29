@@ -7,8 +7,8 @@ pub trait HookContext: Sized {
 }
 
 #[cfg(feature = "dom")]
-impl HookContext for frender_dom::Dom {
-    type ContextData = frender_dom::NextNodePosition;
+impl HookContext for frender_csr::Dom {
+    type ContextData = frender_csr::NextNodePosition;
 
     #[inline]
     fn get_context_data(this: &Self) -> Self::ContextData {

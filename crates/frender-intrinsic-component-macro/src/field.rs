@@ -27,7 +27,7 @@ impl Field {
 
         match &self.declaration {
             super::FieldDeclaration::Inherit(_) => Some(quote! {
-                #crate_path::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+                #crate_path::frender_csr::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                     self.project(). #name,
                     cx,
                 )

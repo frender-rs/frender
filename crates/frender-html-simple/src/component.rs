@@ -5,7 +5,7 @@ use crate::IntoElementProps;
 
 #[cfg(feature = "dom")]
 pub trait DomIntrinsicComponent {
-    type Element: AsRef<frender_dom::web_sys::Element> + frender_dom::wasm_bindgen::JsCast;
+    type Element: AsRef<frender_csr::web_sys::Element> + frender_csr::wasm_bindgen::JsCast;
 }
 
 pub trait IntrinsicComponentWithChildren<Ctx, Children> {
@@ -74,7 +74,7 @@ pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, p
 #[cfg(feature = "dom")]
 mod dom {
     use frender_core::UpdateRenderState;
-    use frender_dom::{props::UpdateElementNonReactive, Dom};
+    use frender_csr::{props::UpdateElementNonReactive, Dom};
     use frender_html_common::IntrinsicComponent;
 
     use crate::{states::ElementPropsStates, ElementProps};
@@ -88,7 +88,7 @@ mod dom {
         C: crate::IntrinsicComponentWithChildren<Dom, P::Children>,
         P::Attrs: UpdateElementNonReactive<C::Element>,
     {
-        type State = ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
+        type State = ::frender_csr::element::intrinsic::IntrinsicComponentRenderState<
             C::Element,
             ElementPropsStates<
                 C::ChildrenState,

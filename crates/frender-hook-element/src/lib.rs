@@ -9,7 +9,7 @@ pub use element::*;
 pub use hook_context::*;
 
 #[cfg(feature = "dom")]
-pub use frender_dom;
+pub use frender_csr;
 
 #[cfg(feature = "ssr")]
 pub use frender_ssr;
@@ -23,11 +23,11 @@ pub mod __private {
     pub use frender_core::{RenderState, UpdateRenderState};
 
     #[cfg(feature = "csr")]
-    pub use frender_dom::Dom as csr;
+    pub use frender_csr::Dom as csr;
 
     pub mod main {
         #[cfg(all(feature = "csr", feature = "spawn"))]
-        pub use frender_dom::spawn_mount_to_dom_element;
+        pub use frender_csr::spawn_mount_to_dom_element;
     }
 
     #[cfg(feature = "ssr")]

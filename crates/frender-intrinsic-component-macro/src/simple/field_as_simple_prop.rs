@@ -151,14 +151,14 @@ impl FieldAsSimpleProp<'_> {
         FieldToSimpleProp {
             impl_dom: Some(quote! {
                 impl<V #dom_bounds, E: ::core::convert::AsRef<#dom_element_ty>>
-                    #crate_path::frender_dom::props::UpdateElementNonReactive<E>
+                    #crate_path::frender_csr::props::UpdateElementNonReactive<E>
                 for super::props::#name<V> {
                     type State = super::props::#name<#dom_state_ty>;
 
                     fn initialize_state_non_reactive(
                         this: Self,
                         element: &E,
-                        children_ctx: &mut #crate_path::frender_dom::Dom,
+                        children_ctx: &mut #crate_path::frender_csr::Dom,
                     ) -> Self::State {
                         let dom_element = element.as_ref();
                         #dom_pre
@@ -170,7 +170,7 @@ impl FieldAsSimpleProp<'_> {
                     fn update_element_non_reactive(
                         this: Self,
                         element: &E,
-                        children_ctx: &mut #crate_path::frender_dom::Dom,
+                        children_ctx: &mut #crate_path::frender_csr::Dom,
                         state: ::core::pin::Pin<&mut Self::State>,
                     ) {
                         let dom_element = element.as_ref();

@@ -223,7 +223,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "frender-dom"
+name = "frender-csr"
 version = "0.1.0"
 dependencies = [
  "frender-core",
@@ -241,7 +241,7 @@ name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
  "frender-core",
- "frender-dom",
+ "frender-csr",
  "frender-ssr",
  "hooks-core",
  "lazy-pinned",
@@ -274,7 +274,7 @@ name = "frender-html-components"
 version = "0.1.0"
 dependencies = [
  "frender-core",
- "frender-dom",
+ "frender-csr",
  "frender-html",
  "frender-html-simple",
  "frender-macros",
@@ -299,7 +299,7 @@ name = "frender-html-simple"
 version = "0.1.0"
 dependencies = [
  "frender-core",
- "frender-dom",
+ "frender-csr",
  "frender-html-common",
  "frender-ssr",
  "pin-project-lite",

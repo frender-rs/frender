@@ -44,7 +44,7 @@ fn ts_bounds(
 
 fn dom_ctx(span: Span) -> TokenStream {
     quote_spanned! {span=>
-        ::frender_dom::Dom
+        ::frender_csr::Dom
     }
 }
 

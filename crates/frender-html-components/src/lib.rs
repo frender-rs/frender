@@ -18,7 +18,7 @@ mod imports {
     pub use pin_project_lite::pin_project;
 
     #[cfg(feature = "dom")]
-    pub use frender_dom;
+    pub use frender_csr;
 
     #[cfg(feature = "ssr")]
     pub use frender_ssr;

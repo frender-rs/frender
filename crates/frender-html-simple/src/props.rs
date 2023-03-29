@@ -41,7 +41,7 @@ impl<Children, Attrs> ElementProps<Children, Attrs> {
 #[cfg(feature = "dom")]
 mod dom {
     use super::*;
-    use frender_dom::{
+    use frender_csr::{
         props::{UpdateElement, UpdateElementNonReactive},
         Dom,
     };

@@ -25,7 +25,7 @@ pub struct ChainProps<A, B>(pub A, pub B);
 #[cfg(feature = "dom")]
 mod dom {
     use super::*;
-    use frender_dom::{
+    use frender_csr::{
         props::{IntrinsicComponentPollReactive, UpdateElement},
         Dom,
     };

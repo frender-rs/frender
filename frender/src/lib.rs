@@ -5,7 +5,7 @@ pub use frender_core::{element, intrinsic, Keyed, RenderState, StaticText, Updat
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "dom")]
-pub use frender_hook_element::frender_dom::Dom;
+pub use frender_hook_element::frender_csr::Dom;
 
 #[cfg(feature = "ssr")]
 pub use frender_hook_element::frender_ssr::{Element as SsrElement, ElementExt as SsrElementExt};

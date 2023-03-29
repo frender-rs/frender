@@ -69,20 +69,20 @@ macro_rules! def_intrinsic_component {
                     TypeDefs: ?::core::marker::Sized + $component_name::Types,
                     ComponentType: crate::imports::frender_html::props::IntrinsicComponent,
                 >
-                    ::frender_core::UpdateRenderState<::frender_dom::Dom>
+                    ::frender_core::UpdateRenderState<::frender_csr::Dom>
                     for $component_name::Data<TypeDefs, ComponentType>
                 where
-                    $props_name::Data<TypeDefs>: ::frender_dom::props::UpdateElement<$dom_element_ty>,
+                    $props_name::Data<TypeDefs>: ::frender_csr::props::UpdateElement<$dom_element_ty>,
                 {
                     type State =
-                        ::frender_dom::element::intrinsic::IntrinsicComponentRenderState<
+                        ::frender_csr::element::intrinsic::IntrinsicComponentRenderState<
                             $dom_element_ty,
-                            <$props_name::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
+                            <$props_name::Data<TypeDefs> as ::frender_csr::props::UpdateElement<
                                 $dom_element_ty,
                             >>::State,
                         >;
 
-                    fn initialize_render_state(self, ctx: &mut ::frender_dom::Dom) -> Self::State {
+                    fn initialize_render_state(self, ctx: &mut ::frender_csr::Dom) -> Self::State {
                         Self::State::initialize_with_tag(
                             self.0,
                             ctx,
@@ -92,14 +92,14 @@ macro_rules! def_intrinsic_component {
 
                     fn update_render_state(
                         self,
-                        ctx: &mut ::frender_dom::Dom,
+                        ctx: &mut ::frender_csr::Dom,
                         state: ::core::pin::Pin<&mut Self::State>,
                     ) {
                         let (node_and_mounted, state) = state.pin_project();
                         node_and_mounted.update(
                             ctx,
                             |element, children_ctx| {
-                                <$props_name::Data<TypeDefs> as ::frender_dom::props::UpdateElement<
+                                <$props_name::Data<TypeDefs> as ::frender_csr::props::UpdateElement<
                                     $dom_element_ty,
                                 >>::update_element(self.0, element, children_ctx, state)
                             },
