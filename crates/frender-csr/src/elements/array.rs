@@ -1,19 +1,19 @@
-use crate::{utils::pin_project_map_array, RenderState, UpdateRenderState};
+use crate::{utils::pin_project_map_array, Element, RenderState};
 
-impl<Ctx, S: RenderState<Ctx>, const N: usize> RenderState<Ctx> for [S; N] {
+impl<S: RenderState, const N: usize> RenderState for [S; N] {
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {
         pin_project_map_array(self, S::unmount)
     }
 
-    fn poll_reactive(
+    fn poll_csr(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
-        pin_project_map_array(self, |state| match S::poll_reactive(state, ctx, cx) {
+        pin_project_map_array(self, |state| match S::poll_csr(state, ctx, cx) {
             std::task::Poll::Ready(()) => {}
             v @ std::task::Poll::Pending => {
                 if let std::task::Poll::Ready(()) = res {
@@ -26,17 +26,17 @@ impl<Ctx, S: RenderState<Ctx>, const N: usize> RenderState<Ctx> for [S; N] {
     }
 }
 
-impl<E: UpdateRenderState<Ctx>, Ctx, const N: usize> UpdateRenderState<Ctx> for [E; N] {
-    type State = [E::State; N];
+impl<E: Element, const N: usize> Element for [E; N] {
+    type CsrState = [E::CsrState; N];
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        self.map(|v| E::initialize_render_state(v, ctx))
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        self.map(|v| E::into_csr_state(v, ctx))
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
         let mut this = self.into_iter();
         pin_project_map_array(state, |state| {
-            this.next().unwrap().update_render_state(ctx, state)
+            this.next().unwrap().update_csr_state(ctx, state)
         });
         debug_assert!(this.next().is_none());
     }

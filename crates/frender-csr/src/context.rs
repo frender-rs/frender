@@ -1,6 +1,6 @@
 use std::future::IntoFuture;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 
 #[derive(Debug, Clone)]
 pub enum NextNodePosition {
@@ -37,12 +37,12 @@ impl NextNodePosition {
 
 #[derive(Debug, Clone)]
 #[non_exhaustive]
-pub struct Dom {
+pub struct CsrContext {
     pub document: web_sys::Document,
     pub next_node_position: NextNodePosition,
 }
 
-impl Dom {
+impl CsrContext {
     pub fn new(document: web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {
             document,
@@ -68,6 +68,7 @@ impl Dom {
 
     #[inline]
     pub fn with_position<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+        // TODO: avoid clone
         let old_position = self.next_node_position.clone();
 
         let out = f(self);
@@ -91,14 +92,14 @@ impl Dom {
         out
     }
 
-    pub async fn render_element<E: UpdateRenderState<Dom>>(
+    pub async fn render_element<E: Element>(
         &mut self,
         element: E,
         stop: impl IntoFuture<Output = ()>,
     ) {
         let root_position = self.next_node_position.clone();
 
-        let state = element.initialize_render_state(self);
+        let state = element.into_csr_state(self);
 
         futures_lite::pin!(state);
 
@@ -110,7 +111,7 @@ impl Dom {
             stop.as_mut(),
             std::future::poll_fn(|cx| {
                 self.next_node_position = root_position.clone();
-                state.as_mut().poll_reactive(self, cx)
+                state.as_mut().poll_csr(self, cx)
             }),
         )
         .await;

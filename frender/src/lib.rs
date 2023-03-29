@@ -2,12 +2,11 @@ mod debug;
 pub use debug::*;
 
 pub use frender_core::{element, intrinsic, StaticText};
-#[cfg(feature = "csr")]
-pub use frender_hook_element::frender_csr::{Keyed, RenderState, UpdateRenderState};
+pub use frender_hook_element::frender_csr::Keyed; // TODO: move to common
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
-pub use frender_hook_element::frender_csr::Dom;
+pub use frender_hook_element::frender_csr::{CsrContext, Element as CsrElement};
 
 #[cfg(feature = "ssr")]
 pub use frender_hook_element::frender_ssr::{Element as SsrElement, ElementExt as SsrElementExt};

@@ -1,17 +1,17 @@
 use std::pin::Pin;
 
-use crate::UpdateRenderState;
+use crate::Element;
 
-impl<Ctx, R: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for Box<R> {
-    type State = R::State;
+impl<R: Element> Element for Box<R> {
+    type CsrState = R::CsrState;
 
     #[inline]
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        R::initialize_render_state(*self, ctx)
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        R::into_csr_state(*self, ctx)
     }
 
     #[inline]
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-        R::update_render_state(*self, ctx, state)
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
+        R::update_csr_state(*self, ctx, state)
     }
 }

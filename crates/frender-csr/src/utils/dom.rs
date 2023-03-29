@@ -1,12 +1,12 @@
 use wasm_bindgen::JsCast;
 
-use crate::{elements::intrinsic::ElementAndMounted, Dom, NextNodePosition};
+use crate::{elements::intrinsic::ElementAndMounted, CsrContext, NextNodePosition};
 
 // TODO: inline
 pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(
-    ctx: &mut Dom,
+    ctx: &mut CsrContext,
     tag: &str,
-    update: impl FnOnce(&mut E, &mut Dom) -> R,
+    update: impl FnOnce(&mut E, &mut CsrContext) -> R,
 ) -> (ElementAndMounted<E>, R) {
     initialize_element(
         ctx,
@@ -22,9 +22,9 @@ pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(
 }
 
 pub fn initialize_element<E: JsCast + AsRef<web_sys::Element>, R>(
-    ctx: &mut Dom,
-    create: impl FnOnce(&mut Dom) -> E,
-    update: impl FnOnce(&mut E, &mut Dom) -> R,
+    ctx: &mut CsrContext,
+    create: impl FnOnce(&mut CsrContext) -> E,
+    update: impl FnOnce(&mut E, &mut CsrContext) -> R,
 ) -> (ElementAndMounted<E>, R) {
     let mut element = create(ctx);
     let node: &web_sys::Element = element.as_ref();
@@ -46,8 +46,8 @@ pub fn initialize_element<E: JsCast + AsRef<web_sys::Element>, R>(
 
 pub fn update_element<E: JsCast + AsRef<web_sys::Element>>(
     this: &mut ElementAndMounted<E>,
-    ctx: &mut Dom,
-    update: impl FnOnce(&mut E, &mut Dom),
+    ctx: &mut CsrContext,
+    update: impl FnOnce(&mut E, &mut CsrContext),
 ) {
     let ElementAndMounted { element, mounted } = this;
     let node: &web_sys::Element = element.as_ref();

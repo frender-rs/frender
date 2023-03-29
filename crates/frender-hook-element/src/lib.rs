@@ -1,15 +1,22 @@
-pub use frender_core;
+pub mod fn_wrapper;
 
-mod ctx_and_state;
 mod element;
-mod hook_context;
+mod state;
 
-pub use ctx_and_state::*;
 pub use element::*;
-pub use hook_context::*;
+pub use state::*;
 
 #[cfg(feature = "csr")]
 pub use frender_csr;
+
+#[cfg(feature = "ssr")]
+pub mod ssr;
+
+#[cfg(feature = "csr")]
+pub mod csr;
+
+#[cfg(feature = "ssr")]
+pub use ssr::{SsrRenderContext, UseSsr};
 
 #[cfg(feature = "ssr")]
 pub use frender_ssr;
@@ -20,10 +27,8 @@ pub mod __private {
     pub use hooks_core::transform_hook_fn_body_as_closure;
     pub use syn_lite::{expand_or, parse_item_fn};
 
-    pub use frender_csr::{RenderState, UpdateRenderState};
-
     #[cfg(feature = "csr")]
-    pub use frender_csr::Dom as csr;
+    pub use frender_csr::Element as csr;
 
     pub mod main {
         #[cfg(all(feature = "csr", feature = "spawn"))]
@@ -381,16 +386,10 @@ macro_rules! __impl_element_type {
         impl $crate::__private::$ssr $(+ $($rest)+)?
     };
     ([csr][$csr:ident] $($($rest:tt)+)?) => {
-        impl $crate::__private::UpdateRenderState<
-            $crate::__private::$csr,
-            // State = impl $crate::__private::RenderState
-        > $(+ $($rest)+)?
+        impl $crate::__private::$csr $(+ $($rest)+)?
     };
     ([ssr,csr][$ssr:ident,$csr:ident] $($($rest:tt)+)?) => {
-        impl $crate::__private::$ssr + $crate::__private::UpdateRenderState<
-            $crate::__private::$csr,
-            // State = impl $crate::__private::RenderState
-        > $(+ $($rest)+)?
+        impl $crate::__private::$ssr + $crate::__private::$csr $(+ $($rest)+)?
     };
     ([csr,ssr][$csr:ident,$ssr:ident] $($rest:tt)*) => {
         $crate::__impl_element_type! {[$ssr,$csr][$ssr,$csr] $($rest)*}

@@ -133,7 +133,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -150,7 +150,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -175,7 +175,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -192,7 +192,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -217,7 +217,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -238,7 +238,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -267,7 +267,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -284,7 +284,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -309,7 +309,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -326,7 +326,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -351,7 +351,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -368,7 +368,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -393,7 +393,7 @@ mod impl_dom_for_props {
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -410,7 +410,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_csr::Dom,
+            children_ctx: &mut crate::imports::frender_csr::CsrContext,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();

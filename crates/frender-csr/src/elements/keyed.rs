@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 
 /// TODO: `Keyed(element, key)`
 ///     - improve performance.
@@ -14,23 +14,23 @@ pub struct KeyedElementsState<K, S> {
 
 impl<K, S> Unpin for KeyedElementsState<K, S> {}
 
-impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsState<K, S> {
+impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         for state in self.get_mut().states.values_mut().map(std::pin::Pin::new) {
             S::unmount(state)
         }
     }
 
-    fn poll_reactive(
+    fn poll_csr(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
         let values = self.get_mut().states.values_mut();
         for state in values {
-            match S::poll_reactive(std::pin::Pin::new(state), ctx, cx) {
+            match S::poll_csr(std::pin::Pin::new(state), ctx, cx) {
                 std::task::Poll::Ready(()) => {}
                 v @ std::task::Poll::Pending => {
                     if let std::task::Poll::Ready(()) = res {
@@ -44,24 +44,24 @@ impl<Ctx, K, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for KeyedElementsStat
     }
 }
 
-impl<Ctx, K, E> UpdateRenderState<Ctx> for Vec<Keyed<K, E>>
+impl<K, E> Element for Vec<Keyed<K, E>>
 where
     K: std::hash::Hash + Eq,
-    E: UpdateRenderState<Ctx>,
-    E::State: Unpin,
+    E: Element,
+    E::CsrState: Unpin,
 {
-    type State = KeyedElementsState<K, E::State>;
+    type CsrState = KeyedElementsState<K, E::CsrState>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
         KeyedElementsState {
             states: self
                 .into_iter()
-                .map(|Keyed(k, v)| (k, v.initialize_render_state(ctx)))
+                .map(|Keyed(k, v)| (k, v.into_csr_state(ctx)))
                 .collect(),
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, mut state: std::pin::Pin<&mut Self::State>) {
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, mut state: std::pin::Pin<&mut Self::CsrState>) {
         state.as_mut().unmount();
         let states = &mut state.get_mut().states;
         let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
@@ -70,9 +70,9 @@ where
             if let Some(state) = old_states.remove(&key) {
                 // TODO: assert entry is vacant
                 let state = states.entry(key).or_insert(state);
-                E::update_render_state(element, ctx, std::pin::Pin::new(state));
+                E::update_csr_state(element, ctx, std::pin::Pin::new(state));
             } else {
-                states.insert(key, element.initialize_render_state(ctx)); // TODO: assert returned is None
+                states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None
             }
         }
     }

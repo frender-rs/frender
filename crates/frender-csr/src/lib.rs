@@ -1,11 +1,13 @@
 mod utils;
 
 mod context;
-mod render_state;
-mod update_render_state;
 pub use context::*;
+
+mod render_state;
 pub use render_state::*;
-pub use update_render_state::*;
+
+mod element;
+pub use element::*;
 
 // TODO: change to pub mod
 mod elements;

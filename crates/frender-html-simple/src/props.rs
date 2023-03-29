@@ -1,5 +1,3 @@
-use frender_csr::UpdateRenderState;
-
 use super::ElementPropsStates;
 
 pub trait IntoElementProps {
@@ -41,21 +39,22 @@ impl<Children, Attrs> ElementProps<Children, Attrs> {
 #[cfg(feature = "csr")]
 mod dom {
     use super::*;
+    use frender_csr::Element;
     use frender_csr::{
         props::{UpdateElement, UpdateElementNonReactive},
-        Dom,
+        CsrContext,
     };
 
     impl<E, Children, Attrs> UpdateElement<E> for ElementProps<Children, Attrs>
     where
-        Children: UpdateRenderState<Dom>,
+        Children: Element,
         Attrs: UpdateElementNonReactive<E>,
     {
-        type State = ElementPropsStates<Children::State, Attrs::State>;
+        type State = ElementPropsStates<Children::CsrState, Attrs::State>;
 
-        fn initialize_state(this: Self, element: &E, children_ctx: &mut Dom) -> Self::State {
+        fn initialize_state(this: Self, element: &E, children_ctx: &mut CsrContext) -> Self::State {
             ElementPropsStates {
-                children: this.children.initialize_render_state(children_ctx),
+                children: this.children.into_csr_state(children_ctx),
                 other_state: Attrs::initialize_state_non_reactive(
                     this.attributes,
                     element,
@@ -67,12 +66,12 @@ mod dom {
         fn update_element(
             this: Self,
             element: &E,
-            children_ctx: &mut Dom,
+            children_ctx: &mut CsrContext,
             state: std::pin::Pin<&mut Self::State>,
         ) {
             let (children_state, other_state) = state.pin_project();
             this.children
-                .update_render_state(children_ctx, children_state);
+                .update_csr_state(children_ctx, children_state);
 
             Attrs::update_element_non_reactive(this.attributes, element, children_ctx, other_state);
         }

@@ -241,7 +241,6 @@ dependencies = [
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
- "frender-core",
  "frender-csr",
  "frender-ssr",
  "hooks-core",

@@ -1,7 +1,5 @@
 use std::pin::Pin;
 
-use frender_csr::RenderState;
-
 pin_project_lite::pin_project! {
     pub struct ElementPropsStates<ChildrenState, PropsState> {
         #[pin]
@@ -21,12 +19,12 @@ impl<ChildrenState, PropsState> ElementPropsStates<ChildrenState, PropsState> {
 #[cfg(feature = "csr")]
 mod dom {
     use super::*;
-    use frender_csr::props::IntrinsicComponentPollReactive;
+    use frender_csr::{props::IntrinsicComponentPollReactive, RenderState};
 
     impl<ChildrenState, PropsState> IntrinsicComponentPollReactive
         for ElementPropsStates<ChildrenState, PropsState>
     where
-        ChildrenState: RenderState<frender_csr::Dom>,
+        ChildrenState: RenderState,
     {
         fn intrinsic_component_unmount(self: Pin<&mut Self>) {
             self.project().children.unmount()
@@ -35,10 +33,10 @@ mod dom {
         #[inline(always)]
         fn intrinsic_component_poll_reactive(
             self: std::pin::Pin<&mut Self>,
-            ctx: &mut frender_csr::Dom,
+            ctx: &mut frender_csr::CsrContext,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            self.project().children.poll_reactive(ctx, cx)
+            self.project().children.poll_csr(ctx, cx)
         }
     }
 }

@@ -1,4 +1,3 @@
-use frender_csr::{RenderState, UpdateRenderState};
 use frender_html_common::IntrinsicComponent;
 
 use crate::IntoElementProps;
@@ -8,14 +7,19 @@ pub trait DomIntrinsicComponent {
     type Element: AsRef<frender_csr::web_sys::Element> + frender_csr::wasm_bindgen::JsCast;
 }
 
-pub trait IntrinsicComponentWithChildren<Ctx, Children> {
-    type ChildrenState: RenderState<Ctx>;
+#[cfg(feature = "csr")]
+pub trait CsrWithChildren<Children> {
+    type ChildrenState: frender_csr::RenderState;
 
-    fn initialize_children_state(self, children: Children, ctx: &mut Ctx) -> Self::ChildrenState;
-    fn update_children_state(
+    fn children_into_csr_state(
         self,
         children: Children,
-        ctx: &mut Ctx,
+        ctx: &mut frender_csr::CsrContext,
+    ) -> Self::ChildrenState;
+    fn children_update_csr_state(
+        self,
+        children: Children,
+        ctx: &mut frender_csr::CsrContext,
         children_state: std::pin::Pin<&mut Self::ChildrenState>,
     );
 }
@@ -44,21 +48,6 @@ where
     }
 }
 
-impl<C, Children, Ctx> UpdateRenderState<Ctx> for IntrinsicChildrenAsElement<C, Children>
-where
-    C: IntrinsicComponentWithChildren<Ctx, Children>,
-{
-    type State = C::ChildrenState;
-
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        C::initialize_children_state(self.component_type, self.children, ctx)
-    }
-
-    fn update_render_state(self, ctx: &mut Ctx, children_state: std::pin::Pin<&mut Self::State>) {
-        C::update_children_state(self.component_type, self.children, ctx, children_state)
-    }
-}
-
 #[cfg(feature = "ssr")]
 pub trait SsrIntrinsicComponent {
     #[inline]
@@ -73,22 +62,21 @@ pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, p
 
 #[cfg(feature = "csr")]
 mod dom {
-    use frender_csr::UpdateRenderState;
-    use frender_csr::{props::UpdateElementNonReactive, Dom};
+    use frender_csr::Element;
+    use frender_csr::{props::UpdateElementNonReactive, CsrContext};
     use frender_html_common::IntrinsicComponent;
 
     use crate::{states::ElementPropsStates, ElementProps};
 
     use super::{DomIntrinsicComponent, IntoElementProps};
 
-    impl<C: IntrinsicComponent, P: IntoElementProps> UpdateRenderState<Dom>
-        for super::IntrinsicElement<C, P>
+    impl<C: IntrinsicComponent, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
     where
         C: DomIntrinsicComponent,
-        C: crate::IntrinsicComponentWithChildren<Dom, P::Children>,
+        C: crate::CsrWithChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C::Element>,
     {
-        type State = ::frender_csr::intrinsic::IntrinsicComponentRenderState<
+        type CsrState = ::frender_csr::intrinsic::IntrinsicComponentRenderState<
             C::Element,
             ElementPropsStates<
                 C::ChildrenState,
@@ -96,14 +84,14 @@ mod dom {
             >,
         >;
 
-        fn initialize_render_state(self, ctx: &mut Dom) -> Self::State {
+        fn into_csr_state(self, ctx: &mut CsrContext) -> Self::CsrState {
             let ElementProps {
                 children,
                 attributes,
             } = P::into_element_props(self.1);
-            Self::State::initialize_with_tag(
+            Self::CsrState::initialize_with_tag(
                 move |element, children_ctx| ElementPropsStates {
-                    children: C::initialize_children_state(self.0, children, children_ctx),
+                    children: C::children_into_csr_state(self.0, children, children_ctx),
                     other_state:
                         UpdateElementNonReactive::<C::Element>::initialize_state_non_reactive(
                             attributes,
@@ -116,7 +104,7 @@ mod dom {
             )
         }
 
-        fn update_render_state(self, ctx: &mut Dom, state: std::pin::Pin<&mut Self::State>) {
+        fn update_csr_state(self, ctx: &mut CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
             let (node_and_mounted, state) = state.pin_project();
             let (children_state, attrs_state) = state.pin_project();
             node_and_mounted.update(ctx, |element, children_ctx| {
@@ -130,7 +118,7 @@ mod dom {
                     children_ctx,
                     attrs_state,
                 );
-                C::update_children_state(self.0, children, children_ctx, children_state);
+                C::children_update_csr_state(self.0, children, children_ctx, children_state);
             })
         }
     }
@@ -140,13 +128,12 @@ mod dom {
 mod ssr {
     use std::borrow::Cow;
 
-    use frender_csr::UpdateRenderState;
     use frender_html_common::IntrinsicComponent;
     use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, Element};
 
     use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};
 
-    use super::{IntrinsicComponentWithChildren, SsrIntrinsicComponent};
+    use super::{CsrWithChildren, SsrIntrinsicComponent};
 
     impl<C: IntrinsicComponent, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
     where

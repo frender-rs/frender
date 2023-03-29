@@ -1,14 +1,14 @@
 use std::borrow::Cow;
 use std::ops::Deref;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 #[cfg(feature = "StaticText")]
 use frender_core::{StaticStr, StaticText};
 
 use js_sys::JsString;
 use wasm_bindgen::{JsCast, JsValue};
 
-use crate::Dom;
+use crate::CsrContext;
 
 pub struct State<Cache> {
     node: web_sys::Text,
@@ -129,7 +129,7 @@ mod js {
 }
 
 impl<Cache> State<Cache> {
-    pub fn update_with_str<S>(&mut self, data: S, dom_ctx: &mut Dom)
+    pub fn update_with_str<S>(&mut self, data: S, dom_ctx: &mut CsrContext)
     where
         S: RenderingStr<Cache = Cache>,
     {
@@ -146,7 +146,7 @@ impl<Cache> State<Cache> {
         }
     }
 
-    pub fn initialize_with_str<S>(data: S, dom_ctx: &mut Dom) -> Self
+    pub fn initialize_with_str<S>(data: S, dom_ctx: &mut CsrContext) -> Self
     where
         S: RenderingStr<Cache = Cache>,
     {
@@ -165,7 +165,7 @@ impl<Cache> State<Cache> {
     pub fn update_with_js_value(
         &mut self,
         data: Cache,
-        dom_ctx: &mut Dom,
+        dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsValue,
     ) where
         Cache: PartialEq<Cache>,
@@ -178,7 +178,7 @@ impl<Cache> State<Cache> {
     #[inline]
     pub fn initialize_with_js_value(
         data: Cache,
-        dom_ctx: &mut Dom,
+        dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsValue,
     ) -> Self
     where
@@ -190,7 +190,7 @@ impl<Cache> State<Cache> {
     pub fn update_with_js_string(
         &mut self,
         data: Cache,
-        dom_ctx: &mut Dom,
+        dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsString,
     ) where
         Cache: PartialEq<Cache>,
@@ -207,7 +207,7 @@ impl<Cache> State<Cache> {
 
     pub fn initialize_with_js_string(
         data: Cache,
-        dom_ctx: &mut Dom,
+        dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsString,
     ) -> Self {
         let s = to_js(&data);
@@ -226,7 +226,7 @@ impl<Cache> State<Cache> {
 
 impl<Cache> Unpin for State<Cache> {}
 
-impl<Cache> RenderState<Dom> for State<Cache> {
+impl<Cache> RenderState for State<Cache> {
     fn unmount(self: std::pin::Pin<&mut Self>) {
         let this = self.get_mut();
         this.unmounted = true;
@@ -234,9 +234,9 @@ impl<Cache> RenderState<Dom> for State<Cache> {
     }
 
     #[inline]
-    fn poll_reactive(
+    fn poll_csr(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Dom,
+        ctx: &mut CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
@@ -248,16 +248,16 @@ macro_rules! impl_render_str {
         $(@[$($generics:tt)*])?
         $for_ty:ty
     ),* $(,)?) => {$(
-        impl $(<$($generics)*>)? UpdateRenderState<Dom> for $for_ty {
-            type State = State<<Self as RenderingStr>::Cache>;
+        impl $(<$($generics)*>)? Element for $for_ty {
+            type CsrState = State<<Self as RenderingStr>::Cache>;
 
             #[inline]
-            fn initialize_render_state(self, ctx: &mut Dom) -> Self::State {
-                Self::State::initialize_with_str(self, ctx)
+            fn into_csr_state(self, ctx: &mut CsrContext) -> Self::CsrState {
+                Self::CsrState::initialize_with_str(self, ctx)
             }
 
             #[inline]
-            fn update_render_state(self, ctx: &mut Dom, state: std::pin::Pin<&mut Self::State>) {
+            fn update_csr_state(self, ctx: &mut CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
                 state.get_mut().update_with_str(self, ctx)
             }
         }

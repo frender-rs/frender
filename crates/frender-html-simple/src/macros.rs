@@ -279,28 +279,26 @@ macro_rules! impl_intrinsic_element_with_any_children {
     ($ty:ty) => {
         $crate::impl_ssr_with_any_children!($ty);
 
-        impl<Ctx, Children: $crate::frender_csr::UpdateRenderState<Ctx>>
-            $crate::IntrinsicComponentWithChildren<Ctx, Children> for $ty
-        {
-            type ChildrenState = Children::State;
+        impl<Children: $crate::frender_csr::Element> $crate::CsrWithChildren<Children> for $ty {
+            type ChildrenState = Children::CsrState;
 
             #[inline(always)]
-            fn initialize_children_state(
+            fn children_into_csr_state(
                 self,
                 children: Children,
-                ctx: &mut Ctx,
+                ctx: &mut $crate::frender_csr::CsrContext,
             ) -> Self::ChildrenState {
-                children.initialize_render_state(ctx)
+                children.into_csr_state(ctx)
             }
 
             #[inline(always)]
-            fn update_children_state(
+            fn children_update_csr_state(
                 self,
                 children: Children,
-                ctx: &mut Ctx,
+                ctx: &mut $crate::frender_csr::CsrContext,
                 children_state: std::pin::Pin<&mut Self::ChildrenState>,
             ) {
-                children.update_render_state(ctx, children_state)
+                children.update_csr_state(ctx, children_state)
             }
         }
     };

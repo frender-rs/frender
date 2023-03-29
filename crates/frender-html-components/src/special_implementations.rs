@@ -7,7 +7,7 @@ mod dom {
     pub(super) fn expect_context_is_first_child_of<
         C: IntrinsicComponent + DomIntrinsicComponent,
     >(
-        ctx: &frender_csr::Dom,
+        ctx: &frender_csr::CsrContext,
     ) -> &C::Element {
         if let frender_csr::NextNodePosition::FirstChildOf(element) = &ctx.next_node_position {
             if let Some(element) = element.dyn_ref() {
@@ -28,19 +28,19 @@ mod script {
     mod dom {
         use frender_csr::NonReactiveRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
-        use frender_html_simple::IntrinsicComponentWithChildren;
+        use frender_html_simple::CsrWithChildren;
 
         use super::super::dom::expect_context_is_first_child_of;
 
-        impl<S: MaybeUpdateValueWithState<str>> IntrinsicComponentWithChildren<frender_csr::Dom, S>
+        impl<S: MaybeUpdateValueWithState<str>> CsrWithChildren<S>
             for crate::html::simply_typed::script::ComponentType
         {
             type ChildrenState = NonReactiveRenderState<S::State>;
 
-            fn initialize_children_state(
+            fn children_into_csr_state(
                 self,
                 children: S,
-                ctx: &mut frender_csr::Dom,
+                ctx: &mut frender_csr::CsrContext,
             ) -> Self::ChildrenState {
                 let element = expect_context_is_first_child_of::<Self>(ctx);
                 NonReactiveRenderState(S::initialize_state_and_update(
@@ -50,10 +50,10 @@ mod script {
                 ))
             }
 
-            fn update_children_state(
+            fn children_update_csr_state(
                 self,
                 children: S,
-                ctx: &mut frender_csr::Dom,
+                ctx: &mut frender_csr::CsrContext,
                 children_state: std::pin::Pin<&mut Self::ChildrenState>,
             ) {
                 let element = expect_context_is_first_child_of::<Self>(ctx);
@@ -71,7 +71,6 @@ mod script {
     mod ssr {
         use std::borrow::Cow;
 
-        use frender_csr::UpdateRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
         use frender_html_simple::SsrWithChildren;
         use frender_ssr::{element::str::EscapeStr, AsyncWrite, Element};

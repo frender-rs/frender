@@ -1,4 +1,4 @@
-use crate::{Dom, UpdateRenderState};
+use crate::{CsrContext, Element};
 
 pub trait GetDomElement {
     fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element;
@@ -22,7 +22,7 @@ where
     }
 }
 
-pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom> + 'e>(
+pub fn mount_to_dom_element<'e, E: Element + 'e>(
     element: E,
     get_dom_element: impl GetDomElement,
 ) -> impl std::future::Future<Output = ()> + 'e {
@@ -32,14 +32,14 @@ pub fn mount_to_dom_element<'e, E: UpdateRenderState<Dom> + 'e>(
     let current_parent = get_dom_element.get_dom_element(&document);
 
     async move {
-        Dom::new(document, current_parent)
+        CsrContext::new(document, current_parent)
             .render_element(element, std::future::pending())
             .await
     }
 }
 
 #[cfg(feature = "spawn")]
-pub fn spawn_mount_to_dom_element<E: UpdateRenderState<Dom> + 'static>(
+pub fn spawn_mount_to_dom_element<E: Element + 'static>(
     get_element: E,
     get_dom_element: impl GetDomElement,
 ) {

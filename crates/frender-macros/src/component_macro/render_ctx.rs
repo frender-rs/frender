@@ -5,9 +5,9 @@ use quote::{quote, quote_spanned};
 use crate::component_data::RenderCtx;
 
 fn ts_bounds(
-    ctx_type: TokenStream,
+    state_name: TokenStream,
     span: Span,
-    hook_element_path: impl ToTokens,
+    crate_path: impl ToTokens,
     bounds: Option<&TokenStream>,
     state_it: Option<&syn::TypeImplTrait>,
 ) -> TokenStream {
@@ -22,9 +22,9 @@ fn ts_bounds(
             let span = impl_token.span;
 
             Some(quote_spanned! {span=>
-                State =
+                #state_name =
                 #impl_token
-                #hook_element_path::frender_core::RenderState
+                #crate_path::RenderState
                 +
                 #bounds
             })
@@ -33,8 +33,7 @@ fn ts_bounds(
     };
 
     quote_spanned! {span=>
-        #hook_element_path::frender_core::UpdateRenderState<
-            #hook_element_path #ctx_type,
+        #crate_path::Element<
             #state_eq_it
         >
         #plus
@@ -95,9 +94,9 @@ impl RenderCtx {
 
         if self.ssr_enabled() {
             out.extend(ts_bounds(
-                ssr_ctx(span),
+                quote_spanned!(span=> SsrState),
                 span,
-                hook_element_path,
+                quote_spanned!(span=> #hook_element_path::frender_ssr),
                 bounds,
                 state_it,
             ))
@@ -109,9 +108,9 @@ impl RenderCtx {
 
         if self.dom_enabled() {
             out.extend(ts_bounds(
-                dom_ctx(span),
+                quote_spanned!(span=> CsrState),
                 span,
-                hook_element_path,
+                quote_spanned!(span=> #hook_element_path::frender_csr),
                 bounds,
                 state_it,
             ))

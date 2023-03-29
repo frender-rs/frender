@@ -1,16 +1,16 @@
 use std::pin::Pin;
 
-use crate::Dom;
+use crate::CsrContext;
 
 pub trait UpdateElement<E> {
     type State: IntrinsicComponentPollReactive;
 
-    fn initialize_state(this: Self, element: &E, children_ctx: &mut Dom) -> Self::State;
+    fn initialize_state(this: Self, element: &E, children_ctx: &mut CsrContext) -> Self::State;
 
     fn update_element(
         this: Self,
         element: &E,
-        children_ctx: &mut Dom,
+        children_ctx: &mut CsrContext,
         state: Pin<&mut Self::State>,
     );
 }
@@ -21,7 +21,7 @@ pub trait IntrinsicComponentPollReactive {
 
     fn intrinsic_component_poll_reactive(
         self: Pin<&mut Self>,
-        ctx: &mut Dom,
+        ctx: &mut CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()>;
 }
@@ -32,13 +32,13 @@ pub trait UpdateElementNonReactive<E> {
     fn initialize_state_non_reactive(
         this: Self,
         element: &E,
-        children_ctx: &mut Dom,
+        children_ctx: &mut CsrContext,
     ) -> Self::State;
 
     fn update_element_non_reactive(
         this: Self,
         element: &E,
-        children_ctx: &mut Dom,
+        children_ctx: &mut CsrContext,
         state: Pin<&mut Self::State>,
     );
 }
@@ -46,9 +46,9 @@ pub trait UpdateElementNonReactive<E> {
 impl<E> UpdateElementNonReactive<E> for () {
     type State = ();
 
-    fn initialize_state_non_reactive(_: Self, _: &E, _: &mut Dom) -> Self::State {}
+    fn initialize_state_non_reactive(_: Self, _: &E, _: &mut CsrContext) -> Self::State {}
 
-    fn update_element_non_reactive(_: Self, _: &E, _: &mut Dom, _: Pin<&mut Self::State>) {}
+    fn update_element_non_reactive(_: Self, _: &E, _: &mut CsrContext, _: Pin<&mut Self::State>) {}
 }
 
 impl<A, B, E> UpdateElementNonReactive<E> for (A, B)
@@ -61,7 +61,7 @@ where
     fn initialize_state_non_reactive(
         this: Self,
         element: &E,
-        children_ctx: &mut Dom,
+        children_ctx: &mut CsrContext,
     ) -> Self::State {
         (
             A::initialize_state_non_reactive(this.0, element, children_ctx),
@@ -72,7 +72,7 @@ where
     fn update_element_non_reactive(
         this: Self,
         element: &E,
-        children_ctx: &mut Dom,
+        children_ctx: &mut CsrContext,
         state: Pin<&mut Self::State>,
     ) {
         // SAFETY: pin projection

@@ -12,7 +12,7 @@ pub struct Square<V, OnClick> {
 
 impl<V, OnClick> Square<V, OnClick>
 where
-    V: frender::UpdateRenderState<frender::Dom>,
+    V: frender::CsrElement,
     OnClick: frender::UpdateDomEventListener<frender::events::Click>,
 {
     // #[component(only_dom)] // TODO: optimize with zero hooks

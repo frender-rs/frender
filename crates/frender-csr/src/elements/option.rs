@@ -1,8 +1,8 @@
 use std::pin::Pin;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 
-impl<Ctx, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for Option<S> {
+impl<S: RenderState + Unpin> RenderState for Option<S> {
     fn unmount(self: Pin<&mut Self>) {
         let this = self.get_mut();
         match this {
@@ -14,39 +14,39 @@ impl<Ctx, S: RenderState<Ctx> + Unpin> RenderState<Ctx> for Option<S> {
         *this = None;
     }
 
-    fn poll_reactive(
+    fn poll_csr(
         self: Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         match self.get_mut() {
-            Some(s) => S::poll_reactive(Pin::new(s), ctx, cx),
+            Some(s) => S::poll_csr(Pin::new(s), ctx, cx),
             None => std::task::Poll::Ready(()),
         }
     }
 }
 
-impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for Option<E>
+impl<E: Element> Element for Option<E>
 where
-    <E as UpdateRenderState<Ctx>>::State: Unpin,
+    <E as Element>::CsrState: Unpin,
 {
-    type State = Option<E::State>;
+    type CsrState = Option<E::CsrState>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
         match self {
-            Some(this) => Some(this.initialize_render_state(ctx)),
+            Some(this) => Some(this.into_csr_state(ctx)),
             None => None,
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
         if let Some(this) = self {
             match state.get_mut() {
-                Some(state) => this.update_render_state(ctx, Pin::new(state)),
-                state => *state = Some(this.initialize_render_state(ctx)),
+                Some(state) => this.update_csr_state(ctx, Pin::new(state)),
+                state => *state = Some(this.into_csr_state(ctx)),
             };
         } else {
-            <Option<E::State> as RenderState<Ctx>>::unmount(state)
+            <Option<E::CsrState> as RenderState>::unmount(state)
         }
     }
 }

@@ -1,7 +1,5 @@
 #![deny(clippy::undocumented_unsafe_blocks)]
 
-pub use frender_csr::{RenderState, UpdateRenderState}; // TODO: remove
-
 mod macros;
 pub use macros::*;
 

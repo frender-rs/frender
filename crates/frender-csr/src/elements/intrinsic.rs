@@ -10,7 +10,7 @@ pub struct ElementAndMounted<E> {
 }
 
 impl<E: wasm_bindgen::JsCast + AsRef<web_sys::Element>> ElementAndMounted<E> {
-    pub fn update(&mut self, ctx: &mut crate::Dom, update: impl FnOnce(&mut E, &mut crate::Dom)) {
+    pub fn update(&mut self, ctx: &mut crate::CsrContext, update: impl FnOnce(&mut E, &mut crate::CsrContext)) {
         crate::utils::dom::update_element(self, ctx, update)
     }
 }
@@ -30,8 +30,8 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 
     pub fn initialize_with_tag(
-        initialize_state: impl FnOnce(&mut E, &mut crate::Dom) -> S,
-        ctx: &mut crate::Dom,
+        initialize_state: impl FnOnce(&mut E, &mut crate::CsrContext) -> S,
+        ctx: &mut crate::CsrContext,
         tag: &str,
     ) -> Self
     where
@@ -47,7 +47,7 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 }
 
-impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState<crate::Dom>
+impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
     for IntrinsicComponentRenderState<E, S>
 {
     fn unmount(self: Pin<&mut Self>) {
@@ -61,9 +61,9 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState<
     }
 
     #[inline]
-    fn poll_reactive(
+    fn poll_csr(
         self: Pin<&mut Self>,
-        ctx: &mut crate::Dom,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let this = self.project();

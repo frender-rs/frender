@@ -2,39 +2,38 @@ use std::pin::Pin;
 
 use crate::{
     utils::{pin_as_deref_mut, pin_downcast_mut},
-    UpdateRenderState,
+    Element,
 };
 
 pub struct BoxState<E, const DYN: bool = true>(pub E);
 
-impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, false> {
-    type State = Pin<Box<E::State>>;
+impl<E: Element> Element for BoxState<E, false> {
+    type CsrState = Pin<Box<E::CsrState>>;
 
     #[inline]
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        Box::pin(self.0.initialize_render_state(ctx))
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        Box::pin(self.0.into_csr_state(ctx))
     }
 
     #[inline]
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
-        E::update_render_state(self.0, ctx, pin_as_deref_mut(state))
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
+        E::update_csr_state(self.0, ctx, pin_as_deref_mut(state))
     }
 }
 
-impl<Ctx, E: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for BoxState<E, true>
+impl<E: Element> Element for BoxState<E, true>
 where
-    Ctx: 'static, // TODO: why this is required
-    E::State: std::any::Any,
+    E::CsrState: std::any::Any,
 {
-    type State = Pin<Box<dyn crate::AnyRenderState<Ctx>>>;
+    type CsrState = Pin<Box<dyn crate::AnyRenderState<crate::CsrContext>>>;
 
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
         let state = pin_downcast_mut(pin_as_deref_mut(state).pin_as_mut_any())
             .expect("state type should match");
-        E::update_render_state(self.0, ctx, state)
+        E::update_csr_state(self.0, ctx, state)
     }
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        Box::pin(E::initialize_render_state(self.0, ctx))
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        Box::pin(E::into_csr_state(self.0, ctx))
     }
 }

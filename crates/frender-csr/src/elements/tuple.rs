@@ -1,15 +1,15 @@
 #![allow(non_snake_case)]
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 
-impl<Ctx> RenderState<Ctx> for () {
+impl RenderState for () {
     #[inline]
     fn unmount(self: std::pin::Pin<&mut Self>) {}
 
     #[inline]
-    fn poll_reactive(
+    fn poll_csr(
         self: std::pin::Pin<&mut Self>,
-        ctx: &mut Ctx,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let _ = cx;
@@ -17,27 +17,31 @@ impl<Ctx> RenderState<Ctx> for () {
     }
 }
 
-impl<Ctx> UpdateRenderState<Ctx> for () {
-    type State = ();
+impl Element for () {
+    type CsrState = ();
 
     #[inline]
-    fn initialize_render_state(self, _ctx: &mut Ctx) -> Self::State {}
+    fn into_csr_state(self, _ctx: &mut crate::CsrContext) -> Self::CsrState {}
 
     #[inline]
-    fn update_render_state(self, _: &mut Ctx, _: std::pin::Pin<&mut Self::State>) {}
+    fn update_csr_state(self, _: &mut crate::CsrContext, _: std::pin::Pin<&mut Self::CsrState>) {}
 }
 
-impl<Ctx, R0: UpdateRenderState<Ctx>> UpdateRenderState<Ctx> for (R0,) {
-    type State = R0::State;
+impl<R0: Element> Element for (R0,) {
+    type CsrState = R0::CsrState;
 
     #[inline]
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
-        R0::initialize_render_state(self.0, ctx)
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        R0::into_csr_state(self.0, ctx)
     }
 
     #[inline]
-    fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
-        R0::update_render_state(self.0, ctx, state)
+    fn update_csr_state(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
+        R0::update_csr_state(self.0, ctx, state)
     }
 }
 
@@ -51,20 +55,20 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<Ctx, $($field: RenderState<Ctx>),+> RenderState<Ctx> for $name<$($field),+> {
+            impl<$($field: RenderState),+> RenderState for $name<$($field),+> {
                 fn unmount(self: ::core::pin::Pin<&mut Self>) {
                     let this = self.project();
                     $( this.$field.unmount(); )+
                 }
 
                 #[inline]
-                fn poll_reactive(
+                fn poll_csr(
                     self: std::pin::Pin<&mut Self>,
-                    ctx: &mut Ctx,
+                    ctx: &mut crate::CsrContext,
                     cx: &mut std::task::Context<'_>,
                 ) -> std::task::Poll<()> {
                     let this = self.project();
-                    match ($($field::poll_reactive(this.$field, ctx, cx) ,)+) {
+                    match ($($field::poll_csr(this.$field, ctx, cx) ,)+) {
                         #[allow(unused_variables)]
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
                         _ => std::task::Poll::Pending,
@@ -72,24 +76,24 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<Ctx, $($field: UpdateRenderState<Ctx>),+> UpdateRenderState<Ctx> for ($($field),+) {
-                type State = $name <$($field::State),+>;
+            impl<$($field: Element),+> Element for ($($field),+) {
+                type CsrState = $name <$($field::CsrState),+>;
 
                 #[inline]
-                fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+                fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
                     let ($($field,)+) = self;
 
                     $name {$(
-                        $field: $field::initialize_render_state($field, ctx),
+                        $field: $field::into_csr_state($field, ctx),
                     )+}
                 }
 
                 #[inline]
-                fn update_render_state(self, ctx: &mut Ctx, state: std::pin::Pin<&mut Self::State>) {
+                fn update_csr_state(self, ctx: &mut crate::CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
                     let state = state.project();
                     let ($($field,)+) = self;
                     $(
-                        $field::update_render_state($field, ctx, state.$field);
+                        $field::update_csr_state($field, ctx, state.$field);
                     )+
                 }
             }

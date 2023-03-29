@@ -195,29 +195,29 @@ pub fn transform_item_fn_with(
     } else {
         method_span = span;
         method_name = if ctx_arg_pat.is_some() {
-            "FnMut"
+            "with_render_context"
         } else {
-            "FnMutOutputElement"
+            "new_fn_hook_element"
         };
-    };
-
-    let mut method_generics = None;
-    if ctx_arg_pat.is_none() {
-        let ctx_ty = render_ctx.to_ctx_ty(span, hook_element_path);
-        method_generics = Some(quote_spanned! {span=>
-            ::<#ctx_ty, _>
-        });
     };
 
     let method_name = proc_macro2::Ident::new(method_name, method_span);
 
     let prepend_stmt = before_stmts(item_fn, errors);
 
+    let fn_name = match render_ctx {
+        RenderCtx::Ssr => "ssr",
+        RenderCtx::Dom => "csr",
+        RenderCtx::SsrAndDom => "ssr_and_csr",
+    };
+
+    let fn_name = syn::Ident::new(fn_name, proc_macro2::Span::call_site()); //TODO: better span
+
     item_fn
         .block
         .stmts
         .push(syn::Stmt::Expr(syn::Expr::Verbatim(quote_spanned! {span=>
-            #hook_element_path::FnHookElement::#method_name #method_generics (
+            #hook_element_path::#method_name ::#fn_name (
                 move |#fn_arg_data_pat, #ctx_arg_pat| {
 
                     #fn_stmts_extract_data
