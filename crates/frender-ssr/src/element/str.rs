@@ -1,8 +1,6 @@
 use std::{borrow::Cow, convert::identity};
 
-use frender_core::{IntoStaticStr, StaticStr, StaticText};
-
-use crate::{bytes::CowSlicedBytes, impl_ssr_for_bytes, Element, EscapeSafe};
+use crate::{bytes::CowSlicedBytes, impl_ssr_for_bytes, Element, EscapeSafe, IntoStaticStr};
 
 use super::bytes::State;
 
@@ -11,7 +9,7 @@ pub struct EscapeStr<S: IntoStaticStr, E: EscapeSafe>(pub S, pub E);
 impl<S: IntoStaticStr, E: EscapeSafe> EscapeStr<S, E> {
     pub fn into_static_escaped<Out>(
         self,
-        from_original: impl FnOnce(S::IntoStaticStr) -> Out,
+        from_original: impl FnOnce(S::StaticStr) -> Out,
         from_owned: impl FnOnce(String) -> Out,
     ) -> Out {
         let string = self.0.into_static_str();
@@ -61,7 +59,10 @@ impl_ssr_for_bytes!(
     const _: fn(Cow<'_, str>) -> Cow<'static, str> = |self| {
         EscapeStr(self, html_escape::encode_safe).into_static_escaped(Cow::Owned, Cow::Owned)
     };
+);
 
+#[cfg(feature = "StaticText")]
+impl_ssr_for_bytes!(
     const _: fn(StaticText<S>) -> Cow<'static, str> = |self, generics: __![S: StaticStr]| {
         EscapeStr(self, html_escape::encode_safe).into_static_escaped(Into::into, Cow::Owned)
     };

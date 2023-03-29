@@ -217,6 +217,7 @@ name = "frender-core"
 version = "0.1.0"
 dependencies = [
  "either",
+ "frender-ssr",
  "lazy-pinned",
  "pin-project-lite",
 ]
@@ -267,9 +268,6 @@ dependencies = [
 [[package]]
 name = "frender-html-common"
 version = "0.1.0"
-dependencies = [
- "frender-core",
-]
 
 [[package]]
 name = "frender-html-components"
@@ -347,7 +345,6 @@ name = "frender-ssr"
 version = "0.1.0"
 dependencies = [
  "either",
- "frender-core",
  "frender-html-common",
  "futures-io",
  "html-escape",

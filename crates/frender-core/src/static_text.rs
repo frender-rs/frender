@@ -19,42 +19,11 @@ impl<S: StaticStr> Deref for StaticText<S> {
     }
 }
 
-pub trait IntoStaticStr {
-    type IntoStaticStr: StaticStr;
-    fn into_static_str(self) -> Self::IntoStaticStr;
-}
+#[cfg(feature = "ssr")]
+impl<S: 'static + StaticStr> frender_ssr::IntoStaticStr for StaticText<S> {
+    type StaticStr = S;
 
-impl IntoStaticStr for &str {
-    type IntoStaticStr = String;
-
-    fn into_static_str(self) -> Self::IntoStaticStr {
-        self.to_owned()
-    }
-}
-
-impl IntoStaticStr for String {
-    type IntoStaticStr = String;
-
-    fn into_static_str(self) -> Self::IntoStaticStr {
-        self
-    }
-}
-
-impl IntoStaticStr for Cow<'_, str> {
-    type IntoStaticStr = String;
-
-    fn into_static_str(self) -> Self::IntoStaticStr {
-        match self {
-            Cow::Borrowed(s) => s.to_owned(),
-            Cow::Owned(s) => s,
-        }
-    }
-}
-
-impl<S: StaticStr> IntoStaticStr for StaticText<S> {
-    type IntoStaticStr = S;
-
-    fn into_static_str(self) -> Self::IntoStaticStr {
+    fn into_static_str(self) -> Self::StaticStr {
         self.0
     }
 }

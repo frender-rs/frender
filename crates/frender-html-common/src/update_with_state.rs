@@ -180,6 +180,7 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
     }
 }
 
+#[cfg(feature = "StaticText")]
 impl<S: frender_core::StaticStr> MaybeUpdateValueWithState<str> for frender_core::StaticText<S> {
     type State = S;
 

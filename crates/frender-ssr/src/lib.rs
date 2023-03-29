@@ -1,6 +1,9 @@
 mod async_writable;
 pub use async_writable::*;
 
+mod into_static_str;
+pub use into_static_str::*;
+
 mod context;
 pub use context::*;
 

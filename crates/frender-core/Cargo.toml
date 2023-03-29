@@ -9,3 +9,8 @@ edition = "2021"
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false, optional = true }
+
+[features]
+csr = []
+ssr = ["dep:frender-ssr"]
