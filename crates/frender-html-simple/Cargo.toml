@@ -13,6 +13,6 @@ frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 pin-project-lite = "0.2.9"
 
 [features]
-default = ["dom", "ssr"]  # TODO: remove
-dom = ["dep:frender-csr"]
+default = ["csr", "ssr"]  # TODO: remove
+csr = ["dep:frender-csr"]
 ssr = ["dep:frender-ssr"]

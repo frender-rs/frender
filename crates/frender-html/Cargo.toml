@@ -107,6 +107,6 @@ features = [
 ]
 
 [features]
-default = ["dom", "ssr"]
-dom = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
+default = ["csr", "ssr"]                              # TODO: remove
+csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
 ssr = ["dep:html-escape", "dep:futures-lite"]

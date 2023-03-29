@@ -4,7 +4,7 @@ pub use debug::*;
 pub use frender_core::{element, intrinsic, Keyed, RenderState, StaticText, UpdateRenderState};
 pub use frender_macros::{component, def_props};
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 pub use frender_hook_element::frender_csr::Dom;
 
 #[cfg(feature = "ssr")]

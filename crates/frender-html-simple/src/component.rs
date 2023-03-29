@@ -3,7 +3,7 @@ use frender_html_common::IntrinsicComponent;
 
 use crate::IntoElementProps;
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 pub trait DomIntrinsicComponent {
     type Element: AsRef<frender_csr::web_sys::Element> + frender_csr::wasm_bindgen::JsCast;
 }
@@ -71,7 +71,7 @@ pub trait SsrIntrinsicComponent {
 
 pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, pub P);
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod dom {
     use frender_core::UpdateRenderState;
     use frender_csr::{props::UpdateElementNonReactive, Dom};

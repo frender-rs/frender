@@ -6,7 +6,7 @@ pub trait HookContext: Sized {
     fn replace_context_data(this: &mut Self, old_context: Self::ContextData);
 }
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 impl HookContext for frender_csr::Dom {
     type ContextData = frender_csr::NextNodePosition;
 

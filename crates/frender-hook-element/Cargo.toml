@@ -16,7 +16,6 @@ syn-lite = "0.1.0"
 
 [features]
 default = ["csr", "ssr"]       # TODO: remove
-dom = ["frender-csr"]
+csr = ["frender-csr"]
 spawn = ["frender-csr?/spawn"]
 ssr = ["dep:frender-ssr"]
-csr = ["dom"]                  # TODO: remove

@@ -8,7 +8,7 @@ pub use ctx_and_state::*;
 pub use element::*;
 pub use hook_context::*;
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 pub use frender_csr;
 
 #[cfg(feature = "ssr")]

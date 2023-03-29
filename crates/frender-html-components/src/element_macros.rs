@@ -62,7 +62,7 @@ macro_rules! def_intrinsic_component {
                 build(building)
             }
 
-            #[cfg(feature = "dom")]
+            #[cfg(feature = "csr")]
             mod impl_update_render_state_dom {
                 use super::super::*;
                 impl<
@@ -256,7 +256,7 @@ mod simple {
                 }
                 pub use struct_component_type::$component_name as ComponentType;
 
-                #[cfg(feature = "dom")]
+                #[cfg(feature = "csr")]
                 mod impl_dom {
                     #[allow(unused_imports)]
                     use super::super::*;

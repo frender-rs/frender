@@ -731,7 +731,7 @@ impl IntrinsicComponentPropsData {
 
                 pub type DataInitial = Data<TypesInitial>;
 
-                #[cfg(feature = "dom")]
+                #[cfg(feature = "csr")]
                 #mod_render_state
 
                 mod builder_and_replacer {
@@ -744,7 +744,7 @@ impl IntrinsicComponentPropsData {
                     }
                 }
 
-                #[cfg(feature = "dom")]
+                #[cfg(feature = "csr")]
                 mod impl_update_element {
                     #[allow(unused_imports)]
                     use super::super::*;

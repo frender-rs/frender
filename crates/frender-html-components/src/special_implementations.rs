@@ -1,4 +1,4 @@
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod dom {
     use frender_csr::wasm_bindgen::JsCast;
     use frender_html::props::IntrinsicComponent;
@@ -24,7 +24,7 @@ mod dom {
 }
 
 mod script {
-    #[cfg(feature = "dom")]
+    #[cfg(feature = "csr")]
     mod dom {
         use frender_core::NonReactiveRenderState;
         use frender_html::props::MaybeUpdateValueWithState;

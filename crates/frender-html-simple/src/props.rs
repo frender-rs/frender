@@ -38,7 +38,7 @@ impl<Children, Attrs> ElementProps<Children, Attrs> {
 // pub type ElementPropsEmpty = ElementProps<(), EmptyProps>;
 
 // TODO: remove
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod dom {
     use super::*;
     use frender_csr::{

@@ -12,7 +12,7 @@ pub use states::*;
 
 pub use frender_core;
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 pub use frender_csr;
 
 #[cfg(feature = "ssr")]

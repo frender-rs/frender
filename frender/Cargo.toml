@@ -45,7 +45,7 @@ wasm-bindgen-test = "0.3.13"
 
 [features]
 default = ["html-components-simply-typed"]
-dom = ["frender-hook-element/dom", "frender-html-components?/dom"]
+csr = ["frender-hook-element/csr", "frender-html-components?/csr"]
 ssr = ["frender-hook-element/ssr", "frender-html-components?/ssr"]
 spawn = ["frender-hook-element/spawn"]
 html = ["frender-html"]

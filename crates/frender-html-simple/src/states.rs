@@ -18,7 +18,7 @@ impl<ChildrenState, PropsState> ElementPropsStates<ChildrenState, PropsState> {
     }
 }
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod dom {
     use super::*;
     use frender_csr::props::IntrinsicComponentPollReactive;

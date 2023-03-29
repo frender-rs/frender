@@ -22,7 +22,7 @@ impl<A, B> ChainPropsState<A, B> {
 
 pub struct ChainProps<A, B>(pub A, pub B);
 
-#[cfg(feature = "dom")]
+#[cfg(feature = "csr")]
 mod dom {
     use super::*;
     use frender_csr::{
