@@ -21,3 +21,7 @@ pub use self::either::*;
 
 mod preserved;
 pub use preserved::*;
+
+pub mod intrinsic;
+pub mod scalar;
+pub mod str;

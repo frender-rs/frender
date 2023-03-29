@@ -11,7 +11,6 @@ pub use update_render_state::*;
 mod elements;
 pub use elements::*;
 
-pub mod element;
 pub mod props;
 
 mod mount;
