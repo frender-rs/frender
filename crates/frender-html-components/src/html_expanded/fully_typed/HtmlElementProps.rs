@@ -3785,7 +3785,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type ElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
+        type ElementProps: crate::imports::frender_csr::props::IntrinsicComponentPollReactive;
         type access_key;
         type auto_capitalize;
         type auto_focus;
@@ -3889,7 +3889,7 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        crate::imports::frender_csr::props::IntrinsicComponentPollReactive
         for RenderState<TypeDefs>
     {
         #[inline]
@@ -3897,7 +3897,7 @@ pub mod render_state {
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_csr::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().ElementProps,
                 cx,
             )
@@ -9995,11 +9995,11 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>
+        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>
         for super::Data<TypeDefs>
     where
         ElementProps::Data<TypeDefs::ElementProps>:
-            crate::imports::frender_dom::props::UpdateElement<web_sys::Element>,
+            crate::imports::frender_csr::props::UpdateElement<web_sys::Element>,
         TypeDefs::on_invalid:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Invalid>,
         TypeDefs::on_animation_cancel:
@@ -10063,7 +10063,7 @@ mod impl_update_element {
             dyn super::render_state::RenderStateTypes<
                 ElementProps = <ElementProps::Data<
                     TypeDefs::ElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
+                > as crate::imports::frender_csr::props::UpdateElement<
                     web_sys::Element,
                 >>::State,
                 access_key = <TypeDefs::access_key as ::frender_html::props::MaybeUpdateValueWithState<
@@ -10236,13 +10236,13 @@ mod impl_update_element {
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlElement,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
             super::render_state::RenderState {
                 ElementProps: <ElementProps::Data<
                     TypeDefs::ElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
+                > as crate::imports::frender_csr::props::UpdateElement<
                     web_sys::Element,
                 >>::initialize_state(this.ElementProps, element, children_ctx),
                 access_key: <TypeDefs::access_key as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10256,7 +10256,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.auto_capitalize,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "autocapitalize",
@@ -10267,7 +10267,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.auto_focus,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         *v,
                         dom_element,
                         "autofocus",
@@ -10278,7 +10278,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.context_menu,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "contextmenu",
@@ -10303,7 +10303,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.enter_key_hint,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "enterkeyhint",
@@ -10321,7 +10321,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.inert,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         *v,
                         dom_element,
                         "inert",
@@ -10332,7 +10332,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.input_mode,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "inputmode",
@@ -10343,7 +10343,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.is,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "is",
@@ -10354,7 +10354,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.item_id,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "itemid",
@@ -10365,7 +10365,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.item_prop,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "itemprop",
@@ -10376,7 +10376,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.item_ref,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "itemref",
@@ -10387,7 +10387,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.item_scope,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "itemscope",
@@ -10398,7 +10398,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.item_type,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "itemtype",
@@ -10416,7 +10416,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.nonce,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "nonce",
@@ -10427,7 +10427,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.role,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "role",
@@ -10438,7 +10438,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.slot,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "slot",
@@ -10456,7 +10456,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.style,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "style",
@@ -10481,7 +10481,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.translate,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "translate",
@@ -10492,7 +10492,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.virtual_keyboard_policy,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "virtualkeyboardpolicy",
@@ -10609,12 +10609,12 @@ mod impl_update_element {
         fn update_element(
             this: Self,
             element: &web_sys::HtmlElement,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::frender_dom::props::UpdateElement::update_element(
+            crate::imports::frender_csr::props::UpdateElement::update_element(
                 this.ElementProps,
                 element.as_ref(),
                 children_ctx,
@@ -10633,7 +10633,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_capitalize,
                 state.auto_capitalize,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "autocapitalize",
@@ -10645,7 +10645,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_focus,
                 state.auto_focus,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     *v,
                     dom_element,
                     "autofocus",
@@ -10657,7 +10657,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.context_menu,
                 state.context_menu,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "contextmenu",
@@ -10685,7 +10685,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.enter_key_hint,
                 state.enter_key_hint,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "enterkeyhint",
@@ -10706,7 +10706,7 @@ mod impl_update_element {
                 this.inert,
                 state.inert,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     *v,
                     dom_element,
                     "inert",
@@ -10719,7 +10719,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.input_mode,
                 state.input_mode,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "inputmode",
@@ -10731,7 +10731,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.is,
                 state.is,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "is",
@@ -10744,7 +10744,7 @@ mod impl_update_element {
                 this.item_id,
                 state.item_id,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "itemid",
@@ -10757,7 +10757,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.item_prop,
                 state.item_prop,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "itemprop",
@@ -10769,7 +10769,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.item_ref,
                 state.item_ref,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "itemref",
@@ -10781,7 +10781,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.item_scope,
                 state.item_scope,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "itemscope",
@@ -10793,7 +10793,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.item_type,
                 state.item_type,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "itemtype",
@@ -10814,7 +10814,7 @@ mod impl_update_element {
                 this.nonce,
                 state.nonce,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "nonce",
@@ -10828,7 +10828,7 @@ mod impl_update_element {
                 this.role,
                 state.role,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "role",
@@ -10842,7 +10842,7 @@ mod impl_update_element {
                 this.slot,
                 state.slot,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "slot",
@@ -10864,7 +10864,7 @@ mod impl_update_element {
                 this.style,
                 state.style,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "style",
@@ -10893,7 +10893,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.translate,
                 state.translate,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "translate",
@@ -10905,7 +10905,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.virtual_keyboard_policy,
                 state.virtual_keyboard_policy,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "virtualkeyboardpolicy",

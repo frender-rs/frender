@@ -133,14 +133,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::accept<V>
     {
         type State = super::props::accept<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -149,7 +149,7 @@ mod impl_dom_for_props {
                     str,
                 >>::initialize_state_and_update(
                     this.0,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "accept",
@@ -161,7 +161,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -171,7 +171,7 @@ mod impl_dom_for_props {
             >>::maybe_update_value_with_state(
                 this.0,
                 &mut state.get_mut().0,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "accept",
@@ -183,14 +183,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::accept_charset<V>
     {
         type State = super::props::accept_charset<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -207,7 +207,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -225,14 +225,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::auto_complete<V>
     {
         type State = super::props::auto_complete<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -249,7 +249,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -267,14 +267,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::name<V>
     {
         type State = super::props::name<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -291,7 +291,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -309,13 +309,13 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E> for super::props::rel<V>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E> for super::props::rel<V>
     {
         type State = super::props::rel<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -324,7 +324,7 @@ mod impl_dom_for_props {
                     str,
                 >>::initialize_state_and_update(
                     this.0,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "rel",
@@ -336,7 +336,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -346,7 +346,7 @@ mod impl_dom_for_props {
             >>::maybe_update_value_with_state(
                 this.0,
                 &mut state.get_mut().0,
-                |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "rel",
@@ -358,14 +358,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::action<V>
     {
         type State = super::props::action<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -382,7 +382,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -400,14 +400,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::enc_type<V>
     {
         type State = super::props::enc_type<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -424,7 +424,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -442,14 +442,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::method<V>
     {
         type State = super::props::method<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -466,7 +466,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -484,14 +484,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::no_validate<V>
     {
         type State = super::props::no_validate<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -508,7 +508,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -526,14 +526,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::target<V>
     {
         type State = super::props::target<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -550,7 +550,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -568,14 +568,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::UpdateDomEventListener<events::FormData>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_form_data<V>
     {
         type State = super::props::on_form_data<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             super::props::on_form_data(V::initialize_dom_event_listener_state(this.0, dom_element))
@@ -583,7 +583,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -593,14 +593,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::UpdateDomEventListener<events::Reset>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_reset<V>
     {
         type State = super::props::on_reset<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             super::props::on_reset(V::initialize_dom_event_listener_state(this.0, dom_element))
@@ -608,7 +608,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -618,14 +618,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::UpdateDomEventListener<events::Submit>,
             E: ::core::convert::AsRef<web_sys::HtmlFormElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_submit<V>
     {
         type State = super::props::on_submit<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             super::props::on_submit(V::initialize_dom_event_listener_state(this.0, dom_element))
@@ -633,7 +633,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();

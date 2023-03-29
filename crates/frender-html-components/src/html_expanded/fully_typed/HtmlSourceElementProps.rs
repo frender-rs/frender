@@ -818,7 +818,7 @@ pub type DataInitial = Data<TypesInitial>;
 pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
-        type HtmlElementProps: crate::imports::frender_dom::props::IntrinsicComponentPollReactive;
+        type HtmlElementProps: crate::imports::frender_csr::props::IntrinsicComponentPollReactive;
         type r#type;
         type src;
         type srcset;
@@ -844,7 +844,7 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        crate::imports::frender_csr::props::IntrinsicComponentPollReactive
         for RenderState<TypeDefs>
     {
         #[inline]
@@ -852,7 +852,7 @@ pub mod render_state {
             self: ::core::pin::Pin<&mut Self>,
             cx: &mut ::core::task::Context<'_>,
         ) -> ::core::task::Poll<bool> {
-            crate::imports::frender_dom::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
+            crate::imports::frender_csr::props::IntrinsicComponentPollReactive::intrinsic_component_poll_reactive(
                 self.project().HtmlElementProps,
                 cx,
             )
@@ -2624,17 +2624,17 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlSourceElement>
+        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlSourceElement>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::frender_dom::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
+                > as crate::imports::frender_csr::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::State,
                 r#type = <TypeDefs::r#type as ::frender_html::props::MaybeUpdateValueWithState<
@@ -2663,13 +2663,13 @@ mod impl_update_element {
         fn initialize_state(
             this: Self,
             element: &web_sys::HtmlSourceElement,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
-                > as crate::imports::frender_dom::props::UpdateElement<
+                > as crate::imports::frender_csr::props::UpdateElement<
                     web_sys::HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
                 r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2711,7 +2711,7 @@ mod impl_update_element {
                     u32,
                 >>::initialize_state_and_update(
                     this.height,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         *v,
                         dom_element,
                         "height",
@@ -2722,7 +2722,7 @@ mod impl_update_element {
                     u32,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         *v,
                         dom_element,
                         "width",
@@ -2734,12 +2734,12 @@ mod impl_update_element {
         fn update_element(
             this: Self,
             element: &web_sys::HtmlSourceElement,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let state = state.pin_project();
             let dom_element: &::web_sys::Element = element.as_ref();
-            crate::imports::frender_dom::props::UpdateElement::update_element(
+            crate::imports::frender_csr::props::UpdateElement::update_element(
                 this.HtmlElementProps,
                 element.as_ref(),
                 children_ctx,
@@ -2791,7 +2791,7 @@ mod impl_update_element {
                 this.height,
                 state.height,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     *v,
                     dom_element,
                     "height",
@@ -2805,7 +2805,7 @@ mod impl_update_element {
                 this.width,
                 state.width,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     *v,
                     dom_element,
                     "width",

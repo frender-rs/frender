@@ -121,14 +121,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>,
             E: ::core::convert::AsRef<web_sys::HtmlCanvasElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::height<V>
     {
         type State = super::props::height<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -145,7 +145,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
@@ -163,14 +163,14 @@ mod impl_dom_for_props {
     impl<
             V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>,
             E: ::core::convert::AsRef<web_sys::HtmlCanvasElement>,
-        > crate::imports::frender_dom::props::UpdateElementNonReactive<E>
+        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::width<V>
     {
         type State = super::props::width<V::State>;
         fn initialize_state_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
         ) -> Self::State {
             let dom_element = element.as_ref();
             let element = dom_element;
@@ -187,7 +187,7 @@ mod impl_dom_for_props {
         fn update_element_non_reactive(
             this: Self,
             element: &E,
-            children_ctx: &mut crate::imports::frender_dom::Dom,
+            children_ctx: &mut crate::imports::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();

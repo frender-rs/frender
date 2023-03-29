@@ -1872,7 +1872,7 @@ pub mod render_state {
         }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes>
-        crate::imports::frender_dom::props::IntrinsicComponentPollReactive
+        crate::imports::frender_csr::props::IntrinsicComponentPollReactive
         for RenderState<TypeDefs>
     {
         #[inline]
@@ -3728,10 +3728,10 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_dom::props::UpdateElement<web_sys::Element>
+        crate::imports::frender_csr::props::UpdateElement<web_sys::Element>
         for super::Data<TypeDefs>
     where
-        TypeDefs::children: ::frender_core::UpdateRenderState<::frender_dom::Dom>,
+        TypeDefs::children: ::frender_core::UpdateRenderState<::frender_csr::Dom>,
         TypeDefs::on_cancel:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Cancel>,
         TypeDefs::on_error:
@@ -3807,7 +3807,7 @@ mod impl_update_element {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 children = <TypeDefs::children as frender_core::UpdateRenderState<
-                    frender_dom::Dom,
+                    frender_csr::Dom,
                 >>::State,
                 class = <TypeDefs::class as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -3928,7 +3928,7 @@ mod impl_update_element {
         fn initialize_state(
             this: Self,
             element: &web_sys::Element,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
             super::render_state::RenderState {
@@ -3940,7 +3940,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.class,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "class",
@@ -3958,7 +3958,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.part,
-                    |v| crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
                         "part",
@@ -4090,7 +4090,7 @@ mod impl_update_element {
         fn update_element(
             this: Self,
             element: &web_sys::Element,
-            children_ctx: &mut ::frender_dom::Dom,
+            children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let state = state.pin_project();
@@ -4106,7 +4106,7 @@ mod impl_update_element {
                 this.class,
                 state.class,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "class",
@@ -4128,7 +4128,7 @@ mod impl_update_element {
                 this.part,
                 state.part,
                 |v| {
-                    crate::imports::frender_dom::props::UpdateElementAttribute::update_element_attribute(
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "part",
