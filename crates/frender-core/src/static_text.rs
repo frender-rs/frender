@@ -1,6 +1,6 @@
 use std::{borrow::Cow, ops::Deref};
 
-pub trait StaticStr: Deref<Target = str> + Into<Cow<'static, str>> {}
+pub trait StaticStr: 'static + Deref<Target = str> + Into<Cow<'static, str>> {}
 
 impl StaticStr for &'static str {}
 impl StaticStr for String {}
