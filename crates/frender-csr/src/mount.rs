@@ -1,6 +1,4 @@
-use frender_core::UpdateRenderState;
-
-use crate::Dom;
+use crate::{Dom, UpdateRenderState};
 
 pub trait GetDomElement {
     fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element;

@@ -279,7 +279,7 @@ macro_rules! impl_intrinsic_element_with_any_children {
     ($ty:ty) => {
         $crate::impl_ssr_with_any_children!($ty);
 
-        impl<Ctx, Children: $crate::frender_core::UpdateRenderState<Ctx>>
+        impl<Ctx, Children: $crate::frender_csr::UpdateRenderState<Ctx>>
             $crate::IntrinsicComponentWithChildren<Ctx, Children> for $ty
         {
             type ChildrenState = Children::State;

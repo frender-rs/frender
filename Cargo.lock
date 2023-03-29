@@ -217,6 +217,7 @@ name = "frender-core"
 version = "0.1.0"
 dependencies = [
  "either",
+ "frender-csr",
  "frender-ssr",
  "lazy-pinned",
  "pin-project-lite",
@@ -226,10 +227,10 @@ dependencies = [
 name = "frender-csr"
 version = "0.1.0"
 dependencies = [
- "frender-core",
  "futures-lite",
  "gloo",
  "js-sys",
+ "lazy-pinned",
  "pin-project-lite",
  "wasm-bindgen",
  "wasm-bindgen-futures",

@@ -1,4 +1,4 @@
-use frender_core::{RenderState, UpdateRenderState};
+use frender_csr::{RenderState, UpdateRenderState};
 use frender_html_common::IntrinsicComponent;
 
 use crate::IntoElementProps;
@@ -73,7 +73,7 @@ pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, p
 
 #[cfg(feature = "csr")]
 mod dom {
-    use frender_core::UpdateRenderState;
+    use frender_csr::UpdateRenderState;
     use frender_csr::{props::UpdateElementNonReactive, Dom};
     use frender_html_common::IntrinsicComponent;
 
@@ -140,7 +140,7 @@ mod dom {
 mod ssr {
     use std::borrow::Cow;
 
-    use frender_core::UpdateRenderState;
+    use frender_csr::UpdateRenderState;
     use frender_html_common::IntrinsicComponent;
     use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, Element};
 

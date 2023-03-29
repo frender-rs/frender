@@ -20,7 +20,7 @@ pub mod __private {
     pub use hooks_core::transform_hook_fn_body_as_closure;
     pub use syn_lite::{expand_or, parse_item_fn};
 
-    pub use frender_core::{RenderState, UpdateRenderState};
+    pub use frender_csr::{RenderState, UpdateRenderState};
 
     #[cfg(feature = "csr")]
     pub use frender_csr::Dom as csr;

@@ -1,6 +1,6 @@
 use std::future::IntoFuture;
 
-use frender_core::{RenderState, UpdateRenderState};
+use crate::{RenderState, UpdateRenderState};
 
 #[derive(Debug, Clone)]
 pub enum NextNodePosition {

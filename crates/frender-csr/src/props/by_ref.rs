@@ -1,5 +1,7 @@
+#[cfg(feature = "StaticText")]
 use std::borrow::Cow;
 
+#[cfg(feature = "StaticText")]
 use frender_core::StaticText;
 
 pub trait MaybeUpdateValueByRef<V: ?Sized> {
@@ -45,6 +47,7 @@ macro_rules! auto_impl_update_value_by_ref {
     )*)*};
 }
 
+#[cfg(feature = "StaticText")]
 auto_impl_update_value_by_ref! {
     str: str, String, Cow<'_, str>, StaticText<String>, StaticText<&'static str>, StaticText<Cow<'static, str>>;
 }

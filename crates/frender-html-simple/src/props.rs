@@ -1,4 +1,4 @@
-use frender_core::UpdateRenderState;
+use frender_csr::UpdateRenderState;
 
 use super::ElementPropsStates;
 

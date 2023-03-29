@@ -1,4 +1,4 @@
-use frender_core::UpdateRenderState;
+use crate::UpdateRenderState;
 use wasm_bindgen::JsValue;
 
 use crate::Dom;

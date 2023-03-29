@@ -1,7 +1,9 @@
 mod debug;
 pub use debug::*;
 
-pub use frender_core::{element, intrinsic, Keyed, RenderState, StaticText, UpdateRenderState};
+pub use frender_core::{element, intrinsic, StaticText};
+#[cfg(feature = "csr")]
+pub use frender_hook_element::frender_csr::{Keyed, RenderState, UpdateRenderState};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
@@ -38,7 +40,8 @@ pub mod prelude {
 
     pub use frender_hook_element::{component_fn, Element};
 
-    pub use frender_core::{element, intrinsic, Keyed, StaticText};
+    pub use frender_core::{element, intrinsic, StaticText};
+    pub use frender_hook_element::frender_csr::Keyed;
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components-simply-typed")]

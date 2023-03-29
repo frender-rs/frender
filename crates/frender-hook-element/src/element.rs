@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_csr::{RenderState, UpdateRenderState};
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 use lazy_pinned::LazyPinned;
 
@@ -12,7 +12,7 @@ use crate::{
 mod prelude_names {
     pub(super) use std::pin::Pin;
 
-    pub(super) use frender_core::{RenderState, UpdateRenderState};
+    pub(super) use frender_csr::{RenderState, UpdateRenderState};
     pub(super) use hooks_core::{HookPollNextUpdate, HookUnmount};
 
     #[cfg(feature = "csr")]

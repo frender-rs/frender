@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender_core::{RenderState, UpdateRenderState};
+use frender_csr::{RenderState, UpdateRenderState};
 use lazy_pinned::LazyPinned;
 
 pub(crate) fn lazy_pinned_state_unmount<State: RenderState<Ctx>, Ctx>(

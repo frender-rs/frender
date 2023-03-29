@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender_core::RenderState;
+use crate::RenderState;
 
 use crate::props::IntrinsicComponentPollReactive;
 

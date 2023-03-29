@@ -26,7 +26,7 @@ mod dom {
 mod script {
     #[cfg(feature = "csr")]
     mod dom {
-        use frender_core::NonReactiveRenderState;
+        use frender_csr::NonReactiveRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
         use frender_html_simple::IntrinsicComponentWithChildren;
 
@@ -71,7 +71,7 @@ mod script {
     mod ssr {
         use std::borrow::Cow;
 
-        use frender_core::UpdateRenderState;
+        use frender_csr::UpdateRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
         use frender_html_simple::SsrWithChildren;
         use frender_ssr::{element::str::EscapeStr, AsyncWrite, Element};

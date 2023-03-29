@@ -1,7 +1,10 @@
 use std::borrow::Cow;
 use std::ops::Deref;
 
-use frender_core::{RenderState, StaticStr, StaticText, UpdateRenderState};
+use crate::{RenderState, UpdateRenderState};
+#[cfg(feature = "StaticText")]
+use frender_core::{StaticStr, StaticText};
+
 use js_sys::JsString;
 use wasm_bindgen::{JsCast, JsValue};
 
@@ -21,6 +24,7 @@ pub trait RenderingStr: Deref<Target = str> {
     fn update_cache(cache: &mut Self::Cache, value: Self);
 }
 
+#[cfg(feature = "StaticText")]
 impl<S: StaticStr> RenderingStr for StaticText<S> {
     type Cache = S;
 
@@ -264,5 +268,9 @@ impl_render_str! {
     Cow<'_, str>,
     &str,
     String,
+}
+
+#[cfg(feature = "StaticText")]
+impl_render_str! {
     @[S: StaticStr] StaticText<S>,
 }

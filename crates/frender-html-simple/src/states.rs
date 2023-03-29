@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender_core::RenderState;
+use frender_csr::RenderState;
 
 pin_project_lite::pin_project! {
     pub struct ElementPropsStates<ChildrenState, PropsState> {
