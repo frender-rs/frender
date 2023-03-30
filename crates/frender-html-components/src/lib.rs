@@ -12,7 +12,6 @@ pub use html_expanded as html;
 mod special_implementations;
 
 mod imports {
-    pub use frender_core;
     pub use frender_html;
     pub use frender_html_simple;
     pub use pin_project_lite::pin_project;

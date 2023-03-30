@@ -202,11 +202,11 @@ version = "2.0.0-alpha.1"
 dependencies = [
  "bg",
  "frender-common",
- "frender-core",
  "frender-hook-element",
  "frender-html",
  "frender-html-components",
  "frender-macros",
+ "frender-ssr",
  "js-sys",
  "wasm-bindgen",
  "wasm-bindgen-test",
@@ -216,17 +216,6 @@ dependencies = [
 [[package]]
 name = "frender-common"
 version = "0.1.0"
-
-[[package]]
-name = "frender-core"
-version = "0.1.0"
-dependencies = [
- "either",
- "frender-csr",
- "frender-ssr",
- "lazy-pinned",
- "pin-project-lite",
-]
 
 [[package]]
 name = "frender-csr"
@@ -261,7 +250,6 @@ name = "frender-html"
 version = "0.1.0"
 dependencies = [
  "convert-js",
- "frender-core",
  "frender-html-common",
  "futures-lite",
  "ghost-lite",
@@ -280,7 +268,6 @@ version = "0.1.0"
 name = "frender-html-components"
 version = "0.1.0"
 dependencies = [
- "frender-core",
  "frender-csr",
  "frender-html",
  "frender-html-simple",
@@ -305,7 +292,6 @@ dependencies = [
 name = "frender-html-simple"
 version = "0.1.0"
 dependencies = [
- "frender-core",
  "frender-csr",
  "frender-html-common",
  "frender-ssr",

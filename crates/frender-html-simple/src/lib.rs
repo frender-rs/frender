@@ -10,8 +10,6 @@ pub use component::*;
 pub use props::*;
 pub use states::*;
 
-pub use frender_core;
-
 #[cfg(feature = "csr")]
 pub use frender_csr;
 

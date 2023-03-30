@@ -1,8 +1,14 @@
 mod debug;
 pub use debug::*;
 
+mod element_macros;
+
+pub mod elements;
+pub mod omitted;
+
+pub use elements::static_text::StaticText;
+
 pub use frender_common::Keyed;
-pub use frender_core::{element, intrinsic, StaticText};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
@@ -35,12 +41,14 @@ pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
-    pub use crate::rsx;
+    pub use crate::{rsx, StaticText};
 
     pub use frender_hook_element::{component_fn, Element};
 
     pub use frender_common::Keyed;
-    pub use frender_core::{element, intrinsic, StaticText};
+
+    pub use crate::{elements, intrinsic};
+
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components-simply-typed")]
