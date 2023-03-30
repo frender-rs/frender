@@ -13,6 +13,7 @@ js-sys = "0.3.60"
 wasm-bindgen-futures = { version = "0.4.33", optional = true }
 lazy-pinned = "0.1.0"
 frender-common = { version = "0.1.0", path = "../frender-common" }
+either = { version = "1.8.1", default-features = false, optional = true }
 
 [dependencies.futures-lite]
 version = "1.12.0"

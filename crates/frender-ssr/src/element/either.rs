@@ -21,8 +21,6 @@ impl<L, R> Element for Either<L, R>
 where
     L: Element,
     R: Element,
-    L::SsrState: Unpin,
-    R::SsrState: Unpin,
 {
     type SsrState = Either<L::SsrState, R::SsrState>;
 

@@ -3,7 +3,7 @@ use std::pin::Pin;
 use either::Either;
 use lazy_pinned::LazyPinned;
 
-use crate::{RenderState, UpdateRenderState};
+use crate::{Element, RenderState};
 
 pin_project_lite::pin_project! {
     pub struct PreservedEitherState<L, R> {
@@ -26,42 +26,43 @@ impl<L: RenderState, R: RenderState> RenderState for PreservedEitherState<L, R> 
         *this.left_is_mounted = None;
     }
 
-    fn poll_reactive(
+    fn poll_csr(
         self: Pin<&mut Self>,
+        ctx: &mut crate::CsrContext,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<bool> {
+    ) -> std::task::Poll<()> {
         let this = self.project();
         match this.left_is_mounted {
-            Some(true) => this.left.as_pin_mut().unwrap().poll_reactive(cx),
-            Some(false) => this.right.as_pin_mut().unwrap().poll_reactive(cx),
-            None => false.into(),
+            Some(true) => this.left.as_pin_mut().unwrap().poll_csr(ctx, cx),
+            Some(false) => this.right.as_pin_mut().unwrap().poll_csr(ctx, cx),
+            None => std::task::Poll::Ready(()),
         }
     }
 }
 
-impl<L, R, Ctx> UpdateRenderState<Ctx> for super::Preserved<Either<L, R>>
+impl<L, R> Element for super::Preserved<Either<L, R>>
 where
-    L: UpdateRenderState<Ctx>,
-    R: UpdateRenderState<Ctx>,
+    L: Element,
+    R: Element,
 {
-    type State = PreservedEitherState<L::State, R::State>;
+    type CsrState = PreservedEitherState<L::CsrState, R::CsrState>;
 
-    fn initialize_render_state(self, ctx: &mut Ctx) -> Self::State {
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
         match self.0 {
             Either::Left(e) => PreservedEitherState {
                 left_is_mounted: Some(true),
-                left: LazyPinned(Some(e.initialize_render_state(ctx))),
+                left: LazyPinned(Some(e.into_csr_state(ctx))),
                 right: LazyPinned(None),
             },
             Either::Right(e) => PreservedEitherState {
                 left_is_mounted: Some(true),
                 left: LazyPinned(None),
-                right: LazyPinned(Some(e.initialize_render_state(ctx))),
+                right: LazyPinned(Some(e.into_csr_state(ctx))),
             },
         }
     }
 
-    fn update_render_state(self, ctx: &mut Ctx, state: Pin<&mut Self::State>) {
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
         let state = state.project();
         match self.0 {
             Either::Left(e) => {
@@ -70,8 +71,8 @@ where
                 }
                 state.left.use_pin_or_insert_with_data(
                     (e, ctx),
-                    |(e, ctx), state| e.update_render_state(ctx, state),
-                    |(e, ctx)| e.initialize_render_state(ctx),
+                    |(e, ctx), state| e.update_csr_state(ctx, state),
+                    |(e, ctx)| e.into_csr_state(ctx),
                 );
                 *state.left_is_mounted = Some(true);
             }
@@ -81,8 +82,8 @@ where
                 }
                 state.right.use_pin_or_insert_with_data(
                     (e, ctx),
-                    |(e, ctx), state| e.update_render_state(ctx, state),
-                    |(e, ctx)| e.initialize_render_state(ctx),
+                    |(e, ctx), state| e.update_csr_state(ctx, state),
+                    |(e, ctx)| e.into_csr_state(ctx),
                 );
                 *state.left_is_mounted = Some(false);
             }

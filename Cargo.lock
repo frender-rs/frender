@@ -232,6 +232,7 @@ dependencies = [
 name = "frender-csr"
 version = "0.1.0"
 dependencies = [
+ "either",
  "frender-common",
  "futures-lite",
  "gloo",
