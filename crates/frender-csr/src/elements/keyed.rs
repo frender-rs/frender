@@ -1,12 +1,8 @@
 use std::collections::HashMap;
 
-use crate::{Element, RenderState};
+use frender_common::Keyed;
 
-/// TODO: `Keyed(element, key)`
-///     - improve performance.
-///       Currently, all elements are unmounted and then new elements update the states.
-///     - impl UpdateRenderState<Ctx> for T where T: IntoIterator<Keyed<E, K>>
-pub struct Keyed<K, E>(pub K, pub E);
+use crate::{Element, RenderState};
 
 pub struct KeyedElementsState<K, S> {
     states: HashMap<K, S>,
@@ -61,7 +57,11 @@ where
         }
     }
 
-    fn update_csr_state(self, ctx: &mut crate::CsrContext, mut state: std::pin::Pin<&mut Self::CsrState>) {
+    fn update_csr_state(
+        self,
+        ctx: &mut crate::CsrContext,
+        mut state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
         state.as_mut().unmount();
         let states = &mut state.get_mut().states;
         let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));

@@ -201,6 +201,7 @@ name = "frender"
 version = "2.0.0-alpha.1"
 dependencies = [
  "bg",
+ "frender-common",
  "frender-core",
  "frender-hook-element",
  "frender-html",
@@ -211,6 +212,10 @@ dependencies = [
  "wasm-bindgen-test",
  "web-sys",
 ]
+
+[[package]]
+name = "frender-common"
+version = "0.1.0"
 
 [[package]]
 name = "frender-core"
@@ -227,6 +232,7 @@ dependencies = [
 name = "frender-csr"
 version = "0.1.0"
 dependencies = [
+ "frender-common",
  "futures-lite",
  "gloo",
  "js-sys",
@@ -345,6 +351,7 @@ name = "frender-ssr"
 version = "0.1.0"
 dependencies = [
  "either",
+ "frender-common",
  "frender-html-common",
  "futures-io",
  "html-escape",
