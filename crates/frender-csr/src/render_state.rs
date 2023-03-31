@@ -1,6 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
-use crate::utils::pin_as_deref_mut;
+use frender_common::utils::pin_as_deref_mut;
 
 pub trait RenderState {
     fn unmount(self: Pin<&mut Self>);

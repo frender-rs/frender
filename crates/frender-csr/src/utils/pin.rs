@@ -1,13 +1,4 @@
-use std::{ops::DerefMut, pin::Pin};
-
-/// See [`Pin::as_deref_mut`]
-pub fn pin_as_deref_mut<P>(this: Pin<&mut Pin<P>>) -> Pin<&mut P::Target>
-where
-    P: DerefMut,
-{
-    // SAFETY: See [`Pin::as_deref_mut`]
-    unsafe { this.get_unchecked_mut() }.as_mut()
-}
+use std::pin::Pin;
 
 pub fn pin_downcast_mut<T: std::any::Any>(
     this: Pin<&mut dyn std::any::Any>,

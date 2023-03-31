@@ -1,9 +1,8 @@
 use std::pin::Pin;
 
-use crate::{
-    utils::{pin_as_deref_mut, pin_downcast_mut},
-    Element,
-};
+use frender_common::utils::pin_as_deref_mut;
+
+use crate::{utils::pin_downcast_mut, Element};
 
 pub struct BoxState<E, const DYN: bool = true>(pub E);
 
