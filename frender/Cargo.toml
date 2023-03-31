@@ -15,6 +15,10 @@ js-sys = "0.3"
 bg = { version = "0.2.0", optional = true }
 frender-common = { version = "0.1.0", path = "../crates/frender-common" }
 frender-ssr = { version = "0.1.0", path = "../crates/frender-ssr", default-features = false, optional = true }
+frender-csr = { version = "0.1.0", path = "../crates/frender-csr", default-features = false, optional = true }
+pin-project-lite = "0.2.9"
+lazy-pinned = "0.1.0"
+either = { version = "1.8.1", default-features = false, optional = true }
 
 [dependencies.frender-hook-element]
 path = "../crates/frender-hook-element"
@@ -42,8 +46,12 @@ features = ["console", "Window", "Document", "Element"]
 wasm-bindgen-test = "0.3.13"
 
 [features]
-default = ["html-components-simply-typed"]
-csr = ["frender-hook-element/csr", "frender-html-components?/csr"]
+default = ["html-components-simply-typed", "either"]
+csr = [
+    "frender-hook-element/csr",
+    "frender-html-components?/csr",
+    "frender-csr",
+]
 ssr = [
     "frender-hook-element/ssr",
     "frender-html-components?/ssr",
@@ -60,3 +68,4 @@ html-components-fully-typed = [
     "html-components",
     "frender-html-components/fully-typed",
 ]
+either = ["dep:either", "frender-ssr?/either", "frender-csr?/either"]

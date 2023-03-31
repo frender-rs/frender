@@ -201,13 +201,17 @@ name = "frender"
 version = "2.0.0-alpha.1"
 dependencies = [
  "bg",
+ "either",
  "frender-common",
+ "frender-csr",
  "frender-hook-element",
  "frender-html",
  "frender-html-components",
  "frender-macros",
  "frender-ssr",
  "js-sys",
+ "lazy-pinned",
+ "pin-project-lite",
  "wasm-bindgen",
  "wasm-bindgen-test",
  "web-sys",
