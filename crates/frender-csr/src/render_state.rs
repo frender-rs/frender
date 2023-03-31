@@ -12,6 +12,34 @@ pub trait RenderState {
     ) -> Poll<()>;
 }
 
+impl<S: ?Sized + RenderState + Unpin> RenderState for &mut S {
+    fn unmount(self: Pin<&mut Self>) {
+        S::unmount(Pin::new(self.get_mut()))
+    }
+
+    fn poll_csr(
+        self: Pin<&mut Self>,
+        ctx: &mut crate::CsrContext,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        S::poll_csr(Pin::new(self.get_mut()), ctx, cx)
+    }
+}
+
+impl<S: ?Sized + RenderState + Unpin> RenderState for Box<S> {
+    fn unmount(self: Pin<&mut Self>) {
+        S::unmount(Pin::new(self.get_mut()))
+    }
+
+    fn poll_csr(
+        self: Pin<&mut Self>,
+        ctx: &mut crate::CsrContext,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        S::poll_csr(Pin::new(self.get_mut()), ctx, cx)
+    }
+}
+
 impl<P> RenderState for Pin<P>
 where
     P: std::ops::DerefMut,
