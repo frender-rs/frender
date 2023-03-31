@@ -59,24 +59,3 @@ where
         P::Target::poll_csr(pin_as_deref_mut(self), ctx, cx)
     }
 }
-
-pub trait AnyRenderState<Ctx>: std::any::Any + RenderState {
-    fn pin_as_mut_any(self: Pin<&mut Self>) -> Pin<&mut dyn std::any::Any>;
-}
-
-impl<E, Ctx> AnyRenderState<Ctx> for E
-where
-    E: std::any::Any + RenderState,
-{
-    fn pin_as_mut_any(self: Pin<&mut Self>) -> Pin<&mut dyn std::any::Any> {
-        self
-    }
-}
-
-// TODO: remove
-pub fn join_poll_reactive_results(a: Poll<()>, b: Poll<()>) -> Poll<()> {
-    match (a, b) {
-        (Poll::Ready(()), Poll::Ready(())) => Poll::Ready(()),
-        _ => Poll::Pending,
-    }
-}
