@@ -4,6 +4,9 @@ pub use async_writable::*;
 mod into_static_str;
 pub use into_static_str::*;
 
+mod render_state;
+pub use render_state::*;
+
 mod context;
 pub use context::*;
 
