@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use wasm_bindgen::JsCast;
 
 use crate::{elements::intrinsic::ElementAndMounted, CsrContext, NextNodePosition};
@@ -6,7 +8,7 @@ use crate::{elements::intrinsic::ElementAndMounted, CsrContext, NextNodePosition
 pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(
     ctx: &mut CsrContext,
     tag: &str,
-    update: impl FnOnce(&mut E, &mut CsrContext) -> R,
+    update: impl FnOnce(&E, &mut CsrContext) -> R,
 ) -> (ElementAndMounted<E>, R) {
     initialize_element(
         ctx,
@@ -24,16 +26,18 @@ pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(
 pub fn initialize_element<E: JsCast + AsRef<web_sys::Element>, R>(
     ctx: &mut CsrContext,
     create: impl FnOnce(&mut CsrContext) -> E,
-    update: impl FnOnce(&mut E, &mut CsrContext) -> R,
+    update: impl FnOnce(&E, &mut CsrContext) -> R,
 ) -> (ElementAndMounted<E>, R) {
-    let mut element = create(ctx);
+    let element = create(ctx);
     let node: &web_sys::Element = element.as_ref();
-    let node = node.clone();
 
-    let ret = ctx.with_new_position(NextNodePosition::FirstChildOf(node.clone()), |ctx| {
-        update(&mut element, ctx)
-    });
-    ctx.next_node_position.add_node(node.into());
+    let ret = {
+        let mut ctx = ctx.as_borrowed();
+        ctx.next_node_position = NextNodePosition::FirstChildOf(Cow::Borrowed(node));
+        update(&element, &mut ctx)
+    };
+    ctx.next_node_position
+        .add_node(Cow::Owned(node.clone().into()));
 
     (
         ElementAndMounted {
@@ -47,20 +51,22 @@ pub fn initialize_element<E: JsCast + AsRef<web_sys::Element>, R>(
 pub fn update_element<E: JsCast + AsRef<web_sys::Element>>(
     this: &mut ElementAndMounted<E>,
     ctx: &mut CsrContext,
-    update: impl FnOnce(&mut E, &mut CsrContext),
+    update: impl FnOnce(&E, &mut CsrContext),
 ) {
     let ElementAndMounted { element, mounted } = this;
     let node: &web_sys::Element = element.as_ref();
-    let node = node.clone();
 
-    ctx.with_new_position(NextNodePosition::FirstChildOf(node.clone()), |ctx| {
-        update(element, ctx)
-    });
+    {
+        let mut ctx = ctx.as_borrowed();
+        ctx.next_node_position = NextNodePosition::FirstChildOf(Cow::Borrowed(node));
+        update(element, &mut ctx)
+    };
 
+    let node: web_sys::Node = node.clone().into();
     if *mounted {
-        ctx.next_node_position.set_as_insert_after(node.into());
+        ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
     } else {
-        ctx.next_node_position.add_node(node.into());
+        ctx.next_node_position.add_node(Cow::Owned(node));
         *mounted = true;
     }
 }

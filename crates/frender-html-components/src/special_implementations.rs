@@ -5,10 +5,11 @@ mod dom {
     use frender_html_simple::DomIntrinsicComponent;
 
     pub(super) fn expect_context_is_first_child_of<
+        'a,
         C: IntrinsicComponent + DomIntrinsicComponent,
     >(
-        ctx: &frender_csr::CsrContext,
-    ) -> &C::Element {
+        ctx: &'a frender_csr::CsrContext,
+    ) -> &'a C::Element {
         if let frender_csr::NextNodePosition::FirstChildOf(element) = &ctx.next_node_position {
             if let Some(element) = element.dyn_ref() {
                 element

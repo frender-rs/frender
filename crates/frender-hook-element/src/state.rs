@@ -80,13 +80,17 @@ mod impl_csr {
         InnerHook: Default,
     {
         #[cfg(feature = "csr")]
-        pub(crate) fn csr_update(self: Pin<&mut Self>, mut use_hook: U, ctx: &mut frender_csr::CsrContext)
-        where
+        pub(crate) fn csr_update(
+            self: Pin<&mut Self>,
+            mut use_hook: U,
+            ctx: &mut frender_csr::CsrContext,
+        ) where
             U: csr::UseCsr<InnerHook, CsrState = S>,
         {
             let state = self.project();
 
-            let cs = csr::CsrRenderContext::new(ctx, state.state);
+            let mut ctx = ctx.as_borrowed();
+            let cs = csr::CsrRenderContext::new(&mut ctx, state.state);
 
             let _: csr::Rendered<U::CsrState> = use_hook.use_render(state.hook_data, cs);
             *state.render_iteration_count = 0;
@@ -118,32 +122,24 @@ mod impl_csr {
             loop {
                 let a = this.hook_data.as_mut().poll_next_update(cx);
                 let b = this.state.as_mut().as_pin_mut().map(|state| {
-                    ctx.with_position(|ctx| {
-                        <U::CsrState as RenderState>::poll_csr(state, ctx, cx)
-                    })
+                    <U::CsrState as RenderState>::poll_csr(state, &mut ctx.as_borrowed(), cx)
                 });
 
                 match (a, b) {
                     (Poll::Ready(false), Some(Poll::Ready(()))) => return Poll::Ready(()),
                     (Poll::Ready(true), _) | (_, None) => {
+                        let _: csr::Rendered<U::CsrState> = this.use_hook.use_render(
+                            this.hook_data.as_mut(),
+                            csr::CsrRenderContext::new(&mut ctx.as_borrowed(), this.state.as_mut()),
+                        );
+
                         if *this.render_iteration_count == u8::MAX {
                             *this.render_iteration_count = 0;
-                            let _: csr::Rendered<U::CsrState> = this.use_hook.use_render(
-                                this.hook_data,
-                                csr::CsrRenderContext::new(ctx, this.state),
-                            );
                             cx.waker().wake_by_ref();
                             return Poll::Pending;
                         } else {
                             *this.render_iteration_count += 1;
-
-                            let _: csr::Rendered<U::CsrState> = ctx.with_position(|ctx| {
-                                this.use_hook.use_render(
-                                    this.hook_data.as_mut(),
-                                    csr::CsrRenderContext::new(ctx, this.state.as_mut()),
-                                )
-                            });
-                        };
+                        }
                     }
                     _ => return Poll::Pending,
                 }

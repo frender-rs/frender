@@ -78,9 +78,9 @@ pub mod with_render_context {
         use_hook: U,
     ) -> FnHookElement<InnerHook, fn_wrapper::FnMutWithRenderContext<U, S>>
     where
-        U: for<'a> FnMut(
+        U: for<'a, 'ctx> FnMut(
             Pin<&'a mut InnerHook>,
-            crate::csr::CsrRenderContext<'a, S>,
+            crate::csr::CsrRenderContext<'a, 'ctx, S>,
         ) -> crate::csr::Rendered<S>,
     {
         FnHookElement {

@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::pin::Pin;
 
 use crate::RenderState;
@@ -10,7 +11,11 @@ pub struct ElementAndMounted<E> {
 }
 
 impl<E: wasm_bindgen::JsCast + AsRef<web_sys::Element>> ElementAndMounted<E> {
-    pub fn update(&mut self, ctx: &mut crate::CsrContext, update: impl FnOnce(&mut E, &mut crate::CsrContext)) {
+    pub fn update(
+        &mut self,
+        ctx: &mut crate::CsrContext,
+        update: impl FnOnce(&E, &mut crate::CsrContext),
+    ) {
         crate::utils::dom::update_element(self, ctx, update)
     }
 }
@@ -30,7 +35,7 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 
     pub fn initialize_with_tag(
-        initialize_state: impl FnOnce(&mut E, &mut crate::CsrContext) -> S,
+        initialize_state: impl FnOnce(&E, &mut crate::CsrContext) -> S,
         ctx: &mut crate::CsrContext,
         tag: &str,
     ) -> Self
@@ -67,15 +72,20 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let this = self.project();
-        let element = this.element_and_mounted.element.as_ref().clone();
+        let element = this.element_and_mounted.element.as_ref();
+
+        let result;
+        {
+            let mut ctx = ctx.with_next_node_position(crate::NextNodePosition::FirstChildOf(
+                Cow::Borrowed(element),
+            ));
+            result = S::intrinsic_component_poll_reactive(this.render_state, &mut ctx, cx);
+        }
 
         let node: &web_sys::Node = element.as_ref();
         let node = node.clone();
 
-        ctx.next_node_position = crate::NextNodePosition::FirstChildOf(element);
-        let result = S::intrinsic_component_poll_reactive(this.render_state, ctx, cx);
-
-        ctx.next_node_position.set_as_insert_after(node);
+        ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
 
         result
     }

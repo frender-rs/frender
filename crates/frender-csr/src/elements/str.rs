@@ -138,7 +138,7 @@ impl<Cache> State<Cache> {
             S::update_cache(&mut self.cache, data);
         }
 
-        let node = self.node.clone().into();
+        let node = Cow::Owned(self.node.clone().into());
         if self.unmounted {
             dom_ctx.next_node_position.add_node(node)
         } else {
@@ -151,7 +151,9 @@ impl<Cache> State<Cache> {
         S: RenderingStr<Cache = Cache>,
     {
         let text = dom_ctx.document.create_text_node(&data);
-        dom_ctx.next_node_position.add_node(text.clone().into());
+        dom_ctx
+            .next_node_position
+            .add_node(Cow::Owned(text.clone().into()));
         State {
             node: text,
             cache: S::create_cache(data),
@@ -202,7 +204,7 @@ impl<Cache> State<Cache> {
         }
         dom_ctx
             .next_node_position
-            .set_as_insert_after(self.node.clone().into());
+            .set_as_insert_after(Cow::Owned(self.node.clone().into()));
     }
 
     pub fn initialize_with_js_string(
@@ -215,7 +217,9 @@ impl<Cache> State<Cache> {
             .document
             .unchecked_ref::<js::Document>()
             .create_text_node(s);
-        dom_ctx.next_node_position.add_node(text.clone().into());
+        dom_ctx
+            .next_node_position
+            .add_node(Cow::Owned(text.clone().into()));
         Self {
             node: text,
             cache: data,
