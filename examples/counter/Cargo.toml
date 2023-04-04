@@ -8,5 +8,5 @@ edition = "2021"
 
 [dependencies]
 frender = { path = "../../frender", features = ["csr", "spawn", "bg"] }
-hooks = "2.0.2-alpha"
+hooks = "2.1.0-alpha"
 gloo = "0.8.0"

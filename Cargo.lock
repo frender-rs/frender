@@ -567,21 +567,20 @@ dependencies = [
 
 [[package]]
 name = "hooks"
-version = "2.0.2-alpha"
+version = "2.1.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a52b9d036acd3582e36f80fc6b62fe06c06ac922dd9cfe6c56a38ce17f82477"
+checksum = "7c1d49e8d3faa6c661aa872f2d0b88f47e07bc15eee294774688ee60b83d0310"
 dependencies = [
  "hooks-core",
- "lazy-pinned",
  "pin-project-lite",
  "smallvec",
 ]
 
 [[package]]
 name = "hooks-core"
-version = "2.1.0-alpha"
+version = "2.2.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5460c39c5d39cd3fbfbbe2a0cd88822e86fea092d0628145506840ced5662950"
+checksum = "233d8aa70bb8526f5c9a6d0ba2fd56b2334a0f72af18d0ed8187ba65497e7ce2"
 dependencies = [
  "futures-core",
  "pin-project-lite",
