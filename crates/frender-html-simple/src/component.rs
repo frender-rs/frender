@@ -104,22 +104,33 @@ mod dom {
             )
         }
 
-        fn update_csr_state(self, ctx: &mut CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
+        fn update_csr_state_maybe_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: std::pin::Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) where
+            Self: Sized,
+        {
             let (node_and_mounted, state) = state.pin_project();
             let (children_state, attrs_state) = state.pin_project();
-            node_and_mounted.update(ctx, |element, children_ctx| {
-                let ElementProps {
-                    children,
-                    attributes,
-                } = P::into_element_props(self.1);
-                UpdateElementNonReactive::<C::Element>::update_element_non_reactive(
-                    attributes,
-                    element,
-                    children_ctx,
-                    attrs_state,
-                );
-                C::children_update_csr_state(self.0, children, children_ctx, children_state);
-            })
+            node_and_mounted.update_maybe_reposition(
+                ctx,
+                |element, children_ctx| {
+                    let ElementProps {
+                        children,
+                        attributes,
+                    } = P::into_element_props(self.1);
+                    UpdateElementNonReactive::<C::Element>::update_element_non_reactive(
+                        attributes,
+                        element,
+                        children_ctx,
+                        attrs_state,
+                    );
+                    C::children_update_csr_state(self.0, children, children_ctx, children_state);
+                },
+                force_reposition,
+            )
         }
     }
 }

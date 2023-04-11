@@ -23,8 +23,13 @@ impl Element for () {
     #[inline]
     fn into_csr_state(self, _ctx: &mut crate::CsrContext) -> Self::CsrState {}
 
-    #[inline]
-    fn update_csr_state(self, _: &mut crate::CsrContext, _: std::pin::Pin<&mut Self::CsrState>) {}
+    fn update_csr_state_maybe_reposition(
+        self,
+        _: &mut crate::CsrContext,
+        _: std::pin::Pin<&mut Self::CsrState>,
+        _: bool,
+    ) {
+    }
 }
 
 impl<R0: Element> Element for (R0,) {
@@ -42,6 +47,24 @@ impl<R0: Element> Element for (R0,) {
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
         R0::update_csr_state(self.0, ctx, state)
+    }
+
+    #[inline]
+    fn update_csr_state_force_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
+        R0::update_csr_state_force_reposition(self.0, ctx, state)
+    }
+
+    fn update_csr_state_maybe_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) {
+        R0::update_csr_state_maybe_reposition(self.0, ctx, state, force_reposition)
     }
 }
 
@@ -88,12 +111,36 @@ macro_rules! impl_render_for_tuple {
                     )+}
                 }
 
-                #[inline]
                 fn update_csr_state(self, ctx: &mut crate::CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
                     let state = state.project();
                     let ($($field,)+) = self;
                     $(
                         $field::update_csr_state($field, ctx, state.$field);
+                    )+
+                }
+
+                fn update_csr_state_force_reposition(
+                    self,
+                    ctx: &mut crate::CsrContext,
+                    state: std::pin::Pin<&mut Self::CsrState>,
+                ) {
+                    let state = state.project();
+                    let ($($field,)+) = self;
+                    $(
+                        $field::update_csr_state_force_reposition($field, ctx, state.$field);
+                    )+
+                }
+
+                fn update_csr_state_maybe_reposition(
+                    self,
+                    ctx: &mut crate::CsrContext,
+                    state: std::pin::Pin<&mut Self::CsrState>,
+                    force_reposition: bool,
+                ) {
+                    let state = state.project();
+                    let ($($field,)+) = self;
+                    $(
+                        $field::update_csr_state_maybe_reposition($field, ctx, state.$field, force_reposition);
                     )+
                 }
             }

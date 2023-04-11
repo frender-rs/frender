@@ -11,12 +11,13 @@ pub struct ElementAndMounted<E> {
 }
 
 impl<E: wasm_bindgen::JsCast + AsRef<web_sys::Element>> ElementAndMounted<E> {
-    pub fn update(
+    pub fn update_maybe_reposition(
         &mut self,
         ctx: &mut crate::CsrContext,
         update: impl FnOnce(&E, &mut crate::CsrContext),
+        force_reposition: bool,
     ) {
-        crate::utils::dom::update_element(self, ctx, update)
+        crate::utils::dom::update_element_maybe_reposition(self, ctx, update, force_reposition)
     }
 }
 

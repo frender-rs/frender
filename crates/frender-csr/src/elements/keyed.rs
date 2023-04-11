@@ -60,10 +60,10 @@ where
     fn update_csr_state(
         self,
         ctx: &mut crate::CsrContext,
-        mut state: std::pin::Pin<&mut Self::CsrState>,
+        state: std::pin::Pin<&mut Self::CsrState>,
     ) {
-        state.as_mut().unmount();
         let states = &mut state.get_mut().states;
+
         let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
 
         for Keyed(key, element) in self {
@@ -76,10 +76,57 @@ where
                 ));
 
                 let state = entry.or_insert(state);
-                E::update_csr_state(element, ctx, std::pin::Pin::new(state));
+                E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
             } else {
                 states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None
             }
+        }
+
+        for state in old_states.values_mut().map(std::pin::Pin::new) {
+            state.unmount()
+        }
+    }
+
+    fn update_csr_state_force_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
+        let states = &mut state.get_mut().states;
+
+        let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
+
+        for Keyed(key, element) in self {
+            if let Some(state) = old_states.remove(&key) {
+                let entry = states.entry(key);
+
+                debug_assert!(matches!(
+                    entry,
+                    std::collections::hash_map::Entry::Vacant(_)
+                ));
+
+                let state = entry.or_insert(state);
+                E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
+            } else {
+                states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None
+            }
+        }
+
+        for state in old_states.values_mut().map(std::pin::Pin::new) {
+            state.unmount()
+        }
+    }
+
+    fn update_csr_state_maybe_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) {
+        if force_reposition {
+            self.update_csr_state(ctx, state)
+        } else {
+            self.update_csr_state_force_reposition(ctx, state)
         }
     }
 }

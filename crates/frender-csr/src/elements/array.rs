@@ -33,10 +33,41 @@ impl<E: Element, const N: usize> Element for [E; N] {
         self.map(|v| E::into_csr_state(v, ctx))
     }
 
-    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
+    fn update_csr_state(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
         let mut this = self.into_iter();
         pin_project_map_array(state, |state| {
             this.next().unwrap().update_csr_state(ctx, state)
+        });
+        debug_assert!(this.next().is_none());
+    }
+
+    fn update_csr_state_force_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
+        let mut this = self.into_iter();
+        pin_project_map_array(state, |state| {
+            this.next().unwrap().update_csr_state_force_reposition(ctx, state)
+        });
+        debug_assert!(this.next().is_none());
+    }
+
+    fn update_csr_state_maybe_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) {
+        let mut this = self.into_iter();
+        pin_project_map_array(state, |state| {
+            this.next()
+                .unwrap()
+                .update_csr_state_maybe_reposition(ctx, state, force_reposition)
         });
         debug_assert!(this.next().is_none());
     }

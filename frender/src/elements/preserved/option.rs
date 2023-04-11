@@ -13,13 +13,14 @@ pub mod csr {
         }
     );
 
-    pub fn update_or_into_state<E: frender_csr::Element>(
+    pub(crate) fn update_with_or_into_state<E: frender_csr::Element>(
         element: E,
         mut state: Pin<&mut Option<E::CsrState>>,
         ctx: &mut frender_csr::CsrContext,
+        update_with: impl FnOnce(E, &mut frender_csr::CsrContext, Pin<&mut E::CsrState>),
     ) {
         match state.as_mut().as_pin_mut() {
-            Some(state) => element.update_csr_state(ctx, state),
+            Some(state) => update_with(element, ctx, state),
             None => state.set(Some(element.into_csr_state(ctx))),
         }
     }
@@ -50,13 +51,39 @@ pub mod csr {
             }
         }
 
-        fn update_csr_state(
+        fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
+            self.update_with(ctx, state, E::update_csr_state)
+        }
+
+        fn update_csr_state_force_reposition(
             self,
-            ctx: &mut crate::CsrContext,
-            mut state: Pin<&mut Self::CsrState>,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            self.update_with(ctx, state, E::update_csr_state_force_reposition)
+        }
+
+        fn update_csr_state_maybe_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) {
+            self.update_with(ctx, state, |element, ctx, state| {
+                element.update_csr_state_maybe_reposition(ctx, state, force_reposition)
+            })
+        }
+    }
+
+    impl<E: Element> Preserved<Option<E>> {
+        fn update_with(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            mut state: Pin<&mut State<E::CsrState>>,
+            with: impl FnOnce(E, &mut frender_csr::CsrContext, Pin<&mut E::CsrState>),
         ) {
             if let Some(element) = self.0 {
-                update_or_into_state(element, state.as_mut().project().inner, ctx)
+                update_with_or_into_state(element, state.as_mut().project().inner, ctx, with)
             } else {
                 state.project().inner.as_pin_mut().map(E::CsrState::unmount);
             }

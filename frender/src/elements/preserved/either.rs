@@ -42,6 +42,39 @@ pub mod csr {
         }
     }
 
+    macro_rules! update {
+        (element = $either:expr, ctx = $ctx:expr, state = $state:expr, with = $update_with:expr $(,)?) => {
+            match ($ctx, $state.project()) {
+                (ctx, state) => match $either {
+                    Either::Left(e) => {
+                        if let Some(false) = state.left_is_mounted {
+                            state.right.as_pin_mut().unwrap().unmount();
+                        }
+                        super::super::option::csr::update_with_or_into_state(
+                            e,
+                            state.left,
+                            ctx,
+                            $update_with,
+                        );
+                        *state.left_is_mounted = Some(true);
+                    }
+                    Either::Right(e) => {
+                        if let Some(true) = state.left_is_mounted {
+                            state.left.as_pin_mut().unwrap().unmount();
+                        }
+                        super::super::option::csr::update_with_or_into_state(
+                            e,
+                            state.right,
+                            ctx,
+                            $update_with,
+                        );
+                        *state.left_is_mounted = Some(false);
+                    }
+                },
+            }
+        };
+    }
+
     impl<L, R> Element for Preserved<Either<L, R>>
     where
         L: Element,
@@ -65,25 +98,43 @@ pub mod csr {
         }
 
         fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
-            let state = state.project();
-            match self.0 {
-                Either::Left(e) => {
-                    if let Some(false) = state.left_is_mounted {
-                        state.right.as_pin_mut().unwrap().unmount();
-                    }
-                    super::super::option::csr::update_or_into_state(e, state.left, ctx);
-                    *state.left_is_mounted = Some(true);
-                }
-                Either::Right(e) => {
-                    if let Some(true) = state.left_is_mounted {
-                        state.left.as_pin_mut().unwrap().unmount();
-                    }
+            update!(
+                element = self.0,
+                ctx = ctx,
+                state = state,
+                with = Element::update_csr_state,
+            )
+        }
 
-                    super::super::option::csr::update_or_into_state(e, state.right, ctx);
+        fn update_csr_state_force_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            update!(
+                element = self.0,
+                ctx = ctx,
+                state = state,
+                with = Element::update_csr_state_force_reposition,
+            )
+        }
 
-                    *state.left_is_mounted = Some(false);
-                }
-            }
+        fn update_csr_state_maybe_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) {
+            update!(
+                element = self.0,
+                ctx = ctx,
+                state = state,
+                with = |element, ctx, state| element.update_csr_state_maybe_reposition(
+                    ctx,
+                    state,
+                    force_reposition
+                ),
+            )
         }
     }
 }

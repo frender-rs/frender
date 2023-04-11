@@ -79,18 +79,18 @@ mod impl_csr {
     where
         InnerHook: Default,
     {
-        #[cfg(feature = "csr")]
         pub(crate) fn csr_update(
             self: Pin<&mut Self>,
             mut use_hook: U,
             ctx: &mut frender_csr::CsrContext,
+            force_reposition: bool,
         ) where
             U: csr::UseCsr<InnerHook, CsrState = S>,
         {
             let state = self.project();
 
             let mut ctx = ctx.as_borrowed();
-            let cs = csr::CsrRenderContext::new(&mut ctx, state.state);
+            let cs = csr::CsrRenderContext::_new(&mut ctx, state.state, force_reposition);
 
             let _: csr::Rendered<U::CsrState> = use_hook.use_render(state.hook_data, cs);
             *state.render_iteration_count = 0;

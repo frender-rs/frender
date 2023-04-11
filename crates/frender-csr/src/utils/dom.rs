@@ -48,10 +48,11 @@ pub fn initialize_element<E: JsCast + AsRef<web_sys::Element>, R>(
     )
 }
 
-pub fn update_element<E: JsCast + AsRef<web_sys::Element>>(
+pub(crate) fn update_element_maybe_reposition<E: JsCast + AsRef<web_sys::Element>>(
     this: &mut ElementAndMounted<E>,
     ctx: &mut CsrContext,
     update: impl FnOnce(&E, &mut CsrContext),
+    force_reposition: bool,
 ) {
     let ElementAndMounted { element, mounted } = this;
     let node: &web_sys::Element = element.as_ref();
@@ -63,11 +64,22 @@ pub fn update_element<E: JsCast + AsRef<web_sys::Element>>(
     };
 
     let node: web_sys::Node = node.clone().into();
-    if *mounted {
+    if *mounted && !force_reposition {
         debug_assert!(node.parent_node().is_some());
         ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
     } else {
-        debug_assert!(node.parent_node().is_none());
+        if *mounted
+            && match &ctx.next_node_position {
+                NextNodePosition::FirstChildOf(parent) => parent.first_child(),
+                NextNodePosition::InsertAfter(previous) => previous.next_sibling(),
+            }
+            .map_or(false, |c| node == c)
+        {
+            ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
+            return;
+        }
+
+        debug_assert!(force_reposition || node.parent_node().is_none());
         ctx.next_node_position.add_node(Cow::Owned(node));
         *mounted = true;
     }

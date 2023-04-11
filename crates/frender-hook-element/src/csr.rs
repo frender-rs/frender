@@ -10,11 +10,24 @@ pub struct Rendered<S>(PhantomData<S>);
 pub struct CsrRenderContext<'a, 'ctx, State> {
     context: &'a mut CsrContext<'ctx>,
     state: Pin<&'a mut LazyPinned<State>>,
+    pub(crate) force_reposition: bool,
 }
 
 impl<'a, 'ctx, State> CsrRenderContext<'a, 'ctx, State> {
     pub fn new(context: &'a mut CsrContext<'ctx>, state: Pin<&'a mut LazyPinned<State>>) -> Self {
-        Self { context, state }
+        Self::_new(context, state, false)
+    }
+
+    pub(crate) fn _new(
+        context: &'a mut CsrContext<'ctx>,
+        state: Pin<&'a mut LazyPinned<State>>,
+        force_reposition: bool,
+    ) -> Self {
+        Self {
+            context,
+            state,
+            force_reposition,
+        }
     }
 }
 
@@ -22,7 +35,9 @@ impl<'a, 'ctx, S: RenderState> CsrRenderContext<'a, 'ctx, S> {
     pub fn render<E: Element<CsrState = S>>(self, element: E) -> Rendered<S> {
         self.state.use_pin_or_insert_with_data(
             (element, self.context),
-            |(element, context), state| element.update_csr_state(context, state),
+            |(element, context), state| {
+                element.update_csr_state_maybe_reposition(context, state, self.force_reposition)
+            },
             |(element, context)| element.into_csr_state(context),
         );
 

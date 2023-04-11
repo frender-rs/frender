@@ -182,8 +182,15 @@ mod impl_csr {
             FnMutHookElementState::_new(self.use_hook)
         }
 
-        fn update_csr_state(self, ctx: &mut CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
-            state.csr_update(self.use_hook, ctx)
+        fn update_csr_state_maybe_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: std::pin::Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) where
+            Self: Sized,
+        {
+            state.csr_update(self.use_hook, ctx, force_reposition)
         }
     }
 }

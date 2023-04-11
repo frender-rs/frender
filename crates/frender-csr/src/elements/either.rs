@@ -24,6 +24,29 @@ impl<L: RenderState, R: RenderState> RenderState for Either<L, R> {
     }
 }
 
+macro_rules! update_either {
+    ($_self:ident . $method:ident($ctx:ident, $state:ident $(, $arg:expr)?)) => {
+        let new_state = match ($_self, $state.as_mut().as_pin_mut()) {
+            (Either::Left(e), Either::Left(state)) => {
+                return e.$method($ctx, state $(, $arg)?)
+            }
+            (Either::Right(e), Either::Right(state)) => {
+                return e.$method($ctx, state $(, $arg)?)
+            }
+            (Either::Left(e), Either::Right(state)) => {
+                state.unmount();
+                Either::Left(e.into_csr_state($ctx))
+            }
+            (Either::Right(e), Either::Left(state)) => {
+                state.unmount();
+                Either::Right(e.into_csr_state($ctx))
+            }
+        };
+
+        $state.set(new_state);
+    };
+}
+
 impl<L, R> Element for Either<L, R>
 where
     L: Element,
@@ -39,19 +62,23 @@ where
     }
 
     fn update_csr_state(self, ctx: &mut crate::CsrContext, mut state: Pin<&mut Self::CsrState>) {
-        let new_state = match (self, state.as_mut().as_pin_mut()) {
-            (Either::Left(e), Either::Left(state)) => return e.update_csr_state(ctx, state),
-            (Either::Right(e), Either::Right(state)) => return e.update_csr_state(ctx, state),
-            (Either::Left(e), Either::Right(state)) => {
-                state.unmount();
-                Either::Left(e.into_csr_state(ctx))
-            }
-            (Either::Right(e), Either::Left(state)) => {
-                state.unmount();
-                Either::Right(e.into_csr_state(ctx))
-            }
-        };
+        update_either!(self.update_csr_state(ctx, state));
+    }
 
-        state.set(new_state);
+    fn update_csr_state_force_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        mut state: Pin<&mut Self::CsrState>,
+    ) {
+        update_either!(self.update_csr_state_force_reposition(ctx, state));
+    }
+
+    fn update_csr_state_maybe_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        mut state: Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) {
+        update_either!(self.update_csr_state_maybe_reposition(ctx, state, force_reposition));
     }
 }

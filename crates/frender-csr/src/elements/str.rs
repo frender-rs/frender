@@ -129,17 +129,21 @@ mod js {
 }
 
 impl<Cache> State<Cache> {
-    fn add_self_to_dom(&self, dom_ctx: &mut CsrContext) {
+    fn add_self_to_dom(&self, dom_ctx: &mut CsrContext, force_reposition: bool) {
         let node = Cow::Owned(self.node.clone().into());
-        if self.unmounted {
+        if force_reposition || self.unmounted {
             dom_ctx.next_node_position.add_node(node)
         } else {
             dom_ctx.next_node_position.set_as_insert_after(node);
         }
     }
 
-    pub fn update_with_str<S>(&mut self, data: S, dom_ctx: &mut CsrContext)
-    where
+    fn update_with_str_maybe_reposition<S>(
+        &mut self,
+        data: S,
+        dom_ctx: &mut CsrContext,
+        force_reposition: bool,
+    ) where
         S: RenderingStr<Cache = Cache>,
     {
         if S::not_match_cache(&data, &self.cache) {
@@ -147,7 +151,7 @@ impl<Cache> State<Cache> {
             S::update_cache(&mut self.cache, data);
         }
 
-        self.add_self_to_dom(dom_ctx)
+        self.add_self_to_dom(dom_ctx, force_reposition)
     }
 
     pub fn initialize_with_str<S>(data: S, dom_ctx: &mut CsrContext) -> Self
@@ -167,16 +171,21 @@ impl<Cache> State<Cache> {
 
     /// The js value returned by `to_js` will be called with `String(value)`
     /// and then set as data of `Text` node.
-    #[inline]
-    pub fn update_with_js_value(
+    pub(crate) fn update_with_js_value_maybe_reposition(
         &mut self,
         data: Cache,
         dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsValue,
+        force_reposition: bool,
     ) where
         Cache: PartialEq<Cache>,
     {
-        self.update_with_js_string(data, dom_ctx, move |v| js::js_string(to_js(v)))
+        self.update_with_js_string_maybe_reposition(
+            data,
+            dom_ctx,
+            move |v| js::js_string(to_js(v)),
+            force_reposition,
+        )
     }
 
     /// The js value returned by `to_js` will be called with `String(value)`
@@ -193,11 +202,12 @@ impl<Cache> State<Cache> {
         Self::initialize_with_js_string(data, dom_ctx, move |v| js::js_string(to_js(v)))
     }
 
-    pub fn update_with_js_string(
+    pub(crate) fn update_with_js_string_maybe_reposition(
         &mut self,
         data: Cache,
         dom_ctx: &mut CsrContext,
         to_js: impl FnOnce(&Cache) -> JsString,
+        force_reposition: bool,
     ) where
         Cache: PartialEq<Cache>,
     {
@@ -207,7 +217,7 @@ impl<Cache> State<Cache> {
             self.cache = data;
         }
 
-        self.add_self_to_dom(dom_ctx)
+        self.add_self_to_dom(dom_ctx, force_reposition)
     }
 
     pub fn initialize_with_js_string(
@@ -263,9 +273,13 @@ macro_rules! impl_render_str {
                 Self::CsrState::initialize_with_str(self, ctx)
             }
 
-            #[inline]
-            fn update_csr_state(self, ctx: &mut CsrContext, state: std::pin::Pin<&mut Self::CsrState>) {
-                state.get_mut().update_with_str(self, ctx)
+            fn update_csr_state_maybe_reposition(
+                self,
+                ctx: &mut crate::CsrContext,
+                state: std::pin::Pin<&mut Self::CsrState>,
+                force_reposition: bool,
+            ) {
+                state.get_mut().update_with_str_maybe_reposition(self, ctx, force_reposition)
             }
         }
     )*};

@@ -21,6 +21,28 @@ mod csr {
         fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
             E::update_csr_state(self.0, ctx, pin_as_deref_mut(state))
         }
+
+        fn update_csr_state_force_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            E::update_csr_state_force_reposition(self.0, ctx, pin_as_deref_mut(state))
+        }
+
+        fn update_csr_state_maybe_reposition(
+            self,
+            ctx: &mut frender_csr::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) {
+            E::update_csr_state_maybe_reposition(
+                self.0,
+                ctx,
+                pin_as_deref_mut(state),
+                force_reposition,
+            )
+        }
     }
 }
 
