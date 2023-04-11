@@ -129,6 +129,15 @@ mod js {
 }
 
 impl<Cache> State<Cache> {
+    fn add_self_to_dom(&self, dom_ctx: &mut CsrContext) {
+        let node = Cow::Owned(self.node.clone().into());
+        if self.unmounted {
+            dom_ctx.next_node_position.add_node(node)
+        } else {
+            dom_ctx.next_node_position.set_as_insert_after(node);
+        }
+    }
+
     pub fn update_with_str<S>(&mut self, data: S, dom_ctx: &mut CsrContext)
     where
         S: RenderingStr<Cache = Cache>,
@@ -138,12 +147,7 @@ impl<Cache> State<Cache> {
             S::update_cache(&mut self.cache, data);
         }
 
-        let node = Cow::Owned(self.node.clone().into());
-        if self.unmounted {
-            dom_ctx.next_node_position.add_node(node)
-        } else {
-            dom_ctx.next_node_position.set_as_insert_after(node);
-        }
+        self.add_self_to_dom(dom_ctx)
     }
 
     pub fn initialize_with_str<S>(data: S, dom_ctx: &mut CsrContext) -> Self
@@ -202,9 +206,8 @@ impl<Cache> State<Cache> {
             self.node.unchecked_ref::<js::Text>().set_data(s);
             self.cache = data;
         }
-        dom_ctx
-            .next_node_position
-            .set_as_insert_after(Cow::Owned(self.node.clone().into()));
+
+        self.add_self_to_dom(dom_ctx)
     }
 
     pub fn initialize_with_js_string(
