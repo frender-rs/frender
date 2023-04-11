@@ -17,6 +17,12 @@ impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
         }
     }
 
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        for state in self.get_mut().states.values_mut().map(std::pin::Pin::new) {
+            S::state_unmount(state)
+        }
+    }
+
     fn poll_csr(
         self: std::pin::Pin<&mut Self>,
         ctx: &mut crate::CsrContext,

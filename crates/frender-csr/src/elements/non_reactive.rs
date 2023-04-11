@@ -8,6 +8,8 @@ impl<T> Unpin for NonReactiveRenderState<T> {}
 impl<T> RenderState for NonReactiveRenderState<T> {
     fn unmount(self: std::pin::Pin<&mut Self>) {}
 
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {}
+
     fn poll_csr(
         self: std::pin::Pin<&mut Self>,
         _: &mut crate::CsrContext,

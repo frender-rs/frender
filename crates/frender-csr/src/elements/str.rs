@@ -250,6 +250,8 @@ impl<Cache> RenderState for State<Cache> {
         this.node.remove();
     }
 
+    fn state_unmount(mut self: std::pin::Pin<&mut Self>) {}
+
     #[inline]
     fn poll_csr(
         self: std::pin::Pin<&mut Self>,

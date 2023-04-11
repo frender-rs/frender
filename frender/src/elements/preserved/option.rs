@@ -30,6 +30,10 @@ pub mod csr {
             self.project().inner.as_pin_mut().map(S::unmount);
         }
 
+        fn state_unmount(self: Pin<&mut Self>) {
+            self.project().inner.as_pin_mut().map(S::state_unmount);
+        }
+
         fn poll_csr(
             self: Pin<&mut Self>,
             ctx: &mut crate::CsrContext,

@@ -12,6 +12,13 @@ impl<L: RenderState, R: RenderState> RenderState for Either<L, R> {
         }
     }
 
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        match self.as_pin_mut() {
+            Either::Left(s) => s.state_unmount(),
+            Either::Right(s) => s.state_unmount(),
+        }
+    }
+
     fn poll_csr(
         self: Pin<&mut Self>,
         ctx: &mut crate::CsrContext,

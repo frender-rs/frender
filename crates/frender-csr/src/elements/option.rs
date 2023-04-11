@@ -14,6 +14,10 @@ impl<S: RenderState> RenderState for Option<S> {
         self.set(None)
     }
 
+    fn state_unmount(mut self: std::pin::Pin<&mut Self>) {
+        let _ = self.as_mut().as_pin_mut().map(S::state_unmount);
+    }
+
     fn poll_csr(
         self: Pin<&mut Self>,
         ctx: &mut crate::CsrContext,

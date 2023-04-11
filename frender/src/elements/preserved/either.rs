@@ -28,6 +28,15 @@ pub mod csr {
             *this.left_is_mounted = None;
         }
 
+        fn state_unmount(self: Pin<&mut Self>) {
+            let this = self.project();
+            match this.left_is_mounted {
+                Some(true) => this.left.as_pin_mut().map(L::state_unmount),
+                Some(false) => this.right.as_pin_mut().map(R::state_unmount),
+                None => return,
+            };
+        }
+
         fn poll_csr(
             self: Pin<&mut Self>,
             ctx: &mut crate::CsrContext,

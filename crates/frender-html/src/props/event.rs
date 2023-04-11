@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, rc::Rc};
 
-use gloo::events::EventListener;
+pub use gloo::events::EventListener;
 use wasm_bindgen::JsCast;
 use web_sys::EventTarget;
 

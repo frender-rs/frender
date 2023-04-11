@@ -62,7 +62,15 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
         if *mounted {
             *mounted = false;
             element.as_ref().remove();
-            this.render_state.intrinsic_component_unmount(); // TODO: unmount_when_parent_unmounted
+            this.render_state.intrinsic_component_state_unmount();
+        }
+    }
+
+    #[inline]
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        let this = self.project();
+        if this.element_and_mounted.mounted {
+            this.render_state.intrinsic_component_state_unmount();
         }
     }
 

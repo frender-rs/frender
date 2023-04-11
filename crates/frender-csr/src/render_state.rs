@@ -5,6 +5,8 @@ use frender_common::utils::pin_as_deref_mut;
 pub trait RenderState {
     fn unmount(self: Pin<&mut Self>);
 
+    fn state_unmount(self: Pin<&mut Self>);
+
     fn poll_csr(
         self: Pin<&mut Self>,
         ctx: &mut crate::CsrContext,
@@ -15,6 +17,10 @@ pub trait RenderState {
 impl<S: ?Sized + RenderState + Unpin> RenderState for &mut S {
     fn unmount(self: Pin<&mut Self>) {
         S::unmount(Pin::new(self.get_mut()))
+    }
+
+    fn state_unmount(self: Pin<&mut Self>) {
+        S::state_unmount(Pin::new(self.get_mut()))
     }
 
     fn poll_csr(
@@ -29,6 +35,10 @@ impl<S: ?Sized + RenderState + Unpin> RenderState for &mut S {
 impl<S: ?Sized + RenderState + Unpin> RenderState for Box<S> {
     fn unmount(self: Pin<&mut Self>) {
         S::unmount(Pin::new(self.get_mut()))
+    }
+
+    fn state_unmount(self: Pin<&mut Self>) {
+        S::state_unmount(Pin::new(self.get_mut()))
     }
 
     fn poll_csr(
@@ -48,6 +58,11 @@ where
     #[inline]
     fn unmount(self: Pin<&mut Self>) {
         P::Target::unmount(pin_as_deref_mut(self))
+    }
+
+    #[inline]
+    fn state_unmount(self: Pin<&mut Self>) {
+        P::Target::state_unmount(pin_as_deref_mut(self))
     }
 
     #[inline]

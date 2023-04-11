@@ -19,6 +19,8 @@ pub trait UpdateElement<E> {
 pub trait IntrinsicComponentPollReactive {
     fn intrinsic_component_unmount(self: Pin<&mut Self>);
 
+    fn intrinsic_component_state_unmount(self: Pin<&mut Self>);
+
     fn intrinsic_component_poll_reactive(
         self: Pin<&mut Self>,
         ctx: &mut CsrContext,

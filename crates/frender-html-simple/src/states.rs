@@ -30,6 +30,10 @@ mod dom {
             self.project().children.unmount()
         }
 
+        fn intrinsic_component_state_unmount(self: Pin<&mut Self>) {
+            self.project().children.state_unmount()
+        }
+
         #[inline(always)]
         fn intrinsic_component_poll_reactive(
             self: std::pin::Pin<&mut Self>,

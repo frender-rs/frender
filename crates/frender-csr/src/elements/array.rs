@@ -6,6 +6,11 @@ impl<S: RenderState, const N: usize> RenderState for [S; N] {
         pin_project_map_array(self, S::unmount)
     }
 
+    #[inline]
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        pin_project_map_array(self, S::state_unmount)
+    }
+
     fn poll_csr(
         self: std::pin::Pin<&mut Self>,
         ctx: &mut crate::CsrContext,

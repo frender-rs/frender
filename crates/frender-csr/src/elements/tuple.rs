@@ -7,6 +7,9 @@ impl RenderState for () {
     fn unmount(self: std::pin::Pin<&mut Self>) {}
 
     #[inline]
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {}
+
+    #[inline]
     fn poll_csr(
         self: std::pin::Pin<&mut Self>,
         ctx: &mut crate::CsrContext,
@@ -82,6 +85,11 @@ macro_rules! impl_render_for_tuple {
                 fn unmount(self: ::core::pin::Pin<&mut Self>) {
                     let this = self.project();
                     $( this.$field.unmount(); )+
+                }
+
+                fn state_unmount(self: std::pin::Pin<&mut Self>) {
+                    let this = self.project();
+                    $( this.$field.state_unmount(); )+
                 }
 
                 #[inline]

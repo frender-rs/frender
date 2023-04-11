@@ -112,6 +112,15 @@ mod impl_csr {
             }
         }
 
+        #[inline]
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            let this = self.project();
+            this.hook_data.unmount();
+            if let Some(state) = this.state.as_pin_mut() {
+                state.state_unmount();
+            }
+        }
+
         fn poll_csr(
             self: Pin<&mut Self>,
             ctx: &mut CsrContext,
