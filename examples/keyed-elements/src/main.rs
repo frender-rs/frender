@@ -41,7 +41,18 @@ impl Data {
     fn swap(&mut self) {
         let len = self.items.len();
         if len >= 2 {
-            self.items.swap(1, len - 2)
+            let i = len - 2;
+            self.items.swap(1, i);
+
+            match &mut self.selected_index {
+                Some(selected_index @ 1) => {
+                    *selected_index = i;
+                }
+                Some(selected_index) if *selected_index == i => {
+                    *selected_index = 1;
+                }
+                _ => {}
+            }
         }
     }
 
