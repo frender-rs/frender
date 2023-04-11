@@ -68,8 +68,14 @@ where
 
         for Keyed(key, element) in self {
             if let Some(state) = old_states.remove(&key) {
-                // TODO: assert entry is vacant
-                let state = states.entry(key).or_insert(state);
+                let entry = states.entry(key);
+
+                debug_assert!(matches!(
+                    entry,
+                    std::collections::hash_map::Entry::Vacant(_)
+                ));
+
+                let state = entry.or_insert(state);
                 E::update_csr_state(element, ctx, std::pin::Pin::new(state));
             } else {
                 states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None

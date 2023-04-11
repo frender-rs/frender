@@ -64,8 +64,10 @@ pub fn update_element<E: JsCast + AsRef<web_sys::Element>>(
 
     let node: web_sys::Node = node.clone().into();
     if *mounted {
+        debug_assert!(node.parent_node().is_some());
         ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
     } else {
+        debug_assert!(node.parent_node().is_none());
         ctx.next_node_position.add_node(Cow::Owned(node));
         *mounted = true;
     }
