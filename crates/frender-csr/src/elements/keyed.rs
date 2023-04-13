@@ -1,20 +1,33 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Debug, pin::Pin};
+
+use indexmap::{IndexMap, IndexSet};
 
 use frender_common::Keyed;
 
 use crate::{Element, RenderState};
 
 pub struct KeyedElementsState<K, S> {
-    states: HashMap<K, S>,
+    // key -> state
+    states: IndexMap<K, S>,
+}
+
+impl<K, S: RenderState + Unpin> KeyedElementsState<K, S> {
+    fn unmount(&mut self) {
+        for state in self.states.values_mut().map(std::pin::Pin::new) {
+            S::unmount(state)
+        }
+    }
+    fn clear(&mut self) {
+        self.unmount();
+        self.states = Default::default();
+    }
 }
 
 impl<K, S> Unpin for KeyedElementsState<K, S> {}
 
 impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
     fn unmount(self: std::pin::Pin<&mut Self>) {
-        for state in self.get_mut().states.values_mut().map(std::pin::Pin::new) {
-            S::unmount(state)
-        }
+        self.get_mut().unmount()
     }
 
     fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -48,7 +61,7 @@ impl<K, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
 
 impl<K, E> Element for Vec<Keyed<K, E>>
 where
-    K: std::hash::Hash + Eq,
+    K: std::hash::Hash + Eq + Debug,
     E: Element,
     E::CsrState: Unpin,
 {
@@ -68,28 +81,86 @@ where
         ctx: &mut crate::CsrContext,
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
-        let states = &mut state.get_mut().states;
+        let state = state.get_mut();
+        if self.is_empty() {
+            return state.clear();
+        }
 
-        let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
+        if state.states.is_empty() {
+            return *state = self.into_csr_state(ctx);
+        }
 
-        for Keyed(key, element) in self {
-            if let Some(state) = old_states.remove(&key) {
-                let entry = states.entry(key);
+        let states = &mut state.states;
 
-                debug_assert!(matches!(
-                    entry,
-                    std::collections::hash_map::Entry::Vacant(_)
-                ));
+        let mut old_states = std::mem::replace(states, IndexMap::new());
 
-                let state = entry.or_insert(state);
-                E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
+        let mut removed = HashMap::new();
+
+        let mut cur = 0;
+
+        for Keyed(key, element) in self.into_iter() {
+            if let Some(mut old_idx) = old_states.get_index_of(&key) {
+                match old_idx.cmp(&cur) {
+                    std::cmp::Ordering::Equal => {}
+                    std::cmp::Ordering::Less => unreachable!(),
+                    std::cmp::Ordering::Greater => {
+                        if old_states.len() - old_idx < old_idx - cur {
+                            // drain tail
+
+                            let mut to_remove = old_states.drain(old_idx..);
+                            let old = to_remove.next().unwrap();
+                            removed.extend(to_remove);
+
+                            states.extend(old_states.drain(..cur).chain(Some(old)));
+
+                            let (key_old, old_state) = states.last_mut().unwrap();
+
+                            debug_assert_eq!(*key_old, key);
+
+                            element.update_csr_state_force_reposition(ctx, Pin::new(old_state));
+
+                            cur = 0;
+                            continue;
+                        } else {
+                            // drain before this
+                            let mut old_states_and_to_remove = old_states.drain(..old_idx);
+
+                            states.extend((&mut old_states_and_to_remove).take(cur));
+                            removed.extend(old_states_and_to_remove);
+                            old_idx = 0;
+                            cur = 0;
+                        }
+                    }
+                }
+
+                // "equal" or "greater but drained"
+                let state_old = &mut old_states[old_idx];
+                element.update_csr_state(ctx, Pin::new(state_old));
+                cur += 1;
             } else {
-                states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None
+                states.extend(old_states.drain(..cur));
+                cur = 0;
+                state_vacant_and_then(states, key, |entry| {
+                    if let Some(old_state) = removed.remove(entry.key()) {
+                        let state = entry.insert(old_state);
+                        element.update_csr_state_force_reposition(ctx, Pin::new(state))
+                    } else {
+                        _ = entry.insert(element.into_csr_state(ctx))
+                    }
+                });
             }
         }
 
-        for state in old_states.values_mut().map(std::pin::Pin::new) {
-            state.unmount()
+        old_states
+            .drain(cur..)
+            .map(|(_, v)| v)
+            .chain(removed.into_values())
+            .for_each(|ref mut state| Pin::new(state).unmount());
+
+        if states.is_empty() {
+            *states = old_states;
+        } else {
+            states.extend(old_states);
         }
     }
 
@@ -100,16 +171,13 @@ where
     ) {
         let states = &mut state.get_mut().states;
 
-        let mut old_states = std::mem::replace(states, HashMap::with_capacity(self.len()));
+        let mut old_states = std::mem::replace(states, IndexMap::with_capacity(self.len()));
 
         for Keyed(key, element) in self {
             if let Some(state) = old_states.remove(&key) {
                 let entry = states.entry(key);
 
-                debug_assert!(matches!(
-                    entry,
-                    std::collections::hash_map::Entry::Vacant(_)
-                ));
+                debug_assert!(matches!(entry, indexmap::map::Entry::Vacant(_)));
 
                 let state = entry.or_insert(state);
                 E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
@@ -133,6 +201,30 @@ where
             self.update_csr_state(ctx, state)
         } else {
             self.update_csr_state_force_reposition(ctx, state)
+        }
+    }
+}
+
+/// If `states` contains `key`, then warns.
+/// Else, call f.
+fn state_vacant_and_then<'a, K, S>(
+    states: &'a mut IndexMap<K, S>,
+    key: K,
+    f: impl FnOnce(indexmap::map::VacantEntry<'a, K, S>),
+) where
+    K: std::hash::Hash + Eq + Debug,
+{
+    match states.entry(key) {
+        indexmap::map::Entry::Vacant(entry) => f(entry),
+        indexmap::map::Entry::Occupied(entry) => {
+            #[cfg(not(debug_assertions))]
+            let _ = entry;
+
+            #[cfg(debug_assertions)]
+            gloo::console::warn!(format!(
+                "key {:?} has been inserted so the latter element is ignored",
+                entry.key()
+            ));
         }
     }
 }
