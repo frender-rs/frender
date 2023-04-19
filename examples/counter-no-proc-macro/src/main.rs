@@ -6,18 +6,20 @@ component_fn!(
     #[inline]
     fn Counter(initial_value: u32) {
         let state = h!(use_shared_state(initial_value));
-        let increment = {
-            let state = state.clone();
-            move |_: &_| {
+
+        let increment = state
+            .clone()
+            .into_callback(|state: &_| {
                 state.replace_with(|v| *v + 1);
-            }
-        };
-        let decrement = {
-            let state = state.clone();
-            move |_: &_| {
+            })
+            .accept_anything();
+
+        let decrement = state
+            .clone()
+            .into_callback(|state| {
                 state.replace_with(|v| *v - 1);
-            }
-        };
+            })
+            .accept_anything();
 
         let state = state.get();
 
@@ -70,8 +72,12 @@ component_fn!(
         )];
 
         let state = *state;
-        let stopped_setter = stopped_setter.clone();
-        let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
+
+        let toggle_stopped = callback!(
+            |()| stopped_setter.replace_with_fn_pointer(|v| !*v),
+            stopped_setter = stopped_setter.clone(),
+        )
+        .accept_anything();
 
         intrinsic!(
             div[[

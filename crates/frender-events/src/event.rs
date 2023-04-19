@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, rc::Rc};
 
-pub use gloo::events::EventListener;
+use gloo::events::EventListener;
 use wasm_bindgen::JsCast;
 use web_sys::EventTarget;
 
@@ -112,16 +112,22 @@ where
     }
 }
 
-impl<EventType: StaticEventType, F> UpdateDomEventListener<EventType> for F
+impl<EventType: StaticEventType, Cbk> UpdateDomEventListener<EventType> for Cbk
 where
-    EventType::Event: JsCast,
-    F: FnMut(&EventType::Event) + 'static,
+    EventType::Event: JsCast + Clone,
+    Cbk: for<'e> crate::callback::Callback<&'e EventType::Event, Output = ()>
+        + 'static
+        + crate::callback::IsCallback,
 {
     type State = EventListener;
 
-    fn initialize_dom_event_listener_state(mut self, target: &EventTarget) -> Self::State {
+    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
         EventListener::new(target, EventType::EVENT_TYPE, move |event| {
-            self(event.dyn_ref().expect("wrong event type"))
+            self.emit(
+                event
+                    .dyn_ref::<EventType::Event>()
+                    .expect("event type should match"),
+            )
         })
     }
 }

@@ -1,6 +1,9 @@
 mod debug;
 pub use debug::*;
 
+#[cfg(feature = "hooks")]
+pub mod hooks_ext;
+
 mod element_macros;
 
 pub mod elements;
@@ -53,6 +56,15 @@ pub mod prelude {
 
     #[cfg(feature = "html-components-simply-typed")]
     pub use frender_html_components::intrinsic_components;
+
+    #[cfg(feature = "hooks")]
+    pub use crate::hooks_ext::ShareValueExt;
+
+    #[cfg(feature = "html")]
+    pub use crate::html::props::callback;
+
+    #[cfg(feature = "html")]
+    pub use callback::{Callback, CallbackExt};
 }
 
 #[macro_export]

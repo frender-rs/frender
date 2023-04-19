@@ -14,21 +14,15 @@ html-escape = { version = "0.2.13", optional = true }
 wasm-bindgen = { version = "0.2.83", optional = true }
 pin-project-lite = "0.2.9"
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
+frender-events = { version = "0.1.0", path = "../frender-events" }
 
 [dependencies.web-sys]
 version = "0.3.60"
 optional = true
 features = [
     #
-    # "ClipboardEvent",
-    "AnimationEvent",
-    "ClipboardEvent",
-    "CompositionEvent",
     "DataTransfer",
-    "DragEvent",
     "Element",
-    "EventTarget",
-    "FocusEvent",
     "HtmlAnchorElement",
     "HtmlAreaElement",
     "HtmlAudioElement",
@@ -91,21 +85,12 @@ features = [
     "HtmlTrackElement",
     "HtmlUListElement",
     "HtmlVideoElement",
-    "InputEvent",
-    "KeyboardEvent",
-    "MouseEvent",
     "Node",
-    "PointerEvent",
-    "SecurityPolicyViolationEvent",
     "Text",
-    "TouchEvent",
     "TouchList",
-    "TransitionEvent",
-    "UiEvent",
-    "WheelEvent",
 ]
 
 [features]
-default = ["csr", "ssr"]                              # TODO: remove
-csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen"]
+default = ["csr", "ssr"]                                                    # TODO: remove
+csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen", "frender-events/csr"]
 ssr = ["dep:html-escape", "dep:futures-lite"]

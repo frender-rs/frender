@@ -19,6 +19,10 @@ frender-csr = { version = "0.1.0", path = "../crates/frender-csr", default-featu
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
+hooks = { version = "2.2.0-alpha", default-features = false, features = [
+    "ShareValue",
+], optional = true }
+frender-events = { version = "0.1.0", path = "../crates/frender-events" }
 
 [dependencies.frender-hook-element]
 path = "../crates/frender-hook-element"
@@ -46,26 +50,12 @@ features = ["console", "Window", "Document", "Element"]
 wasm-bindgen-test = "0.3.13"
 
 [features]
-default = ["html-components-simply-typed", "either"]
-csr = [
-    "frender-hook-element/csr",
-    "frender-html-components?/csr",
-    "frender-csr",
-]
-ssr = [
-    "frender-hook-element/ssr",
-    "frender-html-components?/ssr",
-    "frender-ssr",
-]
+default = ["html-components-simply-typed", "either", "hooks"]
+csr = ["frender-hook-element/csr", "frender-html-components?/csr", "frender-csr"]
+ssr = ["frender-hook-element/ssr", "frender-html-components?/ssr", "frender-ssr"]
 spawn = ["frender-hook-element/spawn"]
 html = ["frender-html"]
 html-components = ["html", "frender-html-components"]
-html-components-simply-typed = [
-    "html-components",
-    "frender-html-components/simply-typed",
-]
-html-components-fully-typed = [
-    "html-components",
-    "frender-html-components/fully-typed",
-]
+html-components-simply-typed = ["html-components", "frender-html-components/simply-typed"]
+html-components-fully-typed = ["html-components", "frender-html-components/fully-typed"]
 either = ["dep:either", "frender-ssr?/either", "frender-csr?/either"]
