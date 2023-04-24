@@ -114,13 +114,3 @@ pub trait CallbackExt: IsCallback {
 }
 
 impl<C: IsCallback> CallbackExt for C {}
-
-impl<IN, Output> IsCallback for fn(IN) -> Output {}
-
-impl<IN, Output> Callback<IN> for fn(IN) -> Output {
-    type Output = Output;
-
-    fn emit(&self, input: IN) -> Self::Output {
-        self(input)
-    }
-}
