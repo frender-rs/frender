@@ -117,7 +117,7 @@ where
     EventType::Event: JsCast + Clone,
     Cbk: for<'e> crate::callback::Callback<&'e EventType::Event, Output = ()>
         + 'static
-        + crate::callback::IsCallback,
+        + crate::callback::IsCallable,
 {
     type State = EventListener;
 

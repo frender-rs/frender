@@ -4,14 +4,12 @@ pub use event::*;
 pub mod events;
 
 pub mod callback;
-pub mod cbk;
 
-/// An identity function which implicit casts the closure as `fn(IN) -> Out`.
-pub fn callback<IN, Out>(f: fn(IN) -> Out) -> fn(IN) -> Out {
+pub fn callback<Out>(f: fn() -> Out) -> fn() -> Out {
     f
 }
 
-pub use callback::{Callback, CallbackExt, IsCallback};
+pub use callback::{Callable, Callback, IsCallable};
 
 #[doc(hidden)]
 #[macro_export]
@@ -115,18 +113,20 @@ macro_rules! callback {
     // -- output and body resolved
     // no   state
     (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]) => {
-            $crate::cbk::r#fn $(::$method_path)*         (|$($($input)*),*                | $(-> $output)? $($body)*)
+        $crate::callback $(::$method_path)*                                (
+            |$($($input)*),*               | $(-> $output)? $($body)*
+        )
     };
     // one  state
     (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]   $state:ident $(= $state_expr:expr)?    $(,)?) => {
-        $crate::cbk::r#fn $(::$method_path)* ::r#ref::provide_last_argument (
+        $crate::callback $(::$method_path)* ::r#ref::provide_last_argument (
             |$($($input)* ,)* $state       | $(-> $output)? $($body)* ,
             $crate::__expand_or!([$($state_expr)?] $state),
         )
     };
     // many states
     (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*] $($state:ident $(= $state_expr:expr)?),+ $(,)?) => {
-        $crate::cbk::r#fn $(::$method_path)* ::r#ref::provide_last_argument (
+        $crate::callback $(::$method_path)* ::r#ref::provide_last_argument (
             |$($($input)* ,)* ($($state,)+)| $(-> $output)? $($body)* ,
             ($( $crate::__expand_or!([$($state_expr)?] $state) ,)+),
         )

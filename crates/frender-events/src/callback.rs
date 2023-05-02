@@ -1,49 +1,41 @@
+//!
+//! ```
+//! # use frender_events::*;
+//! let callback = callback::r#ref(u8::clone).with_input_ref(8);
+//! assert_eq!(callback.emit(()), 8u8);
+//! ```
+
 mod traits;
 pub use traits::*;
 
 pub mod accept_anything;
-pub mod accept_ref;
 pub mod chain;
-pub mod output;
-pub mod output_cloned;
-pub mod with_input_ref;
-pub mod with_state;
 
-pub fn with_state<IN, Out, State: Clone + PartialEq>(
-    f: fn(IN, &State) -> Out,
-    state: State,
-) -> with_state::WithState<accept_ref::AcceptRef2<fn(IN, &State) -> Out>, State> {
-    with_state::WithState {
-        f: accept_ref::AcceptRef2(f),
-        state,
-    }
+pub mod argument;
+
+mod sealed {
+    pub trait Tuple {}
 }
 
-///
-/// ```
-/// # use frender_events::*;
-/// let callback = callback::accept_ref(u8::clone).with_input_ref(8);
-/// assert_eq!(callback.emit(()), 8u8);
-/// ```
-pub fn accept_ref<IN: ?Sized, Out>(f: fn(&IN) -> Out) -> accept_ref::AcceptRef<fn(&IN) -> Out> {
-    accept_ref::AcceptRef(f)
+#[derive(Debug, Clone, Copy)]
+pub struct HkFn<F>(F);
+
+#[cfg(feature = "impl_with_macro_rules")]
+mod imp_macros;
+
+#[cfg(feature = "impl_with_macro_rules")]
+mod imp {
+    super::imp_macros::impl_with_macro_rules!(a1: A1, a2: A2, a3: A3, a4: A4, a5: A5);
 }
 
-/// Also accessible at <code>[accept_ref]::[with_state()](accept_ref::with_state)</code>
-/// and <code>[with_state]::[accept_ref()](with_state::accept_ref)</code>.
-pub fn accept_ref_with_state<IN, Out, State: Clone + PartialEq>(
-    f: fn(&IN, &State) -> Out,
-    state: State,
-) -> with_state::WithState<accept_ref::AcceptRef<fn(&IN, &State) -> Out>, State> {
-    with_state::WithState {
-        f: accept_ref::AcceptRef(f),
-        state,
-    }
-}
+#[cfg(not(feature = "impl_with_macro_rules"))]
+mod imp;
+
+pub use imp::*;
 
 #[cfg(test)]
 mod tests {
-    use super::{Callback, CallbackExt};
+    use super::{Callable, CallableWithFixedArguments, Callback};
 
     #[test]
     fn test_callback_ref() {
@@ -54,8 +46,21 @@ mod tests {
             t
         }
 
-        let cbk = asserts(super::accept_ref(Clone::clone));
+        let cbk = asserts(crate::callback::r#ref(Clone::clone));
         assert_eq!(cbk.emit(&0), 0);
-        assert_eq!(cbk.with_input_ref(8).emit(()), 8);
+        assert_eq!(cbk.provide_last_argument_refed(8).call_fn(()), 8);
+    }
+
+    #[test]
+    fn mods() {
+        use super::super::callback;
+        let _: fn() = callback(|| {});
+
+        let _: fn(()) = callback::value(|()| {});
+        let _: callback::HkFn<fn(&())> = callback::r#ref(|&()| {});
+        let _: callback::HkFn<fn(&mut ())> = callback::r#mut(|&mut ()| {});
+
+        let _: fn((), ()) = callback::value::value(|(), ()| {});
+        let _: callback::value::HkFn<fn((), &())> = callback::value::r#ref(|(), &()| {});
     }
 }

@@ -9,9 +9,9 @@ component_fn!(
 
         let increment = state
             .clone()
-            .into_callback(|state: &_| {
+            .into_callback(callback!(|state: &_| {
                 state.replace_with(|v| *v + 1);
-            })
+            }))
             .accept_anything();
 
         let decrement = state

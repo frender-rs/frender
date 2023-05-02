@@ -64,7 +64,7 @@ pub mod prelude {
     pub use crate::html::props::callback;
 
     #[cfg(feature = "html")]
-    pub use callback::{Callback, CallbackExt};
+    pub use callback::Callback;
 }
 
 #[macro_export]

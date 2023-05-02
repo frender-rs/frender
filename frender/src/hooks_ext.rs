@@ -1,4 +1,4 @@
-use frender_events::callback::{Callback, IsCallback};
+use frender_events::callback::{self, CallableWithFixedArguments, Callback};
 use hooks::ShareValue;
 
 pub trait Equivalent {
@@ -60,134 +60,55 @@ hkt_wrapper!(
 );
 
 pub trait ShareValueExt: ShareValue {
-    fn into_callback<R>(self, f: fn(&Self) -> R) -> IntoCallback<Use<Self, R>, (), Self>
-    where
-        Self: Sized + Clone,
-    {
-        IntoCallback {
-            share_value: self,
-            f: Use(f),
-            dependency: (),
-        }
-    }
-
-    fn into_callback_map<R>(self, f: fn(&Self::Value) -> R) -> IntoCallbackMap<R, Self>
-    where
-        Self: Sized + Clone,
-    {
-        IntoCallbackMap {
-            share_value: self,
-            f,
-            dependency: (),
-        }
-    }
-
-    fn into_callback_map_mut<R>(self, f: fn(&mut Self::Value) -> R) -> IntoCallbackMapMut<R, Self>
-    where
-        Self: Sized + Clone,
-    {
-        IntoCallbackMapMut {
-            share_value: self,
-            f,
-            dependency: (),
-        }
-    }
-
-    fn into_callback_map_mut_accept<IN, R>(
+    fn into_callback<F>(
         self,
-        f: fn(&mut Self::Value, IN) -> R,
-    ) -> IntoCallbackMapMutAcceptInput<IN, R, Self>
+        f: F,
+    ) -> callback::argument::LastArgumentProvided<F, callback::argument::Refed<Self>>
     where
-        Self: Sized + Clone,
+        Self: Sized,
+        F: CallableWithFixedArguments<FixedArgumentTypes = (callback::argument::ByRef<Self>,)>,
     {
-        IntoCallbackMapMutAcceptInput {
-            share_value: self,
-            f,
-            dependency: (),
-        }
+        f.provide_last_argument_refed(self)
     }
+
+    // fn into_callback_map<R>(self, f: fn(&Self::Value) -> R) -> IntoCallbackMap<R, Self>
+    // where
+    //     Self: Sized + Clone,
+    // {
+    //     IntoCallbackMap {
+    //         share_value: self,
+    //         f,
+    //         dependency: (),
+    //     }
+    // }
+
+    // fn into_callback_map_mut<R>(self, f: fn(&mut Self::Value) -> R) -> IntoCallbackMapMut<R, Self>
+    // where
+    //     Self: Sized + Clone,
+    // {
+    //     IntoCallbackMapMut {
+    //         share_value: self,
+    //         f,
+    //         dependency: (),
+    //     }
+    // }
+
+    // fn into_callback_map_mut_accept<IN, R>(
+    //     self,
+    //     f: fn(&mut Self::Value, IN) -> R,
+    // ) -> IntoCallbackMapMutAcceptInput<IN, R, Self>
+    // where
+    //     Self: Sized + Clone,
+    // {
+    //     IntoCallbackMapMutAcceptInput {
+    //         share_value: self,
+    //         f,
+    //         dependency: (),
+    //     }
+    // }
 }
 
 impl<S: ?Sized> ShareValueExt for S where S: ShareValue {}
-
-#[derive(Debug, Clone, Copy)]
-pub struct IntoCallback<F: Clone + Equivalent, Dependency: Clone + PartialEq, S: Clone + ShareValue>
-{
-    share_value: S,
-    f: F,
-    dependency: Dependency,
-}
-
-impl<F: Clone + Equivalent, Dependency: Clone + PartialEq, S: Clone + ShareValue> IsCallback
-    for IntoCallback<F, Dependency, S>
-{
-}
-
-impl<F: Clone + Equivalent, Dependency: Clone + PartialEq, S: Clone + ShareValue> PartialEq
-    for IntoCallback<F, Dependency, S>
-{
-    fn eq(&self, other: &Self) -> bool {
-        self.f.equivalent(&other.f)
-            && self.share_value.equivalent_to(&other.share_value)
-            && self.dependency == other.dependency
-    }
-}
-
-pub type IntoCallbackMap<Out, S> = IntoCallback<fn(&<S as ShareValue>::Value) -> Out, (), S>;
-pub type IntoCallbackMapAcceptInput<IN, Out, S> =
-    IntoCallback<fn(&<S as ShareValue>::Value, IN) -> Out, (), S>;
-pub type IntoCallbackMapFor<Dependency, Out, S> =
-    IntoCallback<fn(&<S as ShareValue>::Value, &Dependency) -> Out, Dependency, S>;
-
-pub type IntoCallbackMapMut<Out, S> = IntoCallback<fn(&mut <S as ShareValue>::Value) -> Out, (), S>;
-pub type IntoCallbackMapMutAcceptInput<IN, Out, S> =
-    IntoCallback<fn(&mut <S as ShareValue>::Value, IN) -> Out, (), S>;
-pub type IntoCallbackMapMutFor<Dependency, Out, S> =
-    IntoCallback<Hkt21<<S as ShareValue>::Value, Dependency, Out>, Dependency, S>;
-
-impl<R, S: Clone + ShareValue> Callback<()> for IntoCallback<Use<S, R>, (), S> {
-    type Output = R;
-
-    fn emit(&self, _: ()) -> Self::Output {
-        (self.f.0)(&self.share_value)
-    }
-}
-
-impl<R, S: Clone + ShareValue> Callback<()> for IntoCallbackMap<R, S> {
-    type Output = R;
-
-    fn emit(&self, _: ()) -> Self::Output {
-        self.share_value.map(move |state| (self.f)(state))
-    }
-}
-
-impl<R, S: Clone + ShareValue> Callback<()> for IntoCallbackMapMut<R, S> {
-    type Output = R;
-
-    fn emit(&self, _: ()) -> Self::Output {
-        self.share_value.map_mut(move |state| (self.f)(state))
-    }
-}
-
-impl<IN, R, S: Clone + ShareValue> Callback<IN> for IntoCallbackMapMutAcceptInput<IN, R, S> {
-    type Output = R;
-
-    fn emit(&self, input: IN) -> Self::Output {
-        self.share_value
-            .map_mut(move |state| (self.f)(state, input))
-    }
-}
-
-impl<R, Dependency: Clone + PartialEq, S: Clone + ShareValue> Callback<()>
-    for IntoCallbackMapMutFor<Dependency, R, S>
-{
-    type Output = R;
-
-    fn emit(&self, _: ()) -> Self::Output {
-        self.share_value
-            .map_mut(|state| (self.f.0)(state, &self.dependency))
-    }
-}
 
 impl_equivalent!(
     impl_!(A0, R): fn(&A0) -> R,

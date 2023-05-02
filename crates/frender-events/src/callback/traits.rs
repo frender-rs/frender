@@ -1,6 +1,13 @@
-use super::*;
+use super::{argument::ProvideArgument, *};
 
-pub trait IsCallback: Clone + PartialEq {}
+pub trait IsCallable {
+    fn accept_anything(self) -> accept_anything::AcceptAnything<Self>
+    where
+        Self: Sized + Callable<()>,
+    {
+        accept_anything::AcceptAnything(self)
+    }
+}
 
 /// Anything implementing Callback has the following traits:
 ///
@@ -37,12 +44,17 @@ pub trait IsCallback: Clone + PartialEq {}
 ///
 /// Note that `fn(&IN) -> Out` doesn't implement `for<'input> Callback<&'input IN, Output = Out>`
 /// due to limitations of higher kind types in rust.
-pub trait Callback<IN>: IsCallback {
-    type Output;
+pub trait Callback<IN>: Callable<(IN,)> {
+    // type Output;
 
-    fn emit(&self, input: IN) -> Self::Output;
+    fn emit(&self, input: IN) -> Self::Output {
+        self.call_fn((input,))
+    }
 
-    fn chain<F: Callback<Self::Output>>(self, f: F) -> chain::Chain<Self, F> {
+    fn chain<F: Callback<Self::Output>>(self, f: F) -> chain::Chain<Self, F>
+    where
+        Self: Sized,
+    {
         chain::Chain(self, f)
     }
 
@@ -58,14 +70,20 @@ pub trait Callback<IN>: IsCallback {
     /// assert_eq!(plus_2.emit(1), 3);
     /// assert_eq!(plus_4.emit(1), 5);
     /// ```
-    fn reform<NewInput, F: Callback<NewInput, Output = IN>>(self, f: F) -> chain::Chain<F, Self> {
+    fn reform<NewInput, F: Callback<NewInput, Output = IN>>(self, f: F) -> chain::Chain<F, Self>
+    where
+        Self: Sized,
+    {
         f.chain(self)
     }
 
     fn reform_ref<NewInput, F: for<'i> Callback<&'i NewInput, Output = IN>>(
         self,
         f: F,
-    ) -> chain::Chain<F, Self> {
+    ) -> chain::Chain<F, Self>
+    where
+        Self: Sized,
+    {
         chain::Chain(f, self)
     }
 
@@ -75,42 +93,73 @@ pub trait Callback<IN>: IsCallback {
     // ) -> Chain<F, Self> {
     //     f.chain(self)
     // }
-
-    fn with_input(self, input: IN) -> chain::Chain<output::Output<IN>, Self>
-    where
-        IN: Copy + PartialEq,
-    {
-        chain::Chain(output::Output { value: input }, self)
-    }
-
-    fn with_input_cloned(self, input: IN) -> chain::Chain<output_cloned::OutputCloned<IN>, Self>
-    where
-        IN: Clone + PartialEq,
-    {
-        chain::Chain(output_cloned::OutputCloned { value: input }, self)
-    }
 }
 
-pub trait CallbackExt: IsCallback {
-    fn accept_anything(self) -> accept_anything::AcceptAnything<Self>
+impl<A1, F: Callable<(A1,)>> crate::Callback<A1> for F {}
+
+pub trait Callable<Args: sealed::Tuple>: crate::callback::IsCallable {
+    type Output;
+
+    fn call_fn(&self, args: Args) -> Self::Output;
+}
+
+pub trait CallableWithFixedArguments:
+    IsCallable
+    + for<'a> crate::Callable<super::argument::ArgumentsOfTypes<'a, Self::FixedArgumentTypes>>
+{
+    type FixedArgumentTypes: argument::ArgumentTypes;
+    // type LastArgumentProvided: CallableWithFixedArguments<
+    //     FixedArgumentTypes = <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
+    // >;
+
+    fn provide_last_argument<
+        A: ProvideArgument<
+            ProvideArgumentType = <Self::FixedArgumentTypes as argument::ArgumentTypes>::Last,
+        >,
+    >(
+        self,
+        last_argument: A,
+    ) -> super::argument::LastArgumentProvided<Self, A>
     where
-        Self: Callback<(), Output = ()>,
+        Self: Sized,
     {
-        accept_anything::AcceptAnything(self)
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument,
+        }
     }
 
-    fn with_input_ref<IN: Clone + PartialEq, Out>(
+    fn provide_last_argument_refed<T>(
         self,
-        input: IN,
-    ) -> with_input_ref::WithInputRef<IN, Self>
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Refed<T>>
     where
-        Self: for<'input> Callback<&'input IN, Output = Out>,
+        Self: Sized,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::ByRef<T>>,
     {
-        with_input_ref::WithInputRef {
-            callback: self,
-            input,
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Refed(last_argument),
+        }
+    }
+
+    fn provide_last_argument_copied<T: Copy>(
+        self,
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Copied<T>>
+    where
+        Self: Sized,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Copied(last_argument),
         }
     }
 }
 
-impl<C: IsCallback> CallbackExt for C {}
+impl<Out> IsCallable for fn() -> Out {}
+impl<Out> CallableWithFixedArguments for fn() -> Out {
+    type FixedArgumentTypes = ();
+    // type LastArgumentProvided = super::argument::LastArgumentProvided<Self, argument::Invalid>;
+}

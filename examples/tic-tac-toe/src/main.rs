@@ -37,7 +37,7 @@ impl<OnClick: Callback<usize, Output = ()> + 'static> Board<OnClick> {
             let on_click = self.on_click.clone();
             Square {
                 value: self.board.squares[i].to_str(),
-                on_click: on_click.with_input(i).accept_anything(),
+                on_click: on_click.provide_last_argument_copied(i).accept_anything(),
             }
             .into_element()
         };
@@ -76,22 +76,22 @@ fn Game() {
         _ => format!("Winner: {}", winner.to_str()),
     };
 
-    let on_click = callback::with_state(
-        |i, state_setter| {
+    let on_click = callback!(
+        |i| {
             state_setter.mutate_with_fn_box(move |game| {
                 game.click(i);
             })
         },
-        state_setter.clone(),
+        state_setter = state_setter.clone(),
     );
 
-    let jump_to = callback::with_state(
-        |i, state_setter| {
+    let jump_to = callback!(
+        |i| {
             state_setter.mutate_with_fn_box(move |game| {
                 game.jump_to(i);
             })
         },
-        state_setter.clone(),
+        state_setter = state_setter.clone(),
     );
 
     let moves = (0..state.full_history().len())

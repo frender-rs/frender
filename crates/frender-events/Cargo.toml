@@ -31,6 +31,8 @@ features = [
 ]
 
 [features]
+# default = ["impl_with_macro_rules"]
+impl_with_macro_rules = []
 csr = []
 
 [dev-dependencies]
