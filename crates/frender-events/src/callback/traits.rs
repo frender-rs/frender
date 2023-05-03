@@ -156,6 +156,20 @@ pub trait CallableWithFixedArguments:
             last_argument: argument::Copied(last_argument),
         }
     }
+
+    fn provide_last_argument_cloned<T: Clone>(
+        self,
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Cloned<T>>
+    where
+        Self: Sized,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Cloned(last_argument),
+        }
+    }
 }
 
 impl<Out> IsCallable for fn() -> Out {}

@@ -48,17 +48,18 @@ fn infer() {
 #[test]
 fn infer_ref() {
     fn provide_with_ref<
-        C: CallableWithFixedArguments<FixedArgumentTypes = (argument::ByRef<Vec<u8>>,)>,
+        C: CallableWithFixedArguments<FixedArgumentTypes = (argument::ByRef<u8>,)>,
     >(
         callable: C,
-    ) -> LastArgumentProvided<C, argument::Refed<Vec<u8>>> {
-        callable.provide_last_argument_refed(vec![1, 2, 3])
+    ) -> LastArgumentProvided<C, argument::Refed<u8>> {
+        callable.provide_last_argument_refed(5)
     }
 
-    let _ = provide_with_ref(callback!(|v: &_| v.len()));
-    let cbk = provide_with_ref(callback!(|v: &Vec<u8>| v.len()));
+    let _ = provide_with_ref(callback!(|v: &_| Vec::from_iter([*v; 3])));
 
-    assert_eq!(cbk.call_fn(()), 3);
+    let cbk = provide_with_ref(callback!(|v: &_| Vec::from_iter([*v; 3])));
+
+    assert_eq!(cbk.call_fn(()), [5, 5, 5]);
 
     fn provide_with_ref_args<C: CallableWithFixedArguments>(
         callable: C,

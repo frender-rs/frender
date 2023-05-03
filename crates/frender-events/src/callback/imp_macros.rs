@@ -32,11 +32,15 @@ macro_rules! argument_type {
 pub(super) use argument_type;
 
 macro_rules! expand_last_trimmed {
-    ($(@impl[$($prepend:tt)*])? (,) $($last:tt)?) => {
+    ($(@impl[$($prepend:tt)*])? (,) $last:tt) => {
         ($($($prepend)*)?)
     };
     ($(@impl[$($prepend:tt)*])? (,) {$($not_last:tt)*}  $($more:tt)+) => {
-        ($($($prepend)*)? $($not_last)*,)
+        crate::callback::imp_macros::expand_last_trimmed! {
+            @impl[$($($prepend)*)? $($not_last)*,]
+            (,)
+            $($more)+
+        }
     };
 }
 
@@ -44,14 +48,14 @@ pub(super) use expand_last_trimmed;
 
 macro_rules! impl_fn {
     ( [$($item:tt)*]$more:tt) => {
-        crate::callback::imp_macros::impl_fn! { ![$($item)*] }
+        crate::callback::imp_macros::impl_fn! { ![$($item)*] $more }
         crate::callback::imp_macros::impl_fn! { *[$($item)*] $more }
     };
     (*[$($item:tt)*][$next:tt $($more:tt)*]) => {
         crate::callback::imp_macros::impl_fn! { [$($item)* $next][$($more)*] }
     };
     (*[$($item:tt)*][]) => {};
-    (![$({$v:ident $tp:ident})*]) => {
+    (![$({$v:ident $tp:ident})*] $more:tt) => {
         impl<$($tp,)*> crate::callback::sealed::Tuple for ($($tp,)*) {}
         impl<'arg, $($tp: for<'a> crate::callback::argument::ArgumentType<'a>,)*> crate::callback::argument::Arguments<'arg> for ($($tp,)*) {
             type Arguments = ($(<$tp as crate::callback::argument::ArgumentType<'arg>>::Argument,)*);
@@ -69,11 +73,27 @@ macro_rules! impl_fn {
                 [$({$tp})*]
                 crate::callback::argument::Invalid
             ];
-            type LastTrimmed = crate::callback::imp_macros::expand_last_trimmed![
-                (,)
-                [$({$tp})*]
-            ];
+            type LastTrimmed = crate::callback::imp_macros::expand_if_else![[$($tp)*][
+                crate::callback::imp_macros::expand_last_trimmed![ (,) $({$tp})* ]
+            ][
+                crate::callback::argument::InvalidTuple
+            ]];
         }
+
+        crate::callback::imp_macros::expand_if_else! { $more [
+        impl<
+            ArgType: for<'a> crate::callback::argument::ArgumentType<'a>,
+            $($tp: for<'a> crate::callback::argument::ArgumentType<'a>,)*
+        > crate::callback::argument::ArgumentTypesAppend<ArgType> for ($($tp,)*) {
+            type Appended = ($($tp,)* ArgType,);
+            fn append<'a>(
+                ($($v,)*): crate::callback::argument::ArgumentsOfTypes<'a, Self>,
+                last: <ArgType as crate::callback::argument::ArgumentType<'a>>::Argument,
+            ) -> crate::callback::argument::ArgumentsOfTypes<'a, Self::Appended> {
+                ($($v,)* last,)
+            }
+        }
+        ][]}
 
         impl<$($tp,)* Out> crate::callback::Callable<($($tp,)*)> for fn($($tp),*) -> Out {
             type Output = Out;
@@ -190,6 +210,7 @@ macro_rules! impl_one_resolved {
             // type LastArgumentProvided = ($(crate::callback::imp_macros::argument_type![$($bef_t)* $bef_tp],)*);
         }
 
+        #[cfg(aa)]
         impl<$($all_tp $(: $($all_tp_bounds)+)?,)* Out, Arg> crate::callback::Callable<($($($bef_t)* $bef_tp,)*)> for
             crate::callback::argument::LastArgumentProvided<$fn_wrapped, Arg>
             where Arg: crate::callback::argument::ProvideArgument<ProvideArgumentType = crate::callback::argument::$fn_name <$cur_tp>>

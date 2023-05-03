@@ -25,7 +25,7 @@ mod imp_macros;
 
 #[cfg(feature = "impl_with_macro_rules")]
 mod imp {
-    super::imp_macros::impl_with_macro_rules!(a1: A1, a2: A2, a3: A3, a4: A4, a5: A5);
+    super::imp_macros::impl_with_macro_rules!(a1: A1, a2: A2, a3: A3);
 }
 
 #[cfg(not(feature = "impl_with_macro_rules"))]
