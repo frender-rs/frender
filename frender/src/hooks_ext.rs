@@ -128,7 +128,7 @@ impl<S: ShareValue + 'static> callback::argument::ProvideArgument for MapMut<S> 
     fn provide_argument_to<
         Out,
         F: for<'arg> FnOnce(
-            <Self::ProvideArgumentType as callback::argument::ArgumentType<'arg>>::Argument,
+            callback::argument::ArgumentOfType<'arg, Self::ProvideArgumentType>,
         ) -> Out,
     >(
         &self,

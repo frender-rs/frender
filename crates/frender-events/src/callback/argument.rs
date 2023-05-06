@@ -6,17 +6,22 @@ pub use ByMut as r#mut;
 pub use ByRef as r#ref;
 pub use Value as value;
 
-pub trait ArgumentType<'a>: 'static {
+pub trait Argument<'a>: 'static {
     type Argument;
 }
+
+pub trait ArgumentType: for<'a> Argument<'a> {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self>;
+}
+
 pub trait ProvideArgument {
-    type ProvideArgumentType: ?Sized + for<'a> ArgumentType<'a>;
+    type ProvideArgumentType: ArgumentType;
 
     // fn provide_argument(&self) -> <Self::ProvideArgumentType as ArgumentType<'_>>::Argument;
 
     fn provide_argument_to<
         Out,
-        F: for<'arg> FnOnce(<Self::ProvideArgumentType as ArgumentType<'arg>>::Argument) -> Out,
+        F: for<'arg> FnOnce(ArgumentOfType<'arg, Self::ProvideArgumentType>) -> Out,
     >(
         &self,
         f: F,
@@ -34,16 +39,34 @@ pub struct Cloned<T: Clone>(pub(super) T);
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Refed<T>(pub(super) T);
 
-impl<'a, T: 'static> ArgumentType<'a> for Value<T> {
+impl<'a, T: 'static> Argument<'a> for Value<T> {
     type Argument = T;
 }
 
-impl<'a, T: ?Sized + 'static> ArgumentType<'a> for ByRef<T> {
+impl<T: 'static> ArgumentType for Value<T> {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self> {
+        arg
+    }
+}
+
+impl<'a, T: ?Sized + 'static> Argument<'a> for ByRef<T> {
     type Argument = &'a T;
 }
 
-impl<'a, T: ?Sized + 'static> ArgumentType<'a> for ByMut<T> {
+impl<T: ?Sized + 'static> ArgumentType for ByRef<T> {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self> {
+        arg
+    }
+}
+
+impl<'a, T: ?Sized + 'static> Argument<'a> for ByMut<T> {
     type Argument = &'a mut T;
+}
+
+impl<T: ?Sized + 'static> ArgumentType for ByMut<T> {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self> {
+        arg
+    }
 }
 
 impl<T: Copy + 'static> ProvideArgument for Copied<T> {
@@ -55,7 +78,7 @@ impl<T: Copy + 'static> ProvideArgument for Copied<T> {
 
     fn provide_argument_to<
         Out,
-        F: for<'arg> FnOnce(<Self::ProvideArgumentType as ArgumentType<'arg>>::Argument) -> Out,
+        F: for<'arg> FnOnce(ArgumentOfType<'arg, Self::ProvideArgumentType>) -> Out,
     >(
         &self,
         f: F,
@@ -72,7 +95,7 @@ impl<T: Clone + 'static> ProvideArgument for Cloned<T> {
 
     fn provide_argument_to<
         Out,
-        F: for<'arg> FnOnce(<Self::ProvideArgumentType as ArgumentType<'arg>>::Argument) -> Out,
+        F: for<'arg> FnOnce(ArgumentOfType<'arg, Self::ProvideArgumentType>) -> Out,
     >(
         &self,
         f: F,
@@ -90,7 +113,7 @@ impl<T: 'static> ProvideArgument for Refed<T> {
 
     fn provide_argument_to<
         Out,
-        F: for<'arg> FnOnce(<Self::ProvideArgumentType as ArgumentType<'arg>>::Argument) -> Out,
+        F: for<'arg> FnOnce(ArgumentOfType<'arg, Self::ProvideArgumentType>) -> Out,
     >(
         &self,
         f: F,
@@ -135,7 +158,7 @@ mod last {
             args: ArgumentsOfTypes<'_, <F::FixedArgumentTypes as ArgumentTypes>::LastTrimmed>,
         ) -> Self::Output {
             self.last_argument
-                .provide_argument_to(move |last| self.f.call_with_last(args, last))
+                .provide_argument_to(move |last| self.f.call_with_appended_args(args, last))
         }
     }
 
@@ -146,32 +169,6 @@ mod last {
         > crate::callback::CallableWithFixedArguments for LastArgumentProvided<F, A>
     {
         type FixedArgumentTypes = <F::FixedArgumentTypes as ArgumentTypes>::LastTrimmed;
-
-        fn call_with_last<'last>(
-            &self,
-            args: crate::callback::argument::ArgumentsOfTypes<
-                '_,
-                <Self::FixedArgumentTypes as super::ArgumentTypes>::LastTrimmed,
-            >,
-            last: <<Self::FixedArgumentTypes as super::ArgumentTypes>::Last as crate::callback::argument::ArgumentType<'last>>::Argument,
-        ) -> <Self as crate::Callable<
-            crate::callback::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>,
-        >>::Output {
-            todo!()
-        }
-
-        fn call_with_first<'first>(
-            &self,
-            first: <<Self::FixedArgumentTypes as super::ArgumentTypes>::First as crate::callback::argument::ArgumentType<'first>>::Argument,
-            args: crate::callback::argument::ArgumentsOfTypes<
-                '_,
-                <Self::FixedArgumentTypes as super::ArgumentTypes>::FirstTrimmed,
-            >,
-        ) -> <Self as crate::Callable<
-            crate::callback::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>,
-        >>::Output {
-            todo!()
-        }
     }
 }
 
@@ -210,7 +207,7 @@ mod first {
             args: ArgumentsOfTypes<'_, <F::FixedArgumentTypes as ArgumentTypes>::FirstTrimmed>,
         ) -> Self::Output {
             self.first_argument
-                .provide_argument_to(move |first| self.f.call_with_first(first, args))
+                .provide_argument_to(move |first| self.f.call_with_prepended_args(first, args))
         }
     }
 
@@ -221,33 +218,6 @@ mod first {
         > super::super::CallableWithFixedArguments for FirstArgumentProvided<F, A>
     {
         type FixedArgumentTypes = <F::FixedArgumentTypes as ArgumentTypes>::FirstTrimmed;
-
-        fn call_with_last<'last>(
-            &self,
-            args: crate::callback::argument::ArgumentsOfTypes<
-                '_,
-                <Self::FixedArgumentTypes as super::ArgumentTypes>::LastTrimmed,
-            >,
-            last: <<Self::FixedArgumentTypes as super::ArgumentTypes>::Last as crate::callback::argument::ArgumentType<'last>>::Argument,
-        ) -> <Self as crate::Callable<
-            crate::callback::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>,
-        >>::Output {
-            self.first_argument
-                .provide_argument_to(|first| self.f.call_with_first(first, args))
-        }
-
-        fn call_with_first<'first>(
-            &self,
-            first: <<Self::FixedArgumentTypes as super::ArgumentTypes>::First as crate::callback::argument::ArgumentType<'first>>::Argument,
-            args: crate::callback::argument::ArgumentsOfTypes<
-                '_,
-                <Self::FixedArgumentTypes as super::ArgumentTypes>::FirstTrimmed,
-            >,
-        ) -> <Self as crate::Callable<
-            crate::callback::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>,
-        >>::Output {
-            todo!()
-        }
     }
 }
 
@@ -255,20 +225,61 @@ pub trait Arguments<'a>: 'static {
     type Arguments: super::sealed::Tuple;
 }
 
-pub trait ArgumentTypes: super::sealed::Tuple + for<'a> Arguments<'a> {
-    type First: for<'a> ArgumentType<'a>;
-    type FirstTrimmed: ArgumentTypes;
+pub trait PrependArgument<Arg: ArgumentType>: ArgumentTypes {
+    type Prepended: ArgumentTypes<First = Arg, FirstTrimmed = Self>;
 
-    type Last: for<'a> ArgumentType<'a>;
-    type LastTrimmed: ArgumentTypes;
+    fn prepend_argument<'a>(
+        first: ArgumentOfType<'a, Arg>,
+        args: ArgumentsOfTypes<'a, Self>,
+    ) -> ArgumentsOfTypes<'a, Self::Prepended>;
 }
 
+pub trait AppendArgument<Arg: ArgumentType>: ArgumentTypes {
+    type Appended: ArgumentTypes<Last = Arg, LastTrimmed = Self>;
+
+    fn append_argument<'a>(
+        args: ArgumentsOfTypes<'a, Self>,
+        last: ArgumentOfType<'a, Arg>,
+    ) -> ArgumentsOfTypes<'a, Self::Appended>;
+}
+
+pub trait ArgumentTypes: super::sealed::Tuple + for<'a> Arguments<'a> {
+    type First: ArgumentType;
+    type FirstTrimmed: ArgumentTypes + PrependArgument<Self::First, Prepended = Self>;
+
+    type Last: ArgumentType;
+    type LastTrimmed: ArgumentTypes + AppendArgument<Self::Last, Appended = Self>;
+
+    fn re_borrow<'a: 'b, 'b>(args: ArgumentsOfTypes<'a, Self>) -> ArgumentsOfTypes<'b, Self>;
+
+    fn from_prepended<'a>(
+        first: ArgumentOfType<'a, Self::First>,
+        args: ArgumentsOfTypes<'a, Self::FirstTrimmed>,
+    ) -> ArgumentsOfTypes<'a, Self> {
+        <Self::FirstTrimmed as PrependArgument<Self::First>>::prepend_argument(first, args)
+    }
+
+    fn from_appended<'a>(
+        args: ArgumentsOfTypes<'a, Self::LastTrimmed>,
+        last: ArgumentOfType<'a, Self::Last>,
+    ) -> ArgumentsOfTypes<'a, Self> {
+        <Self::LastTrimmed as AppendArgument<Self::Last>>::append_argument(args, last)
+    }
+}
+
+pub type ArgumentOfType<'a, A> = <A as Argument<'a>>::Argument;
 pub type ArgumentsOfTypes<'a, A> = <A as Arguments<'a>>::Arguments;
 
 pub enum Invalid {}
 
-impl<'a> ArgumentType<'a> for Invalid {
+impl<'a> Argument<'a> for Invalid {
     type Argument = Invalid;
+}
+
+impl ArgumentType for Invalid {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self> {
+        match arg {}
+    }
 }
 
 pub enum InvalidTuple {}
@@ -280,16 +291,70 @@ impl<'a> Arguments<'a> for InvalidTuple {
 }
 
 impl ArgumentTypes for InvalidTuple {
-    type First = Invalid;
+    type First = Invalid2;
     type FirstTrimmed = InvalidTuple;
     type Last = Invalid2;
     type LastTrimmed = InvalidTuple;
+
+    fn re_borrow<'a: 'b, 'b>(args: ArgumentsOfTypes<'a, Self>) -> ArgumentsOfTypes<'b, Self> {
+        match args {}
+    }
+}
+
+impl PrependArgument<Invalid> for InvalidTuple {
+    type Prepended = ();
+
+    fn prepend_argument<'a>(
+        first: ArgumentOfType<'a, Invalid>,
+        _: ArgumentsOfTypes<'a, Self>,
+    ) -> ArgumentsOfTypes<'a, Self::Prepended> {
+        match first {}
+    }
+}
+
+impl PrependArgument<Invalid2> for InvalidTuple {
+    type Prepended = InvalidTuple;
+
+    fn prepend_argument<'a>(
+        first: ArgumentOfType<'a, Invalid2>,
+        _: ArgumentsOfTypes<'a, Self>,
+    ) -> ArgumentsOfTypes<'a, Self::Prepended> {
+        match first {}
+    }
+}
+
+impl AppendArgument<Invalid> for InvalidTuple {
+    type Appended = ();
+
+    fn append_argument<'a>(
+        _: ArgumentsOfTypes<'a, Self>,
+        last: ArgumentOfType<'a, Invalid>,
+    ) -> ArgumentsOfTypes<'a, Self::Appended> {
+        match last {}
+    }
+}
+
+impl AppendArgument<Invalid2> for InvalidTuple {
+    type Appended = InvalidTuple;
+
+    fn append_argument<'a>(
+        _: ArgumentsOfTypes<'a, Self>,
+        last: ArgumentOfType<'a, Invalid2>,
+    ) -> ArgumentsOfTypes<'a, Self::Appended> {
+        match last {}
+    }
 }
 
 pub enum Invalid2 {}
 
-impl<'a> ArgumentType<'a> for Invalid2 {
+impl<'a> Argument<'a> for Invalid2 {
     type Argument = Invalid2;
+}
+
+impl ArgumentType for Invalid2 {
+    fn re_borrow<'a: 'b, 'b>(arg: ArgumentOfType<'a, Self>) -> ArgumentOfType<'b, Self> {
+        match arg {}
+    }
 }
 
 impl ProvideArgument for Invalid {
@@ -301,7 +366,7 @@ impl ProvideArgument for Invalid {
 
     fn provide_argument_to<
         Out,
-        F: for<'arg> FnOnce(<Self::ProvideArgumentType as ArgumentType<'arg>>::Argument) -> Out,
+        F: for<'arg> FnOnce(ArgumentOfType<'arg, Self::ProvideArgumentType>) -> Out,
     >(
         &self,
         _: F,

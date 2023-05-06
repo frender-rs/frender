@@ -57,18 +57,22 @@ macro_rules! impl_fn {
     (*[$($item:tt)*][]) => {};
     (![$({$v:ident $tp:ident})*] $more:tt) => {
         impl<$($tp,)*> crate::callback::sealed::Tuple for ($($tp,)*) {}
-        impl<'arg, $($tp: for<'a> crate::callback::argument::ArgumentType<'a>,)*> crate::callback::argument::Arguments<'arg> for ($($tp,)*) {
-            type Arguments = ($(<$tp as crate::callback::argument::ArgumentType<'arg>>::Argument,)*);
+        impl<'arg, $($tp: crate::callback::argument::ArgumentType,)*> crate::callback::argument::Arguments<'arg> for ($($tp,)*) {
+            type Arguments = ($(crate::callback::argument::ArgumentOfType<'arg, $tp>,)*);
         }
-        impl<      $($tp: for<'a> crate::callback::argument::ArgumentType<'a>,)*> crate::callback::argument::ArgumentTypes   for ($($tp,)*) {
+        impl<      $($tp: crate::callback::argument::ArgumentType,)*> crate::callback::argument::ArgumentTypes   for ($($tp,)*) {
             type First = crate::callback::imp_macros::expand_first_or![
                 [$({$tp})*]
                 crate::callback::argument::Invalid
             ];
-            type FirstTrimmed = crate::callback::imp_macros::expand_first_trimmed![
-                (,)
-                $({$tp})*
-            ];
+            type FirstTrimmed = crate::callback::imp_macros::expand_if_else![ [$($tp)*][
+                crate::callback::imp_macros::expand_first_trimmed![
+                    (,)
+                    $({$tp})*
+                ]
+            ][
+                crate::callback::argument::InvalidTuple
+            ]];
             type Last = crate::callback::imp_macros::expand_last_or![
                 [$({$tp})*]
                 crate::callback::argument::Invalid
@@ -78,7 +82,40 @@ macro_rules! impl_fn {
             ][
                 crate::callback::argument::InvalidTuple
             ]];
+
+            fn re_borrow<'a: 'b, 'b>(($($v,)*): crate::callback::argument::ArgumentsOfTypes<'a, Self>) -> crate::callback::argument::ArgumentsOfTypes<'b, Self> {
+                ($($tp::re_borrow($v),)*)
+            }
         }
+
+        $crate::callback::imp_macros::expand_if_else! { $more [
+        impl<
+            Arg: crate::callback::argument::ArgumentType,
+            $($tp: crate::callback::argument::ArgumentType,)*
+        > crate::callback::argument::PrependArgument<Arg> for ($($tp,)*) {
+            type Prepended = (Arg, $($tp,)*);
+
+            fn prepend_argument<'a>(
+                first: crate::callback::argument::ArgumentOfType<'a, Arg>,
+                ($($v,)*): crate::callback::argument::ArgumentsOfTypes<'a, Self>,
+            ) -> crate::callback::argument::ArgumentsOfTypes<'a, Self::Prepended> {
+                (first, $($v,)*)
+            }
+        }
+        impl<
+            Arg: crate::callback::argument::ArgumentType,
+            $($tp: crate::callback::argument::ArgumentType,)*
+        > crate::callback::argument::AppendArgument<Arg> for ($($tp,)*) {
+            type Appended = ($($tp,)* Arg,);
+
+            fn append_argument<'a>(
+                ($($v,)*): crate::callback::argument::ArgumentsOfTypes<'a, Self>,
+                last: crate::callback::argument::ArgumentOfType<'a, Arg>,
+            ) -> crate::callback::argument::ArgumentsOfTypes<'a, Self::Appended> {
+                ($($v,)* last,)
+            }
+        }
+        ][] }
 
         impl<$($tp,)* Out> crate::callback::Callable<($($tp,)*)> for fn($($tp),*) -> Out {
             type Output = Out;
@@ -193,29 +230,6 @@ macro_rules! impl_one_resolved {
 
         impl<$($all_tp :'static $(+ $($all_tp_bounds)+)?,)* Out> crate::callback::CallableWithFixedArguments for $fn_wrapped {
             type FixedArgumentTypes   = ($(crate::callback::imp_macros::argument_type![$($all_t)* $all_tp],)*);
-            // type LastArgumentProvided = ($(crate::callback::imp_macros::argument_type![$($bef_t)* $bef_tp],)*);
-
-            fn call_with_last<'last>(
-                &$self_ident,
-                ($($bef_tp,)*): crate::callback::argument::ArgumentsOfTypes<
-                    '_,
-                    <Self::FixedArgumentTypes as crate::callback::argument::ArgumentTypes>::LastTrimmed,
-                >,
-                last: <<Self::FixedArgumentTypes as crate::callback::argument::ArgumentTypes>::Last as crate::callback::argument::ArgumentType<'last>>::Argument,
-            ) -> <Self as crate::callback::Callable<crate::callback::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output {
-                $fn_expr($($bef_tp,)* last,)
-            }
-
-            fn call_with_first<'first>(
-                &$self_ident,
-                first: <<Self::FixedArgumentTypes as crate::callback::argument::ArgumentTypes>::First as crate::callback::argument::ArgumentType<'first>>::Argument,
-                ($($bef_tp,)*): crate::callback::argument::ArgumentsOfTypes<
-                    '_,
-                    <Self::FixedArgumentTypes as crate::callback::argument::ArgumentTypes>::FirstTrimmed,
-                >,
-            ) -> <Self as crate::callback::Callable<crate::callback::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output {
-                $fn_expr(first, $($bef_tp,)*)
-            }
         }
     };
 }

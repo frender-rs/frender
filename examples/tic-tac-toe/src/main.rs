@@ -107,8 +107,6 @@ fn Game() {
         state_setter = state_setter.clone(),
     );
 
-    let a = jump_to.clone();
-
     let moves = (0..state.full_history().len())
         .map(|i: usize| {
             let desc = if i > 0 {

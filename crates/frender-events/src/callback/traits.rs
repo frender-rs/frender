@@ -70,6 +70,17 @@ pub trait IsCallable {
         }
     }
 
+    fn provide_first_argument_copied<T: Copy + 'static>(
+        self,
+        first_argument: T,
+    ) -> super::argument::FirstArgumentProvided<Self, argument::Copied<T>>
+    where
+        Self: Sized + CallableWithFixedArguments,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<First = argument::Value<T>>,
+    {
+        self.provide_first_argument(argument::Copied(first_argument))
+    }
+
     fn provide_last_argument_copied<T: Copy + 'static>(
         self,
         last_argument: T,
@@ -202,48 +213,46 @@ pub trait CallableWithFixedArguments:
     //     FixedArgumentTypes = <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
     // >;
 
-    fn call_with_last<'last>(
+    fn call_with_prepended_args<'first: 'out, 'args: 'out, 'out>(
         &self,
-        args: super::argument::ArgumentsOfTypes<
-            '_,
-            <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
+        first: super::argument::ArgumentOfType<
+            'first,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::First,
         >,
-        last: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'last>>::Argument,
-    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output;
-
-    fn call_with_first<'first>(
-        &self,
-        first: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::First as super::argument::ArgumentType<'first>>::Argument,
         args: super::argument::ArgumentsOfTypes<
-            '_,
+            'args,
             <Self::FixedArgumentTypes as argument::ArgumentTypes>::FirstTrimmed,
         >,
-    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output;
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'out, Self::FixedArgumentTypes>>>::Output
+    {
+        let first = <<Self::FixedArgumentTypes as argument::ArgumentTypes>::First as argument::ArgumentType>::re_borrow(first);
+        let args = <<Self::FixedArgumentTypes as argument::ArgumentTypes>::FirstTrimmed as argument::ArgumentTypes>::re_borrow(args);
+        self.call_fn(
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::from_prepended(first, args),
+        )
+    }
+
+    fn call_with_appended_args<'last: 'out, 'args: 'out, 'out>(
+        &self,
+        args: super::argument::ArgumentsOfTypes<
+            'args,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
+        >,
+        last: super::argument::ArgumentOfType<
+            'last,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::Last,
+        >,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'out, Self::FixedArgumentTypes>>>::Output
+    {
+        let args = <<Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed as argument::ArgumentTypes>::re_borrow(args);
+        let last = <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as argument::ArgumentType>::re_borrow(last);
+        self.call_fn(
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::from_appended(args, last),
+        )
+    }
 }
 
 impl<Out> IsCallable for fn() -> Out {}
 impl<Out> CallableWithFixedArguments for fn() -> Out {
     type FixedArgumentTypes = ();
-
-    fn call_with_last<'last>(
-        &self,
-        args: super::argument::ArgumentsOfTypes<
-            '_,
-            <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
-        >,
-        last: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'last>>::Argument,
-    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output{
-        match last {}
-    }
-
-    fn call_with_first<'first>(
-        &self,
-        first: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'first>>::Argument,
-        args: super::argument::ArgumentsOfTypes<
-            '_,
-            <Self::FixedArgumentTypes as argument::ArgumentTypes>::FirstTrimmed,
-        >,
-    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output{
-        match first {}
-    }
 }
