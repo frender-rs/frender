@@ -12,7 +12,28 @@ impl<
     > CallableWithFixedArguments for Chain<F1, F2>
 {
     type FixedArgumentTypes = F1::FixedArgumentTypes;
-    // type LastArgumentProvided = F1::LastArgumentProvided;
+
+    fn call_with_last<'last>(
+        &self,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as super::argument::ArgumentTypes>::LastTrimmed,
+        >,
+        last: <<Self::FixedArgumentTypes as super::argument::ArgumentTypes>::Last as super::argument::ArgumentType<'last>>::Argument,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output{
+        self.1.call_fn((self.0.call_with_last(args, last),))
+    }
+
+    fn call_with_first<'first>(
+        &self,
+        first: <<Self::FixedArgumentTypes as super::argument::ArgumentTypes>::First as super::argument::ArgumentType<'first>>::Argument,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as super::argument::ArgumentTypes>::FirstTrimmed,
+        >,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output{
+        self.1.call_fn((self.0.call_with_first(first, args),))
+    }
 }
 
 impl<Args: super::sealed::Tuple, F1, F2> Callable<Args> for Chain<F1, F2>

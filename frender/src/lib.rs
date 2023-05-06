@@ -61,10 +61,10 @@ pub mod prelude {
     pub use crate::hooks_ext::ShareValueExt;
 
     #[cfg(feature = "html")]
-    pub use crate::html::props::callback;
+    pub use crate::html::props::{callback, ArgumentTypes};
 
     #[cfg(feature = "html")]
-    pub use callback::Callback;
+    pub use callback::{Callable, CallableWithFixedArguments, Callback, IsCallable};
 }
 
 #[macro_export]

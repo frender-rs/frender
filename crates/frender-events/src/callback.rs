@@ -33,9 +33,28 @@ mod imp;
 
 pub use imp::*;
 
+#[macro_export]
+macro_rules! ArgumentTypes {
+    () => {
+        ()
+    };
+    (@$resolved:tt) => {
+        $resolved
+    };
+    ($(@($($resolved:tt)*))? &mut $t:ty $(, $($rest:tt)*)? ) => {
+        $crate::ArgumentTypes! { @($($($resolved)*)? $crate::callback::argument::ByMut<$t>,) $($rest)* }
+    };
+    ($(@($($resolved:tt)*))? &    $t:ty $(, $($rest:tt)*)? ) => {
+        $crate::ArgumentTypes! { @($($($resolved)*)? $crate::callback::argument::ByRef<$t>,) $($rest)* }
+    };
+    ($(@($($resolved:tt)*))?      $t:ty $(, $($rest:tt)*)? ) => {
+        $crate::ArgumentTypes! { @($($($resolved)*)? $crate::callback::argument::Value<$t>,) $($rest)* }
+    };
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{Callable, CallableWithFixedArguments, Callback};
+    use super::{Callable, Callback, IsCallable};
 
     #[test]
     fn test_callback_ref() {

@@ -5,7 +5,11 @@ pub mod data;
 
 use frender::prelude::*;
 
-pub struct Square<V, OnClick> {
+pub struct Square<V, OnClick>
+where
+    V: frender::CsrElement,
+    OnClick: frender::UpdateDomEventListener<frender::events::Click>,
+{
     value: V,
     on_click: OnClick,
 }
@@ -25,12 +29,21 @@ where
     }
 }
 
-pub struct Board<OnClick: Callback<usize, Output = ()> + 'static> {
+pub struct Board<
+    OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()>
+        + Clone
+        + 'static,
+> {
     board: data::Board,
     on_click: OnClick,
 }
 
-impl<OnClick: Callback<usize, Output = ()> + 'static> Board<OnClick> {
+impl<
+        OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()>
+            + Clone
+            + 'static,
+    > Board<OnClick>
+{
     #[component(only_dom)]
     fn into_element(self) {
         let render_square = |i: usize| {
@@ -94,6 +107,8 @@ fn Game() {
         state_setter = state_setter.clone(),
     );
 
+    let a = jump_to.clone();
+
     let moves = (0..state.full_history().len())
         .map(|i: usize| {
             let desc = if i > 0 {
@@ -104,7 +119,7 @@ fn Game() {
 
             rsx!(
               <li key={i}>
-                <button on_click={jump_to.clone().with_input(i).accept_anything()}>{desc}</button>
+                <button on_click={jump_to.clone().provide_first_argument_copied(i).accept_anything()}>{desc}</button>
               </li>
             )
         })

@@ -59,16 +59,18 @@ hkt_wrapper!(
     pub struct Hkt21<S, IN, R>(fn(&mut S, &IN) -> R);
 );
 
-pub trait ShareValueExt: ShareValue {
+pub trait ShareValueExt: ShareValue + 'static {
     fn into_callback<F>(
         self,
         f: F,
-    ) -> callback::argument::LastArgumentProvided<F, callback::argument::Refed<Self>>
+    ) -> callback::argument::FirstArgumentProvided<F, callback::argument::Refed<Self>>
     where
         Self: Sized,
-        F: CallableWithFixedArguments<FixedArgumentTypes = (callback::argument::ByRef<Self>,)>,
+        F: CallableWithFixedArguments,
+        F::FixedArgumentTypes:
+            callback::argument::ArgumentTypes<First = callback::argument::ByRef<Self>>,
     {
-        f.provide_last_argument_refed(self)
+        f.provide_first_argument_refed(self)
     }
 
     // fn into_callback_map<R>(self, f: fn(&Self::Value) -> R) -> IntoCallbackMap<R, Self>
@@ -82,16 +84,18 @@ pub trait ShareValueExt: ShareValue {
     //     }
     // }
 
-    // fn into_callback_map_mut<R>(self, f: fn(&mut Self::Value) -> R) -> IntoCallbackMapMut<R, Self>
-    // where
-    //     Self: Sized + Clone,
-    // {
-    //     IntoCallbackMapMut {
-    //         share_value: self,
-    //         f,
-    //         dependency: (),
-    //     }
-    // }
+    fn into_callback_map_mut<F>(
+        self,
+        f: F,
+    ) -> callback::argument::FirstArgumentProvided<F, MapMut<Self>>
+    where
+        Self: Sized,
+        F: CallableWithFixedArguments,
+        F::FixedArgumentTypes:
+            callback::argument::ArgumentTypes<First = callback::argument::ByMut<Self::Value>>,
+    {
+        f.provide_first_argument(MapMut(self))
+    }
 
     // fn into_callback_map_mut_accept<IN, R>(
     //     self,
@@ -108,10 +112,28 @@ pub trait ShareValueExt: ShareValue {
     // }
 }
 
-impl<S: ?Sized> ShareValueExt for S where S: ShareValue {}
+impl<S: ?Sized + 'static> ShareValueExt for S where S: ShareValue {}
 
 impl_equivalent!(
     impl_!(A0, R): fn(&A0) -> R,
     impl_!(A0, R): fn(&mut A0) -> R,
     impl_!(A0, A1, R): fn(&mut A0, A1) -> R,
 );
+
+pub struct MapMut<S: ShareValue>(S);
+
+impl<S: ShareValue + 'static> callback::argument::ProvideArgument for MapMut<S> {
+    type ProvideArgumentType = callback::argument::ByMut<S::Value>;
+
+    fn provide_argument_to<
+        Out,
+        F: for<'arg> FnOnce(
+            <Self::ProvideArgumentType as callback::argument::ArgumentType<'arg>>::Argument,
+        ) -> Out,
+    >(
+        &self,
+        f: F,
+    ) -> Out {
+        self.0.map_mut(f)
+    }
+}

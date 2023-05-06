@@ -24,7 +24,7 @@ macro_rules! impl_callback_parse_input {
         macro_rules! __callback_parse_input {
             // end input
             ([| $dollar($other:tt)*] $_clone:tt $path:tt $input:tt ) => {
-                $crate::callback! { ![$path $input] $dollar($other)*  }
+                $crate::__callback_input_resolved! { [$path $input] $dollar($other)*  }
             };
             $(
                 (   [$($match)* , $dollar($_rest:tt)*]
@@ -44,7 +44,7 @@ macro_rules! impl_callback_parse_input {
                     {$dollar($paths:ident)*}
                     {$dollar($inputs:tt  )*}
                 ) => {
-                    $crate::callback! { ![
+                    $crate::__callback_input_resolved! { [
                         {$dollar($paths )* $output_path }
                         {$dollar($inputs)* $output_input}
                     ] $dollar($rest)* }
@@ -62,7 +62,7 @@ impl_callback_parse_input! { $
     // &mut _: _
     [&       mut       $_input:tt      :      $_input_ty:ty][$r:tt $m:tt   $ input:tt      :      $ input_ty:ty]=> r#mut [$r $m   $input   : $input_ty]
     // v: &mut _
-    [                $($_input:ident)+ : &mut $_input_ty:ty][                $($ input:ident)+ : $r:tt $m:tt $ input_ty:ty]=> r#mut [$r $m   $input   : $input_ty]
+    [                $($_input:ident)+ : &mut $_input_ty:ty][                $($ input:ident)+ : $r:tt $m:tt $ input_ty:ty]=> r#mut [$($input)+   : $r $m $input_ty]
     // _: &mut _
     [                  $_input:tt      : &mut $_input_ty:ty , $($_rest:tt)*][                  $ input:tt      : &mut $ input_ty:ty , $($ rest:tt)*]=> r#mut[$input : &mut $input_ty]
 
@@ -88,44 +88,71 @@ impl_callback_parse_input! { $
 #[macro_export]
 macro_rules! callback {
     (|| $($rest:tt)*) => {
-        $crate::callback! { ![{} {}] $($rest)*  }
+        $crate::__callback_input_resolved! { [{} {}] $($rest)*  }
     };
     (|  $($rest:tt)* ) => {
         $crate::__callback_parse_input! { [$($rest)*][$($rest)*]{}{} }
     };
-    // - implementation details
-    //
-    // -- input resolved
-    //
+    ($e:expr , fn($($args:tt)*) $(-> $output:ty)?) => {
+        $crate::__callable_wrap_fn! { [$($args)*]{}{}($e){$($output)?} }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __callable_wrap_fn {
+    ([                             ]{$($path:ident)*}{$($generics:tt)*}($e:expr){$output_ty:ty} ) => {
+        $crate::callback $(:: $path)* ::<$($generics)* $output_ty> ($e)
+    };
+    ([                             ]{$($path:ident)*}{$($generics:tt)*}($e:expr){             } ) => {
+        $crate::callback $(:: $path)* ::<$($generics)* _         > ($e)
+    };
+    ([&mut $t:ty $(, $($rest:tt)*)?]{$($path:ident)*}{$($generics:tt)*} $e:tt    $output_ty:tt  ) => {
+        $crate::__callable_wrap_fn! { [$($($rest)*)?]{$($path)* r#mut}{$t,} $e $output_ty }
+    };
+    ([&    $t:ty $(, $($rest:tt)*)?]{$($path:ident)*}{$($generics:tt)*} $e:tt    $output_ty:tt  ) => {
+        $crate::__callable_wrap_fn! { [$($($rest)*)?]{$($path)* r#ref}{$t,} $e $output_ty }
+    };
+    ([     $t:ty $(, $($rest:tt)*)?]{$($path:ident)*}{$($generics:tt)*} $e:tt    $output_ty:tt  ) => {
+        $crate::__callable_wrap_fn! { [$($($rest)*)?]{$($path)* value}{$t,} $e $output_ty }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __callback_input_resolved {
     // --- no explicit output type
-    (!$input:tt                   $body:expr   $(, $($rest:tt)*)?) => {
-        $crate::callback! { @$input [       ] [   $body   ] $($($rest)*)? }
+    ($input:tt                   $body:expr   $(, $($rest:tt)*)?) => {
+        $crate::__callback_all_resolved! { $input [       ] [   $body   ] $($($rest)*)? }
     };
     // This branch is for dev experience
-    (!$input:tt               { $($body:tt)* } $(, $($rest:tt)*)?) => {
-        $crate::callback! { @$input [       ] [{$($body)*}] $($($rest)*)? }
+    ($input:tt               { $($body:tt)* } $(, $($rest:tt)*)?) => {
+        $crate::__callback_all_resolved! { $input [       ] [{$($body)*}] $($($rest)*)? }
     };
     // --- explicit output
-    (!$input:tt -> $output:ty { $($body:tt)* } $(, $($rest:tt)*)?) => {
-        $crate::callback! { @$input [$output] [{$($body)*}] $($($rest)*)? }
+    ($input:tt -> $output:ty { $($body:tt)* } $(, $($rest:tt)*)?) => {
+        $crate::__callback_all_resolved! { $input [$output] [{$($body)*}] $($($rest)*)? }
     };
+}
 
-    // -- output and body resolved
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __callback_all_resolved {
     // no   state
-    (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]) => {
+    ([{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]) => {
         $crate::callback $(::$method_path)*                                (
             |$($($input)*),*               | $(-> $output)? $($body)*
         )
     };
     // one  state
-    (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]   $state:ident $(= $state_expr:expr)?    $(,)?) => {
+    ([{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*]   $state:ident $(= $state_expr:expr)?    $(,)?) => {
         $crate::callback $(::$method_path)* ::r#ref::provide_last_argument (
             |$($($input)* ,)* $state       | $(-> $output)? $($body)* ,
             $crate::__expand_or!([$($state_expr)?] $state),
         )
     };
     // many states
-    (@[{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*] $($state:ident $(= $state_expr:expr)?),+ $(,)?) => {
+    ([{$($method_path:tt)*}{$([$($input:tt)*])*}][$($output:ty)?][$($body:tt)*] $($state:ident $(= $state_expr:expr)?),+ $(,)?) => {
         $crate::callback $(::$method_path)* ::r#ref::provide_last_argument (
             |$($($input)* ,)* ($($state,)+)| $(-> $output)? $($body)* ,
             ($( $crate::__expand_or!([$($state_expr)?] $state) ,)+),

@@ -2,7 +2,7 @@ use frender_events::{
     callback,
     callback::argument::{self, ArgumentTypes},
     callback::{argument::LastArgumentProvided, CallableWithFixedArguments},
-    Callable,
+    Callable, IsCallable,
 };
 
 #[test]

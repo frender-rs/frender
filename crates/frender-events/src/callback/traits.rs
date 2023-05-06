@@ -7,6 +7,96 @@ pub trait IsCallable {
     {
         accept_anything::AcceptAnything(self)
     }
+
+    fn provide_last_argument<
+        A: ProvideArgument<
+            ProvideArgumentType = <Self::FixedArgumentTypes as argument::ArgumentTypes>::Last,
+        >,
+    >(
+        self,
+        last_argument: A,
+    ) -> super::argument::LastArgumentProvided<Self, A>
+    where
+        Self: Sized + CallableWithFixedArguments,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument,
+        }
+    }
+
+    fn provide_first_argument<
+        A: ProvideArgument<
+            ProvideArgumentType = <Self::FixedArgumentTypes as argument::ArgumentTypes>::First,
+        >,
+    >(
+        self,
+        first_argument: A,
+    ) -> super::argument::FirstArgumentProvided<Self, A>
+    where
+        Self: Sized + CallableWithFixedArguments,
+    {
+        super::argument::FirstArgumentProvided {
+            f: self,
+            first_argument,
+        }
+    }
+
+    fn provide_last_argument_refed<T: 'static>(
+        self,
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Refed<T>>
+    where
+        Self: Sized + CallableWithFixedArguments,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::ByRef<T>>,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Refed(last_argument),
+        }
+    }
+
+    fn provide_first_argument_refed<T: 'static>(
+        self,
+        first_argument: T,
+    ) -> super::argument::FirstArgumentProvided<Self, argument::Refed<T>>
+    where
+        Self: Sized + CallableWithFixedArguments,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<First = argument::ByRef<T>>,
+    {
+        super::argument::FirstArgumentProvided {
+            f: self,
+            first_argument: argument::Refed(first_argument),
+        }
+    }
+
+    fn provide_last_argument_copied<T: Copy + 'static>(
+        self,
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Copied<T>>
+    where
+        Self: Sized + CallableWithFixedArguments,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Copied(last_argument),
+        }
+    }
+
+    fn provide_last_argument_cloned<T: Clone + 'static>(
+        self,
+        last_argument: T,
+    ) -> super::argument::LastArgumentProvided<Self, argument::Cloned<T>>
+    where
+        Self: Sized + CallableWithFixedArguments,
+        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
+    {
+        super::argument::LastArgumentProvided {
+            f: self,
+            last_argument: argument::Cloned(last_argument),
+        }
+    }
 }
 
 /// Anything implementing Callback has the following traits:
@@ -112,68 +202,48 @@ pub trait CallableWithFixedArguments:
     //     FixedArgumentTypes = <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
     // >;
 
-    fn provide_last_argument<
-        A: ProvideArgument<
-            ProvideArgumentType = <Self::FixedArgumentTypes as argument::ArgumentTypes>::Last,
+    fn call_with_last<'last>(
+        &self,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
         >,
-    >(
-        self,
-        last_argument: A,
-    ) -> super::argument::LastArgumentProvided<Self, A>
-    where
-        Self: Sized,
-    {
-        super::argument::LastArgumentProvided {
-            f: self,
-            last_argument,
-        }
-    }
+        last: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'last>>::Argument,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output;
 
-    fn provide_last_argument_refed<T>(
-        self,
-        last_argument: T,
-    ) -> super::argument::LastArgumentProvided<Self, argument::Refed<T>>
-    where
-        Self: Sized,
-        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::ByRef<T>>,
-    {
-        super::argument::LastArgumentProvided {
-            f: self,
-            last_argument: argument::Refed(last_argument),
-        }
-    }
-
-    fn provide_last_argument_copied<T: Copy>(
-        self,
-        last_argument: T,
-    ) -> super::argument::LastArgumentProvided<Self, argument::Copied<T>>
-    where
-        Self: Sized,
-        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
-    {
-        super::argument::LastArgumentProvided {
-            f: self,
-            last_argument: argument::Copied(last_argument),
-        }
-    }
-
-    fn provide_last_argument_cloned<T: Clone>(
-        self,
-        last_argument: T,
-    ) -> super::argument::LastArgumentProvided<Self, argument::Cloned<T>>
-    where
-        Self: Sized,
-        Self::FixedArgumentTypes: argument::ArgumentTypes<Last = argument::Value<T>>,
-    {
-        super::argument::LastArgumentProvided {
-            f: self,
-            last_argument: argument::Cloned(last_argument),
-        }
-    }
+    fn call_with_first<'first>(
+        &self,
+        first: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::First as super::argument::ArgumentType<'first>>::Argument,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::FirstTrimmed,
+        >,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output;
 }
 
 impl<Out> IsCallable for fn() -> Out {}
 impl<Out> CallableWithFixedArguments for fn() -> Out {
     type FixedArgumentTypes = ();
-    // type LastArgumentProvided = super::argument::LastArgumentProvided<Self, argument::Invalid>;
+
+    fn call_with_last<'last>(
+        &self,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::LastTrimmed,
+        >,
+        last: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'last>>::Argument,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'last, Self::FixedArgumentTypes>>>::Output{
+        match last {}
+    }
+
+    fn call_with_first<'first>(
+        &self,
+        first: <<Self::FixedArgumentTypes as argument::ArgumentTypes>::Last as super::argument::ArgumentType<'first>>::Argument,
+        args: super::argument::ArgumentsOfTypes<
+            '_,
+            <Self::FixedArgumentTypes as argument::ArgumentTypes>::FirstTrimmed,
+        >,
+    ) -> <Self as Callable<super::argument::ArgumentsOfTypes<'first, Self::FixedArgumentTypes>>>::Output{
+        match first {}
+    }
 }

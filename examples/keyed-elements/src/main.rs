@@ -77,22 +77,22 @@ fn Main() {
         div[[
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(Data::prepend)
+                    .into_callback_map_mut(callback!(Data::prepend, fn(&mut _)))
                     .accept_anything()
             )[["Prepend"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(Data::append)
+                    .into_callback_map_mut(callback!(Data::append, fn(&mut _)))
                     .accept_anything()
             )[["Append"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(Data::clear)
+                    .into_callback_map_mut(callback!(Data::clear, fn(&mut _)))
                     .accept_anything()
             )[["Clear"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(Data::swap)
+                    .into_callback_map_mut(callback!(Data::swap, fn(&mut _)))
                     .accept_anything()
             )[["Swap"]],
         ]],
@@ -146,17 +146,17 @@ fn Main() {
                                                 //
                                                 button.on_click(
                                                     data.clone()
-                                                        .into_callback_map_mut_accept(
-                                                            |data, idx| {
+                                                        .into_callback_map_mut(callback!(
+                                                            |data: &mut Data, idx| {
                                                                 if data.selected_index == Some(idx)
                                                                 {
                                                                     data.selected_index = None
                                                                 } else {
                                                                     data.selected_index = Some(idx)
                                                                 }
-                                                            },
-                                                        )
-                                                        .with_input(idx)
+                                                            }
+                                                        ))
+                                                        .provide_last_argument_copied(idx)
                                                         .accept_anything()
                                                 )[[{
                                                     if selected {
@@ -167,10 +167,10 @@ fn Main() {
                                                 }]],
                                                 button.on_click(
                                                     data.clone()
-                                                        .into_callback_map_mut_accept(
-                                                            |data, idx| data.remove(idx),
-                                                        )
-                                                        .with_input(idx)
+                                                        .into_callback_map_mut(callback!(
+                                                            |data: &mut Data, idx| data.remove(idx)
+                                                        ))
+                                                        .provide_last_argument_copied(idx)
                                                         .accept_anything()
                                                 )[["Remove"]],
                                             ]],
