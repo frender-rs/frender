@@ -13,6 +13,9 @@ pub mod chain;
 
 pub mod argument;
 
+mod maybe_handle_event;
+pub use maybe_handle_event::*;
+
 mod sealed {
     pub trait Tuple {}
 }
