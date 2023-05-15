@@ -8132,6 +8132,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`invalid`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
+        ///
+        /// Fired when an element does not satisfy its constraints during constraint validation.
         #[inline(always)]
         pub fn on_invalid<V>(
             self,
@@ -8196,6 +8199,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`animationcancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationcancel_event)
+        ///
+        /// Fired when an animation unexpectedly aborts.
         #[inline(always)]
         pub fn on_animation_cancel<V>(
             self,
@@ -8260,6 +8266,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`animationend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationend_event)
+        ///
+        /// Fired when an animation has completed normally.
         #[inline(always)]
         pub fn on_animation_end<V>(
             self,
@@ -8324,6 +8333,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`animationiteration`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationiteration_event)
+        ///
+        /// Fired when an animation iteration has completed.
         #[inline(always)]
         pub fn on_animation_iteration<V>(
             self,
@@ -8388,6 +8400,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`animationstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)
+        ///
+        /// Fired when an animation starts.
         #[inline(always)]
         pub fn on_animation_start<V>(
             self,
@@ -8452,6 +8467,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`beforeinput`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event)
+        ///
+        /// Fired when the value of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element is about to be modified.
         #[inline(always)]
         pub fn on_before_input<V>(
             self,
@@ -8516,6 +8534,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`input`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event)
+        ///
+        /// Fired when the `value` of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element has been changed.
         #[inline(always)]
         pub fn on_input<V>(
             self,
@@ -8580,6 +8601,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`change`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event)
+        ///
+        /// Fired when the `value` of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element has been changed and committed by the user. Unlike the [`input`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event) event, the `change` event is not necessarily fired for each alteration to an element's `value`.
         #[inline(always)]
         pub fn on_change<V>(
             self,
@@ -8644,6 +8668,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`gotpointercapture`](https://developer.mozilla.org/en-US/docs/Web/API/Element/gotpointercapture_event)
+        ///
+        /// Fired when an element captures a pointer using [`setPointerCapture()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/setPointerCapture).
         #[inline(always)]
         pub fn on_got_pointer_capture<V>(
             self,
@@ -8708,6 +8735,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`lostpointercapture`](https://developer.mozilla.org/en-US/docs/Web/API/Element/lostpointercapture_event)
+        ///
+        /// Fired when a [captured pointer](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events#pointer_capture) is released.
         #[inline(always)]
         pub fn on_lost_pointer_capture<V>(
             self,
@@ -8772,6 +8802,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointercancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event)
+        ///
+        /// Fired when a pointer event is canceled.
         #[inline(always)]
         pub fn on_pointer_cancel<V>(
             self,
@@ -8836,6 +8869,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerdown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerdown_event)
+        ///
+        /// Fired when a pointer becomes active.
         #[inline(always)]
         pub fn on_pointer_down<V>(
             self,
@@ -8900,6 +8936,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerenter`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerenter_event)
+        ///
+        /// Fired when a pointer is moved into the hit test boundaries of an element or one of its descendants.
         #[inline(always)]
         pub fn on_pointer_enter<V>(
             self,
@@ -8964,6 +9003,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerleave`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerleave_event)
+        ///
+        /// Fired when a pointer is moved out of the hit test boundaries of an element.
         #[inline(always)]
         pub fn on_pointer_leave<V>(
             self,
@@ -9028,6 +9070,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointermove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointermove_event)
+        ///
+        /// Fired when a pointer changes coordinates.
         #[inline(always)]
         pub fn on_pointer_move<V>(
             self,
@@ -9092,6 +9137,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerout_event)
+        ///
+        /// Fired when a pointer is moved out of the *hit test* boundaries of an element (among other reasons).
         #[inline(always)]
         pub fn on_pointer_out<V>(
             self,
@@ -9156,6 +9204,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerover_event)
+        ///
+        /// Fired when a pointer is moved into an element's hit test boundaries.
         #[inline(always)]
         pub fn on_pointer_over<V>(
             self,
@@ -9220,6 +9271,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`pointerup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerup_event)
+        ///
+        /// Fired when a pointer is no longer active.
         #[inline(always)]
         pub fn on_pointer_up<V>(
             self,
@@ -9284,6 +9338,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`transitioncancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitioncancel_event)
+        ///
+        /// Fired when a [CSS transition](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions) is canceled.
         #[inline(always)]
         pub fn on_transition_cancel<V>(
             self,
@@ -9348,6 +9405,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`transitionend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionend_event)
+        ///
+        /// Fired when a [CSS transition](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions) has completed.
         #[inline(always)]
         pub fn on_transition_end<V>(
             self,
@@ -9412,6 +9472,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`transitionrun`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionrun_event)
+        ///
+        /// Fired when a [CSS transition](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions) is first created.
         #[inline(always)]
         pub fn on_transition_run<V>(
             self,
@@ -9476,6 +9539,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`transitionstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionstart_event)
+        ///
+        /// Fired when a [CSS transition](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions) has actually started.
         #[inline(always)]
         pub fn on_transition_start<V>(
             self,
@@ -9540,6 +9606,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`drag`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drag_event)
+        ///
+        /// This event is fired when an element or text selection is being dragged.
         #[inline(always)]
         pub fn on_drag<V>(
             self,
@@ -9604,6 +9673,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`dragend`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragend_event)
+        ///
+        /// This event is fired when a drag operation is being ended (by releasing a mouse button or hitting the escape key).
         #[inline(always)]
         pub fn on_drag_end<V>(
             self,
@@ -9668,6 +9740,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`dragenter`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragenter_event)
+        ///
+        /// This event is fired when a dragged element or text selection enters a valid drop target.
         #[inline(always)]
         pub fn on_drag_enter<V>(
             self,
@@ -9732,6 +9807,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`dragleave`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event)
+        ///
+        /// This event is fired when a dragged element or text selection leaves a valid drop target.
         #[inline(always)]
         pub fn on_drag_leave<V>(
             self,
@@ -9796,6 +9874,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`dragover`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event)
+        ///
+        /// This event is fired continuously when an element or text selection is being dragged and the mouse pointer is over a valid drop target (every 50 ms WHEN mouse is not moving ELSE much faster between 5 ms (slow movement) and 1ms (fast movement) approximately. This firing pattern is different than [`mouseover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event) ).
         #[inline(always)]
         pub fn on_drag_over<V>(
             self,
@@ -9860,6 +9941,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`dragstart`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragstart_event)
+        ///
+        /// This event is fired when the user starts dragging an element or text selection.
         #[inline(always)]
         pub fn on_drag_start<V>(
             self,
@@ -9924,6 +10008,9 @@ mod builder_and_replacer {
                 on_drop: self.on_drop,
             }
         }
+        /// Event [`drop`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event)
+        ///
+        /// This event is fired when an element or text selection is dropped on a valid drop target.
         #[inline(always)]
         pub fn on_drop<V>(
             self,
@@ -10001,63 +10088,63 @@ mod impl_update_element {
         ElementProps::Data<TypeDefs::ElementProps>:
             crate::imports::frender_csr::props::UpdateElement<web_sys::Element>,
         TypeDefs::on_invalid:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Invalid>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_animation_cancel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationCancel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationEvent>,
         TypeDefs::on_animation_end:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationEnd>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationEvent>,
         TypeDefs::on_animation_iteration:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationIteration>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationEvent>,
         TypeDefs::on_animation_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::AnimationEvent>,
         TypeDefs::on_before_input:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::BeforeInput>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::InputEvent>,
         TypeDefs::on_input:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Input>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_change:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Change>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_got_pointer_capture:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::GotPointerCapture>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_lost_pointer_capture:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::LostPointerCapture>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_cancel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerCancel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_down:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerDown>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_enter:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEnter>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_leave:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerLeave>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_move:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerMove>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_out:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerOut>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_over:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerOver>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_pointer_up:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerUp>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::PointerEvent>,
         TypeDefs::on_transition_cancel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionCancel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionEvent>,
         TypeDefs::on_transition_end:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionEnd>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionEvent>,
         TypeDefs::on_transition_run:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionRun>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionEvent>,
         TypeDefs::on_transition_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TransitionEvent>,
         TypeDefs::on_drag:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Drag>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drag_end:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DragEnd>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drag_enter:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DragEnter>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drag_leave:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DragLeave>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drag_over:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DragOver>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drag_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DragStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_drop:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Drop>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -10145,91 +10232,91 @@ mod impl_update_element {
                     str,
                 >>::State,
                 on_invalid = <TypeDefs::on_invalid as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Invalid,
+                    events::Event,
                 >>::State,
                 on_animation_cancel = <TypeDefs::on_animation_cancel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::AnimationCancel,
+                    events::AnimationEvent,
                 >>::State,
                 on_animation_end = <TypeDefs::on_animation_end as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::AnimationEnd,
+                    events::AnimationEvent,
                 >>::State,
                 on_animation_iteration = <TypeDefs::on_animation_iteration as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::AnimationIteration,
+                    events::AnimationEvent,
                 >>::State,
                 on_animation_start = <TypeDefs::on_animation_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::AnimationStart,
+                    events::AnimationEvent,
                 >>::State,
                 on_before_input = <TypeDefs::on_before_input as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::BeforeInput,
+                    events::InputEvent,
                 >>::State,
                 on_input = <TypeDefs::on_input as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Input,
+                    events::Event,
                 >>::State,
                 on_change = <TypeDefs::on_change as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Change,
+                    events::Event,
                 >>::State,
                 on_got_pointer_capture = <TypeDefs::on_got_pointer_capture as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::GotPointerCapture,
+                    events::PointerEvent,
                 >>::State,
                 on_lost_pointer_capture = <TypeDefs::on_lost_pointer_capture as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::LostPointerCapture,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_cancel = <TypeDefs::on_pointer_cancel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerCancel,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_down = <TypeDefs::on_pointer_down as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerDown,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_enter = <TypeDefs::on_pointer_enter as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerEnter,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_leave = <TypeDefs::on_pointer_leave as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerLeave,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_move = <TypeDefs::on_pointer_move as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerMove,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_out = <TypeDefs::on_pointer_out as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerOut,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_over = <TypeDefs::on_pointer_over as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerOver,
+                    events::PointerEvent,
                 >>::State,
                 on_pointer_up = <TypeDefs::on_pointer_up as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::PointerUp,
+                    events::PointerEvent,
                 >>::State,
                 on_transition_cancel = <TypeDefs::on_transition_cancel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TransitionCancel,
+                    events::TransitionEvent,
                 >>::State,
                 on_transition_end = <TypeDefs::on_transition_end as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TransitionEnd,
+                    events::TransitionEvent,
                 >>::State,
                 on_transition_run = <TypeDefs::on_transition_run as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TransitionRun,
+                    events::TransitionEvent,
                 >>::State,
                 on_transition_start = <TypeDefs::on_transition_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TransitionStart,
+                    events::TransitionEvent,
                 >>::State,
                 on_drag = <TypeDefs::on_drag as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Drag,
+                    events::Event,
                 >>::State,
                 on_drag_end = <TypeDefs::on_drag_end as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DragEnd,
+                    events::Event,
                 >>::State,
                 on_drag_enter = <TypeDefs::on_drag_enter as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DragEnter,
+                    events::Event,
                 >>::State,
                 on_drag_leave = <TypeDefs::on_drag_leave as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DragLeave,
+                    events::Event,
                 >>::State,
                 on_drag_over = <TypeDefs::on_drag_over as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DragOver,
+                    events::Event,
                 >>::State,
                 on_drag_start = <TypeDefs::on_drag_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DragStart,
+                    events::Event,
                 >>::State,
                 on_drop = <TypeDefs::on_drop as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Drop,
+                    events::Event,
                 >>::State,
             >,
         >;
@@ -10500,109 +10587,109 @@ mod impl_update_element {
                     || dom_element.remove_attribute("virtualkeyboardpolicy").unwrap(),
                 ),
                 on_invalid: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Invalid,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_invalid, element),
                 on_animation_cancel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::AnimationCancel,
+                    events::AnimationEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_animation_cancel,
                     element,
                 ),
                 on_animation_end: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::AnimationEnd,
+                    events::AnimationEvent,
                 >::initialize_dom_event_listener_state(this.on_animation_end, element),
                 on_animation_iteration: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::AnimationIteration,
+                    events::AnimationEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_animation_iteration,
                     element,
                 ),
                 on_animation_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::AnimationStart,
+                    events::AnimationEvent,
                 >::initialize_dom_event_listener_state(this.on_animation_start, element),
                 on_before_input: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::BeforeInput,
+                    events::InputEvent,
                 >::initialize_dom_event_listener_state(this.on_before_input, element),
                 on_input: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Input,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_input, element),
                 on_change: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Change,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_change, element),
                 on_got_pointer_capture: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::GotPointerCapture,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_got_pointer_capture,
                     element,
                 ),
                 on_lost_pointer_capture: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::LostPointerCapture,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_lost_pointer_capture,
                     element,
                 ),
                 on_pointer_cancel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerCancel,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_cancel, element),
                 on_pointer_down: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerDown,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_down, element),
                 on_pointer_enter: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerEnter,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_enter, element),
                 on_pointer_leave: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerLeave,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_leave, element),
                 on_pointer_move: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerMove,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_move, element),
                 on_pointer_out: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerOut,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_out, element),
                 on_pointer_over: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerOver,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_over, element),
                 on_pointer_up: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::PointerUp,
+                    events::PointerEvent,
                 >::initialize_dom_event_listener_state(this.on_pointer_up, element),
                 on_transition_cancel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TransitionCancel,
+                    events::TransitionEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_transition_cancel,
                     element,
                 ),
                 on_transition_end: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TransitionEnd,
+                    events::TransitionEvent,
                 >::initialize_dom_event_listener_state(this.on_transition_end, element),
                 on_transition_run: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TransitionRun,
+                    events::TransitionEvent,
                 >::initialize_dom_event_listener_state(this.on_transition_run, element),
                 on_transition_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TransitionStart,
+                    events::TransitionEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_transition_start,
                     element,
                 ),
                 on_drag: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Drag,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag, element),
                 on_drag_end: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DragEnd,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag_end, element),
                 on_drag_enter: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DragEnter,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag_enter, element),
                 on_drag_leave: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DragLeave,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag_leave, element),
                 on_drag_over: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DragOver,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag_over, element),
                 on_drag_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DragStart,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drag_start, element),
                 on_drop: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Drop,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_drop, element),
             }
         }
@@ -10913,179 +11000,179 @@ mod impl_update_element {
                 || dom_element.remove_attribute("virtualkeyboardpolicy").unwrap(),
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Invalid,
+                events::Event,
             >::update_dom_event_listener(this.on_invalid, element, state.on_invalid);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::AnimationCancel,
+                events::AnimationEvent,
             >::update_dom_event_listener(
                 this.on_animation_cancel,
                 element,
                 state.on_animation_cancel,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::AnimationEnd,
+                events::AnimationEvent,
             >::update_dom_event_listener(
                 this.on_animation_end,
                 element,
                 state.on_animation_end,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::AnimationIteration,
+                events::AnimationEvent,
             >::update_dom_event_listener(
                 this.on_animation_iteration,
                 element,
                 state.on_animation_iteration,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::AnimationStart,
+                events::AnimationEvent,
             >::update_dom_event_listener(
                 this.on_animation_start,
                 element,
                 state.on_animation_start,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::BeforeInput,
+                events::InputEvent,
             >::update_dom_event_listener(
                 this.on_before_input,
                 element,
                 state.on_before_input,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Input,
+                events::Event,
             >::update_dom_event_listener(this.on_input, element, state.on_input);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Change,
+                events::Event,
             >::update_dom_event_listener(this.on_change, element, state.on_change);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::GotPointerCapture,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_got_pointer_capture,
                 element,
                 state.on_got_pointer_capture,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::LostPointerCapture,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_lost_pointer_capture,
                 element,
                 state.on_lost_pointer_capture,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerCancel,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_cancel,
                 element,
                 state.on_pointer_cancel,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerDown,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_down,
                 element,
                 state.on_pointer_down,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerEnter,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_enter,
                 element,
                 state.on_pointer_enter,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerLeave,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_leave,
                 element,
                 state.on_pointer_leave,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerMove,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_move,
                 element,
                 state.on_pointer_move,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerOut,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_out,
                 element,
                 state.on_pointer_out,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerOver,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_over,
                 element,
                 state.on_pointer_over,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::PointerUp,
+                events::PointerEvent,
             >::update_dom_event_listener(
                 this.on_pointer_up,
                 element,
                 state.on_pointer_up,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TransitionCancel,
+                events::TransitionEvent,
             >::update_dom_event_listener(
                 this.on_transition_cancel,
                 element,
                 state.on_transition_cancel,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TransitionEnd,
+                events::TransitionEvent,
             >::update_dom_event_listener(
                 this.on_transition_end,
                 element,
                 state.on_transition_end,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TransitionRun,
+                events::TransitionEvent,
             >::update_dom_event_listener(
                 this.on_transition_run,
                 element,
                 state.on_transition_run,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TransitionStart,
+                events::TransitionEvent,
             >::update_dom_event_listener(
                 this.on_transition_start,
                 element,
                 state.on_transition_start,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Drag,
+                events::Event,
             >::update_dom_event_listener(this.on_drag, element, state.on_drag);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DragEnd,
+                events::Event,
             >::update_dom_event_listener(this.on_drag_end, element, state.on_drag_end);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DragEnter,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_drag_enter,
                 element,
                 state.on_drag_enter,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DragLeave,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_drag_leave,
                 element,
                 state.on_drag_leave,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DragOver,
+                events::Event,
             >::update_dom_event_listener(this.on_drag_over, element, state.on_drag_over);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DragStart,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_drag_start,
                 element,
                 state.on_drag_start,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Drop,
+                events::Event,
             >::update_dom_event_listener(this.on_drop, element, state.on_drop);
         }
     }

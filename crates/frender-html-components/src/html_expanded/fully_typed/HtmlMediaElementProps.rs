@@ -5845,6 +5845,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`abort`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/abort_event)
+        ///
+        /// Fired when the resource was not fully loaded, but not as the result of an error.
         #[inline(always)]
         pub fn on_abort<V>(
             self,
@@ -5883,6 +5886,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`canplay`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/canplay_event)
+        ///
+        /// Fired when the user agent can play the media, but estimates that **not** enough data has been loaded to play the media up to its end without having to stop for further buffering of content.
         #[inline(always)]
         pub fn on_can_play<V>(
             self,
@@ -5921,6 +5927,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`canplaythrough`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/canplaythrough_event)
+        ///
+        /// Fired when the user agent can play the media, and estimates that enough data has been loaded to play the media up to its end without having to stop for further buffering of content.
         #[inline(always)]
         pub fn on_can_play_through<V>(
             self,
@@ -5959,6 +5968,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`durationchange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/durationchange_event)
+        ///
+        /// Fired when the duration property has been updated.
         #[inline(always)]
         pub fn on_duration_change<V>(
             self,
@@ -5997,6 +6009,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`emptied`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/emptied_event)
+        ///
+        /// Fired when the media has become empty; for example, when the media has already been loaded (or partially loaded), and the [`HTMLMediaElement.load()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/load) method is called to reload it.
         #[inline(always)]
         pub fn on_emptied<V>(
             self,
@@ -6035,6 +6050,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`ended`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/ended_event)
+        ///
+        /// Fired when playback stops when end of the media (<audio> or <video>) is reached or because no further data is available.
         #[inline(always)]
         pub fn on_ended<V>(
             self,
@@ -6073,6 +6091,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`loadeddata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadeddata_event)
+        ///
+        /// Fired when the first frame of the media has finished loading.
         #[inline(always)]
         pub fn on_loaded_data<V>(
             self,
@@ -6111,6 +6132,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`loadedmetadata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadedmetadata_event)
+        ///
+        /// Fired when the metadata has been loaded.
         #[inline(always)]
         pub fn on_loaded_metadata<V>(
             self,
@@ -6149,6 +6173,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`loadstart`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadstart_event)
+        ///
+        /// Fired when the browser has started to load a resource.
         #[inline(always)]
         pub fn on_load_start<V>(
             self,
@@ -6187,6 +6214,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`pause`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/pause_event)
+        ///
+        /// Fired when a request to pause play is handled and the activity has entered its paused state, most commonly occurring when the media's [`HTMLMediaElement.pause()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/pause) method is called.
         #[inline(always)]
         pub fn on_pause<V>(
             self,
@@ -6225,6 +6255,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`play`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play_event)
+        ///
+        /// Fired when the `paused` property is changed from `true` to `false`, as a result of the [`HTMLMediaElement.play()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play) method, or the `autoplay` attribute.
         #[inline(always)]
         pub fn on_play<V>(
             self,
@@ -6263,6 +6296,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`playing`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playing_event)
+        ///
+        /// Fired when playback is ready to start after having been paused or delayed due to lack of data.
         #[inline(always)]
         pub fn on_playing<V>(
             self,
@@ -6301,6 +6337,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`progress`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/progress_event)
+        ///
+        /// Fired periodically as the browser loads a resource.
         #[inline(always)]
         pub fn on_progress<V>(
             self,
@@ -6339,6 +6378,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`ratechange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/ratechange_event)
+        ///
+        /// Fired when the playback rate has changed.
         #[inline(always)]
         pub fn on_rate_change<V>(
             self,
@@ -6377,6 +6419,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`resize`]()
+        ///
+        /// Fired when one or both of the `videoWidth` and `videoHeight` properties have just been updated.
         #[inline(always)]
         pub fn on_resize<V>(
             self,
@@ -6415,6 +6460,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`seeked`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/seeked_event)
+        ///
+        /// Fired when a seek operation completes.
         #[inline(always)]
         pub fn on_seeked<V>(
             self,
@@ -6453,6 +6501,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`seeking`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/seeking_event)
+        ///
+        /// Fired when a seek operation begins.
         #[inline(always)]
         pub fn on_seeking<V>(
             self,
@@ -6491,6 +6542,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`stalled`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/stalled_event)
+        ///
+        /// Fired when the user agent is trying to fetch media data, but data is unexpectedly not forthcoming.
         #[inline(always)]
         pub fn on_stalled<V>(
             self,
@@ -6529,6 +6583,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`suspend`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/suspend_event)
+        ///
+        /// Fired when the media data loading has been suspended.
         #[inline(always)]
         pub fn on_suspend<V>(
             self,
@@ -6567,6 +6624,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`timeupdate`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event)
+        ///
+        /// Fired when the time indicated by the [`currentTime`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/currentTime) property has been updated.
         #[inline(always)]
         pub fn on_time_update<V>(
             self,
@@ -6605,6 +6665,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`volumechange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/volumechange_event)
+        ///
+        /// Fired when the volume has changed.
         #[inline(always)]
         pub fn on_volume_change<V>(
             self,
@@ -6643,6 +6706,9 @@ mod builder_and_replacer {
                 on_waiting: self.on_waiting,
             }
         }
+        /// Event [`waiting`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event)
+        ///
+        /// Fired when playback has stopped because of a temporary lack of data.
         #[inline(always)]
         pub fn on_waiting<V>(
             self,
@@ -6694,49 +6760,49 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
         TypeDefs::on_abort:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Abort>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_can_play:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::CanPlay>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_can_play_through:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::CanPlayThrough>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_duration_change:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DurationChange>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_emptied:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Emptied>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_ended:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Ended>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_loaded_data:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadedData>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_loaded_metadata:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadedMetadata>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_load_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::LoadStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_pause:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Pause>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_play:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Play>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_playing:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Playing>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_progress:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Progress>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_rate_change:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::RateChange>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_resize:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Resize>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_seeked:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Seeked>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_seeking:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Seeking>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_stalled:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Stalled>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_suspend:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Suspend>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_time_update:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TimeUpdate>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_volume_change:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::VolumeChange>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_waiting:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Waiting>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -6767,70 +6833,70 @@ mod impl_update_element {
                     str,
                 >>::State,
                 on_abort = <TypeDefs::on_abort as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Abort,
+                    events::Event,
                 >>::State,
                 on_can_play = <TypeDefs::on_can_play as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::CanPlay,
+                    events::Event,
                 >>::State,
                 on_can_play_through = <TypeDefs::on_can_play_through as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::CanPlayThrough,
+                    events::Event,
                 >>::State,
                 on_duration_change = <TypeDefs::on_duration_change as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DurationChange,
+                    events::Event,
                 >>::State,
                 on_emptied = <TypeDefs::on_emptied as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Emptied,
+                    events::Event,
                 >>::State,
                 on_ended = <TypeDefs::on_ended as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Ended,
+                    events::Event,
                 >>::State,
                 on_loaded_data = <TypeDefs::on_loaded_data as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::LoadedData,
+                    events::Event,
                 >>::State,
                 on_loaded_metadata = <TypeDefs::on_loaded_metadata as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::LoadedMetadata,
+                    events::Event,
                 >>::State,
                 on_load_start = <TypeDefs::on_load_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::LoadStart,
+                    events::Event,
                 >>::State,
                 on_pause = <TypeDefs::on_pause as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Pause,
+                    events::Event,
                 >>::State,
                 on_play = <TypeDefs::on_play as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Play,
+                    events::Event,
                 >>::State,
                 on_playing = <TypeDefs::on_playing as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Playing,
+                    events::Event,
                 >>::State,
                 on_progress = <TypeDefs::on_progress as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Progress,
+                    events::Event,
                 >>::State,
                 on_rate_change = <TypeDefs::on_rate_change as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::RateChange,
+                    events::Event,
                 >>::State,
                 on_resize = <TypeDefs::on_resize as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Resize,
+                    events::Event,
                 >>::State,
                 on_seeked = <TypeDefs::on_seeked as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Seeked,
+                    events::Event,
                 >>::State,
                 on_seeking = <TypeDefs::on_seeking as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Seeking,
+                    events::Event,
                 >>::State,
                 on_stalled = <TypeDefs::on_stalled as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Stalled,
+                    events::Event,
                 >>::State,
                 on_suspend = <TypeDefs::on_suspend as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Suspend,
+                    events::Event,
                 >>::State,
                 on_time_update = <TypeDefs::on_time_update as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TimeUpdate,
+                    events::Event,
                 >>::State,
                 on_volume_change = <TypeDefs::on_volume_change as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::VolumeChange,
+                    events::Event,
                 >>::State,
                 on_waiting = <TypeDefs::on_waiting as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Waiting,
+                    events::Event,
                 >>::State,
             >,
         >;
@@ -6900,73 +6966,73 @@ mod impl_update_element {
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 on_abort: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Abort,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_abort, element),
                 on_can_play: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::CanPlay,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_can_play, element),
                 on_can_play_through: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::CanPlayThrough,
+                    events::Event,
                 >::initialize_dom_event_listener_state(
                     this.on_can_play_through,
                     element,
                 ),
                 on_duration_change: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DurationChange,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_duration_change, element),
                 on_emptied: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Emptied,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_emptied, element),
                 on_ended: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Ended,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_ended, element),
                 on_loaded_data: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::LoadedData,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_loaded_data, element),
                 on_loaded_metadata: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::LoadedMetadata,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_loaded_metadata, element),
                 on_load_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::LoadStart,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_load_start, element),
                 on_pause: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Pause,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_pause, element),
                 on_play: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Play,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_play, element),
                 on_playing: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Playing,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_playing, element),
                 on_progress: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Progress,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_progress, element),
                 on_rate_change: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::RateChange,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_rate_change, element),
                 on_resize: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Resize,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_resize, element),
                 on_seeked: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Seeked,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_seeked, element),
                 on_seeking: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Seeking,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_seeking, element),
                 on_stalled: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Stalled,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_stalled, element),
                 on_suspend: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Suspend,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_suspend, element),
                 on_time_update: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TimeUpdate,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_time_update, element),
                 on_volume_change: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::VolumeChange,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_volume_change, element),
                 on_waiting: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Waiting,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_waiting, element),
             }
         }
@@ -7045,102 +7111,102 @@ mod impl_update_element {
                 || dom_element.remove_attribute("src").unwrap(),
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Abort,
+                events::Event,
             >::update_dom_event_listener(this.on_abort, element, state.on_abort);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::CanPlay,
+                events::Event,
             >::update_dom_event_listener(this.on_can_play, element, state.on_can_play);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::CanPlayThrough,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_can_play_through,
                 element,
                 state.on_can_play_through,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DurationChange,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_duration_change,
                 element,
                 state.on_duration_change,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Emptied,
+                events::Event,
             >::update_dom_event_listener(this.on_emptied, element, state.on_emptied);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Ended,
+                events::Event,
             >::update_dom_event_listener(this.on_ended, element, state.on_ended);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::LoadedData,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_loaded_data,
                 element,
                 state.on_loaded_data,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::LoadedMetadata,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_loaded_metadata,
                 element,
                 state.on_loaded_metadata,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::LoadStart,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_load_start,
                 element,
                 state.on_load_start,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Pause,
+                events::Event,
             >::update_dom_event_listener(this.on_pause, element, state.on_pause);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Play,
+                events::Event,
             >::update_dom_event_listener(this.on_play, element, state.on_play);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Playing,
+                events::Event,
             >::update_dom_event_listener(this.on_playing, element, state.on_playing);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Progress,
+                events::Event,
             >::update_dom_event_listener(this.on_progress, element, state.on_progress);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::RateChange,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_rate_change,
                 element,
                 state.on_rate_change,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Resize,
+                events::Event,
             >::update_dom_event_listener(this.on_resize, element, state.on_resize);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Seeked,
+                events::Event,
             >::update_dom_event_listener(this.on_seeked, element, state.on_seeked);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Seeking,
+                events::Event,
             >::update_dom_event_listener(this.on_seeking, element, state.on_seeking);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Stalled,
+                events::Event,
             >::update_dom_event_listener(this.on_stalled, element, state.on_stalled);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Suspend,
+                events::Event,
             >::update_dom_event_listener(this.on_suspend, element, state.on_suspend);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TimeUpdate,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_time_update,
                 element,
                 state.on_time_update,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::VolumeChange,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_volume_change,
                 element,
                 state.on_volume_change,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Waiting,
+                events::Event,
             >::update_dom_event_listener(this.on_waiting, element, state.on_waiting);
         }
     }
