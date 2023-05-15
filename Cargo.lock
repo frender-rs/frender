@@ -46,14 +46,9 @@ checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
 
 [[package]]
 name = "callable"
-version = "0.2.0"
-
-[[package]]
-name = "callable"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccde2b2ca80d8953ea44874221f4a6d5b811f80560a398bccd48a861860fdfdd"
-replace = "callable 0.2.0"
+checksum = "dfe1c80307d206716b5aa437968947ac764c54164e3140485f1cc2d98e0f3a39"
 
 [[package]]
 name = "cfg-if"
@@ -101,7 +96,7 @@ version = "0.1.0"
 dependencies = [
  "frender",
  "gloo",
- "hooks 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks",
 ]
 
 [[package]]
@@ -110,7 +105,7 @@ version = "0.1.0"
 dependencies = [
  "frender",
  "gloo",
- "hooks 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks",
 ]
 
 [[package]]
@@ -227,7 +222,7 @@ dependencies = [
  "frender-html-components",
  "frender-macros",
  "frender-ssr",
- "hooks 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks",
  "js-sys",
  "lazy-pinned",
  "pin-project-lite",
@@ -261,7 +256,7 @@ dependencies = [
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
- "callable 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "callable",
  "gloo",
  "static_assertions",
  "wasm-bindgen",
@@ -274,7 +269,7 @@ version = "0.1.0"
 dependencies = [
  "frender-csr",
  "frender-ssr",
- "hooks-core 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks-core",
  "lazy-pinned",
  "pin-project-lite",
  "syn-lite",
@@ -606,27 +601,13 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hooks"
-version = "2.2.0-alpha"
+version = "2.3.0-alpha"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "086e6616b5828b794f2e39d947847b7a158b5336b7a23519a047c2a9afb71044"
 dependencies = [
- "hooks-core 2.2.0-alpha",
+ "hooks-core",
  "pin-project-lite",
  "smallvec",
-]
-
-[[package]]
-name = "hooks"
-version = "2.2.0-alpha"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c81812a57b2a18e70d3236dc5f2e1b6520e239c2b04de0e456bf9299aed5d6b5"
-replace = "hooks 2.2.0-alpha"
-
-[[package]]
-name = "hooks-core"
-version = "2.2.0-alpha"
-dependencies = [
- "futures-core",
- "pin-project-lite",
- "syn-lite",
 ]
 
 [[package]]
@@ -634,7 +615,11 @@ name = "hooks-core"
 version = "2.2.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "233d8aa70bb8526f5c9a6d0ba2fd56b2334a0f72af18d0ed8187ba65497e7ce2"
-replace = "hooks-core 2.2.0-alpha"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
+ "syn-lite",
+]
 
 [[package]]
 name = "hooks-derive-core"
@@ -725,7 +710,7 @@ dependencies = [
  "either",
  "frender",
  "gloo",
- "hooks 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks",
 ]
 
 [[package]]
@@ -969,7 +954,7 @@ version = "0.1.0"
 dependencies = [
  "frender",
  "gloo",
- "hooks 2.2.0-alpha (registry+https://github.com/rust-lang/crates.io-index)",
+ "hooks",
 ]
 
 [[package]]

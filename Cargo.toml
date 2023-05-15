@@ -10,8 +10,3 @@ members = [
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"
-
-[replace]
-"hooks@2.2.0-alpha" = { path = "../hooks/packages/hooks" }
-"hooks-core@2.2.0-alpha" = { path = "../hooks/packages/hooks-core" }
-"callable@0.2.0" = { path = "../callable" }

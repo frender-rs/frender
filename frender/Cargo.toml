@@ -19,7 +19,7 @@ frender-csr = { version = "0.1.0", path = "../crates/frender-csr", default-featu
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
-hooks = { version = "2.2.0-alpha", default-features = false, features = [
+hooks = { version = "2.3.0-alpha", default-features = false, features = [
     "ShareValue",
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../crates/frender-events" }
