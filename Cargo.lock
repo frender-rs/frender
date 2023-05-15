@@ -45,6 +45,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
 
 [[package]]
+name = "callable"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfe1c80307d206716b5aa437968947ac764c54164e3140485f1cc2d98e0f3a39"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -210,11 +216,13 @@ dependencies = [
  "either",
  "frender-common",
  "frender-csr",
+ "frender-events",
  "frender-hook-element",
  "frender-html",
  "frender-html-components",
  "frender-macros",
  "frender-ssr",
+ "hooks",
  "js-sys",
  "lazy-pinned",
  "pin-project-lite",
@@ -245,6 +253,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-events"
+version = "0.1.0"
+dependencies = [
+ "callable",
+ "gloo",
+ "static_assertions",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
@@ -261,6 +280,7 @@ name = "frender-html"
 version = "0.1.0"
 dependencies = [
  "convert-js",
+ "frender-events",
  "frender-html-common",
  "futures-lite",
  "ghost-lite",
@@ -280,6 +300,7 @@ name = "frender-html-components"
 version = "0.1.0"
 dependencies = [
  "frender-csr",
+ "frender-events",
  "frender-html",
  "frender-html-simple",
  "frender-macros",
@@ -580,9 +601,9 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hooks"
-version = "2.1.0-alpha"
+version = "2.3.0-alpha"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c1d49e8d3faa6c661aa872f2d0b88f47e07bc15eee294774688ee60b83d0310"
+checksum = "086e6616b5828b794f2e39d947847b7a158b5336b7a23519a047c2a9afb71044"
 dependencies = [
  "hooks-core",
  "pin-project-lite",
@@ -877,6 +898,12 @@ dependencies = [
  "frender",
  "futures-lite",
 ]
+
+[[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "strsim"

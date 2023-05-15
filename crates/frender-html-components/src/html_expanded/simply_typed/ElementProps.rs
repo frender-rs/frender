@@ -5,41 +5,62 @@ def_props_type!(
         class: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         id: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
         part: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        on_cancel,
-        on_error,
-        on_scroll,
-        on_security_policy_violation,
-        on_select,
-        on_wheel,
-        on_copy,
-        on_cut,
-        on_paste,
-        on_composition_end,
-        on_composition_start,
-        on_composition_update,
-        on_blur,
-        on_focus,
-        on_focus_in,
-        on_focus_out,
-        on_fullscreen_change,
-        on_fullscreen_error,
-        on_key_down,
-        on_key_up,
-        on_aux_click,
-        on_click,
-        on_context_menu,
-        on_double_click,
-        on_mouse_down,
-        on_mouse_enter,
-        on_mouse_leave,
-        on_mouse_move,
-        on_mouse_out,
-        on_mouse_over,
-        on_mouse_up,
-        on_touch_cancel,
-        on_touch_end,
-        on_touch_move,
-        on_touch_start,
+        on_cancel: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_error: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_scroll: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_security_policy_violation:
+            bounds![
+                crate::imports::frender_events::MaybeHandleEvent<
+                    events::SecurityPolicyViolationEvent,
+                >
+            ],
+        on_select: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_wheel: bounds![crate::imports::frender_events::MaybeHandleEvent<events::WheelEvent>],
+        on_copy: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_cut: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_paste: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_composition_end:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>],
+        on_composition_start:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>],
+        on_composition_update:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>],
+        on_blur: bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+        on_focus: bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+        on_focus_in: bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+        on_focus_out: bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+        on_fullscreen_change:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_fullscreen_error:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+        on_key_down:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>],
+        on_key_up: bounds![crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>],
+        on_aux_click: bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_click: bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_context_menu:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_double_click:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_down:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_enter:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_leave:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_move:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_out: bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_over:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_mouse_up: bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+        on_touch_cancel:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+        on_touch_end: bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+        on_touch_move:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+        on_touch_start:
+            bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
     )
 );
 #[cfg(feature = "csr")]
@@ -189,7 +210,7 @@ mod impl_dom_for_props {
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Cancel>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_cancel<V>
@@ -201,7 +222,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_cancel(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_cancel(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "cancel",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -210,11 +237,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "cancel",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Error>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_error<V>
@@ -226,7 +259,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_error(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_error(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "error",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -235,11 +274,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "error",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Scroll>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_scroll<V>
@@ -251,7 +296,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_scroll(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_scroll(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "scroll",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -260,13 +311,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "scroll",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<
-                events::SecurityPolicyViolation,
-            >,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::SecurityPolicyViolationEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_security_policy_violation<V>
@@ -278,9 +333,15 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_security_policy_violation(V::initialize_dom_event_listener_state(
+            super::props::on_security_policy_violation(V::initialize_handle_event_state(
                 this.0,
-                dom_element,
+                |callable| {
+                    crate::imports::frender_events::EventListener::new(
+                        dom_element,
+                        "securitypolicyviolation",
+                        callable.clone(),
+                    )
+                },
             ))
         }
         fn update_element_non_reactive(
@@ -290,11 +351,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "securitypolicyviolation",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Select>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_select<V>
@@ -306,7 +373,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_select(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_select(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "select",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -315,11 +388,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "select",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Wheel>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::WheelEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_wheel<V>
@@ -331,7 +410,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_wheel(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_wheel(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "wheel",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -340,11 +425,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "wheel",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Copy>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_copy<V>
@@ -356,7 +447,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_copy(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_copy(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "copy",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -365,11 +462,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "copy",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Cut>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_cut<V>
@@ -381,7 +484,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_cut(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_cut(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "cut",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -390,11 +499,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "cut",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Paste>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_paste<V>
@@ -406,7 +521,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_paste(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_paste(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "paste",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -415,11 +536,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "paste",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionEnd>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_composition_end<V>
@@ -431,10 +558,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_composition_end(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_composition_end(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "compositionend",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -443,11 +573,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "compositionend",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionStart>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_composition_start<V>
@@ -459,9 +595,15 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_composition_start(V::initialize_dom_event_listener_state(
+            super::props::on_composition_start(V::initialize_handle_event_state(
                 this.0,
-                dom_element,
+                |callable| {
+                    crate::imports::frender_events::EventListener::new(
+                        dom_element,
+                        "compositionstart",
+                        callable.clone(),
+                    )
+                },
             ))
         }
         fn update_element_non_reactive(
@@ -471,11 +613,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "compositionstart",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionUpdate>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_composition_update<V>
@@ -487,9 +635,15 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_composition_update(V::initialize_dom_event_listener_state(
+            super::props::on_composition_update(V::initialize_handle_event_state(
                 this.0,
-                dom_element,
+                |callable| {
+                    crate::imports::frender_events::EventListener::new(
+                        dom_element,
+                        "compositionupdate",
+                        callable.clone(),
+                    )
+                },
             ))
         }
         fn update_element_non_reactive(
@@ -499,11 +653,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "compositionupdate",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Blur>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_blur<V>
@@ -515,7 +675,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_blur(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_blur(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "blur",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -524,11 +690,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "blur",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Focus>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_focus<V>
@@ -540,7 +712,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_focus(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_focus(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focus",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -549,11 +727,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focus",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::FocusIn>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_focus_in<V>
@@ -565,7 +749,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_focus_in(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_focus_in(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focusin",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -574,11 +764,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focusin",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::FocusOut>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_focus_out<V>
@@ -590,7 +786,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_focus_out(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_focus_out(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focusout",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -599,11 +801,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "focusout",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::FullscreenChange>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_fullscreen_change<V>
@@ -615,9 +823,15 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_fullscreen_change(V::initialize_dom_event_listener_state(
+            super::props::on_fullscreen_change(V::initialize_handle_event_state(
                 this.0,
-                dom_element,
+                |callable| {
+                    crate::imports::frender_events::EventListener::new(
+                        dom_element,
+                        "fullscreenchange",
+                        callable.clone(),
+                    )
+                },
             ))
         }
         fn update_element_non_reactive(
@@ -627,11 +841,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "fullscreenchange",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::FullscreenError>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::Event>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_fullscreen_error<V>
@@ -643,9 +863,15 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_fullscreen_error(V::initialize_dom_event_listener_state(
+            super::props::on_fullscreen_error(V::initialize_handle_event_state(
                 this.0,
-                dom_element,
+                |callable| {
+                    crate::imports::frender_events::EventListener::new(
+                        dom_element,
+                        "fullscreenerror",
+                        callable.clone(),
+                    )
+                },
             ))
         }
         fn update_element_non_reactive(
@@ -655,11 +881,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "fullscreenerror",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::KeyDown>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_key_down<V>
@@ -671,7 +903,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_key_down(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_key_down(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "keydown",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -680,11 +918,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "keydown",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::KeyUp>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_key_up<V>
@@ -696,7 +940,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_key_up(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_key_up(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "keyup",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -705,11 +955,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "keyup",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::AuxClick>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_aux_click<V>
@@ -721,7 +977,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_aux_click(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_aux_click(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "auxclick",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -730,11 +992,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "auxclick",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::Click>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_click<V>
@@ -746,7 +1014,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_click(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_click(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "click",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -755,11 +1029,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "click",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::ContextMenu>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_context_menu<V>
@@ -771,10 +1051,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_context_menu(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_context_menu(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "contextmenu",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -783,11 +1066,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "contextmenu",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::DoubleClick>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_double_click<V>
@@ -799,10 +1088,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_double_click(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_double_click(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "dblclick",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -811,11 +1103,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "dblclick",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseDown>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_down<V>
@@ -827,7 +1125,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_down(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_mouse_down(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mousedown",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -836,11 +1140,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mousedown",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEnter>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_enter<V>
@@ -852,10 +1162,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_enter(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_mouse_enter(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseenter",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -864,11 +1177,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseenter",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseLeave>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_leave<V>
@@ -880,10 +1199,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_leave(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_mouse_leave(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseleave",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -892,11 +1214,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseleave",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseMove>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_move<V>
@@ -908,7 +1236,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_move(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_mouse_move(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mousemove",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -917,11 +1251,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mousemove",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseOut>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_out<V>
@@ -933,7 +1273,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_out(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_mouse_out(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseout",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -942,11 +1288,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseout",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseOver>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_over<V>
@@ -958,7 +1310,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_over(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_mouse_over(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseover",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -967,11 +1325,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseover",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::MouseUp>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_mouse_up<V>
@@ -983,7 +1347,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_mouse_up(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_mouse_up(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseup",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -992,11 +1362,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "mouseup",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::TouchCancel>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_touch_cancel<V>
@@ -1008,10 +1384,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_touch_cancel(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_touch_cancel(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchcancel",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -1020,11 +1399,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchcancel",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEnd>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_touch_end<V>
@@ -1036,7 +1421,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_touch_end(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_touch_end(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchend",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -1045,11 +1436,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchend",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::TouchMove>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_touch_move<V>
@@ -1061,7 +1458,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_touch_move(V::initialize_dom_event_listener_state(this.0, dom_element))
+            super::props::on_touch_move(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchmove",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -1070,11 +1473,17 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchmove",
+                    callable.clone(),
+                )
+            })
         }
     }
     impl<
-            V: crate::imports::frender_html::props::UpdateDomEventListener<events::TouchStart>,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>,
             E: ::core::convert::AsRef<web_sys::Element>,
         > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
         for super::props::on_touch_start<V>
@@ -1086,10 +1495,13 @@ mod impl_dom_for_props {
             children_ctx: &mut crate::imports::frender_csr::CsrContext,
         ) -> Self::State {
             let dom_element = element.as_ref();
-            super::props::on_touch_start(V::initialize_dom_event_listener_state(
-                this.0,
-                dom_element,
-            ))
+            super::props::on_touch_start(V::initialize_handle_event_state(this.0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchstart",
+                    callable.clone(),
+                )
+            }))
         }
         fn update_element_non_reactive(
             this: Self,
@@ -1098,7 +1510,13 @@ mod impl_dom_for_props {
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
             let dom_element = element.as_ref();
-            V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+            V::update_handle_event_state(this.0, &mut state.get_mut().0, |callable| {
+                crate::imports::frender_events::EventListener::new(
+                    dom_element,
+                    "touchstart",
+                    callable.clone(),
+                )
+            })
         }
     }
 }
@@ -1161,8 +1579,8 @@ mod impl_ssr_for_props {
                 .into_iter()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_cancel<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_cancel<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1170,8 +1588,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_error<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_error<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1179,8 +1597,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_scroll<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_scroll<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1188,7 +1606,10 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<
+            'a,
+            V: crate::imports::frender_events::MaybeHandleEvent<events::SecurityPolicyViolationEvent>,
+        > crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_security_policy_violation<V>
     {
         type IntoIterAttrs =
@@ -1197,8 +1618,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_select<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_select<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1206,8 +1627,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_wheel<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::WheelEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_wheel<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1215,22 +1636,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_copy<V> {
-        type IntoIterAttrs =
-            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            ::core::iter::empty()
-        }
-    }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_cut<V> {
-        type IntoIterAttrs =
-            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            ::core::iter::empty()
-        }
-    }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_paste<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_copy<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1238,7 +1645,26 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_cut<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_paste<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_composition_end<V>
     {
         type IntoIterAttrs =
@@ -1247,7 +1673,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_composition_start<V>
     {
         type IntoIterAttrs =
@@ -1256,7 +1683,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_composition_update<V>
     {
         type IntoIterAttrs =
@@ -1265,15 +1693,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_blur<V> {
-        type IntoIterAttrs =
-            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            ::core::iter::empty()
-        }
-    }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_focus<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_blur<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1281,8 +1702,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_focus_in<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_focus<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1290,7 +1711,17 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_focus_in<V>
+    {
+        type IntoIterAttrs =
+            ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
+        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
+            ::core::iter::empty()
+        }
+    }
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_focus_out<V>
     {
         type IntoIterAttrs =
@@ -1299,7 +1730,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_fullscreen_change<V>
     {
         type IntoIterAttrs =
@@ -1308,7 +1740,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::Event>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_fullscreen_error<V>
     {
         type IntoIterAttrs =
@@ -1317,8 +1750,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_key_down<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_key_down<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1326,8 +1759,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_key_up<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_key_up<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1335,7 +1768,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_aux_click<V>
     {
         type IntoIterAttrs =
@@ -1344,8 +1778,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_click<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_click<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1353,7 +1787,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_context_menu<V>
     {
         type IntoIterAttrs =
@@ -1362,7 +1797,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_double_click<V>
     {
         type IntoIterAttrs =
@@ -1371,7 +1807,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_down<V>
     {
         type IntoIterAttrs =
@@ -1380,7 +1817,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_enter<V>
     {
         type IntoIterAttrs =
@@ -1389,7 +1827,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_leave<V>
     {
         type IntoIterAttrs =
@@ -1398,7 +1837,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_move<V>
     {
         type IntoIterAttrs =
@@ -1407,7 +1847,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_out<V>
     {
         type IntoIterAttrs =
@@ -1416,7 +1857,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_mouse_over<V>
     {
         type IntoIterAttrs =
@@ -1425,8 +1867,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::on_mouse_up<V>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::on_mouse_up<V>
     {
         type IntoIterAttrs =
             ::core::iter::Empty<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
@@ -1434,7 +1876,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_touch_cancel<V>
     {
         type IntoIterAttrs =
@@ -1443,7 +1886,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_touch_end<V>
     {
         type IntoIterAttrs =
@@ -1452,7 +1896,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_touch_move<V>
     {
         type IntoIterAttrs =
@@ -1461,7 +1906,8 @@ mod impl_ssr_for_props {
             ::core::iter::empty()
         }
     }
-    impl<'a, V> crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
+    impl<'a, V: crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>>
+        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
         for super::props::on_touch_start<V>
     {
         type IntoIterAttrs =

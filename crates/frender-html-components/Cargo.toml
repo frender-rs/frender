@@ -11,6 +11,7 @@ frender-ssr = { path = "../frender-ssr", version = "0.1.0", optional = true }
 frender-html = { path = "../frender-html", version = "0.1.0" }
 pin-project-lite = "0.2.9"
 frender-html-simple = { version = "0.1.0", path = "../frender-html-simple" }
+frender-events = { version = "0.1.0", path = "../frender-events" }
 
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
@@ -109,6 +110,7 @@ features = [
 ]
 
 [features]
+# default = ["html_macro_not_expand"]
 csr = ["dep:frender-csr", "dep:web-sys"]
 ssr = ["dep:frender-ssr"]
 html_macro_not_expand = ["dep:frender-macros"]

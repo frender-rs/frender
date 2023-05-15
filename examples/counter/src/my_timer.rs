@@ -45,7 +45,11 @@ pub fn MyTimer(props: MyTimerProps) {
 
     let state = *state;
     let stopped_setter = stopped_setter.clone();
-    let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
+    let toggle_stopped = callable!(
+        || stopped_setter.replace_with_fn_pointer(|v| !*v),
+        stopped_setter = stopped_setter.clone(),
+    )
+    .accept_anything();
 
     rsx!(
         <div>

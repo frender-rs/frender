@@ -5,7 +5,11 @@ pub mod data;
 
 use frender::prelude::*;
 
-pub struct Square<V, OnClick> {
+pub struct Square<V, OnClick>
+where
+    V: frender::CsrElement,
+    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
+{
     value: V,
     on_click: OnClick,
 }
@@ -13,7 +17,7 @@ pub struct Square<V, OnClick> {
 impl<V, OnClick> Square<V, OnClick>
 where
     V: frender::CsrElement,
-    OnClick: frender::UpdateDomEventListener<frender::events::Click>,
+    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
 {
     // #[component(only_dom)] // TODO: optimize with zero hooks
     fn into_element(self) -> Element![csr] {
@@ -25,19 +29,27 @@ where
     }
 }
 
-pub struct Board<OnClick: Fn(usize) + 'static + Clone> {
+pub struct Board<
+    OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()> + Clone,
+> {
     board: data::Board,
     on_click: OnClick,
 }
 
-impl<OnClick: Fn(usize) + 'static + Clone> Board<OnClick> {
+impl<
+        OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()>
+            + Clone
+            + PartialEq
+            + 'static,
+    > Board<OnClick>
+{
     #[component(only_dom)]
     fn into_element(self) {
         let render_square = |i: usize| {
             let on_click = self.on_click.clone();
             Square {
                 value: self.board.squares[i].to_str(),
-                on_click: move |_: &_| on_click(i),
+                on_click: on_click.provide_last_argument_copied(i).accept_anything(),
             }
             .into_element()
         };
@@ -69,7 +81,6 @@ fn Game() {
     let (state, state_setter) = hooks::use_state_with(data::Game::new);
 
     let current = state.current();
-    let state_setter = state_setter.clone();
     let winner = current.calculate_winner();
 
     let status = match winner {
@@ -77,24 +88,26 @@ fn Game() {
         _ => format!("Winner: {}", winner.to_str()),
     };
 
-    let on_click = {
-        let state_setter = state_setter.clone();
-        move |i| {
+    let on_click = callable!(
+        |i| {
             state_setter.mutate_with_fn_box(move |game| {
                 game.click(i);
             })
-        }
-    };
+        },
+        state_setter = state_setter.clone(),
+    );
 
-    let jump_to = move |i| {
-        state_setter.mutate_with_fn_box(move |game| {
-            game.jump_to(i);
-        })
-    };
+    let jump_to = callable!(
+        |i| {
+            state_setter.mutate_with_fn_box(move |game| {
+                game.jump_to(i);
+            })
+        },
+        state_setter = state_setter.clone(),
+    );
 
     let moves = (0..state.full_history().len())
         .map(|i: usize| {
-            let jump_to = jump_to.clone();
             let desc = if i > 0 {
                 format!("Go to move #{i}")
             } else {
@@ -103,7 +116,7 @@ fn Game() {
 
             rsx!(
               <li key={i}>
-                <button on_click={move |_: &_| jump_to(i)}>{desc}</button>
+                <button on_click={jump_to.clone().provide_first_argument_copied(i).accept_anything()}>{desc}</button>
               </li>
             )
         })

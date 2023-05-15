@@ -2076,6 +2076,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)
+        ///
+        /// Fires on a [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) when the user instructs the browser that they wish to dismiss the currently open modal dialog. The browser fires this event when the user presses the <kbd>Esc</kbd> key to close the modal dialog.
         #[inline(always)]
         pub fn on_cancel<V>(
             self,
@@ -2123,6 +2126,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`error`](https://developer.mozilla.org/en-US/docs/Web/API/Element/error_event)
+        ///
+        /// Fired when a resource failed to load, or can't be used. For example, if a script has an execution error or an image can't be found or is invalid.
         #[inline(always)]
         pub fn on_error<V>(
             self,
@@ -2170,6 +2176,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`scroll`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event)
+        ///
+        /// Fired when the document view or an element has been scrolled.
         #[inline(always)]
         pub fn on_scroll<V>(
             self,
@@ -2217,6 +2226,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`securitypolicyviolation`](https://developer.mozilla.org/en-US/docs/Web/API/Element/securitypolicyviolation_event)
+        ///
+        /// Fired when a [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) is violated.
         #[inline(always)]
         pub fn on_security_policy_violation<V>(
             self,
@@ -2264,6 +2276,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`select`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/select_event)
+        ///
+        /// Fired when some text has been selected.
         #[inline(always)]
         pub fn on_select<V>(
             self,
@@ -2311,6 +2326,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`wheel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event)
+        ///
+        /// Fired when the user rotates a wheel button on a pointing device (typically a mouse).
         #[inline(always)]
         pub fn on_wheel<V>(
             self,
@@ -2358,6 +2376,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`copy`](https://developer.mozilla.org/en-US/docs/Web/API/Element/copy_event)
+        ///
+        /// Fired when the user initiates a copy action through the browser's user interface.
         #[inline(always)]
         pub fn on_copy<V>(
             self,
@@ -2405,6 +2426,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`cut`](https://developer.mozilla.org/en-US/docs/Web/API/Element/cut_event)
+        ///
+        /// Fired when the user initiates a cut action through the browser's user interface.
         #[inline(always)]
         pub fn on_cut<V>(
             self,
@@ -2452,6 +2476,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`paste`](https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event)
+        ///
+        /// Fired when the user initiates a paste action through the browser's user interface.
         #[inline(always)]
         pub fn on_paste<V>(
             self,
@@ -2499,6 +2526,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`compositionend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event)
+        ///
+        /// Fired when a text composition system such as an [input method editor](https://developer.mozilla.org/en-US/docs/Glossary/Input_method_editor) completes or cancels the current composition session.
         #[inline(always)]
         pub fn on_composition_end<V>(
             self,
@@ -2546,6 +2576,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`compositionstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event)
+        ///
+        /// Fired when a text composition system such as an [input method editor](https://developer.mozilla.org/en-US/docs/Glossary/Input_method_editor) starts a new composition session.
         #[inline(always)]
         pub fn on_composition_start<V>(
             self,
@@ -2593,6 +2626,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`compositionupdate`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event)
+        ///
+        /// Fired when a new character is received in the context of a text composition session controlled by a text composition system such as an [input method editor](https://developer.mozilla.org/en-US/docs/Glossary/Input_method_editor).
         #[inline(always)]
         pub fn on_composition_update<V>(
             self,
@@ -2640,6 +2676,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`blur`](https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event)
+        ///
+        /// Fired when an element has lost focus.
         #[inline(always)]
         pub fn on_blur<V>(
             self,
@@ -2687,6 +2726,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`focus`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event)
+        ///
+        /// Fired when an element has gained focus.
         #[inline(always)]
         pub fn on_focus<V>(
             self,
@@ -2734,6 +2776,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`focusin`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focusin_event)
+        ///
+        /// Fired when an element has gained focus, after [`focus`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event).
         #[inline(always)]
         pub fn on_focus_in<V>(
             self,
@@ -2781,6 +2826,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`focusout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focusout_event)
+        ///
+        /// Fired when an element has lost focus, after [`blur`](https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event).
         #[inline(always)]
         pub fn on_focus_out<V>(
             self,
@@ -2828,6 +2876,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`fullscreenchange`](https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenchange_event)
+        ///
+        /// Sent to an [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element) when it transitions into or out of [fullscreen](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide) mode.
         #[inline(always)]
         pub fn on_fullscreen_change<V>(
             self,
@@ -2875,6 +2926,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`fullscreenerror`](https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenerror_event)
+        ///
+        /// Sent to an `Element` if an error occurs while attempting to switch it into or out of [fullscreen](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide) mode.
         #[inline(always)]
         pub fn on_fullscreen_error<V>(
             self,
@@ -2922,6 +2976,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`keydown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event)
+        ///
+        /// Fired when a key is pressed.
         #[inline(always)]
         pub fn on_key_down<V>(
             self,
@@ -2969,6 +3026,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`keyup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/keyup_event)
+        ///
+        /// Fired when a key is released.
         #[inline(always)]
         pub fn on_key_up<V>(
             self,
@@ -3016,6 +3076,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`auxclick`](https://developer.mozilla.org/en-US/docs/Web/API/Element/auxclick_event)
+        ///
+        /// Fired when a non-primary pointing device button (e.g., any mouse button other than the left button) has been pressed and released on an element.
         #[inline(always)]
         pub fn on_aux_click<V>(
             self,
@@ -3063,6 +3126,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`click`](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event)
+        ///
+        /// Fired when a pointing device button (e.g., a mouse's primary button) is pressed and released on a single element.
         #[inline(always)]
         pub fn on_click<V>(
             self,
@@ -3110,6 +3176,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`contextmenu`](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event)
+        ///
+        /// Fired when the user attempts to open a context menu.
         #[inline(always)]
         pub fn on_context_menu<V>(
             self,
@@ -3157,6 +3226,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`dblclick`](https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event)
+        ///
+        /// Fired when a pointing device button (e.g., a mouse's primary button) is clicked twice on a single element.
         #[inline(always)]
         pub fn on_double_click<V>(
             self,
@@ -3204,6 +3276,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mousedown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mousedown_event)
+        ///
+        /// Fired when a pointing device button is pressed on an element.
         #[inline(always)]
         pub fn on_mouse_down<V>(
             self,
@@ -3251,6 +3326,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mouseenter`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseenter_event)
+        ///
+        /// Fired when a pointing device (usually a mouse) is moved over the element that has the listener attached.
         #[inline(always)]
         pub fn on_mouse_enter<V>(
             self,
@@ -3298,6 +3376,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mouseleave`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseleave_event)
+        ///
+        /// Fired when the pointer of a pointing device (usually a mouse) is moved out of an element that has the listener attached to it.
         #[inline(always)]
         pub fn on_mouse_leave<V>(
             self,
@@ -3345,6 +3426,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mousemove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event)
+        ///
+        /// Fired when a pointing device (usually a mouse) is moved while over an element.
         #[inline(always)]
         pub fn on_mouse_move<V>(
             self,
@@ -3392,6 +3476,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mouseout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseout_event)
+        ///
+        /// Fired when a pointing device (usually a mouse) is moved off the element to which the listener is attached or off one of its children.
         #[inline(always)]
         pub fn on_mouse_out<V>(
             self,
@@ -3439,6 +3526,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mouseover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event)
+        ///
+        /// Fired when a pointing device is moved onto the element to which the listener is attached or onto one of its children.
         #[inline(always)]
         pub fn on_mouse_over<V>(
             self,
@@ -3486,6 +3576,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`mouseup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseup_event)
+        ///
+        /// Fired when a pointing device button is released on an element.
         #[inline(always)]
         pub fn on_mouse_up<V>(
             self,
@@ -3533,6 +3626,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`touchcancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchcancel_event)
+        ///
+        /// Fired when one or more touch points have been disrupted in an implementation-specific manner (for example, too many touch points are created).
         #[inline(always)]
         pub fn on_touch_cancel<V>(
             self,
@@ -3580,6 +3676,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`touchend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchend_event)
+        ///
+        /// Fired when one or more touch points are removed from the touch surface.
         #[inline(always)]
         pub fn on_touch_end<V>(
             self,
@@ -3627,6 +3726,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`touchmove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchmove_event)
+        ///
+        /// Fired when one or more touch points are moved along the touch surface.
         #[inline(always)]
         pub fn on_touch_move<V>(
             self,
@@ -3674,6 +3776,9 @@ mod builder_and_replacer {
                 on_touch_start: self.on_touch_start,
             }
         }
+        /// Event [`touchstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchstart_event)
+        ///
+        /// Fired when one or more touch points are placed on the touch surface.
         #[inline(always)]
         pub fn on_touch_start<V>(
             self,
@@ -3733,76 +3838,77 @@ mod impl_update_element {
     where
         TypeDefs::children: ::frender_core::UpdateRenderState<::frender_csr::Dom>,
         TypeDefs::on_cancel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Cancel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_error:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Error>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_scroll:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Scroll>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_security_policy_violation:
             crate::imports::frender_html::props::UpdateDomEventListener<
-                events::SecurityPolicyViolation,
+                events::SecurityPolicyViolationEvent,
             >,
         TypeDefs::on_select:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Select>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_wheel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Wheel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::WheelEvent>,
         TypeDefs::on_copy:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Copy>,
-        TypeDefs::on_cut: crate::imports::frender_html::props::UpdateDomEventListener<events::Cut>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
+        TypeDefs::on_cut:
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_paste:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Paste>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_composition_end:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionEnd>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionEvent>,
         TypeDefs::on_composition_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionEvent>,
         TypeDefs::on_composition_update:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionUpdate>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::CompositionEvent>,
         TypeDefs::on_blur:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Blur>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusEvent>,
         TypeDefs::on_focus:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Focus>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusEvent>,
         TypeDefs::on_focus_in:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusIn>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusEvent>,
         TypeDefs::on_focus_out:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusOut>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::FocusEvent>,
         TypeDefs::on_fullscreen_change:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::FullscreenChange>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_fullscreen_error:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::FullscreenError>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_key_down:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::KeyDown>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::KeyboardEvent>,
         TypeDefs::on_key_up:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::KeyUp>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::KeyboardEvent>,
         TypeDefs::on_aux_click:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::AuxClick>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_click:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Click>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_context_menu:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::ContextMenu>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_double_click:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::DoubleClick>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_down:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseDown>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_enter:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEnter>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_leave:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseLeave>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_move:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseMove>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_out:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseOut>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_over:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseOver>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_mouse_up:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseUp>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::MouseEvent>,
         TypeDefs::on_touch_cancel:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchCancel>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEvent>,
         TypeDefs::on_touch_end:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEnd>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEvent>,
         TypeDefs::on_touch_move:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchMove>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEvent>,
         TypeDefs::on_touch_start:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchStart>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::TouchEvent>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -3819,109 +3925,109 @@ mod impl_update_element {
                     str,
                 >>::State,
                 on_cancel = <TypeDefs::on_cancel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Cancel,
+                    events::Event,
                 >>::State,
                 on_error = <TypeDefs::on_error as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Error,
+                    events::Event,
                 >>::State,
                 on_scroll = <TypeDefs::on_scroll as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Scroll,
+                    events::Event,
                 >>::State,
                 on_security_policy_violation = <TypeDefs::on_security_policy_violation as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::SecurityPolicyViolation,
+                    events::SecurityPolicyViolationEvent,
                 >>::State,
                 on_select = <TypeDefs::on_select as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Select,
+                    events::Event,
                 >>::State,
                 on_wheel = <TypeDefs::on_wheel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Wheel,
+                    events::WheelEvent,
                 >>::State,
                 on_copy = <TypeDefs::on_copy as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Copy,
+                    events::Event,
                 >>::State,
                 on_cut = <TypeDefs::on_cut as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Cut,
+                    events::Event,
                 >>::State,
                 on_paste = <TypeDefs::on_paste as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Paste,
+                    events::Event,
                 >>::State,
                 on_composition_end = <TypeDefs::on_composition_end as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::CompositionEnd,
+                    events::CompositionEvent,
                 >>::State,
                 on_composition_start = <TypeDefs::on_composition_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::CompositionStart,
+                    events::CompositionEvent,
                 >>::State,
                 on_composition_update = <TypeDefs::on_composition_update as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::CompositionUpdate,
+                    events::CompositionEvent,
                 >>::State,
                 on_blur = <TypeDefs::on_blur as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Blur,
+                    events::FocusEvent,
                 >>::State,
                 on_focus = <TypeDefs::on_focus as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Focus,
+                    events::FocusEvent,
                 >>::State,
                 on_focus_in = <TypeDefs::on_focus_in as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::FocusIn,
+                    events::FocusEvent,
                 >>::State,
                 on_focus_out = <TypeDefs::on_focus_out as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::FocusOut,
+                    events::FocusEvent,
                 >>::State,
                 on_fullscreen_change = <TypeDefs::on_fullscreen_change as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::FullscreenChange,
+                    events::Event,
                 >>::State,
                 on_fullscreen_error = <TypeDefs::on_fullscreen_error as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::FullscreenError,
+                    events::Event,
                 >>::State,
                 on_key_down = <TypeDefs::on_key_down as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::KeyDown,
+                    events::KeyboardEvent,
                 >>::State,
                 on_key_up = <TypeDefs::on_key_up as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::KeyUp,
+                    events::KeyboardEvent,
                 >>::State,
                 on_aux_click = <TypeDefs::on_aux_click as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::AuxClick,
+                    events::MouseEvent,
                 >>::State,
                 on_click = <TypeDefs::on_click as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Click,
+                    events::MouseEvent,
                 >>::State,
                 on_context_menu = <TypeDefs::on_context_menu as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::ContextMenu,
+                    events::MouseEvent,
                 >>::State,
                 on_double_click = <TypeDefs::on_double_click as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::DoubleClick,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_down = <TypeDefs::on_mouse_down as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseDown,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_enter = <TypeDefs::on_mouse_enter as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseEnter,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_leave = <TypeDefs::on_mouse_leave as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseLeave,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_move = <TypeDefs::on_mouse_move as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseMove,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_out = <TypeDefs::on_mouse_out as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseOut,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_over = <TypeDefs::on_mouse_over as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseOver,
+                    events::MouseEvent,
                 >>::State,
                 on_mouse_up = <TypeDefs::on_mouse_up as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::MouseUp,
+                    events::MouseEvent,
                 >>::State,
                 on_touch_cancel = <TypeDefs::on_touch_cancel as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TouchCancel,
+                    events::TouchEvent,
                 >>::State,
                 on_touch_end = <TypeDefs::on_touch_end as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TouchEnd,
+                    events::TouchEvent,
                 >>::State,
                 on_touch_move = <TypeDefs::on_touch_move as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TouchMove,
+                    events::TouchEvent,
                 >>::State,
                 on_touch_start = <TypeDefs::on_touch_start as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::TouchStart,
+                    events::TouchEvent,
                 >>::State,
             >,
         >;
@@ -3966,124 +4072,124 @@ mod impl_update_element {
                     || dom_element.remove_attribute("part").unwrap(),
                 ),
                 on_cancel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Cancel,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_cancel, element),
                 on_error: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Error,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_error, element),
                 on_scroll: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Scroll,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_scroll, element),
                 on_security_policy_violation: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::SecurityPolicyViolation,
+                    events::SecurityPolicyViolationEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_security_policy_violation,
                     element,
                 ),
                 on_select: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Select,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_select, element),
                 on_wheel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Wheel,
+                    events::WheelEvent,
                 >::initialize_dom_event_listener_state(this.on_wheel, element),
                 on_copy: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Copy,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_copy, element),
                 on_cut: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Cut,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_cut, element),
                 on_paste: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Paste,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_paste, element),
                 on_composition_end: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::CompositionEnd,
+                    events::CompositionEvent,
                 >::initialize_dom_event_listener_state(this.on_composition_end, element),
                 on_composition_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::CompositionStart,
+                    events::CompositionEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_composition_start,
                     element,
                 ),
                 on_composition_update: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::CompositionUpdate,
+                    events::CompositionEvent,
                 >::initialize_dom_event_listener_state(
                     this.on_composition_update,
                     element,
                 ),
                 on_blur: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Blur,
+                    events::FocusEvent,
                 >::initialize_dom_event_listener_state(this.on_blur, element),
                 on_focus: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Focus,
+                    events::FocusEvent,
                 >::initialize_dom_event_listener_state(this.on_focus, element),
                 on_focus_in: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::FocusIn,
+                    events::FocusEvent,
                 >::initialize_dom_event_listener_state(this.on_focus_in, element),
                 on_focus_out: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::FocusOut,
+                    events::FocusEvent,
                 >::initialize_dom_event_listener_state(this.on_focus_out, element),
                 on_fullscreen_change: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::FullscreenChange,
+                    events::Event,
                 >::initialize_dom_event_listener_state(
                     this.on_fullscreen_change,
                     element,
                 ),
                 on_fullscreen_error: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::FullscreenError,
+                    events::Event,
                 >::initialize_dom_event_listener_state(
                     this.on_fullscreen_error,
                     element,
                 ),
                 on_key_down: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::KeyDown,
+                    events::KeyboardEvent,
                 >::initialize_dom_event_listener_state(this.on_key_down, element),
                 on_key_up: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::KeyUp,
+                    events::KeyboardEvent,
                 >::initialize_dom_event_listener_state(this.on_key_up, element),
                 on_aux_click: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::AuxClick,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_aux_click, element),
                 on_click: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Click,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_click, element),
                 on_context_menu: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::ContextMenu,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_context_menu, element),
                 on_double_click: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::DoubleClick,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_double_click, element),
                 on_mouse_down: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseDown,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_down, element),
                 on_mouse_enter: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseEnter,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_enter, element),
                 on_mouse_leave: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseLeave,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_leave, element),
                 on_mouse_move: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseMove,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_move, element),
                 on_mouse_out: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseOut,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_out, element),
                 on_mouse_over: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseOver,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_over, element),
                 on_mouse_up: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::MouseUp,
+                    events::MouseEvent,
                 >::initialize_dom_event_listener_state(this.on_mouse_up, element),
                 on_touch_cancel: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TouchCancel,
+                    events::TouchEvent,
                 >::initialize_dom_event_listener_state(this.on_touch_cancel, element),
                 on_touch_end: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TouchEnd,
+                    events::TouchEvent,
                 >::initialize_dom_event_listener_state(this.on_touch_end, element),
                 on_touch_move: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TouchMove,
+                    events::TouchEvent,
                 >::initialize_dom_event_listener_state(this.on_touch_move, element),
                 on_touch_start: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::TouchStart,
+                    events::TouchEvent,
                 >::initialize_dom_event_listener_state(this.on_touch_start, element),
             }
         }
@@ -4137,169 +4243,169 @@ mod impl_update_element {
                 || dom_element.remove_attribute("part").unwrap(),
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Cancel,
+                events::Event,
             >::update_dom_event_listener(this.on_cancel, element, state.on_cancel);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Error,
+                events::Event,
             >::update_dom_event_listener(this.on_error, element, state.on_error);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Scroll,
+                events::Event,
             >::update_dom_event_listener(this.on_scroll, element, state.on_scroll);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::SecurityPolicyViolation,
+                events::SecurityPolicyViolationEvent,
             >::update_dom_event_listener(
                 this.on_security_policy_violation,
                 element,
                 state.on_security_policy_violation,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Select,
+                events::Event,
             >::update_dom_event_listener(this.on_select, element, state.on_select);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Wheel,
+                events::WheelEvent,
             >::update_dom_event_listener(this.on_wheel, element, state.on_wheel);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Copy,
+                events::Event,
             >::update_dom_event_listener(this.on_copy, element, state.on_copy);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Cut,
+                events::Event,
             >::update_dom_event_listener(this.on_cut, element, state.on_cut);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Paste,
+                events::Event,
             >::update_dom_event_listener(this.on_paste, element, state.on_paste);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::CompositionEnd,
+                events::CompositionEvent,
             >::update_dom_event_listener(
                 this.on_composition_end,
                 element,
                 state.on_composition_end,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::CompositionStart,
+                events::CompositionEvent,
             >::update_dom_event_listener(
                 this.on_composition_start,
                 element,
                 state.on_composition_start,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::CompositionUpdate,
+                events::CompositionEvent,
             >::update_dom_event_listener(
                 this.on_composition_update,
                 element,
                 state.on_composition_update,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Blur,
+                events::FocusEvent,
             >::update_dom_event_listener(this.on_blur, element, state.on_blur);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Focus,
+                events::FocusEvent,
             >::update_dom_event_listener(this.on_focus, element, state.on_focus);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::FocusIn,
+                events::FocusEvent,
             >::update_dom_event_listener(this.on_focus_in, element, state.on_focus_in);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::FocusOut,
+                events::FocusEvent,
             >::update_dom_event_listener(this.on_focus_out, element, state.on_focus_out);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::FullscreenChange,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_fullscreen_change,
                 element,
                 state.on_fullscreen_change,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::FullscreenError,
+                events::Event,
             >::update_dom_event_listener(
                 this.on_fullscreen_error,
                 element,
                 state.on_fullscreen_error,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::KeyDown,
+                events::KeyboardEvent,
             >::update_dom_event_listener(this.on_key_down, element, state.on_key_down);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::KeyUp,
+                events::KeyboardEvent,
             >::update_dom_event_listener(this.on_key_up, element, state.on_key_up);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::AuxClick,
+                events::MouseEvent,
             >::update_dom_event_listener(this.on_aux_click, element, state.on_aux_click);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Click,
+                events::MouseEvent,
             >::update_dom_event_listener(this.on_click, element, state.on_click);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::ContextMenu,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_context_menu,
                 element,
                 state.on_context_menu,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::DoubleClick,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_double_click,
                 element,
                 state.on_double_click,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseDown,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_mouse_down,
                 element,
                 state.on_mouse_down,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseEnter,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_mouse_enter,
                 element,
                 state.on_mouse_enter,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseLeave,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_mouse_leave,
                 element,
                 state.on_mouse_leave,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseMove,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_mouse_move,
                 element,
                 state.on_mouse_move,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseOut,
+                events::MouseEvent,
             >::update_dom_event_listener(this.on_mouse_out, element, state.on_mouse_out);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseOver,
+                events::MouseEvent,
             >::update_dom_event_listener(
                 this.on_mouse_over,
                 element,
                 state.on_mouse_over,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::MouseUp,
+                events::MouseEvent,
             >::update_dom_event_listener(this.on_mouse_up, element, state.on_mouse_up);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TouchCancel,
+                events::TouchEvent,
             >::update_dom_event_listener(
                 this.on_touch_cancel,
                 element,
                 state.on_touch_cancel,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TouchEnd,
+                events::TouchEvent,
             >::update_dom_event_listener(this.on_touch_end, element, state.on_touch_end);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TouchMove,
+                events::TouchEvent,
             >::update_dom_event_listener(
                 this.on_touch_move,
                 element,
                 state.on_touch_move,
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::TouchStart,
+                events::TouchEvent,
             >::update_dom_event_listener(
                 this.on_touch_start,
                 element,

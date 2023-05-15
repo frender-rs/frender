@@ -1,23 +1,25 @@
 use frender::prelude::*;
-use hooks::prelude::*;
+use hooks::{prelude::*, shared_state::SharedState};
 
 component_fn!(
     #[component(csr)]
     #[inline]
     fn Counter(initial_value: u32) {
         let state = h!(use_shared_state(initial_value));
-        let increment = {
-            let state = state.clone();
-            move |_: &_| {
+
+        let increment = state
+            .clone()
+            .into_callback(callable!(|state: &SharedState<_>| {
                 state.replace_with(|v| *v + 1);
-            }
-        };
-        let decrement = {
-            let state = state.clone();
-            move |_: &_| {
+            }))
+            .accept_anything();
+
+        let decrement = state
+            .clone()
+            .into_callback(callable!(|state: &SharedState<_>| {
                 state.replace_with(|v| *v - 1);
-            }
-        };
+            }))
+            .accept_anything();
 
         let state = state.get();
 
@@ -70,8 +72,12 @@ component_fn!(
         )];
 
         let state = *state;
-        let stopped_setter = stopped_setter.clone();
-        let toggle_stopped = move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v);
+
+        let toggle_stopped = callable!(
+            || stopped_setter.replace_with_fn_pointer(|v| !*v),
+            stopped_setter = stopped_setter.clone(),
+        )
+        .accept_anything();
 
         intrinsic!(
             div[[

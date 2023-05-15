@@ -3473,6 +3473,9 @@ mod builder_and_replacer {
                 on_submit: self.on_submit,
             }
         }
+        /// Event [`formdata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/formdata_event)
+        ///
+        /// The `formdata` event fires after the entry list representing the form's data is constructed.
         #[inline(always)]
         pub fn on_form_data<V>(
             self,
@@ -3495,6 +3498,9 @@ mod builder_and_replacer {
                 on_submit: self.on_submit,
             }
         }
+        /// Event [`reset`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset_event)
+        ///
+        /// The `reset` event fires when a form is reset.
         #[inline(always)]
         pub fn on_reset<V>(
             self,
@@ -3517,6 +3523,9 @@ mod builder_and_replacer {
                 on_submit: self.on_submit,
             }
         }
+        /// Event [`submit`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event)
+        ///
+        /// The `submit` event fires when a form is submitted.
         #[inline(always)]
         pub fn on_submit<V>(
             self,
@@ -3552,11 +3561,11 @@ mod impl_update_element {
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
         TypeDefs::on_form_data:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::FormData>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_reset:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Reset>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_submit:
-            crate::imports::frender_html::props::UpdateDomEventListener<events::Submit>,
+            crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -3596,13 +3605,13 @@ mod impl_update_element {
                     str,
                 >>::State,
                 on_form_data = <TypeDefs::on_form_data as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::FormData,
+                    events::Event,
                 >>::State,
                 on_reset = <TypeDefs::on_reset as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Reset,
+                    events::Event,
                 >>::State,
                 on_submit = <TypeDefs::on_submit as crate::imports::frender_html::props::UpdateDomEventListener<
-                    events::Submit,
+                    events::Event,
                 >>::State,
             >,
         >;
@@ -3697,13 +3706,13 @@ mod impl_update_element {
                     || dom_element.remove_attribute("target").unwrap(),
                 ),
                 on_form_data: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::FormData,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_form_data, element),
                 on_reset: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Reset,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_reset, element),
                 on_submit: crate::imports::frender_html::props::UpdateDomEventListener::<
-                    events::Submit,
+                    events::Event,
                 >::initialize_dom_event_listener_state(this.on_submit, element),
             }
         }
@@ -3814,13 +3823,13 @@ mod impl_update_element {
                 || dom_element.remove_attribute("target").unwrap(),
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::FormData,
+                events::Event,
             >::update_dom_event_listener(this.on_form_data, element, state.on_form_data);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Reset,
+                events::Event,
             >::update_dom_event_listener(this.on_reset, element, state.on_reset);
             crate::imports::frender_html::props::UpdateDomEventListener::<
-                events::Submit,
+                events::Event,
             >::update_dom_event_listener(this.on_submit, element, state.on_submit);
         }
     }

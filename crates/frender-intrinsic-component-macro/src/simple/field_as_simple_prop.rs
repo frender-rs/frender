@@ -86,19 +86,38 @@ impl FieldAsSimpleProp<'_> {
             FieldDeclaration::EventListener(e) => {
                 //
                 let ty = &e.ty;
-                dom_bounds = Some(quote! {
-                    : #crate_path::frender_html::props::UpdateDomEventListener<#ty>
+                let event_type = &e.event_type;
+                builder_fn_bounds = Some(quote! {
+                    #crate_path::frender_events::MaybeHandleEvent<#ty>
                 });
+                dom_bounds = Some(quote!(: #builder_fn_bounds));
+                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
+
                 dom_state_ty = {
                     quote! {
                         V::State
                     }
                 };
                 dom_init = quote! {
-                    V::initialize_dom_event_listener_state(this.0, dom_element)
+                    V::initialize_handle_event_state(
+                        this.0,
+                        |callable| #crate_path::frender_events::EventListener::new(
+                            dom_element,
+                            #event_type,
+                            callable.clone(),
+                        ),
+                    )
                 };
                 dom_update = quote! {
-                    V::update_dom_event_listener(this.0, dom_element, &mut state.get_mut().0)
+                    V::update_handle_event_state(
+                        this.0,
+                        &mut state.get_mut().0,
+                        |callable| #crate_path::frender_events::EventListener::new(
+                            dom_element,
+                            #event_type,
+                            callable.clone(),
+                        ),
+                    )
                 };
 
                 ssr_attrs_ty = quote! {
@@ -158,7 +177,7 @@ impl FieldAsSimpleProp<'_> {
                     fn initialize_state_non_reactive(
                         this: Self,
                         element: &E,
-                        children_ctx: &mut #crate_path::frender_csr::Dom,
+                        children_ctx: &mut #crate_path::frender_csr::CsrContext,
                     ) -> Self::State {
                         let dom_element = element.as_ref();
                         #dom_pre
@@ -170,7 +189,7 @@ impl FieldAsSimpleProp<'_> {
                     fn update_element_non_reactive(
                         this: Self,
                         element: &E,
-                        children_ctx: &mut #crate_path::frender_csr::Dom,
+                        children_ctx: &mut #crate_path::frender_csr::CsrContext,
                         state: ::core::pin::Pin<&mut Self::State>,
                     ) {
                         let dom_element = element.as_ref();

@@ -25,6 +25,7 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+// TODO: don't rely on intrinsic! and element!
 pub fn rsx(input: TokenStream) -> TokenStream {
     let value = match syn::parse::<rsx_data::OptionalCratePathAndRsxChild>(input) {
         Ok(v) => v,

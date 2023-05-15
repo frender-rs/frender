@@ -12,6 +12,6 @@ frender = { path = "../../frender", features = [
     "bg",
     "either",
 ] }
-hooks = "2.1.0-alpha"
+hooks = "2.3.0-alpha"
 gloo = "0.8.0"
 either = "1.8.1"
