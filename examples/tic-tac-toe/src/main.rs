@@ -8,7 +8,7 @@ use frender::prelude::*;
 pub struct Square<V, OnClick>
 where
     V: frender::CsrElement,
-    OnClick: frender::UpdateDomEventListener<frender::events::Click>,
+    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
 {
     value: V,
     on_click: OnClick,
@@ -17,7 +17,7 @@ where
 impl<V, OnClick> Square<V, OnClick>
 where
     V: frender::CsrElement,
-    OnClick: frender::UpdateDomEventListener<frender::events::Click>,
+    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
 {
     // #[component(only_dom)] // TODO: optimize with zero hooks
     fn into_element(self) -> Element![csr] {
@@ -30,9 +30,7 @@ where
 }
 
 pub struct Board<
-    OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()>
-        + Clone
-        + 'static,
+    OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()> + Clone,
 > {
     board: data::Board,
     on_click: OnClick,
@@ -41,6 +39,7 @@ pub struct Board<
 impl<
         OnClick: CallableWithFixedArguments<FixedArgumentTypes = ArgumentTypes!(usize), Output = ()>
             + Clone
+            + PartialEq
             + 'static,
     > Board<OnClick>
 {
@@ -89,7 +88,7 @@ fn Game() {
         _ => format!("Winner: {}", winner.to_str()),
     };
 
-    let on_click = callback!(
+    let on_click = callable!(
         |i| {
             state_setter.mutate_with_fn_box(move |game| {
                 game.click(i);
@@ -98,7 +97,7 @@ fn Game() {
         state_setter = state_setter.clone(),
     );
 
-    let jump_to = callback!(
+    let jump_to = callable!(
         |i| {
             state_setter.mutate_with_fn_box(move |game| {
                 game.jump_to(i);

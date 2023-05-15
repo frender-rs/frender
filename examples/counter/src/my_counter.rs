@@ -1,4 +1,4 @@
-use frender::prelude::{callback::IsCallable, *};
+use frender::prelude::*;
 use hooks::{shared_state::SharedState, ShareValue};
 
 frender::bg::builder! {
@@ -14,14 +14,14 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
 
     let on_increment = shared_state
         .clone()
-        .into_callback(callback!(|shared_state: &SharedState<_>| {
+        .into_callback(callable!(|shared_state: &SharedState<_>| {
             shared_state.replace_with(|v| *v + 1);
         }))
         .accept_anything();
 
     let on_decrement = shared_state
         .clone()
-        .into_callback(callback!(|shared_state: &SharedState<_>| {
+        .into_callback(callable!(|shared_state: &SharedState<_>| {
             shared_state.replace_with(|v| *v - 1);
         }))
         .accept_anything();

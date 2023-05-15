@@ -1,171 +1,113 @@
-use std::{marker::PhantomData, rc::Rc};
-
-use gloo::events::EventListener;
-use wasm_bindgen::JsCast;
-use web_sys::EventTarget;
-
-pub trait StaticEventType {
-    const EVENT_TYPE: &'static str;
-
-    type Event;
-}
-
-pub struct EventListenerShared<Event, F: Fn(&Event) + ?Sized> {
-    inner: Rc<F>,
-    _event: PhantomData<Event>,
-}
-
-impl<Event, F: Fn(&Event) + ?Sized> Unpin for EventListenerShared<Event, F> {}
-
-impl<Event, F: Fn(&Event) + ?Sized> Clone for EventListenerShared<Event, F> {
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-            _event: PhantomData,
-        }
-    }
-}
-
-impl<Event, F: Fn(&Event) + ?Sized> PartialEq for EventListenerShared<Event, F> {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        Rc::ptr_eq(&self.inner, &other.inner)
-    }
-}
-
-impl<Event, F: Fn(&Event) + ?Sized> EventListenerShared<Event, F> {
-    #[inline]
-    pub fn new(f: Rc<F>) -> Self {
-        Self {
-            inner: f,
-            _event: PhantomData,
-        }
-    }
-}
-
-pub type EventListenerSharedDyn<Event> = EventListenerShared<Event, dyn Fn(&Event)>;
-
-pub struct EventListenerOnce<Event, F: FnOnce(&Event)> {
-    inner: F,
-    _event: PhantomData<Event>,
-}
-
-impl<Event, F: FnOnce(&Event)> EventListenerOnce<Event, F> {
-    #[inline]
-    pub fn new(f: F) -> Self {
-        Self {
-            inner: f,
-            _event: PhantomData,
-        }
-    }
-}
-
-pub type EventListenerOnceDyn<Event> = EventListenerOnce<Event, Box<dyn FnOnce(&Event)>>;
-
-pub trait UpdateDomEventListener<EventType: StaticEventType>: Sized {
-    type State: 'static;
-
-    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State;
-
-    fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {
-        *state = <Self as UpdateDomEventListener<EventType>>::initialize_dom_event_listener_state(
-            self, target,
-        );
-    }
-}
-
-impl<EventType: StaticEventType> UpdateDomEventListener<EventType> for () {
-    type State = ();
-
-    #[inline(always)]
-    fn initialize_dom_event_listener_state(self, _: &EventTarget) -> Self::State {}
-
-    #[inline(always)]
-    fn update_dom_event_listener(self, _: &EventTarget, _: &mut Self::State) {}
-}
-
-impl<EventType: StaticEventType, F: Fn(&EventType::Event) + ?Sized + 'static>
-    UpdateDomEventListener<EventType> for EventListenerShared<EventType::Event, F>
-where
-    EventType::Event: JsCast + 'static,
-{
-    type State = (Self, EventListener);
-
-    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
-        let el = {
-            let this = self.clone();
-            EventListener::new(target, EventType::EVENT_TYPE, move |event| {
-                (this.inner)(event.dyn_ref().expect("wrong event type"))
-            })
-        };
-        (self, el)
-    }
-
-    fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {
-        if state.0 == self {
-            return;
+macro_rules! wrap_if_csr {
+    (
+        $(#$attr:tt)*
+        $vis:vis struct $name:ident ($inner:ty);
+    ) => {
+        $(#$attr)*
+        #[repr(transparent)]
+        #[non_exhaustive]
+        $vis struct $name {
+            #[cfg(feature = "csr")]
+            inner: $inner
         }
 
-        *state = <Self as UpdateDomEventListener<EventType>>::initialize_dom_event_listener_state(
-            self, target,
-        );
-    }
-}
+        #[cfg(feature = "csr")]
+        impl std::ops::Deref for $name {
+            type Target = $inner;
 
-impl<EventType: StaticEventType, Cbk> UpdateDomEventListener<EventType> for Cbk
-where
-    EventType::Event: JsCast + Clone,
-    Cbk: for<'e> crate::callback::Callback<&'e EventType::Event, Output = ()>
-        + 'static
-        + crate::callback::IsCallable,
-{
-    type State = EventListener;
-
-    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
-        EventListener::new(target, EventType::EVENT_TYPE, move |event| {
-            self.emit(
-                event
-                    .dyn_ref::<EventType::Event>()
-                    .expect("event type should match"),
-            )
-        })
-    }
-}
-
-impl<EventType: StaticEventType, F> UpdateDomEventListener<EventType>
-    for EventListenerOnce<EventType::Event, F>
-where
-    EventType::Event: JsCast,
-    F: FnOnce(&EventType::Event) + 'static,
-{
-    type State = EventListener;
-
-    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
-        EventListener::once(target, EventType::EVENT_TYPE, move |event| {
-            (self.inner)(event.dyn_ref().expect("wrong event type"))
-        })
-    }
-}
-
-impl<Event: StaticEventType, F> UpdateDomEventListener<Event> for Option<F>
-where
-    F: UpdateDomEventListener<Event>,
-{
-    type State = Option<<F as UpdateDomEventListener<Event>>::State>;
-
-    fn initialize_dom_event_listener_state(self, target: &EventTarget) -> Self::State {
-        self.map(|el| F::initialize_dom_event_listener_state(el, target))
-    }
-
-    fn update_dom_event_listener(self, target: &EventTarget, state: &mut Self::State) {
-        match (self, state) {
-            (Some(el), Some(state)) => el.update_dom_event_listener(target, state),
-            (Some(el), state @ None) => {
-                *state = Some(el.initialize_dom_event_listener_state(target))
-            }
-            (None, state) => {
-                *state = None;
+            fn deref(&self) -> &Self::Target {
+                &self.inner
             }
         }
+
+        #[cfg(feature = "csr")]
+        impl std::ops::DerefMut for $name {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.inner
+            }
+        }
+
+        #[cfg(feature = "csr")]
+        impl From<$inner> for $name {
+            fn from(inner: $inner) -> Self {
+                Self { inner }
+            }
+        }
+
+        #[cfg(feature = "csr")]
+        impl Into<$inner> for $name {
+            fn into(self) -> $inner {
+                self.inner
+            }
+        }
+    };
+}
+
+pub(super) use wrap_if_csr;
+
+macro_rules! wrap_events {
+    ($($vis:vis struct $name:ident ($inner:ty);)*) => {$(
+        crate::event::wrap_if_csr! { $vis struct $name ($inner); }
+
+        impl ::callable::StatedEvent for $name {
+            type State = crate::event::EventListener;
+        }
+
+        #[cfg(feature = "csr")]
+        impl crate::NewFromRef for $name {
+            fn new_from_ref(inner: &$inner) -> &Self {
+                // SAFETY: Self is just a wrapper around the inner type,
+                // therefore converting &Inner to &Self is safe.
+                unsafe { &*(inner as *const $inner as *const Self) }
+            }
+        }
+    )*};
+}
+
+pub(super) use wrap_events;
+
+wrap_if_csr!(
+    #[derive(Debug)]
+    pub struct EventListener(gloo::events::EventListener);
+);
+
+#[cfg(feature = "csr")]
+impl EventListener {
+    pub fn new<E: NewFromRef, C: for<'e> callable::Callable<(&'e E,), Output = ()> + 'static>(
+        target: &web_sys::EventTarget,
+        event_type: &'static str,
+        callable: C,
+    ) -> Self
+    where
+        E::Target: wasm_bindgen::JsCast,
+    {
+        Self::from(gloo::events::EventListener::new(
+            target,
+            event_type,
+            move |event| {
+                let event: &E::Target =
+                    wasm_bindgen::JsCast::dyn_ref(event).expect("matched event type");
+                let event: &E = E::new_from_ref(event);
+                let _: () = callable::Callable::call_fn(&callable, (event,));
+            },
+        ))
     }
+}
+
+pub trait NewFromRef: std::ops::Deref {
+    fn new_from_ref(inner: &Self::Target) -> &Self;
+}
+
+pub trait MaybeHandleEvent<E: ?Sized + callable::StatedEvent>:
+    callable::MaybeHandleEvent<E, Callable = Self::StaticCloneCallable>
+{
+    type StaticCloneCallable: 'static + Clone + for<'e> callable::Callable<(&'e E,), Output = ()>;
+}
+
+impl<C, E: ?Sized + callable::StatedEvent> MaybeHandleEvent<E> for C
+where
+    C: callable::MaybeHandleEvent<E>,
+    C::Callable: 'static + Clone + for<'e> callable::Callable<(&'e E,), Output = ()>,
+{
+    type StaticCloneCallable = C::Callable;
 }

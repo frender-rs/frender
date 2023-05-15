@@ -1,4 +1,4 @@
-use frender::prelude::{callback::IsCallable, *};
+use frender::prelude::*;
 use hooks::{prelude::*, shared_state::SharedState};
 
 component_fn!(
@@ -9,14 +9,14 @@ component_fn!(
 
         let increment = state
             .clone()
-            .into_callback(callback!(|state: &SharedState<_>| {
+            .into_callback(callable!(|state: &SharedState<_>| {
                 state.replace_with(|v| *v + 1);
             }))
             .accept_anything();
 
         let decrement = state
             .clone()
-            .into_callback(callback!(|state: &SharedState<_>| {
+            .into_callback(callable!(|state: &SharedState<_>| {
                 state.replace_with(|v| *v - 1);
             }))
             .accept_anything();
@@ -73,7 +73,7 @@ component_fn!(
 
         let state = *state;
 
-        let toggle_stopped = callback!(
+        let toggle_stopped = callable!(
             || stopped_setter.replace_with_fn_pointer(|v| !*v),
             stopped_setter = stopped_setter.clone(),
         )

@@ -8,8 +8,3 @@ pub use style::*;
 
 pub use frender_html_common::IntrinsicComponent; //TODO: refactor
 pub use frender_html_common::MaybeUpdateValueWithState; //TODO: refactor
-
-pub use frender_events::*;
-
-// TODO: remove
-pub use gloo::events::EventListener;

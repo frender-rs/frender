@@ -77,22 +77,22 @@ fn Main() {
         div[[
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(callback!(Data::prepend, fn(&mut _)))
+                    .into_callback_map_mut(callable![fn(&mut _)](Data::prepend))
                     .accept_anything()
             )[["Prepend"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(callback!(Data::append, fn(&mut _)))
+                    .into_callback_map_mut(callable![fn(&mut _)](Data::append))
                     .accept_anything()
             )[["Append"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(callback!(Data::clear, fn(&mut _)))
+                    .into_callback_map_mut(callable![fn(&mut _)](Data::clear))
                     .accept_anything()
             )[["Clear"]],
             button.on_click(
                 data.clone()
-                    .into_callback_map_mut(callback!(Data::swap, fn(&mut _)))
+                    .into_callback_map_mut(callable![fn(&mut _)](Data::swap))
                     .accept_anything()
             )[["Swap"]],
         ]],
@@ -146,7 +146,7 @@ fn Main() {
                                                 //
                                                 button.on_click(
                                                     data.clone()
-                                                        .into_callback_map_mut(callback!(
+                                                        .into_callback_map_mut(callable!(
                                                             |data: &mut Data, idx| {
                                                                 if data.selected_index == Some(idx)
                                                                 {
@@ -167,7 +167,7 @@ fn Main() {
                                                 }]],
                                                 button.on_click(
                                                     data.clone()
-                                                        .into_callback_map_mut(callback!(
+                                                        .into_callback_map_mut(callable!(
                                                             |data: &mut Data, idx| data.remove(idx)
                                                         ))
                                                         .provide_last_argument_copied(idx)

@@ -45,6 +45,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d261e256854913907f67ed06efbc3338dfe6179796deefc1ff763fc1aee5535"
 
 [[package]]
+name = "callable"
+version = "0.2.0"
+
+[[package]]
+name = "callable"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccde2b2ca80d8953ea44874221f4a6d5b811f80560a398bccd48a861860fdfdd"
+replace = "callable 0.2.0"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -250,6 +261,7 @@ dependencies = [
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
+ "callable 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "gloo",
  "static_assertions",
  "wasm-bindgen",
@@ -293,6 +305,7 @@ name = "frender-html-components"
 version = "0.1.0"
 dependencies = [
  "frender-csr",
+ "frender-events",
  "frender-html",
  "frender-html-simple",
  "frender-macros",

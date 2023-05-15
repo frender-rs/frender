@@ -5,6 +5,7 @@ use syn::parse::Parse;
 #[derive(Clone)]
 pub struct FieldDeclarationEventListener {
     pub at_token: syn::Token![@],
+    pub event_type: syn::LitStr,
     pub ty: syn::Type,
 }
 impl FieldDeclarationEventListener {
@@ -20,6 +21,7 @@ impl Parse for FieldDeclarationEventListener {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         Ok(Self {
             at_token: input.parse()?,
+            event_type: input.parse()?,
             ty: input.parse()?,
         })
     }

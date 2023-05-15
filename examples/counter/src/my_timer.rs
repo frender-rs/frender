@@ -1,4 +1,4 @@
-use frender::prelude::{callback::IsCallable, *};
+use frender::prelude::*;
 
 frender::bg::builder! {
     pub struct MyTimerProps {
@@ -45,7 +45,7 @@ pub fn MyTimer(props: MyTimerProps) {
 
     let state = *state;
     let stopped_setter = stopped_setter.clone();
-    let toggle_stopped = callback!(
+    let toggle_stopped = callable!(
         || stopped_setter.replace_with_fn_pointer(|v| !*v),
         stopped_setter = stopped_setter.clone(),
     )

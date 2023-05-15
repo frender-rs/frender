@@ -1,139 +1,111 @@
-use frender_events::callback::{self, CallableWithFixedArguments, Callback};
+use frender_events::callable::{self, ArgumentType, CallableWithFixedArguments};
 use hooks::ShareValue;
 
-pub trait Equivalent {
-    fn equivalent(&self, other: &Self) -> bool;
+pub mod argument {
+    macro_rules! wrap_share_value {
+        ($(
+            $vis:vis struct $name:ident
+            <$tp:ident>
+            ($fn_name:ident ![
+                |$this:ident, $f:ident|
+                -> $arg_ty:tt
+                $impl_block:block
+            ] $(,)?);
+        )*) => {$(
+            #[derive(Debug, Clone, Copy)]
+            $vis struct $name<$tp: ::hooks::ShareValue>(pub(super) $tp);
+
+            impl<$tp: ::hooks::ShareValue> PartialEq for $name<$tp> {
+                fn eq(&self, other: &Self) -> bool {
+                    self.0.equivalent_to(&other.0)
+                }
+            }
+
+            impl<$tp: ::hooks::ShareValue> ::frender_events::callable::argument::ProvideArgument for $name<$tp> {
+                type ProvideArgumentType = ::frender_events::callable::ArgumentType! $arg_ty;
+
+                fn $fn_name<
+                    Out,
+                    F: for<'arg> FnOnce(
+                        ::frender_events::callable::argument::ArgumentOfType<'arg, Self::ProvideArgumentType>,
+                    ) -> Out,
+                >(
+                    &$this,
+                    $f: F,
+                ) -> Out
+                    $impl_block
+            }
+        )*};
+    }
+
+    wrap_share_value!(
+        pub struct Shared<S>(provide_argument_to![|self, f| -> (&S) { f(&self.0) }]);
+        pub struct Mapped<S>(provide_argument_to![|self, f| -> (&S::Value) { self.0.map(f) }]);
+        pub struct MappedMut<S>(
+            provide_argument_to![|self, f| -> (&mut S::Value) { self.0.map_mut(f) }],
+        );
+    );
 }
 
-macro_rules! impl_equivalent {
-    (
-        $(
-            impl_!($($impl_generics:tt)*) : $ty:ty,
-        )*
-    ) => {$(
-        impl <$($impl_generics)*> Equivalent for $ty {
-            fn equivalent(&self, other: &Self) -> bool {
-                *self as usize == *other as usize
-            }
-        }
-    )*};
-}
+pub trait ShareValueExt: ShareValue {
+    fn into_argument_shared(self) -> argument::Shared<Self>
+    where
+        Self: Sized,
+    {
+        argument::Shared(self)
+    }
 
-macro_rules! hkt_wrapper {
-    ($(
-        $vis:vis struct $name:ident
-        $(<$($tp:ident),* $(,)?>)?
-        ($fn_ty:ty);
-    )*) => {$(
-        $vis struct $name
-        $(<$($tp),*>)?
-        ($fn_ty);
+    fn into_argument_mapped(self) -> argument::Mapped<Self>
+    where
+        Self: Sized,
+    {
+        argument::Mapped(self)
+    }
 
-        // impl $(<$($tp),*>)? PartialEq for $name $(<$($tp),*>)? {
-        //     fn eq(&self, other: &Self) -> bool {
-        //         self.0 as usize == other.0 as usize
-        //     }
-        // }
+    fn into_argument_mapped_mut(self) -> argument::MappedMut<Self>
+    where
+        Self: Sized,
+    {
+        argument::MappedMut(self)
+    }
 
-        // impl $(<$($tp),*>)? Eq for $name $(<$($tp),*>)? {}
-
-        impl $(<$($tp),*>)? Equivalent for $name $(<$($tp),*>)? {
-            fn equivalent(&self, other: &Self) -> bool {
-                self.0 as usize == other.0 as usize
-            }
-        }
-
-        impl $(<$($tp),*>)? Clone for $name $(<$($tp),*>)? {
-            fn clone(&self) -> Self {
-                Self(self.0)
-            }
-        }
-
-        impl $(<$($tp),*>)? Copy for $name $(<$($tp),*>)? {}
-    )*};
-}
-
-hkt_wrapper!(
-    pub struct Use<S, R>(fn(&S) -> R);
-    pub struct Hkt2<S, R>(fn(&mut S) -> R);
-    pub struct Hkt21<S, IN, R>(fn(&mut S, &IN) -> R);
-);
-
-pub trait ShareValueExt: ShareValue + 'static {
     fn into_callback<F>(
         self,
         f: F,
-    ) -> callback::argument::FirstArgumentProvided<F, callback::argument::Refed<Self>>
+    ) -> callable::argument::FirstArgumentProvided<F, argument::Shared<Self>>
+    where
+        Self: Sized,
+        F: CallableWithFixedArguments,
+        F::FixedArgumentTypes: callable::argument::ArgumentTypes<First = ArgumentType![&Self]>,
+    {
+        f.provide_first_argument(argument::Shared(self))
+    }
+
+    fn into_callback_map<F>(
+        self,
+        f: F,
+    ) -> callable::argument::FirstArgumentProvided<F, argument::Mapped<Self>>
     where
         Self: Sized,
         F: CallableWithFixedArguments,
         F::FixedArgumentTypes:
-            callback::argument::ArgumentTypes<First = callback::argument::ByRef<Self>>,
+            callable::argument::ArgumentTypes<First = ArgumentType![&Self::Value]>,
     {
-        f.provide_first_argument_refed(self)
+        f.provide_first_argument(argument::Mapped(self))
     }
-
-    // fn into_callback_map<R>(self, f: fn(&Self::Value) -> R) -> IntoCallbackMap<R, Self>
-    // where
-    //     Self: Sized + Clone,
-    // {
-    //     IntoCallbackMap {
-    //         share_value: self,
-    //         f,
-    //         dependency: (),
-    //     }
-    // }
 
     fn into_callback_map_mut<F>(
         self,
         f: F,
-    ) -> callback::argument::FirstArgumentProvided<F, MapMut<Self>>
+    ) -> callable::argument::FirstArgumentProvided<F, argument::MappedMut<Self>>
     where
         Self: Sized,
         F: CallableWithFixedArguments,
         F::FixedArgumentTypes:
-            callback::argument::ArgumentTypes<First = callback::argument::ByMut<Self::Value>>,
+            callable::argument::ArgumentTypes<First = ArgumentType![&mut Self::Value]>,
     {
-        f.provide_first_argument(MapMut(self))
-    }
-
-    // fn into_callback_map_mut_accept<IN, R>(
-    //     self,
-    //     f: fn(&mut Self::Value, IN) -> R,
-    // ) -> IntoCallbackMapMutAcceptInput<IN, R, Self>
-    // where
-    //     Self: Sized + Clone,
-    // {
-    //     IntoCallbackMapMutAcceptInput {
-    //         share_value: self,
-    //         f,
-    //         dependency: (),
-    //     }
-    // }
-}
-
-impl<S: ?Sized + 'static> ShareValueExt for S where S: ShareValue {}
-
-impl_equivalent!(
-    impl_!(A0, R): fn(&A0) -> R,
-    impl_!(A0, R): fn(&mut A0) -> R,
-    impl_!(A0, A1, R): fn(&mut A0, A1) -> R,
-);
-
-pub struct MapMut<S: ShareValue>(S);
-
-impl<S: ShareValue + 'static> callback::argument::ProvideArgument for MapMut<S> {
-    type ProvideArgumentType = callback::argument::ByMut<S::Value>;
-
-    fn provide_argument_to<
-        Out,
-        F: for<'arg> FnOnce(
-            callback::argument::ArgumentOfType<'arg, Self::ProvideArgumentType>,
-        ) -> Out,
-    >(
-        &self,
-        f: F,
-    ) -> Out {
-        self.0.map_mut(f)
+        f.provide_first_argument(argument::MappedMut(self))
     }
 }
+
+impl<S: ?Sized> ShareValueExt for S where S: ShareValue {}

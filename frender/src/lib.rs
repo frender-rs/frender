@@ -31,11 +31,10 @@ pub mod html {
     pub use frender_html_components::intrinsic_components;
 }
 
-#[cfg(feature = "html")]
-pub use html::props::{events, UpdateDomEventListener};
-
 pub use frender_hook_element as hook_element;
 pub use frender_hook_element::{component_fn, Element};
+
+pub use frender_events::{events, MaybeHandleEvent};
 
 #[cfg(feature = "bg")]
 pub use bg;
@@ -54,17 +53,13 @@ pub mod prelude {
 
     pub use frender_macros::component;
 
+    pub use frender_events::callable::prelude::*;
+
     #[cfg(feature = "html-components-simply-typed")]
     pub use frender_html_components::intrinsic_components;
 
     #[cfg(feature = "hooks")]
     pub use crate::hooks_ext::ShareValueExt;
-
-    #[cfg(feature = "html")]
-    pub use crate::html::props::{callback, ArgumentTypes};
-
-    #[cfg(feature = "html")]
-    pub use callback::{Callable, CallableWithFixedArguments, Callback, IsCallable};
 }
 
 #[macro_export]
