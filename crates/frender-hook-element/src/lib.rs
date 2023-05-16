@@ -1,9 +1,11 @@
 pub mod fn_wrapper;
 
 mod element;
+mod render;
 mod state;
 
 pub use element::*;
+pub use render::*;
 pub use state::*;
 
 #[cfg(feature = "csr")]

@@ -11,11 +11,13 @@ pub mod omitted;
 
 pub use elements::static_text::StaticText;
 
-pub use frender_common::Keyed;
+pub use frender_common::{Elements, Keyed};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
-pub use frender_hook_element::frender_csr::{CsrContext, Element as CsrElement};
+pub use frender_hook_element::frender_csr::{
+    CsrContext, Element as CsrElement, RenderState as CsrRenderState,
+};
 
 #[cfg(feature = "ssr")]
 pub use frender_hook_element::frender_ssr::{Element as SsrElement, ElementExt as SsrElementExt};
@@ -32,7 +34,7 @@ pub mod html {
 }
 
 pub use frender_hook_element as hook_element;
-pub use frender_hook_element::{component_fn, Element};
+pub use frender_hook_element::{component_fn, Element, RenderWith};
 
 pub use frender_events::{events, MaybeHandleEvent};
 
@@ -45,9 +47,9 @@ pub mod prelude {
 
     pub use crate::{rsx, StaticText};
 
-    pub use frender_hook_element::{component_fn, Element};
+    pub use frender_hook_element::{component_fn, Element, RenderWith};
 
-    pub use frender_common::Keyed;
+    pub use frender_common::{Elements, Keyed};
 
     pub use crate::{elements, intrinsic};
 

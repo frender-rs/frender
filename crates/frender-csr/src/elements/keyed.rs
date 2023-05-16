@@ -2,7 +2,7 @@ use std::{collections::HashMap, fmt::Debug, pin::Pin};
 
 use indexmap::{IndexMap, IndexSet};
 
-use frender_common::Keyed;
+use frender_common::{Elements, Keyed};
 
 use crate::{Element, RenderState};
 
@@ -68,8 +68,50 @@ where
     type CsrState = KeyedElementsState<K, E::CsrState>;
 
     fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
+        Elements(self).into_csr_state(ctx)
+    }
+
+    fn update_csr_state_maybe_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) {
+        Elements(self).update_csr_state_maybe_reposition(ctx, state, force_reposition)
+    }
+
+    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>)
+    where
+        Self: Sized,
+    {
+        Elements(self).update_csr_state(ctx, state)
+    }
+
+    fn update_csr_state_force_reposition(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: Pin<&mut Self::CsrState>,
+    ) where
+        Self: Sized,
+    {
+        Elements(self).update_csr_state_force_reposition(ctx, state)
+    }
+}
+
+impl<I, K, E> Element for Elements<I>
+where
+    I: IntoIterator<Item = Keyed<K, E>>,
+    I::IntoIter: ExactSizeIterator,
+    K: std::hash::Hash + Eq + Debug,
+    E: Element,
+    E::CsrState: Unpin,
+{
+    type CsrState = KeyedElementsState<K, E::CsrState>;
+
+    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
         KeyedElementsState {
             states: self
+                .0
                 .into_iter()
                 .map(|Keyed(k, v)| (k, v.into_csr_state(ctx)))
                 .collect(),
@@ -82,12 +124,14 @@ where
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
         let state = state.get_mut();
-        if self.is_empty() {
-            return state.clear();
-        }
 
         if state.states.is_empty() {
             return *state = self.into_csr_state(ctx);
+        }
+
+        let elements = self.0.into_iter();
+        if elements.len() == 0 {
+            return state.clear();
         }
 
         let states = &mut state.states;
@@ -98,7 +142,7 @@ where
 
         let mut cur = 0;
 
-        for Keyed(key, element) in self.into_iter() {
+        for Keyed(key, element) in elements {
             if let Some(mut old_idx) = old_states.get_index_of(&key) {
                 match old_idx.cmp(&cur) {
                     std::cmp::Ordering::Equal => {}
@@ -171,9 +215,11 @@ where
     ) {
         let states = &mut state.get_mut().states;
 
-        let mut old_states = std::mem::replace(states, IndexMap::with_capacity(self.len()));
+        let elements = self.0.into_iter();
 
-        for Keyed(key, element) in self {
+        let mut old_states = std::mem::replace(states, IndexMap::with_capacity(elements.len()));
+
+        for Keyed(key, element) in elements {
             if let Some(state) = old_states.remove(&key) {
                 let entry = states.entry(key);
 

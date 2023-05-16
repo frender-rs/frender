@@ -5,7 +5,7 @@ use lazy_pinned::LazyPinned;
 
 use crate::fn_wrapper;
 
-pub struct Rendered<S>(PhantomData<S>);
+pub struct Rendered<S>(pub(crate) PhantomData<S>);
 
 pub struct CsrRenderContext<'a, 'ctx, State> {
     context: &'a mut CsrContext<'ctx>,
