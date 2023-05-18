@@ -36,6 +36,11 @@ impl<'a, 'ctx, S: RenderState> CsrRenderContext<'a, 'ctx, S> {
         self.state.use_pin_or_insert_with_data(
             (element, self.context),
             |(element, context), state| {
+                #[cfg(debug_assertions)]
+                frender_csr::web_sys::console::log_2(
+                    &"CsrRenderContext::render self.force_reposition".into(),
+                    &self.force_reposition.into(),
+                );
                 element.update_csr_state_maybe_reposition(context, state, self.force_reposition)
             },
             |(element, context)| element.into_csr_state(context),

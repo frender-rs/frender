@@ -1,31 +1,11 @@
 use std::{marker::PhantomData, pin::Pin};
 
-pub enum OptionPin<'a, S> {
-    Option(Pin<&'a mut Option<S>>),
-    AlwaysSome(Pin<&'a mut S>),
-}
-
-impl<'a, S> OptionPin<'a, S> {
-    pub(crate) fn as_mut(&mut self) -> OptionPin<'_, S> {
-        match self {
-            OptionPin::Option(v) => OptionPin::Option(v.as_mut()),
-            OptionPin::AlwaysSome(v) => OptionPin::AlwaysSome(v.as_mut()),
-        }
-    }
-
-    pub(crate) fn as_pin_mut(self) -> Option<Pin<&'a mut S>> {
-        match self {
-            OptionPin::Option(v) => v.as_pin_mut(),
-            OptionPin::AlwaysSome(v) => Some(v),
-        }
-    }
-
-    pub(crate) fn set(self, value: S) {
-        match self {
-            OptionPin::Option(mut v) => v.set(Some(value)),
-            OptionPin::AlwaysSome(mut v) => v.set(value),
-        }
-    }
+pub enum OptionRenderState<'a, S> {
+    Uninitialized(Pin<&'a mut Option<S>>),
+    Initialized {
+        state: Pin<&'a mut S>,
+        force_reposition: bool,
+    },
 }
 
 pub struct RenderWith<
@@ -54,7 +34,7 @@ pub mod csr {
 
     use frender_csr::{CsrContext, Element, RenderState};
 
-    use crate::OptionPin;
+    use crate::OptionRenderState;
 
     pin_project_lite::pin_project!(
         pub struct State<S: RenderState> {
@@ -86,36 +66,38 @@ pub mod csr {
 
     pub struct CsrRenderContext<'a, 'ctx, State: RenderState> {
         context: &'a mut CsrContext<'ctx>,
-        state: OptionPin<'a, State>,
-        pub(crate) force_reposition: bool,
+        state: OptionRenderState<'a, State>,
     }
 
     impl<'a, 'ctx, State: RenderState> CsrRenderContext<'a, 'ctx, State> {
         pub(super) fn _new(
             context: &'a mut CsrContext<'ctx>,
-            state: OptionPin<'a, State>,
-            force_reposition: bool,
+            state: OptionRenderState<'a, State>,
         ) -> Self {
-            Self {
-                context,
-                state,
-                force_reposition,
-            }
+            Self { context, state }
         }
 
         pub fn render<E: Element<CsrState = State>>(
-            mut self,
+            self,
             element: E,
         ) -> crate::csr::Rendered<State> {
-            if let Some(state) = self.state.as_mut().as_pin_mut() {
-                element.update_csr_state_maybe_reposition(
-                    self.context,
+            match self.state {
+                OptionRenderState::Uninitialized(mut state) => {
+                    state.set(Some(element.into_csr_state(self.context)))
+                }
+                OptionRenderState::Initialized {
                     state,
-                    self.force_reposition,
-                )
-            } else {
-                self.state.set(element.into_csr_state(self.context))
+                    force_reposition,
+                } => {
+                    #[cfg(debug_assertions)]
+                    frender_csr::web_sys::console::log_2(
+                        &"render_with::CsrRenderContext::render force_reposition".into(),
+                        &force_reposition.into(),
+                    );
+                    element.update_csr_state_maybe_reposition(self.context, state, force_reposition)
+                }
             }
+
             crate::csr::Rendered(PhantomData)
         }
     }
@@ -132,8 +114,7 @@ impl<
         let mut state = None;
         let _: crate::csr::Rendered<S> = (self.f)(csr::CsrRenderContext::_new(
             ctx,
-            OptionPin::Option(Pin::new(&mut state)),
-            false,
+            OptionRenderState::Uninitialized(Pin::new(&mut state)),
         ));
 
         state.unwrap()
@@ -145,10 +126,17 @@ impl<
         state: std::pin::Pin<&mut Self::CsrState>,
         force_reposition: bool,
     ) {
+        #[cfg(debug_assertions)]
+        frender_csr::web_sys::console::log_2(
+            &"RenderWith::update_csr_state_maybe_reposition".into(),
+            &force_reposition.into(),
+        );
         let _: crate::csr::Rendered<S> = (self.f)(csr::CsrRenderContext::_new(
             ctx,
-            OptionPin::AlwaysSome(state),
-            force_reposition,
+            OptionRenderState::Initialized {
+                state,
+                force_reposition,
+            },
         ));
     }
 }

@@ -95,10 +95,12 @@ impl CsrContext<'_> {
         )
         .await;
 
+        #[cfg(debug_assertions)]
         web_sys::console::log_1(&"stopped or non-dynamic".into());
 
         stop.await;
 
+        #[cfg(debug_assertions)]
         web_sys::console::log_1(&"stopped".into());
 
         state.unmount();

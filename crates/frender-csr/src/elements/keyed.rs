@@ -208,11 +208,75 @@ where
         }
     }
 
+    #[cfg(frender_elements_update_by_swapping)]
+    fn update_csr_state(
+        self,
+        ctx: &mut crate::CsrContext,
+        state: std::pin::Pin<&mut Self::CsrState>,
+    ) {
+        let state = state.get_mut();
+
+        if state.states.is_empty() {
+            return *state = self.into_csr_state(ctx);
+        }
+
+        let elements = self.0.into_iter();
+        if elements.len() == 0 {
+            return state.clear();
+        }
+
+        let states = &mut state.states;
+
+        let new_len = elements.len();
+        let old_len = states.len();
+        if new_len > old_len {
+            states.reserve(new_len - old_len);
+        }
+
+        // after this index, elements needs to be repositioned
+        let mut after_index = old_len;
+
+        for (new_idx, Keyed(key, element)) in elements.enumerate() {
+            if let Some(old_idx) = states.get_index_of(&key) {
+                let force_reposition = if new_idx == old_idx {
+                    old_idx >= after_index
+                } else {
+                    debug_assert!(old_idx > new_idx);
+                    if after_index > old_idx {
+                        after_index = old_idx;
+                    }
+                    states.swap_indices(new_idx, old_idx);
+                    true
+                };
+                let (_, state) = states.get_index_mut(new_idx).unwrap();
+                element.update_csr_state_maybe_reposition(ctx, Pin::new(state), force_reposition)
+            } else {
+                // element is new
+                if let (last, None) = states.insert_full(key, element.into_csr_state(ctx)) {
+                    if new_idx != last {
+                        states.swap_indices(new_idx, last);
+                    }
+                } else {
+                    unreachable!()
+                };
+            }
+        }
+
+        if states.len() > new_len {
+            states
+                .drain(new_len..)
+                .for_each(|(_, ref mut state)| Pin::new(state).unmount())
+        }
+    }
+
     fn update_csr_state_force_reposition(
         self,
         ctx: &mut crate::CsrContext,
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
+        #[cfg(debug_assertions)]
+        gloo::console::warn!("Elements repositioning");
+
         let states = &mut state.get_mut().states;
 
         let elements = self.0.into_iter();
@@ -244,9 +308,9 @@ where
         force_reposition: bool,
     ) {
         if force_reposition {
-            self.update_csr_state(ctx, state)
-        } else {
             self.update_csr_state_force_reposition(ctx, state)
+        } else {
+            self.update_csr_state(ctx, state)
         }
     }
 }

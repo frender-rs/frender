@@ -112,6 +112,11 @@ mod dom {
         ) where
             Self: Sized,
         {
+            #[cfg(debug_assertions)]
+            frender_csr::web_sys::console::log_2(
+                &"IntrinsicElement force_reposition".into(),
+                &force_reposition.into(),
+            );
             let (node_and_mounted, state) = state.pin_project();
             let (children_state, attrs_state) = state.pin_project();
             node_and_mounted.update_maybe_reposition(
