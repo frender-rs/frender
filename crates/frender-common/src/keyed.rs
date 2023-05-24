@@ -5,5 +5,11 @@
 #[derive(Debug, Clone, Copy)]
 pub struct Keyed<K, E>(pub K, pub E);
 
+impl<K, E> Keyed<K, E> {
+    pub fn from_tuple((key, element): (K, E)) -> Self {
+        Keyed(key, element)
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Elements<I: IntoIterator>(pub I);
