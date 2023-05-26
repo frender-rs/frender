@@ -20,19 +20,9 @@ mod link {
 
     use frender_common::Keyed;
 
-    struct CursorOfLinkedItems {
-        first_index: usize,
-    }
-
-    struct ItemInfo {
-        index: usize,
-        next: usize,
-    }
-
-    struct IndexMapWithHashMap<K, V> {
-        map: HashMap<K, ItemInfo>,
-        vec: Vec<V>,
-    }
+    // /// `usize::MAX` means `None`
+    // #[derive(Clone, Copy)]
+    // pub struct OptionIndex(usize);
 
     pub struct Node<Value, Index = usize> {
         value: Value,
@@ -75,18 +65,6 @@ mod link {
                 value: (),
                 prev: self.prev,
                 next: self.next,
-            }
-        }
-
-        fn as_position_deref_copied(&self) -> Position<Index::Target>
-        where
-            Index: std::ops::Deref,
-            Index::Target: Copy,
-        {
-            Position {
-                value: (),
-                prev: *self.prev,
-                next: *self.next,
             }
         }
     }
@@ -229,7 +207,7 @@ mod link {
                 assert!(into.is_empty());
                 assert_eq!(
                     updated,
-                    ORIGINAL.map(|(key, v)| Updated {
+                    ORIGINAL.map(|(_, v)| Updated {
                         old_state: v,
                         new_item: v,
                         force_reposition: false
@@ -238,7 +216,7 @@ mod link {
                 assert_eq!(unmounted, [] as [u32; 0]);
             }
 
-            fn append<Impl: IndexMapForStates<Key, State>>() {
+            pub(super) fn append<Impl: IndexMapForStates<Key, State>>() {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
@@ -366,16 +344,107 @@ mod link {
                 assert_eq!(
                     records,
                     Records {
-                        into: vec![ORIGINAL.len() as Item],
+                        into: vec![],
+                        updated: [
+                            Updated {
+                                old_state: 0,
+                                new_item: 0,
+                                force_reposition: false
+                            },
+                            Updated {
+                                old_state: 3,
+                                new_item: 3,
+                                force_reposition: true
+                            },
+                            Updated {
+                                old_state: 2,
+                                new_item: 2,
+                                force_reposition: true
+                            },
+                            Updated {
+                                old_state: 1,
+                                new_item: 1,
+                                force_reposition: true
+                            },
+                            Updated {
+                                old_state: 4,
+                                new_item: 4,
+                                force_reposition: true
+                            },
+                        ]
+                        .into(),
+                        unmounted: vec![]
+                    }
+                );
+            }
+
+            pub(super) fn remove_all<Impl: IndexMapForStates<Key, State>>() {
+                let mut states = get_original_state::<Impl>();
+                let mut records = Records::default();
+
+                records.record_while_updating_states(&mut states, [].into_iter());
+
+                assert_eq!(states.clone_ordered(), []);
+
+                assert_eq!(
+                    records,
+                    Records {
+                        into: vec![],
+                        updated: vec![],
+                        unmounted: ORIGINAL.into_iter().map(|(_, state)| state).collect()
+                    }
+                );
+            }
+
+            pub(super) fn full_replace<Impl: IndexMapForStates<Key, State>>() {
+                let mut states = get_original_state::<Impl>();
+                let mut records = Records::default();
+
+                records.record_while_updating_states(
+                    &mut states,
+                    [Keyed("f".into(), 5), Keyed("g".into(), 6)].into_iter(),
+                );
+
+                assert_eq!(states.clone_ordered(), []);
+
+                assert_eq!(
+                    records,
+                    Records {
+                        into: vec![5, 6],
+                        updated: vec![],
+                        unmounted: ORIGINAL.into_iter().map(|(_, state)| state).collect()
+                    }
+                );
+            }
+
+            pub(super) fn pop_front<Impl: IndexMapForStates<Key, State>>() {
+                let mut states = get_original_state::<Impl>();
+                let mut records = Records::default();
+
+                records.record_while_updating_states(
+                    &mut states,
+                    ORIGINAL.into_iter().skip(1).map(Keyed::from_tuple),
+                );
+
+                assert_eq!(
+                    states.clone_ordered(),
+                    ORIGINAL.into_iter().skip(1).collect::<Vec<_>>()
+                );
+
+                assert_eq!(
+                    records,
+                    Records {
+                        into: vec![],
                         updated: ORIGINAL
                             .into_iter()
-                            .map(|(_, item)| Updated {
-                                old_state: item,
-                                new_item: item + 1,
+                            .skip(1)
+                            .map(|(_, v)| Updated {
+                                old_state: v,
+                                new_item: v,
                                 force_reposition: false
                             })
-                            .collect::<Vec<_>>(),
-                        unmounted: vec![]
+                            .collect(),
+                        unmounted: vec![ORIGINAL[0].1]
                     }
                 );
             }
@@ -387,12 +456,15 @@ mod link {
                 prepend::<Impl>();
                 prepend_and_update::<Impl>();
                 swap::<Impl>();
+                remove_all::<Impl>();
+                full_replace::<Impl>();
+                pop_front::<Impl>();
             }
         }
 
         #[test]
         fn real_index_map() {
-            asserts::swap::<RealIndexMap<_, _>>()
+            asserts::pop_front::<RealIndexMap<_, _>>()
         }
     }
 
@@ -492,30 +564,49 @@ mod link {
             let (key, node) = self.map.get_index(index).unwrap();
             (key, node.as_ref())
         }
-    }
 
-    pub enum KeyOrIndex<'a, K> {
-        Key(&'a K),
-        Index(usize),
-    }
+        fn remove_by_index(&mut self, index: usize, first_index: &mut usize) -> Node<V, usize> {
+            let (_, mut node) = self.map.swap_remove_index(index).unwrap();
 
-    pub(super) enum MutKeyMatchedIndex<'a, K, V> {
-        KeyExists {
-            key: &'a K,
-            value: &'a mut V,
-            next: &'a mut usize,
-            unmatched_index: Option<usize>,
-        },
-        KeyNotExists {
-            value: &'a mut V,
-            next: &'a mut usize,
-        },
-    }
+            let swapped_index = self.map.len();
 
-    pub(super) struct GetMut<'a, V> {
-        index: usize,
-        value: &'a mut V,
-        next_index: &'a mut usize,
+            debug_assert_ne!(swapped_index, usize::MAX);
+
+            if index != swapped_index {
+                let prev = *self.get_mut_prev_by_index(index);
+                if prev == usize::MAX {
+                    *first_index = index;
+                } else {
+                    *self.get_mut_next_by_index(prev) = index;
+                }
+
+                let next = *self.get_mut_next_by_index(index);
+
+                if next != usize::MAX {
+                    *self.get_mut_prev_by_index(next) = index;
+                }
+            }
+
+            let next_of_prev = if node.prev == usize::MAX {
+                debug_assert_ne!(*first_index, usize::MAX);
+                first_index
+            } else {
+                if node.prev == swapped_index {
+                    node.prev = index;
+                }
+                self.get_mut_next_by_index(node.prev)
+            };
+            *next_of_prev = node.next;
+
+            if node.next != usize::MAX {
+                if node.next == swapped_index {
+                    node.next = index;
+                }
+                *self.get_mut_prev_by_index(node.next) = node.prev;
+            }
+
+            node
+        }
     }
 
     pub(super) trait GetMutPositionByIndex {
@@ -552,6 +643,11 @@ mod link {
 
         fn get_mut_value_by_index(&mut self, index: usize) -> &mut V;
         fn get_by_index(&self, index: usize) -> (&K, Node<&V, &usize>);
+
+        /// `index` should be valid. If not, implementation should panic.
+        ///
+        /// Implementation should make sure `prev` and `next` are correctly updated.
+        fn remove_by_index(&mut self, index: usize, first_index: &mut usize) -> Node<V, usize>;
     }
 
     #[cfg(test)]
@@ -572,89 +668,6 @@ mod link {
         map: IndexMapImpl,
         first_index: usize,
         _phantom: PhantomData<(K, V)>,
-    }
-
-    mod skipped_list {
-        use super::*;
-
-        pub(super) struct SkippedList {
-            first: usize,
-            tail: usize,
-        }
-
-        impl SkippedList {
-            pub(super) fn new() -> Self {
-                Self {
-                    first: usize::MAX,
-                    tail: usize::MAX,
-                }
-            }
-
-            /// returns the old position of `index`
-            pub(super) fn append(
-                &mut self,
-                index: usize,
-                map: &mut impl GetMutPositionByIndex,
-            ) -> Position {
-                let pos = map.get_mut_position_by_index(index);
-                let old_pos = pos.as_position_deref_copied();
-                if self.first == usize::MAX {
-                    // empty
-                    debug_assert_eq!(self.tail, usize::MAX);
-                    self.first = index;
-                    self.tail = index;
-
-                    *pos.prev = usize::MAX;
-                    *pos.next = usize::MAX;
-                } else {
-                    *map.get_mut_next_by_index(self.tail) = index;
-                    let pos = map.get_mut_position_by_index(index);
-                    *pos.prev = self.tail;
-                    *pos.next = usize::MAX;
-                    self.tail = index;
-                }
-
-                if old_pos.prev != usize::MAX {
-                    let next = map.get_mut_next_by_index(old_pos.prev);
-                    debug_assert_eq!(*next, index);
-                    *next = old_pos.next;
-                }
-
-                if old_pos.next != usize::MAX {
-                    let prev = map.get_mut_prev_by_index(old_pos.next);
-                    debug_assert_eq!(*prev, index);
-                    *prev = old_pos.prev;
-                }
-
-                old_pos
-            }
-
-            pub(super) fn pop_front(
-                &mut self,
-                map: &mut impl GetMutPositionByIndex,
-            ) -> Option<usize> {
-                if self.first == usize::MAX {
-                    // empty
-                    debug_assert_eq!(self.tail, usize::MAX);
-                    None
-                } else {
-                    let first = self.first;
-
-                    debug_assert_eq!(*map.get_mut_prev_by_index(first), usize::MAX);
-
-                    let next_of_index = map.get_mut_next_by_index(first);
-                    let next = *next_of_index;
-
-                    *next_of_index = usize::MAX;
-
-                    let prev_of_next = map.get_mut_prev_by_index(next);
-                    debug_assert_eq!(*prev_of_next, first);
-                    *prev_of_next = usize::MAX;
-
-                    Some(first)
-                }
-            }
-        }
     }
 
     impl<K: Hash + Eq, V: Unpin, IndexMapImpl: IndexMapForStates<K, V>>
@@ -712,104 +725,82 @@ mod link {
             debug_assert_ne!(self.first_index, usize::MAX);
             debug_assert!(self.map.len() > self.first_index);
 
-            #[derive(Debug)]
-            struct Cursor<'a> {
-                current: Option<usize>,
-                first: &'a mut usize,
-            }
-
-            impl<'a> Cursor<'a> {
-                fn current_as_index(&self) -> usize {
-                    self.current.unwrap_or(usize::MAX)
-                }
-
-                fn get_mut_next_index_of_current<'b>(
-                    &'b mut self,
-                    map: &'b mut impl GetMutPositionByIndex,
-                ) -> &'b mut usize {
-                    if let Some(current) = self.current {
-                        map.get_mut_next_by_index(current)
-                    } else {
-                        self.first
-                    }
-                }
-            }
-
-            let mut list = Cursor {
-                current: None,
-                first: &mut self.first_index,
-            };
-
             #[cfg(all(debug_assertions, target_arch = "wasm32"))]
             gloo::console::warn!("list.first", *list.first);
 
-            let mut skipped_list = skipped_list::SkippedList::new();
+            let mut prev = usize::MAX;
+            let mut next_of_prev = self.first_index;
 
             let mut count = 0;
 
             for Keyed(key, item) in entries {
-                count += 1;
+                let index;
 
-                #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-                gloo::console::warn!("iter: list = ", format!("{:?}", list));
-
-                let mut next_of_cursor = *list.get_mut_next_index_of_current(&mut self.map);
-                if let Some(index) = self
+                if let Some(i) = self
                     .map
-                    .get_index_by_key_with_index_hint(&key, next_of_cursor)
+                    .get_index_by_key_with_index_hint(&key, next_of_prev)
                 {
-                    let force_reposition;
+                    index = i;
 
-                    // skip `next_of_cursor`
-                    loop {
-                        if next_of_cursor == usize::MAX {
-                            force_reposition = true;
-                            break;
+                    if index == next_of_prev {
+                        let node = self.map.get_mut_node_by_index(index);
+                        item_update_value(item, ctx, Pin::new(node.value), false);
+
+                        next_of_prev = *node.next;
+
+                        #[cfg(debug_assertions)]
+                        if prev == usize::MAX {
+                            debug_assert_eq!(self.first_index, index);
+                        } else {
+                            debug_assert_eq!(self.map.get_position_by_index(prev).next, index);
                         }
+                    } else {
+                        let node = self.map.get_mut_node_by_index(index);
+                        item_update_value(item, ctx, Pin::new(node.value), true);
 
-                        if next_of_cursor == index {
-                            force_reposition = false;
-                            break;
-                        };
+                        *node.prev = prev;
+                        next_of_prev = *node.next;
 
-                        let old_pos = skipped_list.append(next_of_cursor, &mut self.map);
-
-                        next_of_cursor = old_pos.next;
+                        if prev == usize::MAX {
+                            self.first_index = index;
+                        } else {
+                            *self.map.get_mut_next_by_index(prev) = index;
+                        }
                     }
 
-                    if force_reposition {
-                        let pos = self.map.get_position_by_index(index);
-                        if pos.prev != usize::MAX {
-                            *self.map.get_mut_next_by_index(pos.prev) = pos.next;
-                        }
-                        if pos.next != usize::MAX {
-                            *self.map.get_mut_prev_by_index(pos.next) = pos.prev;
-                        }
-                    }
-
-                    let node = self.map.get_mut_node_by_index(index);
-
-                    item_update_value(item, ctx, Pin::new(node.value), force_reposition);
-
-                    *node.prev = list.current_as_index();
-
-                    *list.get_mut_next_index_of_current(&mut self.map) = index;
-
-                    list.current = Some(index);
+                    prev = index;
                 } else {
                     #[cfg(all(debug_assertions, target_arch = "wasm32"))]
                     gloo::console::warn!("New Key, next_of_cursor = ", next_of_cursor);
-                    let index = self.map.add_with_new_key(
+
+                    index = self.map.add_with_new_key(
                         key,
                         Node {
                             value: item_into_value(item, ctx),
-                            prev: list.current_as_index(),
-                            next: next_of_cursor,
+                            prev,
+                            next: next_of_prev,
                         },
                     );
-                    *list.get_mut_next_index_of_current(&mut self.map) = index;
-                    list.current = Some(index);
+
+                    let nop = if prev == usize::MAX {
+                        &mut self.first_index
+                    } else {
+                        self.map.get_mut_next_by_index(prev)
+                    };
+
+                    debug_assert_eq!(*nop, next_of_prev);
+
+                    *nop = index;
+
+                    prev = index;
                 };
+
+                #[cfg(debug_assertions)]
+                if count == 0 {
+                    assert_eq!(index, self.first_index);
+                }
+
+                count += 1;
             }
 
             if count == 0 {
@@ -818,11 +809,14 @@ mod link {
                 return;
             }
 
-            while let Some(skipped_index) = skipped_list.pop_front(&mut self.map) {
-                let value = self.map.get_mut_value_by_index(skipped_index);
-                value_unmount(Pin::new(value));
+            while next_of_prev != usize::MAX {
+                let mut removed = self
+                    .map
+                    .remove_by_index(next_of_prev, &mut self.first_index);
 
-                // TODO: swap_remove skipped
+                value_unmount(Pin::new(&mut removed.value));
+
+                next_of_prev = removed.next;
             }
         }
 
