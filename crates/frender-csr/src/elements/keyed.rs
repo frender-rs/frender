@@ -20,9 +20,13 @@ mod link {
 
     use frender_common::Keyed;
 
-    // /// `usize::MAX` means `None`
-    // #[derive(Clone, Copy)]
-    // pub struct OptionIndex(usize);
+    /// `usize::MAX` means `None`
+    #[derive(Clone, Copy)]
+    struct OptionIndex(usize);
+
+    impl OptionIndex {
+        const NONE: Self = Self(usize::MAX);
+    }
 
     pub struct Node<Value, Index = usize> {
         value: Value,
@@ -255,7 +259,7 @@ mod link {
                 );
             }
 
-            fn prepend<Impl: IndexMapForStates<Key, State>>() {
+            pub(super) fn prepend<Impl: IndexMapForStates<Key, State>>() {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
@@ -364,12 +368,12 @@ mod link {
                             Updated {
                                 old_state: 1,
                                 new_item: 1,
-                                force_reposition: true
+                                force_reposition: false
                             },
                             Updated {
                                 old_state: 4,
                                 new_item: 4,
-                                force_reposition: true
+                                force_reposition: false
                             },
                         ]
                         .into(),
@@ -400,12 +404,14 @@ mod link {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
+                const NEW: [(Key, Item); 2] = [(Cow::Borrowed("f"), 5), (Cow::Borrowed("g"), 6)];
+
                 records.record_while_updating_states(
                     &mut states,
-                    [Keyed("f".into(), 5), Keyed("g".into(), 6)].into_iter(),
+                    NEW.into_iter().map(Keyed::from_tuple),
                 );
 
-                assert_eq!(states.clone_ordered(), []);
+                assert_eq!(states.clone_ordered(), NEW);
 
                 assert_eq!(
                     records,
@@ -441,12 +447,31 @@ mod link {
                             .map(|(_, v)| Updated {
                                 old_state: v,
                                 new_item: v,
-                                force_reposition: false
+                                force_reposition: true
                             })
                             .collect(),
                         unmounted: vec![ORIGINAL[0].1]
                     }
                 );
+            }
+
+            pub(super) fn empty<Impl: IndexMapForStates<Key, State>>() {
+                let mut states = ListAndSorted::<_, _, Impl>::from_entries([]);
+                assert!(states.clone_ordered().is_empty());
+
+                let mut records = Records::default();
+
+                records.record_while_updating_states(
+                    &mut states,
+                    ORIGINAL.into_iter().map(Keyed::from_tuple),
+                );
+
+                assert_eq!(states.clone_ordered(), ORIGINAL);
+            }
+
+            pub(super) fn create<Impl: IndexMapForStates<Key, State>>() {
+                let states = ListAndSorted::<_, _, Impl>::from_entries([]);
+                assert!(states.clone_ordered().is_empty());
             }
 
             pub(super) fn all<Impl: IndexMapForStates<Key, State>>() {
@@ -459,12 +484,14 @@ mod link {
                 remove_all::<Impl>();
                 full_replace::<Impl>();
                 pop_front::<Impl>();
+                empty::<Impl>();
+                create::<Impl>();
             }
         }
 
         #[test]
         fn real_index_map() {
-            asserts::pop_front::<RealIndexMap<_, _>>()
+            asserts::all::<RealIndexMap<_, _>>()
         }
     }
 
@@ -535,6 +562,18 @@ mod link {
             {
                 *next_of_last = usize::MAX;
             }
+
+            if let Some((
+                _,
+                Node {
+                    prev: prev_of_first,
+                    ..
+                },
+            )) = map.first_mut()
+            {
+                *prev_of_first = usize::MAX;
+            }
+
             Self { map }
         }
 
@@ -572,37 +611,62 @@ mod link {
 
             debug_assert_ne!(swapped_index, usize::MAX);
 
-            if index != swapped_index {
-                let prev = *self.get_mut_prev_by_index(index);
-                if prev == usize::MAX {
-                    *first_index = index;
-                } else {
-                    *self.get_mut_next_by_index(prev) = index;
-                }
+            if node.prev == swapped_index {
+                node.prev = index;
+            }
 
-                let next = *self.get_mut_next_by_index(index);
+            if node.next == swapped_index {
+                node.next = index;
+            }
+
+            *if node.prev == usize::MAX {
+                debug_assert_ne!(*first_index, usize::MAX);
+                &mut *first_index
+            } else {
+                self.get_mut_next_by_index(node.prev)
+            } = node.next;
+
+            if node.next != usize::MAX {
+                *self.get_mut_prev_by_index(node.next) = node.prev;
+            }
+
+            if index != swapped_index {
+                let Position {
+                    value: (),
+                    prev,
+                    next,
+                } = self.get_position_by_index(index);
+                let next_of_prev = if prev == usize::MAX {
+                    &mut *first_index
+                } else {
+                    self.get_mut_next_by_index(prev)
+                };
+                *next_of_prev = index;
 
                 if next != usize::MAX {
-                    *self.get_mut_prev_by_index(next) = index;
+                    let prev_of_next = self.get_mut_prev_by_index(next);
+                    *prev_of_next = index;
                 }
             }
 
-            let next_of_prev = if node.prev == usize::MAX {
-                debug_assert_ne!(*first_index, usize::MAX);
-                first_index
-            } else {
-                if node.prev == swapped_index {
-                    node.prev = index;
+            #[cfg(debug_assertions)]
+            if index != swapped_index {
+                let Position {
+                    value: (),
+                    prev,
+                    next,
+                } = self.get_position_by_index(index);
+                assert_eq!(
+                    *if prev == usize::MAX {
+                        first_index
+                    } else {
+                        self.get_mut_next_by_index(prev)
+                    },
+                    index
+                );
+                if next != usize::MAX {
+                    assert_eq!(*self.get_mut_prev_by_index(next), index);
                 }
-                self.get_mut_next_by_index(node.prev)
-            };
-            *next_of_prev = node.next;
-
-            if node.next != usize::MAX {
-                if node.next == swapped_index {
-                    node.next = index;
-                }
-                *self.get_mut_prev_by_index(node.next) = node.prev;
             }
 
             node
@@ -670,6 +734,20 @@ mod link {
         _phantom: PhantomData<(K, V)>,
     }
 
+    struct List {
+        head: OptionIndex,
+        tail: OptionIndex,
+    }
+
+    impl List {
+        fn new() -> Self {
+            Self {
+                head: OptionIndex::NONE,
+                tail: OptionIndex::NONE,
+            }
+        }
+    }
+
     impl<K: Hash + Eq, V: Unpin, IndexMapImpl: IndexMapForStates<K, V>>
         ListAndSorted<K, V, IndexMapImpl>
     {
@@ -687,9 +765,11 @@ mod link {
 
             debug_assert!(map.len() < usize::MAX);
 
+            let first_index = if map.is_empty() { usize::MAX } else { 0 };
+
             Self {
                 map,
-                first_index: 0,
+                first_index,
                 _phantom: PhantomData,
             }
         }
@@ -725,9 +805,6 @@ mod link {
             debug_assert_ne!(self.first_index, usize::MAX);
             debug_assert!(self.map.len() > self.first_index);
 
-            #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-            gloo::console::warn!("list.first", *list.first);
-
             let mut prev = usize::MAX;
             let mut next_of_prev = self.first_index;
 
@@ -758,21 +835,40 @@ mod link {
                         let node = self.map.get_mut_node_by_index(index);
                         item_update_value(item, ctx, Pin::new(node.value), true);
 
+                        let prev_of_node = *node.prev;
+                        let next_of_node = *node.next;
                         *node.prev = prev;
-                        next_of_prev = *node.next;
+                        *node.next = next_of_prev;
 
                         if prev == usize::MAX {
                             self.first_index = index;
                         } else {
                             *self.map.get_mut_next_by_index(prev) = index;
                         }
+
+                        if next_of_prev != usize::MAX {
+                            *self.map.get_mut_prev_by_index(next_of_prev) = index;
+                        }
+
+                        {
+                            let next = if prev_of_node == usize::MAX {
+                                &mut self.first_index
+                            } else {
+                                self.map.get_mut_next_by_index(prev_of_node)
+                            };
+                            debug_assert_eq!(*next, index);
+                            *next = next_of_node;
+                        }
+
+                        if next_of_node != usize::MAX {
+                            let prev = self.map.get_mut_prev_by_index(next_of_node);
+                            debug_assert_eq!(*prev, index);
+                            *prev = prev_of_node;
+                        }
                     }
 
                     prev = index;
                 } else {
-                    #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-                    gloo::console::warn!("New Key, next_of_cursor = ", next_of_cursor);
-
                     index = self.map.add_with_new_key(
                         key,
                         Node {
@@ -782,15 +878,23 @@ mod link {
                         },
                     );
 
-                    let nop = if prev == usize::MAX {
-                        &mut self.first_index
-                    } else {
-                        self.map.get_mut_next_by_index(prev)
-                    };
+                    {
+                        let nop = if prev == usize::MAX {
+                            &mut self.first_index
+                        } else {
+                            self.map.get_mut_next_by_index(prev)
+                        };
 
-                    debug_assert_eq!(*nop, next_of_prev);
+                        debug_assert_eq!(*nop, next_of_prev);
 
-                    *nop = index;
+                        *nop = index;
+                    }
+
+                    if next_of_prev != usize::MAX {
+                        let pon = self.map.get_mut_prev_by_index(next_of_prev);
+                        debug_assert_eq!(*pon, prev);
+                        *pon = index;
+                    }
 
                     prev = index;
                 };
@@ -858,11 +962,25 @@ mod link {
                 key,
                 Node {
                     value,
-                    prev: _,
-                    next,
+                    prev: &prev,
+                    next: &next,
                 },
             ) = self.this.map.get_by_index(self.cursor);
-            self.cursor = *next;
+
+            assert_eq!(
+                if prev == usize::MAX {
+                    self.this.first_index
+                } else {
+                    self.this.map.get_position_by_index(prev).next
+                },
+                self.cursor
+            );
+
+            if next != usize::MAX {
+                assert_eq!(self.this.map.get_position_by_index(next).prev, self.cursor)
+            }
+
+            self.cursor = next;
             Some((key, value))
         }
     }
