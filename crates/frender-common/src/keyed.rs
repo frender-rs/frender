@@ -11,5 +11,18 @@ impl<K, E> Keyed<K, E> {
     }
 }
 
+pub struct DefaultElementsAlgorithm;
+
 #[derive(Debug, Clone, Copy)]
-pub struct Elements<I: IntoIterator>(pub I);
+pub struct Elements<I: IntoIterator, A = DefaultElementsAlgorithm> {
+    pub iter: I,
+    pub algorithm: A,
+}
+
+#[allow(non_snake_case)]
+pub fn Elements<I: IntoIterator>(iter: I) -> Elements<I> {
+    Elements {
+        iter,
+        algorithm: DefaultElementsAlgorithm,
+    }
+}

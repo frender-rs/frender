@@ -1,31 +1,340 @@
-use std::{collections::HashMap, fmt::Debug, hash::Hash, pin::Pin};
-
-use indexmap::{IndexMap, IndexSet};
+use std::pin::Pin;
 
 use frender_common::{Elements, Keyed};
 
-use crate::{Element, RenderState};
+use crate::{CsrContext, Element, RenderState};
 
-pub struct KeyedElementsState<K: Hash + Eq, S: Unpin> {
-    imp: link::ListAndSorted<K, S, link::RealIndexMap<K, S>>,
+pub trait ElementsAlgorithm<K, E> {
+    type CsrState: RenderState;
+
+    fn keyed_elements_into_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+        self,
+        keyed_elements: I,
+        ctx: &mut CsrContext,
+    ) -> Self::CsrState;
+
+    fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+        self,
+        keyed_elements: I,
+        ctx: &mut crate::CsrContext,
+        state: Pin<&mut Self::CsrState>,
+    );
+
+    /// The element needs to be repositioned (re-add to the ctx)
+    fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
+        self,
+        keyed_elements: I,
+        ctx: &mut crate::CsrContext,
+        state: Pin<&mut Self::CsrState>,
+    );
+
+    fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
+        self,
+        keyed_elements: I,
+        ctx: &mut crate::CsrContext,
+        state: Pin<&mut Self::CsrState>,
+        force_reposition: bool,
+    ) where
+        Self: Sized,
+    {
+        if force_reposition {
+            self.keyed_elements_update_csr_state_force_reposition(keyed_elements, ctx, state)
+        } else {
+            self.keyed_elements_update_csr_state(keyed_elements, ctx, state)
+        }
+    }
 }
 
-mod link {
-    use std::{
-        collections::{BinaryHeap, HashMap},
-        hash::Hash,
-        marker::PhantomData,
-        pin::Pin,
-    };
+pub mod default {
+    use std::{collections::HashMap, hash::Hash, pin::Pin};
+
+    use frender_common::{DefaultElementsAlgorithm, Keyed};
+    use indexmap::IndexMap;
+
+    use crate::{CsrContext, Element, ElementsAlgorithm, RenderState};
+
+    pub struct States<K, S>(IndexMap<K, S>);
+
+    impl<K, S> Unpin for States<K, S> {}
+
+    impl<K, S: RenderState + Unpin> RenderState for States<K, S> {
+        fn unmount(self: Pin<&mut Self>) {
+            let this = self.get_mut();
+            for state in this.0.values_mut() {
+                S::unmount(Pin::new(state))
+            }
+            this.0 = Default::default();
+        }
+
+        fn state_unmount(self: Pin<&mut Self>) {
+            for state in self.get_mut().0.values_mut() {
+                S::state_unmount(Pin::new(state))
+            }
+        }
+
+        fn poll_csr(
+            self: Pin<&mut Self>,
+            ctx: &mut crate::CsrContext,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let mut res = std::task::Poll::Ready(());
+
+            for state in self.get_mut().0.values_mut() {
+                match S::poll_csr(std::pin::Pin::new(state), ctx, cx) {
+                    std::task::Poll::Ready(()) => {}
+                    v @ std::task::Poll::Pending => {
+                        res = v;
+                    }
+                }
+            }
+
+            res
+        }
+    }
+
+    impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm
+    where
+        E::CsrState: Unpin,
+    {
+        type CsrState = States<K, E::CsrState>;
+
+        fn keyed_elements_into_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut CsrContext,
+        ) -> Self::CsrState {
+            States(
+                keyed_elements
+                    .into_iter()
+                    .map(|Keyed(k, v)| (k, v.into_csr_state(ctx)))
+                    .collect(),
+            )
+        }
+
+        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            let state = state.get_mut();
+
+            if state.0.is_empty() {
+                return *state = self.keyed_elements_into_csr_state(keyed_elements, ctx);
+            }
+
+            let elements = keyed_elements.into_iter();
+
+            // TODO: specialize for ExactSizeIterator
+            // if elements.len() == 0 {
+            //     return state.clear();
+            // }
+
+            let states = &mut state.0;
+
+            let mut old_states = std::mem::replace(states, IndexMap::new());
+
+            let mut removed = HashMap::new();
+
+            let mut cur = 0;
+
+            for Keyed(key, element) in elements {
+                if let Some(mut old_idx) = old_states.get_index_of(&key) {
+                    match old_idx.cmp(&cur) {
+                        std::cmp::Ordering::Equal => {}
+                        std::cmp::Ordering::Less => unreachable!(),
+                        std::cmp::Ordering::Greater => {
+                            if old_states.len() - old_idx < old_idx - cur {
+                                // drain tail
+
+                                let mut to_remove = old_states.drain(old_idx..);
+                                let old = to_remove.next().unwrap();
+                                removed.extend(to_remove);
+
+                                states.extend(old_states.drain(..cur).chain(Some(old)));
+
+                                let (key_old, old_state) = states.last_mut().unwrap();
+
+                                debug_assert!(*key_old == key);
+
+                                element.update_csr_state_force_reposition(ctx, Pin::new(old_state));
+
+                                cur = 0;
+                                continue;
+                            } else {
+                                // drain before this
+                                let mut old_states_and_to_remove = old_states.drain(..old_idx);
+
+                                states.extend((&mut old_states_and_to_remove).take(cur));
+                                removed.extend(old_states_and_to_remove);
+                                old_idx = 0;
+                                cur = 0;
+                            }
+                        }
+                    }
+
+                    // "equal" or "greater but drained"
+                    let state_old = &mut old_states[old_idx];
+                    element.update_csr_state(ctx, Pin::new(state_old));
+                    cur += 1;
+                } else {
+                    states.extend(old_states.drain(..cur));
+                    cur = 0;
+                    state_vacant_and_then(states, key, |entry| {
+                        if let Some(old_state) = removed.remove(entry.key()) {
+                            let state = entry.insert(old_state);
+                            element.update_csr_state_force_reposition(ctx, Pin::new(state))
+                        } else {
+                            _ = entry.insert(element.into_csr_state(ctx))
+                        }
+                    });
+                }
+            }
+
+            old_states
+                .drain(cur..)
+                .map(|(_, v)| v)
+                .chain(removed.into_values())
+                .for_each(|ref mut state| Pin::new(state).unmount());
+
+            if states.is_empty() {
+                *states = old_states;
+            } else {
+                states.extend(old_states);
+            }
+        }
+
+        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            let states = &mut state.get_mut().0;
+
+            let elements = keyed_elements.into_iter();
+
+            let mut old_states = std::mem::replace(states, IndexMap::new());
+            // TODO: optimize perf with IndexMap::with_capacity(elements.len());
+
+            for Keyed(key, element) in elements {
+                if let Some(state) = old_states.remove(&key) {
+                    let entry = states.entry(key);
+
+                    debug_assert!(matches!(entry, indexmap::map::Entry::Vacant(_)));
+
+                    let state = entry.or_insert(state);
+                    E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
+                } else {
+                    let old_state = states.insert(key, element.into_csr_state(ctx));
+                    debug_assert!(old_state.is_none());
+                }
+            }
+
+            for state in old_states.values_mut().map(std::pin::Pin::new) {
+                state.unmount()
+            }
+        }
+    }
+
+    /// If `states` contains `key`, then warns.
+    /// Else, call f.
+    fn state_vacant_and_then<'a, K, S>(
+        states: &'a mut IndexMap<K, S>,
+        key: K,
+        f: impl FnOnce(indexmap::map::VacantEntry<'a, K, S>),
+    ) where
+        K: std::hash::Hash + Eq,
+    {
+        match states.entry(key) {
+            indexmap::map::Entry::Vacant(entry) => f(entry),
+            indexmap::map::Entry::Occupied(_) => {
+                if cfg!(all(debug_assertions, target_arch = "wasm32")) {
+                    gloo::console::warn!(
+                        "the same key has been inserted so the latter element is ignored"
+                    );
+                }
+            }
+        }
+    }
+}
+
+pub mod linked_vec {
+    use std::{hash::Hash, marker::PhantomData, pin::Pin};
 
     use frender_common::Keyed;
 
-    /// `usize::MAX` means `None`
-    #[derive(Clone, Copy)]
-    struct OptionIndex(usize);
+    use crate::{Element, ElementsAlgorithm, RenderState};
 
-    impl OptionIndex {
-        const NONE: Self = Self(usize::MAX);
+    pub use LinkedVecAlgorithm as Algorithm;
+
+    pub struct LinkedVecAlgorithm<Impl> {
+        __phantom: std::marker::PhantomData<Impl>,
+    }
+
+    impl<Impl> Default for LinkedVecAlgorithm<Impl> {
+        fn default() -> Self {
+            Self {
+                __phantom: std::marker::PhantomData,
+            }
+        }
+    }
+
+    impl<K: Hash + Eq, E: Element, Impl: IndexMapForStates<K, E::CsrState>> ElementsAlgorithm<K, E>
+        for LinkedVecAlgorithm<Impl>
+    where
+        E::CsrState: Unpin,
+    {
+        type CsrState = States<K, E::CsrState, Impl>;
+
+        fn keyed_elements_into_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+        ) -> Self::CsrState {
+            States::from_entries(
+                keyed_elements
+                    .into_iter()
+                    .map(|Keyed(key, element)| (key, element.into_csr_state(ctx))),
+            )
+        }
+
+        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            self.keyed_elements_update_csr_state_maybe_reposition(keyed_elements, ctx, state, false)
+        }
+
+        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+        ) {
+            self.keyed_elements_update_csr_state_maybe_reposition(keyed_elements, ctx, state, true)
+        }
+
+        fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
+            self,
+            keyed_elements: I,
+            ctx: &mut crate::CsrContext,
+            state: Pin<&mut Self::CsrState>,
+            force_reposition: bool,
+        ) where
+            Self: Sized,
+        {
+            state.get_mut().update_maybe_reposition(
+                keyed_elements.into_iter(),
+                E::into_csr_state,
+                E::update_csr_state_maybe_reposition,
+                E::CsrState::unmount,
+                ctx,
+                force_reposition,
+            );
+        }
     }
 
     pub struct Node<Value, Index = usize> {
@@ -45,7 +354,7 @@ mod link {
             }
         }
 
-        fn as_mut_position(&mut self) -> Node<(), &mut Index> {
+        fn as_mut_position(&mut self) -> Position<&mut Index> {
             Node {
                 value: (),
                 prev: &mut self.prev,
@@ -73,7 +382,7 @@ mod link {
         }
     }
 
-    pub(super) struct RealIndexMap<K, V> {
+    pub struct RealIndexMap<K, V> {
         map: indexmap::IndexMap<K, Node<V>>,
     }
 
@@ -113,9 +422,8 @@ mod link {
             (Cow::Borrowed("e"), 4),
         ];
 
-        fn get_original_state<Impl: IndexMapForStates<Key, State>>(
-        ) -> ListAndSorted<Key, State, Impl> {
-            ListAndSorted::<Key, State, Impl>::from_entries(ORIGINAL)
+        fn get_original_state<Impl: IndexMapForStates<Key, State>>() -> States<Key, State, Impl> {
+            States::<Key, State, Impl>::from_entries(ORIGINAL)
         }
 
         fn clone_key_state<K: Clone, S: Clone>((key, state): (&K, &S)) -> (K, S) {
@@ -141,14 +449,15 @@ mod link {
 
             impl Records {
                 fn record_while_updating_states<
-                    States: IndexMapForStates<Key, State>,
+                    Impl: IndexMapForStates<Key, State>,
                     E: Iterator<Item = Keyed<Key, Item>>,
                 >(
                     &mut self,
-                    states: &mut ListAndSorted<Key, State, States>,
+                    states: &mut States<Key, State, Impl>,
                     entries: E,
+                    force_reposition: bool,
                 ) {
-                    states.update(
+                    states.update_maybe_reposition(
                         entries,
                         |v, _| {
                             self.into.push(v);
@@ -164,6 +473,7 @@ mod link {
                         },
                         |state| self.unmounted.push(*state),
                         &mut (),
+                        force_reposition,
                     )
                 }
             }
@@ -178,46 +488,35 @@ mod link {
             }
 
             fn update_with_unchanged<Impl: IndexMapForStates<Key, State>>() {
-                let mut state = get_original_state::<Impl>();
-                let mut into = vec![];
-                let mut updated = vec![];
-                let mut unmounted = vec![];
-                state.update(
+                let mut states = get_original_state::<Impl>();
+                let mut records = Records::default();
+                records.record_while_updating_states(
+                    &mut states,
                     ORIGINAL.map(|(k, v)| Keyed(k, v)).into_iter(),
-                    |v, _| {
-                        into.push(v);
-                        v
-                    },
-                    |v, _, state, force_reposition| {
-                        updated.push(Updated {
-                            old_state: *state,
-                            new_item: v,
-                            force_reposition,
-                        });
-                        *state.get_mut() = v;
-                    },
-                    |v| unmounted.push(*v),
-                    &mut (),
+                    false,
                 );
-
                 assert_eq!(
-                    state
+                    states
                         .iter_ordered()
                         .map(clone_key_state)
                         .collect::<Vec<_>>(),
                     ORIGINAL
                 );
 
-                assert!(into.is_empty());
                 assert_eq!(
-                    updated,
-                    ORIGINAL.map(|(_, v)| Updated {
-                        old_state: v,
-                        new_item: v,
-                        force_reposition: false
-                    })
+                    records,
+                    Records {
+                        into: vec![],
+                        updated: ORIGINAL
+                            .map(|(_, v)| Updated {
+                                old_state: v,
+                                new_item: v,
+                                force_reposition: false
+                            })
+                            .into(),
+                        unmounted: vec![]
+                    }
                 );
-                assert_eq!(unmounted, [] as [u32; 0]);
             }
 
             pub(super) fn append<Impl: IndexMapForStates<Key, State>>() {
@@ -229,7 +528,7 @@ mod link {
                     .chain([(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)])
                     .map(Keyed::from_tuple);
 
-                records.record_while_updating_states(&mut states, entries);
+                records.record_while_updating_states(&mut states, entries, false);
 
                 assert_eq!(
                     states
@@ -269,6 +568,7 @@ mod link {
                         .into_iter()
                         .chain(ORIGINAL.into_iter())
                         .map(Keyed::from_tuple),
+                    false,
                 );
 
                 assert_eq!(
@@ -307,6 +607,7 @@ mod link {
                 records.record_while_updating_states(
                     &mut states,
                     expected.clone().into_iter().map(Keyed::from_tuple),
+                    false,
                 );
 
                 assert_eq!(states.clone_ordered(), expected);
@@ -341,6 +642,7 @@ mod link {
                 records.record_while_updating_states(
                     &mut states,
                     swapped.clone().map(Keyed::from_tuple).into_iter(),
+                    false,
                 );
 
                 assert_eq!(states.clone_ordered(), swapped);
@@ -386,7 +688,7 @@ mod link {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
-                records.record_while_updating_states(&mut states, [].into_iter());
+                records.record_while_updating_states(&mut states, [].into_iter(), false);
 
                 assert_eq!(states.clone_ordered(), []);
 
@@ -409,6 +711,7 @@ mod link {
                 records.record_while_updating_states(
                     &mut states,
                     NEW.into_iter().map(Keyed::from_tuple),
+                    false,
                 );
 
                 assert_eq!(states.clone_ordered(), NEW);
@@ -430,6 +733,7 @@ mod link {
                 records.record_while_updating_states(
                     &mut states,
                     ORIGINAL.into_iter().skip(1).map(Keyed::from_tuple),
+                    false,
                 );
 
                 assert_eq!(
@@ -456,7 +760,7 @@ mod link {
             }
 
             pub(super) fn empty<Impl: IndexMapForStates<Key, State>>() {
-                let mut states = ListAndSorted::<_, _, Impl>::from_entries([]);
+                let mut states = States::<_, _, Impl>::from_entries([]);
                 assert!(states.clone_ordered().is_empty());
 
                 let mut records = Records::default();
@@ -464,13 +768,14 @@ mod link {
                 records.record_while_updating_states(
                     &mut states,
                     ORIGINAL.into_iter().map(Keyed::from_tuple),
+                    false,
                 );
 
                 assert_eq!(states.clone_ordered(), ORIGINAL);
             }
 
             pub(super) fn create<Impl: IndexMapForStates<Key, State>>() {
-                let states = ListAndSorted::<_, _, Impl>::from_entries([]);
+                let states = States::<_, _, Impl>::from_entries([]);
                 assert!(states.clone_ordered().is_empty());
             }
 
@@ -492,18 +797,6 @@ mod link {
         #[test]
         fn real_index_map() {
             asserts::all::<RealIndexMap<_, _>>()
-        }
-    }
-
-    pub(super) struct RealIndexMapIntoIterOrdered<K, V> {
-        inner: indexmap::map::IntoIter<K, (V, usize)>,
-    }
-
-    impl<K, V> Iterator for RealIndexMapIntoIterOrdered<K, V> {
-        type Item = (K, V);
-
-        fn next(&mut self) -> Option<Self::Item> {
-            self.inner.next().map(|(k, (v, _))| (k, v))
         }
     }
 
@@ -673,14 +966,14 @@ mod link {
         }
     }
 
-    pub(super) trait GetMutPositionByIndex {
+    pub trait GetMutPositionByIndex {
         fn get_mut_position_by_index(&mut self, index: usize) -> Node<(), &mut usize>;
         fn get_position_by_index(&self, index: usize) -> Position<usize>;
         fn get_mut_next_by_index(&mut self, index: usize) -> &mut usize;
         fn get_mut_prev_by_index(&mut self, index: usize) -> &mut usize;
     }
 
-    pub(super) trait IndexMapForStates<K, V>: GetMutPositionByIndex {
+    pub trait IndexMapForStates<K, V>: GetMutPositionByIndex {
         fn len(&self) -> usize;
         fn is_empty(&self) -> bool;
 
@@ -728,29 +1021,13 @@ mod link {
         fn iter_ordered(&self) -> Self::IterOrdered<'_>;
     }
 
-    pub(super) struct ListAndSorted<K, V, IndexMapImpl: IndexMapForStates<K, V>> {
+    pub struct States<K, V, IndexMapImpl: IndexMapForStates<K, V>> {
         map: IndexMapImpl,
         first_index: usize,
         _phantom: PhantomData<(K, V)>,
     }
 
-    struct List {
-        head: OptionIndex,
-        tail: OptionIndex,
-    }
-
-    impl List {
-        fn new() -> Self {
-            Self {
-                head: OptionIndex::NONE,
-                tail: OptionIndex::NONE,
-            }
-        }
-    }
-
-    impl<K: Hash + Eq, V: Unpin, IndexMapImpl: IndexMapForStates<K, V>>
-        ListAndSorted<K, V, IndexMapImpl>
-    {
+    impl<K: Hash + Eq, V: Unpin, IndexMapImpl: IndexMapForStates<K, V>> States<K, V, IndexMapImpl> {
         pub(super) fn for_each_value_pin_mut<F: FnMut(Pin<&mut V>)>(&mut self, f: F) {
             self.map.for_each_value_pin_mut(f)
         }
@@ -774,13 +1051,14 @@ mod link {
             }
         }
 
-        pub(super) fn update<T, Ctx, E: Iterator<Item = Keyed<K, T>>>(
+        pub(super) fn update_maybe_reposition<T, Ctx, E: Iterator<Item = Keyed<K, T>>>(
             &mut self,
             entries: E,
             mut item_into_value: impl FnMut(T, &mut Ctx) -> V,
             mut item_update_value: impl FnMut(T, &mut Ctx, Pin<&mut V>, bool),
             mut value_unmount: impl FnMut(Pin<&mut V>),
             ctx: &mut Ctx,
+            force_reposition: bool,
         ) {
             if self.map.is_empty() {
                 self.map = IndexMapImpl::from_entries(
@@ -821,7 +1099,7 @@ mod link {
 
                     if index == next_of_prev {
                         let node = self.map.get_mut_node_by_index(index);
-                        item_update_value(item, ctx, Pin::new(node.value), false);
+                        item_update_value(item, ctx, Pin::new(node.value), force_reposition);
 
                         next_of_prev = *node.next;
 
@@ -944,8 +1222,40 @@ mod link {
         }
     }
 
+    impl<K: Hash + Eq, S: Unpin, Impl: IndexMapForStates<K, S>> Unpin for States<K, S, Impl> {}
+
+    impl<K: Hash + Eq, S: RenderState + Unpin, Impl: IndexMapForStates<K, S>> RenderState
+        for States<K, S, Impl>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>) {
+            self.get_mut().for_each_value_pin_mut(S::unmount)
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            self.get_mut().for_each_value_pin_mut(S::state_unmount)
+        }
+
+        fn poll_csr(
+            self: std::pin::Pin<&mut Self>,
+            ctx: &mut crate::CsrContext,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let mut res = std::task::Poll::Ready(());
+
+            self.get_mut()
+                .for_each_value_pin_mut(|state| match S::poll_csr(state, ctx, cx) {
+                    std::task::Poll::Ready(()) => {}
+                    std::task::Poll::Pending => {
+                        res = std::task::Poll::Pending;
+                    }
+                });
+
+            res
+        }
+    }
+
     pub(super) struct IterOrdered<'a, K, V, IndexMapImpl: IndexMapForStates<K, V>> {
-        this: &'a ListAndSorted<K, V, IndexMapImpl>,
+        this: &'a States<K, V, IndexMapImpl>,
         cursor: usize,
     }
 
@@ -986,44 +1296,13 @@ mod link {
     }
 }
 
-impl<K: Hash + Eq, S: Unpin> Unpin for KeyedElementsState<K, S> {}
-
-impl<K: Hash + Eq, S: RenderState + Unpin> RenderState for KeyedElementsState<K, S> {
-    fn unmount(self: std::pin::Pin<&mut Self>) {
-        self.get_mut().imp.for_each_value_pin_mut(S::unmount)
-    }
-
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {
-        self.get_mut().imp.for_each_value_pin_mut(S::state_unmount)
-    }
-
-    fn poll_csr(
-        self: std::pin::Pin<&mut Self>,
-        ctx: &mut crate::CsrContext,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        let mut res = std::task::Poll::Ready(());
-
-        self.get_mut()
-            .imp
-            .for_each_value_pin_mut(|state| match S::poll_csr(state, ctx, cx) {
-                std::task::Poll::Ready(()) => {}
-                std::task::Poll::Pending => {
-                    res = std::task::Poll::Pending;
-                }
-            });
-
-        res
-    }
-}
-
 impl<K, E> Element for Vec<Keyed<K, E>>
 where
-    K: std::hash::Hash + Eq + Debug,
+    K: std::hash::Hash + Eq,
     E: Element,
     E::CsrState: Unpin,
 {
-    type CsrState = KeyedElementsState<K, E::CsrState>;
+    type CsrState = default::States<K, E::CsrState>;
 
     fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
         Elements(self).into_csr_state(ctx)
@@ -1056,172 +1335,37 @@ where
     }
 }
 
-impl<I, K, E> Element for Elements<I>
+impl<I, A, K, E> Element for Elements<I, A>
 where
     I: IntoIterator<Item = Keyed<K, E>>,
     I::IntoIter: ExactSizeIterator,
-    K: std::hash::Hash + Eq + Debug,
+    K: std::hash::Hash + Eq,
     E: Element,
     E::CsrState: Unpin,
+    A: ElementsAlgorithm<K, E>,
 {
-    type CsrState = KeyedElementsState<K, E::CsrState>;
+    type CsrState = A::CsrState;
 
     fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
-        let states = self
-            .0
-            .into_iter()
-            .map(|Keyed(k, v)| (k, v.into_csr_state(ctx)));
-        KeyedElementsState {
-            imp: link::ListAndSorted::from_entries(states),
-        }
+        self.algorithm.keyed_elements_into_csr_state(self.iter, ctx)
     }
 
-    #[cfg(aaa)]
-    #[cfg(not(frender_elements_update_by_swapping))]
     fn update_csr_state(
         self,
         ctx: &mut crate::CsrContext,
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
-        let state = state.get_mut();
-
-        if state.states.is_empty() {
-            return *state = self.into_csr_state(ctx);
-        }
-
-        let elements = self.0.into_iter();
-        if elements.len() == 0 {
-            return state.clear();
-        }
-
-        let states = &mut state.states;
-
-        let mut old_states = std::mem::replace(states, IndexMap::new());
-
-        let mut removed = HashMap::new();
-
-        let mut cur = 0;
-
-        for Keyed(key, element) in elements {
-            if let Some(mut old_idx) = old_states.get_index_of(&key) {
-                match old_idx.cmp(&cur) {
-                    std::cmp::Ordering::Equal => {}
-                    std::cmp::Ordering::Less => unreachable!(),
-                    std::cmp::Ordering::Greater => {
-                        if old_states.len() - old_idx < old_idx - cur {
-                            // drain tail
-
-                            let mut to_remove = old_states.drain(old_idx..);
-                            let old = to_remove.next().unwrap();
-                            removed.extend(to_remove);
-
-                            states.extend(old_states.drain(..cur).chain(Some(old)));
-
-                            let (key_old, old_state) = states.last_mut().unwrap();
-
-                            debug_assert_eq!(*key_old, key);
-
-                            element.update_csr_state_force_reposition(ctx, Pin::new(old_state));
-
-                            cur = 0;
-                            continue;
-                        } else {
-                            // drain before this
-                            let mut old_states_and_to_remove = old_states.drain(..old_idx);
-
-                            states.extend((&mut old_states_and_to_remove).take(cur));
-                            removed.extend(old_states_and_to_remove);
-                            old_idx = 0;
-                            cur = 0;
-                        }
-                    }
-                }
-
-                // "equal" or "greater but drained"
-                let state_old = &mut old_states[old_idx];
-                element.update_csr_state(ctx, Pin::new(state_old));
-                cur += 1;
-            } else {
-                states.extend(old_states.drain(..cur));
-                cur = 0;
-                state_vacant_and_then(states, key, |entry| {
-                    if let Some(old_state) = removed.remove(entry.key()) {
-                        let state = entry.insert(old_state);
-                        element.update_csr_state_force_reposition(ctx, Pin::new(state))
-                    } else {
-                        _ = entry.insert(element.into_csr_state(ctx))
-                    }
-                });
-            }
-        }
-
-        old_states
-            .drain(cur..)
-            .map(|(_, v)| v)
-            .chain(removed.into_values())
-            .for_each(|ref mut state| Pin::new(state).unmount());
-
-        if states.is_empty() {
-            *states = old_states;
-        } else {
-            states.extend(old_states);
-        }
+        self.algorithm
+            .keyed_elements_update_csr_state(self.iter, ctx, state)
     }
 
-    // #[cfg(frender_elements_update_by_swapping)]
-    fn update_csr_state(
-        self,
-        ctx: &mut crate::CsrContext,
-        state: std::pin::Pin<&mut Self::CsrState>,
-    ) {
-        state.get_mut().imp.update(
-            self.0.into_iter(),
-            E::into_csr_state,
-            E::update_csr_state_maybe_reposition,
-            E::CsrState::unmount,
-            ctx,
-        );
-    }
-
-    fn update_csr_state_force_reposition(
-        self,
-        _: &mut crate::CsrContext,
-        _: std::pin::Pin<&mut Self::CsrState>,
-    ) {
-        panic!("Elements repositioning")
-    }
-
-    #[cfg(aaaa)]
     fn update_csr_state_force_reposition(
         self,
         ctx: &mut crate::CsrContext,
         state: std::pin::Pin<&mut Self::CsrState>,
     ) {
-        #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-        gloo::console::warn!("Elements repositioning");
-
-        let states = &mut state.get_mut().states;
-
-        let elements = self.0.into_iter();
-
-        let mut old_states = std::mem::replace(states, IndexMap::with_capacity(elements.len()));
-
-        for Keyed(key, element) in elements {
-            if let Some(state) = old_states.remove(&key) {
-                let entry = states.entry(key);
-
-                debug_assert!(matches!(entry, indexmap::map::Entry::Vacant(_)));
-
-                let state = entry.or_insert(state);
-                E::update_csr_state_force_reposition(element, ctx, std::pin::Pin::new(state));
-            } else {
-                states.insert(key, element.into_csr_state(ctx)); // TODO: assert returned is None
-            }
-        }
-
-        for state in old_states.values_mut().map(std::pin::Pin::new) {
-            state.unmount()
-        }
+        self.algorithm
+            .keyed_elements_update_csr_state_force_reposition(self.iter, ctx, state)
     }
 
     fn update_csr_state_maybe_reposition(
@@ -1230,35 +1374,22 @@ where
         state: std::pin::Pin<&mut Self::CsrState>,
         force_reposition: bool,
     ) {
-        if force_reposition {
-            self.update_csr_state_force_reposition(ctx, state)
-        } else {
-            self.update_csr_state(ctx, state)
-        }
+        self.algorithm
+            .keyed_elements_update_csr_state_maybe_reposition(
+                self.iter,
+                ctx,
+                state,
+                force_reposition,
+            )
     }
 }
 
-/// If `states` contains `key`, then warns.
-/// Else, call f.
-#[cfg(not(frender_elements_update_by_swapping))]
-fn state_vacant_and_then<'a, K, S>(
-    states: &'a mut IndexMap<K, S>,
-    key: K,
-    f: impl FnOnce(indexmap::map::VacantEntry<'a, K, S>),
-) where
-    K: std::hash::Hash + Eq + Debug,
-{
-    match states.entry(key) {
-        indexmap::map::Entry::Vacant(entry) => f(entry),
-        indexmap::map::Entry::Occupied(entry) => {
-            #[cfg(not(debug_assertions))]
-            let _ = entry;
-
-            #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-            gloo::console::warn!(format!(
-                "key {:?} has been inserted so the latter element is ignored",
-                entry.key()
-            ));
-        }
+#[allow(non_snake_case)]
+pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(
+    iter: I,
+) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::CsrState>>> {
+    Elements {
+        iter,
+        algorithm: Default::default(),
     }
 }

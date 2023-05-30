@@ -16,7 +16,7 @@ pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
 pub use frender_hook_element::frender_csr::{
-    CsrContext, Element as CsrElement, RenderState as CsrRenderState,
+    CsrContext, Element as CsrElement, ElementsLinkedVec, RenderState as CsrRenderState,
 };
 
 #[cfg(feature = "ssr")]
