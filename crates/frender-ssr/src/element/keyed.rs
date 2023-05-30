@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use frender_common::Keyed;
+use frender_common::{Elements, Keyed};
 
 use crate::{Element, RenderState};
 
@@ -44,7 +42,20 @@ where
     type SsrState = State<E::SsrState>;
 
     fn into_ssr_state(self) -> Self::SsrState {
+        Elements(self).into_ssr_state()
+    }
+}
+
+impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> Element for Elements<I, A>
+where
+    K: std::hash::Hash + Eq, // TODO: ToString ?
+    E: Element,
+{
+    type SsrState = State<E::SsrState>;
+
+    fn into_ssr_state(self) -> Self::SsrState {
         let states: Vec<_> = self
+            .iter
             .into_iter()
             .map(|Keyed(_, e)| e.into_ssr_state())
             .collect();
