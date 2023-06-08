@@ -51,7 +51,9 @@ pub mod default {
     use frender_common::{DefaultElementsAlgorithm, Keyed};
     use indexmap::IndexMap;
 
-    use crate::{CsrContext, Element, ElementsAlgorithm, RenderState};
+    use crate::{CsrContext, Element, RenderState};
+
+    use super::ElementsAlgorithm;
 
     pub struct States<K, S>(IndexMap<K, S>);
 
@@ -264,7 +266,9 @@ pub mod linked_vec {
 
     use frender_common::Keyed;
 
-    use crate::{Element, ElementsAlgorithm, RenderState};
+    use crate::{Element, RenderState};
+
+    use super::ElementsAlgorithm;
 
     pub use LinkedVecAlgorithm as Algorithm;
 

@@ -6,12 +6,11 @@ pub use context::*;
 mod render_state;
 pub use render_state::*;
 
-mod element;
-pub use element::*;
+mod trait_element;
+pub use trait_element::*;
 
-// TODO: change to pub mod
-mod elements;
-pub use elements::*;
+pub mod element;
+pub use element::keyed::ElementsLinkedVec;
 
 pub mod props;
 

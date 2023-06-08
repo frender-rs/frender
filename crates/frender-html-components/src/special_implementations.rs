@@ -27,7 +27,7 @@ mod dom {
 mod script {
     #[cfg(feature = "csr")]
     mod dom {
-        use frender_csr::NonReactiveRenderState;
+        use frender_csr::element::non_reactive::NonReactiveRenderState;
         use frender_html::props::MaybeUpdateValueWithState;
         use frender_html_simple::CsrWithChildren;
 

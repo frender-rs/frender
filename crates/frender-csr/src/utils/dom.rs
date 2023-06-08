@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use wasm_bindgen::JsCast;
 
-use crate::{elements::intrinsic::ElementAndMounted, CsrContext, NextNodePosition};
+use crate::{element::intrinsic::ElementAndMounted, CsrContext, NextNodePosition};
 
 // TODO: inline
 pub fn initialize_element_with_tag<E: JsCast + AsRef<web_sys::Element>, R>(

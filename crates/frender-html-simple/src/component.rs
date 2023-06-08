@@ -76,7 +76,7 @@ mod dom {
         C: crate::CsrWithChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C::Element>,
     {
-        type CsrState = ::frender_csr::intrinsic::IntrinsicComponentRenderState<
+        type CsrState = ::frender_csr::element::intrinsic::IntrinsicComponentRenderState<
             C::Element,
             ElementPropsStates<
                 C::ChildrenState,

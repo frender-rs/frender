@@ -7,8 +7,8 @@ pub use into_static_str::*;
 mod render_state;
 pub use render_state::*;
 
-mod context;
-pub use context::*;
+mod trait_element;
+pub use trait_element::*;
 
 mod escape_safe;
 pub use escape_safe::*;
