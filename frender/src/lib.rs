@@ -34,7 +34,7 @@ pub mod html {
 }
 
 pub use frender_hook_element as hook_element;
-pub use frender_hook_element::{component_fn, Element, RenderWith};
+pub use frender_hook_element::{component_fn, RenderWith};
 
 pub use frender_events::{events, MaybeHandleEvent};
 
@@ -47,7 +47,7 @@ pub mod prelude {
 
     pub use crate::{rsx, StaticText};
 
-    pub use frender_hook_element::{component_fn, Element, RenderWith};
+    pub use frender_hook_element::{component_fn, RenderWith};
 
     pub use frender_common::{Elements, Keyed};
 

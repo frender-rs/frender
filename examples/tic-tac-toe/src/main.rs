@@ -20,7 +20,7 @@ where
     OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
 {
     // #[component(only_dom)] // TODO: optimize with zero hooks
-    fn into_element(self) -> Element![csr] {
+    fn into_element(self) -> impl CsrElement {
         rsx!(
             <button class="square" on_click={self.on_click}>
                 {self.value}
