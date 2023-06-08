@@ -1,6 +1,9 @@
 mod debug;
 pub use debug::*;
 
+mod element;
+pub use element::*;
+
 #[cfg(feature = "hooks")]
 pub mod hooks_ext;
 
@@ -45,7 +48,7 @@ pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
-    pub use crate::{rsx, StaticText};
+    pub use crate::{rsx, Element, StaticText};
 
     pub use frender_hook_element::{component_fn, RenderWith};
 
