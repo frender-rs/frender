@@ -2,7 +2,9 @@ use std::{pin::Pin, task::Poll};
 
 use frender_common::utils::pin_as_deref_mut;
 
-pub trait RenderState {
+pub use CsrRenderState as RenderState;
+
+pub trait CsrRenderState {
     fn unmount(self: Pin<&mut Self>);
 
     fn state_unmount(self: Pin<&mut Self>);

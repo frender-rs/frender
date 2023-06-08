@@ -15,12 +15,12 @@ pub use frender_common::{Elements, Keyed};
 pub use frender_macros::{component, def_props};
 
 #[cfg(feature = "csr")]
-pub use frender_hook_element::frender_csr::{
-    CsrContext, Element as CsrElement, ElementsLinkedVec, RenderState as CsrRenderState,
-};
+pub use frender_hook_element::frender_csr as csr;
 
 #[cfg(feature = "ssr")]
-pub use frender_hook_element::frender_ssr::{Element as SsrElement, ElementExt as SsrElementExt};
+pub use frender_hook_element::frender_ssr as ssr;
+
+pub use prelude::*;
 
 #[cfg(feature = "html")]
 pub mod html {
@@ -62,6 +62,14 @@ pub mod prelude {
 
     #[cfg(feature = "hooks")]
     pub use crate::hooks_ext::ShareValueExt;
+
+    #[cfg(feature = "csr")]
+    pub use frender_hook_element::frender_csr::{
+        CsrContext, CsrElement, CsrRenderState, ElementsLinkedVec,
+    };
+
+    #[cfg(feature = "ssr")]
+    pub use frender_hook_element::frender_ssr::{SsrElement, SsrElementExt, SsrRenderState};
 }
 
 #[macro_export]

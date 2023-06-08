@@ -2,7 +2,9 @@ use std::pin::Pin;
 
 use crate::RenderState;
 
-pub trait Element {
+pub use CsrElement as Element;
+
+pub trait CsrElement {
     type CsrState: RenderState;
 
     fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState;

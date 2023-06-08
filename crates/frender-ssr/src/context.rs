@@ -1,6 +1,8 @@
 use crate::RenderState;
 
-pub trait Element {
+pub use SsrElement as Element;
+
+pub trait SsrElement {
     type SsrState: RenderState;
 
     fn into_ssr_state(self) -> Self::SsrState;

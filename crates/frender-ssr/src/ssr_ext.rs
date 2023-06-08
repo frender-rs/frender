@@ -4,6 +4,8 @@ use futures_io::AsyncWrite;
 
 use crate::{Element, RenderState};
 
+pub use SsrElementExt as ElementExt;
+
 pin_project_lite::pin_project!(
     #[must_use = "futures do nothing unless you `.await` or poll them"]
     pub struct RenderToWriter<W: AsyncWrite, S: RenderState> {
@@ -110,7 +112,7 @@ impl<M: MapWriteResult<W>, W: AsyncWrite + Unpin, S: RenderState> Future for Ren
     }
 }
 
-pub trait ElementExt: Sized + Element {
+pub trait SsrElementExt: Sized + Element {
     fn render_to_writer<W: AsyncWrite + Unpin>(
         self,
         writer: &mut W,

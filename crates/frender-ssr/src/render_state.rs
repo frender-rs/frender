@@ -2,7 +2,9 @@ use std::{io, pin::Pin, task::Poll};
 
 use futures_io::AsyncWrite;
 
-pub trait RenderState {
+pub use SsrRenderState as RenderState;
+
+pub trait SsrRenderState {
     fn poll_render<W: AsyncWrite + ?Sized>(
         self: Pin<&mut Self>,
         writer: Pin<&mut W>,
