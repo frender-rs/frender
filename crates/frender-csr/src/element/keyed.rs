@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender_common::{Elements, Keyed};
+use frender_common::{Elements, IsKeyed, Keyed};
 
 use crate::{CsrContext, Element, RenderState};
 
@@ -1387,6 +1387,16 @@ where
             )
     }
 }
+
+pub type ElementsLinkedVec<I> = Elements<
+    I,
+    linked_vec::Algorithm<
+        linked_vec::RealIndexMap<
+            <<I as IntoIterator>::Item as IsKeyed>::Key,
+            <<<I as IntoIterator>::Item as IsKeyed>::Element as Element>::CsrState,
+        >,
+    >,
+>;
 
 #[allow(non_snake_case)]
 pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(

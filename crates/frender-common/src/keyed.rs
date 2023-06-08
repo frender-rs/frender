@@ -1,9 +1,22 @@
-/// TODO: `Keyed(element, key)`
-///     - improve performance.
-///       Currently, all elements are unmounted and then new elements update the states.
-///     - impl UpdateRenderState<Ctx> for T where T: IntoIterator<Keyed<E, K>>
 #[derive(Debug, Clone, Copy)]
 pub struct Keyed<K, E>(pub K, pub E);
+
+mod sealed {
+    pub trait Sealed {}
+
+    impl<K, E> Sealed for super::Keyed<K, E> {}
+}
+
+/// Only [`Keyed<K, E>`] implements [`IsKeyed<Key = K, Element = E>`].
+pub trait IsKeyed: sealed::Sealed {
+    type Key;
+    type Element;
+}
+
+impl<K, E> IsKeyed for Keyed<K, E> {
+    type Key = K;
+    type Element = E;
+}
 
 impl<K, E> Keyed<K, E> {
     pub fn from_tuple((key, element): (K, E)) -> Self {
