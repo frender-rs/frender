@@ -118,7 +118,7 @@ impl<'a, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Iterator for AttrsIntoByteChu
 
 pin_project_lite::pin_project!(
     pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
-        pub before_children: IterByteChunks<
+        before_children: IterByteChunks<
             core::iter::Chain<
                 core::iter::Chain<
                     core::array::IntoIter<CowSlicedBytes<'a>, 2>,
@@ -128,8 +128,8 @@ pin_project_lite::pin_project!(
             >,
         >,
         #[pin]
-        pub children: Option<Children>,
-        pub after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
+        children: Option<Children>,
+        after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
     }
 );
 
