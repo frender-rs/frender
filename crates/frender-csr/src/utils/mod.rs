@@ -1,4 +1,4 @@
 mod pin;
 mod reentrant;
-pub use pin::*;
-pub use reentrant::*;
+pub(crate) use pin::*;
+pub(crate) use reentrant::*;

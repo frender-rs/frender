@@ -1,7 +1,7 @@
 use std::future::Future;
 
 pin_project_lite::pin_project! {
-    pub struct Reentrant<F> {
+    pub(crate) struct Reentrant<F> {
         #[pin]
         fut: F,
         finished: bool,
@@ -29,7 +29,7 @@ impl<F: Future<Output = ()>> Future for Reentrant<F> {
 }
 
 #[inline]
-pub fn reentrant<F: Future<Output = ()>>(fut: F) -> Reentrant<F> {
+pub(crate) fn reentrant<F: Future<Output = ()>>(fut: F) -> Reentrant<F> {
     Reentrant {
         fut,
         finished: false,
