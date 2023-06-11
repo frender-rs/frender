@@ -1,19 +1,18 @@
 pub trait UpdateElementAttribute {
-    // TODO: change to this
-    fn update_element_attribute(self, element: &web_sys::Element, attribute_name: &str);
+    fn update_element_attribute(this: Self, element: &web_sys::Element, attribute_name: &str);
 }
 
 impl UpdateElementAttribute for &str {
     #[inline]
-    fn update_element_attribute(self, element: &web_sys::Element, attribute_name: &str) {
-        element.set_attribute(attribute_name, self).unwrap()
+    fn update_element_attribute(this: Self, element: &web_sys::Element, attribute_name: &str) {
+        element.set_attribute(attribute_name, this).unwrap()
     }
 }
 
 impl UpdateElementAttribute for bool {
     #[inline]
-    fn update_element_attribute(self, element: &web_sys::Element, attribute_name: &str) {
-        if self {
+    fn update_element_attribute(this: Self, element: &web_sys::Element, attribute_name: &str) {
+        if this {
             element.set_attribute(attribute_name, "").unwrap()
         } else {
             element.remove_attribute(attribute_name).unwrap()
@@ -23,9 +22,10 @@ impl UpdateElementAttribute for bool {
 
 impl UpdateElementAttribute for u32 {
     #[inline]
-    fn update_element_attribute(self, element: &web_sys::Element, attribute_name: &str) {
+    fn update_element_attribute(this: Self, element: &web_sys::Element, attribute_name: &str) {
+        // TODO: pass u32 directly and let js runtime convert it into a string. https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
         element
-            .set_attribute(attribute_name, &self.to_string())
+            .set_attribute(attribute_name, &this.to_string())
             .unwrap()
     }
 }
