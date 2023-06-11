@@ -14,7 +14,6 @@ hooks-core = { version = "2.2.0-alpha", default-features = false }
 syn-lite = "0.1.0"
 
 [features]
-default = ["csr", "ssr"]       # TODO: remove
 csr = ["frender-csr"]
 spawn = ["frender-csr?/spawn"]
 ssr = ["dep:frender-ssr"]
