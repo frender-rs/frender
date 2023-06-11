@@ -1,9 +1,9 @@
 use std::pin::Pin;
 
-use crate::CsrContext;
+use crate::{CsrContext, CsrRenderState};
 
 pub trait UpdateElement<E> {
-    type State: IntrinsicComponentPollReactive;
+    type State: CsrRenderState;
 
     fn initialize_state(this: Self, element: &E, children_ctx: &mut CsrContext) -> Self::State;
 
@@ -13,19 +13,6 @@ pub trait UpdateElement<E> {
         children_ctx: &mut CsrContext,
         state: Pin<&mut Self::State>,
     );
-}
-
-// TODO: remove this
-pub trait IntrinsicComponentPollReactive {
-    fn intrinsic_component_unmount(self: Pin<&mut Self>);
-
-    fn intrinsic_component_state_unmount(self: Pin<&mut Self>);
-
-    fn intrinsic_component_poll_reactive(
-        self: Pin<&mut Self>,
-        ctx: &mut CsrContext,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()>;
 }
 
 pub trait UpdateElementNonReactive<E> {

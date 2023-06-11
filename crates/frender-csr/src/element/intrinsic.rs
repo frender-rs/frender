@@ -3,8 +3,6 @@ use std::pin::Pin;
 
 use crate::RenderState;
 
-use crate::props::IntrinsicComponentPollReactive;
-
 pub struct ElementAndMounted<E> {
     pub element: E,
     pub mounted: bool,
@@ -53,7 +51,7 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     }
 }
 
-impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
+impl<E: AsRef<web_sys::Element>, S: RenderState> RenderState
     for IntrinsicComponentRenderState<E, S>
 {
     fn unmount(self: Pin<&mut Self>) {
@@ -62,7 +60,7 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
         if *mounted {
             *mounted = false;
             element.as_ref().remove();
-            this.render_state.intrinsic_component_state_unmount();
+            this.render_state.state_unmount();
         }
     }
 
@@ -70,7 +68,7 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
     fn state_unmount(self: std::pin::Pin<&mut Self>) {
         let this = self.project();
         if this.element_and_mounted.mounted {
-            this.render_state.intrinsic_component_state_unmount();
+            this.render_state.state_unmount();
         }
     }
 
@@ -88,7 +86,7 @@ impl<E: AsRef<web_sys::Element>, S: IntrinsicComponentPollReactive> RenderState
             let mut ctx = ctx.with_next_node_position(crate::NextNodePosition::FirstChildOf(
                 Cow::Borrowed(element),
             ));
-            result = S::intrinsic_component_poll_reactive(this.render_state, &mut ctx, cx);
+            result = S::poll_csr(this.render_state, &mut ctx, cx);
         }
 
         let node: &web_sys::Node = element.as_ref();

@@ -19,23 +19,22 @@ impl<ChildrenState, PropsState> ElementPropsStates<ChildrenState, PropsState> {
 #[cfg(feature = "csr")]
 mod dom {
     use super::*;
-    use frender_csr::{props::IntrinsicComponentPollReactive, RenderState};
+    use frender_csr::RenderState;
 
-    impl<ChildrenState, PropsState> IntrinsicComponentPollReactive
-        for ElementPropsStates<ChildrenState, PropsState>
+    impl<ChildrenState, PropsState> RenderState for ElementPropsStates<ChildrenState, PropsState>
     where
         ChildrenState: RenderState,
     {
-        fn intrinsic_component_unmount(self: Pin<&mut Self>) {
+        fn unmount(self: Pin<&mut Self>) {
             self.project().children.unmount()
         }
 
-        fn intrinsic_component_state_unmount(self: Pin<&mut Self>) {
+        fn state_unmount(self: Pin<&mut Self>) {
             self.project().children.state_unmount()
         }
 
         #[inline(always)]
-        fn intrinsic_component_poll_reactive(
+        fn poll_csr(
             self: std::pin::Pin<&mut Self>,
             ctx: &mut frender_csr::CsrContext,
             cx: &mut std::task::Context<'_>,
