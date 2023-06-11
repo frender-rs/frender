@@ -15,7 +15,38 @@ impl<E: wasm_bindgen::JsCast + AsRef<web_sys::Element>> ElementAndMounted<E> {
         update: impl FnOnce(&E, &mut crate::CsrContext),
         force_reposition: bool,
     ) {
-        crate::utils::dom::update_element_maybe_reposition(self, ctx, update, force_reposition)
+        use crate::NextNodePosition;
+
+        let force_reposition = force_reposition;
+        let ElementAndMounted { element, mounted } = self;
+        let node: &web_sys::Element = element.as_ref();
+
+        {
+            let mut ctx = ctx.as_borrowed();
+            ctx.next_node_position = NextNodePosition::FirstChildOf(Cow::Borrowed(node));
+            update(element, &mut ctx)
+        };
+
+        let node: web_sys::Node = node.clone().into();
+        if *mounted && !force_reposition {
+            debug_assert!(node.parent_node().is_some());
+            ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
+        } else {
+            if *mounted
+                && match &ctx.next_node_position {
+                    NextNodePosition::FirstChildOf(parent) => parent.first_child(),
+                    NextNodePosition::InsertAfter(previous) => previous.next_sibling(),
+                }
+                .map_or(false, |c| node == c)
+            {
+                ctx.next_node_position.set_as_insert_after(Cow::Owned(node));
+                return;
+            }
+
+            debug_assert!(force_reposition || node.parent_node().is_none());
+            ctx.next_node_position.add_node(Cow::Owned(node));
+            *mounted = true;
+        }
     }
 }
 
@@ -41,12 +72,32 @@ impl<E, S> IntrinsicComponentRenderState<E, S> {
     where
         E: wasm_bindgen::JsCast + AsRef<web_sys::Element>,
     {
-        let (element_and_mounted, render_state) =
-            crate::utils::dom::initialize_element_with_tag(ctx, tag, initialize_state);
+        use wasm_bindgen::JsCast;
+
+        use crate::NextNodePosition;
+
+        let element = ctx
+            .document
+            .create_element(tag)
+            .unwrap()
+            .dyn_into::<E>()
+            .unwrap();
+        let node: &web_sys::Element = element.as_ref();
+
+        let ret = {
+            let mut ctx = ctx.as_borrowed();
+            ctx.next_node_position = NextNodePosition::FirstChildOf(Cow::Borrowed(node));
+            initialize_state(&element, &mut ctx)
+        };
+        ctx.next_node_position
+            .add_node(Cow::Owned(node.clone().into()));
 
         Self {
-            element_and_mounted,
-            render_state,
+            element_and_mounted: ElementAndMounted {
+                element,
+                mounted: true,
+            },
+            render_state: ret,
         }
     }
 }
