@@ -15,6 +15,9 @@ use super::{
     IntrinsicComponentPropsVirtual,
 };
 
+mod with_bounds;
+pub use with_bounds::*;
+
 #[derive(Clone)]
 pub struct FieldDeclarationDomImpl {
     pub impl_token: syn::Token![impl],
@@ -137,6 +140,7 @@ pub enum FieldDeclaration {
     EventListener(FieldDeclarationEventListener),
     Full(FieldDeclarationFull),
     Inherit(FieldDeclarationInherit),
+    WithBounds(FieldDeclarationWithBounds),
 }
 
 impl FieldDeclaration {
@@ -172,6 +176,11 @@ impl Parse for FieldDeclaration {
             Ok(Self::Maybe(input.parse()?))
         } else if input.peek(syn::Token![@]) {
             Ok(Self::EventListener(input.parse()?))
+        } else if input.peek(syn::Token![:])
+            && input.peek2(syn::Ident)
+            && input.peek3(syn::Token![!])
+        {
+            Ok(Self::WithBounds(input.parse()?))
         } else {
             Ok(Self::Full(input.parse()?))
         }

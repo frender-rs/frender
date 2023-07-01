@@ -145,7 +145,7 @@ mod ssr {
     use std::borrow::Cow;
 
     use frender_html_common::IntrinsicComponent;
-    use frender_ssr::{attrs::IntoIteratorAttrs, AsyncWrite, Element};
+    use frender_ssr::{attrs::GiveAttrs, AsyncWrite, Element};
 
     use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};
 
@@ -155,7 +155,7 @@ mod ssr {
     where
         C: SsrIntrinsicComponent,
         C: SsrWithChildren<P::Children>,
-        P::Attrs: IntoIteratorAttrs<'static>,
+        P::Attrs: GiveAttrs,
     {
         type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
             'static,

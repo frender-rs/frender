@@ -57,3 +57,11 @@ pub trait AsyncWritableByteChunks {
         Poll::Ready(Ok(()))
     }
 }
+
+pub trait AsyncWriteInto {
+    fn poll_write_into<W: crate::AsyncWrite + ?Sized>(
+        &mut self,
+        writer: Pin<&mut W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<std::io::Result<()>>;
+}

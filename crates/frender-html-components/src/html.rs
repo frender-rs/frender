@@ -22,7 +22,17 @@ frender_macros::def_intrinsic_component_props! {
                 }
             }
         },
-        class ? &str,
+        class: bounds![{
+            trait Bounds = DomTokens;
+            // const _: () = ();
+            impl csr {
+                fn initialize(this: Self, element: _, children_ctx: _) -> Self::State {}
+                fn update(this: Self, element: _, children_ctx: _, state: _) {}
+            }
+            impl ssr {
+
+            }
+        }],
         id ? &str {set_id},
         part ? &str,
         /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)

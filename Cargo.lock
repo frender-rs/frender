@@ -294,6 +294,10 @@ dependencies = [
 [[package]]
 name = "frender-html-common"
 version = "0.1.0"
+dependencies = [
+ "either",
+ "frender-common",
+]
 
 [[package]]
 name = "frender-html-components"

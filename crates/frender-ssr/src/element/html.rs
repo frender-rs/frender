@@ -3,22 +3,15 @@ use std::{borrow::Cow, pin::Pin, task::Poll};
 use futures_io::AsyncWrite;
 
 use crate::{
-    attrs::IntoIteratorAttrs,
-    bytes::{AsyncWritableByteChunks, CowSlicedBytes, IterByteChunks},
+    attrs::{GiveAttrs, IntoGiveAttrs},
+    bytes::{
+        AsyncWritableByteChunks, AsyncWritableBytes, AsyncWriteInto, CowSlicedBytes, IterByteChunks,
+    },
     ready_ok, Element, RenderState,
 };
 
-// TODO: use html_common::
-pub enum HtmlAttributeValue<'a> {
-    String(Cow<'a, str>),
-    /// If a boolean attribute is present, its value is true, and if it's absent, its value is false.
-    ///
-    /// HTML defines restrictions on the allowed values of boolean attributes. Please see
-    /// [boolean_attributes]
-    ///
-    /// [boolean_attributes]: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes#boolean_attributes
-    BooleanTrue,
-}
+// TODO: remove
+pub type HtmlAttributeValue<'a> = frender_html_common::attr::HtmlAttributeValue<Cow<'a, str>>;
 
 // TODO: use html_common
 pub enum HtmlElementChildren<Children> {
@@ -42,7 +35,11 @@ impl<Children> HtmlElementChildren<Children> {
     }
 }
 
-pub struct HtmlElement<'a, Children = (), Attrs = [HtmlAttrPair<'a>; 0]> {
+pub struct HtmlElement<
+    'a,
+    Children = (),
+    Attrs = [HtmlAttrPair<'a, std::iter::Empty<Cow<'a, str>>>; 0],
+> {
     pub tag: Cow<'a, str>,
     pub attributes: Attrs,
     pub children: HtmlElementChildren<Children>,
@@ -87,95 +84,61 @@ pub enum HtmlAttributeValueState<'a> {
     BooleanTrue,
 }
 
-pub type HtmlAttrPair<'a> = (Cow<'a, str>, HtmlAttributeValue<'a>);
-
-pub struct AttrsIntoByteChunks<Attrs>(pub Attrs);
-
-impl<'a, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Iterator for AttrsIntoByteChunks<Attrs> {
-    type Item = [CowSlicedBytes<'a>; 5];
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|(name, value)| {
-            let (a, b, c) = match value {
-                HtmlAttributeValue::String(value) => (
-                    CowSlicedBytes::Borrowed(b"=\""),
-                    match html_escape::encode_double_quoted_attribute(&value) {
-                        Cow::Borrowed(_) => value.into(),
-                        Cow::Owned(value) => CowSlicedBytes::Owned(value.into_bytes().into()),
-                    },
-                    CowSlicedBytes::Borrowed(b"\""),
-                ),
-                HtmlAttributeValue::BooleanTrue => (
-                    CowSlicedBytes::Borrowed(&[]),
-                    CowSlicedBytes::Borrowed(&[]),
-                    CowSlicedBytes::Borrowed(&[]),
-                ),
-            };
-            [CowSlicedBytes::Borrowed(b" "), name.into(), a, b, c]
-        })
-    }
-}
+pub type HtmlAttrPair<'a, S: Iterator<Item = Cow<'a, str>>> = (
+    Cow<'a, str>,
+    frender_html_common::attr::HtmlAttributeValue<S>,
+);
 
 pin_project_lite::pin_project!(
-    pub struct HtmlElementRenderState<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>> {
-        before_children: IterByteChunks<
-            core::iter::Chain<
-                core::iter::Chain<
-                    core::array::IntoIter<CowSlicedBytes<'a>, 2>,
-                    core::iter::Flatten<AttrsIntoByteChunks<Attrs>>,
-                >,
-                core::array::IntoIter<CowSlicedBytes<'a>, 3>,
-            >,
-        >,
+    pub struct HtmlElementRenderState<'a, Children, Attrs: GiveAttrs> {
+        before_attrs: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 2>>,
+        attrs: Attrs,
+        after_attrs: &'static [u8],
         #[pin]
         children: Option<Children>,
-        after_children: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>,
+        after_children: Option<IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 3>>>,
     }
 );
 
-impl<'a, Children, Attrs: Iterator<Item = HtmlAttrPair<'a>>>
-    HtmlElementRenderState<'a, Children, Attrs>
-{
+impl<'a, Children, Attrs: GiveAttrs> HtmlElementRenderState<'a, Children, Attrs> {
     pub fn new(tag: Cow<'a, str>, attrs: Attrs, children: HtmlElementChildren<Children>) -> Self {
-        let mut start_tag_end = [
-            CowSlicedBytes::Borrowed(&[]),
-            CowSlicedBytes::Borrowed(&[]),
-            CowSlicedBytes::Borrowed(b">"),
-        ];
-        if let HtmlElementChildren::SelfClosing = &children {
-            start_tag_end[0] = CowSlicedBytes::Borrowed(b" ");
-            start_tag_end[1] = CowSlicedBytes::Borrowed(b"/");
+        let after_attrs = if let HtmlElementChildren::SelfClosing = &children {
+            b" />".as_slice()
+        } else {
+            b">"
         };
 
         let (children, after_children) = match children {
             HtmlElementChildren::Children(v) => (
                 Some(v),
-                [
-                    CowSlicedBytes::Borrowed(b"</"),
-                    tag.clone().into(),
-                    CowSlicedBytes::Borrowed(b">"),
-                ],
+                Some(IterByteChunks::new(
+                    [
+                        CowSlicedBytes::Borrowed(b"</"),
+                        tag.clone().into(),
+                        CowSlicedBytes::Borrowed(b">"),
+                    ]
+                    .into_iter(),
+                )),
             ),
-            _ => (None, [[].as_slice(); 3].map(CowSlicedBytes::Borrowed)),
+            _ => (None, None),
         };
 
-        let before_children = IterByteChunks::new(
-            [CowSlicedBytes::Borrowed(b"<"), tag.into()]
-                .into_iter()
-                .chain(AttrsIntoByteChunks(attrs).flatten())
-                .chain(start_tag_end),
-        );
+        let before_attrs =
+            IterByteChunks::new([CowSlicedBytes::Borrowed(b"<"), tag.into()].into_iter());
 
         Self {
-            before_children,
+            before_attrs,
+            attrs,
+            after_attrs,
             children,
-            after_children: IterByteChunks::new(after_children.into_iter()),
+            after_children,
         }
     }
 }
 
-impl<'a, Children: RenderState, Attrs: Iterator<Item = HtmlAttrPair<'a>>> RenderState
-    for HtmlElementRenderState<'a, Children, Attrs>
+impl<'a, Children: RenderState, Attrs> RenderState for HtmlElementRenderState<'a, Children, Attrs>
+where
+    Attrs: GiveAttrs,
 {
     fn poll_render<W: AsyncWrite + ?Sized>(
         self: Pin<&mut Self>,
@@ -185,14 +148,20 @@ impl<'a, Children: RenderState, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Render
         let this = self.project();
 
         ready_ok!(this
-            .before_children
+            .before_attrs
             .poll_write_byte_chunks(writer.as_mut(), cx));
+
+        ready_ok!(this.attrs.poll_write_into(writer.as_mut(), cx));
+
+        ready_ok!(this.after_attrs.poll_write_bytes(writer.as_mut(), cx));
 
         if let Some(children) = this.children.as_pin_mut() {
             ready_ok!(children.poll_render(writer.as_mut(), cx));
         }
 
-        ready_ok!(this.after_children.poll_write_byte_chunks(writer, cx));
+        if let Some(after_children) = this.after_children {
+            ready_ok!(after_children.poll_write_byte_chunks(writer, cx));
+        }
 
         Poll::Ready(Ok(()))
     }
@@ -200,16 +169,191 @@ impl<'a, Children: RenderState, Attrs: Iterator<Item = HtmlAttrPair<'a>>> Render
 
 impl<'a, Children: Element, Attrs> Element for HtmlElement<'a, Children, Attrs>
 where
-    Attrs: IntoIteratorAttrs<'a>,
+    Attrs: IntoGiveAttrs,
 {
-    type SsrState = HtmlElementRenderState<'a, Children::SsrState, Attrs::IntoIterAttrs>;
+    type SsrState = HtmlElementRenderState<'a, Children::SsrState, ()>;
 
     fn into_ssr_state(self) -> Self::SsrState {
         HtmlElementRenderState::new(
             self.tag,
-            Attrs::into_iter_attrs(self.attributes),
+            (),
             self.children
                 .map_children(|children| children.into_ssr_state()),
         )
     }
+}
+
+pub struct WritableAttrValue<'a, V: Iterator<Item = Cow<'a, str>>> {
+    current_chunk: Option<CowSlicedBytes<'a>>,
+    rest_chunks: V,
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> AsyncWritableByteChunks for WritableAttrValue<'a, V> {
+    type Chunk = CowSlicedBytes<'a>;
+
+    fn as_mut_current_chunk(&mut self) -> Option<&mut Self::Chunk> {
+        self.current_chunk.as_mut()
+    }
+
+    fn go_to_next_chunk(&mut self) {
+        self.current_chunk = self.rest_chunks.next().map(encode_double_quoted_attribute);
+    }
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> WritableAttrValue<'a, V> {
+    fn new(mut value: V) -> Self {
+        Self {
+            current_chunk: value.next().map(encode_double_quoted_attribute),
+            rest_chunks: value,
+        }
+    }
+}
+
+fn encode_double_quoted_attribute(value: Cow<str>) -> CowSlicedBytes {
+    match html_escape::encode_double_quoted_attribute(&value) {
+        Cow::Borrowed(_) => value.into(),
+        Cow::Owned(value) => CowSlicedBytes::Owned(value.into_bytes().into()),
+    }
+}
+
+pub struct WritableAttrEqValue<'a, V: Iterator<Item = Cow<'a, str>>> {
+    /// `="`
+    eq_dq: &'static [u8],
+    value: WritableAttrValue<'a, V>,
+    /// double-quote `"`
+    dq: &'static [u8],
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> AsyncWriteInto for WritableAttrEqValue<'a, V> {
+    fn poll_write_into<W: crate::AsyncWrite + ?Sized>(
+        &mut self,
+        mut writer: Pin<&mut W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<std::io::Result<()>> {
+        ready_ok!(self.eq_dq.poll_write_bytes(writer.as_mut(), cx));
+        ready_ok!(self.value.poll_write_byte_chunks(writer.as_mut(), cx));
+        self.dq.poll_write_bytes(writer, cx)
+    }
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> WritableAttrEqValue<'a, V> {
+    fn new(value: V) -> Self {
+        Self {
+            eq_dq: b"=\"",
+            value: WritableAttrValue::new(value),
+            dq: b"\"",
+        }
+    }
+}
+
+pub struct WritableAttrPair<'a, V: Iterator<Item = Cow<'a, str>>> {
+    space: &'static [u8],
+    name: CowSlicedBytes<'a>,
+    eq_value: Option<WritableAttrEqValue<'a, V>>,
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> WritableAttrPair<'a, V> {
+    fn new(name: Cow<'a, str>, value: frender_html_common::attr::HtmlAttributeValue<V>) -> Self {
+        Self {
+            space: b" ",
+            name: name.into(),
+            eq_value: match value {
+                frender_html_common::attr::HtmlAttributeValue::String(value) => {
+                    Some(WritableAttrEqValue::new(value))
+                }
+                frender_html_common::attr::HtmlAttributeValue::BooleanTrue => None,
+            },
+        }
+    }
+
+    fn from_pair(
+        (name, value): (
+            Cow<'a, str>,
+            frender_html_common::attr::HtmlAttributeValue<V>,
+        ),
+    ) -> Self {
+        Self::new(name, value)
+    }
+}
+
+impl<'a, V: Iterator<Item = Cow<'a, str>>> AsyncWriteInto for WritableAttrPair<'a, V> {
+    fn poll_write_into<W: AsyncWrite + ?Sized>(
+        &mut self,
+        mut writer: Pin<&mut W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<std::io::Result<()>> {
+        ready_ok!(self.space.poll_write_bytes(writer.as_mut(), cx));
+        ready_ok!(self.name.poll_write_bytes(writer.as_mut(), cx));
+
+        if let Some(ref mut eq_value) = self.eq_value {
+            ready_ok!(eq_value.poll_write_into(writer.as_mut(), cx));
+        }
+
+        Poll::Ready(Ok(()))
+    }
+}
+
+pub struct WritableAttrs<'a, Attrs, V>
+where
+    Attrs: Iterator<
+        Item = (
+            Cow<'a, str>,
+            frender_html_common::attr::HtmlAttributeValue<V>,
+        ),
+    >,
+    V: Iterator<Item = Cow<'a, str>>,
+{
+    current_attr: Option<WritableAttrPair<'a, V>>,
+    rest_attrs: Attrs,
+}
+
+impl<'a, Attrs, V> WritableAttrs<'a, Attrs, V>
+where
+    Attrs: Iterator<
+        Item = (
+            Cow<'a, str>,
+            frender_html_common::attr::HtmlAttributeValue<V>,
+        ),
+    >,
+    V: Iterator<Item = Cow<'a, str>>,
+{
+    fn new(mut attrs: Attrs) -> Self {
+        Self {
+            current_attr: attrs.next().map(WritableAttrPair::from_pair),
+            rest_attrs: attrs,
+        }
+    }
+}
+
+impl<'a, Attrs, V> AsyncWriteInto for WritableAttrs<'a, Attrs, V>
+where
+    Attrs: Iterator<
+        Item = (
+            Cow<'a, str>,
+            frender_html_common::attr::HtmlAttributeValue<V>,
+        ),
+    >,
+    V: Iterator<Item = Cow<'a, str>>,
+{
+    fn poll_write_into<W: crate::AsyncWrite + ?Sized>(
+        &mut self,
+        mut writer: Pin<&mut W>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<std::io::Result<()>> {
+        while let Some(current_attr) = &mut self.current_attr {
+            match current_attr.poll_write_into(writer.as_mut(), cx) {
+                Poll::Ready(Ok(_)) => {
+                    self.current_attr = self.rest_attrs.next().map(WritableAttrPair::from_pair)
+                }
+                res => return res,
+            }
+        }
+
+        Poll::Ready(Ok(()))
+    }
+}
+
+pub struct GivingAttrs<Attrs: GiveAttrs> {
+    current_attr: (),
+    attrs: Attrs,
 }

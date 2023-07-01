@@ -126,6 +126,7 @@ impl Field {
             super::FieldDeclaration::EventListener(_) => None,
             super::FieldDeclaration::Full(_) => None, // TODO:
             super::FieldDeclaration::Inherit(_) => None,
+            super::FieldDeclaration::WithBounds(_) => Some(quote!(unimplemented!())),
         }
     }
 }

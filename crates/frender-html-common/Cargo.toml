@@ -3,4 +3,8 @@ name = "frender-html-common"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+either = { version = "1.8.1", default-features = false }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

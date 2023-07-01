@@ -30,12 +30,24 @@ impl FieldAsSimpleProp<'_> {
         let mut builder_fn_bounds = None;
         let mut dom_bounds = None;
         let dom_state_ty;
-        let mut dom_pre = None;
         let dom_init;
         let dom_update;
+
+        let mut csr_initialize_pat_this = quote!(this);
+        let mut csr_initialize_pat_element = quote!(element);
+        let mut csr_initialize_pat_children_ctx = quote!(children_ctx);
+        let mut csr_initialize_pat_dom_element = quote!(dom_element);
+
+        let mut csr_update_pat_this = quote!(this);
+        let csr_update_pat_element = quote!(element);
+        let mut csr_update_pat_children_ctx = quote!(children_ctx);
+        let mut csr_update_pat_state = quote!(state);
+        let mut csr_update_pat_dom_element = quote!(dom_element);
+
         let mut ssr_bounds = None;
+        let mut ssr_attrs_args = quote!(this: Self);
         let ssr_attrs_ty;
-        let ssr_attrs_impl;
+        let ssr_attrs_block;
 
         match &field.declaration {
             FieldDeclaration::Maybe(m) => {
@@ -52,7 +64,8 @@ impl FieldAsSimpleProp<'_> {
                         V::State
                     }
                 };
-                dom_pre = Some(quote!(let element = dom_element;));
+                csr_initialize_pat_dom_element = quote!(element);
+                csr_update_pat_dom_element = quote!(element);
 
                 dom_init = m
                     .to_ts_dom_initialize_state_custom(crate_path, name, quote!(V), quote!(this.0))
@@ -74,14 +87,14 @@ impl FieldAsSimpleProp<'_> {
 
                 let attr_name = m.to_html_prop_name(name);
 
-                ssr_attrs_impl = quote! {
+                ssr_attrs_block = quote! {{
                     V::maybe_into_html_attribute_value(
                         this.0
                     ).map(|attr_value| (::std::borrow::Cow::Borrowed(#attr_name), attr_value.map_or(
                             #crate_path::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
                             #crate_path::frender_ssr::element::html::HtmlAttributeValue::String,
                     ))).into_iter()
-                };
+                }};
             }
             FieldDeclaration::EventListener(e) => {
                 //
@@ -126,9 +139,9 @@ impl FieldAsSimpleProp<'_> {
                     >
                 };
 
-                ssr_attrs_impl = quote! {
+                ssr_attrs_block = quote! {{
                     ::core::iter::empty()
-                };
+                }};
             }
             FieldDeclaration::Full(_) => {
                 assert_eq!(
@@ -165,6 +178,64 @@ impl FieldAsSimpleProp<'_> {
                     },
                 };
             }
+            FieldDeclaration::WithBounds(wb) => {
+                let wb = &wb.details.content;
+                builder_fn_bounds = wb
+                    .common_bounds
+                    .as_ref()
+                    .map(|common_bounds| common_bounds.bounds.to_token_stream());
+
+                dom_bounds = Some(quote!(: #builder_fn_bounds));
+                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
+
+                // csr
+                {
+                    let crate::FieldDeclarationWithCommonBoundsCsrContent {
+                        fn_initialize,
+                        fn_update,
+                    } = wb.csr_content();
+                    {
+                        dom_state_ty = fn_initialize.ty_state.to_token_stream();
+
+                        {
+                            let args = &fn_initialize.args.content.args;
+                            csr_initialize_pat_this = args.this.pat.to_token_stream();
+                            csr_initialize_pat_children_ctx =
+                                args.children_ctx.pat.to_token_stream();
+                            csr_initialize_pat_dom_element = args.element.pat.to_token_stream();
+                        }
+
+                        dom_init = fn_initialize.block.to_token_stream();
+                    }
+                    {
+                        {
+                            let args = &fn_update.args.content;
+
+                            csr_update_pat_this = args.pre_args.this.pat.to_token_stream();
+                            csr_update_pat_children_ctx =
+                                args.pre_args.children_ctx.pat.to_token_stream();
+                            csr_update_pat_state = args.state.pat.to_token_stream();
+                            csr_update_pat_dom_element =
+                                args.pre_args.element.pat.to_token_stream();
+                        }
+                        dom_update = fn_update.block.to_token_stream();
+                    }
+                }
+
+                // ssr
+                {
+                    let crate::FnIntoIterAttrs {
+                        inputs,
+                        ty_into_iter_attrs,
+                        block,
+                        ..
+                    } = &wb.ssr_content().fn_into_iter_attrs;
+
+                    ssr_attrs_args = inputs.to_token_stream();
+                    ssr_attrs_ty = ty_into_iter_attrs.to_token_stream();
+                    ssr_attrs_block = block.to_token_stream();
+                }
+            }
         }
 
         FieldToSimpleProp {
@@ -175,25 +246,23 @@ impl FieldAsSimpleProp<'_> {
                     type State = super::props::#name<#dom_state_ty>;
 
                     fn initialize_state_non_reactive(
-                        this: Self,
-                        element: &E,
-                        children_ctx: &mut #crate_path::frender_csr::CsrContext,
+                        #csr_initialize_pat_this: Self,
+                        #csr_initialize_pat_element: &E,
+                        #csr_initialize_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
                     ) -> Self::State {
-                        let dom_element = element.as_ref();
-                        #dom_pre
+                        let #csr_initialize_pat_dom_element = element.as_ref();
                         super::props::#name(
                             #dom_init
                         )
                     }
 
                     fn update_element_non_reactive(
-                        this: Self,
-                        element: &E,
-                        children_ctx: &mut #crate_path::frender_csr::CsrContext,
-                        state: ::core::pin::Pin<&mut Self::State>,
+                        #csr_update_pat_this: Self,
+                        #csr_update_pat_element: &E,
+                        #csr_update_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
+                        #csr_update_pat_state: ::core::pin::Pin<&mut Self::State>,
                     ) {
-                        let dom_element = element.as_ref();
-                        #dom_pre
+                        let #csr_update_pat_dom_element = element.as_ref();
                         #dom_update
                     }
                 }
@@ -203,8 +272,8 @@ impl FieldAsSimpleProp<'_> {
                     #crate_path::frender_ssr::attrs::IntoIteratorAttrs<'a>
                 for super::props::#name<V> {
                     type IntoIterAttrs = #ssr_attrs_ty;
-                    fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-                        #ssr_attrs_impl
+                    fn into_iter_attrs(#ssr_attrs_args) -> Self::IntoIterAttrs {
+                        #ssr_attrs_block
                     }
                 }
             }),

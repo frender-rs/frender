@@ -33,6 +33,7 @@ impl FieldDeclaration {
                 .map(|init| Cow::Borrowed(&init.content.content)),
             FieldDeclaration::Inherit(_) => None,
             FieldDeclaration::EventListener(_) => None,
+            FieldDeclaration::WithBounds(_) => Some(Cow::Owned(quote!(unimplemented!()))),
         }
     }
 
@@ -75,6 +76,7 @@ impl FieldDeclaration {
                     );
                 ))
             }
+            FieldDeclaration::WithBounds(_) => Cow::Owned(quote!(unimplemented!())),
         }
     }
 
@@ -106,6 +108,7 @@ impl FieldDeclaration {
                     #base ::Data<TypeDefs::#field_name>: #crate_path::frender_csr::props::UpdateElement<#dom_element_ty>
                 ))
             }
+            FieldDeclaration::WithBounds(_) => Some(quote!(unimplemented!())),
         }
     }
 
@@ -138,6 +141,7 @@ impl FieldDeclaration {
                     #base ::Data<TypeDefs::#field_name>: ::frender_ssr::IntoSsrData<W>
                 ))
             }
+            FieldDeclaration::WithBounds(_) => Some(quote!(unimplemented!())),
         }
     }
 
@@ -233,6 +237,7 @@ impl FieldDeclaration {
                     }),
                 })
             }
+            FieldDeclaration::WithBounds(_) => None, // TODO:
         }
     }
 }
@@ -275,6 +280,12 @@ impl FieldDeclaration {
                     ?::core::marker::Sized + #path ::Types
                 }))
             }
+            FieldDeclaration::WithBounds(wb) => wb
+                .details
+                .content
+                .common_bounds
+                .as_ref()
+                .map(|common_bounds| Cow::Owned(common_bounds.bounds.to_token_stream())),
         }
     }
 
@@ -291,6 +302,10 @@ impl FieldDeclaration {
                     #path ::TypesInitial
                 )))
             }
+            FieldDeclaration::WithBounds(wb) => wb.details.content.initial.as_ref().map_or_else(
+                || Cow::Owned(syn::Type::Verbatim(quote!(()))),
+                |initial| Cow::Owned(initial.ty.clone()),
+            ),
         }
     }
 
@@ -306,6 +321,10 @@ impl FieldDeclaration {
                     #path ::build(#path ())
                 }))
             }
+            FieldDeclaration::WithBounds(wb) => wb.details.content.initial.as_ref().map_or_else(
+                || Cow::Owned(syn::Expr::Verbatim(quote!(()))),
+                |initial| Cow::Owned(initial.expr.clone()),
+            ),
         }
     }
 }
