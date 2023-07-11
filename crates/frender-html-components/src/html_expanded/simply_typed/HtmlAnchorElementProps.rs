@@ -264,7 +264,7 @@ def_props_type!(
         href: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         ping: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         referrer_policy: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        rel: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        rel: bounds![DomTokens::Bounds],
         target: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         href_lang: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         r#type: alias![type_] + bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
@@ -312,13 +312,12 @@ mod imp {
         },
     ));
     crate::imports::impl_bounds!(super::props::rel(
-        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        bounds as DomTokens,
         element as web_sys::HtmlAnchorElement,
         attr_name = "rel",
         csr {
-            update: |el: &web_sys::HtmlAnchorElement, _, v: &_| el.set_rel(v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
+            get_dom_token: crate::common::rel_list::RelList::rel_list
+        }
     ));
     crate::imports::impl_bounds!(super::props::target(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,

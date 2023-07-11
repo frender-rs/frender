@@ -413,7 +413,13 @@ frender_macros::def_intrinsic_component_props! {
                 href ? &str { set_href },
                 ping ? &str { set_ping },
                 referrer_policy ? &str {"referrerpolicy" set_referrer_policy},
-                rel ? &str { set_rel },
+                // rel ? &str { set_rel },
+                rel: bounds![
+                    bounds as DomTokens,
+                    csr {
+                        get_dom_token: crate::common::rel_list::RelList::rel_list
+                    }
+                ],
                 target ? &str { set_target },
             } [
                 pub struct HtmlAnchorElementProps(web_sys::HtmlAnchorElement : a) {
@@ -623,7 +629,7 @@ frender_macros::def_intrinsic_component_props! {
                 accept_charset ? &str {"accept-charset" set_accept_charset},
                 auto_complete ? &str {"autocomplete" set_autocomplete},
                 name ? &str {set_name},
-                rel ? &str,
+                rel ? &str, // TODO: bounds![]
                 action ? &str {set_action},
                 enc_type ? &str {"enctype" set_enctype},
                 method ? &str {set_method},
@@ -740,7 +746,13 @@ frender_macros::def_intrinsic_component_props! {
                 media ? &str {set_media},
                 prefetch ? &str,
                 referrer_policy ? &str {"referrerpolicy" set_referrer_policy},
-                rel ? &str { set_rel },
+                // rel ? &str { set_rel },
+                rel: bounds![
+                    bounds as DomTokens,
+                    csr {
+                        get_dom_token: crate::common::rel_list::RelList::rel_list
+                    }
+                ],
                 sizes ? &str,
                 #[intrinsic_component(alias(type_))]
                 r#type ? &str {"type" set_type},

@@ -1,3 +1,5 @@
+mod common;
+
 #[cfg(feature = "html_macro_not_expand")]
 pub mod html;
 

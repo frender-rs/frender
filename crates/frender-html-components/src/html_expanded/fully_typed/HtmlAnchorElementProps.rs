@@ -9,7 +9,7 @@ pub fn HtmlAnchorElementProps() -> Building<TypesInitial> {
         href: (),
         ping: (),
         referrer_policy: (),
-        rel: (),
+        rel: unimplemented!(),
         target: (),
         href_lang: (),
         r#type: (),
@@ -793,7 +793,7 @@ mod trait_types {
         type href: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type ping: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
-        type rel: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type rel: Todo<unimplemented![]>;
         type target: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type href_lang: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type r#type: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
@@ -829,7 +829,7 @@ mod types_initial {
         href = (),
         ping = (),
         referrer_policy = (),
-        rel = (),
+        rel = unimplemented![],
         target = (),
         href_lang = (),
         r#type = (),
@@ -846,7 +846,6 @@ pub mod render_state {
         type href;
         type ping;
         type referrer_policy;
-        type rel;
         type target;
         type href_lang;
         type r#type;
@@ -856,9 +855,8 @@ pub mod render_state {
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
         TypeDefs::HtmlElementProps, pub download : TypeDefs::download, pub href :
         TypeDefs::href, pub ping : TypeDefs::ping, pub referrer_policy :
-        TypeDefs::referrer_policy, pub rel : TypeDefs::rel, pub target :
-        TypeDefs::target, pub href_lang : TypeDefs::href_lang, pub r#type :
-        TypeDefs::r#type, }
+        TypeDefs::referrer_policy, pub target : TypeDefs::target, pub href_lang :
+        TypeDefs::href_lang, pub r#type : TypeDefs::r#type, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -2695,7 +2693,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn rel<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn rel<V: Todo<unimplemented![]>>(
             self,
             rel: V,
         ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
@@ -2774,6 +2772,7 @@ mod impl_update_element {
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
+        unimplemented!(): __,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -2794,9 +2793,6 @@ mod impl_update_element {
                 referrer_policy = <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
-                rel = <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::State,
                 target = <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
@@ -2814,6 +2810,7 @@ mod impl_update_element {
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
+            unimplemented!();
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
@@ -2847,13 +2844,6 @@ mod impl_update_element {
                     this.referrer_policy,
                     |v| dom_element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
-                ),
-                rel: <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.rel,
-                    |v| dom_element.set_rel(v),
-                    || dom_element.remove_attribute("rel").unwrap(),
                 ),
                 target: <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -2924,14 +2914,7 @@ mod impl_update_element {
                 |v| dom_element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
-            <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.rel,
-                state.rel,
-                |v| dom_element.set_rel(v),
-                || dom_element.remove_attribute("rel").unwrap(),
-            );
+            unimplemented! {}
             <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
@@ -2969,6 +2952,7 @@ mod impl_into_ssr_data {
         > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>: ::frender_ssr::IntoSsrData<W>,
+        unimplemented!(): __,
     {
         type Children = <HtmlElementProps::Data<
             TypeDefs::HtmlElementProps,
@@ -3046,19 +3030,7 @@ mod impl_into_ssr_data {
                                             ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
                                         },
                                     )),
-                                <TypeDefs::rel as ::frender_html::props::MaybeUpdateValueWithState<
-                                    str,
-                                >>::maybe_into_html_attribute_value(this.rel)
-                                    .map(|value| (
-                                        ::std::borrow::Cow::Borrowed("rel"),
-                                        if let Some(value) = value {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                                value,
-                                            )
-                                        } else {
-                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                        },
-                                    )),
+                                unimplemented!(),
                                 <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
                                 >>::maybe_into_html_attribute_value(this.target)
