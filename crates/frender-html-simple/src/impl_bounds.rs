@@ -190,37 +190,32 @@ pub mod DomTokens {
 
         pub type State<V> = <V as DomTokens>::UpdateState;
 
-        pub struct Input<
-            'a,
-            'ctx,
-            V: DomTokens,
-            G: FnOnce(&web_sys::Element) -> web_sys::DomTokenList,
-        > {
+        pub struct Input<'a, 'ctx, V: DomTokens, El, G: FnOnce(&El) -> web_sys::DomTokenList> {
             pub this: V,
-            pub element: &'a web_sys::Element,
+            pub element: &'a El,
             pub children_ctx: &'a mut CsrContext<'ctx>,
             pub attr_name: &'static str,
             pub get_dom_token: G,
         }
 
-        pub fn initialize<V: DomTokens, G: FnOnce(&web_sys::Element) -> web_sys::DomTokenList>(
+        pub fn initialize<V: DomTokens, El, G: FnOnce(&El) -> web_sys::DomTokenList>(
             Input {
                 this,
                 element,
                 get_dom_token,
                 ..
-            }: Input<V, G>,
+            }: Input<V, El, G>,
         ) -> State<V> {
             V::update_dom_token_list_and_initialize_state(this, &get_dom_token(element))
         }
 
-        pub fn update<V: DomTokens, G: FnOnce(&web_sys::Element) -> web_sys::DomTokenList>(
+        pub fn update<V: DomTokens, El, G: FnOnce(&El) -> web_sys::DomTokenList>(
             Input {
                 this,
                 element,
                 get_dom_token,
                 ..
-            }: Input<V, G>,
+            }: Input<V, El, G>,
             state: &mut State<V>,
         ) {
             V::update_dom_token_list(this, &get_dom_token(element), state)
