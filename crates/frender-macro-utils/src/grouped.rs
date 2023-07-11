@@ -56,6 +56,13 @@ macro_rules! impl_grouped {
                 <$ty as syn::token::Token>::display()
             }
         }
+
+        impl<S: quote::ToTokens> quote::ToTokens for $name<S> {
+            fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+                self.group_token
+                    .surround(tokens, |tokens| self.content.to_tokens(tokens))
+            }
+        }
     )*};
 }
 

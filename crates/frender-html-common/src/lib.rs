@@ -7,3 +7,5 @@ pub mod attr;
 pub mod class;
 pub mod dom_token;
 pub use dom_token::DomTokens;
+
+pub use frender_common::write::attrs::{AsyncWritableAttrs, IntoAsyncWritableAttrs};

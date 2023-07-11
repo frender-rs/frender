@@ -15,6 +15,7 @@ lazy-pinned = "0.1.0"
 frender-common = { version = "0.1.0", path = "../frender-common" }
 either = { version = "1.8.1", default-features = false, optional = true }
 indexmap = { version = "1.9.3", features = ["std"] }
+frender-html-common = { version = "0.1.0", path = "../frender-html-common", features = ["csr"] }
 
 [dependencies.futures-lite]
 version = "1.12.0"

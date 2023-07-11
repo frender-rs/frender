@@ -935,7 +935,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2973,63 +2973,63 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.download,
-                    |v| element.set_download(v),
+                    |v| dom_element.set_download(v),
                     || dom_element.remove_attribute("download").unwrap(),
                 ),
                 href: <TypeDefs::href as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.href,
-                    |v| element.set_href(v),
+                    |v| dom_element.set_href(v),
                     || dom_element.remove_attribute("href").unwrap(),
                 ),
                 ping: <TypeDefs::ping as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.ping,
-                    |v| element.set_ping(v),
+                    |v| dom_element.set_ping(v),
                     || dom_element.remove_attribute("ping").unwrap(),
                 ),
                 referrer_policy: <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
-                    |v| element.set_referrer_policy(v),
+                    |v| dom_element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
                 rel: <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.rel,
-                    |v| element.set_rel(v),
+                    |v| dom_element.set_rel(v),
                     || dom_element.remove_attribute("rel").unwrap(),
                 ),
                 target: <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.target,
-                    |v| element.set_target(v),
+                    |v| dom_element.set_target(v),
                     || dom_element.remove_attribute("target").unwrap(),
                 ),
                 alt: <TypeDefs::alt as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.alt,
-                    |v| element.set_alt(v),
+                    |v| dom_element.set_alt(v),
                     || dom_element.remove_attribute("alt").unwrap(),
                 ),
                 coords: <TypeDefs::coords as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.coords,
-                    |v| element.set_coords(v),
+                    |v| dom_element.set_coords(v),
                     || dom_element.remove_attribute("coords").unwrap(),
                 ),
                 shape: <TypeDefs::shape as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.shape,
-                    |v| element.set_shape(v),
+                    |v| dom_element.set_shape(v),
                     || dom_element.remove_attribute("shape").unwrap(),
                 ),
             }
@@ -3053,7 +3053,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.download,
                 state.download,
-                |v| element.set_download(v),
+                |v| dom_element.set_download(v),
                 || dom_element.remove_attribute("download").unwrap(),
             );
             <TypeDefs::href as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3061,7 +3061,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.href,
                 state.href,
-                |v| element.set_href(v),
+                |v| dom_element.set_href(v),
                 || dom_element.remove_attribute("href").unwrap(),
             );
             <TypeDefs::ping as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3069,7 +3069,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.ping,
                 state.ping,
-                |v| element.set_ping(v),
+                |v| dom_element.set_ping(v),
                 || dom_element.remove_attribute("ping").unwrap(),
             );
             <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3077,7 +3077,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
                 state.referrer_policy,
-                |v| element.set_referrer_policy(v),
+                |v| dom_element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
             <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3085,7 +3085,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.rel,
                 state.rel,
-                |v| element.set_rel(v),
+                |v| dom_element.set_rel(v),
                 || dom_element.remove_attribute("rel").unwrap(),
             );
             <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3093,7 +3093,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.target,
                 state.target,
-                |v| element.set_target(v),
+                |v| dom_element.set_target(v),
                 || dom_element.remove_attribute("target").unwrap(),
             );
             <TypeDefs::alt as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3101,7 +3101,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.alt,
                 state.alt,
-                |v| element.set_alt(v),
+                |v| dom_element.set_alt(v),
                 || dom_element.remove_attribute("alt").unwrap(),
             );
             <TypeDefs::coords as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3109,7 +3109,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.coords,
                 state.coords,
-                |v| element.set_coords(v),
+                |v| dom_element.set_coords(v),
                 || dom_element.remove_attribute("coords").unwrap(),
             );
             <TypeDefs::shape as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3117,7 +3117,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.shape,
                 state.shape,
-                |v| element.set_shape(v),
+                |v| dom_element.set_shape(v),
                 || dom_element.remove_attribute("shape").unwrap(),
             );
         }

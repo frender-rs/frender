@@ -882,7 +882,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2676,35 +2676,35 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.r#type,
-                    |v| element.set_type(v),
+                    |v| dom_element.set_type(v),
                     || dom_element.remove_attribute("r#type").unwrap(),
                 ),
                 src: <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 srcset: <TypeDefs::srcset as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.srcset,
-                    |v| element.set_srcset(v),
+                    |v| dom_element.set_srcset(v),
                     || dom_element.remove_attribute("srcset").unwrap(),
                 ),
                 sizes: <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.sizes,
-                    |v| element.set_sizes(v),
+                    |v| dom_element.set_sizes(v),
                     || dom_element.remove_attribute("sizes").unwrap(),
                 ),
                 media: <TypeDefs::media as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.media,
-                    |v| element.set_media(v),
+                    |v| dom_element.set_media(v),
                     || dom_element.remove_attribute("media").unwrap(),
                 ),
                 height: <TypeDefs::height as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2750,7 +2750,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#type,
                 state.r#type,
-                |v| element.set_type(v),
+                |v| dom_element.set_type(v),
                 || dom_element.remove_attribute("r#type").unwrap(),
             );
             <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2758,7 +2758,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             <TypeDefs::srcset as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2766,7 +2766,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.srcset,
                 state.srcset,
-                |v| element.set_srcset(v),
+                |v| dom_element.set_srcset(v),
                 || dom_element.remove_attribute("srcset").unwrap(),
             );
             <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2774,7 +2774,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.sizes,
                 state.sizes,
-                |v| element.set_sizes(v),
+                |v| dom_element.set_sizes(v),
                 || dom_element.remove_attribute("sizes").unwrap(),
             );
             <TypeDefs::media as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2782,7 +2782,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.media,
                 state.media,
-                |v| element.set_media(v),
+                |v| dom_element.set_media(v),
                 || dom_element.remove_attribute("media").unwrap(),
             );
             <TypeDefs::height as crate::imports::frender_html::props::MaybeUpdateValueWithState<

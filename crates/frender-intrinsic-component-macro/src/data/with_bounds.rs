@@ -1,4 +1,5 @@
 use frender_macro_utils::grouped::{Braced, Parenthesized};
+use proc_macro2::TokenStream;
 use syn::{parse::Parse, punctuated::Punctuated};
 
 use crate::kw;
@@ -185,24 +186,24 @@ impl Parse for FieldDeclarationWithCommonBoundsCsrContent {
 }
 
 #[derive(Clone)]
-pub struct FnIntoIterAttrs {
+pub struct FnIntoAttrs {
     pub fn_token: syn::Token![fn],
-    pub ident: kw::into_iter_attrs,
+    pub ident: kw::into_attrs,
     pub paren_token: syn::token::Paren,
-    pub inputs: Punctuated<syn::FnArg, syn::Token![,]>,
+    pub inputs: TypedPatType<syn::Token![Self]>,
     pub arrow_token: syn::Token![->],
     pub ty_into_iter_attrs: syn::Type,
     pub block: syn::Block,
 }
 
-impl Parse for FnIntoIterAttrs {
+impl Parse for FnIntoAttrs {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let inputs;
         Ok(Self {
             fn_token: input.parse()?,
             ident: input.parse()?,
             paren_token: syn::parenthesized!(inputs in input),
-            inputs: inputs.parse_terminated(Parse::parse)?,
+            inputs: inputs.parse()?,
             arrow_token: input.parse()?,
             ty_into_iter_attrs: input.parse()?,
             block: input.parse()?,
@@ -212,7 +213,7 @@ impl Parse for FnIntoIterAttrs {
 
 #[derive(Clone)]
 pub struct FieldDeclarationWithCommonBoundsSsrContent {
-    pub fn_into_iter_attrs: FnIntoIterAttrs,
+    pub fn_into_iter_attrs: FnIntoAttrs,
 }
 
 impl Parse for FieldDeclarationWithCommonBoundsSsrContent {
@@ -285,14 +286,71 @@ type FieldDeclarationWithBoundsImplSsr =
     FieldDeclarationWithBoundsImpl<kw::ssr, FieldDeclarationWithCommonBoundsSsrContent>;
 
 #[derive(Clone)]
-pub struct FieldDeclarationWithBoundsDetails {
+pub struct BoundsPath {
+    pub mod_path: syn::Path,
+    pub generic_args: Option<syn::AngleBracketedGenericArguments>,
+}
+
+impl Parse for BoundsPath {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            mod_path: input.call(syn::Path::parse_mod_style)?,
+            generic_args: if input.peek(syn::Token![<])
+                || (input.peek(syn::Token![::]) && input.peek2(syn::Token![<]))
+            {
+                Some(input.parse()?)
+            } else {
+                None
+            },
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct FieldDeclarationWithBoundsDetailsSimple {
+    pub bounds: (kw::bounds, syn::Token![as], BoundsPath),
+    pub attr_name: Option<(syn::Token![,], kw::attr_name, syn::Token![=], syn::Expr)>,
+    pub imps: Vec<(syn::Token![,], syn::Ident, Braced<TokenStream>)>,
+    pub trailing_comma: Option<syn::Token![,]>,
+}
+
+impl Parse for FieldDeclarationWithBoundsDetailsSimple {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            bounds: (input.parse()?, input.parse()?, input.parse()?),
+            attr_name: if input.peek(syn::Token![,]) && input.peek2(kw::attr_name) {
+                Some((
+                    input.parse()?,
+                    input.parse()?,
+                    input.parse()?,
+                    input.parse()?,
+                ))
+            } else {
+                None
+            },
+            imps: {
+                let mut imps = vec![];
+
+                while input.peek(syn::Token![,]) && input.peek2(syn::Ident) {
+                    imps.push((input.parse()?, input.parse()?, input.parse()?));
+                }
+
+                imps
+            },
+            trailing_comma: input.parse()?,
+        })
+    }
+}
+
+#[derive(Clone)]
+pub struct FieldDeclarationWithBoundsDetailsFull {
     pub common_bounds: Option<FieldDeclarationWithCommonBoundsTraitBounds>,
     pub initial: Option<FieldDeclarationWithBoundsInitial>,
     pub csr: FieldDeclarationWithBoundsImplCsr,
     pub ssr: FieldDeclarationWithBoundsImplSsr,
 }
 
-impl FieldDeclarationWithBoundsDetails {
+impl FieldDeclarationWithBoundsDetailsFull {
     pub fn csr_content(&self) -> &FieldDeclarationWithCommonBoundsCsrContent {
         &self.csr.content.content
     }
@@ -302,7 +360,7 @@ impl FieldDeclarationWithBoundsDetails {
     }
 }
 
-impl Parse for FieldDeclarationWithBoundsDetails {
+impl Parse for FieldDeclarationWithBoundsDetailsFull {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         Ok(Self {
             common_bounds: input.call(FieldDeclarationWithCommonBoundsTraitBounds::parse_some)?,
@@ -319,7 +377,23 @@ pub struct FieldDeclarationWithBounds {
     pub ident: kw::bounds,
     pub bang_token: syn::Token![!],
     pub delimiter: syn::MacroDelimiter,
-    pub details: Braced<FieldDeclarationWithBoundsDetails>,
+    pub details: FieldDeclarationWithBoundsDetails,
+}
+
+#[derive(Clone)]
+pub enum FieldDeclarationWithBoundsDetails {
+    Full(Braced<FieldDeclarationWithBoundsDetailsFull>),
+    Simple(FieldDeclarationWithBoundsDetailsSimple),
+}
+
+impl Parse for FieldDeclarationWithBoundsDetails {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(if let Some(full) = input.parse()? {
+            Self::Full(full)
+        } else {
+            Self::Simple(input.parse()?)
+        })
+    }
 }
 
 impl Parse for FieldDeclarationWithBounds {

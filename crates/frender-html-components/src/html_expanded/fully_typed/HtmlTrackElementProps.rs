@@ -837,7 +837,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2397,35 +2397,35 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.default,
-                    |v| element.set_default(*v),
+                    |v| dom_element.set_default(*v),
                     || dom_element.remove_attribute("default").unwrap(),
                 ),
                 kind: <TypeDefs::kind as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.kind,
-                    |v| element.set_kind(v),
+                    |v| dom_element.set_kind(v),
                     || dom_element.remove_attribute("kind").unwrap(),
                 ),
                 label: <TypeDefs::label as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.label,
-                    |v| element.set_label(v),
+                    |v| dom_element.set_label(v),
                     || dom_element.remove_attribute("label").unwrap(),
                 ),
                 src: <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 src_lang: <TypeDefs::src_lang as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src_lang,
-                    |v| element.set_srclang(v),
+                    |v| dom_element.set_srclang(v),
                     || dom_element.remove_attribute("srclang").unwrap(),
                 ),
             }
@@ -2449,7 +2449,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.default,
                 state.default,
-                |v| element.set_default(*v),
+                |v| dom_element.set_default(*v),
                 || dom_element.remove_attribute("default").unwrap(),
             );
             <TypeDefs::kind as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2457,7 +2457,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.kind,
                 state.kind,
-                |v| element.set_kind(v),
+                |v| dom_element.set_kind(v),
                 || dom_element.remove_attribute("kind").unwrap(),
             );
             <TypeDefs::label as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2465,7 +2465,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.label,
                 state.label,
-                |v| element.set_label(v),
+                |v| dom_element.set_label(v),
                 || dom_element.remove_attribute("label").unwrap(),
             );
             <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2473,7 +2473,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             <TypeDefs::src_lang as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2481,7 +2481,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src_lang,
                 state.src_lang,
-                |v| element.set_srclang(v),
+                |v| dom_element.set_srclang(v),
                 || dom_element.remove_attribute("srclang").unwrap(),
             );
         }

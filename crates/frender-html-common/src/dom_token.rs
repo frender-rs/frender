@@ -1,5 +1,10 @@
 // mod advanced; // TODO: impl advanced dom tokens
 
+use frender_common::write::{
+    attrs::IntoAsyncWritableAttrs,
+    str::{AsyncWritableStr, IntoAsyncWritableStr},
+};
+
 #[doc(hidden)]
 pub mod custom_const_dom_tokens {
     use super::DomTokenList;
@@ -188,14 +193,36 @@ pub trait DomTokens {
         state: &mut Self::UpdateState,
     );
 
-    type StringChunk: 'static + AsRef<str>;
-    type StringChunks: Iterator<Item = Self::StringChunk>;
+    type AsyncWritableDomTokens: AsyncWritableStr;
 
-    fn into_string_chunks(this: Self) -> Self::StringChunks;
+    fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens;
+}
+
+#[cfg(feature = "csr")]
+mod impl_csr {
+    impl super::DomTokenList for web_sys::DomTokenList {
+        fn set_value(&self, value: &str) {
+            self.set_value(value)
+        }
+
+        fn add_1(&self, token: &str) {
+            self.add_1(token).unwrap()
+        }
+
+        fn remove_1(&self, token: &str) {
+            self.remove_1(token).unwrap()
+        }
+
+        fn replace(&self, old_token: &str, new_token: &str) {
+            _ = self.replace(old_token, new_token).unwrap()
+        }
+    }
 }
 
 mod impl_for_static_string {
     use std::borrow::Cow;
+
+    use frender_common::write::str::StrWriting;
 
     use super::DomTokens;
 
@@ -243,11 +270,9 @@ mod impl_for_static_string {
                 }
             }
 
-            type StringChunk = Self;
-            type StringChunks = core::iter::Once<Self::StringChunk>;
-
-            fn into_string_chunks(this: Self) -> Self::StringChunks {
-                core::iter::once(this)
+            type AsyncWritableDomTokens = StrWriting<Self>;
+            fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens {
+                StrWriting::new(this)
             }
         }
     );
@@ -268,12 +293,10 @@ mod impl_for_unit_tuple {
         fn update_dom_token_list(_: Self, _: &impl super::DomTokenList, _: &mut Self::UpdateState) {
         }
 
-        type StringChunk = &'static str;
+        type AsyncWritableDomTokens = frender_common::write::str::Empty;
 
-        type StringChunks = std::iter::Empty<&'static str>;
-
-        fn into_string_chunks(_: Self) -> Self::StringChunks {
-            std::iter::empty()
+        fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens {
+            frender_common::write::str::Empty
         }
     }
 }

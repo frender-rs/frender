@@ -241,6 +241,7 @@ version = "0.1.0"
 dependencies = [
  "either",
  "frender-common",
+ "frender-html-common",
  "futures-lite",
  "gloo",
  "indexmap",
@@ -297,6 +298,7 @@ version = "0.1.0"
 dependencies = [
  "either",
  "frender-common",
+ "web-sys",
 ]
 
 [[package]]
@@ -328,7 +330,9 @@ dependencies = [
 name = "frender-html-simple"
 version = "0.1.0"
 dependencies = [
+ "frender-common",
  "frender-csr",
+ "frender-events",
  "frender-html-common",
  "frender-ssr",
  "pin-project-lite",

@@ -935,7 +935,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2984,63 +2984,63 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.align,
-                    |v| element.set_align(v),
+                    |v| dom_element.set_align(v),
                     || dom_element.remove_attribute("align").unwrap(),
                 ),
                 bg_color: <TypeDefs::bg_color as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.bg_color,
-                    |v| element.set_bg_color(v),
+                    |v| dom_element.set_bg_color(v),
                     || dom_element.remove_attribute("bgcolor").unwrap(),
                 ),
                 border: <TypeDefs::border as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.border,
-                    |v| element.set_border(v),
+                    |v| dom_element.set_border(v),
                     || dom_element.remove_attribute("border").unwrap(),
                 ),
                 cell_padding: <TypeDefs::cell_padding as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cell_padding,
-                    |v| element.set_cell_padding(v),
+                    |v| dom_element.set_cell_padding(v),
                     || dom_element.remove_attribute("cellpadding").unwrap(),
                 ),
                 cell_spacing: <TypeDefs::cell_spacing as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cell_spacing,
-                    |v| element.set_cell_spacing(v),
+                    |v| dom_element.set_cell_spacing(v),
                     || dom_element.remove_attribute("cellspacing").unwrap(),
                 ),
                 frame: <TypeDefs::frame as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.frame,
-                    |v| element.set_frame(v),
+                    |v| dom_element.set_frame(v),
                     || dom_element.remove_attribute("frame").unwrap(),
                 ),
                 rules: <TypeDefs::rules as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.rules,
-                    |v| element.set_rules(v),
+                    |v| dom_element.set_rules(v),
                     || dom_element.remove_attribute("rules").unwrap(),
                 ),
                 summary: <TypeDefs::summary as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.summary,
-                    |v| element.set_summary(v),
+                    |v| dom_element.set_summary(v),
                     || dom_element.remove_attribute("summary").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| element.set_width(v),
+                    |v| dom_element.set_width(v),
                     || dom_element.remove_attribute("width").unwrap(),
                 ),
             }
@@ -3064,7 +3064,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.align,
                 state.align,
-                |v| element.set_align(v),
+                |v| dom_element.set_align(v),
                 || dom_element.remove_attribute("align").unwrap(),
             );
             <TypeDefs::bg_color as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3072,7 +3072,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.bg_color,
                 state.bg_color,
-                |v| element.set_bg_color(v),
+                |v| dom_element.set_bg_color(v),
                 || dom_element.remove_attribute("bgcolor").unwrap(),
             );
             <TypeDefs::border as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3080,7 +3080,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.border,
                 state.border,
-                |v| element.set_border(v),
+                |v| dom_element.set_border(v),
                 || dom_element.remove_attribute("border").unwrap(),
             );
             <TypeDefs::cell_padding as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3088,7 +3088,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cell_padding,
                 state.cell_padding,
-                |v| element.set_cell_padding(v),
+                |v| dom_element.set_cell_padding(v),
                 || dom_element.remove_attribute("cellpadding").unwrap(),
             );
             <TypeDefs::cell_spacing as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3096,7 +3096,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cell_spacing,
                 state.cell_spacing,
-                |v| element.set_cell_spacing(v),
+                |v| dom_element.set_cell_spacing(v),
                 || dom_element.remove_attribute("cellspacing").unwrap(),
             );
             <TypeDefs::frame as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3104,7 +3104,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.frame,
                 state.frame,
-                |v| element.set_frame(v),
+                |v| dom_element.set_frame(v),
                 || dom_element.remove_attribute("frame").unwrap(),
             );
             <TypeDefs::rules as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3112,7 +3112,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.rules,
                 state.rules,
-                |v| element.set_rules(v),
+                |v| dom_element.set_rules(v),
                 || dom_element.remove_attribute("rules").unwrap(),
             );
             <TypeDefs::summary as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3120,7 +3120,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.summary,
                 state.summary,
-                |v| element.set_summary(v),
+                |v| dom_element.set_summary(v),
                 || dom_element.remove_attribute("summary").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3128,7 +3128,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.width,
                 state.width,
-                |v| element.set_width(v),
+                |v| dom_element.set_width(v),
                 || dom_element.remove_attribute("width").unwrap(),
             );
         }

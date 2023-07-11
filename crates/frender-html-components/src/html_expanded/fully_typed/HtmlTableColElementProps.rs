@@ -882,7 +882,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2682,7 +2682,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.align,
-                    |v| element.set_align(v),
+                    |v| dom_element.set_align(v),
                     || dom_element.remove_attribute("align").unwrap(),
                 ),
                 bg_color: <TypeDefs::bg_color as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2700,35 +2700,35 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.char,
-                    |v| element.set_ch(v),
+                    |v| dom_element.set_ch(v),
                     || dom_element.remove_attribute("char").unwrap(),
                 ),
                 char_off: <TypeDefs::char_off as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.char_off,
-                    |v| element.set_ch_off(v),
+                    |v| dom_element.set_ch_off(v),
                     || dom_element.remove_attribute("charoff").unwrap(),
                 ),
                 v_align: <TypeDefs::v_align as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.v_align,
-                    |v| element.set_v_align(v),
+                    |v| dom_element.set_v_align(v),
                     || dom_element.remove_attribute("valign").unwrap(),
                 ),
                 span: <TypeDefs::span as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::initialize_state_and_update(
                     this.span,
-                    |v| element.set_span(*v),
+                    |v| dom_element.set_span(*v),
                     || dom_element.remove_attribute("span").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| element.set_width(v),
+                    |v| dom_element.set_width(v),
                     || dom_element.remove_attribute("width").unwrap(),
                 ),
             }
@@ -2752,7 +2752,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.align,
                 state.align,
-                |v| element.set_align(v),
+                |v| dom_element.set_align(v),
                 || dom_element.remove_attribute("align").unwrap(),
             );
             <TypeDefs::bg_color as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2772,7 +2772,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.char,
                 state.char,
-                |v| element.set_ch(v),
+                |v| dom_element.set_ch(v),
                 || dom_element.remove_attribute("char").unwrap(),
             );
             <TypeDefs::char_off as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2780,7 +2780,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.char_off,
                 state.char_off,
-                |v| element.set_ch_off(v),
+                |v| dom_element.set_ch_off(v),
                 || dom_element.remove_attribute("charoff").unwrap(),
             );
             <TypeDefs::v_align as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2788,7 +2788,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.v_align,
                 state.v_align,
-                |v| element.set_v_align(v),
+                |v| dom_element.set_v_align(v),
                 || dom_element.remove_attribute("valign").unwrap(),
             );
             <TypeDefs::span as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2796,7 +2796,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.span,
                 state.span,
-                |v| element.set_span(*v),
+                |v| dom_element.set_span(*v),
                 || dom_element.remove_attribute("span").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2804,7 +2804,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.width,
                 state.width,
-                |v| element.set_width(v),
+                |v| dom_element.set_width(v),
                 || dom_element.remove_attribute("width").unwrap(),
             );
         }

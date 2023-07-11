@@ -17,6 +17,8 @@ mod imports {
     pub use frender_html_simple;
     pub use pin_project_lite::pin_project;
 
+    pub use frender_html_simple::impl_bounds;
+
     #[cfg(feature = "csr")]
     pub use frender_csr;
 

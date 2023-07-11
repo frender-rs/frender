@@ -3,11 +3,17 @@ use std::{borrow::Cow, pin::Pin, task::Poll};
 use futures_io::AsyncWrite;
 
 use crate::{
-    attrs::{GiveAttrs, IntoGiveAttrs},
     bytes::{
         AsyncWritableByteChunks, AsyncWritableBytes, AsyncWriteInto, CowSlicedBytes, IterByteChunks,
     },
     ready_ok, Element, RenderState,
+};
+use frender_common::write::{
+    attrs::{
+        states::AsyncWriteAttrNameState, writable::AsyncWritableAttrValue, AsyncWritableAttrs,
+        IntoAsyncWritableAttrs,
+    },
+    str::{AsyncWritableStr, StrWriting},
 };
 
 // TODO: remove
@@ -90,7 +96,7 @@ pub type HtmlAttrPair<'a, S: Iterator<Item = Cow<'a, str>>> = (
 );
 
 pin_project_lite::pin_project!(
-    pub struct HtmlElementRenderState<'a, Children, Attrs: GiveAttrs> {
+    pub struct HtmlElementRenderState<'a, Children, Attrs: AsyncWritableAttrs> {
         before_attrs: IterByteChunks<core::array::IntoIter<CowSlicedBytes<'a>, 2>>,
         attrs: Attrs,
         after_attrs: &'static [u8],
@@ -100,7 +106,7 @@ pin_project_lite::pin_project!(
     }
 );
 
-impl<'a, Children, Attrs: GiveAttrs> HtmlElementRenderState<'a, Children, Attrs> {
+impl<'a, Children, Attrs: AsyncWritableAttrs> HtmlElementRenderState<'a, Children, Attrs> {
     pub fn new(tag: Cow<'a, str>, attrs: Attrs, children: HtmlElementChildren<Children>) -> Self {
         let after_attrs = if let HtmlElementChildren::SelfClosing = &children {
             b" />".as_slice()
@@ -138,7 +144,7 @@ impl<'a, Children, Attrs: GiveAttrs> HtmlElementRenderState<'a, Children, Attrs>
 
 impl<'a, Children: RenderState, Attrs> RenderState for HtmlElementRenderState<'a, Children, Attrs>
 where
-    Attrs: GiveAttrs,
+    Attrs: AsyncWritableAttrs,
 {
     fn poll_render<W: AsyncWrite + ?Sized>(
         self: Pin<&mut Self>,
@@ -151,7 +157,10 @@ where
             .before_attrs
             .poll_write_byte_chunks(writer.as_mut(), cx));
 
-        ready_ok!(this.attrs.poll_write_into(writer.as_mut(), cx));
+        _ = crate::ready_ok_rewrap_err!(this.attrs.poll_write_attrs_into(
+            cx,
+            crate::write_attrs::AsyncWriteAttrName::new(writer.as_mut())
+        ));
 
         ready_ok!(this.after_attrs.poll_write_bytes(writer.as_mut(), cx));
 
@@ -169,14 +178,14 @@ where
 
 impl<'a, Children: Element, Attrs> Element for HtmlElement<'a, Children, Attrs>
 where
-    Attrs: IntoGiveAttrs,
+    Attrs: IntoAsyncWritableAttrs,
 {
-    type SsrState = HtmlElementRenderState<'a, Children::SsrState, ()>;
+    type SsrState = HtmlElementRenderState<'a, Children::SsrState, Attrs::AsyncWritableAttrs>;
 
     fn into_ssr_state(self) -> Self::SsrState {
         HtmlElementRenderState::new(
             self.tag,
-            (),
+            Attrs::into_async_writable_attrs(self.attributes),
             self.children
                 .map_children(|children| children.into_ssr_state()),
         )
@@ -246,6 +255,58 @@ impl<'a, V: Iterator<Item = Cow<'a, str>>> WritableAttrEqValue<'a, V> {
     }
 }
 
+pub mod simple {
+    use frender_common::write::{
+        attrs::{
+            writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
+            AsyncWritableAttrValueStr,
+        },
+        str::StrWriting,
+    };
+
+    pub type AttrValueStr<'a> = AsyncWritableAttrValueStr<StrWriting<&'a str>>;
+    pub type AttrPair<V> = super::AsyncWritableAttrPair<StrWriting<&'static str>, V>;
+    pub type AttrPairStr<S> = AttrPair<AsyncWritableAttrValueStr<S>>;
+    pub type AttrPairBooleanTrue = AttrPair<AsyncWritableAttrValueBooleanTrue>;
+}
+
+pub struct AsyncWritableAttrPair<N: AsyncWritableStr, V: AsyncWritableAttrValue> {
+    pub name: N,
+    pub name_state: AsyncWriteAttrNameState,
+    pub value: V,
+}
+
+impl<S: std::borrow::Borrow<str>, V: AsyncWritableAttrValue>
+    AsyncWritableAttrPair<StrWriting<S>, V>
+{
+    pub fn new_from_str(name: S, value: V) -> Self {
+        Self {
+            name: StrWriting::new(name),
+            name_state: AsyncWriteAttrNameState::default(),
+            value,
+        }
+    }
+}
+
+impl<N: AsyncWritableStr, V: AsyncWritableAttrValue> AsyncWritableAttrs
+    for AsyncWritableAttrPair<N, V>
+{
+    fn poll_write_attrs_into<W: frender_common::write::attrs::write_traits::AsyncWriteAttrName>(
+        &mut self,
+        cx: &mut std::task::Context,
+        write: W,
+    ) -> Poll<std::io::Result<W>> {
+        let write = crate::ready_ok_rewrap_err!(write.poll_write_attr_name(
+            cx,
+            &mut self.name,
+            &mut self.name_state
+        ));
+
+        self.value.poll_write_attr_value_into(cx, write)
+    }
+}
+
+// TODO: remove
 pub struct WritableAttrPair<'a, V: Iterator<Item = Cow<'a, str>>> {
     space: &'static [u8],
     name: CowSlicedBytes<'a>,
@@ -351,9 +412,4 @@ where
 
         Poll::Ready(Ok(()))
     }
-}
-
-pub struct GivingAttrs<Attrs: GiveAttrs> {
-    current_attr: (),
-    attrs: Attrs,
 }

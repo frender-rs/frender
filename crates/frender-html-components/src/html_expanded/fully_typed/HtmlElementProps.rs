@@ -3975,7 +3975,7 @@ mod builder_and_replacer {
         }
         ///See [`ElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -10336,7 +10336,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.access_key,
-                    |v| element.set_access_key(v),
+                    |v| dom_element.set_access_key(v),
                     || dom_element.remove_attribute("accesskey").unwrap(),
                 ),
                 auto_capitalize: <TypeDefs::auto_capitalize as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10376,14 +10376,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.dir,
-                    |v| element.set_dir(v),
+                    |v| dom_element.set_dir(v),
                     || dom_element.remove_attribute("dir").unwrap(),
                 ),
                 draggable: <TypeDefs::draggable as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.draggable,
-                    |v| element.set_draggable(*v),
+                    |v| dom_element.set_draggable(*v),
                     || dom_element.remove_attribute("draggable").unwrap(),
                 ),
                 enter_key_hint: <TypeDefs::enter_key_hint as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10401,7 +10401,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.hidden,
-                    |v| element.set_hidden(*v),
+                    |v| dom_element.set_hidden(*v),
                     || dom_element.remove_attribute("hidden").unwrap(),
                 ),
                 inert: <TypeDefs::inert as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10496,7 +10496,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.lang,
-                    |v| element.set_lang(v),
+                    |v| dom_element.set_lang(v),
                     || dom_element.remove_attribute("lang").unwrap(),
                 ),
                 nonce: <TypeDefs::nonce as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10536,7 +10536,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.spellcheck,
-                    |v| element.set_spellcheck(*v),
+                    |v| dom_element.set_spellcheck(*v),
                     || dom_element.remove_attribute("spellcheck").unwrap(),
                 ),
                 style: <TypeDefs::style as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10554,14 +10554,14 @@ mod impl_update_element {
                     i32,
                 >>::initialize_state_and_update(
                     this.tab_index,
-                    |v| element.set_tab_index(*v),
+                    |v| dom_element.set_tab_index(*v),
                     || dom_element.remove_attribute("tabindex").unwrap(),
                 ),
                 title: <TypeDefs::title as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.title,
-                    |v| element.set_title(v),
+                    |v| dom_element.set_title(v),
                     || dom_element.remove_attribute("title").unwrap(),
                 ),
                 translate: <TypeDefs::translate as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10712,7 +10712,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.access_key,
                 state.access_key,
-                |v| element.set_access_key(v),
+                |v| dom_element.set_access_key(v),
                 || dom_element.remove_attribute("accesskey").unwrap(),
             );
             <TypeDefs::auto_capitalize as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10756,7 +10756,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.dir,
                 state.dir,
-                |v| element.set_dir(v),
+                |v| dom_element.set_dir(v),
                 || dom_element.remove_attribute("dir").unwrap(),
             );
             <TypeDefs::draggable as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10764,7 +10764,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.draggable,
                 state.draggable,
-                |v| element.set_draggable(*v),
+                |v| dom_element.set_draggable(*v),
                 || dom_element.remove_attribute("draggable").unwrap(),
             );
             <TypeDefs::enter_key_hint as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10784,7 +10784,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.hidden,
                 state.hidden,
-                |v| element.set_hidden(*v),
+                |v| dom_element.set_hidden(*v),
                 || dom_element.remove_attribute("hidden").unwrap(),
             );
             <TypeDefs::inert as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10892,7 +10892,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.lang,
                 state.lang,
-                |v| element.set_lang(v),
+                |v| dom_element.set_lang(v),
                 || dom_element.remove_attribute("lang").unwrap(),
             );
             <TypeDefs::nonce as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10942,7 +10942,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.spellcheck,
                 state.spellcheck,
-                |v| element.set_spellcheck(*v),
+                |v| dom_element.set_spellcheck(*v),
                 || dom_element.remove_attribute("spellcheck").unwrap(),
             );
             <TypeDefs::style as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10964,7 +10964,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.tab_index,
                 state.tab_index,
-                |v| element.set_tab_index(*v),
+                |v| dom_element.set_tab_index(*v),
                 || dom_element.remove_attribute("tabindex").unwrap(),
             );
             <TypeDefs::title as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -10972,7 +10972,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.title,
                 state.title,
-                |v| element.set_title(v),
+                |v| dom_element.set_title(v),
                 || dom_element.remove_attribute("title").unwrap(),
             );
             <TypeDefs::translate as crate::imports::frender_html::props::MaybeUpdateValueWithState<

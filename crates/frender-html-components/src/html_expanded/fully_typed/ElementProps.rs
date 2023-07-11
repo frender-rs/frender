@@ -5,7 +5,7 @@ pub fn ElementProps() -> Building<TypesInitial> {
     use super::*;
     self::Building {
         children: (),
-        class: (),
+        class: unimplemented!(),
         id: (),
         part: (),
         on_cancel: (),
@@ -1654,7 +1654,7 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type children;
-        type class: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type class: Todo<unimplemented![]>;
         type id: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type part: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type on_cancel;
@@ -1750,7 +1750,7 @@ mod types_initial {
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
         children = (),
-        class = (),
+        class = unimplemented![],
         id = (),
         part = (),
         on_cancel = (),
@@ -1797,7 +1797,6 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type children: ::frender_core::RenderState;
-        type class;
         type id;
         type part;
         type on_cancel;
@@ -1839,16 +1838,16 @@ pub mod render_state {
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub children :
-        TypeDefs::children, pub class : TypeDefs::class, pub id : TypeDefs::id, pub part
-        : TypeDefs::part, pub on_cancel : TypeDefs::on_cancel, pub on_error :
-        TypeDefs::on_error, pub on_scroll : TypeDefs::on_scroll, pub
-        on_security_policy_violation : TypeDefs::on_security_policy_violation, pub
-        on_select : TypeDefs::on_select, pub on_wheel : TypeDefs::on_wheel, pub on_copy :
-        TypeDefs::on_copy, pub on_cut : TypeDefs::on_cut, pub on_paste :
-        TypeDefs::on_paste, pub on_composition_end : TypeDefs::on_composition_end, pub
-        on_composition_start : TypeDefs::on_composition_start, pub on_composition_update
-        : TypeDefs::on_composition_update, pub on_blur : TypeDefs::on_blur, pub on_focus
-        : TypeDefs::on_focus, pub on_focus_in : TypeDefs::on_focus_in, pub on_focus_out :
+        TypeDefs::children, pub id : TypeDefs::id, pub part : TypeDefs::part, pub
+        on_cancel : TypeDefs::on_cancel, pub on_error : TypeDefs::on_error, pub on_scroll
+        : TypeDefs::on_scroll, pub on_security_policy_violation :
+        TypeDefs::on_security_policy_violation, pub on_select : TypeDefs::on_select, pub
+        on_wheel : TypeDefs::on_wheel, pub on_copy : TypeDefs::on_copy, pub on_cut :
+        TypeDefs::on_cut, pub on_paste : TypeDefs::on_paste, pub on_composition_end :
+        TypeDefs::on_composition_end, pub on_composition_start :
+        TypeDefs::on_composition_start, pub on_composition_update :
+        TypeDefs::on_composition_update, pub on_blur : TypeDefs::on_blur, pub on_focus :
+        TypeDefs::on_focus, pub on_focus_in : TypeDefs::on_focus_in, pub on_focus_out :
         TypeDefs::on_focus_out, pub on_fullscreen_change :
         TypeDefs::on_fullscreen_change, pub on_fullscreen_error :
         TypeDefs::on_fullscreen_error, pub on_key_down : TypeDefs::on_key_down, pub
@@ -1936,7 +1935,7 @@ mod builder_and_replacer {
             }
         }
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3837,6 +3836,7 @@ mod impl_update_element {
         for super::Data<TypeDefs>
     where
         TypeDefs::children: ::frender_core::UpdateRenderState<::frender_csr::Dom>,
+        unimplemented!(): __,
         TypeDefs::on_cancel:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_error:
@@ -3914,9 +3914,6 @@ mod impl_update_element {
             dyn super::render_state::RenderStateTypes<
                 children = <TypeDefs::children as frender_core::UpdateRenderState<
                     frender_csr::Dom,
-                >>::State,
-                class = <TypeDefs::class as ::frender_html::props::MaybeUpdateValueWithState<
-                    str,
                 >>::State,
                 id = <TypeDefs::id as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -4037,27 +4034,17 @@ mod impl_update_element {
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
+            unimplemented!();
             super::render_state::RenderState {
                 children: ::frender_core::UpdateRenderState::initialize_render_state(
                     this.children,
                     children_ctx,
                 ),
-                class: <TypeDefs::class as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.class,
-                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "class",
-                    ),
-                    || dom_element.remove_attribute("class").unwrap(),
-                ),
                 id: <TypeDefs::id as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.id,
-                    |v| element.set_id(v),
+                    |v| dom_element.set_id(v),
                     || dom_element.remove_attribute("id").unwrap(),
                 ),
                 part: <TypeDefs::part as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4206,26 +4193,13 @@ mod impl_update_element {
                 children_ctx,
                 state.children,
             );
-            <TypeDefs::class as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.class,
-                state.class,
-                |v| {
-                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                    v,
-                    dom_element,
-                    "class",
-                )
-                },
-                || dom_element.remove_attribute("class").unwrap(),
-            );
+            unimplemented! {}
             <TypeDefs::id as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
                 this.id,
                 state.id,
-                |v| element.set_id(v),
+                |v| dom_element.set_id(v),
                 || dom_element.remove_attribute("id").unwrap(),
             );
             <TypeDefs::part as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4429,6 +4403,7 @@ mod impl_into_ssr_data {
         <TypeDefs::children as ::frender_core::UpdateRenderState<
             ::frender_ssr::SsrContext<W>,
         >>::State: ::core::marker::Unpin,
+        unimplemented!(): __,
     {
         type Children = TypeDefs::children;
         type ChildrenRenderState = <TypeDefs::children as ::frender_core::UpdateRenderState<
@@ -4443,19 +4418,7 @@ mod impl_into_ssr_data {
                 this.children,
                 ::frender_ssr::utils::filter::FilterIdentity(
                     [
-                        <TypeDefs::class as ::frender_html::props::MaybeUpdateValueWithState<
-                            str,
-                        >>::maybe_into_html_attribute_value(this.class)
-                            .map(|value| (
-                                ::std::borrow::Cow::Borrowed("class"),
-                                if let Some(value) = value {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::String(
-                                        value,
-                                    )
-                                } else {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                },
-                            )),
+                        unimplemented!(),
                         <TypeDefs::id as ::frender_html::props::MaybeUpdateValueWithState<
                             str,
                         >>::maybe_into_html_attribute_value(this.id)

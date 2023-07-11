@@ -75,7 +75,8 @@ impl IntrinsicComponentPropsData {
             });
 
         let mut all_field_info = TokenStream::new();
-        let mut props_impl_dom = TokenStream::new();
+        let mut props_imp = TokenStream::new();
+        let mut props_impl_csr = TokenStream::new();
         let mut props_impl_ssr = TokenStream::new();
 
         for p in fields.iter().map(|field| {
@@ -86,10 +87,33 @@ impl IntrinsicComponentPropsData {
             }
             .into_simple_prop()
         }) {
-            props_impl_dom.extend(p.impl_dom);
+            props_imp.extend(p.imp);
+            props_impl_csr.extend(p.impl_dom);
             props_impl_ssr.extend(p.impl_ssr);
             all_field_info.extend(p.field_info);
         }
+
+        fn sub_mod(mod_name: &str, tokens: TokenStream) -> Option<TokenStream> {
+            let mod_name = syn::Ident::new(mod_name, proc_macro2::Span::call_site());
+            if tokens.is_empty() {
+                None
+            } else {
+                Some(quote! {
+                    #[cfg(feature = "csr")]
+                    mod #mod_name {
+                        #![allow(unused_variables)]
+                        #[allow(unused_imports)]
+                        use super::super::*;
+
+                        #tokens
+                    }
+                })
+            }
+        }
+
+        let props_imp = sub_mod("imp", props_imp);
+        let props_impl_csr = sub_mod("imp_csr_for_props", props_impl_csr);
+        let props_impl_ssr = sub_mod("imp_ssr_for_props", props_impl_ssr);
 
         quote_spanned! {span=>
             #[allow(non_snake_case)]
@@ -102,23 +126,9 @@ impl IntrinsicComponentPropsData {
                     )
                 );
 
-                #[cfg(feature = "csr")]
-                mod impl_dom_for_props {
-                    #![allow(unused_variables)]
-                    #[allow(unused_imports)]
-                    use super::super::*;
-
-                    #props_impl_dom
-                }
-
-                #[cfg(feature = "ssr")]
-                mod impl_ssr_for_props {
-                    #![allow(unused_variables)]
-                    #[allow(unused_imports)]
-                    use super::super::*;
-
-                    #props_impl_ssr
-                }
+                #props_imp
+                #props_impl_csr
+                #props_impl_ssr
 
                 mod imports {
                     #[allow(unused_imports)]

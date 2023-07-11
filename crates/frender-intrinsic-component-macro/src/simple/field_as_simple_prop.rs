@@ -3,10 +3,16 @@ use std::borrow::Cow;
 use darling::ToTokens;
 use proc_macro2::TokenStream;
 use quote::quote;
+use syn::parse_quote;
 
-use crate::{Field, FieldDeclaration};
+use crate::{
+    BoundsPath, Field, FieldDeclaration, FieldDeclarationEventListener,
+    FieldDeclarationMaybeDetailsImpl, FieldDeclarationWithBounds,
+    FieldDeclarationWithBoundsDetails, FieldDeclarationWithBoundsDetailsSimple,
+};
 
 pub struct FieldToSimpleProp {
+    pub imp: Option<TokenStream>,
     pub impl_dom: Option<TokenStream>,
     pub impl_ssr: Option<TokenStream>,
     pub field_info: TokenStream,
@@ -34,12 +40,10 @@ impl FieldAsSimpleProp<'_> {
         let dom_update;
 
         let mut csr_initialize_pat_this = quote!(this);
-        let mut csr_initialize_pat_element = quote!(element);
         let mut csr_initialize_pat_children_ctx = quote!(children_ctx);
         let mut csr_initialize_pat_dom_element = quote!(dom_element);
 
         let mut csr_update_pat_this = quote!(this);
-        let csr_update_pat_element = quote!(element);
         let mut csr_update_pat_children_ctx = quote!(children_ctx);
         let mut csr_update_pat_state = quote!(state);
         let mut csr_update_pat_dom_element = quote!(dom_element);
@@ -52,96 +56,101 @@ impl FieldAsSimpleProp<'_> {
         match &field.declaration {
             FieldDeclaration::Maybe(m) => {
                 assert!(m.no_cache.is_none(), "simply typed prop must have state");
-                let ty = &m.ty;
-                builder_fn_bounds = Some(quote! {
-                    #crate_path::frender_html::props::MaybeUpdateValueWithState<#ty>
-                });
-                dom_bounds = Some(quote!(: #builder_fn_bounds));
-                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
-                dom_state_ty = {
-                    // let
-                    quote! {
-                        V::State
+
+                let value_ty = &m.ty;
+
+                let field = {
+                    let mut field = field.clone();
+
+                    let mut attr_name = None;
+                    let mut update =
+                        quote!(#crate_path::impl_bounds::MaybeValue::csr::default_update);
+                    let mut remove =
+                        quote!(#crate_path::impl_bounds::MaybeValue::csr::default_remove);
+
+                    if let Some(details) = &m.details {
+                        let details = &details.content;
+                        attr_name = details
+                            .html_prop_name
+                            .as_ref()
+                            .map(|prop| quote!(attr_name = #prop,));
+
+                        if let Some(html_element_method) = &details.html_element_method {
+                            assert!(
+                                details.impl_update.is_none(),
+                                "html_element_method and custom update cannot be both specified"
+                            );
+                            let deref = if m.by_ref.is_some() {
+                                None
+                            } else {
+                                Some(quote!(&))
+                            };
+                            update = quote!(|el: &#dom_element_ty, _, #deref v: &_| el.#html_element_method(v));
+                        }
+
+                        if let Some(impl_update) = &details.impl_update {
+                            let FieldDeclarationMaybeDetailsImpl {
+                                keyword: _,
+                                element_pat_ident,
+                                rest,
+                            } = &impl_update.content;
+                            update =
+                                quote!(|#element_pat_ident: &#dom_element_ty, _, v: &_| (#rest)(v));
+                        }
+
+                        if let Some(impl_remove) = &details.impl_remove {
+                            let FieldDeclarationMaybeDetailsImpl {
+                                keyword: _,
+                                element_pat_ident,
+                                rest,
+                            } = &impl_remove.content;
+                            remove = quote!(|#element_pat_ident: &#dom_element_ty, _| (#rest)());
+                        }
                     }
+
+                    field.declaration = FieldDeclaration::WithBounds(parse_quote!(
+                        : bounds![
+                            bounds as #crate_path::impl_bounds::MaybeValue<#value_ty>,
+                            #attr_name
+                            csr {
+                                update: #update,
+                                remove: #remove,
+                            },
+                        ]
+                    ));
+
+                    field
                 };
-                csr_initialize_pat_dom_element = quote!(element);
-                csr_update_pat_dom_element = quote!(element);
-
-                dom_init = m
-                    .to_ts_dom_initialize_state_custom(crate_path, name, quote!(V), quote!(this.0))
-                    .unwrap();
-
-                dom_update = m.to_ts_update_element_custom(
+                return FieldAsSimpleProp {
                     crate_path,
-                    name,
-                    quote!(V),
-                    quote!(this.0),
-                    quote!(&mut state.get_mut().0),
-                );
-
-                ssr_attrs_ty = quote! {
-                    ::core::option::IntoIter<
-                        #crate_path::frender_ssr::element::html::HtmlAttrPair<'a>
-                    >
-                };
-
-                let attr_name = m.to_html_prop_name(name);
-
-                ssr_attrs_block = quote! {{
-                    V::maybe_into_html_attribute_value(
-                        this.0
-                    ).map(|attr_value| (::std::borrow::Cow::Borrowed(#attr_name), attr_value.map_or(
-                            #crate_path::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            #crate_path::frender_ssr::element::html::HtmlAttributeValue::String,
-                    ))).into_iter()
-                }};
+                    field: &field,
+                    dom_element_ty,
+                }
+                .into_simple_prop();
             }
-            FieldDeclaration::EventListener(e) => {
-                //
-                let ty = &e.ty;
-                let event_type = &e.event_type;
-                builder_fn_bounds = Some(quote! {
-                    #crate_path::frender_events::MaybeHandleEvent<#ty>
-                });
-                dom_bounds = Some(quote!(: #builder_fn_bounds));
-                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
+            FieldDeclaration::EventListener(FieldDeclarationEventListener {
+                at_token: _,
+                event_type,
+                ty,
+            }) => {
+                let field = {
+                    let mut field = field.clone();
 
-                dom_state_ty = {
-                    quote! {
-                        V::State
-                    }
-                };
-                dom_init = quote! {
-                    V::initialize_handle_event_state(
-                        this.0,
-                        |callable| #crate_path::frender_events::EventListener::new(
-                            dom_element,
-                            #event_type,
-                            callable.clone(),
-                        ),
-                    )
-                };
-                dom_update = quote! {
-                    V::update_handle_event_state(
-                        this.0,
-                        &mut state.get_mut().0,
-                        |callable| #crate_path::frender_events::EventListener::new(
-                            dom_element,
-                            #event_type,
-                            callable.clone(),
-                        ),
-                    )
-                };
+                    field.declaration = FieldDeclaration::WithBounds(parse_quote!(
+                        : bounds![
+                            bounds as #crate_path::impl_bounds::MaybeHandleEvent<#ty>,
+                            attr_name = #event_type,
+                        ]
+                    ));
 
-                ssr_attrs_ty = quote! {
-                    ::core::iter::Empty<
-                        #crate_path::frender_ssr::element::html::HtmlAttrPair<'a>
-                    >
+                    field
                 };
-
-                ssr_attrs_block = quote! {{
-                    ::core::iter::empty()
-                }};
+                return FieldAsSimpleProp {
+                    crate_path,
+                    field: &field,
+                    dom_element_ty,
+                }
+                .into_simple_prop();
             }
             FieldDeclaration::Full(_) => {
                 assert_eq!(
@@ -149,6 +158,7 @@ impl FieldAsSimpleProp<'_> {
                     "In simply typed props, only children can have with full declaration"
                 );
                 return FieldToSimpleProp {
+                    imp: None,
                     impl_dom: None,
                     impl_ssr: None,
                     field_info: quote!(children,),
@@ -157,6 +167,7 @@ impl FieldAsSimpleProp<'_> {
             FieldDeclaration::Inherit(f) => {
                 let from_path = &f.from_path;
                 return FieldToSimpleProp {
+                    imp: None,
                     impl_dom: None,
                     impl_ssr: None,
                     field_info: {
@@ -179,7 +190,82 @@ impl FieldAsSimpleProp<'_> {
                 };
             }
             FieldDeclaration::WithBounds(wb) => {
-                let wb = &wb.details.content;
+                let wb = match &wb.details {
+                    FieldDeclarationWithBoundsDetails::Full(wb) => &wb.content,
+                    FieldDeclarationWithBoundsDetails::Simple(
+                        FieldDeclarationWithBoundsDetailsSimple {
+                            bounds:
+                                (
+                                    bounds,
+                                    bounds_as,
+                                    BoundsPath {
+                                        mod_path,
+                                        generic_args,
+                                    },
+                                ),
+                            attr_name,
+                            imps,
+                            trailing_comma,
+                        },
+                    ) => {
+                        // TODO: remove
+                        #[cfg(todo_remove)]
+                        let generic_args = generic_args.as_ref().map(|generic_args| {
+                            if generic_args.colon2_token.is_none() {
+                                let mut generic_args = generic_args.clone();
+                                generic_args.colon2_token = Some(Default::default());
+                                Cow::Owned(generic_args)
+                            } else {
+                                Cow::Borrowed(generic_args)
+                            }
+                        });
+                        let attr_name = attr_name.as_ref().map_or_else(
+                            || {
+                                let attr_name = syn::LitStr::new(&name.to_string(), name.span());
+                                quote!(, attr_name = #attr_name)
+                            },
+                            |(comma, attr_name, eq, value)| quote!(#comma #attr_name #eq #value),
+                        );
+                        let imps = imps.iter().map(
+                            |(comma, imp_name, imp_fields)| quote!(#comma #imp_name #imp_fields),
+                        );
+                        return FieldToSimpleProp {
+                            imp: Some(quote! {
+                                #crate_path::impl_bounds!(super::props::#name(
+                                    #bounds #bounds_as #mod_path #generic_args,
+                                    element as #dom_element_ty
+                                    #attr_name
+                                    #(#imps)*
+                                    #trailing_comma
+                                ));
+                            }),
+                            impl_dom: None,
+                            impl_ssr: None,
+                            field_info: {
+                                let alias = if field.options.alias.0.is_empty() {
+                                    None
+                                } else {
+                                    let alias = field.options.alias.0.iter().enumerate().map(
+                                        |(i, ident)| {
+                                            let comma = if i == 0 { None } else { Some(quote!(,)) };
+                                            quote!(#comma #ident)
+                                        },
+                                    );
+                                    Some(quote!(alias![#(#alias)*] +))
+                                };
+
+                                let bounds = quote! {
+                                    bounds![#mod_path::Bounds #generic_args]
+                                };
+
+                                quote! {
+                                    #name : #alias #bounds,
+                                }
+                            },
+                        };
+                    }
+                };
+
                 builder_fn_bounds = wb
                     .common_bounds
                     .as_ref()
@@ -195,50 +281,82 @@ impl FieldAsSimpleProp<'_> {
                         fn_update,
                     } = wb.csr_content();
                     {
-                        dom_state_ty = fn_initialize.ty_state.to_token_stream();
+                        dom_state_ty = replace_self_type_with(
+                            fn_initialize.ty_state.clone(),
+                            "V",
+                            syn::visit_mut::visit_type_mut,
+                        )
+                        .into_token_stream();
 
                         {
                             let args = &fn_initialize.args.content.args;
-                            csr_initialize_pat_this = args.this.pat.to_token_stream();
+                            csr_initialize_pat_this = {
+                                let pat = &args.this.pat;
+                                quote!(Self(#pat))
+                            };
                             csr_initialize_pat_children_ctx =
                                 args.children_ctx.pat.to_token_stream();
                             csr_initialize_pat_dom_element = args.element.pat.to_token_stream();
                         }
 
-                        dom_init = fn_initialize.block.to_token_stream();
+                        dom_init = replace_self_type_with(
+                            fn_initialize.block.clone(),
+                            "V",
+                            syn::visit_mut::visit_block_mut,
+                        )
+                        .to_token_stream();
                     }
                     {
                         {
                             let args = &fn_update.args.content;
 
-                            csr_update_pat_this = args.pre_args.this.pat.to_token_stream();
+                            csr_update_pat_this = {
+                                let pat = &args.pre_args.this.pat;
+                                quote!(Self(#pat))
+                            };
                             csr_update_pat_children_ctx =
                                 args.pre_args.children_ctx.pat.to_token_stream();
                             csr_update_pat_state = args.state.pat.to_token_stream();
                             csr_update_pat_dom_element =
                                 args.pre_args.element.pat.to_token_stream();
                         }
-                        dom_update = fn_update.block.to_token_stream();
+                        dom_update = replace_self_type_with(
+                            fn_update.block.clone(),
+                            "V",
+                            syn::visit_mut::visit_block_mut,
+                        )
+                        .to_token_stream();
                     }
                 }
 
                 // ssr
                 {
-                    let crate::FnIntoIterAttrs {
+                    let crate::FnIntoAttrs {
                         inputs,
                         ty_into_iter_attrs,
                         block,
                         ..
                     } = &wb.ssr_content().fn_into_iter_attrs;
 
-                    ssr_attrs_args = inputs.to_token_stream();
-                    ssr_attrs_ty = ty_into_iter_attrs.to_token_stream();
-                    ssr_attrs_block = block.to_token_stream();
+                    ssr_attrs_args = {
+                        let pat = &inputs.pat;
+                        quote!(Self(#pat): Self)
+                    };
+                    ssr_attrs_ty = replace_self_type_with(
+                        ty_into_iter_attrs.clone(),
+                        "V",
+                        syn::visit_mut::visit_type_mut,
+                    )
+                    .into_token_stream();
+                    ssr_attrs_block =
+                        replace_self_type_with(block.clone(), "V", syn::visit_mut::visit_block_mut)
+                            .into_token_stream();
                 }
             }
         }
 
         FieldToSimpleProp {
+            imp: None,
             impl_dom: Some(quote! {
                 impl<V #dom_bounds, E: ::core::convert::AsRef<#dom_element_ty>>
                     #crate_path::frender_csr::props::UpdateElementNonReactive<E>
@@ -247,7 +365,7 @@ impl FieldAsSimpleProp<'_> {
 
                     fn initialize_state_non_reactive(
                         #csr_initialize_pat_this: Self,
-                        #csr_initialize_pat_element: &E,
+                        element: &E,
                         #csr_initialize_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
                     ) -> Self::State {
                         let #csr_initialize_pat_dom_element = element.as_ref();
@@ -258,7 +376,7 @@ impl FieldAsSimpleProp<'_> {
 
                     fn update_element_non_reactive(
                         #csr_update_pat_this: Self,
-                        #csr_update_pat_element: &E,
+                        element: &E,
                         #csr_update_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
                         #csr_update_pat_state: ::core::pin::Pin<&mut Self::State>,
                     ) {
@@ -268,13 +386,12 @@ impl FieldAsSimpleProp<'_> {
                 }
             }),
             impl_ssr: Some(quote! {
-                impl<'a, V #ssr_bounds>
-                    #crate_path::frender_ssr::attrs::IntoIteratorAttrs<'a>
+                impl<V #ssr_bounds>
+                    #crate_path::frender_html::IntoAsyncWritableAttrs
                 for super::props::#name<V> {
-                    type IntoIterAttrs = #ssr_attrs_ty;
-                    fn into_iter_attrs(#ssr_attrs_args) -> Self::IntoIterAttrs {
+                    type AsyncWritableAttrs = #ssr_attrs_ty;
+                    fn into_async_writable_attrs(#ssr_attrs_args) -> Self::AsyncWritableAttrs
                         #ssr_attrs_block
-                    }
                 }
             }),
             field_info: {
@@ -308,4 +425,40 @@ impl FieldAsSimpleProp<'_> {
             },
         }
     }
+}
+
+pub trait ReplaceIdent {
+    fn replace_ident(&mut self, ident: &syn::Ident) -> syn::Ident;
+}
+
+impl<F: FnMut(&syn::Ident) -> syn::Ident> ReplaceIdent for F {
+    fn replace_ident(&mut self, ident: &syn::Ident) -> syn::Ident {
+        self(ident)
+    }
+}
+
+impl ReplaceIdent for &str {
+    fn replace_ident(&mut self, ident: &syn::Ident) -> syn::Ident {
+        syn::Ident::new(self, ident.span())
+    }
+}
+
+struct ReplaceSelfTypeWith<F: ReplaceIdent>(F);
+impl<F: ReplaceIdent> syn::visit_mut::VisitMut for ReplaceSelfTypeWith<F> {
+    fn visit_ident_mut(&mut self, ident: &mut proc_macro2::Ident) {
+        if ident == "Self" {
+            *ident = self.0.replace_ident(ident);
+        } else {
+            syn::visit_mut::visit_ident_mut(self, ident)
+        }
+    }
+}
+
+fn replace_self_type_with<T, R: ReplaceIdent>(
+    mut ty: T,
+    replace_with: R,
+    visit_with: impl FnOnce(&mut ReplaceSelfTypeWith<R>, &mut T),
+) -> T {
+    visit_with(&mut ReplaceSelfTypeWith(replace_with), &mut ty);
+    ty
 }

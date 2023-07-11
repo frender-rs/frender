@@ -881,7 +881,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2675,7 +2675,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.data,
-                    |v| element.set_data(v),
+                    |v| dom_element.set_data(v),
                     || dom_element.remove_attribute("data").unwrap(),
                 ),
                 form: <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2693,35 +2693,35 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.height,
-                    |v| element.set_height(v),
+                    |v| dom_element.set_height(v),
                     || dom_element.remove_attribute("height").unwrap(),
                 ),
                 name: <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.name,
-                    |v| element.set_name(v),
+                    |v| dom_element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
                 r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.r#type,
-                    |v| element.set_type(v),
+                    |v| dom_element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
                 use_map: <TypeDefs::use_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.use_map,
-                    |v| element.set_use_map(v),
+                    |v| dom_element.set_use_map(v),
                     || dom_element.remove_attribute("usemap").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| element.set_width(v),
+                    |v| dom_element.set_width(v),
                     || dom_element.remove_attribute("width").unwrap(),
                 ),
             }
@@ -2745,7 +2745,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.data,
                 state.data,
-                |v| element.set_data(v),
+                |v| dom_element.set_data(v),
                 || dom_element.remove_attribute("data").unwrap(),
             );
             <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2767,7 +2767,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.height,
                 state.height,
-                |v| element.set_height(v),
+                |v| dom_element.set_height(v),
                 || dom_element.remove_attribute("height").unwrap(),
             );
             <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2775,7 +2775,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.name,
                 state.name,
-                |v| element.set_name(v),
+                |v| dom_element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
             <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2783,7 +2783,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#type,
                 state.r#type,
-                |v| element.set_type(v),
+                |v| dom_element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
             <TypeDefs::use_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2791,7 +2791,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.use_map,
                 state.use_map,
-                |v| element.set_use_map(v),
+                |v| dom_element.set_use_map(v),
                 || dom_element.remove_attribute("usemap").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2799,7 +2799,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.width,
                 state.width,
-                |v| element.set_width(v),
+                |v| dom_element.set_width(v),
                 || dom_element.remove_attribute("width").unwrap(),
             );
         }

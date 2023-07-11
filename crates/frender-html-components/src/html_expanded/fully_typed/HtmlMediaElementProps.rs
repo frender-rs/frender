@@ -1906,7 +1906,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -6916,24 +6916,24 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.auto_play,
-                    |v| element.set_autoplay(*v),
+                    |v| dom_element.set_autoplay(*v),
                     || dom_element.remove_attribute("autoplay").unwrap(),
                 ),
                 controls: <TypeDefs::controls as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.controls,
-                    |v| element.set_controls(*v),
+                    |v| dom_element.set_controls(*v),
                     || dom_element.remove_attribute("controls").unwrap(),
                 ),
                 cross_origin: <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
-                    match element {
+                    match dom_element {
                         el => |v: &_| el.set_cross_origin(Some(v)),
                     },
-                    match element {
+                    match dom_element {
                         el => || el.set_cross_origin(None),
                     },
                 ),
@@ -6941,28 +6941,28 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.r#loop,
-                    |v| element.set_loop(*v),
+                    |v| dom_element.set_loop(*v),
                     || dom_element.remove_attribute("loop").unwrap(),
                 ),
                 muted: <TypeDefs::muted as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.muted,
-                    |v| element.set_muted(*v),
+                    |v| dom_element.set_muted(*v),
                     || dom_element.remove_attribute("muted").unwrap(),
                 ),
                 preload: <TypeDefs::preload as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.preload,
-                    |v| element.set_preload(v),
+                    |v| dom_element.set_preload(v),
                     || dom_element.remove_attribute("preload").unwrap(),
                 ),
                 src: <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 on_abort: crate::imports::frender_html::props::UpdateDomEventListener::<
@@ -7055,7 +7055,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_play,
                 state.auto_play,
-                |v| element.set_autoplay(*v),
+                |v| dom_element.set_autoplay(*v),
                 || dom_element.remove_attribute("autoplay").unwrap(),
             );
             <TypeDefs::controls as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7063,7 +7063,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.controls,
                 state.controls,
-                |v| element.set_controls(*v),
+                |v| dom_element.set_controls(*v),
                 || dom_element.remove_attribute("controls").unwrap(),
             );
             <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7071,10 +7071,10 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cross_origin,
                 state.cross_origin,
-                match element {
+                match dom_element {
                     el => |v: &_| el.set_cross_origin(Some(v)),
                 },
-                match element {
+                match dom_element {
                     el => || el.set_cross_origin(None),
                 },
             );
@@ -7083,7 +7083,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#loop,
                 state.r#loop,
-                |v| element.set_loop(*v),
+                |v| dom_element.set_loop(*v),
                 || dom_element.remove_attribute("loop").unwrap(),
             );
             <TypeDefs::muted as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7091,7 +7091,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.muted,
                 state.muted,
-                |v| element.set_muted(*v),
+                |v| dom_element.set_muted(*v),
                 || dom_element.remove_attribute("muted").unwrap(),
             );
             <TypeDefs::preload as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7099,7 +7099,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.preload,
                 state.preload,
-                |v| element.set_preload(v),
+                |v| dom_element.set_preload(v),
                 || dom_element.remove_attribute("preload").unwrap(),
             );
             <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7107,7 +7107,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             crate::imports::frender_html::props::UpdateDomEventListener::<

@@ -767,7 +767,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -1883,7 +1883,7 @@ mod impl_update_element {
                     i32,
                 >>::initialize_state_and_update(
                     this.value,
-                    |v| element.set_value(*v),
+                    |v| dom_element.set_value(*v),
                     || dom_element.remove_attribute("value").unwrap(),
                 ),
             }
@@ -1907,7 +1907,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.value,
                 state.value,
-                |v| element.set_value(*v),
+                |v| dom_element.set_value(*v),
                 || dom_element.remove_attribute("value").unwrap(),
             );
         }

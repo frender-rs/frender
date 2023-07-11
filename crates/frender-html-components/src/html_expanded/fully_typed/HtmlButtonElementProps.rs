@@ -965,7 +965,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3135,7 +3135,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.disabled,
-                    |v| element.set_disabled(*v),
+                    |v| dom_element.set_disabled(*v),
                     || dom_element.remove_attribute("disabled").unwrap(),
                 ),
                 form: <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3153,56 +3153,56 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.form_action,
-                    |v| element.set_form_action(v),
+                    |v| dom_element.set_form_action(v),
                     || dom_element.remove_attribute("formaction").unwrap(),
                 ),
                 form_enc_type: <TypeDefs::form_enc_type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.form_enc_type,
-                    |v| element.set_form_enctype(v),
+                    |v| dom_element.set_form_enctype(v),
                     || dom_element.remove_attribute("formenctype").unwrap(),
                 ),
                 form_method: <TypeDefs::form_method as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.form_method,
-                    |v| element.set_form_method(v),
+                    |v| dom_element.set_form_method(v),
                     || dom_element.remove_attribute("formmethod").unwrap(),
                 ),
                 form_no_validate: <TypeDefs::form_no_validate as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.form_no_validate,
-                    |v| element.set_form_no_validate(*v),
+                    |v| dom_element.set_form_no_validate(*v),
                     || dom_element.remove_attribute("formnovalidate").unwrap(),
                 ),
                 form_target: <TypeDefs::form_target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.form_target,
-                    |v| element.set_form_target(v),
+                    |v| dom_element.set_form_target(v),
                     || dom_element.remove_attribute("formtarget").unwrap(),
                 ),
                 name: <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.name,
-                    |v| element.set_name(v),
+                    |v| dom_element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
                 r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.r#type,
-                    |v| element.set_type(v),
+                    |v| dom_element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
                 value: <TypeDefs::value as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.value,
-                    |v| element.set_value(v),
+                    |v| dom_element.set_value(v),
                     || dom_element.remove_attribute("value").unwrap(),
                 ),
             }
@@ -3226,7 +3226,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.disabled,
                 state.disabled,
-                |v| element.set_disabled(*v),
+                |v| dom_element.set_disabled(*v),
                 || dom_element.remove_attribute("disabled").unwrap(),
             );
             <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3248,7 +3248,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.form_action,
                 state.form_action,
-                |v| element.set_form_action(v),
+                |v| dom_element.set_form_action(v),
                 || dom_element.remove_attribute("formaction").unwrap(),
             );
             <TypeDefs::form_enc_type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3256,7 +3256,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.form_enc_type,
                 state.form_enc_type,
-                |v| element.set_form_enctype(v),
+                |v| dom_element.set_form_enctype(v),
                 || dom_element.remove_attribute("formenctype").unwrap(),
             );
             <TypeDefs::form_method as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3264,7 +3264,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.form_method,
                 state.form_method,
-                |v| element.set_form_method(v),
+                |v| dom_element.set_form_method(v),
                 || dom_element.remove_attribute("formmethod").unwrap(),
             );
             <TypeDefs::form_no_validate as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3272,7 +3272,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.form_no_validate,
                 state.form_no_validate,
-                |v| element.set_form_no_validate(*v),
+                |v| dom_element.set_form_no_validate(*v),
                 || dom_element.remove_attribute("formnovalidate").unwrap(),
             );
             <TypeDefs::form_target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3280,7 +3280,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.form_target,
                 state.form_target,
-                |v| element.set_form_target(v),
+                |v| dom_element.set_form_target(v),
                 || dom_element.remove_attribute("formtarget").unwrap(),
             );
             <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3288,7 +3288,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.name,
                 state.name,
-                |v| element.set_name(v),
+                |v| dom_element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
             <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3296,7 +3296,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#type,
                 state.r#type,
-                |v| element.set_type(v),
+                |v| dom_element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
             <TypeDefs::value as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3304,7 +3304,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.value,
                 state.value,
-                |v| element.set_value(v),
+                |v| dom_element.set_value(v),
                 || dom_element.remove_attribute("value").unwrap(),
             );
         }

@@ -1,14 +1,51 @@
-pub trait MaybeUpdateValueWithState<V: ?Sized> {
+use frender_common::write::{
+    attrs::{
+        writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
+        AsyncWritableAttrValueStr,
+    },
+    str::{AsyncWritableStr, StrWriting},
+};
+
+pub use value::*;
+
+pub enum NeverWritable {}
+impl AsyncWritableAttrValue for NeverWritable {
+    fn poll_write_attr_value_into<
+        W: frender_common::write::attrs::write_traits::AsyncWriteAttrValue,
+    >(
+        &mut self,
+        cx: &mut std::task::Context,
+        write: W,
+    ) -> std::task::Poll<std::io::Result<W::AsyncWriteAttrName>> {
+        match *self {}
+    }
+}
+
+impl AsyncWritableStr for NeverWritable {
+    fn poll_write_str_into<W: frender_common::write::str::AsyncWriteStr>(
+        &mut self,
+        cx: &mut std::task::Context,
+        write: &mut W,
+    ) -> std::task::Poll<std::io::Result<()>> {
+        match *self {}
+    }
+}
+
+mod value {
+    pub(super) mod sealed {
+        pub enum NotSupported {}
+    }
+
+    pub trait ValueType {
+        type SupportIntoChildStr;
+        type SupportIntoAttrValue;
+    }
+}
+
+pub trait MaybeUpdateValueWithState<V: ?Sized + ValueType> {
     type State;
 
     fn maybe_as(this: &Self) -> Option<&V>;
-
-    /// - `None` means this attribute is absent;
-    /// - `Some(None)` means this attribute is present, but is void (no value is assigned);
-    /// - `Some(Some(value))` means this attribute is present and set to `value`;
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>>;
 
     fn initialize_state_and_update(
         this: Self,
@@ -22,19 +59,25 @@ pub trait MaybeUpdateValueWithState<V: ?Sized> {
         update: impl FnOnce(&V),
         remove: impl FnOnce(),
     );
+
+    type ChildStr: AsyncWritableStr;
+    fn maybe_into_child_str(
+        this: Self,
+        supported: <V as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr>;
+
+    type AttrValue: AsyncWritableAttrValue;
+    fn maybe_into_attr_value(
+        this: Self,
+        supported: <V as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue>;
 }
 
-impl<V: ?Sized> MaybeUpdateValueWithState<V> for () {
+impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
     type State = ();
 
     #[inline(always)]
     fn maybe_as(_: &Self) -> Option<&V> {
-        None
-    }
-
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
         None
     }
 
@@ -49,19 +92,33 @@ impl<V: ?Sized> MaybeUpdateValueWithState<V> for () {
         _: impl FnOnce(),
     ) {
     }
+
+    type ChildStr = NeverWritable;
+
+    fn maybe_into_child_str(
+        (): Self,
+        _: <V as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        None
+    }
+
+    type AttrValue = NeverWritable;
+
+    fn maybe_into_attr_value(
+        (): Self,
+        _: <V as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
+        None
+    }
 }
 
-impl<T: MaybeUpdateValueWithState<V>, V: ?Sized> MaybeUpdateValueWithState<V> for Option<T> {
+impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWithState<V>
+    for Option<T>
+{
     type State = Option<T::State>;
 
     fn maybe_as(this: &Self) -> Option<&V> {
         this.as_ref().and_then(T::maybe_as)
-    }
-
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
-        this.and_then(T::maybe_into_html_attribute_value)
     }
 
     fn initialize_state_and_update(
@@ -97,6 +154,41 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized> MaybeUpdateValueWithState<V> fo
             }
         }
     }
+
+    type ChildStr = T::ChildStr;
+
+    fn maybe_into_child_str(
+        this: Self,
+        supported: <V as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        this.and_then(|this| T::maybe_into_child_str(this, supported))
+    }
+
+    type AttrValue = T::AttrValue;
+
+    fn maybe_into_attr_value(
+        this: Self,
+        supported: <V as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
+        this.and_then(|this| T::maybe_into_attr_value(this, supported))
+    }
+}
+
+macro_rules! impl_many {
+    (
+        impl<__> $impl_trait:ident for each_of![$($ty:ty),* $(,)?]
+        $impl_block:tt
+    ) => {$(
+        impl $impl_trait for $ty
+        $impl_block
+    )*};
+    (
+        impl<__> $impl_trait:ident <$t:ty> for each_of![$($ty:ty),* $(,)?]
+        $impl_block:tt
+    ) => {$(
+        impl $impl_trait <$t> for $ty
+        $impl_block
+    )*};
 }
 
 /// No cache
@@ -105,12 +197,6 @@ impl MaybeUpdateValueWithState<str> for &str {
 
     fn maybe_as(this: &Self) -> Option<&str> {
         Some(this)
-    }
-
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
-        Some(Some(this.to_owned().into()))
     }
 
     #[inline(always)]
@@ -131,6 +217,24 @@ impl MaybeUpdateValueWithState<str> for &str {
     ) {
         update(this)
     }
+
+    type ChildStr = StrWriting<Self>;
+
+    fn maybe_into_child_str(
+        this: Self,
+        (): <str as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        Some(StrWriting::new(this))
+    }
+
+    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
+
+    fn maybe_into_attr_value(
+        this: Self,
+        supported: <str as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
+        Some(AsyncWritableAttrValueStr::new_from_str(this))
+    }
 }
 
 /// Cache if self is [`Cow::Owned`]
@@ -140,12 +244,6 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
 
     fn maybe_as(this: &Self) -> Option<&str> {
         Some(&this)
-    }
-
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
-        Some(Some(this.into_owned().into()))
     }
 
     fn initialize_state_and_update(
@@ -177,6 +275,24 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
                 update(this)
             }
         }
+    }
+
+    type ChildStr = StrWriting<Self>;
+
+    fn maybe_into_child_str(
+        this: Self,
+        (): <str as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        Some(StrWriting::new(this))
+    }
+
+    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
+
+    fn maybe_into_attr_value(
+        this: Self,
+        supported: <str as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
+        Some(AsyncWritableAttrValueStr::new_from_str(this))
     }
 }
 
@@ -224,12 +340,6 @@ impl MaybeUpdateValueWithState<str> for String {
         Some(&this)
     }
 
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
-        Some(Some(this.into()))
-    }
-
     fn initialize_state_and_update(
         this: Self,
         update: impl FnOnce(&str),
@@ -251,67 +361,137 @@ impl MaybeUpdateValueWithState<str> for String {
         update(&this);
         *state = this;
     }
+
+    type ChildStr = StrWriting<Self>;
+
+    fn maybe_into_child_str(
+        this: Self,
+        (): <str as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        Some(StrWriting::new(this))
+    }
+
+    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
+
+    fn maybe_into_attr_value(
+        this: Self,
+        supported: <str as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
+        Some(AsyncWritableAttrValueStr::new_from_str(this))
+    }
 }
 
-macro_rules! auto_impl_update {
-    ($($ty:ty),* $(,)?) => {
-        auto_impl_update! {
-            @impl attribute |this| {
-                Some(Some(this.to_string().into()))
-            }
-            $($ty),*
+impl_many!(
+    impl<__> ValueType
+        for each_of![str, i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64]
+    {
+        type SupportIntoChildStr = ();
+        type SupportIntoAttrValue = ();
+    }
+);
+
+impl ValueType for bool {
+    type SupportIntoChildStr = sealed::NotSupported;
+    type SupportIntoAttrValue = ();
+}
+
+impl_many!(
+    impl<__> MaybeUpdateValueWithState<Self>
+        for each_of![i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64]
+    {
+        type State = Self;
+
+        fn maybe_as(this: &Self) -> Option<&Self> {
+            Some(this)
         }
-    };
-    (@impl attribute |$this:ident| $impl_attribute:block $($ty:ty),* $(,)?) => {$(
-        impl MaybeUpdateValueWithState<$ty> for $ty {
-            type State = $ty;
 
-            fn maybe_as(this: &Self) -> Option<&$ty> {
-                Some(this)
-            }
-
-            fn maybe_into_html_attribute_value(
-                $this: Self,
-            ) -> Option<Option<std::borrow::Cow<'static, str>>>
-                $impl_attribute
-
-            fn initialize_state_and_update(
-                this: Self,
-                update: impl FnOnce(&$ty),
-                _: impl FnOnce(),
-            ) -> Self::State {
-                update(&this);
-                this
-            }
-
-            fn maybe_update_value_with_state(
-                this: Self,
-                state: &mut Self::State,
-                update: impl FnOnce(&$ty),
-                _: impl FnOnce(),
-            ) {
-                if *state == this {
-                    return;
-                }
-                update(&this);
-                *state = this;
-            }
+        fn initialize_state_and_update(
+            this: Self,
+            update: impl FnOnce(&Self),
+            _: impl FnOnce(),
+        ) -> Self::State {
+            update(&this);
+            this
         }
-    )*};
-}
 
-auto_impl_update! {
-    i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize,
-    f32, f64,
-}
+        fn maybe_update_value_with_state(
+            this: Self,
+            state: &mut Self::State,
+            update: impl FnOnce(&Self),
+            _: impl FnOnce(),
+        ) {
+            if *state == this {
+                return;
+            }
+            update(&this);
+            *state = this;
+        }
 
-auto_impl_update! {
-    @impl attribute |this| {
+        type ChildStr = StrWriting<String>;
+
+        fn maybe_into_child_str(
+            this: Self,
+            supported: <Self as ValueType>::SupportIntoChildStr,
+        ) -> Option<Self::ChildStr> {
+            String::maybe_into_child_str(this.to_string(), supported)
+        }
+
+        type AttrValue = AsyncWritableAttrValueStr<StrWriting<String>>;
+
+        fn maybe_into_attr_value(this: Self, supported: ()) -> Option<Self::AttrValue> {
+            String::maybe_into_attr_value(this.to_string(), supported)
+        }
+    }
+);
+
+impl MaybeUpdateValueWithState<bool> for bool {
+    type State = Self;
+
+    fn maybe_as(this: &Self) -> Option<&Self> {
+        Some(this)
+    }
+
+    fn initialize_state_and_update(
+        this: Self,
+        update: impl FnOnce(&Self),
+        _: impl FnOnce(),
+    ) -> Self::State {
+        update(&this);
+        this
+    }
+
+    fn maybe_update_value_with_state(
+        this: Self,
+        state: &mut Self::State,
+        update: impl FnOnce(&Self),
+        _: impl FnOnce(),
+    ) {
+        if *state == this {
+            return;
+        }
+        update(&this);
+        *state = this;
+    }
+
+    type ChildStr = NeverWritable;
+
+    fn maybe_into_child_str(
+        this: Self,
+        supported: <bool as ValueType>::SupportIntoChildStr,
+    ) -> Option<Self::ChildStr> {
+        match supported {}
+    }
+
+    type AttrValue = AsyncWritableAttrValueBooleanTrue;
+
+    fn maybe_into_attr_value(
+        this: Self,
+        (): <bool as ValueType>::SupportIntoAttrValue,
+    ) -> Option<Self::AttrValue> {
         if this {
-            Some(None)
+            Some(AsyncWritableAttrValueBooleanTrue)
         } else {
             None
         }
     }
-    bool
 }

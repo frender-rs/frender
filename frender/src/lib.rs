@@ -1,7 +1,9 @@
 mod debug;
 pub use debug::*;
 
+#[cfg(all(feature = "csr", feature = "ssr"))]
 mod element;
+#[cfg(all(feature = "csr", feature = "ssr"))]
 pub use element::*;
 
 #[cfg(feature = "hooks")]
@@ -48,7 +50,9 @@ pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
-    pub use crate::{rsx, Element, StaticText};
+    #[cfg(all(feature = "csr", feature = "ssr"))]
+    pub use crate::Element;
+    pub use crate::{rsx, StaticText};
 
     pub use frender_hook_element::{component_fn, RenderWith};
 

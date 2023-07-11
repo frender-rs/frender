@@ -882,7 +882,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2678,14 +2678,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.auto_complete,
-                    |v| element.set_autocomplete(v),
+                    |v| dom_element.set_autocomplete(v),
                     || dom_element.remove_attribute("autocomplete").unwrap(),
                 ),
                 disabled: <TypeDefs::disabled as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.disabled,
-                    |v| element.set_disabled(*v),
+                    |v| dom_element.set_disabled(*v),
                     || dom_element.remove_attribute("disabled").unwrap(),
                 ),
                 form: <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2703,28 +2703,28 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.multiple,
-                    |v| element.set_multiple(*v),
+                    |v| dom_element.set_multiple(*v),
                     || dom_element.remove_attribute("multiple").unwrap(),
                 ),
                 name: <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.name,
-                    |v| element.set_name(v),
+                    |v| dom_element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
                 required: <TypeDefs::required as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.required,
-                    |v| element.set_required(*v),
+                    |v| dom_element.set_required(*v),
                     || dom_element.remove_attribute("required").unwrap(),
                 ),
                 size: <TypeDefs::size as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::initialize_state_and_update(
                     this.size,
-                    |v| element.set_size(*v),
+                    |v| dom_element.set_size(*v),
                     || dom_element.remove_attribute("size").unwrap(),
                 ),
             }
@@ -2748,7 +2748,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_complete,
                 state.auto_complete,
-                |v| element.set_autocomplete(v),
+                |v| dom_element.set_autocomplete(v),
                 || dom_element.remove_attribute("autocomplete").unwrap(),
             );
             <TypeDefs::disabled as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2756,7 +2756,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.disabled,
                 state.disabled,
-                |v| element.set_disabled(*v),
+                |v| dom_element.set_disabled(*v),
                 || dom_element.remove_attribute("disabled").unwrap(),
             );
             <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2778,7 +2778,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.multiple,
                 state.multiple,
-                |v| element.set_multiple(*v),
+                |v| dom_element.set_multiple(*v),
                 || dom_element.remove_attribute("multiple").unwrap(),
             );
             <TypeDefs::name as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2786,7 +2786,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.name,
                 state.name,
-                |v| element.set_name(v),
+                |v| dom_element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
             <TypeDefs::required as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2794,7 +2794,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.required,
                 state.required,
-                |v| element.set_required(*v),
+                |v| dom_element.set_required(*v),
                 || dom_element.remove_attribute("required").unwrap(),
             );
             <TypeDefs::size as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2802,7 +2802,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.size,
                 state.size,
-                |v| element.set_size(*v),
+                |v| dom_element.set_size(*v),
                 || dom_element.remove_attribute("size").unwrap(),
             );
         }

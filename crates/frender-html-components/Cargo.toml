@@ -29,6 +29,7 @@ features = [
     "ClipboardEvent",
     "CompositionEvent",
     "DataTransfer",
+    "DomTokenList",
     "DragEvent",
     "Element",
     "EventTarget",
@@ -110,7 +111,7 @@ features = [
 ]
 
 [features]
-default = ["html_macro_not_expand"]
+# default = ["html_macro_not_expand"]
 csr = ["dep:frender-csr", "dep:web-sys"]
 ssr = ["dep:frender-ssr"]
 html_macro_not_expand = ["dep:frender-macros"]

@@ -144,8 +144,9 @@ mod dom {
 mod ssr {
     use std::borrow::Cow;
 
+    use frender_common::write::attrs::IntoAsyncWritableAttrs;
     use frender_html_common::IntrinsicComponent;
-    use frender_ssr::{attrs::GiveAttrs, AsyncWrite, Element};
+    use frender_ssr::{AsyncWrite, Element};
 
     use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};
 
@@ -155,12 +156,12 @@ mod ssr {
     where
         C: SsrIntrinsicComponent,
         C: SsrWithChildren<P::Children>,
-        P::Attrs: GiveAttrs,
+        P::Attrs: IntoAsyncWritableAttrs,
     {
         type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
             'static,
             C::ChildrenSsrState,
-            <P::Attrs as IntoIteratorAttrs<'static>>::IntoIterAttrs,
+            <P::Attrs as IntoAsyncWritableAttrs>::AsyncWritableAttrs,
         >;
 
         fn into_ssr_state(self) -> Self::SsrState {

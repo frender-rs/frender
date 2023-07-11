@@ -858,7 +858,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2534,42 +2534,42 @@ mod impl_update_element {
                     f64,
                 >>::initialize_state_and_update(
                     this.value,
-                    |v| element.set_value(*v),
+                    |v| dom_element.set_value(*v),
                     || dom_element.remove_attribute("value").unwrap(),
                 ),
                 min: <TypeDefs::min as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     f64,
                 >>::initialize_state_and_update(
                     this.min,
-                    |v| element.set_min(*v),
+                    |v| dom_element.set_min(*v),
                     || dom_element.remove_attribute("min").unwrap(),
                 ),
                 max: <TypeDefs::max as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     f64,
                 >>::initialize_state_and_update(
                     this.max,
-                    |v| element.set_max(*v),
+                    |v| dom_element.set_max(*v),
                     || dom_element.remove_attribute("max").unwrap(),
                 ),
                 low: <TypeDefs::low as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     f64,
                 >>::initialize_state_and_update(
                     this.low,
-                    |v| element.set_low(*v),
+                    |v| dom_element.set_low(*v),
                     || dom_element.remove_attribute("low").unwrap(),
                 ),
                 high: <TypeDefs::high as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     f64,
                 >>::initialize_state_and_update(
                     this.high,
-                    |v| element.set_high(*v),
+                    |v| dom_element.set_high(*v),
                     || dom_element.remove_attribute("high").unwrap(),
                 ),
                 optimum: <TypeDefs::optimum as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     f64,
                 >>::initialize_state_and_update(
                     this.optimum,
-                    |v| element.set_optimum(*v),
+                    |v| dom_element.set_optimum(*v),
                     || dom_element.remove_attribute("optimum").unwrap(),
                 ),
             }
@@ -2593,7 +2593,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.value,
                 state.value,
-                |v| element.set_value(*v),
+                |v| dom_element.set_value(*v),
                 || dom_element.remove_attribute("value").unwrap(),
             );
             <TypeDefs::min as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2601,7 +2601,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.min,
                 state.min,
-                |v| element.set_min(*v),
+                |v| dom_element.set_min(*v),
                 || dom_element.remove_attribute("min").unwrap(),
             );
             <TypeDefs::max as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2609,7 +2609,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.max,
                 state.max,
-                |v| element.set_max(*v),
+                |v| dom_element.set_max(*v),
                 || dom_element.remove_attribute("max").unwrap(),
             );
             <TypeDefs::low as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2617,7 +2617,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.low,
                 state.low,
-                |v| element.set_low(*v),
+                |v| dom_element.set_low(*v),
                 || dom_element.remove_attribute("low").unwrap(),
             );
             <TypeDefs::high as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2625,7 +2625,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.high,
                 state.high,
-                |v| element.set_high(*v),
+                |v| dom_element.set_high(*v),
                 || dom_element.remove_attribute("high").unwrap(),
             );
             <TypeDefs::optimum as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2633,7 +2633,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.optimum,
                 state.optimum,
-                |v| element.set_optimum(*v),
+                |v| dom_element.set_optimum(*v),
                 || dom_element.remove_attribute("optimum").unwrap(),
             );
         }

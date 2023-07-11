@@ -68,7 +68,7 @@ impl FieldDeclarationMaybe {
                         let imp=
                         if let Some(element_method) = html_element_method {
                             quote! {
-                                element.#element_method(#deref_star v)
+                                dom_element.#element_method(#deref_star v)
                             }
                         } else {
                             quote! {
@@ -82,7 +82,7 @@ impl FieldDeclarationMaybe {
                     let maybe_update_element = &update.element_pat_ident;
                     let maybe_update = &update.rest;
                     let v = quote! {
-                        match element { #maybe_update_element => #maybe_update }
+                        match dom_element { #maybe_update_element => #maybe_update }
                     };
                     if let Some(html_element_method) = html_element_method {
                         let error = syn::Error::new(html_element_method.span(), "html_element_method not respected because custom update is implemented")
@@ -118,7 +118,7 @@ impl FieldDeclarationMaybe {
                     let maybe_remove_element = &remove.element_pat_ident;
                     let maybe_remove = &remove.rest;
                     quote! {
-                        match element { #maybe_remove_element => #maybe_remove }
+                        match dom_element { #maybe_remove_element => #maybe_remove }
                     }
                 },
             )

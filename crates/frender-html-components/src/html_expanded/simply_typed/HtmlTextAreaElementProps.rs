@@ -4,996 +4,399 @@ def_props_type!(
         ..HtmlElementProps(
             ..ElementProps(
                 children,
-                class: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-                id: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-                part: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-                on_cancel: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-                on_error: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-                on_scroll: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                class: bounds![DomTokens::Bounds],
+                id: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+                part: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+                on_cancel:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                on_error:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                on_scroll:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
                 on_security_policy_violation:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
                             events::SecurityPolicyViolationEvent,
                         >
                     ],
-                on_select: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                on_select:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
                 on_wheel:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::WheelEvent>],
-                on_copy: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-                on_cut: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-                on_paste: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::WheelEvent>
+                    ],
+                on_copy:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                on_cut:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                on_paste:
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
                 on_composition_end:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
+                            events::CompositionEvent,
+                        >
                     ],
                 on_composition_start:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
+                            events::CompositionEvent,
+                        >
                     ],
                 on_composition_update:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<events::CompositionEvent>
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
+                            events::CompositionEvent,
+                        >
                     ],
                 on_blur:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                    ],
                 on_focus:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                    ],
                 on_focus_in:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                    ],
                 on_focus_out:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::FocusEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                    ],
                 on_fullscreen_change:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
                 on_fullscreen_error:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
                 on_key_down:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
+                            events::KeyboardEvent,
+                        >
                     ],
                 on_key_up:
                     bounds![
-                        crate::imports::frender_events::MaybeHandleEvent<events::KeyboardEvent>
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
+                            events::KeyboardEvent,
+                        >
                     ],
                 on_aux_click:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_click:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_context_menu:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_double_click:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_down:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_enter:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_leave:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_move:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_out:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_over:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_mouse_up:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::MouseEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                    ],
                 on_touch_cancel:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                    ],
                 on_touch_end:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                    ],
                 on_touch_move:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                    ],
                 on_touch_start:
-                    bounds![crate::imports::frender_events::MaybeHandleEvent<events::TouchEvent>],
+                    bounds![
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                    ],
             ),
-            access_key:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            auto_capitalize:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            auto_focus:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-            context_menu:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            dir: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            draggable:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-            enter_key_hint:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            hidden: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-            inert: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-            input_mode:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            is: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            item_id: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            item_prop: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            item_ref: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            item_scope:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            item_type: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            lang: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            nonce: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            role: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            slot: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            spellcheck:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-            style: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            tab_index: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>],
-            title: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            translate: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            virtual_keyboard_policy:
-                bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-            on_invalid: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+            access_key: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            auto_capitalize: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            auto_focus: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            context_menu: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            dir: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            draggable: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            enter_key_hint: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            hidden: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            inert: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            input_mode: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            is: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            item_id: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            item_prop: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            item_ref: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            item_scope: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            item_type: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            lang: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            nonce: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            role: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            slot: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            spellcheck: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            style: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            tab_index: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<i32>],
+            title: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            translate: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            virtual_keyboard_policy: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+            on_invalid:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
             on_animation_cancel:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::AnimationEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                ],
             on_animation_end:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::AnimationEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                ],
             on_animation_iteration:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::AnimationEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                ],
             on_animation_start:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::AnimationEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                ],
             on_before_input:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::InputEvent>],
-            on_input: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_change: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::InputEvent>],
+            on_input: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_change:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
             on_got_pointer_capture:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_lost_pointer_capture:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_cancel:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_down:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_enter:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_leave:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_move:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_out:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_over:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_pointer_up:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::PointerEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                ],
             on_transition_cancel:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::TransitionEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                ],
             on_transition_end:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::TransitionEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                ],
             on_transition_run:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::TransitionEvent>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                ],
             on_transition_start:
-                bounds![crate::imports::frender_events::MaybeHandleEvent<events::TransitionEvent>],
-            on_drag: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drag_end: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drag_enter: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drag_leave: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drag_over: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drag_start: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
-            on_drop: bounds![crate::imports::frender_events::MaybeHandleEvent<events::Event>],
+                bounds![
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                ],
+            on_drag: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag_end:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag_enter:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag_leave:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag_over:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag_start:
+                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drop: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
         ),
-        auto_complete: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        auto_correct: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        cols: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>],
-        disabled: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-        form: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        max_length: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>],
-        min_length: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>],
-        name: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        placeholder: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
-        read_only: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-        required: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>],
-        rows: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>],
-        wrap: bounds![crate::imports::frender_html::props::MaybeUpdateValueWithState<str>],
+        auto_complete: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        auto_correct: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        cols: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<u32>],
+        disabled: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+        form: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        max_length: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<i32>],
+        min_length: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<i32>],
+        name: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        placeholder: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        read_only: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+        required: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+        rows: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<u32>],
+        wrap: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
     )
 );
 #[cfg(feature = "csr")]
-mod impl_dom_for_props {
+mod imp {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::auto_complete<V>
-    {
-        type State = super::props::auto_complete<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::auto_complete(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_autocomplete(v),
-                    || dom_element.remove_attribute("autocomplete").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_autocomplete(v),
-                || dom_element.remove_attribute("autocomplete").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::auto_correct<V>
-    {
-        type State = super::props::auto_correct<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::auto_correct(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "auto_correct",
-                    ),
-                    || dom_element.remove_attribute("auto_correct").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                    v,
-                    dom_element,
-                    "auto_correct",
-                ),
-                || dom_element.remove_attribute("auto_correct").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::cols<V>
-    {
-        type State = super::props::cols<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::cols(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_cols(*v),
-                    || dom_element.remove_attribute("cols").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                u32,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_cols(*v),
-                || dom_element.remove_attribute("cols").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::disabled<V>
-    {
-        type State = super::props::disabled<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::disabled(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    bool,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_disabled(*v),
-                    || dom_element.remove_attribute("disabled").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                bool,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_disabled(*v),
-                || dom_element.remove_attribute("disabled").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::form<V>
-    {
-        type State = super::props::form<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::form(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                        v,
-                        dom_element,
-                        "form",
-                    ),
-                    || dom_element.remove_attribute("form").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
-                    v,
-                    dom_element,
-                    "form",
-                ),
-                || dom_element.remove_attribute("form").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::max_length<V>
-    {
-        type State = super::props::max_length<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::max_length(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    i32,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_max_length(*v),
-                    || dom_element.remove_attribute("maxlength").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                i32,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_max_length(*v),
-                || dom_element.remove_attribute("maxlength").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::min_length<V>
-    {
-        type State = super::props::min_length<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::min_length(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    i32,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_min_length(*v),
-                    || dom_element.remove_attribute("minlength").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                i32,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_min_length(*v),
-                || dom_element.remove_attribute("minlength").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::name<V>
-    {
-        type State = super::props::name<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::name(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_name(v),
-                    || dom_element.remove_attribute("name").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_name(v),
-                || dom_element.remove_attribute("name").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::placeholder<V>
-    {
-        type State = super::props::placeholder<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::placeholder(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_placeholder(v),
-                    || dom_element.remove_attribute("placeholder").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_placeholder(v),
-                || dom_element.remove_attribute("placeholder").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::read_only<V>
-    {
-        type State = super::props::read_only<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::read_only(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    bool,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_read_only(*v),
-                    || dom_element.remove_attribute("readonly").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                bool,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_read_only(*v),
-                || dom_element.remove_attribute("readonly").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::required<V>
-    {
-        type State = super::props::required<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::required(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    bool,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_required(*v),
-                    || dom_element.remove_attribute("required").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                bool,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_required(*v),
-                || dom_element.remove_attribute("required").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::rows<V>
-    {
-        type State = super::props::rows<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::rows(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_rows(*v),
-                    || dom_element.remove_attribute("rows").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                u32,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_rows(*v),
-                || dom_element.remove_attribute("rows").unwrap(),
-            );
-        }
-    }
-    impl<
-            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
-            E: ::core::convert::AsRef<web_sys::HtmlTextAreaElement>,
-        > crate::imports::frender_csr::props::UpdateElementNonReactive<E>
-        for super::props::wrap<V>
-    {
-        type State = super::props::wrap<V::State>;
-        fn initialize_state_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-        ) -> Self::State {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            super::props::wrap(
-                <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    str,
-                >>::initialize_state_and_update(
-                    this.0,
-                    |v| element.set_wrap(v),
-                    || dom_element.remove_attribute("wrap").unwrap(),
-                ),
-            )
-        }
-        fn update_element_non_reactive(
-            this: Self,
-            element: &E,
-            children_ctx: &mut crate::imports::frender_csr::CsrContext,
-            state: ::core::pin::Pin<&mut Self::State>,
-        ) {
-            let dom_element = element.as_ref();
-            let element = dom_element;
-            <V as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                str,
-            >>::maybe_update_value_with_state(
-                this.0,
-                &mut state.get_mut().0,
-                |v| element.set_wrap(v),
-                || dom_element.remove_attribute("wrap").unwrap(),
-            );
-        }
-    }
-}
-#[cfg(feature = "ssr")]
-mod impl_ssr_for_props {
-    #![allow(unused_variables)]
-    #[allow(unused_imports)]
-    use super::super::*;
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::auto_complete<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("autocomplete"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a>
-        for super::props::auto_correct<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("auto_correct"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::cols<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("cols"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::disabled<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("disabled"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::form<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("form"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::max_length<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("maxlength"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<i32>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::min_length<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("minlength"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::name<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("name"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::placeholder<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("placeholder"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::read_only<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("readonly"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<bool>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::required<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("required"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::rows<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("rows"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
-    impl<'a, V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>
-        crate::imports::frender_ssr::attrs::IntoIteratorAttrs<'a> for super::props::wrap<V>
-    {
-        type IntoIterAttrs =
-            ::core::option::IntoIter<crate::imports::frender_ssr::element::html::HtmlAttrPair<'a>>;
-        fn into_iter_attrs(this: Self) -> Self::IntoIterAttrs {
-            V::maybe_into_html_attribute_value(this.0)
-                .map(|attr_value| (
-                    ::std::borrow::Cow::Borrowed("wrap"),
-                    attr_value
-                        .map_or(
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue,
-                            crate::imports::frender_ssr::element::html::HtmlAttributeValue::String,
-                        ),
-                ))
-                .into_iter()
-        }
-    }
+    crate::imports::impl_bounds!(super::props::auto_complete(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "autocomplete",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, v: &_| el.set_autocomplete(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::auto_correct(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "auto_correct",
+        csr {
+            update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::cols(
+        bounds as crate::imports::impl_bounds::MaybeValue<u32>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "cols",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_cols(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::disabled(
+        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "disabled",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_disabled(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::form(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "form",
+        csr {
+            update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::max_length(
+        bounds as crate::imports::impl_bounds::MaybeValue<i32>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "maxlength",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_max_length(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::min_length(
+        bounds as crate::imports::impl_bounds::MaybeValue<i32>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "minlength",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_min_length(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::name(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "name",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, v: &_| el.set_name(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::placeholder(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "placeholder",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, v: &_| el.set_placeholder(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::read_only(
+        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "readonly",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_read_only(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::required(
+        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "required",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_required(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::rows(
+        bounds as crate::imports::impl_bounds::MaybeValue<u32>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "rows",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, &v: &_| el.set_rows(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::wrap(
+        bounds as crate::imports::impl_bounds::MaybeValue<str>,
+        element as web_sys::HtmlTextAreaElement,
+        attr_name = "wrap",
+        csr {
+            update: |el: &web_sys::HtmlTextAreaElement, _, v: &_| el.set_wrap(v),
+            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
 }
 mod imports {
     #[allow(unused_imports)]

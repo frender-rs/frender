@@ -15,3 +15,10 @@ pub use frender_csr;
 
 #[cfg(feature = "ssr")]
 pub use frender_ssr;
+
+pub mod impl_bounds;
+
+#[doc(hidden)]
+pub mod __private {
+    pub use frender_html_common::IntoAsyncWritableAttrs;
+}

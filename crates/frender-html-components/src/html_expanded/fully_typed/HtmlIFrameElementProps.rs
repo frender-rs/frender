@@ -1067,7 +1067,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3630,14 +3630,14 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.allow_fullscreen,
-                    |v| element.set_allow_fullscreen(*v),
+                    |v| dom_element.set_allow_fullscreen(*v),
                     || dom_element.remove_attribute("allowfullscreen").unwrap(),
                 ),
                 allow_payment_request: <TypeDefs::allow_payment_request as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.allow_payment_request,
-                    |v| element.set_allow_payment_request(*v),
+                    |v| dom_element.set_allow_payment_request(*v),
                     || dom_element.remove_attribute("allowpaymentrequest").unwrap(),
                 ),
                 csp: <TypeDefs::csp as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3666,7 +3666,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.height,
-                    |v| element.set_height(v),
+                    |v| dom_element.set_height(v),
                     || dom_element.remove_attribute("height").unwrap(),
                 ),
                 loading: <TypeDefs::loading as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3684,14 +3684,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.name,
-                    |v| element.set_name(v),
+                    |v| dom_element.set_name(v),
                     || dom_element.remove_attribute("name").unwrap(),
                 ),
                 referrer_policy: <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
-                    |v| element.set_referrer_policy(v),
+                    |v| dom_element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
                 sandbox: <TypeDefs::sandbox as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3709,21 +3709,21 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 src_doc: <TypeDefs::src_doc as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src_doc,
-                    |v| element.set_srcdoc(v),
+                    |v| dom_element.set_srcdoc(v),
                     || dom_element.remove_attribute("srcdoc").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| element.set_width(v),
+                    |v| dom_element.set_width(v),
                     || dom_element.remove_attribute("width").unwrap(),
                 ),
             }
@@ -3761,7 +3761,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.allow_fullscreen,
                 state.allow_fullscreen,
-                |v| element.set_allow_fullscreen(*v),
+                |v| dom_element.set_allow_fullscreen(*v),
                 || dom_element.remove_attribute("allowfullscreen").unwrap(),
             );
             <TypeDefs::allow_payment_request as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3769,7 +3769,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.allow_payment_request,
                 state.allow_payment_request,
-                |v| element.set_allow_payment_request(*v),
+                |v| dom_element.set_allow_payment_request(*v),
                 || dom_element.remove_attribute("allowpaymentrequest").unwrap(),
             );
             <TypeDefs::csp as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3803,7 +3803,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.height,
                 state.height,
-                |v| element.set_height(v),
+                |v| dom_element.set_height(v),
                 || dom_element.remove_attribute("height").unwrap(),
             );
             <TypeDefs::loading as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3825,7 +3825,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.name,
                 state.name,
-                |v| element.set_name(v),
+                |v| dom_element.set_name(v),
                 || dom_element.remove_attribute("name").unwrap(),
             );
             <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3833,7 +3833,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
                 state.referrer_policy,
-                |v| element.set_referrer_policy(v),
+                |v| dom_element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
             <TypeDefs::sandbox as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3855,7 +3855,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             <TypeDefs::src_doc as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3863,7 +3863,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src_doc,
                 state.src_doc,
-                |v| element.set_srcdoc(v),
+                |v| dom_element.set_srcdoc(v),
                 || dom_element.remove_attribute("srcdoc").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3871,7 +3871,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.width,
                 state.width,
-                |v| element.set_width(v),
+                |v| dom_element.set_width(v),
                 || dom_element.remove_attribute("width").unwrap(),
             );
         }

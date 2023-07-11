@@ -1,3 +1,6 @@
+mod maybe_owned;
+pub use maybe_owned::*;
+
 mod async_writable;
 pub use async_writable::*;
 
@@ -28,15 +31,6 @@ pub mod element;
 
 pub mod utils;
 
-pub mod attrs;
+pub mod write_attrs;
 
-macro_rules! ready_ok {
-    ($e:expr) => {
-        match $e {
-            ::core::task::Poll::Ready(::core::result::Result::Ok(())) => {}
-            non_ready_ok => return non_ready_ok,
-        }
-    };
-}
-
-pub(crate) use ready_ok;
+pub(crate) use frender_common::{ready_ok, ready_ok_rewrap_err};

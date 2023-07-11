@@ -782,7 +782,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2006,14 +2006,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.href,
-                    |v| element.set_href(v),
+                    |v| dom_element.set_href(v),
                     || dom_element.remove_attribute("href").unwrap(),
                 ),
                 target: <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.target,
-                    |v| element.set_target(v),
+                    |v| dom_element.set_target(v),
                     || dom_element.remove_attribute("target").unwrap(),
                 ),
             }
@@ -2037,7 +2037,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.href,
                 state.href,
-                |v| element.set_href(v),
+                |v| dom_element.set_href(v),
                 || dom_element.remove_attribute("href").unwrap(),
             );
             <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2045,7 +2045,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.target,
                 state.target,
-                |v| element.set_target(v),
+                |v| dom_element.set_target(v),
                 || dom_element.remove_attribute("target").unwrap(),
             );
         }

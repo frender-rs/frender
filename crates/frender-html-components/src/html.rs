@@ -2,6 +2,8 @@
 
 use frender_events::events;
 
+use frender_html_simple::impl_bounds::DomTokens;
+
 #[cfg(not(frender_macro_def_intrinsic_component_props))] // this attribute is for identifying when expanding this macro
 frender_macros::def_intrinsic_component_props! {
     @[crate::imports]
@@ -22,17 +24,13 @@ frender_macros::def_intrinsic_component_props! {
                 }
             }
         },
-        class: bounds![{
-            trait Bounds = DomTokens;
-            // const _: () = ();
-            impl csr {
-                fn initialize(this: Self, element: _, children_ctx: _) -> Self::State {}
-                fn update(this: Self, element: _, children_ctx: _, state: _) {}
+        class: bounds![
+            bounds as DomTokens,
+            attr_name = "class",
+            csr {
+                get_dom_token: web_sys::Element::class_list
             }
-            impl ssr {
-
-            }
-        }],
+        ],
         id ? &str {set_id},
         part ? &str,
         /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)

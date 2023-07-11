@@ -4,7 +4,7 @@ component_fn!(
     #[component(ssr)]
     fn Main(main_id: &str) -> impl SsrElement + '_ {
         intrinsic!(
-            div.id(main_id).style(
+            div.class("main").id(main_id).style(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;

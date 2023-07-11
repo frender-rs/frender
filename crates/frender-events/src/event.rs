@@ -73,7 +73,10 @@ wrap_if_csr!(
 
 #[cfg(feature = "csr")]
 impl EventListener {
-    pub fn new<E: NewFromRef, C: for<'e> callable::Callable<(&'e E,), Output = ()> + 'static>(
+    pub fn new<
+        E: ?Sized + NewFromRef,
+        C: for<'e> callable::Callable<(&'e E,), Output = ()> + 'static,
+    >(
         target: &web_sys::EventTarget,
         event_type: &'static str,
         callable: C,

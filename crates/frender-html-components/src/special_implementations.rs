@@ -74,23 +74,28 @@ mod script {
 
         use frender_html::props::MaybeUpdateValueWithState;
         use frender_html_simple::SsrWithChildren;
-        use frender_ssr::{element::str::EscapeStr, AsyncWrite, Element};
+        use frender_ssr::{
+            element::str::{EscapeStr, EscapedStrWritingState},
+            AsyncWrite, Element,
+        };
 
-        fn maybe_str<S: MaybeUpdateValueWithState<str>>(s: S) -> Option<Cow<'static, str>> {
-            S::maybe_into_html_attribute_value(s).map(Option::unwrap)
+        #[derive(Clone, Copy)]
+        pub struct EncodeScript;
+
+        impl frender_ssr::EscapeSafe for EncodeScript {
+            fn escape_safe<'a>(&mut self, input: &'a str) -> Cow<'a, str> {
+                frender_ssr::html_escape::encode_script(input)
+            }
         }
 
         impl<S: MaybeUpdateValueWithState<str>> SsrWithChildren<S>
             for crate::html::simply_typed::script::ComponentType
         {
-            type ChildrenSsrState = Option<
-                frender_ssr::element::bytes::State<frender_ssr::bytes::CowSlicedBytes<'static>>,
-            >;
+            type ChildrenSsrState = Option<EscapedStrWritingState<S::ChildStr, EncodeScript>>;
 
             fn into_children_ssr_state(self, children: S) -> Self::ChildrenSsrState {
-                maybe_str(children).map(|children| {
-                    EscapeStr(children, frender_ssr::html_escape::encode_script).into_ssr_state()
-                })
+                S::maybe_into_child_str(children, ())
+                    .map(|children| EscapedStrWritingState(children, EncodeScript))
             }
         }
     }

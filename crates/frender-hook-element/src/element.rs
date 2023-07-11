@@ -1,6 +1,5 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_csr::{Element, RenderState};
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 use lazy_pinned::LazyPinned;
 

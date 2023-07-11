@@ -785,7 +785,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -2009,14 +2009,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.cite,
-                    |v| element.set_cite(v),
+                    |v| dom_element.set_cite(v),
                     || dom_element.remove_attribute("cite").unwrap(),
                 ),
                 date_time: <TypeDefs::date_time as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.date_time,
-                    |v| element.set_date_time(v),
+                    |v| dom_element.set_date_time(v),
                     || dom_element.remove_attribute("datetime").unwrap(),
                 ),
             }
@@ -2040,7 +2040,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cite,
                 state.cite,
-                |v| element.set_cite(v),
+                |v| dom_element.set_cite(v),
                 || dom_element.remove_attribute("cite").unwrap(),
             );
             <TypeDefs::date_time as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2048,7 +2048,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.date_time,
                 state.date_time,
-                |v| element.set_date_time(v),
+                |v| dom_element.set_date_time(v),
                 || dom_element.remove_attribute("datetime").unwrap(),
             );
         }

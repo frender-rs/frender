@@ -1142,7 +1142,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3962,17 +3962,17 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.r#as,
-                    |v| element.set_as(v),
+                    |v| dom_element.set_as(v),
                     || dom_element.remove_attribute("as").unwrap(),
                 ),
                 cross_origin: <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
-                    match element {
+                    match dom_element {
                         el => |v: &_| el.set_cross_origin(Some(v)),
                     },
-                    match element {
+                    match dom_element {
                         el => || el.set_cross_origin(None),
                     },
                 ),
@@ -3991,14 +3991,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.href,
-                    |v| element.set_href(v),
+                    |v| dom_element.set_href(v),
                     || dom_element.remove_attribute("href").unwrap(),
                 ),
                 href_lang: <TypeDefs::href_lang as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.href_lang,
-                    |v| element.set_hreflang(v),
+                    |v| dom_element.set_hreflang(v),
                     || dom_element.remove_attribute("hreflang").unwrap(),
                 ),
                 image_sizes: <TypeDefs::image_sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4027,14 +4027,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.integrity,
-                    |v| element.set_integrity(v),
+                    |v| dom_element.set_integrity(v),
                     || dom_element.remove_attribute("integrity").unwrap(),
                 ),
                 media: <TypeDefs::media as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.media,
-                    |v| element.set_media(v),
+                    |v| dom_element.set_media(v),
                     || dom_element.remove_attribute("media").unwrap(),
                 ),
                 prefetch: <TypeDefs::prefetch as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4052,14 +4052,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
-                    |v| element.set_referrer_policy(v),
+                    |v| dom_element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
                 rel: <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.rel,
-                    |v| element.set_rel(v),
+                    |v| dom_element.set_rel(v),
                     || dom_element.remove_attribute("rel").unwrap(),
                 ),
                 sizes: <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4077,7 +4077,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.r#type,
-                    |v| element.set_type(v),
+                    |v| dom_element.set_type(v),
                     || dom_element.remove_attribute("type").unwrap(),
                 ),
                 blocking: <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4112,7 +4112,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#as,
                 state.r#as,
-                |v| element.set_as(v),
+                |v| dom_element.set_as(v),
                 || dom_element.remove_attribute("as").unwrap(),
             );
             <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4120,10 +4120,10 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cross_origin,
                 state.cross_origin,
-                match element {
+                match dom_element {
                     el => |v: &_| el.set_cross_origin(Some(v)),
                 },
-                match element {
+                match dom_element {
                     el => || el.set_cross_origin(None),
                 },
             );
@@ -4144,7 +4144,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.href,
                 state.href,
-                |v| element.set_href(v),
+                |v| dom_element.set_href(v),
                 || dom_element.remove_attribute("href").unwrap(),
             );
             <TypeDefs::href_lang as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4152,7 +4152,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.href_lang,
                 state.href_lang,
-                |v| element.set_hreflang(v),
+                |v| dom_element.set_hreflang(v),
                 || dom_element.remove_attribute("hreflang").unwrap(),
             );
             <TypeDefs::image_sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4184,7 +4184,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.integrity,
                 state.integrity,
-                |v| element.set_integrity(v),
+                |v| dom_element.set_integrity(v),
                 || dom_element.remove_attribute("integrity").unwrap(),
             );
             <TypeDefs::media as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4192,7 +4192,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.media,
                 state.media,
-                |v| element.set_media(v),
+                |v| dom_element.set_media(v),
                 || dom_element.remove_attribute("media").unwrap(),
             );
             <TypeDefs::prefetch as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4212,7 +4212,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
                 state.referrer_policy,
-                |v| element.set_referrer_policy(v),
+                |v| dom_element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
             <TypeDefs::rel as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4220,7 +4220,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.rel,
                 state.rel,
-                |v| element.set_rel(v),
+                |v| dom_element.set_rel(v),
                 || dom_element.remove_attribute("rel").unwrap(),
             );
             <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4242,7 +4242,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#type,
                 state.r#type,
-                |v| element.set_type(v),
+                |v| dom_element.set_type(v),
                 || dom_element.remove_attribute("type").unwrap(),
             );
             <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<

@@ -965,7 +965,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3133,17 +3133,17 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.r#async,
-                    |v| element.set_async(*v),
+                    |v| dom_element.set_async(*v),
                     || dom_element.remove_attribute("r#async").unwrap(),
                 ),
                 cross_origin: <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
-                    match element {
+                    match dom_element {
                         el => |v: &_| el.set_cross_origin(Some(v)),
                     },
-                    match element {
+                    match dom_element {
                         el => || el.set_cross_origin(None),
                     },
                 ),
@@ -3151,7 +3151,7 @@ mod impl_update_element {
                     bool,
                 >>::initialize_state_and_update(
                     this.defer,
-                    |v| element.set_defer(*v),
+                    |v| dom_element.set_defer(*v),
                     || dom_element.remove_attribute("defer").unwrap(),
                 ),
                 fetch_priority: <TypeDefs::fetch_priority as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3169,14 +3169,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.integrity,
-                    |v| element.set_integrity(v),
+                    |v| dom_element.set_integrity(v),
                     || dom_element.remove_attribute("integrity").unwrap(),
                 ),
                 no_module: <TypeDefs::no_module as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.no_module,
-                    |v| element.set_no_module(*v),
+                    |v| dom_element.set_no_module(*v),
                     || dom_element.remove_attribute("nomodule").unwrap(),
                 ),
                 referrer_policy: <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3194,14 +3194,14 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 r#type: <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.r#type,
-                    |v| element.set_type(v),
+                    |v| dom_element.set_type(v),
                     || dom_element.remove_attribute("r#type").unwrap(),
                 ),
                 blocking: <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3236,7 +3236,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#async,
                 state.r#async,
-                |v| element.set_async(*v),
+                |v| dom_element.set_async(*v),
                 || dom_element.remove_attribute("r#async").unwrap(),
             );
             <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3244,10 +3244,10 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cross_origin,
                 state.cross_origin,
-                match element {
+                match dom_element {
                     el => |v: &_| el.set_cross_origin(Some(v)),
                 },
-                match element {
+                match dom_element {
                     el => || el.set_cross_origin(None),
                 },
             );
@@ -3256,7 +3256,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.defer,
                 state.defer,
-                |v| element.set_defer(*v),
+                |v| dom_element.set_defer(*v),
                 || dom_element.remove_attribute("defer").unwrap(),
             );
             <TypeDefs::fetch_priority as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3276,7 +3276,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.integrity,
                 state.integrity,
-                |v| element.set_integrity(v),
+                |v| dom_element.set_integrity(v),
                 || dom_element.remove_attribute("integrity").unwrap(),
             );
             <TypeDefs::no_module as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3284,7 +3284,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.no_module,
                 state.no_module,
-                |v| element.set_no_module(*v),
+                |v| dom_element.set_no_module(*v),
                 || dom_element.remove_attribute("nomodule").unwrap(),
             );
             <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3304,7 +3304,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             <TypeDefs::r#type as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3312,7 +3312,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.r#type,
                 state.r#type,
-                |v| element.set_type(v),
+                |v| dom_element.set_type(v),
                 || dom_element.remove_attribute("r#type").unwrap(),
             );
             <TypeDefs::blocking as crate::imports::frender_html::props::MaybeUpdateValueWithState<

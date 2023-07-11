@@ -1065,7 +1065,7 @@ mod builder_and_replacer {
         }
         ///See [`HtmlElementProps::class`]
         #[inline(always)]
-        pub fn class<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn class<V: Todo<unimplemented![]>>(
             self,
             class: V,
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
@@ -3615,17 +3615,17 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.alt,
-                    |v| element.set_alt(v),
+                    |v| dom_element.set_alt(v),
                     || dom_element.remove_attribute("alt").unwrap(),
                 ),
                 cross_origin: <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
-                    match element {
+                    match dom_element {
                         el => |v: &_| el.set_cross_origin(Some(v)),
                     },
-                    match element {
+                    match dom_element {
                         el => || el.set_cross_origin(None),
                     },
                 ),
@@ -3633,7 +3633,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.decoding,
-                    |v| element.set_decoding(v),
+                    |v| dom_element.set_decoding(v),
                     || dom_element.remove_attribute("decoding").unwrap(),
                 ),
                 element_timing: <TypeDefs::element_timing as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3651,14 +3651,14 @@ mod impl_update_element {
                     u32,
                 >>::initialize_state_and_update(
                     this.height,
-                    |v| element.set_height(*v),
+                    |v| dom_element.set_height(*v),
                     || dom_element.remove_attribute("height").unwrap(),
                 ),
                 is_map: <TypeDefs::is_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.is_map,
-                    |v| element.set_is_map(*v),
+                    |v| dom_element.set_is_map(*v),
                     || dom_element.remove_attribute("ismap").unwrap(),
                 ),
                 loading: <TypeDefs::loading as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3676,42 +3676,42 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.referrer_policy,
-                    |v| element.set_referrer_policy(v),
+                    |v| dom_element.set_referrer_policy(v),
                     || dom_element.remove_attribute("referrerpolicy").unwrap(),
                 ),
                 sizes: <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.sizes,
-                    |v| element.set_sizes(v),
+                    |v| dom_element.set_sizes(v),
                     || dom_element.remove_attribute("sizes").unwrap(),
                 ),
                 src: <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.src,
-                    |v| element.set_src(v),
+                    |v| dom_element.set_src(v),
                     || dom_element.remove_attribute("src").unwrap(),
                 ),
                 srcset: <TypeDefs::srcset as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.srcset,
-                    |v| element.set_srcset(v),
+                    |v| dom_element.set_srcset(v),
                     || dom_element.remove_attribute("srcset").unwrap(),
                 ),
                 width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     u32,
                 >>::initialize_state_and_update(
                     this.width,
-                    |v| element.set_width(*v),
+                    |v| dom_element.set_width(*v),
                     || dom_element.remove_attribute("width").unwrap(),
                 ),
                 use_map: <TypeDefs::use_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.use_map,
-                    |v| element.set_use_map(v),
+                    |v| dom_element.set_use_map(v),
                     || dom_element.remove_attribute("usemap").unwrap(),
                 ),
             }
@@ -3735,7 +3735,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.alt,
                 state.alt,
-                |v| element.set_alt(v),
+                |v| dom_element.set_alt(v),
                 || dom_element.remove_attribute("alt").unwrap(),
             );
             <TypeDefs::cross_origin as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3743,10 +3743,10 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cross_origin,
                 state.cross_origin,
-                match element {
+                match dom_element {
                     el => |v: &_| el.set_cross_origin(Some(v)),
                 },
-                match element {
+                match dom_element {
                     el => || el.set_cross_origin(None),
                 },
             );
@@ -3755,7 +3755,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.decoding,
                 state.decoding,
-                |v| element.set_decoding(v),
+                |v| dom_element.set_decoding(v),
                 || dom_element.remove_attribute("decoding").unwrap(),
             );
             <TypeDefs::element_timing as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3775,7 +3775,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.height,
                 state.height,
-                |v| element.set_height(*v),
+                |v| dom_element.set_height(*v),
                 || dom_element.remove_attribute("height").unwrap(),
             );
             <TypeDefs::is_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3783,7 +3783,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.is_map,
                 state.is_map,
-                |v| element.set_is_map(*v),
+                |v| dom_element.set_is_map(*v),
                 || dom_element.remove_attribute("ismap").unwrap(),
             );
             <TypeDefs::loading as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3805,7 +3805,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.referrer_policy,
                 state.referrer_policy,
-                |v| element.set_referrer_policy(v),
+                |v| dom_element.set_referrer_policy(v),
                 || dom_element.remove_attribute("referrerpolicy").unwrap(),
             );
             <TypeDefs::sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3813,7 +3813,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.sizes,
                 state.sizes,
-                |v| element.set_sizes(v),
+                |v| dom_element.set_sizes(v),
                 || dom_element.remove_attribute("sizes").unwrap(),
             );
             <TypeDefs::src as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3821,7 +3821,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src,
                 state.src,
-                |v| element.set_src(v),
+                |v| dom_element.set_src(v),
                 || dom_element.remove_attribute("src").unwrap(),
             );
             <TypeDefs::srcset as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3829,7 +3829,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.srcset,
                 state.srcset,
-                |v| element.set_srcset(v),
+                |v| dom_element.set_srcset(v),
                 || dom_element.remove_attribute("srcset").unwrap(),
             );
             <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3837,7 +3837,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.width,
                 state.width,
-                |v| element.set_width(*v),
+                |v| dom_element.set_width(*v),
                 || dom_element.remove_attribute("width").unwrap(),
             );
             <TypeDefs::use_map as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -3845,7 +3845,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.use_map,
                 state.use_map,
-                |v| element.set_use_map(v),
+                |v| dom_element.set_use_map(v),
                 || dom_element.remove_attribute("usemap").unwrap(),
             );
         }
