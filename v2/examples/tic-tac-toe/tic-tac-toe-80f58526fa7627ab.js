@@ -517,7 +517,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('tic-tac-toe-b72ea601501b970_bg.wasm', import.meta.url);
+        input = new URL('tic-tac-toe-80f58526fa7627ab_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
