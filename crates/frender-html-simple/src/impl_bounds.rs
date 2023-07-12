@@ -240,15 +240,19 @@ pub mod DomTokens {
         pub use super::super::SsrInput as Input;
         pub use crate::DefaultSsrAttrs as Attrs;
 
-        pub type Attrs<V> = frender_ssr::element::html::simple::AttrPairStr<
-            <V as DomTokens>::AsyncWritableDomTokens,
+        pub type Attrs<V> = Option<
+            frender_ssr::element::html::simple::AttrPairStr<
+                <V as DomTokens>::AsyncWritableDomTokens,
+            >,
         >;
 
         pub fn into_attrs<V: DomTokens>(Input { this, attr_name }: Input<V>) -> Attrs<V> {
-            frender_ssr::element::html::simple::AttrPairStr::new_from_str(
-                attr_name,
-                AsyncWritableAttrValueStr::new(V::into_async_writable_dom_tokens(this)),
-            )
+            V::maybe_into_async_writable_dom_tokens(this).map(|value| {
+                frender_ssr::element::html::simple::AttrPairStr::new_from_str(
+                    attr_name,
+                    AsyncWritableAttrValueStr::new(value),
+                )
+            })
         }
     }
 }

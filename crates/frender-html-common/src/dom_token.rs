@@ -195,7 +195,7 @@ pub trait DomTokens {
 
     type AsyncWritableDomTokens: AsyncWritableStr;
 
-    fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens;
+    fn maybe_into_async_writable_dom_tokens(this: Self) -> Option<Self::AsyncWritableDomTokens>;
 }
 
 #[cfg(feature = "csr")]
@@ -271,14 +271,18 @@ mod impl_for_static_string {
             }
 
             type AsyncWritableDomTokens = StrWriting<Self>;
-            fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens {
-                StrWriting::new(this)
+            fn maybe_into_async_writable_dom_tokens(
+                this: Self,
+            ) -> Option<Self::AsyncWritableDomTokens> {
+                Some(StrWriting::new(this))
             }
         }
     );
 }
 
 mod impl_for_unit_tuple {
+    use crate::NeverWritable;
+
     use super::DomTokens;
 
     impl DomTokens for () {
@@ -293,10 +297,10 @@ mod impl_for_unit_tuple {
         fn update_dom_token_list(_: Self, _: &impl super::DomTokenList, _: &mut Self::UpdateState) {
         }
 
-        type AsyncWritableDomTokens = frender_common::write::str::Empty;
+        type AsyncWritableDomTokens = NeverWritable;
 
-        fn into_async_writable_dom_tokens(this: Self) -> Self::AsyncWritableDomTokens {
-            frender_common::write::str::Empty
+        fn maybe_into_async_writable_dom_tokens((): Self) -> Option<Self::AsyncWritableDomTokens> {
+            None
         }
     }
 }
