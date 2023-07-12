@@ -90,6 +90,7 @@ def_props_type!(
         access_key: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         auto_capitalize: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         auto_focus: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+        content_editable: bounds![MaybeContentEditable::Bounds],
         context_menu: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         dir: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         draggable: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
@@ -196,6 +197,15 @@ mod imp {
         csr {
             update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
+        },
+    ));
+    crate::imports::impl_bounds!(super::props::content_editable(
+        bounds as MaybeContentEditable,
+        element as web_sys::HtmlElement,
+        attr_name = "contenteditable",
+        csr {
+            update: |v: &_, el: &web_sys::HtmlElement, _attr_name: &_| el.set_content_editable(v),
+            remove: MaybeContentEditable::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::context_menu(

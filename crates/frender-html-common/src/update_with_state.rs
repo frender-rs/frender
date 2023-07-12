@@ -6,6 +6,8 @@ use frender_common::write::{
     str::{AsyncWritableStr, StrWriting},
 };
 
+use crate::impl_many;
+
 pub use value::*;
 
 pub enum NeverWritable {}
@@ -174,23 +176,6 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWit
     }
 }
 
-macro_rules! impl_many {
-    (
-        impl<__> $impl_trait:ident for each_of![$($ty:ty),* $(,)?]
-        $impl_block:tt
-    ) => {$(
-        impl $impl_trait for $ty
-        $impl_block
-    )*};
-    (
-        impl<__> $impl_trait:ident <$t:ty> for each_of![$($ty:ty),* $(,)?]
-        $impl_block:tt
-    ) => {$(
-        impl $impl_trait <$t> for $ty
-        $impl_block
-    )*};
-}
-
 /// No cache
 impl MaybeUpdateValueWithState<str> for &str {
     type State = ();
@@ -231,7 +216,7 @@ impl MaybeUpdateValueWithState<str> for &str {
 
     fn maybe_into_attr_value(
         this: Self,
-        supported: <str as ValueType>::SupportIntoAttrValue,
+        (): <str as ValueType>::SupportIntoAttrValue,
     ) -> Option<Self::AttrValue> {
         Some(AsyncWritableAttrValueStr::new_from_str(this))
     }

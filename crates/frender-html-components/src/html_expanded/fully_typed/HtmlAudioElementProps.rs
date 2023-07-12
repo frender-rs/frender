@@ -320,6 +320,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
         super::super::HtmlMediaElementProps::overwrite::context_menu<
@@ -1360,6 +1367,18 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.auto_focus(auto_focus),
+            }
+        }
+        ///See [`HtmlMediaElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlMediaElementProps: self
+                    .HtmlMediaElementProps
+                    .content_editable(content_editable),
             }
         }
         ///See [`HtmlMediaElementProps::context_menu`]

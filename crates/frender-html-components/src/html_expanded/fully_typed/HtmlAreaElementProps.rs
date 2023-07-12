@@ -332,6 +332,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::context_menu<
@@ -1715,6 +1722,25 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+                alt: self.alt,
+                coords: self.coords,
+                shape: self.shape,
+            }
+        }
+        ///See [`HtmlElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
                 download: self.download,
                 href: self.href,
                 ping: self.ping,

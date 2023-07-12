@@ -340,6 +340,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::context_menu<
@@ -2007,6 +2014,29 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                auto_complete: self.auto_complete,
+                auto_correct: self.auto_correct,
+                cols: self.cols,
+                disabled: self.disabled,
+                form: self.form,
+                max_length: self.max_length,
+                min_length: self.min_length,
+                name: self.name,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                rows: self.rows,
+                wrap: self.wrap,
+            }
+        }
+        ///See [`HtmlElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
                 auto_complete: self.auto_complete,
                 auto_correct: self.auto_correct,
                 cols: self.cols,

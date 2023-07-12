@@ -372,6 +372,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::context_menu<
@@ -3488,6 +3495,45 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                auto_play: self.auto_play,
+                controls: self.controls,
+                cross_origin: self.cross_origin,
+                r#loop: self.r#loop,
+                muted: self.muted,
+                preload: self.preload,
+                src: self.src,
+                on_abort: self.on_abort,
+                on_can_play: self.on_can_play,
+                on_can_play_through: self.on_can_play_through,
+                on_duration_change: self.on_duration_change,
+                on_emptied: self.on_emptied,
+                on_ended: self.on_ended,
+                on_loaded_data: self.on_loaded_data,
+                on_loaded_metadata: self.on_loaded_metadata,
+                on_load_start: self.on_load_start,
+                on_pause: self.on_pause,
+                on_play: self.on_play,
+                on_playing: self.on_playing,
+                on_progress: self.on_progress,
+                on_rate_change: self.on_rate_change,
+                on_resize: self.on_resize,
+                on_seeked: self.on_seeked,
+                on_seeking: self.on_seeking,
+                on_stalled: self.on_stalled,
+                on_suspend: self.on_suspend,
+                on_time_update: self.on_time_update,
+                on_volume_change: self.on_volume_change,
+                on_waiting: self.on_waiting,
+            }
+        }
+        ///See [`HtmlElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
                 auto_play: self.auto_play,
                 controls: self.controls,
                 cross_origin: self.cross_origin,

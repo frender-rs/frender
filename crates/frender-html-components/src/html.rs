@@ -2,7 +2,7 @@
 
 use frender_events::events;
 
-use frender_html_simple::impl_bounds::DomTokens;
+use frender_html_simple::impl_bounds::{DomTokens, MaybeContentEditable};
 
 #[cfg(not(frender_macro_def_intrinsic_component_props))] // this attribute is for identifying when expanding this macro
 frender_macros::def_intrinsic_component_props! {
@@ -245,13 +245,14 @@ frender_macros::def_intrinsic_component_props! {
             access_key ? &str {"accesskey" set_access_key},
             auto_capitalize ? &str {"autocapitalize"},
             auto_focus ? bool {"autofocus"},
-            // content_editable [frender_html::props::MaybeInherit<bool>] : () = () => {
-            //     dom {
-            //         impl {
-            //             // TODO:
-            //         }
-            //     }
-            // },
+            content_editable: bounds![
+                bounds as MaybeContentEditable,
+                attr_name = "contenteditable",
+                csr {
+                    update: |v: &_, el: &web_sys::HtmlElement, _attr_name: &_| el.set_content_editable(v),
+                    remove: MaybeContentEditable::csr::default_remove,
+                },
+            ],
             #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
             context_menu ? &str {"contextmenu"},
             dir ? &str {set_dir},

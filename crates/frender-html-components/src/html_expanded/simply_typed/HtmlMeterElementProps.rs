@@ -145,6 +145,7 @@ def_props_type!(
             access_key: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             auto_capitalize: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             auto_focus: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
+            content_editable: bounds![MaybeContentEditable::Bounds],
             context_menu: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             dir: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             draggable: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],

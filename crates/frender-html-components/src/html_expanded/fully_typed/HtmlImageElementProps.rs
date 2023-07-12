@@ -340,6 +340,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::context_menu<
@@ -2007,6 +2014,29 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                alt: self.alt,
+                cross_origin: self.cross_origin,
+                decoding: self.decoding,
+                element_timing: self.element_timing,
+                height: self.height,
+                is_map: self.is_map,
+                loading: self.loading,
+                referrer_policy: self.referrer_policy,
+                sizes: self.sizes,
+                src: self.src,
+                srcset: self.srcset,
+                width: self.width,
+                use_map: self.use_map,
+            }
+        }
+        ///See [`HtmlElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
                 alt: self.alt,
                 cross_origin: self.cross_origin,
                 decoding: self.decoding,

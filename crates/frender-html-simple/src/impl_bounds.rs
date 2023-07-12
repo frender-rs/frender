@@ -6,6 +6,16 @@ pub struct CsrInput<'a, 'ctx, V, E> {
     pub attr_name: &'static str,
 }
 
+#[cfg(feature = "csr")]
+pub struct CsrInputWithUpdater<'a, 'ctx, V, E, U, R> {
+    pub this: V,
+    pub element: &'a E,
+    pub children_ctx: &'a mut frender_csr::CsrContext<'ctx>,
+    pub attr_name: &'static str,
+    pub update: U,
+    pub remove: R,
+}
+
 #[macro_export]
 macro_rules! impl_bounds {
     (
@@ -14,7 +24,7 @@ macro_rules! impl_bounds {
                 $(:: $mod_path:ident)*
                 $($(::)? <$($ty:ty),* $(,)?>)?,
             element as $csr_element_ty:ty,
-            attr_name = $attr_name:expr
+            $attr_name_ident:ident = $attr_name:expr
             $(, $name:ident $fields:tt)*
             $(,)?
         )
@@ -24,7 +34,7 @@ macro_rules! impl_bounds {
             bounds!  { $($mod_path_start)? $(:: $mod_path)* }
             bounds_tps! { $($($ty,)*)? }
             csr_element_ty! { $csr_element_ty }
-            attr_name! { $attr_name }
+            attr_name! { $attr_name_ident = $attr_name }
         }{
             $($name :: $name $fields)*
         }}
@@ -81,7 +91,7 @@ macro_rules! default_impl_csr {
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ty }
-            attr_name! { $attr_name:expr }
+            attr_name! { $attr_name_ident:ident = $attr_name:expr }
         }
         $csr:ident !{ $($csr_fields:tt)* }
     ) => {
@@ -102,7 +112,7 @@ macro_rules! default_impl_csr {
                         this,
                         element,
                         children_ctx,
-                        attr_name: $attr_name,
+                        $attr_name_ident: $attr_name,
                         $($csr_fields)*
                     })
                 )
@@ -134,7 +144,7 @@ macro_rules! default_impl_ssr {
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ty }
-            attr_name! { $attr_name:expr }
+            attr_name! { $attr_name_ident:ident = $attr_name:expr }
         }
         $ssr:ident !{ $($ssr_fields:tt)* }
     ) => {
@@ -146,7 +156,7 @@ macro_rules! default_impl_ssr {
             fn into_async_writable_attrs(Self(this): Self) -> Self::AsyncWritableAttrs {
                 $($bounds)*::$ssr::into_attrs($($bounds)*::$ssr::Input {
                     this,
-                    attr_name: $attr_name,
+                    $attr_name_ident: $attr_name,
                     $($ssr_fields)*
                 })
             }
@@ -255,18 +265,10 @@ pub mod MaybeValue {
         use frender_csr::{props::UpdateElementAttribute, web_sys, CsrContext};
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
 
+        pub use super::super::CsrInputWithUpdater as Input;
         pub use crate::DefaultCsrState as State;
 
         pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::State;
-
-        pub struct Input<'a, 'ctx, V, E, U, R> {
-            pub this: V,
-            pub element: &'a E,
-            pub children_ctx: &'a mut CsrContext<'ctx>,
-            pub attr_name: &'static str,
-            pub update: U,
-            pub remove: R,
-        }
 
         pub fn initialize<
             VT: ?Sized + ValueType,
@@ -435,4 +437,86 @@ pub mod MaybeHandleEvent {
     }
 
     pub use __impl_EventListener_ssr as ssr;
+}
+
+#[allow(non_snake_case)]
+pub mod MaybeContentEditable {
+    pub use crate::default_impl_csr as csr;
+    pub use crate::default_impl_ssr as ssr;
+    pub use frender_html_common::MaybeContentEditable as Bounds;
+
+    pub mod csr {
+        use frender_html_common::MaybeContentEditable;
+
+        pub use super::super::CsrInputWithUpdater as Input;
+        pub use crate::DefaultCsrState as State;
+
+        pub type State<V> = <V as MaybeContentEditable>::State;
+
+        pub fn initialize<
+            V: MaybeContentEditable,
+            E,
+            U: FnOnce(&str, &E, &'static str),
+            R: FnOnce(&E, &'static str),
+        >(
+            Input {
+                this,
+                element,
+                children_ctx: _,
+                attr_name,
+                update,
+                remove,
+            }: Input<V, E, U, R>,
+        ) -> State<V> {
+            V::initialize(
+                this,
+                |v| update(v, element, attr_name),
+                || remove(element, attr_name),
+            )
+        }
+
+        pub fn update<
+            V: MaybeContentEditable,
+            E,
+            U: FnOnce(&str, &E, &'static str),
+            R: FnOnce(&E, &'static str),
+        >(
+            Input {
+                this,
+                element,
+                children_ctx: _,
+                attr_name,
+                update,
+                remove,
+            }: Input<V, E, U, R>,
+            state: &mut State<V>,
+        ) {
+            V::update(
+                this,
+                |v| update(v, element, attr_name),
+                || remove(element, attr_name),
+                state,
+            )
+        }
+
+        pub use super::super::MaybeValue::csr::default_remove;
+    }
+    pub mod ssr {
+        use frender_common::write::attrs::AsyncWritableAttrValueStr;
+        use frender_html_common::MaybeContentEditable;
+        use frender_ssr::element::html::simple::AttrPairStr;
+
+        pub use super::super::SsrInput as Input;
+        pub use crate::DefaultSsrAttrs as Attrs;
+
+        pub type Attrs<V> = Option<AttrPairStr<<V as MaybeContentEditable>::AttrValueStr>>;
+
+        pub fn into_attrs<V: MaybeContentEditable>(
+            Input { this, attr_name }: Input<V>,
+        ) -> Attrs<V> {
+            V::maybe_into_attr_value_str(this).map(|value| {
+                AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value))
+            })
+        }
+    }
 }

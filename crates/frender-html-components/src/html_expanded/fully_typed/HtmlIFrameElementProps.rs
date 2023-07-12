@@ -340,6 +340,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type content_editable<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::content_editable<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type context_menu<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::context_menu<
@@ -2009,6 +2016,29 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
+                allow: self.allow,
+                allow_fullscreen: self.allow_fullscreen,
+                allow_payment_request: self.allow_payment_request,
+                csp: self.csp,
+                fetch_priority: self.fetch_priority,
+                height: self.height,
+                loading: self.loading,
+                name: self.name,
+                referrer_policy: self.referrer_policy,
+                sandbox: self.sandbox,
+                src: self.src,
+                src_doc: self.src_doc,
+                width: self.width,
+            }
+        }
+        ///See [`HtmlElementProps::content_editable`]
+        #[inline(always)]
+        pub fn content_editable<V: Todo<unimplemented![]>>(
+            self,
+            content_editable: V,
+        ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
                 allow: self.allow,
                 allow_fullscreen: self.allow_fullscreen,
                 allow_payment_request: self.allow_payment_request,
