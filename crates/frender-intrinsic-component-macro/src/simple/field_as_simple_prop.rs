@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
 use darling::ToTokens;
+use frender_macro_utils::grouped::Grouped;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse_quote;
@@ -9,12 +10,15 @@ use crate::{
     BoundsPath, Field, FieldDeclaration, FieldDeclarationEventListener,
     FieldDeclarationMaybeDetailsImpl, FieldDeclarationWithBounds,
     FieldDeclarationWithBoundsDetails, FieldDeclarationWithBoundsDetailsSimple,
+    FieldDeclarationWithCommonBoundsCsrContent, FieldDeclarationWithCommonBoundsCsrFnCommonArgs,
+    FieldDeclarationWithCommonBoundsCsrFnInitialize,
+    FieldDeclarationWithCommonBoundsCsrFnInitializeArgs,
+    FieldDeclarationWithCommonBoundsCsrFnUpdate, FieldDeclarationWithCommonBoundsCsrFnUpdateArgs,
+    FieldDeclarationWithCommonBoundsSsrContent, FnIntoAttrs, TypedPatType,
 };
 
 pub struct FieldToSimpleProp {
     pub imp: Option<TokenStream>,
-    pub impl_dom: Option<TokenStream>,
-    pub impl_ssr: Option<TokenStream>,
     pub field_info: TokenStream,
 }
 
@@ -32,26 +36,6 @@ impl FieldAsSimpleProp<'_> {
             dom_element_ty,
         } = self;
         let name = &field.name;
-
-        let mut builder_fn_bounds = None;
-        let mut dom_bounds = None;
-        let dom_state_ty;
-        let dom_init;
-        let dom_update;
-
-        let mut csr_initialize_pat_this = quote!(this);
-        let mut csr_initialize_pat_children_ctx = quote!(children_ctx);
-        let mut csr_initialize_pat_dom_element = quote!(dom_element);
-
-        let mut csr_update_pat_this = quote!(this);
-        let mut csr_update_pat_children_ctx = quote!(children_ctx);
-        let mut csr_update_pat_state = quote!(state);
-        let mut csr_update_pat_dom_element = quote!(dom_element);
-
-        let mut ssr_bounds = None;
-        let mut ssr_attrs_args = quote!(this: Self);
-        let ssr_attrs_ty;
-        let ssr_attrs_block;
 
         match &field.declaration {
             FieldDeclaration::Maybe(m) => {
@@ -159,8 +143,6 @@ impl FieldAsSimpleProp<'_> {
                 );
                 return FieldToSimpleProp {
                     imp: None,
-                    impl_dom: None,
-                    impl_ssr: None,
                     field_info: quote!(children,),
                 };
             }
@@ -168,8 +150,6 @@ impl FieldAsSimpleProp<'_> {
                 let from_path = &f.from_path;
                 return FieldToSimpleProp {
                     imp: None,
-                    impl_dom: None,
-                    impl_ssr: None,
                     field_info: {
                         let fields = f
                             .fields
@@ -190,8 +170,207 @@ impl FieldAsSimpleProp<'_> {
                 };
             }
             FieldDeclaration::WithBounds(wb) => {
-                let wb = match &wb.details {
-                    FieldDeclarationWithBoundsDetails::Full(wb) => &wb.content,
+                let imp;
+                let builder_bounds;
+
+                match &wb.details {
+                    FieldDeclarationWithBoundsDetails::Full(wb) => {
+                        let wb = &wb.content;
+                        let (bounds, where_clause) = wb
+                            .common_bounds
+                            .as_ref()
+                            .map(|common_bounds| {
+                                (
+                                    Some(replace_self_type_with(
+                                        common_bounds.bounds.clone(),
+                                        "V",
+                                        |visitor, bounds| {
+                                            for bound in bounds.iter_mut() {
+                                                syn::visit_mut::visit_type_param_bound_mut(
+                                                    visitor, bound,
+                                                )
+                                            }
+                                        },
+                                    )),
+                                    common_bounds
+                                        .where_clause
+                                        .clone()
+                                        .map(replace_self_type_in_where_clause),
+                                )
+                            })
+                            .unwrap_or_default();
+
+                        fn replace_self_type_in_where_clause(
+                            where_clause: syn::WhereClause,
+                        ) -> syn::WhereClause {
+                            replace_self_type_with(
+                                where_clause,
+                                "V",
+                                syn::visit_mut::visit_where_clause_mut,
+                            )
+                        }
+
+                        builder_bounds = bounds.to_token_stream();
+
+                        let bounds = bounds.map(|bounds| quote!(: #bounds));
+
+                        fn join_where_clause(
+                            a: Option<syn::WhereClause>,
+                            b: Option<syn::WhereClause>,
+                        ) -> Option<syn::WhereClause> {
+                            let predicates: syn::punctuated::Punctuated<
+                                syn::WherePredicate,
+                                syn:: Token![,],
+                            > = [a, b]
+                                .into_iter()
+                                .filter_map(std::convert::identity)
+                                .flat_map(|wc| wc.predicates)
+                                .collect();
+
+                            if predicates.is_empty() {
+                                None
+                            } else {
+                                Some(syn::WhereClause {
+                                    where_token: syn::Token![where](proc_macro2::Span::call_site()),
+                                    predicates,
+                                })
+                            }
+                        }
+
+                        let csr_where_clause = join_where_clause(
+                            where_clause.clone(),
+                            wb.csr
+                                .where_clause
+                                .clone()
+                                .map(replace_self_type_in_where_clause),
+                        );
+
+                        let ssr_where_clause = join_where_clause(
+                            where_clause,
+                            wb.ssr
+                                .where_clause
+                                .clone()
+                                .map(replace_self_type_in_where_clause),
+                        );
+
+                        let FieldDeclarationWithCommonBoundsCsrContent {
+                            fn_initialize:
+                                FieldDeclarationWithCommonBoundsCsrFnInitialize {
+                                    fn_token: _,
+                                    ident: _,
+                                    args: csr_initialize_args,
+                                    arrow_token: _,
+                                    ty_state: csr_state_ty,
+                                    block: csr_block,
+                                },
+                            fn_update:
+                                FieldDeclarationWithCommonBoundsCsrFnUpdate {
+                                    fn_token: _,
+                                    ident: _,
+                                    args: csr_update_args,
+                                    block: csr_update_block,
+                                },
+                        } = wb.csr_content();
+
+                        let FieldDeclarationWithCommonBoundsCsrFnCommonArgs {
+                            this:
+                                TypedPatType {
+                                    pat: csr_pat_this,
+                                    colon_token: _,
+                                    ty: _,
+                                },
+                            comma_1: _,
+                            element: csr_pat_element,
+                            comma_2: _,
+                            children_ctx:
+                                TypedPatType {
+                                    pat: csr_pat_children_ctx,
+                                    colon_token: _,
+                                    ty: _,
+                                },
+                        } = &csr_initialize_args.content.args;
+
+                        let FieldDeclarationWithCommonBoundsCsrFnUpdateArgs {
+                            pre_args:
+                                FieldDeclarationWithCommonBoundsCsrFnCommonArgs {
+                                    this:
+                                        TypedPatType {
+                                            pat: csr_update_pat_this,
+                                            colon_token: _,
+                                            ty: _,
+                                        },
+                                    comma_1: _,
+                                    element: csr_update_pat_element,
+                                    comma_2: _,
+                                    children_ctx: csr_update_pat_children_ctx,
+                                },
+                            comma_3: _,
+                            state:
+                                TypedPatType {
+                                    pat: csr_update_pat_state,
+                                    colon_token: _,
+                                    ty: _,
+                                },
+                            comma_trailing: _,
+                        } = &csr_update_args.content;
+
+                        let FieldDeclarationWithCommonBoundsSsrContent {
+                            fn_into_iter_attrs:
+                                FnIntoAttrs {
+                                    fn_token: _,
+                                    ident: _,
+                                    paren_token: _,
+                                    inputs:
+                                        TypedPatType {
+                                            pat: ssr_pat_this,
+                                            colon_token: _,
+                                            ty: _,
+                                        },
+                                    arrow_token: _,
+                                    ty_into_iter_attrs: ssr_attrs_ty,
+                                    block: ssr_block,
+                                },
+                        } = wb.ssr_content();
+
+                        imp = Some(quote! {
+                            #[cfg(feature = "csr")]
+                            impl<V #bounds, E: ::core::convert::AsRef<#dom_element_ty>>
+                                #crate_path::frender_csr::props::UpdateElementNonReactive<E>
+                            for super::props::#name<V>
+                            #csr_where_clause {
+                                type State = super::props::#name<#csr_state_ty>;
+
+                                fn initialize_state_non_reactive(
+                                    Self(#csr_pat_this): Self,
+                                    element: &E,
+                                    #csr_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
+                                ) -> Self::State {
+                                    let #csr_pat_element = element.as_ref();
+                                    super::props::#name(#csr_block)
+                                }
+
+                                fn update_element_non_reactive(
+                                    #csr_update_pat_this: Self,
+                                    element: &E,
+                                    #csr_update_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
+                                    #csr_update_pat_state: ::core::pin::Pin<&mut Self::State>,
+                                ) {
+                                    let #csr_update_pat_element = element.as_ref();
+                                    #csr_update_block
+                                }
+                            }
+
+                            #[cfg(feature = "ssr")]
+                            impl<V #bounds>
+                                #crate_path::frender_html::IntoAsyncWritableAttrs
+                            for super::props::#name<V>
+                            #ssr_where_clause {
+                                type AsyncWritableAttrs = #ssr_attrs_ty;
+                                fn into_async_writable_attrs(Self(#ssr_pat_this): Self) -> Self::AsyncWritableAttrs
+                                    #ssr_block
+                            }
+                        });
+                    }
                     FieldDeclarationWithBoundsDetails::Simple(
                         FieldDeclarationWithBoundsDetailsSimple {
                             bounds:
@@ -208,17 +387,6 @@ impl FieldAsSimpleProp<'_> {
                             trailing_comma,
                         },
                     ) => {
-                        // TODO: remove
-                        #[cfg(todo_remove)]
-                        let generic_args = generic_args.as_ref().map(|generic_args| {
-                            if generic_args.colon2_token.is_none() {
-                                let mut generic_args = generic_args.clone();
-                                generic_args.colon2_token = Some(Default::default());
-                                Cow::Owned(generic_args)
-                            } else {
-                                Cow::Borrowed(generic_args)
-                            }
-                        });
                         let attr_name = attr_name.as_ref().map_or_else(
                             || {
                                 let attr_name = syn::LitStr::new(&name.to_string(), name.span());
@@ -229,175 +397,25 @@ impl FieldAsSimpleProp<'_> {
                         let imps = imps.iter().map(
                             |(comma, imp_name, imp_fields)| quote!(#comma #imp_name #imp_fields),
                         );
-                        return FieldToSimpleProp {
-                            imp: Some(quote! {
-                                #crate_path::impl_bounds!(super::props::#name(
-                                    #bounds #bounds_as #mod_path #generic_args,
-                                    element as #dom_element_ty
-                                    #attr_name
-                                    #(#imps)*
-                                    #trailing_comma
-                                ));
-                            }),
-                            impl_dom: None,
-                            impl_ssr: None,
-                            field_info: {
-                                let alias = if field.options.alias.0.is_empty() {
-                                    None
-                                } else {
-                                    let alias = field.options.alias.0.iter().enumerate().map(
-                                        |(i, ident)| {
-                                            let comma = if i == 0 { None } else { Some(quote!(,)) };
-                                            quote!(#comma #ident)
-                                        },
-                                    );
-                                    Some(quote!(alias![#(#alias)*] +))
-                                };
 
-                                let bounds = quote! {
-                                    bounds![#mod_path::Bounds #generic_args]
-                                };
+                        builder_bounds = quote!(#mod_path::Bounds #generic_args);
 
-                                quote! {
-                                    #name : #alias #bounds,
-                                }
-                            },
-                        };
-                    }
-                };
-
-                builder_fn_bounds = wb
-                    .common_bounds
-                    .as_ref()
-                    .map(|common_bounds| common_bounds.bounds.to_token_stream());
-
-                dom_bounds = Some(quote!(: #builder_fn_bounds));
-                ssr_bounds = Some(Cow::Borrowed(dom_bounds.as_ref().unwrap()));
-
-                // csr
-                {
-                    let crate::FieldDeclarationWithCommonBoundsCsrContent {
-                        fn_initialize,
-                        fn_update,
-                    } = wb.csr_content();
-                    {
-                        dom_state_ty = replace_self_type_with(
-                            fn_initialize.ty_state.clone(),
-                            "V",
-                            syn::visit_mut::visit_type_mut,
-                        )
-                        .into_token_stream();
-
-                        {
-                            let args = &fn_initialize.args.content.args;
-                            csr_initialize_pat_this = {
-                                let pat = &args.this.pat;
-                                quote!(Self(#pat))
-                            };
-                            csr_initialize_pat_children_ctx =
-                                args.children_ctx.pat.to_token_stream();
-                            csr_initialize_pat_dom_element = args.element.pat.to_token_stream();
-                        }
-
-                        dom_init = replace_self_type_with(
-                            fn_initialize.block.clone(),
-                            "V",
-                            syn::visit_mut::visit_block_mut,
-                        )
-                        .to_token_stream();
-                    }
-                    {
-                        {
-                            let args = &fn_update.args.content;
-
-                            csr_update_pat_this = {
-                                let pat = &args.pre_args.this.pat;
-                                quote!(Self(#pat))
-                            };
-                            csr_update_pat_children_ctx =
-                                args.pre_args.children_ctx.pat.to_token_stream();
-                            csr_update_pat_state = args.state.pat.to_token_stream();
-                            csr_update_pat_dom_element =
-                                args.pre_args.element.pat.to_token_stream();
-                        }
-                        dom_update = replace_self_type_with(
-                            fn_update.block.clone(),
-                            "V",
-                            syn::visit_mut::visit_block_mut,
-                        )
-                        .to_token_stream();
+                        imp = Some(quote! {
+                            #crate_path::impl_bounds!(super::props::#name(
+                                #bounds #bounds_as #mod_path #generic_args,
+                                element as #dom_element_ty
+                                #attr_name
+                                #(#imps)*
+                                #trailing_comma
+                            ));
+                        });
                     }
                 }
 
-                // ssr
-                {
-                    let crate::FnIntoAttrs {
-                        inputs,
-                        ty_into_iter_attrs,
-                        block,
-                        ..
-                    } = &wb.ssr_content().fn_into_iter_attrs;
-
-                    ssr_attrs_args = {
-                        let pat = &inputs.pat;
-                        quote!(Self(#pat): Self)
-                    };
-                    ssr_attrs_ty = replace_self_type_with(
-                        ty_into_iter_attrs.clone(),
-                        "V",
-                        syn::visit_mut::visit_type_mut,
-                    )
-                    .into_token_stream();
-                    ssr_attrs_block =
-                        replace_self_type_with(block.clone(), "V", syn::visit_mut::visit_block_mut)
-                            .into_token_stream();
-                }
-            }
-        }
-
-        FieldToSimpleProp {
-            imp: None,
-            impl_dom: Some(quote! {
-                impl<V #dom_bounds, E: ::core::convert::AsRef<#dom_element_ty>>
-                    #crate_path::frender_csr::props::UpdateElementNonReactive<E>
-                for super::props::#name<V> {
-                    type State = super::props::#name<#dom_state_ty>;
-
-                    fn initialize_state_non_reactive(
-                        #csr_initialize_pat_this: Self,
-                        element: &E,
-                        #csr_initialize_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
-                    ) -> Self::State {
-                        let #csr_initialize_pat_dom_element = element.as_ref();
-                        super::props::#name(
-                            #dom_init
-                        )
-                    }
-
-                    fn update_element_non_reactive(
-                        #csr_update_pat_this: Self,
-                        element: &E,
-                        #csr_update_pat_children_ctx: &mut #crate_path::frender_csr::CsrContext,
-                        #csr_update_pat_state: ::core::pin::Pin<&mut Self::State>,
-                    ) {
-                        let #csr_update_pat_dom_element = element.as_ref();
-                        #dom_update
-                    }
-                }
-            }),
-            impl_ssr: Some(quote! {
-                impl<V #ssr_bounds>
-                    #crate_path::frender_html::IntoAsyncWritableAttrs
-                for super::props::#name<V> {
-                    type AsyncWritableAttrs = #ssr_attrs_ty;
-                    fn into_async_writable_attrs(#ssr_attrs_args) -> Self::AsyncWritableAttrs
-                        #ssr_attrs_block
-                }
-            }),
-            field_info: {
-                let data = syn::punctuated::Punctuated::<TokenStream, syn::Token![+]>::from_iter(
-                    [
-                        if field.options.alias.0.is_empty() {
+                return FieldToSimpleProp {
+                    imp,
+                    field_info: {
+                        let alias = if field.options.alias.0.is_empty() {
                             None
                         } else {
                             let alias =
@@ -405,24 +423,19 @@ impl FieldAsSimpleProp<'_> {
                                     let comma = if i == 0 { None } else { Some(quote!(,)) };
                                     quote!(#comma #ident)
                                 });
-                            Some(quote!(alias![#(#alias)*]))
-                        },
-                        builder_fn_bounds.map(|b| quote!(bounds![#b])),
-                    ]
-                    .into_iter()
-                    .filter_map(std::convert::identity),
-                );
+                            Some(quote!(alias![#(#alias)*] +))
+                        };
 
-                let colon = if data.is_empty() {
-                    None
-                } else {
-                    Some(quote!(:))
+                        let bounds = quote! {
+                            bounds![#builder_bounds]
+                        };
+
+                        quote! {
+                            #name : #alias #bounds,
+                        }
+                    },
                 };
-
-                quote! {
-                    #name #colon #data,
-                }
-            },
+            }
         }
     }
 }

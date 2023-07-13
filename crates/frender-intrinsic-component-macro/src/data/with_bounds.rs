@@ -1,5 +1,6 @@
 use frender_macro_utils::grouped::{Braced, Parenthesized};
 use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::{parse::Parse, punctuated::Punctuated};
 
 use crate::kw;
@@ -97,6 +98,14 @@ pub struct TypedPatType<Type> {
     pub pat: syn::Pat,
     pub colon_token: ColonToken,
     pub ty: Type,
+}
+
+impl<Type: ToTokens> ToTokens for TypedPatType<Type> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.pat.to_tokens(tokens);
+        self.colon_token.to_tokens(tokens);
+        self.ty.to_tokens(tokens);
+    }
 }
 
 impl<Type: Parse> Parse for TypedPatType<Type> {
@@ -228,9 +237,10 @@ type ImplToken = syn::Token![impl];
 
 /// `impl csr { ... }`
 #[derive(Clone)]
-pub struct FieldDeclarationWithBoundsImpl<ModIdent, Content> {
+pub struct FieldDeclarationWithBoundsImpl<ImplIdent, Content> {
     pub impl_token: ImplToken,
-    pub impl_ident: ModIdent,
+    pub impl_ident: ImplIdent,
+    pub where_clause: Option<syn::WhereClause>,
     pub content: Braced<Content>,
 }
 
@@ -239,6 +249,7 @@ impl<ModIdent: Parse, Content: Parse> Parse for FieldDeclarationWithBoundsImpl<M
         Ok(Self {
             impl_token: input.parse()?,
             impl_ident: input.parse()?,
+            where_clause: input.parse()?,
             content: input.parse()?,
         })
     }

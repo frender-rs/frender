@@ -76,8 +76,6 @@ impl IntrinsicComponentPropsData {
 
         let mut all_field_info = TokenStream::new();
         let mut props_imp = TokenStream::new();
-        let mut props_impl_csr = TokenStream::new();
-        let mut props_impl_ssr = TokenStream::new();
 
         for p in fields.iter().map(|field| {
             FieldAsSimpleProp {
@@ -88,8 +86,6 @@ impl IntrinsicComponentPropsData {
             .into_simple_prop()
         }) {
             props_imp.extend(p.imp);
-            props_impl_csr.extend(p.impl_dom);
-            props_impl_ssr.extend(p.impl_ssr);
             all_field_info.extend(p.field_info);
         }
 
@@ -112,8 +108,6 @@ impl IntrinsicComponentPropsData {
         }
 
         let props_imp = sub_mod("imp", props_imp);
-        let props_impl_csr = sub_mod("imp_csr_for_props", props_impl_csr);
-        let props_impl_ssr = sub_mod("imp_ssr_for_props", props_impl_ssr);
 
         quote_spanned! {span=>
             #[allow(non_snake_case)]
@@ -127,8 +121,6 @@ impl IntrinsicComponentPropsData {
                 );
 
                 #props_imp
-                #props_impl_csr
-                #props_impl_ssr
 
                 mod imports {
                     #[allow(unused_imports)]
