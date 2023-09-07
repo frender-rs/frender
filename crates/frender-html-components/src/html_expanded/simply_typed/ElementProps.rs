@@ -2,6 +2,7 @@ def_props_type!(
     #[derive(Debug, Clone, Copy, Default)]
     ElementProps(
         children,
+        css: bounds![Css::Bounds],
         class: bounds![DomTokens::Bounds],
         id: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         part: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
@@ -84,6 +85,11 @@ mod imp {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
+    crate::imports::impl_bounds!(super::props::css(
+        bounds as Css,
+        element as web_sys::Element,
+        attr_name = "css"
+    ));
     crate::imports::impl_bounds!(super::props::class(
         bounds as DomTokens,
         element as web_sys::Element,

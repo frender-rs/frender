@@ -53,6 +53,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::class<
@@ -1055,6 +1062,29 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
+                accept: self.accept,
+                accept_charset: self.accept_charset,
+                auto_complete: self.auto_complete,
+                name: self.name,
+                rel: self.rel,
+                action: self.action,
+                enc_type: self.enc_type,
+                method: self.method,
+                no_validate: self.no_validate,
+                target: self.target,
+                on_form_data: self.on_form_data,
+                on_reset: self.on_reset,
+                on_submit: self.on_submit,
+            }
+        }
+        ///See [`HtmlElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.css(css),
                 accept: self.accept,
                 accept_charset: self.accept_charset,
                 auto_complete: self.auto_complete,

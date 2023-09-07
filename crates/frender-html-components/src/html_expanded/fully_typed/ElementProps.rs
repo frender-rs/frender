@@ -5,6 +5,7 @@ pub fn ElementProps() -> Building<TypesInitial> {
     use super::*;
     self::Building {
         children: (),
+        css: unimplemented!(),
         class: unimplemented!(),
         id: (),
         part: (),
@@ -50,6 +51,49 @@ pub mod overwrite {
     #![allow(non_camel_case_types)]
     pub type children<TypeDefs, Value> = dyn super::Types<
         children = Value,
+        css = <TypeDefs as super::Types>::css,
+        class = <TypeDefs as super::Types>::class,
+        id = <TypeDefs as super::Types>::id,
+        part = <TypeDefs as super::Types>::part,
+        on_cancel = <TypeDefs as super::Types>::on_cancel,
+        on_error = <TypeDefs as super::Types>::on_error,
+        on_scroll = <TypeDefs as super::Types>::on_scroll,
+        on_security_policy_violation = <TypeDefs as super::Types>::on_security_policy_violation,
+        on_select = <TypeDefs as super::Types>::on_select,
+        on_wheel = <TypeDefs as super::Types>::on_wheel,
+        on_copy = <TypeDefs as super::Types>::on_copy,
+        on_cut = <TypeDefs as super::Types>::on_cut,
+        on_paste = <TypeDefs as super::Types>::on_paste,
+        on_composition_end = <TypeDefs as super::Types>::on_composition_end,
+        on_composition_start = <TypeDefs as super::Types>::on_composition_start,
+        on_composition_update = <TypeDefs as super::Types>::on_composition_update,
+        on_blur = <TypeDefs as super::Types>::on_blur,
+        on_focus = <TypeDefs as super::Types>::on_focus,
+        on_focus_in = <TypeDefs as super::Types>::on_focus_in,
+        on_focus_out = <TypeDefs as super::Types>::on_focus_out,
+        on_fullscreen_change = <TypeDefs as super::Types>::on_fullscreen_change,
+        on_fullscreen_error = <TypeDefs as super::Types>::on_fullscreen_error,
+        on_key_down = <TypeDefs as super::Types>::on_key_down,
+        on_key_up = <TypeDefs as super::Types>::on_key_up,
+        on_aux_click = <TypeDefs as super::Types>::on_aux_click,
+        on_click = <TypeDefs as super::Types>::on_click,
+        on_context_menu = <TypeDefs as super::Types>::on_context_menu,
+        on_double_click = <TypeDefs as super::Types>::on_double_click,
+        on_mouse_down = <TypeDefs as super::Types>::on_mouse_down,
+        on_mouse_enter = <TypeDefs as super::Types>::on_mouse_enter,
+        on_mouse_leave = <TypeDefs as super::Types>::on_mouse_leave,
+        on_mouse_move = <TypeDefs as super::Types>::on_mouse_move,
+        on_mouse_out = <TypeDefs as super::Types>::on_mouse_out,
+        on_mouse_over = <TypeDefs as super::Types>::on_mouse_over,
+        on_mouse_up = <TypeDefs as super::Types>::on_mouse_up,
+        on_touch_cancel = <TypeDefs as super::Types>::on_touch_cancel,
+        on_touch_end = <TypeDefs as super::Types>::on_touch_end,
+        on_touch_move = <TypeDefs as super::Types>::on_touch_move,
+        on_touch_start = <TypeDefs as super::Types>::on_touch_start,
+    >;
+    pub type css<TypeDefs, Value> = dyn super::Types<
+        children = <TypeDefs as super::Types>::children,
+        css = Value,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -91,6 +135,7 @@ pub mod overwrite {
     >;
     pub type class<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = Value,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -132,6 +177,7 @@ pub mod overwrite {
     >;
     pub type id<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = Value,
         part = <TypeDefs as super::Types>::part,
@@ -173,6 +219,7 @@ pub mod overwrite {
     >;
     pub type part<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = Value,
@@ -214,6 +261,7 @@ pub mod overwrite {
     >;
     pub type on_cancel<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -255,6 +303,7 @@ pub mod overwrite {
     >;
     pub type on_error<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -296,6 +345,7 @@ pub mod overwrite {
     >;
     pub type on_scroll<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -337,6 +387,7 @@ pub mod overwrite {
     >;
     pub type on_security_policy_violation<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -378,6 +429,7 @@ pub mod overwrite {
     >;
     pub type on_select<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -419,6 +471,7 @@ pub mod overwrite {
     >;
     pub type on_wheel<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -460,6 +513,7 @@ pub mod overwrite {
     >;
     pub type on_copy<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -501,6 +555,7 @@ pub mod overwrite {
     >;
     pub type on_cut<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -542,6 +597,7 @@ pub mod overwrite {
     >;
     pub type on_paste<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -583,6 +639,7 @@ pub mod overwrite {
     >;
     pub type on_composition_end<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -624,6 +681,7 @@ pub mod overwrite {
     >;
     pub type on_composition_start<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -665,6 +723,7 @@ pub mod overwrite {
     >;
     pub type on_composition_update<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -706,6 +765,7 @@ pub mod overwrite {
     >;
     pub type on_blur<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -747,6 +807,7 @@ pub mod overwrite {
     >;
     pub type on_focus<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -788,6 +849,7 @@ pub mod overwrite {
     >;
     pub type on_focus_in<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -829,6 +891,7 @@ pub mod overwrite {
     >;
     pub type on_focus_out<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -870,6 +933,7 @@ pub mod overwrite {
     >;
     pub type on_fullscreen_change<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -911,6 +975,7 @@ pub mod overwrite {
     >;
     pub type on_fullscreen_error<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -952,6 +1017,7 @@ pub mod overwrite {
     >;
     pub type on_key_down<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -993,6 +1059,7 @@ pub mod overwrite {
     >;
     pub type on_key_up<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1034,6 +1101,7 @@ pub mod overwrite {
     >;
     pub type on_aux_click<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1075,6 +1143,7 @@ pub mod overwrite {
     >;
     pub type on_click<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1116,6 +1185,7 @@ pub mod overwrite {
     >;
     pub type on_context_menu<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1157,6 +1227,7 @@ pub mod overwrite {
     >;
     pub type on_double_click<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1198,6 +1269,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_down<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1239,6 +1311,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_enter<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1280,6 +1353,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_leave<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1321,6 +1395,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_move<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1362,6 +1437,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_out<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1403,6 +1479,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_over<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1444,6 +1521,7 @@ pub mod overwrite {
     >;
     pub type on_mouse_up<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1485,6 +1563,7 @@ pub mod overwrite {
     >;
     pub type on_touch_cancel<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1526,6 +1605,7 @@ pub mod overwrite {
     >;
     pub type on_touch_end<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1567,6 +1647,7 @@ pub mod overwrite {
     >;
     pub type on_touch_move<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1608,6 +1689,7 @@ pub mod overwrite {
     >;
     pub type on_touch_start<TypeDefs, Value> = dyn super::Types<
         children = <TypeDefs as super::Types>::children,
+        css = <TypeDefs as super::Types>::css,
         class = <TypeDefs as super::Types>::class,
         id = <TypeDefs as super::Types>::id,
         part = <TypeDefs as super::Types>::part,
@@ -1654,6 +1736,7 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type children;
+        type css: Todo<unimplemented![]>;
         type class: Todo<unimplemented![]>;
         type id: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type part: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
@@ -1700,6 +1783,7 @@ pub mod data_struct {
     #[non_exhaustive]
     pub struct ElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
         pub children: TypeDefs::children,
+        pub css: TypeDefs::css,
         pub class: TypeDefs::class,
         pub id: TypeDefs::id,
         pub part: TypeDefs::part,
@@ -1750,6 +1834,7 @@ mod types_initial {
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
         children = (),
+        css = unimplemented![],
         class = unimplemented![],
         id = (),
         part = (),
@@ -1894,6 +1979,55 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 children,
+                css: self.css,
+                class: self.class,
+                id: self.id,
+                part: self.part,
+                on_cancel: self.on_cancel,
+                on_error: self.on_error,
+                on_scroll: self.on_scroll,
+                on_security_policy_violation: self.on_security_policy_violation,
+                on_select: self.on_select,
+                on_wheel: self.on_wheel,
+                on_copy: self.on_copy,
+                on_cut: self.on_cut,
+                on_paste: self.on_paste,
+                on_composition_end: self.on_composition_end,
+                on_composition_start: self.on_composition_start,
+                on_composition_update: self.on_composition_update,
+                on_blur: self.on_blur,
+                on_focus: self.on_focus,
+                on_focus_in: self.on_focus_in,
+                on_focus_out: self.on_focus_out,
+                on_fullscreen_change: self.on_fullscreen_change,
+                on_fullscreen_error: self.on_fullscreen_error,
+                on_key_down: self.on_key_down,
+                on_key_up: self.on_key_up,
+                on_aux_click: self.on_aux_click,
+                on_click: self.on_click,
+                on_context_menu: self.on_context_menu,
+                on_double_click: self.on_double_click,
+                on_mouse_down: self.on_mouse_down,
+                on_mouse_enter: self.on_mouse_enter,
+                on_mouse_leave: self.on_mouse_leave,
+                on_mouse_move: self.on_mouse_move,
+                on_mouse_out: self.on_mouse_out,
+                on_mouse_over: self.on_mouse_over,
+                on_mouse_up: self.on_mouse_up,
+                on_touch_cancel: self.on_touch_cancel,
+                on_touch_end: self.on_touch_end,
+                on_touch_move: self.on_touch_move,
+                on_touch_start: self.on_touch_start,
+            }
+        }
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                children: self.children,
+                css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -1941,6 +2075,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class,
                 id: self.id,
                 part: self.part,
@@ -1988,6 +2123,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id,
                 part: self.part,
@@ -2035,6 +2171,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part,
@@ -2085,6 +2222,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2135,6 +2273,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2185,6 +2324,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2235,6 +2375,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_security_policy_violation<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2285,6 +2426,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2335,6 +2477,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2385,6 +2528,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2435,6 +2579,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2485,6 +2630,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2535,6 +2681,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2585,6 +2732,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_start<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2635,6 +2783,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_update<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2685,6 +2834,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2735,6 +2885,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2785,6 +2936,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2835,6 +2987,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2885,6 +3038,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_fullscreen_change<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2935,6 +3089,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_fullscreen_error<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -2985,6 +3140,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3035,6 +3191,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3085,6 +3242,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3135,6 +3293,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3185,6 +3344,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3235,6 +3395,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3285,6 +3446,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3335,6 +3497,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3385,6 +3548,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3435,6 +3599,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3485,6 +3650,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3535,6 +3701,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3585,6 +3752,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3635,6 +3803,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3685,6 +3854,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3735,6 +3905,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3785,6 +3956,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
             super::Data {
                 children: self.children,
+                css: self.css,
                 class: self.class,
                 id: self.id,
                 part: self.part,
@@ -3836,6 +4008,7 @@ mod impl_update_element {
         for super::Data<TypeDefs>
     where
         TypeDefs::children: ::frender_core::UpdateRenderState<::frender_csr::Dom>,
+        unimplemented!(): __,
         unimplemented!(): __,
         TypeDefs::on_cancel:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
@@ -4035,6 +4208,7 @@ mod impl_update_element {
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
             unimplemented!();
+            unimplemented!();
             super::render_state::RenderState {
                 children: ::frender_core::UpdateRenderState::initialize_render_state(
                     this.children,
@@ -4193,6 +4367,7 @@ mod impl_update_element {
                 children_ctx,
                 state.children,
             );
+            unimplemented! {}
             unimplemented! {}
             <TypeDefs::id as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
@@ -4404,6 +4579,7 @@ mod impl_into_ssr_data {
             ::frender_ssr::SsrContext<W>,
         >>::State: ::core::marker::Unpin,
         unimplemented!(): __,
+        unimplemented!(): __,
     {
         type Children = TypeDefs::children;
         type ChildrenRenderState = <TypeDefs::children as ::frender_core::UpdateRenderState<
@@ -4411,13 +4587,14 @@ mod impl_into_ssr_data {
         >>::State;
         type Attrs = ::frender_ssr::utils::filter::FilterArray<
             ::frender_ssr::element::html::HtmlAttrPair<'static>,
-            3usize,
+            4usize,
         >;
         fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
             (
                 this.children,
                 ::frender_ssr::utils::filter::FilterIdentity(
                     [
+                        unimplemented!(),
                         unimplemented!(),
                         <TypeDefs::id as ::frender_html::props::MaybeUpdateValueWithState<
                             str,

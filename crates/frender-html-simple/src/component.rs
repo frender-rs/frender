@@ -60,6 +60,153 @@ pub trait SsrIntrinsicComponent {
 
 pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, pub P);
 
+pub trait ElementWithChildren<Children> {
+    type ChildrenRenderState<R: frender_html::RenderHtml>: frender_html::RenderState<R> + Default;
+
+    fn children_render_update<Renderer: frender_html::RenderHtml>(
+        self,
+        children: Children,
+        renderer: &mut Renderer,
+        render_state: std::pin::Pin<&mut Self::ChildrenRenderState<Renderer>>,
+    );
+}
+
+mod imp {
+    use frender_csr::element::intrinsic::ElementAndMounted;
+    use frender_html::{
+        element_do_for_renderer,
+        renderer::{MarkPositionAfter, MarkPositionAtFirstChild, RemoveNode},
+        Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
+        UpdateElementNonReactive,
+    };
+
+    use crate::IntoElementProps;
+
+    pin_project_lite::pin_project!(
+        pub struct IntrinsicElementRenderState<E, S> {
+            element_and_mounted: Option<ElementAndMounted<E>>,
+            #[pin]
+            props_state: S,
+        }
+    );
+
+    impl<E, S: Default> Default for IntrinsicElementRenderState<E, S> {
+        fn default() -> Self {
+            Self {
+                element_and_mounted: None,
+                props_state: Default::default(),
+            }
+        }
+    }
+
+    impl<
+            E: element_do_for_renderer::RemoveFromRenderer<R>
+                + element_do_for_renderer::MarkPositionAfterSelfForRenderer<R>
+                + element_do_for_renderer::MarkPositionAtFirstChildForRenderer<R>,
+            S: RenderState<R>,
+            R,
+        > RenderState<R> for IntrinsicElementRenderState<E, S>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            let this = self.project();
+            if let Some(ElementAndMounted { element, mounted }) = this.element_and_mounted {
+                if *mounted {
+                    *mounted = false;
+                    // renderer.remove_node(element);
+                    element.remove_from_renderer(renderer);
+                    this.props_state.state_unmount();
+                }
+            }
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            let this = self.project();
+            if this
+                .element_and_mounted
+                .as_ref()
+                .map_or(false, |v| v.mounted)
+            {
+                this.props_state.state_unmount();
+            }
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let this = self.project();
+            let element = if let Some(v) = this.element_and_mounted {
+                &mut v.element
+            } else {
+                return std::task::Poll::Ready(());
+            };
+
+            element.mark_position_at_first_child_for_renderer(renderer);
+            // renderer.mark_position_at_first_child(element);
+            let result = S::poll_render(this.props_state, renderer, cx);
+
+            element.mark_position_after_self_for_renderer(renderer);
+            // renderer.mark_position_after(element);
+
+            result
+        }
+    }
+
+    pin_project_lite::pin_project! {
+        #[derive(Default)]
+        pub struct ElementPropsState<C, A> {
+            #[pin]
+            children_render_state: C,
+            attrs_state: A,
+        }
+    }
+
+    impl<R, C: RenderState<R>, A> RenderState<R> for ElementPropsState<C, A> {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            self.project().children_render_state.unmount(renderer)
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            self.project().children_render_state.state_unmount()
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            self.project()
+                .children_render_state
+                .poll_render(renderer, cx)
+        }
+    }
+
+    impl<C: IntrinsicComponent + frender_html_common::IntrinsicComponent, P: IntoElementProps>
+        Element for super::IntrinsicElement<C, P>
+    where
+        C: crate::ElementWithChildren<P::Children>,
+        P::Attrs: UpdateElementNonReactive<C::ElementType>,
+    {
+        type RenderState<R: frender_html::RenderHtml> = IntrinsicElementRenderState<
+            ElementOfType<C::ElementType, R>,
+            ElementPropsState<
+                C::ChildrenRenderState<R>,
+                <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State,
+            >,
+        >;
+
+        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml>(
+            self,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
+            force_reposition: bool,
+        ) {
+            todo!()
+        }
+    }
+}
+
 #[cfg(feature = "csr")]
 mod dom {
     use frender_csr::Element;

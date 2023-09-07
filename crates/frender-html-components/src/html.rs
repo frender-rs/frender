@@ -2,7 +2,7 @@
 
 use frender_events::events;
 
-use frender_html_simple::impl_bounds::{DomTokens, MaybeContentEditable};
+use frender_html_simple::impl_bounds::{Css, DomTokens, MaybeContentEditable};
 
 #[cfg(not(frender_macro_def_intrinsic_component_props))] // this attribute is for identifying when expanding this macro
 frender_macros::def_intrinsic_component_props! {
@@ -24,6 +24,7 @@ frender_macros::def_intrinsic_component_props! {
                 }
             }
         },
+        css: bounds![bounds as Css],
         class: bounds![
             bounds as DomTokens,
             csr {

@@ -1,27 +1,30 @@
-pub mod fn_wrapper;
+// pub mod fn_wrapper;
 
-mod element;
-mod render;
-mod state;
+// mod element;
+// mod render;
+// mod state;
 
-pub use element::*;
-pub use render::*;
-pub use state::*;
+// pub use element::*;
+// pub use render::*;
+// pub use state::*;
 
-#[cfg(feature = "csr")]
-pub use frender_csr;
+mod html;
+pub use html::*;
 
-#[cfg(feature = "ssr")]
-pub mod ssr;
+// #[cfg(feature = "csr")]
+// pub use frender_csr;
 
-#[cfg(feature = "csr")]
-pub mod csr;
+// #[cfg(feature = "ssr")]
+// pub mod ssr;
 
-#[cfg(feature = "ssr")]
-pub use ssr::{SsrRenderContext, UseSsr};
+// #[cfg(feature = "csr")]
+// pub mod csr;
 
-#[cfg(feature = "ssr")]
-pub use frender_ssr;
+// #[cfg(feature = "ssr")]
+// pub use ssr::{SsrRenderContext, UseSsr};
+
+// #[cfg(feature = "ssr")]
+// pub use frender_ssr;
 
 #[doc(hidden)]
 pub mod __private {
@@ -37,8 +40,8 @@ pub mod __private {
         pub use frender_csr::spawn_mount_to_dom_element;
     }
 
-    #[cfg(feature = "ssr")]
-    pub use frender_ssr::Element as ssr;
+    // #[cfg(feature = "ssr")]
+    // pub use frender_ssr::Element as ssr;
 }
 
 #[doc(hidden)]
@@ -118,7 +121,7 @@ macro_rules! __impl_component_fn_options_parsed {
 
             $($inner_attrs)*
 
-            $crate::new_fn_hook_element $(:: $ctxs)* (
+            $crate::new_fn_hook_element(
                 $crate::__private::transform_hook_fn_body_as_closure! {
                     []
                     $stmts

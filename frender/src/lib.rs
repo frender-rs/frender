@@ -19,11 +19,11 @@ pub use elements::static_text::StaticText;
 pub use frender_common::{Elements, Keyed};
 pub use frender_macros::{component, def_props};
 
-#[cfg(feature = "csr")]
-pub use frender_hook_element::frender_csr as csr;
+// #[cfg(feature = "csr")]
+// pub use frender_hook_element::frender_csr as csr;
 
-#[cfg(feature = "ssr")]
-pub use frender_hook_element::frender_ssr as ssr;
+// #[cfg(feature = "ssr")]
+// pub use frender_hook_element::frender_ssr as ssr;
 
 pub use prelude::*;
 
@@ -39,7 +39,7 @@ pub mod html {
 }
 
 pub use frender_hook_element as hook_element;
-pub use frender_hook_element::{component_fn, RenderWith};
+pub use frender_hook_element::component_fn;
 
 pub use frender_events::{events, MaybeHandleEvent};
 
@@ -50,11 +50,14 @@ pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};
 
-    #[cfg(all(feature = "csr", feature = "ssr"))]
-    pub use crate::Element;
+    // #[cfg(all(feature = "csr", feature = "ssr"))]
+    // pub use crate::Element;
+
     pub use crate::{rsx, StaticText};
 
-    pub use frender_hook_element::{component_fn, RenderWith};
+    pub use frender_hook_element::component_fn;
+
+    pub use frender_html::Element;
 
     pub use frender_common::{Elements, Keyed};
 
@@ -70,13 +73,13 @@ pub mod prelude {
     #[cfg(feature = "hooks")]
     pub use crate::hooks_ext::ShareValueExt;
 
-    #[cfg(feature = "csr")]
-    pub use frender_hook_element::frender_csr::{
-        CsrContext, CsrElement, CsrRenderState, ElementsLinkedVec,
-    };
+    // #[cfg(feature = "csr")]
+    // pub use frender_hook_element::frender_csr::{
+    //     CsrContext, CsrElement, CsrRenderState, ElementsLinkedVec,
+    // };
 
-    #[cfg(feature = "ssr")]
-    pub use frender_hook_element::frender_ssr::{SsrElement, SsrElementExt, SsrRenderState};
+    // #[cfg(feature = "ssr")]
+    // pub use frender_hook_element::frender_ssr::{SsrElement, SsrElementExt, SsrRenderState};
 }
 
 #[macro_export]

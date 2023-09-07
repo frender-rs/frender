@@ -3,6 +3,7 @@ def_props_type!(
     HtmlElementProps(
         ..ElementProps(
             children,
+            css: bounds![Css::Bounds],
             class: bounds![DomTokens::Bounds],
             id: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             part: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],

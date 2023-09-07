@@ -35,6 +35,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::class<
@@ -816,6 +823,20 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
+                height: self.height,
+                src: self.src,
+                r#type: self.r#type,
+                width: self.width,
+            }
+        }
+        ///See [`HtmlElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.css(css),
                 height: self.height,
                 src: self.src,
                 r#type: self.r#type,

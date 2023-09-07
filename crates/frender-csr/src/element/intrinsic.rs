@@ -3,6 +3,7 @@ use std::pin::Pin;
 
 use crate::RenderState;
 
+#[derive(Default)]
 pub struct ElementAndMounted<E> {
     pub element: E,
     pub mounted: bool,

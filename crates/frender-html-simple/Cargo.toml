@@ -9,6 +9,7 @@ edition = "2021"
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-events = { version = "0.1.0", path = "../frender-events" }
+frender-html = { version = "0.1.0", path = "../frender-html" }
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 pin-project-lite = "0.2.9"

@@ -7,6 +7,8 @@ pub mod utils;
 
 pub mod write;
 
+pub mod element;
+
 #[macro_export]
 macro_rules! ready_ok {
     ($e:expr) => {

@@ -524,3 +524,43 @@ pub mod MaybeContentEditable {
         }
     }
 }
+
+#[allow(non_snake_case)]
+pub mod Css {
+    pub use frender_html_common::Css as Bounds;
+
+    pub use crate::default_impl_csr as csr;
+    pub use crate::default_impl_ssr as ssr;
+
+    pub mod csr {
+        pub use super::super::CsrInput as Input;
+        pub use crate::DefaultCsrState as State;
+
+        pub type State<V> = V;
+
+        pub fn initialize<V, E>(input: Input<V, E>) -> State<V> {
+            input.this
+        }
+        pub fn update<V, E>(input: Input<V, E>, state: &mut State<V>) {}
+    }
+    pub mod ssr {
+        use frender_common::write::str::StrWriting;
+
+        pub use super::super::SsrInput as Input;
+        pub use crate::css_type_attrs as Attrs;
+
+        pub type Attrs =
+            Option<frender_ssr::element::html::simple::AttrPairStr<StrWriting<String>>>;
+
+        #[macro_export]
+        macro_rules! css_type_attrs {
+            ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
+                $crate::impl_bounds::Css::ssr::Attrs
+            };
+        }
+
+        pub fn into_attrs<V>(input: Input<V>) -> Attrs {
+            None
+        }
+    }
+}

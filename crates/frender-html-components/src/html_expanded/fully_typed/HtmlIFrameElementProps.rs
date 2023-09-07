@@ -53,6 +53,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::class<
@@ -1057,6 +1064,29 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
+                allow: self.allow,
+                allow_fullscreen: self.allow_fullscreen,
+                allow_payment_request: self.allow_payment_request,
+                csp: self.csp,
+                fetch_priority: self.fetch_priority,
+                height: self.height,
+                loading: self.loading,
+                name: self.name,
+                referrer_policy: self.referrer_policy,
+                sandbox: self.sandbox,
+                src: self.src,
+                src_doc: self.src_doc,
+                width: self.width,
+            }
+        }
+        ///See [`HtmlElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.css(css),
                 allow: self.allow,
                 allow_fullscreen: self.allow_fullscreen,
                 allow_payment_request: self.allow_payment_request,

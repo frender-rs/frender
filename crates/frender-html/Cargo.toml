@@ -15,6 +15,7 @@ wasm-bindgen = { version = "0.2.83", optional = true }
 pin-project-lite = "0.2.9"
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-events = { version = "0.1.0", path = "../frender-events" }
+frender-common = { version = "0.1.0", path = "../frender-common" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -92,11 +93,5 @@ features = [
 
 [features]
 default = ["csr", "ssr"] # TODO: remove
-csr = [
-    "dep:gloo",
-    "dep:web-sys",
-    "dep:wasm-bindgen",
-    "frender-events/csr",
-    "frender-html-common/csr",
-]
+csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen", "frender-events/csr", "frender-html-common/csr"]
 ssr = ["dep:html-escape", "dep:futures-lite"]

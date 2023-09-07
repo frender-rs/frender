@@ -1,0 +1,12 @@
+[package]
+name = "frender-csr-wry"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-io = "1.13.0"
+futures-lite = "1.13.0"
+waker-fn = "1.1.0"
+wry = "0.30.0"

@@ -47,6 +47,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::class<
@@ -958,6 +965,26 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
+                disabled: self.disabled,
+                form: self.form,
+                form_action: self.form_action,
+                form_enc_type: self.form_enc_type,
+                form_method: self.form_method,
+                form_no_validate: self.form_no_validate,
+                form_target: self.form_target,
+                name: self.name,
+                r#type: self.r#type,
+                value: self.value,
+            }
+        }
+        ///See [`HtmlElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.css(css),
                 disabled: self.disabled,
                 form: self.form,
                 form_action: self.form_action,

@@ -132,6 +132,10 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::ElementProps<
+        TypeDefs,
+        super::super::ElementProps::overwrite::css<<TypeDefs as super::Types>::ElementProps, Value>,
+    >;
     pub type class<TypeDefs, Value> = self::ElementProps<
         TypeDefs,
         super::super::ElementProps::overwrite::class<
@@ -4035,6 +4039,72 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 ElementProps: self.ElementProps.children(children),
+                access_key: self.access_key,
+                auto_capitalize: self.auto_capitalize,
+                auto_focus: self.auto_focus,
+                content_editable: self.content_editable,
+                context_menu: self.context_menu,
+                dir: self.dir,
+                draggable: self.draggable,
+                enter_key_hint: self.enter_key_hint,
+                hidden: self.hidden,
+                inert: self.inert,
+                input_mode: self.input_mode,
+                is: self.is,
+                item_id: self.item_id,
+                item_prop: self.item_prop,
+                item_ref: self.item_ref,
+                item_scope: self.item_scope,
+                item_type: self.item_type,
+                lang: self.lang,
+                nonce: self.nonce,
+                role: self.role,
+                slot: self.slot,
+                spellcheck: self.spellcheck,
+                style: self.style,
+                tab_index: self.tab_index,
+                title: self.title,
+                translate: self.translate,
+                virtual_keyboard_policy: self.virtual_keyboard_policy,
+                on_invalid: self.on_invalid,
+                on_animation_cancel: self.on_animation_cancel,
+                on_animation_end: self.on_animation_end,
+                on_animation_iteration: self.on_animation_iteration,
+                on_animation_start: self.on_animation_start,
+                on_before_input: self.on_before_input,
+                on_input: self.on_input,
+                on_change: self.on_change,
+                on_got_pointer_capture: self.on_got_pointer_capture,
+                on_lost_pointer_capture: self.on_lost_pointer_capture,
+                on_pointer_cancel: self.on_pointer_cancel,
+                on_pointer_down: self.on_pointer_down,
+                on_pointer_enter: self.on_pointer_enter,
+                on_pointer_leave: self.on_pointer_leave,
+                on_pointer_move: self.on_pointer_move,
+                on_pointer_out: self.on_pointer_out,
+                on_pointer_over: self.on_pointer_over,
+                on_pointer_up: self.on_pointer_up,
+                on_transition_cancel: self.on_transition_cancel,
+                on_transition_end: self.on_transition_end,
+                on_transition_run: self.on_transition_run,
+                on_transition_start: self.on_transition_start,
+                on_drag: self.on_drag,
+                on_drag_end: self.on_drag_end,
+                on_drag_enter: self.on_drag_enter,
+                on_drag_leave: self.on_drag_leave,
+                on_drag_over: self.on_drag_over,
+                on_drag_start: self.on_drag_start,
+                on_drop: self.on_drop,
+            }
+        }
+        ///See [`ElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                ElementProps: self.ElementProps.css(css),
                 access_key: self.access_key,
                 auto_capitalize: self.auto_capitalize,
                 auto_focus: self.auto_focus,

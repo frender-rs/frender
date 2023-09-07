@@ -33,6 +33,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlMediaElementProps<
+        TypeDefs,
+        super::super::HtmlMediaElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlMediaElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlMediaElementProps<
         TypeDefs,
         super::super::HtmlMediaElementProps::overwrite::class<
@@ -939,6 +946,16 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlMediaElementProps: self.HtmlMediaElementProps.children(children),
+            }
+        }
+        ///See [`HtmlMediaElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlMediaElementProps: self.HtmlMediaElementProps.css(css),
             }
         }
         ///See [`HtmlMediaElementProps::class`]

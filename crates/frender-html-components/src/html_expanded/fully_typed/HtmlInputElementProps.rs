@@ -89,6 +89,13 @@ pub mod overwrite {
             Value,
         >,
     >;
+    pub type css<TypeDefs, Value> = self::HtmlElementProps<
+        TypeDefs,
+        super::super::HtmlElementProps::overwrite::css<
+            <TypeDefs as super::Types>::HtmlElementProps,
+            Value,
+        >,
+    >;
     pub type class<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
         super::super::HtmlElementProps::overwrite::class<
@@ -2017,6 +2024,47 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
+                accept: self.accept,
+                alt: self.alt,
+                auto_complete: self.auto_complete,
+                capture: self.capture,
+                checked: self.checked,
+                dirname: self.dirname,
+                disabled: self.disabled,
+                form: self.form,
+                form_action: self.form_action,
+                form_enc_type: self.form_enc_type,
+                form_method: self.form_method,
+                form_no_validate: self.form_no_validate,
+                form_target: self.form_target,
+                height: self.height,
+                list: self.list,
+                max: self.max,
+                max_length: self.max_length,
+                min: self.min,
+                min_length: self.min_length,
+                multiple: self.multiple,
+                name: self.name,
+                pattern: self.pattern,
+                placeholder: self.placeholder,
+                read_only: self.read_only,
+                required: self.required,
+                size: self.size,
+                src: self.src,
+                step: self.step,
+                r#type: self.r#type,
+                value: self.value,
+                width: self.width,
+            }
+        }
+        ///See [`HtmlElementProps::css`]
+        #[inline(always)]
+        pub fn css<V: Todo<unimplemented![]>>(
+            self,
+            css: V,
+        ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps.css(css),
                 accept: self.accept,
                 alt: self.alt,
                 auto_complete: self.auto_complete,

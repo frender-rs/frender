@@ -97,7 +97,7 @@ component_fn!(
 );
 
 #[allow(non_snake_case)]
-fn DivCode(code: impl CsrElement, children: impl CsrElement) -> impl CsrElement {
+fn DivCode(code: impl Element, children: impl Element) -> impl Element {
     intrinsic!(div[[code.children(code), { children }]])
 }
 
