@@ -1,9 +1,6 @@
 use std::borrow::Cow;
 
-use frender_html::{
-    renderer::{CreateElementOfType, RenderTextFrom},
-    RenderHtml,
-};
+use frender_html::{renderer::RenderTextFrom, RenderHtml};
 use wasm_bindgen::{JsCast, UnwrapThrowExt};
 
 use crate::try_behavior::{TryBehavior, TryWithTryBehavior};
@@ -172,35 +169,20 @@ impl<V: ?Sized + to_text_node::ToTextNode, TB: TryBehavior> RenderTextFrom<Node<
     }
 }
 
-impl<TB: TryBehavior, ET: frender_html::renderer::ElementType<Element<Self> = Node<E>>, E>
-    CreateElementOfType<ET> for Renderer<'_, TB>
-where
-    E: JsCast,
-{
-    fn create_element_of_type(
-        &mut self,
-    ) -> <ET as frender_html::renderer::ElementType>::Element<Self>
-    where
-        Self: RenderHtml,
-    {
-        let element = self
-            .document
-            .create_element(ET::INTRINSIC_COMPONENT_TAG)
-            .unwrap_with_behavior(&mut self.try_behavior);
-        Node(
-            element
-                .dyn_into()
-                .unwrap_with_behavior(&mut self.try_behavior),
-        )
-    }
-}
-
 impl<TB: TryBehavior> RenderHtml for Renderer<'_, TB> {
     type EventListenerId = gloo_events::EventListener;
     type Event = web_sys::Event;
     type Text = Node<web_sys::Text>;
 
     type div = Node<web_sys::HtmlDivElement>;
+
+    fn div(&mut self) -> Self::div {
+        let element = self
+            .document
+            .create_element(<frender_html::element_types::div as frender_html::renderer::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG)
+            .unwrap_with_behavior(&mut self.try_behavior);
+        Node(element.unchecked_into())
+    }
 }
 
 pub struct Node<N>(N);
@@ -214,12 +196,19 @@ mod node {
 
     impl<'a, TB: TryBehavior> Renderer<'a, TB> {
         fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
+            web_sys::console::log_3(&"readd_node".into(), node, &force_reposition.into());
             if force_reposition {
                 match &self.next_node_position {
-                    NextNodePosition::FirstChildOf(parent) => parent
-                        .prepend_with_node_1(node)
-                        .unwrap_with_behavior(&mut self.try_behavior),
+                    NextNodePosition::FirstChildOf(parent) => {
+                        web_sys::console::log_2(&"FirstChildOf".into(), parent);
+
+                        parent
+                            .prepend_with_node_1(node)
+                            .unwrap_with_behavior(&mut self.try_behavior)
+                    }
                     NextNodePosition::InsertAfter(pre) => {
+                        web_sys::console::log_2(&"InsertAfter".into(), pre);
+
                         pre.parent_node()
                             .unwrap()
                             .insert_before(node, pre.next_sibling().as_ref())

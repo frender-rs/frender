@@ -74,7 +74,7 @@ pub trait ElementWithChildren<Children> {
 mod imp {
     use frender_csr::element::intrinsic::ElementAndMounted;
     use frender_html::{
-        renderer::{node_behaviors, CreateElementOfType},
+        renderer::{node_behaviors, CreateElement},
         Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
         UpdateElementNonReactive,
     };
@@ -206,34 +206,33 @@ mod imp {
                 children,
                 attributes,
             } = P::into_element_props(self.1);
-            if let Some(element_and_mounted) = render_state.element_and_mounted {
-                update_element_maybe_reposition(
-                    element_and_mounted,
-                    renderer,
-                    |element, renderer| {
-                        <P::Attrs>::update_element_non_reactive(
-                            attributes,
-                            renderer,
-                            element,
-                            props_state.attrs_state,
-                        );
-                        <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::children_render_update(
+
+            let element_and_mounted =
+                render_state
+                    .element_and_mounted
+                    .get_or_insert_with(|| ElementAndMounted {
+                        element: <C::ElementType as CreateElement>::create_element(renderer),
+                        mounted: false,
+                    });
+
+            update_element_maybe_reposition(
+                element_and_mounted,
+                renderer,
+                |element, renderer| {
+                    <P::Attrs>::update_element_non_reactive(
+                        attributes,
+                        renderer,
+                        element,
+                        props_state.attrs_state,
+                    );
+                    <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::children_render_update(
                             children,
                             renderer,
                             props_state.children_render_state,
                         )
-                    },
-                    force_reposition,
-                )
-            } else {
-                *render_state.element_and_mounted = Some(ElementAndMounted {
-                    element:
-                        <Renderer as CreateElementOfType<C::ElementType>>::create_element_of_type(
-                            renderer,
-                        ),
-                    mounted: true,
-                });
-            }
+                },
+                force_reposition,
+            )
         }
     }
 
@@ -248,22 +247,24 @@ mod imp {
     ) {
         let ElementAndMounted { element, mounted } = element_and_mounted;
 
+        if *mounted && !force_reposition {
+            // element.move_cursor_after_self(renderer);
+        } else {
+            // if *mounted && element.cursor_is_at_self(renderer) {
+            //     element.move_cursor_after_self(renderer);
+            //     return;
+            // }
+
+            element.readd_self(renderer, true);
+            *mounted = true;
+        }
+
         {
             element.move_cursor_at_the_first_child_of_self(renderer);
             update(element, renderer);
         };
 
-        if *mounted && !force_reposition {
-            element.move_cursor_after_self(renderer);
-        } else {
-            if *mounted && element.cursor_is_at_self(renderer) {
-                element.move_cursor_after_self(renderer);
-                return;
-            }
-
-            element.readd_self(renderer, force_reposition);
-            *mounted = true;
-        }
+        element.move_cursor_after_self(renderer);
     }
 }
 

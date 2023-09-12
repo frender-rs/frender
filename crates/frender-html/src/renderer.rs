@@ -12,7 +12,7 @@ macro_rules! define_node_type_traits {
         }
     ) => {
         pub trait $node_type_trait
-            : HasIntrinsicComponentTag
+            : HasIntrinsicComponentTag + CreateElement
             $(+ $super_trait)? {
             type $node_trait<R: ?Sized + crate::RenderHtml>: crate::renderer::node_behaviors::$node_trait<R>
                 $(+ crate::Identity<This = <Self as $super_trait>::$super_trait_element<R>>)?
@@ -58,6 +58,7 @@ macro_rules! define_nodes_types {
     ) => {
         $($(
             type $tags: crate::renderer::node_behaviors::$node_trait<Self>;
+            fn $tags(&mut self) -> Self::$tags;
         )*)?
 
         expand! { if ($($sub_mods)*) {
@@ -77,6 +78,12 @@ macro_rules! define_element_type {
 
         impl crate::renderer::HasIntrinsicComponentTag for $tag {
             const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tag);
+        }
+
+        impl crate::renderer::CreateElement for $tag {
+            fn create_element<R: ?Sized + crate::RenderHtml>(renderer: &mut R) -> crate::ElementOfType<Self, R> {
+                renderer.$tag()
+            }
         }
 
         $(
@@ -159,9 +166,6 @@ macro_rules! trait_create_element {
 
 macro_rules! define {
     (
-        $vis_create_element:vis trait $trait_create_element:ident {
-        }
-
         #[alias($element_type_traits:ident)]
         $vis_element_types:vis mod $element_types:ident {
             $($element_types_defs:tt)*
@@ -171,11 +175,6 @@ macro_rules! define {
                 $($render_html_items:tt)*
         }
     ) => {
-        trait_create_element! {
-            [$vis_create_element trait $trait_create_element]
-            {$($element_types_defs)*}
-            []
-        }
         define_node_type_traits! { $($element_types_defs)* }
         $vis_element_types mod $element_types {
             mod_element_types! { $($element_types_defs)* }
@@ -210,8 +209,6 @@ pub mod element_types {
 }
 
 define!(
-    pub trait CreateElement {}
-
     #[alias(element_type_traits)]
     pub mod element_types {
         mod Element {
@@ -240,8 +237,7 @@ define!(
              + RenderTextFrom<Self::Text, f32>
              + RenderTextFrom<Self::Text, f64>
              + RenderTextFrom<Self::Text, bool>
-             + RenderTextFrom<Self::Text, char>
-             + CreateElement],
+             + RenderTextFrom<Self::Text, char>],
     )
     {
         #![allow(non_camel_case_types)]
@@ -266,17 +262,14 @@ pub trait HasIntrinsicComponentTag {
     const INTRINSIC_COMPONENT_TAG: &'static str;
 }
 
-pub trait CreateElementOfType<ET: ElementType> {
-    fn create_element_of_type(&mut self) -> ET::Element<Self>
+pub trait CreateElement {
+    fn create_element<R: RenderHtml>(renderer: &mut R) -> Self::Element<R>
     where
-        Self: RenderHtml;
+        Self: ElementType;
 }
 
 pub trait RenderTextFrom<Text, V: ?Sized> {
-    // let text = dom_ctx.document.create_text_node(&data);
-    // dom_ctx
-    //     .next_node_position
-    //     .add_node(Cow::Owned(text.clone().into()));
+    /// should not move cursor
     fn render_text_from(&mut self, v: &V) -> Text;
     fn update_text_from(&mut self, text: &mut Text, v: &V);
 }

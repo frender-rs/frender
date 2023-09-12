@@ -160,8 +160,10 @@ impl<Cache, Text> State<Cache, Text> {
     pub fn initialize_with_str<R: RenderHtml<Text = Text>, S>(data: S, renderer: &mut R) -> Self
     where
         S: RenderingStr<Cache = Cache>,
+        Text: crate::renderer::node_behaviors::Node<R>,
     {
-        let text = renderer.render_text_from(&*data);
+        let mut text = renderer.render_text_from(&*data);
+        text.readd_self(renderer, true);
         State {
             node: text,
             cache: S::create_cache(data),
