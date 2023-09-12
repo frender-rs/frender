@@ -1,9 +1,25 @@
+pub struct Data<'a, V, E, R> {
+    pub this: V,
+    pub element: &'a mut E,
+    pub renderer: &'a mut R,
+    pub attr_name: &'static str,
+}
+
 #[cfg(feature = "csr")]
 pub struct CsrInput<'a, 'ctx, V, E> {
     pub this: V,
     pub element: &'a E,
     pub children_ctx: &'a mut frender_csr::CsrContext<'ctx>,
     pub attr_name: &'static str,
+}
+
+pub struct DataWithUpdater<'a, V, E, RR, U, R> {
+    pub this: V,
+    pub element: &'a mut E,
+    pub renderer: &'a mut RR,
+    pub attr_name: &'static str,
+    pub update: U,
+    pub remove: R,
 }
 
 #[cfg(feature = "csr")]
@@ -23,7 +39,7 @@ macro_rules! impl_bounds {
             bounds as $($mod_path_start:ident)?
                 $(:: $mod_path:ident)*
                 $($(::)? <$($ty:ty),* $(,)?>)?,
-            element as $csr_element_ty:ty,
+            element as $csr_element_ty:ident,
             $attr_name_ident:ident = $attr_name:expr
             $(, $name:ident $fields:tt)*
             $(,)?
@@ -90,47 +106,35 @@ macro_rules! default_impl_csr {
             wrapper! {$($wrapper:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
-            csr_element_ty! { $csr_element_ty:ty }
+            csr_element_ty! { $csr_element_ty:ident }
             attr_name! { $attr_name_ident:ident = $attr_name:expr }
         }
         $csr:ident !{ $($csr_fields:tt)* }
     ) => {
-        #[cfg(feature = "csr")]
-        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>, E: ::core::convert::AsRef<$csr_element_ty>>
-            $crate::frender_csr::props::UpdateElementNonReactive<E>
-            for $($wrapper)*::<V>
-        {
+        impl<
+            V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
+            ET: $crate::__private::frender_html::element_type_traits::$csr_element_ty,
+        >
+            $crate::__private::frender_html::UpdateElementNonReactive<
+                ET
+            >
+        for $($wrapper)*::<V> {
             type State = $($wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
-            fn initialize_state_non_reactive(
+
+            fn update_element_non_reactive<Renderer: $crate::__private::frender_html::RenderHtml>(
                 Self(this): Self,
-                element: &E,
-                children_ctx: &mut $crate::frender_csr::CsrContext,
-            ) -> Self::State {
-                let element: &$csr_element_ty = element.as_ref();
-                $($wrapper)* (
-                    $($bounds)*::$csr::initialize($($bounds)*::$csr::Input {
-                        this,
-                        element,
-                        children_ctx,
-                        $attr_name_ident: $attr_name,
-                        $($csr_fields)*
-                    })
-                )
-            }
-            fn update_element_non_reactive(
-                Self(this): Self,
-                element: &E,
-                children_ctx: &mut crate::imports::frender_csr::CsrContext,
-                state: ::core::pin::Pin<&mut Self::State>,
+                renderer: &mut Renderer,
+                element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
+                state: &mut Self::State,
             ) {
-                let element: &$csr_element_ty = element.as_ref();
-                $($bounds)*::$csr::update($($bounds)*::$csr::Input {
+                let element: &mut <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> = $crate::__private::frender_html::Identity::from_identity_mut(element);
+                $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Data {
                     this,
                     element,
-                    children_ctx,
+                    renderer,
                     attr_name: $attr_name,
                     $($csr_fields)*
-                }, &mut state.get_mut().0)
+                }, &mut state.0)
             }
         }
     };
@@ -270,55 +274,64 @@ pub mod MaybeValue {
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
 
         pub use super::super::CsrInputWithUpdater as Input;
+        pub use super::super::DataWithUpdater as Data;
         pub use crate::DefaultCsrState as State;
 
-        pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::State;
+        pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::UpdateWithState;
 
-        pub fn initialize<
+        pub fn update_with_state<
             VT: ?Sized + ValueType,
             V: MaybeUpdateValueWithState<VT>,
             E,
-            U: FnOnce(&E, &'static str, &VT),
-            R: FnOnce(&E, &'static str),
+            RR,
+            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+            R: FnOnce(&mut E, &mut RR, &'static str),
         >(
-            Input {
+            Data {
                 this,
                 element,
-                update,
-                remove,
-                attr_name,
-                ..
-            }: Input<V, E, U, R>,
-        ) -> State<VT, V> {
-            V::initialize_state_and_update(
-                this,
-                |v| update(element, attr_name, v),
-                || remove(element, attr_name),
-            )
-        }
-
-        pub fn update<
-            VT: ?Sized + ValueType,
-            V: MaybeUpdateValueWithState<VT>,
-            E,
-            U: FnOnce(&E, &'static str, &VT),
-            R: FnOnce(&E, &'static str),
-        >(
-            Input {
-                this,
-                element,
+                renderer,
                 attr_name,
                 update,
                 remove,
-                ..
-            }: Input<V, E, U, R>,
+            }: Data<V, E, RR, U, R>,
             state: &mut State<VT, V>,
         ) {
-            V::maybe_update_value_with_state(
+            struct Updater<'a, E, RR, U, R> {
+                element: &'a mut E,
+                renderer: &'a mut RR,
+                attr_name: &'static str,
+                update: U,
+                remove: R,
+            }
+            impl<
+                    'a,
+                    VT: ?Sized,
+                    E,
+                    RR,
+                    U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+                    R: FnOnce(&mut E, &mut RR, &'static str),
+                > frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R>
+            {
+                fn update(mut self, value: &VT) {
+                    (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
+                }
+
+                fn remove(mut self) {
+                    (self.remove)(&mut self.element, &mut self.renderer, self.attr_name)
+                }
+            }
+
+            V::update_with_state(
                 this,
                 state,
-                |v| update(element, attr_name, v),
-                || remove(element, attr_name),
+                Updater {
+                    element,
+                    renderer,
+                    attr_name,
+                    update,
+                    remove,
+                },
             )
         }
 
@@ -332,6 +345,17 @@ pub mod MaybeValue {
 
         pub fn default_remove<E: AsRef<web_sys::Element>>(element: &E, prop_name: &'static str) {
             element.as_ref().remove_attribute(prop_name).unwrap()
+        }
+
+        pub fn remove<
+            E: ?Sized + frender_html::renderer::node_behaviors::Element<RR>,
+            RR: ?Sized,
+        >(
+            element: &mut E,
+            renderer: &mut RR,
+            prop_name: &'static str,
+        ) {
+            element.remove_attribute(renderer, prop_name)
         }
     }
 

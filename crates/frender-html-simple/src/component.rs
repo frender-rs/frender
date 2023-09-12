@@ -74,8 +74,7 @@ pub trait ElementWithChildren<Children> {
 mod imp {
     use frender_csr::element::intrinsic::ElementAndMounted;
     use frender_html::{
-        element_do_for_renderer,
-        renderer::{MarkPositionAfter, MarkPositionAtFirstChild, RemoveNode},
+        renderer::{node_behaviors, CreateElementOfType},
         Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
         UpdateElementNonReactive,
     };
@@ -99,13 +98,8 @@ mod imp {
         }
     }
 
-    impl<
-            E: element_do_for_renderer::RemoveFromRenderer<R>
-                + element_do_for_renderer::MarkPositionAfterSelfForRenderer<R>
-                + element_do_for_renderer::MarkPositionAtFirstChildForRenderer<R>,
-            S: RenderState<R>,
-            R,
-        > RenderState<R> for IntrinsicElementRenderState<E, S>
+    impl<E: node_behaviors::Element<R>, S: RenderState<R>, R> RenderState<R>
+        for IntrinsicElementRenderState<E, S>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
             let this = self.project();
@@ -113,7 +107,7 @@ mod imp {
                 if *mounted {
                     *mounted = false;
                     // renderer.remove_node(element);
-                    element.remove_from_renderer(renderer);
+                    element.remove_self(renderer);
                     this.props_state.state_unmount();
                 }
             }
@@ -142,11 +136,11 @@ mod imp {
                 return std::task::Poll::Ready(());
             };
 
-            element.mark_position_at_first_child_for_renderer(renderer);
+            element.move_cursor_at_the_first_child_of_self(renderer);
             // renderer.mark_position_at_first_child(element);
             let result = S::poll_render(this.props_state, renderer, cx);
 
-            element.mark_position_after_self_for_renderer(renderer);
+            element.move_cursor_after_self(renderer);
             // renderer.mark_position_after(element);
 
             result
@@ -185,13 +179,15 @@ mod imp {
     impl<C: IntrinsicComponent + frender_html_common::IntrinsicComponent, P: IntoElementProps>
         Element for super::IntrinsicElement<C, P>
     where
-        C: crate::ElementWithChildren<P::Children>,
+        C::ElementTagType: frender_html::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C::ElementType>,
     {
         type RenderState<R: frender_html::RenderHtml> = IntrinsicElementRenderState<
             ElementOfType<C::ElementType, R>,
             ElementPropsState<
-                C::ChildrenRenderState<R>,
+                <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::ChildrenRenderState<
+                    R,
+                >,
                 <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State,
             >,
         >;
@@ -202,7 +198,71 @@ mod imp {
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
-            todo!()
+            let render_state = render_state.project();
+
+            let props_state = render_state.props_state.project();
+
+            let crate::ElementProps {
+                children,
+                attributes,
+            } = P::into_element_props(self.1);
+            if let Some(element_and_mounted) = render_state.element_and_mounted {
+                update_element_maybe_reposition(
+                    element_and_mounted,
+                    renderer,
+                    |element, renderer| {
+                        <P::Attrs>::update_element_non_reactive(
+                            attributes,
+                            renderer,
+                            element,
+                            props_state.attrs_state,
+                        );
+                        <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::children_render_update(
+                            children,
+                            renderer,
+                            props_state.children_render_state,
+                        )
+                    },
+                    force_reposition,
+                )
+            } else {
+                *render_state.element_and_mounted = Some(ElementAndMounted {
+                    element:
+                        <Renderer as CreateElementOfType<C::ElementType>>::create_element_of_type(
+                            renderer,
+                        ),
+                    mounted: true,
+                });
+            }
+        }
+    }
+
+    pub fn update_element_maybe_reposition<
+        E: frender_html::renderer::node_behaviors::Element<R>,
+        R: ?Sized + RenderHtml,
+    >(
+        element_and_mounted: &mut ElementAndMounted<E>,
+        renderer: &mut R,
+        update: impl FnOnce(&mut E, &mut R),
+        force_reposition: bool,
+    ) {
+        let ElementAndMounted { element, mounted } = element_and_mounted;
+
+        {
+            element.move_cursor_at_the_first_child_of_self(renderer);
+            update(element, renderer);
+        };
+
+        if *mounted && !force_reposition {
+            element.move_cursor_after_self(renderer);
+        } else {
+            if *mounted && element.cursor_is_at_self(renderer) {
+                element.move_cursor_after_self(renderer);
+                return;
+            }
+
+            element.readd_self(renderer, force_reposition);
+            *mounted = true;
         }
     }
 }

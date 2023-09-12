@@ -1,68 +1,27 @@
 use crate::{
-    renderer::{MarkPositionAfter, MarkPositionAtFirstChild, RemoveNode},
+    renderer::{node_behaviors, ElementType},
     RenderHtml,
 };
 
-pub mod element_types {
-    use crate::ElementType;
+// pub trait ElementType {
+//     type Element<Renderer: RenderHtml>: node_behaviors::Element<Renderer>;
+// }
 
-    pub enum Element {}
+// pub trait HtmlElementType: ElementType {
+//     type HtmlElement<Renderer: RenderHtml>: node_behaviors::HtmlElement<Renderer>
+//         + Identity<This = Self::Element<Renderer>>;
+// }
 
-    impl ElementType for Element {
-        type Element<Renderer: crate::RenderHtml> = Renderer::Element;
-
-        fn remove_from_renderer<Renderer: crate::RenderHtml>(
-            renderer: &mut Renderer,
-            element: &mut Self::Element<Renderer>,
-        ) {
-            renderer.remove_node(element)
-        }
-    }
+pub trait Identity {
+    type This: ?Sized;
+    fn from_identity_mut(this: &mut Self::This) -> &mut Self;
 }
 
-pub mod element_do_for_renderer {
-    use crate::renderer::{MarkPositionAfter, MarkPositionAtFirstChild, RemoveNode};
-
-    pub trait RemoveFromRenderer<R: ?Sized> {
-        fn remove_from_renderer(&mut self, renderer: &mut R);
+impl<T: ?Sized> Identity for T {
+    type This = T;
+    fn from_identity_mut(v: &mut T) -> &mut Self {
+        v
     }
-
-    impl<E, R: ?Sized + RemoveNode<E>> RemoveFromRenderer<R> for E {
-        fn remove_from_renderer(&mut self, renderer: &mut R) {
-            renderer.remove_node(self)
-        }
-    }
-
-    pub trait MarkPositionAfterSelfForRenderer<R: ?Sized> {
-        fn mark_position_after_self_for_renderer(&mut self, renderer: &mut R);
-    }
-
-    impl<E, R: ?Sized + MarkPositionAfter<E>> MarkPositionAfterSelfForRenderer<R> for E {
-        fn mark_position_after_self_for_renderer(&mut self, renderer: &mut R) {
-            renderer.mark_position_after(self)
-        }
-    }
-
-    pub trait MarkPositionAtFirstChildForRenderer<R: ?Sized> {
-        fn mark_position_at_first_child_for_renderer(&mut self, renderer: &mut R);
-    }
-
-    impl<E, R: ?Sized + MarkPositionAtFirstChild<E>> MarkPositionAtFirstChildForRenderer<R> for E {
-        fn mark_position_at_first_child_for_renderer(&mut self, renderer: &mut R) {
-            renderer.mark_position_at_first_child(self)
-        }
-    }
-}
-
-pub trait ElementType {
-    type Element<Renderer: RenderHtml>: element_do_for_renderer::RemoveFromRenderer<Renderer>
-        + element_do_for_renderer::MarkPositionAfterSelfForRenderer<Renderer>
-        + element_do_for_renderer::MarkPositionAtFirstChildForRenderer<Renderer>;
-
-    fn remove_from_renderer<Renderer: RenderHtml>(
-        renderer: &mut Renderer,
-        element: &mut Self::Element<Renderer>,
-    );
 }
 
 pub type ElementOfType<ET, R> = <ET as ElementType>::Element<R>;
@@ -110,34 +69,75 @@ pub trait IntrinsicComponent {
     const INTRINSIC_TAG: &'static str;
 
     type ElementType: ElementType;
+    type ElementTagType: ElementTagType;
+}
+
+pub trait ElementTagType {}
+
+pub trait ElementSupportChildren<C>: ElementTagType {
+    type ChildrenRenderState<R: RenderHtml>: crate::RenderState<R> + Default;
+
+    fn children_render_update<R: RenderHtml>(
+        children: C,
+        renderer: &mut R,
+        children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>,
+    );
+}
+
+pub mod element_tag_types {
+    use crate::Element;
+
+    pub enum EncloseAnyElement {}
+    impl super::ElementTagType for EncloseAnyElement {}
+    impl<E: Element> super::ElementSupportChildren<E> for EncloseAnyElement {
+        type ChildrenRenderState<R: crate::RenderHtml> = E::RenderState<R>;
+
+        fn children_render_update<R: crate::RenderHtml>(
+            children: E,
+            renderer: &mut R,
+            children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>,
+        ) {
+            children.render_update(renderer, children_state)
+        }
+    }
 }
 
 mod demo {
-    // use crate::UpdateElementNonReactive;
+    use crate::renderer::{
+        node_behaviors::{Element, HtmlElement},
+        ElementType, HtmlElementType,
+    };
+
+    use super::{ElementOfType, Identity, UpdateElementNonReactive};
 
     struct id(pub String);
 
-    pub trait UpdateElementNonReactive<E> {
-        type State;
-
-        fn update_element_non_reactive<Renderer: crate::RenderHtml>(
-            this: Self,
-            renderer: &mut Renderer,
-            element: &mut E,
-            state: &mut Self::State,
-        );
-    }
-
-    impl<E> UpdateElementNonReactive<E> for id {
+    impl<ET: ElementType> UpdateElementNonReactive<ET> for id {
         type State = ();
 
         fn update_element_non_reactive<Renderer: crate::RenderHtml>(
             this: Self,
             renderer: &mut Renderer,
-            element: &mut E,
+            element: &mut ElementOfType<ET, Renderer>,
             state: &mut Self::State,
         ) {
-            todo!()
+            element.set_id(renderer, &this.0)
+        }
+    }
+
+    struct access_key(pub String);
+
+    impl<ET: HtmlElementType> UpdateElementNonReactive<ET> for access_key {
+        type State = ();
+
+        fn update_element_non_reactive<Renderer: crate::RenderHtml>(
+            this: Self,
+            renderer: &mut Renderer,
+            element: &mut ElementOfType<ET, Renderer>,
+            state: &mut Self::State,
+        ) {
+            let element = <ET::HtmlElement<Renderer> as Identity>::from_identity_mut(element);
+            element.set_access_key(renderer, &this.0)
         }
     }
 }

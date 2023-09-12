@@ -136,7 +136,7 @@ macro_rules! __impl_builder_fns {
 macro_rules! __impl_prop_struct {
     (children) => {};
     ($name:ident) => {
-        #[derive(Debug, Clone, Copy)]
+        #[derive(Debug, Clone, Copy, Default)]
         pub struct $name<V>(pub V);
         impl<V> Unpin for $name<V> {}
     };

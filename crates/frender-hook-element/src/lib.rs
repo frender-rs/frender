@@ -37,11 +37,14 @@ pub mod __private {
 
     pub mod main {
         #[cfg(all(feature = "csr", feature = "spawn"))]
-        pub use frender_csr::spawn_mount_to_dom_element;
+        // pub use frender_csr::spawn_mount_to_dom_element;
+        pub use frender_csr_web::mount::spawn_mount_to_dom_element;
     }
 
     // #[cfg(feature = "ssr")]
     // pub use frender_ssr::Element as ssr;
+
+    pub use frender_html;
 }
 
 #[doc(hidden)]
@@ -114,7 +117,7 @@ macro_rules! __impl_component_fn_options_parsed {
         $($outer_attrs)*
         #[allow(non_snake_case)]
         $vis fn $ident $paren_inputs ->
-            $crate::__private::expand_or![[$($output_ty)?] $crate::Element![$($ctxs),*]]
+            $crate::__private::expand_or![[$($output_ty)?] impl $crate::__private::frender_html::Element]
         {
             #[allow(unused_imports)]
             use $crate::__private::hooks_core::prelude_h::*;

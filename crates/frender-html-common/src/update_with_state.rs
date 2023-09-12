@@ -10,6 +10,21 @@ use crate::impl_many;
 
 pub use value::*;
 
+pub trait ValueUpdater<V: ?Sized> {
+    fn update(self, value: &V);
+    fn remove(self);
+}
+
+impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
+    fn update(self, value: &V) {
+        self.0(value)
+    }
+
+    fn remove(self) {
+        self.1()
+    }
+}
+
 pub enum NeverWritable {}
 impl AsyncWritableAttrValue for NeverWritable {
     fn poll_write_attr_value_into<
@@ -73,6 +88,14 @@ pub trait MaybeUpdateValueWithState<V: ?Sized + ValueType> {
         this: Self,
         supported: <V as ValueType>::SupportIntoAttrValue,
     ) -> Option<Self::AttrValue>;
+
+    type UpdateWithState: Default;
+
+    fn update_with_state(
+        this: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<V>,
+    );
 }
 
 impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
@@ -112,6 +135,10 @@ impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
     ) -> Option<Self::AttrValue> {
         None
     }
+
+    type UpdateWithState = ();
+
+    fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
 }
 
 impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWithState<V>
@@ -174,6 +201,21 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWit
     ) -> Option<Self::AttrValue> {
         this.and_then(|this| T::maybe_into_attr_value(this, supported))
     }
+
+    type UpdateWithState = T::UpdateWithState;
+
+    fn update_with_state(
+        this: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<V>,
+    ) {
+        if let Some(this) = this {
+            T::update_with_state(this, state, updater)
+        } else {
+            updater.remove();
+            *state = Default::default()
+        }
+    }
 }
 
 /// No cache
@@ -219,6 +261,16 @@ impl MaybeUpdateValueWithState<str> for &str {
         (): <str as ValueType>::SupportIntoAttrValue,
     ) -> Option<Self::AttrValue> {
         Some(AsyncWritableAttrValueStr::new_from_str(this))
+    }
+
+    type UpdateWithState = ();
+
+    fn update_with_state(
+        this: Self,
+        _: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<str>,
+    ) {
+        updater.update(this)
     }
 }
 
@@ -278,6 +330,26 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
         supported: <str as ValueType>::SupportIntoAttrValue,
     ) -> Option<Self::AttrValue> {
         Some(AsyncWritableAttrValueStr::new_from_str(this))
+    }
+
+    type UpdateWithState = Self::State;
+
+    fn update_with_state(
+        this: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<str>,
+    ) {
+        match (state, this) {
+            (Some(state), this) if *this == **state => {}
+            (state, std::borrow::Cow::Owned(this)) => {
+                updater.update(&this);
+                *state = Some(this);
+            }
+            (state, std::borrow::Cow::Borrowed(this)) => {
+                *state = None;
+                updater.update(this)
+            }
+        }
     }
 }
 
@@ -364,6 +436,23 @@ impl MaybeUpdateValueWithState<str> for String {
     ) -> Option<Self::AttrValue> {
         Some(AsyncWritableAttrValueStr::new_from_str(this))
     }
+
+    type UpdateWithState = Option<Self::State>;
+
+    fn update_with_state(
+        this: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<str>,
+    ) {
+        if let Some(state) = state {
+            if *state == this {
+                return;
+            }
+        }
+
+        updater.update(&this);
+        *state = Some(this);
+    }
 }
 
 impl_many!(
@@ -426,6 +515,23 @@ impl_many!(
         fn maybe_into_attr_value(this: Self, supported: ()) -> Option<Self::AttrValue> {
             String::maybe_into_attr_value(this.to_string(), supported)
         }
+
+        type UpdateWithState = Option<Self::State>;
+
+        fn update_with_state(
+            this: Self,
+            state: &mut Self::UpdateWithState,
+            updater: impl ValueUpdater<Self>,
+        ) {
+            if let Some(state) = state {
+                if *state == this {
+                    return;
+                }
+            }
+
+            updater.update(&this);
+            *state = Some(this);
+        }
     }
 );
 
@@ -478,5 +584,22 @@ impl MaybeUpdateValueWithState<bool> for bool {
         } else {
             None
         }
+    }
+
+    type UpdateWithState = Option<Self::State>;
+
+    fn update_with_state(
+        this: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<Self>,
+    ) {
+        if let Some(state) = state {
+            if *state == this {
+                return;
+            }
+        }
+
+        updater.update(&this);
+        *state = Some(this);
     }
 }

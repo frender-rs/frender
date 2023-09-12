@@ -3,7 +3,7 @@ use std::ops::Deref;
 
 use crate::{
     pin_mut_maybe_uninit::PinMutMaybeUninit,
-    renderer::{self, RemoveNode},
+    renderer::{self, node_behaviors::Node},
     Element, RenderHtml, RenderState,
 };
 #[cfg(feature = "StaticText")]
@@ -131,12 +131,12 @@ mod js {
 }
 
 impl<Cache, Text> State<Cache, Text> {
-    fn add_self_to_dom<R: RenderHtml<Text = Text>>(
-        &mut self,
-        renderer: &mut R,
-        force_reposition: bool,
-    ) {
-        renderer.readd_node(&mut self.node, force_reposition || self.unmounted);
+    fn add_self_to_dom<R>(&mut self, renderer: &mut R, force_reposition: bool)
+    where
+        Text: Node<R>,
+    {
+        self.node
+            .readd_self(renderer, force_reposition || self.unmounted);
     }
 
     fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text>, S>(
@@ -145,6 +145,7 @@ impl<Cache, Text> State<Cache, Text> {
         renderer: &mut R,
         force_reposition: bool,
     ) where
+        Text: Node<R>,
         S: RenderingStr<Cache = Cache>,
     {
         if S::not_match_cache(&data, &self.cache) {
@@ -246,11 +247,11 @@ impl<Cache, Text> State<Cache, Text> {
 
 impl<Cache, Text> Unpin for State<Cache, Text> {}
 
-impl<Cache, Text, R: RemoveNode<Text>> RenderState<R> for State<Cache, Text> {
+impl<Cache, Text: Node<R>, R> RenderState<R> for State<Cache, Text> {
     fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
         let this = self.get_mut();
         this.unmounted = true;
-        renderer.remove_node(&mut this.node)
+        this.node.remove_self(renderer);
     }
 
     fn state_unmount(mut self: std::pin::Pin<&mut Self>) {}

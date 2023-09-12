@@ -13,6 +13,7 @@ lazy-pinned = "0.1.0"
 hooks-core = { version = "2.2.0-alpha", default-features = false }
 syn-lite = "0.1.0"
 frender-html = { version = "0.1.0", path = "../frender-html" }
+frender-csr-web = { version = "0.1.0", path = "../frender-csr-web" }
 
 [features]
 csr = ["frender-csr"]
