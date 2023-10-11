@@ -1,12 +1,3 @@
-macro_rules! for_each_trait {
-    ({$($vis:vis trait $WithEventsTrait:ident $body:tt)*} $commands:tt) => {
-        $(crate::expand! {
-            {$vis trait $WithEventsTrait $body}
-            do $commands
-        })*
-    };
-}
-
 macro_rules! define_element_trait {
     (
         $(#[super_traits($($super_traits:ident),+ $(,)?)])?
@@ -65,7 +56,7 @@ macro_rules! define_element_trait {
             )*
         }
 
-        for_each_trait! {{$($($sub_traits)*)?}{
+        crate::for_each_trait! {{$($($sub_traits)*)?}{
             prepend($(#[super_traits($($super_traits,)+ $WithEventsTrait)])?)
             wrap{}
             prepend(define_element_trait!)
@@ -106,7 +97,7 @@ macro_rules! define_event_types {
             }
         )*
 
-        for_each_trait! {{$($($sub_traits)*)?}{
+        crate::for_each_trait! {{$($($sub_traits)*)?}{
             // prepend($(#[super_traits($($super_traits,)+ $WithEventsTrait)])?)
             wrap{}
             prepend(define_event_types!)
@@ -159,7 +150,7 @@ macro_rules! define_type_of {
             }
         )*
 
-        for_each_trait! {{$($($sub_traits)*)?}{
+        crate::for_each_trait! {{$($($sub_traits)*)?}{
             // prepend($(#[super_traits($($super_traits,)+ $WithEventsTrait)])?)
             wrap{}
             prepend(define_type_of!)

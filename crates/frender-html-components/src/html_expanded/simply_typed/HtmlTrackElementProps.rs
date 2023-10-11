@@ -506,7 +506,7 @@ mod imp {
         attr_name = "srclang",
         csr {
             update: |el: &mut ET::HtmlTrackElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_srclang(renderer, v),
+                .set_src_lang(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));

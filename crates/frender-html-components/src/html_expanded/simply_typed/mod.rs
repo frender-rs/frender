@@ -68,9 +68,6 @@ crate::imports::def_intrinsic_component_simple!(
     pub struct wbr;
 );
 #[allow(non_snake_case)]
-pub mod HtmlElementWithHrefProps;
-pub use HtmlElementWithHrefProps::HtmlElementWithHrefProps;
-#[allow(non_snake_case)]
 pub mod HtmlAnchorElementProps;
 pub use HtmlAnchorElementProps::HtmlAnchorElementProps;
 crate::imports::def_intrinsic_component_simple!(

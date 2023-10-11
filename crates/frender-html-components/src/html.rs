@@ -414,7 +414,7 @@ frender_macros::def_intrinsic_component_props! {
             /// This event is fired when an element or text selection is dropped on a valid drop target.
             on_drop @ "drop" events::Event,
         } [
-            pub struct HtmlElementWithHrefProps(HtmlElementWithHref) {
+            virtual {
                 download ? &str { set_download },
                 href ? &str { set_href },
                 ping ? &str { set_ping },
@@ -423,7 +423,7 @@ frender_macros::def_intrinsic_component_props! {
                 rel: bounds![
                     bounds as DomTokens,
                     csr {
-                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithHref::rel_list,
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
                     }
                 ],
                 target ? &str { set_target },
@@ -757,7 +757,7 @@ frender_macros::def_intrinsic_component_props! {
                 rel: bounds![
                     bounds as DomTokens,
                     csr {
-                        get_dom_token: crate::common::rel_list::RelList::rel_list
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
                     }
                 ],
                 sizes ? &str,
@@ -967,7 +967,7 @@ frender_macros::def_intrinsic_component_props! {
                 kind ? &str {set_kind},
                 label ? &str {set_label},
                 src ? &str {set_src},
-                src_lang ? &str {"srclang" set_srclang},
+                src_lang ? &str {"srclang" set_src_lang},
             }
         ][
             pub struct HtmlUListElementProps(HtmlUListElement : ul) {

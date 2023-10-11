@@ -2469,7 +2469,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.src_lang,
-                    |v| dom_element.set_srclang(v),
+                    |v| dom_element.set_src_lang(v),
                     || dom_element.remove_attribute("srclang").unwrap(),
                 ),
             }
@@ -2525,7 +2525,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.src_lang,
                 state.src_lang,
-                |v| dom_element.set_srclang(v),
+                |v| dom_element.set_src_lang(v),
                 || dom_element.remove_attribute("srclang").unwrap(),
             );
         }

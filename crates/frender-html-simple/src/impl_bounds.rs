@@ -157,7 +157,7 @@ macro_rules! default_impl_csr {
                 state: &mut Self::State<Renderer>,
             ) {
                 // #[allow(unused_imports)]
-                use $crate::__private::frender_html::renderer::node_behaviors::$csr_element_ty;
+                use $crate::__private::frender_html::renderer::node_behaviors::prelude::$csr_element_ty::*;
 
                 let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
                 $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
@@ -253,6 +253,8 @@ pub mod DomTokens {
                     element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
+                    use $crate::__private::frender_html::renderer::node_behaviors::prelude::$csr_element_ty::*;
+
                     let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
 
                     let input = $($bounds)*::$csr::Input {
@@ -354,6 +356,8 @@ pub mod MaybeValue {
 
     #[cfg(feature = "csr")]
     pub mod csr {
+        use std::borrow::Cow;
+
         use frender_csr::{props::UpdateElementAttribute, web_sys, CsrContext};
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
 
@@ -377,20 +381,27 @@ pub mod MaybeValue {
             V::update_with_state(this, state, updater)
         }
 
+        // TODO: remove and use UpdateElementAttribute
         pub trait AsAttributeValue {
-            fn as_attribute_value(&self) -> &str;
+            fn as_attribute_value(&self) -> Cow<str>;
         }
 
         impl AsAttributeValue for str {
-            fn as_attribute_value(&self) -> &str {
-                self
+            fn as_attribute_value(&self) -> Cow<str> {
+                Cow::Borrowed(self)
             }
         }
 
         impl AsAttributeValue for bool {
-            fn as_attribute_value(&self) -> &str {
+            fn as_attribute_value(&self) -> Cow<str> {
                 debug_assert!(*self);
-                ""
+                Cow::Borrowed("")
+            }
+        }
+
+        impl AsAttributeValue for u32 {
+            fn as_attribute_value(&self) -> Cow<str> {
+                Cow::Owned(self.to_string())
             }
         }
 
@@ -404,7 +415,7 @@ pub mod MaybeValue {
             prop_name: &'static str,
             value: &V,
         ) {
-            element.set_attribute(renderer, prop_name, value.as_attribute_value())
+            element.set_attribute(renderer, prop_name, &value.as_attribute_value())
         }
 
         pub fn default_remove<
@@ -480,6 +491,8 @@ pub mod MaybeHandleEvent {
                     element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
+                    use $crate::__private::frender_html::renderer::node_behaviors::prelude::$csr_element_ty::*;
+
                     let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
                     $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
                         this,

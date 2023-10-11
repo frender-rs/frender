@@ -883,6 +883,7 @@ dependencies = [
 name = "frender-csr-web"
 version = "0.1.0"
 dependencies = [
+ "frender-common",
  "frender-html",
  "futures-lite",
  "gloo-events 0.2.0",
@@ -945,6 +946,7 @@ dependencies = [
  "gloo",
  "gloo-events 0.2.0",
  "html-escape",
+ "js-sys",
  "pin-project-lite",
  "wasm-bindgen",
  "web-sys",

@@ -13,21 +13,4 @@ pub use css::Css;
 
 pub use frender_common::write::attrs::{AsyncWritableAttrs, IntoAsyncWritableAttrs};
 
-macro_rules! impl_many {
-    (
-        impl<__> $impl_trait:ident for each_of![$($ty:ty),* $(,)?]
-        $impl_block:tt
-    ) => {$(
-        impl $impl_trait for $ty
-        $impl_block
-    )*};
-    (
-        impl<__> $impl_trait:ident <$t:ty> for each_of![$($ty:ty),* $(,)?]
-        $impl_block:tt
-    ) => {$(
-        impl $impl_trait <$t> for $ty
-        $impl_block
-    )*};
-}
-
-pub(crate) use impl_many;
+use frender_common::impl_many;

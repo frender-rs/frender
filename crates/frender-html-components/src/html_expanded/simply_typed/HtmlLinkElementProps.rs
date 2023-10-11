@@ -585,7 +585,8 @@ mod imp {
         element as HtmlLinkElement,
         attr_name = "rel",
         csr {
-            get_dom_token: crate::common::rel_list::RelList::rel_list
+            get_mut_dom_token_list:
+                frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
         }
     ));
     crate::imports::impl_bounds!(super::props::sizes(

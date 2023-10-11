@@ -1,6 +1,8 @@
 mod keyed;
 pub use keyed::*;
 
+pub mod try_behavior;
+
 #[doc(hidden)]
 /// This is only for inner usage of frender
 pub mod utils;
@@ -28,6 +30,82 @@ macro_rules! ready_ok_rewrap_err {
                 return ::core::task::Poll::Ready(::core::result::Result::Err(e))
             }
             ::core::task::Poll::Pending => return ::core::task::Poll::Pending,
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! expand {
+    (if (                 ) { $($expand:tt)* }) => {};
+    (if ($($predicate:tt)+) { $($expand:tt)* }) => { $($expand)* };
+    ({$($t:tt)*}) => { $($t)* };
+    ({$($t:tt)*} if (                 ) $($commands:tt)*) => {
+        $crate::expand! {{      } $($commands)*}
+    };
+    ({$($t:tt)*} if ($($predicate:tt)+) $($commands:tt)*) => {
+        $crate::expand! {{$($t)*} $($commands)*}
+    };
+    ({$($t:tt)*} unless (           ) $($commands:tt)*) => {
+        $crate::expand! {{$($t)*} $($commands)*}
+    };
+    ({$($t:tt)*} unless ($($not:tt)+) $($commands:tt)*) => {
+        $crate::expand! {{      } $($commands)*}
+    };
+    ({$($t:tt)*} prepend ($($prepend:tt)*) $($commands:tt)*) => {
+        $crate::expand! {{$($prepend)* $($t)*} $($commands)*}
+    };
+    ({$($t:tt)*} append  ($($append:tt )*) $($commands:tt)*) => {
+        $crate::expand! {{$($t)* $($append )*} $($commands)*}
+    };
+    ({$($t:tt)*} do {$($do_commands:tt)*} $($commands:tt)*) => {
+        $crate::expand! {{$($t)*} $($do_commands)* $($commands)*}
+    };
+    ({$($t:tt)*} wrap {} $($commands:tt)*) => {
+        $crate::expand! {{{$($t)*}} $($commands)*}
+    };
+    ({$($t:tt)*} wrap () $($commands:tt)*) => {
+        $crate::expand! {{($($t)*)} $($commands)*}
+    };
+    // $each must be wrapped with `{}`
+    // $commands must be wrapped with `{}`
+    (while ($($each:tt)*) $commands:tt) => {
+        $($crate::expand! { $each do $commands })*
+    };
+}
+
+#[macro_export]
+macro_rules! impl_many {
+    (
+        impl<__> $impl_trait:ident for each_of![$($ty:ty),* $(,)?]
+        $impl_block:tt
+    ) => {$(
+        impl $impl_trait for $ty
+        $impl_block
+    )*};
+    (
+        impl<__> $impl_trait:ident <$t:ty> for each_of![$($ty:ty),* $(,)?]
+        $impl_block:tt
+    ) => {$(
+        impl $impl_trait <$t> for $ty
+        $impl_block
+    )*};
+    (
+        impl $(<__>)? (
+            $(Generics![$($generics:tt)*],)?
+            Trait![$($impl_trait:tt)+],
+            each_of![$($ty:ty),* $(,)?]
+            $(, $(Where![$($where_clause:tt)*] $(,)?)? )?
+        )
+        $impl_block:tt
+    ) => {
+        $crate::expand! {
+            while ($({$ty})*) {
+                prepend( impl $(<$($generics)*>)? $($impl_trait)+ for  )
+                append(
+                    $($(where $($where_clause)*)?)?
+                    $impl_block
+                )
+            }
         }
     };
 }

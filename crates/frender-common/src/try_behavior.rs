@@ -33,23 +33,6 @@ impl TryBehavior for Unwrap {
     }
 }
 
-pub struct UnwrapThrow;
-
-impl TryBehavior for UnwrapThrow {
-    fn unwrap_result<T, E>(&mut self, result: Result<T, E>) -> T
-    where
-        E: std::fmt::Debug,
-    {
-        use wasm_bindgen::UnwrapThrowExt;
-        result.unwrap_throw()
-    }
-
-    fn unwrap_option<T>(&mut self, option: Option<T>) -> T {
-        use wasm_bindgen::UnwrapThrowExt;
-        option.unwrap_throw()
-    }
-}
-
 pub trait TryWithTryBehavior<TB: TryBehavior> {
     type TryOutput;
     fn unwrap_with_behavior(self, tb: &mut TB) -> Self::TryOutput;

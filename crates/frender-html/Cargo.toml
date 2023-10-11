@@ -18,6 +18,7 @@ frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 # stack_dst = "0.8.1"
 gloo-events = { version = "0.2.0", optional = true }
+js-sys = { version = "0.3.64", optional = true }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -96,12 +97,6 @@ features = [
 
 [features]
 default = ["csr", "ssr", "web"] # TODO: remove
-csr = [
-    "dep:gloo",
-    "dep:web-sys",
-    "dep:wasm-bindgen",
-    "frender-events/csr",
-    "frender-html-common/csr",
-]
+csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen", "frender-events/csr", "frender-html-common/csr"]
 ssr = ["dep:html-escape", "dep:futures-lite"]
-web = ["dep:gloo-events"]
+web = ["dep:gloo-events", "dep:js-sys"]
