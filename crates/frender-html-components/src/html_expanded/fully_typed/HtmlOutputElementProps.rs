@@ -5,7 +5,7 @@ pub fn HtmlOutputElementProps() -> Building<TypesInitial> {
     use super::*;
     self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
-        html_for: (),
+        r#for: (),
         form: (),
         name: (),
     }
@@ -15,7 +15,7 @@ pub mod overwrite {
     #![allow(non_camel_case_types)]
     pub type HtmlElementProps<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = Value,
-        html_for = <TypeDefs as super::Types>::html_for,
+        r#for = <TypeDefs as super::Types>::r#for,
         form = <TypeDefs as super::Types>::form,
         name = <TypeDefs as super::Types>::name,
     >;
@@ -698,21 +698,21 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type html_for<TypeDefs, Value> = dyn super::Types<
+    pub type r#for<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        html_for = Value,
+        r#for = Value,
         form = <TypeDefs as super::Types>::form,
         name = <TypeDefs as super::Types>::name,
     >;
     pub type form<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        html_for = <TypeDefs as super::Types>::html_for,
+        r#for = <TypeDefs as super::Types>::r#for,
         form = Value,
         name = <TypeDefs as super::Types>::name,
     >;
     pub type name<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        html_for = <TypeDefs as super::Types>::html_for,
+        r#for = <TypeDefs as super::Types>::r#for,
         form = <TypeDefs as super::Types>::form,
         name = Value,
     >;
@@ -723,7 +723,7 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type html_for: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type r#for: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type form: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
         type name: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
@@ -734,7 +734,7 @@ pub mod data_struct {
     #[non_exhaustive]
     pub struct HtmlOutputElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
         pub HtmlElementProps: super::super::HtmlElementProps::Data<TypeDefs::HtmlElementProps>,
-        pub html_for: TypeDefs::html_for,
+        pub r#for: TypeDefs::r#for,
         pub form: TypeDefs::form,
         pub name: TypeDefs::name,
     }
@@ -749,7 +749,7 @@ mod types_initial {
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
         HtmlElementProps = HtmlElementProps::TypesInitial,
-        html_for = (),
+        r#for = (),
         form = (),
         name = (),
     >;
@@ -761,14 +761,14 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type HtmlElementProps: crate::imports::frender_csr::props::IntrinsicComponentPollReactive;
-        type html_for;
+        type r#for;
         type form;
         type name;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
-        TypeDefs::HtmlElementProps, pub html_for : TypeDefs::html_for, pub form :
+        TypeDefs::HtmlElementProps, pub r#for : TypeDefs::r#for, pub form :
         TypeDefs::form, pub name : TypeDefs::name, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
@@ -807,7 +807,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -820,7 +820,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.css(css),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -833,7 +833,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.class(class),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -846,7 +846,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.id(id),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -859,7 +859,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.part(part),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -872,7 +872,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -885,7 +885,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_error(on_error),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -898,7 +898,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -913,7 +913,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_security_policy_violation(on_security_policy_violation),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -926,7 +926,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_select(on_select),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -939,7 +939,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -952,7 +952,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -965,7 +965,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -978,7 +978,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -991,7 +991,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1006,7 +1006,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_start(on_composition_start),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1021,7 +1021,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_update(on_composition_update),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1034,7 +1034,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1047,7 +1047,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1060,7 +1060,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1073,7 +1073,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1088,7 +1088,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_change(on_fullscreen_change),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1103,7 +1103,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_error(on_fullscreen_error),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1116,7 +1116,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1129,7 +1129,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1142,7 +1142,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1155,7 +1155,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_click(on_click),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1168,7 +1168,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1181,7 +1181,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1194,7 +1194,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1207,7 +1207,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1220,7 +1220,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1233,7 +1233,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1246,7 +1246,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1259,7 +1259,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1272,7 +1272,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1285,7 +1285,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1298,7 +1298,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1311,7 +1311,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1324,7 +1324,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1339,7 +1339,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.access_key(access_key),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1354,7 +1354,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1369,7 +1369,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1382,7 +1382,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1397,7 +1397,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1410,7 +1410,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.dir(dir),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1425,7 +1425,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.draggable(draggable),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1440,7 +1440,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1453,7 +1453,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.hidden(hidden),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1466,7 +1466,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.inert(inert),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1481,7 +1481,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1494,7 +1494,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.is(is),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1507,7 +1507,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_id(item_id),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1520,7 +1520,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1533,7 +1533,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1548,7 +1548,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1561,7 +1561,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_type(item_type),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1574,7 +1574,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.lang(lang),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1587,7 +1587,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.nonce(nonce),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1600,7 +1600,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.role(role),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1613,7 +1613,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.slot(slot),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1628,7 +1628,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1641,7 +1641,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.style(style),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1654,7 +1654,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1667,7 +1667,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.title(title),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1680,7 +1680,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.translate(translate),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1697,7 +1697,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .virtual_keyboard_policy(virtual_keyboard_policy),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1710,7 +1710,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1725,7 +1725,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_cancel(on_animation_cancel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1738,7 +1738,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1753,7 +1753,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_iteration(on_animation_iteration),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1766,7 +1766,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1779,7 +1779,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1792,7 +1792,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_input(on_input),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1805,7 +1805,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_change(on_change),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1820,7 +1820,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_got_pointer_capture(on_got_pointer_capture),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1835,7 +1835,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_lost_pointer_capture(on_lost_pointer_capture),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1848,7 +1848,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1861,7 +1861,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1874,7 +1874,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1887,7 +1887,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1900,7 +1900,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1913,7 +1913,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1926,7 +1926,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1939,7 +1939,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1954,7 +1954,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_cancel(on_transition_cancel),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1967,7 +1967,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1980,7 +1980,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -1995,7 +1995,7 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_start(on_transition_start),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2008,7 +2008,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2021,7 +2021,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2034,7 +2034,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2047,7 +2047,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2060,7 +2060,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2073,7 +2073,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2086,19 +2086,19 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name: self.name,
             }
         }
         #[inline(always)]
-        pub fn html_for<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+        pub fn r#for<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            html_for: V,
-        ) -> super::Building<super::overwrite::html_for<TypeDefs, V>> {
+            r#for: V,
+        ) -> super::Building<super::overwrite::r#for<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                html_for,
+                r#for,
                 form: self.form,
                 name: self.name,
             }
@@ -2110,7 +2110,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::form<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form,
                 name: self.name,
             }
@@ -2122,7 +2122,7 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::name<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                html_for: self.html_for,
+                r#for: self.r#for,
                 form: self.form,
                 name,
             }
@@ -2134,20 +2134,20 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlOutputElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlOutputElement>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::State,
-                html_for = <TypeDefs::html_for as ::frender_html::props::MaybeUpdateValueWithState<
+                r#for = <TypeDefs::r#for as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
                 form = <TypeDefs::form as ::frender_html::props::MaybeUpdateValueWithState<
@@ -2160,7 +2160,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlOutputElement,
+            element: &HtmlOutputElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -2168,12 +2168,12 @@ mod impl_update_element {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                html_for: <TypeDefs::html_for as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                r#for: <TypeDefs::r#for as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
-                    this.html_for,
+                    this.r#for,
                     |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                         v,
                         dom_element,
@@ -2203,7 +2203,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlOutputElement,
+            element: &HtmlOutputElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
@@ -2215,16 +2215,18 @@ mod impl_update_element {
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::html_for as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+            <TypeDefs::r#for as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 str,
             >>::maybe_update_value_with_state(
-                this.html_for,
-                state.html_for,
-                |v| crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
+                this.r#for,
+                state.r#for,
+                |v| {
+                    crate::imports::frender_csr::props::UpdateElementAttribute::update_element_attribute(
                     v,
                     dom_element,
                     "for",
-                ),
+                )
+                },
                 || dom_element.remove_attribute("for").unwrap(),
             );
             <TypeDefs::form as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2287,9 +2289,9 @@ mod impl_into_ssr_data {
                     .chain(
                         ::frender_ssr::utils::filter::FilterIdentity(
                             [
-                                <TypeDefs::html_for as ::frender_html::props::MaybeUpdateValueWithState<
+                                <TypeDefs::r#for as ::frender_html::props::MaybeUpdateValueWithState<
                                     str,
-                                >>::maybe_into_html_attribute_value(this.html_for)
+                                >>::maybe_into_html_attribute_value(this.r#for)
                                     .map(|value| (
                                         ::std::borrow::Cow::Borrowed("for"),
                                         if let Some(value) = value {

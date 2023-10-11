@@ -2269,32 +2269,30 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlAudioElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlAudioElement>
         for super::Data<TypeDefs>
     where
         HtmlMediaElementProps::Data<TypeDefs::HtmlMediaElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlMediaElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlMediaElement>,
     {
         type State = <HtmlMediaElementProps::Data<
             TypeDefs::HtmlMediaElementProps,
-        > as crate::imports::frender_csr::props::UpdateElement<
-            web_sys::HtmlMediaElement,
-        >>::State;
+        > as crate::imports::frender_csr::props::UpdateElement<HtmlMediaElement>>::State;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlAudioElement,
+            element: &HtmlAudioElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
             <HtmlMediaElementProps::Data<
                 TypeDefs::HtmlMediaElementProps,
             > as crate::imports::frender_csr::props::UpdateElement<
-                web_sys::HtmlMediaElement,
+                HtmlMediaElement,
             >>::initialize_state(this.HtmlMediaElementProps, element, children_ctx)
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlAudioElement,
+            element: &HtmlAudioElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {

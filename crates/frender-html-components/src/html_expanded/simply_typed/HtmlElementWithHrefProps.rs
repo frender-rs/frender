@@ -1,6 +1,6 @@
 def_props_type!(
     #[derive(Debug, Clone, Copy, Default)]
-    HtmlTextAreaElementProps(
+    HtmlElementWithHrefProps(
         ..HtmlElementProps(
             ..ElementProps(
                 children,
@@ -448,19 +448,12 @@ def_props_type!(
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
         ),
-        auto_complete: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        auto_correct: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        cols: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<u32>],
-        disabled: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
-        form: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        max_length: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<i32>],
-        min_length: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<i32>],
-        name: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        placeholder: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
-        read_only: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
-        required: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<bool>],
-        rows: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<u32>],
-        wrap: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        download: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        href: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        ping: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        referrer_policy: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
+        rel: bounds![DomTokens::Bounds],
+        target: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
     )
 );
 #[cfg(feature = "csr")]
@@ -468,131 +461,62 @@ mod imp {
     #![allow(unused_variables)]
     #[allow(unused_imports)]
     use super::super::*;
-    crate::imports::impl_bounds!(super::props::auto_complete(
+    crate::imports::impl_bounds!(super::props::download(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "autocomplete",
+        element as HtmlElementWithHref,
+        attr_name = "download",
         csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_auto_complete(renderer, v),
+            update: |el: &mut ET::HtmlElementWithHref<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_download(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
-    crate::imports::impl_bounds!(super::props::auto_correct(
+    crate::imports::impl_bounds!(super::props::href(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "auto_correct",
+        element as HtmlElementWithHref,
+        attr_name = "href",
         csr {
-            update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
+            update: |el: &mut ET::HtmlElementWithHref<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_href(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
-    crate::imports::impl_bounds!(super::props::cols(
-        bounds as crate::imports::impl_bounds::MaybeValue<u32>,
-        element as HtmlTextAreaElement,
-        attr_name = "cols",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_cols(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::disabled(
-        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
-        element as HtmlTextAreaElement,
-        attr_name = "disabled",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_disabled(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::form(
+    crate::imports::impl_bounds!(super::props::ping(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "form",
+        element as HtmlElementWithHref,
+        attr_name = "ping",
         csr {
-            update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
+            update: |el: &mut ET::HtmlElementWithHref<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_ping(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
-    crate::imports::impl_bounds!(super::props::max_length(
-        bounds as crate::imports::impl_bounds::MaybeValue<i32>,
-        element as HtmlTextAreaElement,
-        attr_name = "maxlength",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_max_length(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::min_length(
-        bounds as crate::imports::impl_bounds::MaybeValue<i32>,
-        element as HtmlTextAreaElement,
-        attr_name = "minlength",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_min_length(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::name(
+    crate::imports::impl_bounds!(super::props::referrer_policy(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "name",
+        element as HtmlElementWithHref,
+        attr_name = "referrerpolicy",
         csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_name(renderer, v),
+            update: |el: &mut ET::HtmlElementWithHref<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_referrer_policy(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
-    crate::imports::impl_bounds!(super::props::placeholder(
+    crate::imports::impl_bounds!(super::props::rel(
+        bounds as DomTokens,
+        element as HtmlElementWithHref,
+        attr_name = "rel",
+        csr {
+            get_mut_dom_token_list:
+                frender_html::renderer::node_behaviors::HtmlElementWithHref::rel_list,
+        }
+    ));
+    crate::imports::impl_bounds!(super::props::target(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "placeholder",
+        element as HtmlElementWithHref,
+        attr_name = "target",
         csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_placeholder(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::read_only(
-        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
-        element as HtmlTextAreaElement,
-        attr_name = "readonly",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_read_only(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::required(
-        bounds as crate::imports::impl_bounds::MaybeValue<bool>,
-        element as HtmlTextAreaElement,
-        attr_name = "required",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_required(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::rows(
-        bounds as crate::imports::impl_bounds::MaybeValue<u32>,
-        element as HtmlTextAreaElement,
-        attr_name = "rows",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, &v: &_| el
-                .set_rows(renderer, v),
-            remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
-        },
-    ));
-    crate::imports::impl_bounds!(super::props::wrap(
-        bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as HtmlTextAreaElement,
-        attr_name = "wrap",
-        csr {
-            update: |el: &mut ET::HtmlTextAreaElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_wrap(renderer, v),
+            update: |el: &mut ET::HtmlElementWithHref<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_target(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));

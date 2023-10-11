@@ -11,7 +11,7 @@ frender_macros::def_intrinsic_component_props! {
     fully_typed (pub mod fully_typed  "fully-typed" )
     simply_typed(pub mod simply_typed "simply-typed")
 
-    pub struct ElementProps (web_sys::Element) {
+    pub struct ElementProps (Element) {
         children: () = () => {
             dom {
                 bounds[::frender_core::UpdateRenderState<::frender_csr::Dom>]
@@ -28,7 +28,7 @@ frender_macros::def_intrinsic_component_props! {
         class: bounds![
             bounds as DomTokens,
             csr {
-                get_dom_token: web_sys::Element::class_list
+                get_mut_dom_token_list: frender_html::renderer::node_behaviors::Element::class_list,
             }
         ],
         id ? &str {set_id},
@@ -189,7 +189,7 @@ frender_macros::def_intrinsic_component_props! {
         on_touch_start @ "touchstart" events::TouchEvent,
     } [
         pub struct HtmlElementProps (
-            web_sys::HtmlElement :
+            HtmlElement :
                 abbr,
                 address,
                 article,
@@ -250,7 +250,11 @@ frender_macros::def_intrinsic_component_props! {
                 bounds as MaybeContentEditable,
                 attr_name = "contenteditable",
                 csr {
-                    update: |v: &_, el: &web_sys::HtmlElement, _attr_name: &_| el.set_content_editable(v),
+                    update: |el: &mut _, renderer: &mut _, _, v: &_| {
+                        frender_html::renderer::node_behaviors::HtmlElement::set_content_editable(
+                            el, renderer, v,
+                        )
+                    },
                     remove: MaybeContentEditable::csr::default_remove,
                 },
             ],
@@ -410,7 +414,7 @@ frender_macros::def_intrinsic_component_props! {
             /// This event is fired when an element or text selection is dropped on a valid drop target.
             on_drop @ "drop" events::Event,
         } [
-            virtual {
+            pub struct HtmlElementWithHrefProps(HtmlElementWithHref) {
                 download ? &str { set_download },
                 href ? &str { set_href },
                 ping ? &str { set_ping },
@@ -419,28 +423,28 @@ frender_macros::def_intrinsic_component_props! {
                 rel: bounds![
                     bounds as DomTokens,
                     csr {
-                        get_dom_token: crate::common::rel_list::RelList::rel_list
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithHref::rel_list,
                     }
                 ],
                 target ? &str { set_target },
             } [
-                pub struct HtmlAnchorElementProps(web_sys::HtmlAnchorElement : a) {
-                    href_lang ? &str { "hreflang" set_hreflang },
+                pub struct HtmlAnchorElementProps(HtmlAnchorElement : a) {
+                    href_lang ? &str { "hreflang" set_href_lang },
                     #[intrinsic_component(alias(type_))]
                     r#type ? &str {"type" set_type},
                 }
             ][
-                pub struct HtmlAreaElementProps(web_sys::HtmlAreaElement : area) {
+                pub struct HtmlAreaElementProps(HtmlAreaElement : area) {
                     alt ? &str {set_alt},
                     coords ? &str {set_coords},
                     shape ? &str {set_shape},
                 }
             ]
         ][
-            pub struct HtmlMediaElementProps(web_sys::HtmlMediaElement) {
-                auto_play ? bool {"autoplay" set_autoplay},
+            pub struct HtmlMediaElementProps(HtmlMediaElement) {
+                auto_play ? bool {"autoplay" set_auto_play},
                 controls ? bool {set_controls},
-                cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
+                cross_origin ? &str {"crossorigin" [update |Self { element, renderer, value }| element.set_cross_origin(renderer, Some(value)) ] [remove |Self { element, renderer }| element.set_cross_origin(renderer, None)]},
                 #[intrinsic_component(alias(loop_))]
                 r#loop ? bool {"loop" set_loop},
                 muted ? bool {set_muted},
@@ -538,10 +542,10 @@ frender_macros::def_intrinsic_component_props! {
                 /// Fired when playback has stopped because of a temporary lack of data.
                 on_waiting @ "waiting" events::Event,
             } [
-                pub struct HtmlAudioElementProps(web_sys::HtmlAudioElement : audio) {
+                pub struct HtmlAudioElementProps(HtmlAudioElement : audio) {
                 }
             ][
-                pub struct HtmlVideoElementProps(web_sys::HtmlVideoElement : video) {
+                pub struct HtmlVideoElementProps(HtmlVideoElement : video) {
                     height ? u32 {set_height},
                     plays_inline ? bool {"playsinline"},
                     poster ? &str {set_poster},
@@ -549,28 +553,28 @@ frender_macros::def_intrinsic_component_props! {
                 }
             ]
         ][
-            pub struct HtmlBaseElementProps(web_sys::HtmlBaseElement : base) {
+            pub struct HtmlBaseElementProps(HtmlBaseElement : base) {
                 href ? &str { set_href },
                 target ? &str { set_target },
             }
         ][
-            pub struct HtmlQuoteElementProps(web_sys::HtmlQuoteElement: blockquote, q) {
+            pub struct HtmlQuoteElementProps(HtmlQuoteElement: blockquote, q) {
                 cite ? &str { set_cite },
             }
         ][
-            pub struct HtmlBodyElementProps(web_sys::HtmlBodyElement : body) {
+            pub struct HtmlBodyElementProps(HtmlBodyElement : body) {
                 // TODO:
                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
                 #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
                 alink ? &str,
             }
         ][
-            pub struct HtmlBrElementProps(web_sys::HtmlBrElement : br) {
+            pub struct HtmlBrElementProps(HtmlBrElement : br) {
                 #[deprecated]
                 clear ? &str {set_clear},
             }
         ][
-            pub struct HtmlButtonElementProps(web_sys::HtmlButtonElement : button) {
+            pub struct HtmlButtonElementProps(HtmlButtonElement : button) {
                 disabled ? bool {set_disabled},
                 form ? &str,
                 form_action ? &str {"formaction" set_form_action},
@@ -584,34 +588,34 @@ frender_macros::def_intrinsic_component_props! {
                 value ? &str {set_value},
             }
         ][
-            pub struct HtmlCanvasElementProps(web_sys::HtmlCanvasElement : canvas) {
+            pub struct HtmlCanvasElementProps(HtmlCanvasElement : canvas) {
                 height ? u32 {set_height},
                 width ? u32 {set_width},
             }
         ][
-            pub struct HtmlTableCaptionElementProps(web_sys::HtmlTableCaptionElement : caption) {
+            pub struct HtmlTableCaptionElementProps(HtmlTableCaptionElement : caption) {
                 #[deprecated = "Do not use this attribute, as it has been deprecated. The <caption> element should be styled using the CSS properties caption-side and text-align."]
                 align ? &str {set_align},
             }
         ][
-            pub struct HtmlDataElementProps(web_sys::HtmlDataElement : data) {
+            pub struct HtmlDataElementProps(HtmlDataElement : data) {
                 value ? &str {set_value},
             }
         ][
-            pub struct HtmlModElementProps(web_sys::HtmlModElement: del, ins) {
+            pub struct HtmlModElementProps(HtmlModElement: del, ins) {
                 cite ? &str {set_cite},
                 date_time ? &str {"datetime" set_date_time},
             }
         ][
-            pub struct HtmlDetailsElementProps(web_sys::HtmlDetailsElement : details) {
+            pub struct HtmlDetailsElementProps(HtmlDetailsElement : details) {
                 open ? bool {set_open},
             }
         ][
-            pub struct HtmlDialogElementProps(web_sys::HtmlDialogElement : dialog) {
+            pub struct HtmlDialogElementProps(HtmlDialogElement : dialog) {
                 open ? bool {set_open},
             }
         ][
-            pub struct HtmlEmbedElementProps(web_sys::HtmlEmbedElement : embed) {
+            pub struct HtmlEmbedElementProps(HtmlEmbedElement : embed) {
                 height ? &str {set_height},
                 src ? &str {set_src},
                 #[intrinsic_component(alias(type_))]
@@ -619,17 +623,17 @@ frender_macros::def_intrinsic_component_props! {
                 width ? &str {set_width},
             }
         ][
-            pub struct HtmlFieldSetElementProps(web_sys::HtmlFieldSetElement : fieldset) {
+            pub struct HtmlFieldSetElementProps(HtmlFieldSetElement : fieldset) {
                 disabled ? bool {set_disabled},
                 form ? &str,
                 name ? &str {set_name},
             }
         ][
-            pub struct HtmlFormElementProps(web_sys::HtmlFormElement : form) {
+            pub struct HtmlFormElementProps(HtmlFormElement : form) {
                 #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
                 accept ? &str,
                 accept_charset ? &str {"accept-charset" set_accept_charset},
-                auto_complete ? &str {"autocomplete" set_autocomplete},
+                auto_complete ? &str {"autocomplete" set_auto_complete},
                 name ? &str {set_name},
                 rel ? &str, // TODO: bounds![]
                 action ? &str {set_action},
@@ -654,11 +658,11 @@ frender_macros::def_intrinsic_component_props! {
                 on_submit @ "submit" events::Event,
             }
         ][
-            pub struct HtmlHtmlElementProps(web_sys::HtmlHtmlElement : html) {
+            pub struct HtmlHtmlElementProps(HtmlHtmlElement : html) {
                 xmlns ? &str,
             }
         ][
-            pub struct HtmlIFrameElementProps(web_sys::HtmlIFrameElement : iframe) {
+            pub struct HtmlIFrameElementProps(HtmlIFrameElement : iframe) {
                 allow ? &str,
                 allow_fullscreen ? bool {"allowfullscreen" set_allow_fullscreen},
                 allow_payment_request ? bool {"allowpaymentrequest" set_allow_payment_request},
@@ -676,9 +680,9 @@ frender_macros::def_intrinsic_component_props! {
                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#deprecated_attributes
             }
         ][
-            pub struct HtmlImageElementProps(web_sys::HtmlImageElement : img) {
+            pub struct HtmlImageElementProps(HtmlImageElement : img) {
                 alt ? &str {set_alt},
-                cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
+                cross_origin ? &str {"crossorigin" [update |Self { element, renderer, value }| element.set_cross_origin(renderer, Some(value)) ] [remove |Self { element, renderer }| element.set_cross_origin(renderer, None)]},
                 decoding ? &str {set_decoding},
                 element_timing ? &str {"elementtiming"},
                 height ? u32 {set_height},
@@ -692,10 +696,10 @@ frender_macros::def_intrinsic_component_props! {
                 use_map ? &str {"usemap" set_use_map},
             }
         ][
-            pub struct HtmlInputElementProps(web_sys::HtmlInputElement : input) {
+            pub struct HtmlInputElementProps(HtmlInputElement : input) {
                 accept ? &str {set_accept},
                 alt ? &str {set_alt},
-                auto_complete ? &str {"autocomplete" set_autocomplete},
+                auto_complete ? &str {"autocomplete" set_auto_complete},
                 capture ? &str,
                 checked ? bool {set_checked},
                 dirname ? &str,
@@ -727,18 +731,19 @@ frender_macros::def_intrinsic_component_props! {
                 width ? u32 {set_width},
             }
         ][
-            pub struct HtmlLabelElementProps(web_sys::HtmlLabelElement : label) {
-                html_for ? &str {"for" set_html_for},
+            pub struct HtmlLabelElementProps(HtmlLabelElement : label) {
+                #[intrinsic_component(alias(html_for))]
+                r#for ? &str {"for" set_html_for},
             }
         ][
-            pub struct HtmlLiElementProps(web_sys::HtmlLiElement : li) {
+            pub struct HtmlLiElementProps(HtmlLiElement : li) {
                 value ? i32 {set_value},
             }
         ][
-            pub struct HtmlLinkElementProps(web_sys::HtmlLinkElement : link) {
+            pub struct HtmlLinkElementProps(HtmlLinkElement : link) {
                 #[intrinsic_component(alias(as_))]
                 r#as ? &str {"as" set_as},
-                cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
+                cross_origin ? &str {"crossorigin" [update |Self { element, renderer, value }| element.set_cross_origin(renderer, Some(value)) ] [remove |Self { element, renderer }| element.set_cross_origin(renderer, None)]},
                 fetch_priority ? &str {"fetchpriority"},
                 href ? &str { set_href },
                 href_lang ? &str { "hreflang" set_hreflang },
@@ -761,18 +766,18 @@ frender_macros::def_intrinsic_component_props! {
                 blocking ? &str,
             }
         ][
-            pub struct HtmlMapElementProps(web_sys::HtmlMapElement : map) {
+            pub struct HtmlMapElementProps(HtmlMapElement : map) {
                 name ? &str {set_name},
             }
         ][
-            pub struct HtmlMetaElementProps(web_sys::HtmlMetaElement : meta) {
+            pub struct HtmlMetaElementProps(HtmlMetaElement : meta) {
                 charset ? &str,
                 content ? &str {set_content},
                 http_equiv ? &str {"http-equiv" set_http_equiv},
                 name ? &str {set_name},
             }
         ][
-            pub struct HtmlMeterElementProps(web_sys::HtmlMeterElement : meter) {
+            pub struct HtmlMeterElementProps(HtmlMeterElement : meter) {
                 value ? f64 {set_value},
                 min ? f64 {set_min},
                 max ? f64 {set_max},
@@ -781,7 +786,7 @@ frender_macros::def_intrinsic_component_props! {
                 optimum ? f64 {set_optimum},
             }
         ][
-            pub struct HtmlObjectElementProps(web_sys::HtmlObjectElement : object) {
+            pub struct HtmlObjectElementProps(HtmlObjectElement : object) {
                 data ? &str {set_data},
                 form ? &str,
                 height ? &str {set_height},
@@ -792,44 +797,45 @@ frender_macros::def_intrinsic_component_props! {
                 width ? &str {set_width},
             }
         ][
-            pub struct HtmlOListElementProps(web_sys::HtmlOListElement : ol) {
+            pub struct HtmlOListElementProps(HtmlOListElement : ol) {
                 reversed ? bool {set_reversed},
                 start ? i32 {set_start},
                 #[intrinsic_component(alias(type_))]
                 r#type ? &str {"type" set_type},
             }
         ][
-            pub struct HtmlOptGroupElementProps(web_sys::HtmlOptGroupElement : optgroup) {
+            pub struct HtmlOptGroupElementProps(HtmlOptGroupElement : optgroup) {
                 disabled ? bool {set_disabled},
                 label ? &str {set_label},
             }
         ][
-            pub struct HtmlOptionElementProps(web_sys::HtmlOptionElement : option) {
+            pub struct HtmlOptionElementProps(HtmlOptionElement : option) {
                 disabled ? bool {set_disabled},
                 label ? &str {set_label},
                 selected ? bool {set_selected},
                 value ? &str {set_value},
             }
         ][
-            pub struct HtmlOutputElementProps(web_sys::HtmlOutputElement : output) {
-                html_for ? &str {"for"},
+            pub struct HtmlOutputElementProps(HtmlOutputElement : output) {
+                #[intrinsic_component(alias(html_for))]
+                r#for ? &str {"for"},
                 form ? &str,
                 name ? &str {set_name},
             }
         ][
-            pub struct HtmlProgressElementProps(web_sys::HtmlProgressElement : progress) {
+            pub struct HtmlProgressElementProps(HtmlProgressElement : progress) {
                 max ? f64 {set_max},
                 value ? f64 {set_value},
             }
         ][
             pub struct HtmlScriptElementProps(
-                web_sys::HtmlScriptElement :
+                HtmlScriptElement :
                     script {
                         special_children: __,
                     }
             ) {
                 r#async ? bool {set_async},
-                cross_origin ? &str {"crossorigin" [update el |v:&_| el.set_cross_origin(Some(v)) ] [remove el || el.set_cross_origin(None)]},
+                cross_origin ? &str {"crossorigin" [update |Self { element, renderer, value }| element.set_cross_origin(renderer, Some(value)) ] [remove |Self { element, renderer }| element.set_cross_origin(renderer, None)]},
                 defer ? bool {set_defer},
                 fetch_priority ? &str {"fetchpriority"},
                 integrity ? &str {set_integrity},
@@ -841,8 +847,8 @@ frender_macros::def_intrinsic_component_props! {
                 blocking ? &str,
             }
         ][
-            pub struct HtmlSelectElementProps(web_sys::HtmlSelectElement : select) {
-                auto_complete ? &str {"autocomplete" set_autocomplete},
+            pub struct HtmlSelectElementProps(HtmlSelectElement : select) {
+                auto_complete ? &str {"autocomplete" set_auto_complete},
                 disabled ? bool {set_disabled},
                 form ? &str,
                 multiple ? bool {set_multiple},
@@ -851,11 +857,11 @@ frender_macros::def_intrinsic_component_props! {
                 size ? u32 {set_size},
             }
         ][
-            pub struct HtmlSlotElementProps(web_sys::HtmlSlotElement : slot) {
+            pub struct HtmlSlotElementProps(HtmlSlotElement : slot) {
                 name ? &str {set_name},
             }
         ][
-            pub struct HtmlSourceElementProps(web_sys::HtmlSourceElement : source) {
+            pub struct HtmlSourceElementProps(HtmlSourceElement : source) {
                 #[intrinsic_component(alias(type_))]
                 r#type ? &str {set_type},
                 src ? &str {set_src},
@@ -866,7 +872,7 @@ frender_macros::def_intrinsic_component_props! {
                 width ? u32,
             }
         ][
-            pub struct HtmlStyleElementProps(web_sys::HtmlStyleElement : style) {
+            pub struct HtmlStyleElementProps(HtmlStyleElement : style) {
                 media ? &str {set_media},
                 blocking ? &str,
                 #[deprecated = "This attribute should not be provided: if it is, the only permitted values are the empty string or a case-insensitive match for \"text/css.\""]
@@ -874,7 +880,7 @@ frender_macros::def_intrinsic_component_props! {
                 r#type ? &str {set_type},
             }
         ][
-            pub struct HtmlTableElementProps(web_sys::HtmlTableElement : table) {
+            pub struct HtmlTableElementProps(HtmlTableElement : table) {
                 #[deprecated]
                 align ? &str {set_align},
                 #[deprecated]
@@ -907,19 +913,19 @@ frender_macros::def_intrinsic_component_props! {
                 #[deprecated]
                 v_align ? &str {"valign" set_v_align},
             } [
-                pub struct HtmlTableSectionElementProps(web_sys::HtmlTableSectionElement : tbody, tfoot, thead) {
+                pub struct HtmlTableSectionElementProps(HtmlTableSectionElement : tbody, tfoot, thead) {
                 }
             ][
-                pub struct HtmlTableRowElementProps(web_sys::HtmlTableRowElement : tr) {
+                pub struct HtmlTableRowElementProps(HtmlTableRowElement : tr) {
                 }
             ][
-                pub struct HtmlTableColElementProps(web_sys::HtmlTableColElement : col, colgroup) {
+                pub struct HtmlTableColElementProps(HtmlTableColElement : col, colgroup) {
                     span ? u32 {set_span},
                     #[deprecated]
                     width ? &str {set_width},
                 }
             ][
-                pub struct HtmlTableCellElementProps(web_sys::HtmlTableCellElement : td, th) {
+                pub struct HtmlTableCellElementProps(HtmlTableCellElement : td, th) {
                     col_span ? u32 {"colspan" set_col_span},
                     headers ? &str {set_headers},
                     row_span ? u32 {"rowspan" set_row_span},
@@ -936,8 +942,8 @@ frender_macros::def_intrinsic_component_props! {
                 }
             ]
         ][
-            pub struct HtmlTextAreaElementProps(web_sys::HtmlTextAreaElement : textarea) {
-                auto_complete ? &str {"autocomplete" set_autocomplete},
+            pub struct HtmlTextAreaElementProps(HtmlTextAreaElement : textarea) {
+                auto_complete ? &str {"autocomplete" set_auto_complete},
                 auto_correct ? &str,
                 cols ? u32 {set_cols},
                 disabled ? bool {set_disabled},
@@ -952,11 +958,11 @@ frender_macros::def_intrinsic_component_props! {
                 wrap ? &str {set_wrap},
             }
         ][
-            pub struct HtmlTimeElementProps(web_sys::HtmlTimeElement : time) {
+            pub struct HtmlTimeElementProps(HtmlTimeElement : time) {
                 date_time ? &str {"datetime" set_date_time},
             }
         ][
-            pub struct HtmlTrackElementProps(web_sys::HtmlTrackElement : track) {
+            pub struct HtmlTrackElementProps(HtmlTrackElement : track) {
                 default ? bool {set_default},
                 kind ? &str {set_kind},
                 label ? &str {set_label},
@@ -964,7 +970,7 @@ frender_macros::def_intrinsic_component_props! {
                 src_lang ? &str {"srclang" set_srclang},
             }
         ][
-            pub struct HtmlUListElementProps(web_sys::HtmlUListElement : ul) {
+            pub struct HtmlUListElementProps(HtmlUListElement : ul) {
                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
                 compact ? bool {set_compact},
                 #[deprecated = "Do not use this attribute, as it has been deprecated; use the CSS list-style-type property instead."]

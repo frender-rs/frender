@@ -21,4 +21,6 @@ features = [
     "Event",
     "Text",
     "Node",
+    "HtmlMenuElement",
+    "HtmlPictureElement",
 ]

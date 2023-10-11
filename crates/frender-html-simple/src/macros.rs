@@ -74,6 +74,24 @@ macro_rules! __impl_builder_fn {
 #[macro_export]
 macro_rules! __impl_builder_fn_with_prop_name {
     (
+        @[$($attrs:tt)*][[
+            #[event($($event_path:tt)*)]
+            $($bounds:tt)+
+        ]]
+        $name:ident($prop_name:ident)
+    ) => {
+        $($attrs)*
+        #[inline(always)]
+        pub fn $name<V : $($bounds)+ <dyn $($event_path)* ::Event>>(
+            self,
+            $name: V,
+        ) -> super::Building<Children, (Attrs, super::props::$prop_name<V>)> {
+            super::Building(super::Data {
+                props: self.0.props.chain_prop(super::props::$prop_name($name)),
+            })
+        }
+    };
+    (
         @[$($attrs:tt)*][$([ $($bounds:tt)+ ])?]
         $name:ident($prop_name:ident)
     ) => {

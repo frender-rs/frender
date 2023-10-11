@@ -2,7 +2,6 @@ use frender::prelude::*;
 use hooks::{prelude::*, shared_state::SharedState};
 
 component_fn!(
-    #[component(csr)]
     #[inline]
     fn Counter(initial_value: u32) {
         let state = h!(use_shared_state(initial_value));
@@ -105,7 +104,7 @@ component_fn!(
     #[component(csr, main)]
     fn Main() {
         intrinsic!(
-            div.style(
+            div.id("a").style(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;
@@ -113,7 +112,8 @@ max-width: 768px;
             )[[
                 h1[[
                     "Counter & Timer (without proc-macro) - ",
-                    i[[a.href("https://github.com/frender-rs/frender")
+                    div[[a
+                        .href("https://github.com/frender-rs/frender")
                         .target("_blank")[[b.children("f"), "render"]]]]
                 ]],
                 main.children((

@@ -253,6 +253,12 @@ mod simple {
                         $component_options_or_semi
                         $component_name
                     }
+
+                    impl crate::imports::frender_html::IntrinsicComponent for $component_name {
+                        const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
+                        type ElementType = $crate::imports::frender_html::element_types::$component_name;
+                        type ElementTagType = $crate::imports::frender_html::element_tag_types::EncloseAnyElement;
+                    }
                 }
                 pub use struct_component_type::$component_name as ComponentType;
 
@@ -260,10 +266,6 @@ mod simple {
                 mod impl_dom {
                     #[allow(unused_imports)]
                     use super::super::*;
-
-                    impl crate::imports::frender_html_simple::DomIntrinsicComponent for super::ComponentType {
-                        $item_type_element
-                    }
                 }
 
                 #[cfg(feature = "ssr")]

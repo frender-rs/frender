@@ -1,14 +1,4 @@
 use crate::Element;
-use wasm_bindgen::JsValue;
-
-use crate::CsrContext;
-
-fn js_value_from_deref<V: Copy>(v: &V) -> JsValue
-where
-    JsValue: From<V>,
-{
-    JsValue::from(*v)
-}
 
 macro_rules! impl_render_scalar {
     (
@@ -29,54 +19,10 @@ impl_render_scalar!(
             bool,
         }
     {
-        type CsrState = super::str::State<Self>;
+        type RenderState<R: crate::RenderHtml> = Option<super::str::State<Self, R::Text>>;
 
-        #[inline]
-        fn into_csr_state(self, ctx: &mut CsrContext) -> Self::CsrState {
-            Self::CsrState::initialize_with_js_value(self, ctx, js_value_from_deref)
-        }
-
-        #[inline]
-        fn update_csr_state_maybe_reposition(
-            self,
-            ctx: &mut crate::CsrContext,
-            state: std::pin::Pin<&mut Self::CsrState>,
-            force_reposition: bool,
-        ) {
-            state.get_mut().update_with_js_value_maybe_reposition(
-                self,
-                ctx,
-                js_value_from_deref,
-                force_reposition,
-            );
+        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+            super::str::render_update_maybe_reposition::<Self, Self, Self, _>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
         }
     }
 );
-
-fn char_to_js_string(v: &char) -> js_sys::JsString {
-    (*v).into()
-}
-
-impl Element for char {
-    type CsrState = super::str::State<Self>;
-
-    #[inline]
-    fn into_csr_state(self, ctx: &mut CsrContext) -> Self::CsrState {
-        Self::CsrState::initialize_with_js_string(self, ctx, char_to_js_string)
-    }
-
-    #[inline]
-    fn update_csr_state_maybe_reposition(
-        self,
-        ctx: &mut crate::CsrContext,
-        state: std::pin::Pin<&mut Self::CsrState>,
-        force_reposition: bool,
-    ) {
-        state.get_mut().update_with_js_string_maybe_reposition(
-            self,
-            ctx,
-            char_to_js_string,
-            force_reposition,
-        );
-    }
-}

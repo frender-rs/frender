@@ -305,8 +305,13 @@ dependencies = [
 [[package]]
 name = "callable"
 version = "0.3.0"
+
+[[package]]
+name = "callable"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dfe1c80307d206716b5aa437968947ac764c54164e3140485f1cc2d98e0f3a39"
+replace = "callable 0.3.0"
 
 [[package]]
 name = "cc"
@@ -906,7 +911,7 @@ version = "0.1.0"
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
- "callable",
+ "callable 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "gloo",
  "static_assertions",
  "wasm-bindgen",
@@ -938,6 +943,7 @@ dependencies = [
  "futures-lite",
  "ghost-lite",
  "gloo",
+ "gloo-events 0.2.0",
  "html-escape",
  "pin-project-lite",
  "wasm-bindgen",

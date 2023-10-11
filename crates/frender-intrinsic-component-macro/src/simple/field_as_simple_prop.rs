@@ -7,14 +7,14 @@ use quote::quote;
 use syn::parse_quote;
 
 use crate::{
-    BoundsPath, Field, FieldDeclaration, FieldDeclarationEventListener,
+    BoundsPath, Field, FieldDeclaration, FieldDeclarationBounds, FieldDeclarationEventListener,
     FieldDeclarationMaybeDetailsImpl, FieldDeclarationWithBounds,
     FieldDeclarationWithBoundsDetails, FieldDeclarationWithBoundsDetailsSimple,
     FieldDeclarationWithCommonBoundsCsrContent, FieldDeclarationWithCommonBoundsCsrFnCommonArgs,
     FieldDeclarationWithCommonBoundsCsrFnInitialize,
     FieldDeclarationWithCommonBoundsCsrFnInitializeArgs,
     FieldDeclarationWithCommonBoundsCsrFnUpdate, FieldDeclarationWithCommonBoundsCsrFnUpdateArgs,
-    FieldDeclarationWithCommonBoundsSsrContent, FnIntoAttrs, TypedPatType,
+    FieldDeclarationWithCommonBoundsSsrContent, FnIntoAttrs, ImplClosure, TypedPatType,
 };
 
 pub struct FieldToSimpleProp {
@@ -69,26 +69,66 @@ impl FieldAsSimpleProp<'_> {
                             } else {
                                 Some(quote!(&))
                             };
-                            update = quote!(|el: &#dom_element_ty, _, #deref v: &_| el.#html_element_method(v));
+                            update = quote!(
+                                |el: &mut ET::#dom_element_ty<Renderer>, renderer: &mut _, _, #deref v: &_|
+                                    el.#html_element_method(renderer, v)
+                            );
                         }
 
                         if let Some(impl_update) = &details.impl_update {
                             let FieldDeclarationMaybeDetailsImpl {
                                 keyword: _,
-                                element_pat_ident,
-                                rest,
+                                impl_closure:
+                                    ImplClosure {
+                                        or1_token,
+                                        inputs,
+                                        comma: _,
+                                        or2_token,
+                                        body,
+                                    },
                             } = &impl_update.content;
-                            update =
-                                quote!(|#element_pat_ident: &#dom_element_ty, _, v: &_| (#rest)(v));
+
+                            let mut inputs = inputs.fields_to_map();
+
+                            let element_pat = inputs.take_or_wild("element").pat;
+                            let renderer_pat = inputs.take_or_wild("renderer").pat;
+                            let attr_name_pat = inputs.take_or_wild("attr_name").pat;
+                            let value_pat = inputs.take_or_wild("value").pat;
+                            inputs.assert_empty().unwrap();
+
+                            update = quote!(#or1_token
+                                #element_pat: &mut ET::#dom_element_ty<Renderer>,
+                                #renderer_pat: &mut Renderer,
+                                #attr_name_pat: &_,
+                                #value_pat: &_
+                            #or2_token #body);
                         }
 
                         if let Some(impl_remove) = &details.impl_remove {
                             let FieldDeclarationMaybeDetailsImpl {
                                 keyword: _,
-                                element_pat_ident,
-                                rest,
+                                impl_closure:
+                                    ImplClosure {
+                                        or1_token,
+                                        inputs,
+                                        comma: _,
+                                        or2_token,
+                                        body,
+                                    },
                             } = &impl_remove.content;
-                            remove = quote!(|#element_pat_ident: &#dom_element_ty, _| (#rest)());
+
+                            let mut inputs = inputs.fields_to_map();
+
+                            let element_pat = inputs.take_or_wild("element").pat;
+                            let renderer_pat = inputs.take_or_wild("renderer").pat;
+                            let attr_name_pat = inputs.take_or_wild("attr_name").pat;
+                            inputs.assert_empty().unwrap();
+
+                            remove = quote!(#or1_token
+                                #element_pat: &mut ET::#dom_element_ty<Renderer>,
+                                #renderer_pat: &mut Renderer,
+                                #attr_name_pat: &_,
+                            #or2_token #body);
                         }
                     }
 
@@ -122,8 +162,8 @@ impl FieldAsSimpleProp<'_> {
 
                     field.declaration = FieldDeclaration::WithBounds(parse_quote!(
                         : bounds![
-                            bounds as #crate_path::impl_bounds::MaybeHandleEvent<#ty>,
-                            attr_name = #event_type,
+                            #[event(#crate_path::frender_html::event_types::type_of_event::#name)]
+                            bounds as #crate_path::impl_bounds::MaybeHandleEvent,
                         ]
                     ));
 
@@ -374,14 +414,16 @@ impl FieldAsSimpleProp<'_> {
                     FieldDeclarationWithBoundsDetails::Simple(
                         FieldDeclarationWithBoundsDetailsSimple {
                             bounds:
-                                (
-                                    bounds,
-                                    bounds_as,
-                                    BoundsPath {
-                                        mod_path,
-                                        generic_args,
-                                    },
-                                ),
+                                bounds @ FieldDeclarationBounds {
+                                    bounds_attrs,
+                                    bounds_keyword,
+                                    as_token: bounds_as,
+                                    path:
+                                        BoundsPath {
+                                            mod_path,
+                                            generic_args,
+                                        },
+                                },
                             attr_name,
                             imps,
                             trailing_comma,
@@ -398,11 +440,12 @@ impl FieldAsSimpleProp<'_> {
                             |(comma, imp_name, imp_fields)| quote!(#comma #imp_name #imp_fields),
                         );
 
-                        builder_bounds = quote!(#mod_path::Bounds #generic_args);
+                        builder_bounds = bounds.to_builder_bounds();
+                        let bounds_as = bounds.to_bounds_as();
 
                         imp = Some(quote! {
                             #crate_path::impl_bounds!(super::props::#name(
-                                #bounds #bounds_as #mod_path #generic_args,
+                                #bounds_as,
                                 element as #dom_element_ty
                                 #attr_name
                                 #(#imps)*
@@ -415,23 +458,20 @@ impl FieldAsSimpleProp<'_> {
                 return FieldToSimpleProp {
                     imp,
                     field_info: {
-                        let alias = if field.options.alias.0.is_empty() {
-                            None
-                        } else {
-                            let alias =
-                                field.options.alias.0.iter().enumerate().map(|(i, ident)| {
-                                    let comma = if i == 0 { None } else { Some(quote!(,)) };
-                                    quote!(#comma #ident)
-                                });
-                            Some(quote!(alias![#(#alias)*] +))
-                        };
+                        let alias = field.options.alias.to_alias_macro();
 
                         let bounds = quote! {
                             bounds![#builder_bounds]
                         };
 
+                        let macros = syn::punctuated::Punctuated::<_, syn::Token![+]>::from_iter(
+                            [alias, Some(bounds)]
+                                .into_iter()
+                                .filter_map(std::convert::identity),
+                        );
+
                         quote! {
-                            #name : #alias #bounds,
+                            #name : #macros,
                         }
                     },
                 };

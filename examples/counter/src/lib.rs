@@ -6,7 +6,7 @@ mod my_timer;
 use my_counter::MyCounter;
 use my_timer::MyTimer;
 
-#[component(only_dom, main(get_dom_element = "frender-root"))]
+#[component(main(get_dom_element = "frender-root"))]
 pub fn Main() {
     rsx!(
         <div style=r#"

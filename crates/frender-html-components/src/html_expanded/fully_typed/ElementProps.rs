@@ -4004,8 +4004,7 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::Element>
-        for super::Data<TypeDefs>
+        crate::imports::frender_csr::props::UpdateElement<Element> for super::Data<TypeDefs>
     where
         TypeDefs::children: ::frender_core::UpdateRenderState<::frender_csr::Dom>,
         unimplemented!(): __,
@@ -4203,7 +4202,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::Element,
+            element: &Element,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -4356,7 +4355,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::Element,
+            element: &Element,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {

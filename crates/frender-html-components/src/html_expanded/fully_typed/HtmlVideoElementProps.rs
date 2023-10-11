@@ -2912,18 +2912,18 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlVideoElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlVideoElement>
         for super::Data<TypeDefs>
     where
         HtmlMediaElementProps::Data<TypeDefs::HtmlMediaElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlMediaElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlMediaElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlMediaElementProps = <HtmlMediaElementProps::Data<
                     TypeDefs::HtmlMediaElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlMediaElement,
+                    HtmlMediaElement,
                 >>::State,
                 height = <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
                     u32,
@@ -2941,7 +2941,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlVideoElement,
+            element: &HtmlVideoElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -2949,7 +2949,7 @@ mod impl_update_element {
                 HtmlMediaElementProps: <HtmlMediaElementProps::Data<
                     TypeDefs::HtmlMediaElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlMediaElement,
+                    HtmlMediaElement,
                 >>::initialize_state(this.HtmlMediaElementProps, element, children_ctx),
                 height: <TypeDefs::height as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     u32,
@@ -2987,7 +2987,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlVideoElement,
+            element: &HtmlVideoElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {

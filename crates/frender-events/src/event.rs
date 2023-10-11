@@ -101,15 +101,15 @@ pub trait NewFromRef: std::ops::Deref {
     fn new_from_ref(inner: &Self::Target) -> &Self;
 }
 
-pub trait MaybeHandleEvent<E: ?Sized + callable::StatedEvent>:
-    callable::MaybeHandleEvent<E, Callable = Self::StaticCloneCallable>
+pub trait MaybeHandleEvent<E: ?Sized>:
+    callable::gat::MaybeHandleEvent<E, Callable = Self::StaticCloneCallable>
 {
     type StaticCloneCallable: 'static + Clone + for<'e> callable::Callable<(&'e E,), Output = ()>;
 }
 
-impl<C, E: ?Sized + callable::StatedEvent> MaybeHandleEvent<E> for C
+impl<C, E: ?Sized> MaybeHandleEvent<E> for C
 where
-    C: callable::MaybeHandleEvent<E>,
+    C: callable::gat::MaybeHandleEvent<E>,
     C::Callable: 'static + Clone + for<'e> callable::Callable<(&'e E,), Output = ()>,
 {
     type StaticCloneCallable = C::Callable;

@@ -27,24 +27,24 @@ impl<T: ?Sized> Identity for T {
 pub type ElementOfType<ET, R> = <ET as ElementType>::Element<R>;
 
 pub trait UpdateElementNonReactive<ET: ElementType> {
-    type State: Default;
+    type State<Renderer: RenderHtml>: Default;
 
     fn update_element_non_reactive<Renderer: RenderHtml>(
         this: Self,
         renderer: &mut Renderer,
         element: &mut ElementOfType<ET, Renderer>,
-        state: &mut Self::State,
+        state: &mut Self::State<Renderer>,
     );
 }
 
 impl<ET: ElementType> UpdateElementNonReactive<ET> for () {
-    type State = ();
+    type State<Renderer: RenderHtml> = ();
 
     fn update_element_non_reactive<Renderer: RenderHtml>(
         _: Self,
         _: &mut Renderer,
         _: &mut ElementOfType<ET, Renderer>,
-        _: &mut Self::State,
+        _: &mut Self::State<Renderer>,
     ) {
     }
 }
@@ -52,13 +52,13 @@ impl<ET: ElementType> UpdateElementNonReactive<ET> for () {
 impl<ET: ElementType, A: UpdateElementNonReactive<ET>, B: UpdateElementNonReactive<ET>>
     UpdateElementNonReactive<ET> for (A, B)
 {
-    type State = (A::State, B::State);
+    type State<Renderer: RenderHtml> = (A::State<Renderer>, B::State<Renderer>);
 
     fn update_element_non_reactive<Renderer: RenderHtml>(
         (a, b): Self,
         renderer: &mut Renderer,
         element: &mut ElementOfType<ET, Renderer>,
-        (state_a, state_b): &mut Self::State,
+        (state_a, state_b): &mut Self::State<Renderer>,
     ) {
         A::update_element_non_reactive(a, renderer, element, state_a);
         B::update_element_non_reactive(b, renderer, element, state_b);
@@ -103,9 +103,12 @@ pub mod element_tag_types {
 }
 
 mod demo {
-    use crate::renderer::{
-        node_behaviors::{Element, HtmlElement},
-        ElementType, HtmlElementType,
+    use crate::{
+        renderer::{
+            node_behaviors::{Element, HtmlElement},
+            ElementType, HtmlElementType,
+        },
+        RenderHtml,
     };
 
     use super::{ElementOfType, Identity, UpdateElementNonReactive};
@@ -113,13 +116,13 @@ mod demo {
     struct id(pub String);
 
     impl<ET: ElementType> UpdateElementNonReactive<ET> for id {
-        type State = ();
+        type State<Renderer: RenderHtml> = ();
 
         fn update_element_non_reactive<Renderer: crate::RenderHtml>(
             this: Self,
             renderer: &mut Renderer,
             element: &mut ElementOfType<ET, Renderer>,
-            state: &mut Self::State,
+            state: &mut Self::State<Renderer>,
         ) {
             element.set_id(renderer, &this.0)
         }
@@ -128,13 +131,13 @@ mod demo {
     struct access_key(pub String);
 
     impl<ET: HtmlElementType> UpdateElementNonReactive<ET> for access_key {
-        type State = ();
+        type State<Renderer: RenderHtml> = ();
 
         fn update_element_non_reactive<Renderer: crate::RenderHtml>(
             this: Self,
             renderer: &mut Renderer,
             element: &mut ElementOfType<ET, Renderer>,
-            state: &mut Self::State,
+            state: &mut Self::State<Renderer>,
         ) {
             let element = <ET::HtmlElement<Renderer> as Identity>::from_identity_mut(element);
             element.set_access_key(renderer, &this.0)

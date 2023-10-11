@@ -9,138 +9,231 @@ def_props_type!(
                 id: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
                 part: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
                 on_cancel:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_cancel
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_error:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_error
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_scroll:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_scroll
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_security_policy_violation:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::SecurityPolicyViolationEvent,
-                        >
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_security_policy_violation)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_select:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_select
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_wheel:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::WheelEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_wheel
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_copy:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(crate::imports::frender_html::event_types::type_of_event::on_copy)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_cut:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(crate::imports::frender_html::event_types::type_of_event::on_cut)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_paste:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_paste
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_composition_end:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::CompositionEvent,
-                        >
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_composition_end)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_composition_start:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::CompositionEvent,
-                        >
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_composition_start)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_composition_update:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::CompositionEvent,
-                        >
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_composition_update)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_blur:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                        #[event(crate::imports::frender_html::event_types::type_of_event::on_blur)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_focus
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus_in:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_focus_in
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus_out:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::FocusEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_focus_out
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_fullscreen_change:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_fullscreen_change)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_fullscreen_error:
-                    bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                    bounds![
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_fullscreen_error)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                    ],
                 on_key_down:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::KeyboardEvent,
-                        >
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_key_down
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_key_up:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<
-                            events::KeyboardEvent,
-                        >
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_key_up
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_aux_click:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_aux_click
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_click:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_click
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_context_menu:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_context_menu)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_double_click:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_double_click)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_down:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_mouse_down
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_enter:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_mouse_enter)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_leave:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_mouse_leave)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_move:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_mouse_move
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_out:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_mouse_out
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_over:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_mouse_over
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_up:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::MouseEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_mouse_up
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_cancel:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_touch_cancel)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_end:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_touch_end
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_move:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                        #[event(
+                            crate::imports::frender_html::event_types::type_of_event::on_touch_move
+                        )]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_start:
                     bounds![
-                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TouchEvent>
+                        #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_touch_start)]
+                        crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
             ),
             access_key: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
@@ -171,96 +264,189 @@ def_props_type!(
             translate: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             virtual_keyboard_policy: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             on_invalid:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_invalid)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_animation_cancel:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_animation_cancel)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_end:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_animation_end
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_iteration:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_animation_iteration)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_start:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::AnimationEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_animation_start)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_before_input:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::InputEvent>],
-            on_input: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_before_input
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
+            on_input:
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_input)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_change:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_change)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_got_pointer_capture:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_got_pointer_capture)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_lost_pointer_capture:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_lost_pointer_capture)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_cancel:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_cancel
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_down:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_down
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_enter:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_enter
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_leave:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_leave
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_move:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_move
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_out:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_out
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_over:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_over
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_up:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::PointerEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_pointer_up
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_cancel:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_transition_cancel)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_end:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_transition_end
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_run:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_transition_run
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_start:
                 bounds![
-                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::TransitionEvent>
+                    #[event(crate
+    ::imports::frender_html::event_types::type_of_event::on_transition_start)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
-            on_drag: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+            on_drag:
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drag)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_drag_end:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drag_end)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_drag_enter:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_drag_enter
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_drag_leave:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_drag_leave
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_drag_over:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_drag_over
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
             on_drag_start:
-                bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
-            on_drop: bounds![crate::imports::impl_bounds::MaybeHandleEvent::Bounds<events::Event>],
+                bounds![
+                    #[event(
+                        crate::imports::frender_html::event_types::type_of_event::on_drag_start
+                    )]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
+            on_drop:
+                bounds![
+                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drop)]
+                    crate::imports::impl_bounds::MaybeHandleEvent::Bounds
+                ],
         ),
         data: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         form: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
@@ -278,16 +464,17 @@ mod imp {
     use super::super::*;
     crate::imports::impl_bounds!(super::props::data(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "data",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_data(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_data(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::form(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "form",
         csr {
             update: crate::imports::impl_bounds::MaybeValue::csr::default_update,
@@ -296,46 +483,51 @@ mod imp {
     ));
     crate::imports::impl_bounds!(super::props::height(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "height",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_height(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_height(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::name(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "name",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_name(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_name(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::r#type(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "type",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_type(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_type(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::use_map(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "usemap",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_use_map(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_use_map(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));
     crate::imports::impl_bounds!(super::props::width(
         bounds as crate::imports::impl_bounds::MaybeValue<str>,
-        element as web_sys::HtmlObjectElement,
+        element as HtmlObjectElement,
         attr_name = "width",
         csr {
-            update: |el: &web_sys::HtmlObjectElement, _, v: &_| el.set_width(v),
+            update: |el: &mut ET::HtmlObjectElement<Renderer>, renderer: &mut _, _, v: &_| el
+                .set_width(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));

@@ -12,7 +12,7 @@ pub mod custom_const_dom_tokens {
     pub fn update_dom_token_list<const N: usize>(
         dom_tokens: [&str; N],
         predicates: [bool; N],
-        dom_token_list: &impl DomTokenList,
+        dom_token_list: &mut impl DomTokenList,
         old_predicates: &mut [bool; N],
     ) {
         for ((token, predicate), state) in
@@ -32,7 +32,7 @@ pub mod custom_const_dom_tokens {
     pub fn update_dom_token_list_and_initialize_state<const N: usize>(
         dom_tokens: [&str; N],
         predicates: [bool; N],
-        dom_token_list: &impl DomTokenList,
+        dom_token_list: &mut impl DomTokenList,
     ) -> [bool; N] {
         for (token, predicate) in dom_tokens.into_iter().zip(predicates) {
             if predicate {
@@ -173,10 +173,10 @@ macro_rules! __predicate_or_true {
 
 /// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
 pub trait DomTokenList {
-    fn set_value(&self, value: &str);
-    fn add_1(&self, token: &str);
-    fn remove_1(&self, token: &str);
-    fn replace(&self, old_token: &str, new_token: &str);
+    fn set_value(&mut self, value: &str);
+    fn add_1(&mut self, token: &str);
+    fn remove_1(&mut self, token: &str);
+    fn replace(&mut self, old_token: &str, new_token: &str);
 }
 
 pub trait DomTokens {
@@ -184,39 +184,26 @@ pub trait DomTokens {
 
     fn update_dom_token_list_and_initialize_state(
         this: Self,
-        dom_token_list: &impl DomTokenList,
+        dom_token_list: &mut impl DomTokenList,
     ) -> Self::UpdateState;
 
     fn update_dom_token_list(
         this: Self,
-        dom_token_list: &impl DomTokenList,
+        dom_token_list: &mut impl DomTokenList,
         state: &mut Self::UpdateState,
+    );
+
+    type UpdateWithState: Default;
+
+    fn update_with_state(
+        this: Self,
+        dom_token_list: &mut impl DomTokenList,
+        state: &mut Self::UpdateWithState,
     );
 
     type AsyncWritableDomTokens: AsyncWritableStr;
 
     fn maybe_into_async_writable_dom_tokens(this: Self) -> Option<Self::AsyncWritableDomTokens>;
-}
-
-#[cfg(feature = "csr")]
-mod impl_csr {
-    impl super::DomTokenList for web_sys::DomTokenList {
-        fn set_value(&self, value: &str) {
-            self.set_value(value)
-        }
-
-        fn add_1(&self, token: &str) {
-            self.add_1(token).unwrap()
-        }
-
-        fn remove_1(&self, token: &str) {
-            self.remove_1(token).unwrap()
-        }
-
-        fn replace(&self, old_token: &str, new_token: &str) {
-            _ = self.replace(old_token, new_token).unwrap()
-        }
-    }
 }
 
 mod impl_for_static_string {
@@ -226,20 +213,7 @@ mod impl_for_static_string {
 
     use super::DomTokens;
 
-    macro_rules! impl_for_static_string_types {
-        (
-            impl<__> $trait_name:ident for
-            each_of![
-                $($str_ty:ty),+ $(,)?
-            ]
-            $impl_code:tt
-        ) => {$(
-            impl $trait_name for $str_ty
-            $impl_code
-        )*};
-    }
-
-    impl_for_static_string_types!(
+    crate::impl_many!(
         impl<__> DomTokens
             for each_of![
                 &'static str,
@@ -253,7 +227,7 @@ mod impl_for_static_string {
 
             fn update_dom_token_list_and_initialize_state(
                 this: Self,
-                dom_token_list: &impl super::DomTokenList,
+                dom_token_list: &mut impl super::DomTokenList,
             ) -> Self::UpdateState {
                 dom_token_list.set_value(&this);
                 this
@@ -261,13 +235,30 @@ mod impl_for_static_string {
 
             fn update_dom_token_list(
                 this: Self,
-                dom_token_list: &impl super::DomTokenList,
+                dom_token_list: &mut impl super::DomTokenList,
                 state: &mut Self::UpdateState,
             ) {
                 if *state != this {
                     dom_token_list.set_value(&this);
                     *state = this
                 }
+            }
+
+            type UpdateWithState = Option<Self>;
+
+            fn update_with_state(
+                this: Self,
+                dom_token_list: &mut impl super::DomTokenList,
+                state: &mut Self::UpdateWithState,
+            ) {
+                if let Some(state) = state {
+                    if *state == this {
+                        return;
+                    }
+                }
+
+                dom_token_list.set_value(&this);
+                *state = Some(this)
             }
 
             type AsyncWritableDomTokens = StrWriting<Self>;
@@ -290,11 +281,24 @@ mod impl_for_unit_tuple {
 
         fn update_dom_token_list_and_initialize_state(
             _: Self,
-            _: &impl super::DomTokenList,
+            _: &mut impl super::DomTokenList,
         ) -> Self::UpdateState {
         }
 
-        fn update_dom_token_list(_: Self, _: &impl super::DomTokenList, _: &mut Self::UpdateState) {
+        fn update_dom_token_list(
+            _: Self,
+            _: &mut impl super::DomTokenList,
+            _: &mut Self::UpdateState,
+        ) {
+        }
+
+        type UpdateWithState = ();
+
+        fn update_with_state(
+            (): Self,
+            _: &mut impl super::DomTokenList,
+            (): &mut Self::UpdateWithState,
+        ) {
         }
 
         type AsyncWritableDomTokens = NeverWritable;

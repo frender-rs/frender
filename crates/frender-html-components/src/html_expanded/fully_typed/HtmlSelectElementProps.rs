@@ -2674,18 +2674,18 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlSelectElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlSelectElement>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::State,
                 auto_complete = <TypeDefs::auto_complete as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -2712,7 +2712,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlSelectElement,
+            element: &HtmlSelectElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -2720,13 +2720,13 @@ mod impl_update_element {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
                 auto_complete: <TypeDefs::auto_complete as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::initialize_state_and_update(
                     this.auto_complete,
-                    |v| dom_element.set_autocomplete(v),
+                    |v| dom_element.set_auto_complete(v),
                     || dom_element.remove_attribute("autocomplete").unwrap(),
                 ),
                 disabled: <TypeDefs::disabled as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -2779,7 +2779,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlSelectElement,
+            element: &HtmlSelectElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
@@ -2796,7 +2796,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_complete,
                 state.auto_complete,
-                |v| dom_element.set_autocomplete(v),
+                |v| dom_element.set_auto_complete(v),
                 || dom_element.remove_attribute("autocomplete").unwrap(),
             );
             <TypeDefs::disabled as crate::imports::frender_html::props::MaybeUpdateValueWithState<

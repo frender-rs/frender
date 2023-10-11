@@ -1,5 +1,6 @@
 use darling::{FromAttributes, FromMeta};
 use proc_macro2::TokenStream;
+use quote::quote;
 use syn::{
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
@@ -203,6 +204,20 @@ pub struct FieldOptions {
 
 #[derive(Clone, Default)]
 pub struct IdentList(pub Vec<syn::Ident>);
+
+impl IdentList {
+    pub(crate) fn to_alias_macro(&self) -> Option<TokenStream> {
+        if self.0.is_empty() {
+            None
+        } else {
+            let alias = self.0.iter().enumerate().map(|(i, ident)| {
+                let comma = if i == 0 { None } else { Some(quote!(,)) };
+                quote!(#comma #ident)
+            });
+            Some(quote!(alias![#(#alias)*]))
+        }
+    }
+}
 
 impl FromMeta for IdentList {
     fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {

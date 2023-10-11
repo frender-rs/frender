@@ -10430,11 +10430,10 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>
-        for super::Data<TypeDefs>
+        crate::imports::frender_csr::props::UpdateElement<HtmlElement> for super::Data<TypeDefs>
     where
         ElementProps::Data<TypeDefs::ElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::Element>,
+            crate::imports::frender_csr::props::UpdateElement<Element>,
         unimplemented!(): __,
         TypeDefs::on_invalid:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
@@ -10499,9 +10498,7 @@ mod impl_update_element {
             dyn super::render_state::RenderStateTypes<
                 ElementProps = <ElementProps::Data<
                     TypeDefs::ElementProps,
-                > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::Element,
-                >>::State,
+                > as crate::imports::frender_csr::props::UpdateElement<Element>>::State,
                 access_key = <TypeDefs::access_key as ::frender_html::props::MaybeUpdateValueWithState<
                     str,
                 >>::State,
@@ -10671,7 +10668,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlElement,
+            element: &HtmlElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -10680,7 +10677,7 @@ mod impl_update_element {
                 ElementProps: <ElementProps::Data<
                     TypeDefs::ElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::Element,
+                    Element,
                 >>::initialize_state(this.ElementProps, element, children_ctx),
                 access_key: <TypeDefs::access_key as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     str,
@@ -11045,7 +11042,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlElement,
+            element: &HtmlElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {

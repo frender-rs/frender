@@ -5,6 +5,19 @@ pub trait TryBehavior {
     fn unwrap_option<T>(&mut self, option: Option<T>) -> T;
 }
 
+impl<TB: ?Sized + TryBehavior> TryBehavior for &mut TB {
+    fn unwrap_result<T, E>(&mut self, result: Result<T, E>) -> T
+    where
+        E: std::fmt::Debug,
+    {
+        TB::unwrap_result(self, result)
+    }
+
+    fn unwrap_option<T>(&mut self, option: Option<T>) -> T {
+        TB::unwrap_option(self, option)
+    }
+}
+
 pub struct Unwrap;
 
 impl TryBehavior for Unwrap {

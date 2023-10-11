@@ -3128,18 +3128,18 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlButtonElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlButtonElement>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlElement>,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::State,
                 disabled = <TypeDefs::disabled as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
@@ -3175,7 +3175,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlButtonElement,
+            element: &HtmlButtonElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -3183,7 +3183,7 @@ mod impl_update_element {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
                 disabled: <TypeDefs::disabled as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
@@ -3263,7 +3263,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlButtonElement,
+            element: &HtmlButtonElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {

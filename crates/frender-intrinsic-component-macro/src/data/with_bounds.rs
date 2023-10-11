@@ -1,6 +1,6 @@
 use frender_macro_utils::grouped::{Braced, Parenthesized};
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use syn::{parse::Parse, punctuated::Punctuated};
 
 use crate::kw;
@@ -302,6 +302,17 @@ pub struct BoundsPath {
     pub generic_args: Option<syn::AngleBracketedGenericArguments>,
 }
 
+impl BoundsPath {
+    pub(crate) fn to_builder_bounds(&self) -> TokenStream {
+        let Self {
+            mod_path,
+            generic_args,
+        } = self;
+
+        quote!( #mod_path::Bounds #generic_args )
+    }
+}
+
 impl Parse for BoundsPath {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         Ok(Self {
@@ -318,8 +329,49 @@ impl Parse for BoundsPath {
 }
 
 #[derive(Clone)]
+pub struct FieldDeclarationBounds {
+    pub bounds_attrs: Vec<syn::Attribute>,
+    pub bounds_keyword: kw::bounds,
+    pub as_token: syn::Token![as],
+    pub path: BoundsPath,
+}
+
+impl FieldDeclarationBounds {
+    pub(crate) fn to_bounds_as(&self) -> TokenStream {
+        let Self {
+            bounds_attrs,
+            bounds_keyword: bounds,
+            as_token: bounds_as,
+            path: BoundsPath {
+                mod_path,
+                generic_args,
+            },
+        } = self;
+        quote! {
+            #(#bounds_attrs)*
+            #bounds #bounds_as #mod_path #generic_args
+        }
+    }
+
+    pub(crate) fn to_builder_bounds(&self) -> TokenStream {
+        let Self {
+            bounds_attrs,
+            bounds_keyword: _,
+            as_token: _,
+            path: bounds_path,
+        } = self;
+
+        let bounds = bounds_path.to_builder_bounds();
+        quote!(
+            #(#bounds_attrs)*
+            #bounds
+        )
+    }
+}
+
+#[derive(Clone)]
 pub struct FieldDeclarationWithBoundsDetailsSimple {
-    pub bounds: (kw::bounds, syn::Token![as], BoundsPath),
+    pub bounds: FieldDeclarationBounds,
     pub attr_name: Option<(syn::Token![,], kw::attr_name, syn::Token![=], syn::Expr)>,
     pub imps: Vec<(syn::Token![,], syn::Ident, Braced<TokenStream>)>,
     pub trailing_comma: Option<syn::Token![,]>,
@@ -328,7 +380,12 @@ pub struct FieldDeclarationWithBoundsDetailsSimple {
 impl Parse for FieldDeclarationWithBoundsDetailsSimple {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         Ok(Self {
-            bounds: (input.parse()?, input.parse()?, input.parse()?),
+            bounds: FieldDeclarationBounds {
+                bounds_attrs: syn::Attribute::parse_outer(input)?,
+                bounds_keyword: input.parse()?,
+                as_token: input.parse()?,
+                path: input.parse()?,
+            },
             attr_name: if input.peek(syn::Token![,]) && input.peek2(kw::attr_name) {
                 Some((
                     input.parse()?,

@@ -6846,11 +6846,11 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlMediaElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlMediaElement>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
-            crate::imports::frender_csr::props::UpdateElement<web_sys::HtmlElement>,
+            crate::imports::frender_csr::props::UpdateElement<HtmlElement>,
         TypeDefs::on_abort:
             crate::imports::frender_html::props::UpdateDomEventListener<events::Event>,
         TypeDefs::on_can_play:
@@ -6901,7 +6901,7 @@ mod impl_update_element {
                 HtmlElementProps = <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::State,
                 auto_play = <TypeDefs::auto_play as ::frender_html::props::MaybeUpdateValueWithState<
                     bool,
@@ -6994,7 +6994,7 @@ mod impl_update_element {
         >;
         fn initialize_state(
             this: Self,
-            element: &web_sys::HtmlMediaElement,
+            element: &HtmlMediaElement,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
@@ -7002,13 +7002,13 @@ mod impl_update_element {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
-                    web_sys::HtmlElement,
+                    HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
                 auto_play: <TypeDefs::auto_play as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
                 >>::initialize_state_and_update(
                     this.auto_play,
-                    |v| dom_element.set_autoplay(*v),
+                    |v| dom_element.set_auto_play(*v),
                     || dom_element.remove_attribute("autoplay").unwrap(),
                 ),
                 controls: <TypeDefs::controls as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7022,12 +7022,8 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.cross_origin,
-                    match dom_element {
-                        el => |v: &_| el.set_cross_origin(Some(v)),
-                    },
-                    match dom_element {
-                        el => || el.set_cross_origin(None),
-                    },
+                    match dom_element {},
+                    match dom_element {},
                 ),
                 r#loop: <TypeDefs::r#loop as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                     bool,
@@ -7130,7 +7126,7 @@ mod impl_update_element {
         }
         fn update_element(
             this: Self,
-            element: &web_sys::HtmlMediaElement,
+            element: &HtmlMediaElement,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
@@ -7147,7 +7143,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.auto_play,
                 state.auto_play,
-                |v| dom_element.set_autoplay(*v),
+                |v| dom_element.set_auto_play(*v),
                 || dom_element.remove_attribute("autoplay").unwrap(),
             );
             <TypeDefs::controls as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -7163,12 +7159,8 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.cross_origin,
                 state.cross_origin,
-                match dom_element {
-                    el => |v: &_| el.set_cross_origin(Some(v)),
-                },
-                match dom_element {
-                    el => || el.set_cross_origin(None),
-                },
+                match dom_element {},
+                match dom_element {},
             );
             <TypeDefs::r#loop as crate::imports::frender_html::props::MaybeUpdateValueWithState<
                 bool,

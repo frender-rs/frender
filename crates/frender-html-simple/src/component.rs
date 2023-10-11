@@ -188,7 +188,7 @@ mod imp {
                 <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::ChildrenRenderState<
                     R,
                 >,
-                <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State,
+                <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State<R>,
             >,
         >;
 

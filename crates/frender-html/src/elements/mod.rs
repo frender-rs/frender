@@ -9,5 +9,5 @@ pub mod tuple;
 // pub mod either;
 
 // pub mod intrinsic;
-// pub mod scalar;
+pub mod scalar;
 pub mod str;

@@ -1,12 +1,16 @@
 #[allow(non_snake_case)]
 #[inline(always)]
-pub fn HtmlCanvasElementProps() -> Building<TypesInitial> {
+pub fn HtmlElementWithHrefProps() -> Building<TypesInitial> {
     #[allow(unused_imports)]
     use super::*;
     self::Building {
         HtmlElementProps: HtmlElementProps::build(HtmlElementProps()),
-        height: (),
-        width: (),
+        download: (),
+        href: (),
+        ping: (),
+        referrer_policy: (),
+        rel: unimplemented!(),
+        target: (),
     }
 }
 pub mod prelude {}
@@ -14,8 +18,12 @@ pub mod overwrite {
     #![allow(non_camel_case_types)]
     pub type HtmlElementProps<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = Value,
-        height = <TypeDefs as super::Types>::height,
-        width = <TypeDefs as super::Types>::width,
+        download = <TypeDefs as super::Types>::download,
+        href = <TypeDefs as super::Types>::href,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = <TypeDefs as super::Types>::rel,
+        target = <TypeDefs as super::Types>::target,
     >;
     pub type ElementProps<TypeDefs, Value> = self::HtmlElementProps<
         TypeDefs,
@@ -696,15 +704,59 @@ pub mod overwrite {
             Value,
         >,
     >;
-    pub type height<TypeDefs, Value> = dyn super::Types<
+    pub type download<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        height = Value,
-        width = <TypeDefs as super::Types>::width,
+        download = Value,
+        href = <TypeDefs as super::Types>::href,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = <TypeDefs as super::Types>::rel,
+        target = <TypeDefs as super::Types>::target,
     >;
-    pub type width<TypeDefs, Value> = dyn super::Types<
+    pub type href<TypeDefs, Value> = dyn super::Types<
         HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
-        height = <TypeDefs as super::Types>::height,
-        width = Value,
+        download = <TypeDefs as super::Types>::download,
+        href = Value,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = <TypeDefs as super::Types>::rel,
+        target = <TypeDefs as super::Types>::target,
+    >;
+    pub type ping<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        download = <TypeDefs as super::Types>::download,
+        href = <TypeDefs as super::Types>::href,
+        ping = Value,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = <TypeDefs as super::Types>::rel,
+        target = <TypeDefs as super::Types>::target,
+    >;
+    pub type referrer_policy<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        download = <TypeDefs as super::Types>::download,
+        href = <TypeDefs as super::Types>::href,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = Value,
+        rel = <TypeDefs as super::Types>::rel,
+        target = <TypeDefs as super::Types>::target,
+    >;
+    pub type rel<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        download = <TypeDefs as super::Types>::download,
+        href = <TypeDefs as super::Types>::href,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = Value,
+        target = <TypeDefs as super::Types>::target,
+    >;
+    pub type target<TypeDefs, Value> = dyn super::Types<
+        HtmlElementProps = <TypeDefs as super::Types>::HtmlElementProps,
+        download = <TypeDefs as super::Types>::download,
+        href = <TypeDefs as super::Types>::href,
+        ping = <TypeDefs as super::Types>::ping,
+        referrer_policy = <TypeDefs as super::Types>::referrer_policy,
+        rel = <TypeDefs as super::Types>::rel,
+        target = Value,
     >;
 }
 mod trait_types {
@@ -713,32 +765,44 @@ mod trait_types {
     #[allow(non_camel_case_types)]
     pub trait Types {
         type HtmlElementProps: ?::core::marker::Sized + HtmlElementProps::Types;
-        type height: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
-        type width: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>;
+        type download: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type href: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type ping: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type referrer_policy: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
+        type rel: Todo<unimplemented![]>;
+        type target: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>;
     }
 }
 pub use trait_types::Types;
 pub use trait_types::Types as ValidTypes;
 pub mod data_struct {
     #[non_exhaustive]
-    pub struct HtmlCanvasElementProps<TypeDefs: super::Types + ?::core::marker::Sized> {
+    pub struct HtmlElementWithHrefProps<TypeDefs: super::Types + ?::core::marker::Sized> {
         pub HtmlElementProps: super::super::HtmlElementProps::Data<TypeDefs::HtmlElementProps>,
-        pub height: TypeDefs::height,
-        pub width: TypeDefs::width,
+        pub download: TypeDefs::download,
+        pub href: TypeDefs::href,
+        pub ping: TypeDefs::ping,
+        pub referrer_policy: TypeDefs::referrer_policy,
+        pub rel: TypeDefs::rel,
+        pub target: TypeDefs::target,
     }
 }
 pub use ::core::convert::identity as Building;
 pub use ::core::convert::identity as build;
-pub use data_struct::HtmlCanvasElementProps as Data;
-pub use data_struct::HtmlCanvasElementProps as Building;
+pub use data_struct::HtmlElementWithHrefProps as Data;
+pub use data_struct::HtmlElementWithHrefProps as Building;
 pub struct Replacing<TypeDefs: ?::core::marker::Sized + Types>(pub Data<TypeDefs>);
 mod types_initial {
     #[allow(unused_imports)]
     use super::super::*;
     pub type TypesInitial = dyn super::Types<
         HtmlElementProps = HtmlElementProps::TypesInitial,
-        height = (),
-        width = (),
+        download = (),
+        href = (),
+        ping = (),
+        referrer_policy = (),
+        rel = unimplemented![],
+        target = (),
     >;
 }
 pub use types_initial::TypesInitial;
@@ -748,14 +812,18 @@ pub mod render_state {
     #[allow(non_camel_case_types)]
     pub trait RenderStateTypes {
         type HtmlElementProps: crate::imports::frender_csr::props::IntrinsicComponentPollReactive;
-        type height;
-        type width;
+        type download;
+        type href;
+        type ping;
+        type referrer_policy;
+        type target;
     }
     crate::imports::pin_project! {
         #[project = RenderStateProj] pub struct RenderState < TypeDefs : RenderStateTypes
         > where TypeDefs : ? ::core::marker::Sized { #[pin] pub HtmlElementProps :
-        TypeDefs::HtmlElementProps, pub height : TypeDefs::height, pub width :
-        TypeDefs::width, }
+        TypeDefs::HtmlElementProps, pub download : TypeDefs::download, pub href :
+        TypeDefs::href, pub ping : TypeDefs::ping, pub referrer_policy :
+        TypeDefs::referrer_policy, pub target : TypeDefs::target, }
     }
     impl<TypeDefs: ?::core::marker::Sized + RenderStateTypes> RenderState<TypeDefs> {
         #[inline(always)]
@@ -793,8 +861,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::children<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.children(children),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::css`]
@@ -805,8 +877,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::css<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.css(css),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::class`]
@@ -817,8 +893,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::class<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.class(class),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::id`]
@@ -829,8 +909,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.id(id),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::part`]
@@ -841,8 +925,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::part<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.part(part),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_cancel`]
@@ -853,8 +941,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cancel(on_cancel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_error`]
@@ -865,8 +957,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_error<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_error(on_error),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_scroll`]
@@ -877,8 +973,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_scroll<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_scroll(on_scroll),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_security_policy_violation`]
@@ -891,8 +991,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_security_policy_violation(on_security_policy_violation),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_select`]
@@ -903,8 +1007,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_select<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_select(on_select),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_wheel`]
@@ -915,8 +1023,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_wheel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_wheel(on_wheel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_copy`]
@@ -927,8 +1039,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_copy<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_copy(on_copy),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_cut`]
@@ -939,8 +1055,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_cut<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_cut(on_cut),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_paste`]
@@ -951,8 +1071,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_paste<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_paste(on_paste),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_composition_end`]
@@ -963,8 +1087,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_composition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_composition_end(on_composition_end),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_composition_start`]
@@ -977,8 +1105,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_start(on_composition_start),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_composition_update`]
@@ -991,8 +1123,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_composition_update(on_composition_update),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_blur`]
@@ -1003,8 +1139,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_blur<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_blur(on_blur),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_focus`]
@@ -1015,8 +1155,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus(on_focus),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_focus_in`]
@@ -1027,8 +1171,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_in<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_in(on_focus_in),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_focus_out`]
@@ -1039,8 +1187,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_focus_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_focus_out(on_focus_out),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_change`]
@@ -1053,8 +1205,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_change(on_fullscreen_change),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_fullscreen_error`]
@@ -1067,8 +1223,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_fullscreen_error(on_fullscreen_error),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_key_down`]
@@ -1079,8 +1239,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_down(on_key_down),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_key_up`]
@@ -1091,8 +1255,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_key_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_key_up(on_key_up),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_aux_click`]
@@ -1103,8 +1271,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_aux_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_aux_click(on_aux_click),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_click`]
@@ -1115,8 +1287,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_click(on_click),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_context_menu`]
@@ -1127,8 +1303,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_context_menu(on_context_menu),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_double_click`]
@@ -1139,8 +1319,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_double_click<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_double_click(on_double_click),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_down`]
@@ -1151,8 +1335,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_down(on_mouse_down),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_enter`]
@@ -1163,8 +1351,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_enter(on_mouse_enter),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_leave`]
@@ -1175,8 +1367,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_leave(on_mouse_leave),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_move`]
@@ -1187,8 +1383,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_move(on_mouse_move),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_out`]
@@ -1199,8 +1399,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_out(on_mouse_out),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_over`]
@@ -1211,8 +1415,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_over(on_mouse_over),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_mouse_up`]
@@ -1223,8 +1431,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_mouse_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_mouse_up(on_mouse_up),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_touch_cancel`]
@@ -1235,8 +1447,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_cancel(on_touch_cancel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_touch_end`]
@@ -1247,8 +1463,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_end(on_touch_end),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_touch_move`]
@@ -1259,8 +1479,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_move(on_touch_move),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_touch_start`]
@@ -1271,8 +1495,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_touch_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_touch_start(on_touch_start),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::access_key`]
@@ -1285,8 +1513,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::access_key<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.access_key(access_key),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::auto_capitalize`]
@@ -1299,8 +1531,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_capitalize<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_capitalize(auto_capitalize),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::auto_focus`]
@@ -1313,8 +1549,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::auto_focus<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.auto_focus(auto_focus),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::content_editable`]
@@ -1325,8 +1565,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::content_editable<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.content_editable(content_editable),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::context_menu`]
@@ -1339,8 +1583,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::context_menu<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.context_menu(context_menu),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::dir`]
@@ -1351,8 +1599,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::dir<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.dir(dir),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::draggable`]
@@ -1365,8 +1617,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::draggable<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.draggable(draggable),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::enter_key_hint`]
@@ -1379,8 +1635,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::enter_key_hint<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.enter_key_hint(enter_key_hint),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::hidden`]
@@ -1391,8 +1651,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::hidden<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.hidden(hidden),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::inert`]
@@ -1403,8 +1667,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::inert<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.inert(inert),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::input_mode`]
@@ -1417,8 +1685,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::input_mode<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.input_mode(input_mode),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::is`]
@@ -1429,8 +1701,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::is<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.is(is),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::item_id`]
@@ -1441,8 +1717,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_id<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_id(item_id),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::item_prop`]
@@ -1453,8 +1733,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_prop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_prop(item_prop),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::item_ref`]
@@ -1465,8 +1749,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_ref<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_ref(item_ref),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::item_scope`]
@@ -1479,8 +1767,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_scope<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_scope(item_scope),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::item_type`]
@@ -1491,8 +1783,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::item_type<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.item_type(item_type),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::lang`]
@@ -1503,8 +1799,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::lang<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.lang(lang),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::nonce`]
@@ -1515,8 +1815,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::nonce<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.nonce(nonce),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::role`]
@@ -1527,8 +1831,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::role<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.role(role),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::slot`]
@@ -1539,8 +1847,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::slot<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.slot(slot),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::spellcheck`]
@@ -1553,8 +1865,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::spellcheck<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.spellcheck(spellcheck),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::style`]
@@ -1565,8 +1881,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::style<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.style(style),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::tab_index`]
@@ -1577,8 +1897,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::tab_index<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.tab_index(tab_index),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::title`]
@@ -1589,8 +1913,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::title<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.title(title),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::translate`]
@@ -1601,8 +1929,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::translate<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.translate(translate),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::virtual_keyboard_policy`]
@@ -1617,8 +1949,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .virtual_keyboard_policy(virtual_keyboard_policy),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_invalid`]
@@ -1629,8 +1965,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_invalid<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_invalid(on_invalid),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_animation_cancel`]
@@ -1643,8 +1983,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_cancel(on_animation_cancel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_animation_end`]
@@ -1655,8 +1999,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_end(on_animation_end),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_animation_iteration`]
@@ -1669,8 +2017,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_animation_iteration(on_animation_iteration),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_animation_start`]
@@ -1681,8 +2033,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_animation_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_animation_start(on_animation_start),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_before_input`]
@@ -1693,8 +2049,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_before_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_before_input(on_before_input),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_input`]
@@ -1705,8 +2065,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_input<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_input(on_input),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_change`]
@@ -1717,8 +2081,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_change<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_change(on_change),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_got_pointer_capture`]
@@ -1731,8 +2099,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_got_pointer_capture(on_got_pointer_capture),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_lost_pointer_capture`]
@@ -1745,8 +2117,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_lost_pointer_capture(on_lost_pointer_capture),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_cancel`]
@@ -1757,8 +2133,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_cancel<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_cancel(on_pointer_cancel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_down`]
@@ -1769,8 +2149,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_down<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_down(on_pointer_down),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_enter`]
@@ -1781,8 +2165,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_enter(on_pointer_enter),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_leave`]
@@ -1793,8 +2181,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_leave(on_pointer_leave),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_move`]
@@ -1805,8 +2197,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_move<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_move(on_pointer_move),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_out`]
@@ -1817,8 +2213,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_out<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_out(on_pointer_out),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_over`]
@@ -1829,8 +2229,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_over(on_pointer_over),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_pointer_up`]
@@ -1841,8 +2245,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_pointer_up<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_pointer_up(on_pointer_up),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_transition_cancel`]
@@ -1855,8 +2263,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_cancel(on_transition_cancel),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_transition_end`]
@@ -1867,8 +2279,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_end(on_transition_end),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_transition_run`]
@@ -1879,8 +2295,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_transition_run<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_transition_run(on_transition_run),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_transition_start`]
@@ -1893,8 +2313,12 @@ mod builder_and_replacer {
                 HtmlElementProps: self
                     .HtmlElementProps
                     .on_transition_start(on_transition_start),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag`]
@@ -1905,8 +2329,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag(on_drag),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag_end`]
@@ -1917,8 +2345,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_end<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_end(on_drag_end),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag_enter`]
@@ -1929,8 +2361,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_enter<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_enter(on_drag_enter),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag_leave`]
@@ -1941,8 +2377,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_leave<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_leave(on_drag_leave),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag_over`]
@@ -1953,8 +2393,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_over<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_over(on_drag_over),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drag_start`]
@@ -1965,8 +2409,12 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drag_start<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drag_start(on_drag_start),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         ///See [`HtmlElementProps::on_drop`]
@@ -1977,30 +2425,104 @@ mod builder_and_replacer {
         ) -> super::Building<super::overwrite::on_drop<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps.on_drop(on_drop),
-                height: self.height,
-                width: self.width,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         #[inline(always)]
-        pub fn height<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>(
+        pub fn download<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            height: V,
-        ) -> super::Building<super::overwrite::height<TypeDefs, V>> {
+            download: V,
+        ) -> super::Building<super::overwrite::download<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                height,
-                width: self.width,
+                download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
             }
         }
         #[inline(always)]
-        pub fn width<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<u32>>(
+        pub fn href<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
             self,
-            width: V,
-        ) -> super::Building<super::overwrite::width<TypeDefs, V>> {
+            href: V,
+        ) -> super::Building<super::overwrite::href<TypeDefs, V>> {
             super::Data {
                 HtmlElementProps: self.HtmlElementProps,
-                height: self.height,
-                width,
+                download: self.download,
+                href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+            }
+        }
+        #[inline(always)]
+        pub fn ping<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+            self,
+            ping: V,
+        ) -> super::Building<super::overwrite::ping<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target: self.target,
+            }
+        }
+        #[inline(always)]
+        pub fn referrer_policy<
+            V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>,
+        >(
+            self,
+            referrer_policy: V,
+        ) -> super::Building<super::overwrite::referrer_policy<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy,
+                rel: self.rel,
+                target: self.target,
+            }
+        }
+        #[inline(always)]
+        pub fn rel<V: Todo<unimplemented![]>>(
+            self,
+            rel: V,
+        ) -> super::Building<super::overwrite::rel<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel,
+                target: self.target,
+            }
+        }
+        #[inline(always)]
+        pub fn target<V: crate::imports::frender_html::props::MaybeUpdateValueWithState<str>>(
+            self,
+            target: V,
+        ) -> super::Building<super::overwrite::target<TypeDefs, V>> {
+            super::Data {
+                HtmlElementProps: self.HtmlElementProps,
+                download: self.download,
+                href: self.href,
+                ping: self.ping,
+                referrer_policy: self.referrer_policy,
+                rel: self.rel,
+                target,
             }
         }
     }
@@ -2010,11 +2532,12 @@ mod impl_update_element {
     #[allow(unused_imports)]
     use super::super::*;
     impl<TypeDefs: ?::core::marker::Sized + super::Types>
-        crate::imports::frender_csr::props::UpdateElement<HtmlCanvasElement>
+        crate::imports::frender_csr::props::UpdateElement<HtmlElementWithHref>
         for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>:
             crate::imports::frender_csr::props::UpdateElement<HtmlElement>,
+        unimplemented!(): __,
     {
         type State = super::render_state::RenderState<
             dyn super::render_state::RenderStateTypes<
@@ -2023,45 +2546,76 @@ mod impl_update_element {
                 > as crate::imports::frender_csr::props::UpdateElement<
                     HtmlElement,
                 >>::State,
-                height = <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
+                download = <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
+                    str,
                 >>::State,
-                width = <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
+                href = <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                ping = <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                referrer_policy = <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::State,
+                target = <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
+                    str,
                 >>::State,
             >,
         >;
         fn initialize_state(
             this: Self,
-            element: &HtmlCanvasElement,
+            element: &HtmlElementWithHref,
             children_ctx: &mut ::frender_csr::Dom,
         ) -> Self::State {
             let dom_element: &::web_sys::Element = element.as_ref();
+            unimplemented!();
             super::render_state::RenderState {
                 HtmlElementProps: <HtmlElementProps::Data<
                     TypeDefs::HtmlElementProps,
                 > as crate::imports::frender_csr::props::UpdateElement<
                     HtmlElement,
                 >>::initialize_state(this.HtmlElementProps, element, children_ctx),
-                height: <TypeDefs::height as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
+                download: <TypeDefs::download as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                    str,
                 >>::initialize_state_and_update(
-                    this.height,
-                    |v| dom_element.set_height(*v),
-                    || dom_element.remove_attribute("height").unwrap(),
+                    this.download,
+                    |v| dom_element.set_download(v),
+                    || dom_element.remove_attribute("download").unwrap(),
                 ),
-                width: <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                    u32,
+                href: <TypeDefs::href as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                    str,
                 >>::initialize_state_and_update(
-                    this.width,
-                    |v| dom_element.set_width(*v),
-                    || dom_element.remove_attribute("width").unwrap(),
+                    this.href,
+                    |v| dom_element.set_href(v),
+                    || dom_element.remove_attribute("href").unwrap(),
+                ),
+                ping: <TypeDefs::ping as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.ping,
+                    |v| dom_element.set_ping(v),
+                    || dom_element.remove_attribute("ping").unwrap(),
+                ),
+                referrer_policy: <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.referrer_policy,
+                    |v| dom_element.set_referrer_policy(v),
+                    || dom_element.remove_attribute("referrerpolicy").unwrap(),
+                ),
+                target: <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                    str,
+                >>::initialize_state_and_update(
+                    this.target,
+                    |v| dom_element.set_target(v),
+                    || dom_element.remove_attribute("target").unwrap(),
                 ),
             }
         }
         fn update_element(
             this: Self,
-            element: &HtmlCanvasElement,
+            element: &HtmlElementWithHref,
             children_ctx: &mut ::frender_csr::Dom,
             state: ::core::pin::Pin<&mut Self::State>,
         ) {
@@ -2073,21 +2627,46 @@ mod impl_update_element {
                 children_ctx,
                 state.HtmlElementProps,
             );
-            <TypeDefs::height as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                u32,
+            <TypeDefs::download as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                str,
             >>::maybe_update_value_with_state(
-                this.height,
-                state.height,
-                |v| dom_element.set_height(*v),
-                || dom_element.remove_attribute("height").unwrap(),
+                this.download,
+                state.download,
+                |v| dom_element.set_download(v),
+                || dom_element.remove_attribute("download").unwrap(),
             );
-            <TypeDefs::width as crate::imports::frender_html::props::MaybeUpdateValueWithState<
-                u32,
+            <TypeDefs::href as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                str,
             >>::maybe_update_value_with_state(
-                this.width,
-                state.width,
-                |v| dom_element.set_width(*v),
-                || dom_element.remove_attribute("width").unwrap(),
+                this.href,
+                state.href,
+                |v| dom_element.set_href(v),
+                || dom_element.remove_attribute("href").unwrap(),
+            );
+            <TypeDefs::ping as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.ping,
+                state.ping,
+                |v| dom_element.set_ping(v),
+                || dom_element.remove_attribute("ping").unwrap(),
+            );
+            <TypeDefs::referrer_policy as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.referrer_policy,
+                state.referrer_policy,
+                |v| dom_element.set_referrer_policy(v),
+                || dom_element.remove_attribute("referrerpolicy").unwrap(),
+            );
+            unimplemented! {}
+            <TypeDefs::target as crate::imports::frender_html::props::MaybeUpdateValueWithState<
+                str,
+            >>::maybe_update_value_with_state(
+                this.target,
+                state.target,
+                |v| dom_element.set_target(v),
+                || dom_element.remove_attribute("target").unwrap(),
             );
         }
     }
@@ -2102,6 +2681,7 @@ mod impl_into_ssr_data {
         > ::frender_ssr::IntoSsrData<W> for super::Data<TypeDefs>
     where
         HtmlElementProps::Data<TypeDefs::HtmlElementProps>: ::frender_ssr::IntoSsrData<W>,
+        unimplemented!(): __,
     {
         type Children = <HtmlElementProps::Data<
             TypeDefs::HtmlElementProps,
@@ -2115,7 +2695,7 @@ mod impl_into_ssr_data {
             > as ::frender_ssr::IntoSsrData<W>>::Attrs,
             ::frender_ssr::utils::filter::FilterArray<
                 ::frender_ssr::element::html::HtmlAttrPair<'static>,
-                2usize,
+                6usize,
             >,
         >;
         fn into_ssr_data(this: Self) -> (Self::Children, Self::Attrs) {
@@ -2123,37 +2703,80 @@ mod impl_into_ssr_data {
                 ::frender_ssr::IntoSsrData::into_ssr_data(this.HtmlElementProps);
             (
                 children,
-                attrs.chain(::frender_ssr::utils::filter::FilterIdentity(
-                    [
-                        <TypeDefs::height as ::frender_html::props::MaybeUpdateValueWithState<
-                            u32,
-                        >>::maybe_into_html_attribute_value(this.height)
-                        .map(|value| {
-                            (
-                                ::std::borrow::Cow::Borrowed("height"),
-                                if let Some(value) = value {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::String(value)
-                                } else {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                },
-                            )
-                        }),
-                        <TypeDefs::width as ::frender_html::props::MaybeUpdateValueWithState<
-                            u32,
-                        >>::maybe_into_html_attribute_value(this.width)
-                        .map(|value| {
-                            (
-                                ::std::borrow::Cow::Borrowed("width"),
-                                if let Some(value) = value {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::String(value)
-                                } else {
-                                    ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
-                                },
-                            )
-                        }),
-                    ]
-                    .into_iter(),
-                )),
+                attrs
+                    .chain(
+                        ::frender_ssr::utils::filter::FilterIdentity(
+                            [
+                                <TypeDefs::download as ::frender_html::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.download)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("download"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::href as ::frender_html::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.href)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("href"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::ping as ::frender_html::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.ping)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("ping"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                <TypeDefs::referrer_policy as ::frender_html::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.referrer_policy)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("referrerpolicy"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                                unimplemented!(),
+                                <TypeDefs::target as ::frender_html::props::MaybeUpdateValueWithState<
+                                    str,
+                                >>::maybe_into_html_attribute_value(this.target)
+                                    .map(|value| (
+                                        ::std::borrow::Cow::Borrowed("target"),
+                                        if let Some(value) = value {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::String(
+                                                value,
+                                            )
+                                        } else {
+                                            ::frender_ssr::element::html::HtmlAttributeValue::BooleanTrue
+                                        },
+                                    )),
+                            ]
+                                .into_iter(),
+                        ),
+                    ),
             )
         }
     }
