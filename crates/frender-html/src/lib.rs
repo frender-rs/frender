@@ -33,12 +33,17 @@ pub mod touch;
 
 use frender_common::expand;
 
+pub mod html;
+
 macro_rules! for_each_trait {
     ({$($vis:vis trait $trait_name:ident $body:tt)*} $commands:tt) => {
         $(crate::expand! {
             {$vis trait $trait_name $body}
             do $commands
         })*
+    };
+    (($($t:tt)*) $commands:tt) => {
+        crate::for_each_trait! { {$($t)*} $commands }
     };
 }
 

@@ -36,8 +36,8 @@ macro_rules! ready_ok_rewrap_err {
 
 #[macro_export]
 macro_rules! expand {
-    (if (                 ) { $($expand:tt)* }) => {};
-    (if ($($predicate:tt)+) { $($expand:tt)* }) => { $($expand)* };
+    (if (                 ) { $($expand:tt)* } $(else { $($else:tt)* })?) => { $($($else)*)? };
+    (if ($($predicate:tt)+) { $($expand:tt)* } $(else { $($else:tt)* })?) => { $($expand)* };
     ({$($t:tt)*}) => { $($t)* };
     ({$($t:tt)*} if (                 ) $($commands:tt)*) => {
         $crate::expand! {{      } $($commands)*}
@@ -54,7 +54,13 @@ macro_rules! expand {
     ({$($t:tt)*} prepend ($($prepend:tt)*) $($commands:tt)*) => {
         $crate::expand! {{$($prepend)* $($t)*} $($commands)*}
     };
+    ({$($t:tt)*} prepend {$($prepend:tt)*} $($commands:tt)*) => {
+        $crate::expand! {{$($prepend)* $($t)*} $($commands)*}
+    };
     ({$($t:tt)*} append  ($($append:tt )*) $($commands:tt)*) => {
+        $crate::expand! {{$($t)* $($append )*} $($commands)*}
+    };
+    ({$($t:tt)*} append  {$($append:tt )*} $($commands:tt)*) => {
         $crate::expand! {{$($t)* $($append )*} $($commands)*}
     };
     ({$($t:tt)*} do {$($do_commands:tt)*} $($commands:tt)*) => {
@@ -65,6 +71,33 @@ macro_rules! expand {
     };
     ({$($t:tt)*} wrap () $($commands:tt)*) => {
         $crate::expand! {{($($t)*)} $($commands)*}
+    };
+    ({$($t:tt)+} or ($($or:tt)*) $($commands:tt)*) => {
+        $crate::expand! {{$($t )+} $($commands)*}
+    };
+    ({         } or ($($or:tt)*) $($commands:tt)*) => {
+        $crate::expand! {{$($or)*} $($commands)*}
+    };
+    ({$($t:tt)*} duplex_concat ({$($do_a:tt)*}{$($do_b:tt)*}) $($commands:tt)*) => {
+        $crate::expand! {
+            {$($t)*}
+            $($do_a)*
+            wrap ()
+            prepend({$($t)*} $($do_b)* prepend)
+            append($($commands)*)
+            wrap {}
+            prepend($crate::expand! )
+        }
+    };
+    ({{$($first:tt)*} $({$($others:tt)*})*} trim {first} $($commands:tt)*) => {
+        $crate::expand! { {$({$($others)*})*} $($commands)* }
+    };
+    ({{$($first:tt)*} $({$($others:tt)*})*} get {0} $($commands:tt)*) => {
+        $crate::expand! { {$($first)*} $($commands)* }
+    };
+    ({         } get_or_exit {0} $($commands:tt)*) => {};
+    ({$($t:tt)+} get_or_exit {0} $($commands:tt)*) => {
+        $crate::expand! { {$($t)+} get {0} $($commands)* }
     };
     // $each must be wrapped with `{}`
     // $commands must be wrapped with `{}`
@@ -108,4 +141,13 @@ macro_rules! impl_many {
             }
         }
     };
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn expand_duplex_concat() {
+        let a = crate::expand! {{"a",} duplex_concat({append("b",)}{}) wrap ()};
+        assert_eq!(a, ("a", "b", "a"));
+    }
 }
