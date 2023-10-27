@@ -19,7 +19,6 @@ pub mod pin_mut_maybe_uninit;
 pub mod csr;
 
 pub mod event;
-pub mod event_types;
 
 mod render_element;
 pub use render_element::RenderElement;

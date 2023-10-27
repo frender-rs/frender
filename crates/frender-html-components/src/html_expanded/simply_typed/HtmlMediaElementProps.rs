@@ -10,229 +10,217 @@ def_props_type!(
                 part: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
                 on_cancel:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_cancel
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_cancel)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_error:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_error
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_error)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_scroll:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_scroll
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_scroll)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_security_policy_violation:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_security_policy_violation)]
+    ::imports::frender_html::html::event_type_helpers::on_security_policy_violation)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_select:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_select
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_select)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_wheel:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_wheel
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_wheel)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_copy:
                     bounds![
-                        #[event(crate::imports::frender_html::event_types::type_of_event::on_copy)]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_copy)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_cut:
                     bounds![
-                        #[event(crate::imports::frender_html::event_types::type_of_event::on_cut)]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_cut)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_paste:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_paste
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_paste)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_composition_end:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_composition_end)]
+    ::imports::frender_html::html::event_type_helpers::on_composition_end)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_composition_start:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_composition_start)]
+    ::imports::frender_html::html::event_type_helpers::on_composition_start)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_composition_update:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_composition_update)]
+    ::imports::frender_html::html::event_type_helpers::on_composition_update)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_blur:
                     bounds![
-                        #[event(crate::imports::frender_html::event_types::type_of_event::on_blur)]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_blur)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_focus
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_focus)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus_in:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_focus_in
+                            crate::imports::frender_html::html::event_type_helpers::on_focus_in
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_focus_out:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_focus_out
+                            crate::imports::frender_html::html::event_type_helpers::on_focus_out
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_fullscreen_change:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_fullscreen_change)]
+    ::imports::frender_html::html::event_type_helpers::on_fullscreen_change)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_fullscreen_error:
                     bounds![
                         #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_fullscreen_error)]
+    ::imports::frender_html::html::event_type_helpers::on_fullscreen_error)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_key_down:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_key_down
+                            crate::imports::frender_html::html::event_type_helpers::on_key_down
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_key_up:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_key_up
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_key_up)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_aux_click:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_aux_click
+                            crate::imports::frender_html::html::event_type_helpers::on_aux_click
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_click:
                     bounds![
-                        #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_click
-                        )]
+                        #[event(crate::imports::frender_html::html::event_type_helpers::on_click)]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_context_menu:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_context_menu)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_context_menu
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_double_click:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_double_click)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_double_click
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_down:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_mouse_down
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_down
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_enter:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_mouse_enter)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_enter
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_leave:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_mouse_leave)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_leave
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_move:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_mouse_move
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_move
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_out:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_mouse_out
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_out
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_over:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_mouse_over
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_over
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_mouse_up:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_mouse_up
+                            crate::imports::frender_html::html::event_type_helpers::on_mouse_up
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_cancel:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_touch_cancel)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_touch_cancel
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_end:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_touch_end
+                            crate::imports::frender_html::html::event_type_helpers::on_touch_end
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_move:
                     bounds![
                         #[event(
-                            crate::imports::frender_html::event_types::type_of_event::on_touch_move
+                            crate::imports::frender_html::html::event_type_helpers::on_touch_move
                         )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
                 on_touch_start:
                     bounds![
-                        #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_touch_start)]
+                        #[event(
+                            crate::imports::frender_html::html::event_type_helpers::on_touch_start
+                        )]
                         crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                     ],
             ),
@@ -265,186 +253,179 @@ def_props_type!(
             virtual_keyboard_policy: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
             on_invalid:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_invalid)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_invalid)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_cancel:
                 bounds![
-                    #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_animation_cancel)]
+                    #[event(
+                        crate::imports::frender_html::html::event_type_helpers::on_animation_cancel
+                    )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_end:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_animation_end
+                        crate::imports::frender_html::html::event_type_helpers::on_animation_end
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_iteration:
                 bounds![
                     #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_animation_iteration)]
+    ::imports::frender_html::html::event_type_helpers::on_animation_iteration)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_animation_start:
                 bounds![
-                    #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_animation_start)]
+                    #[event(
+                        crate::imports::frender_html::html::event_type_helpers::on_animation_start
+                    )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_before_input:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_before_input
+                        crate::imports::frender_html::html::event_type_helpers::on_before_input
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_input:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_input)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_input)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_change:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_change)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_change)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_got_pointer_capture:
                 bounds![
                     #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_got_pointer_capture)]
+    ::imports::frender_html::html::event_type_helpers::on_got_pointer_capture)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_lost_pointer_capture:
                 bounds![
                     #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_lost_pointer_capture)]
+    ::imports::frender_html::html::event_type_helpers::on_lost_pointer_capture)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_cancel:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_cancel
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_cancel
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_down:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_down
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_down
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_enter:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_enter
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_enter
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_leave:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_leave
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_leave
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_move:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_move
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_move
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_out:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_out
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_out
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_over:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_over
+                        crate::imports::frender_html::html::event_type_helpers::on_pointer_over
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_pointer_up:
                 bounds![
-                    #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_pointer_up
-                    )]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_pointer_up)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_cancel:
                 bounds![
                     #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_transition_cancel)]
+    ::imports::frender_html::html::event_type_helpers::on_transition_cancel)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_end:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_transition_end
+                        crate::imports::frender_html::html::event_type_helpers::on_transition_end
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_run:
                 bounds![
                     #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_transition_run
+                        crate::imports::frender_html::html::event_type_helpers::on_transition_run
                     )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_transition_start:
                 bounds![
-                    #[event(crate
-    ::imports::frender_html::event_types::type_of_event::on_transition_start)]
+                    #[event(
+                        crate::imports::frender_html::html::event_type_helpers::on_transition_start
+                    )]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drag)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag_end:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drag_end)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag_end)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag_enter:
                 bounds![
-                    #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_drag_enter
-                    )]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag_enter)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag_leave:
                 bounds![
-                    #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_drag_leave
-                    )]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag_leave)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag_over:
                 bounds![
-                    #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_drag_over
-                    )]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag_over)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drag_start:
                 bounds![
-                    #[event(
-                        crate::imports::frender_html::event_types::type_of_event::on_drag_start
-                    )]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drag_start)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
             on_drop:
                 bounds![
-                    #[event(crate::imports::frender_html::event_types::type_of_event::on_drop)]
+                    #[event(crate::imports::frender_html::html::event_type_helpers::on_drop)]
                     crate::imports::impl_bounds::MaybeHandleEvent::Bounds
                 ],
         ),
@@ -457,120 +438,118 @@ def_props_type!(
         src: bounds![crate::imports::impl_bounds::MaybeValue::Bounds<str>],
         on_abort:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_abort)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_abort)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_can_play:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_can_play)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_can_play)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_can_play_through:
             bounds![
                 #[event(
-                    crate::imports::frender_html::event_types::type_of_event::on_can_play_through
+                    crate::imports::frender_html::html::event_type_helpers::on_can_play_through
                 )]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_duration_change:
             bounds![
                 #[event(
-                    crate::imports::frender_html::event_types::type_of_event::on_duration_change
+                    crate::imports::frender_html::html::event_type_helpers::on_duration_change
                 )]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_emptied:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_emptied)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_emptied)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_ended:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_ended)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_ended)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_loaded_data:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_loaded_data)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_loaded_data)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_loaded_metadata:
             bounds![
                 #[event(
-                    crate::imports::frender_html::event_types::type_of_event::on_loaded_metadata
+                    crate::imports::frender_html::html::event_type_helpers::on_loaded_metadata
                 )]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_load_start:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_load_start)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_load_start)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_pause:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_pause)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_pause)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_play:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_play)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_play)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_playing:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_playing)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_playing)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_progress:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_progress)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_progress)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_rate_change:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_rate_change)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_rate_change)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_resize:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_resize)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_resize)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_seeked:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_seeked)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_seeked)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_seeking:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_seeking)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_seeking)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_stalled:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_stalled)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_stalled)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_suspend:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_suspend)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_suspend)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_time_update:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_time_update)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_time_update)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_volume_change:
             bounds![
-                #[event(
-                    crate::imports::frender_html::event_types::type_of_event::on_volume_change
-                )]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_volume_change)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
         on_waiting:
             bounds![
-                #[event(crate::imports::frender_html::event_types::type_of_event::on_waiting)]
+                #[event(crate::imports::frender_html::html::event_type_helpers::on_waiting)]
                 crate::imports::impl_bounds::MaybeHandleEvent::Bounds
             ],
     )
@@ -655,133 +634,133 @@ mod imp {
         },
     ));
     crate::imports::impl_bounds!(super::props::on_abort(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_abort)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_abort)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_abort",
     ));
     crate::imports::impl_bounds!(super::props::on_can_play(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_can_play)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_can_play)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_can_play",
     ));
     crate::imports::impl_bounds!(super::props::on_can_play_through(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_can_play_through)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_can_play_through)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_can_play_through",
     ));
     crate::imports::impl_bounds!(super::props::on_duration_change(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_duration_change)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_duration_change)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_duration_change",
     ));
     crate::imports::impl_bounds!(super::props::on_emptied(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_emptied)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_emptied)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_emptied",
     ));
     crate::imports::impl_bounds!(super::props::on_ended(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_ended)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_ended)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_ended",
     ));
     crate::imports::impl_bounds!(super::props::on_loaded_data(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_loaded_data)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_loaded_data)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_loaded_data",
     ));
     crate::imports::impl_bounds!(super::props::on_loaded_metadata(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_loaded_metadata)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_loaded_metadata)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_loaded_metadata",
     ));
     crate::imports::impl_bounds!(super::props::on_load_start(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_load_start)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_load_start)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_load_start",
     ));
     crate::imports::impl_bounds!(super::props::on_pause(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_pause)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_pause)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_pause",
     ));
     crate::imports::impl_bounds!(super::props::on_play(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_play)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_play)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_play",
     ));
     crate::imports::impl_bounds!(super::props::on_playing(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_playing)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_playing)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_playing",
     ));
     crate::imports::impl_bounds!(super::props::on_progress(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_progress)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_progress)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_progress",
     ));
     crate::imports::impl_bounds!(super::props::on_rate_change(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_rate_change)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_rate_change)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_rate_change",
     ));
     crate::imports::impl_bounds!(super::props::on_resize(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_resize)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_resize)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_resize",
     ));
     crate::imports::impl_bounds!(super::props::on_seeked(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_seeked)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_seeked)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_seeked",
     ));
     crate::imports::impl_bounds!(super::props::on_seeking(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_seeking)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_seeking)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_seeking",
     ));
     crate::imports::impl_bounds!(super::props::on_stalled(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_stalled)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_stalled)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_stalled",
     ));
     crate::imports::impl_bounds!(super::props::on_suspend(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_suspend)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_suspend)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_suspend",
     ));
     crate::imports::impl_bounds!(super::props::on_time_update(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_time_update)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_time_update)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_time_update",
     ));
     crate::imports::impl_bounds!(super::props::on_volume_change(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_volume_change)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_volume_change)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_volume_change",
     ));
     crate::imports::impl_bounds!(super::props::on_waiting(
-        #[event(crate::imports::frender_html::event_types::type_of_event::on_waiting)]
+        #[event(crate::imports::frender_html::html::event_type_helpers::on_waiting)]
         bounds as crate::imports::impl_bounds::MaybeHandleEvent,
         element as HtmlMediaElement,
         attr_name = "on_waiting",

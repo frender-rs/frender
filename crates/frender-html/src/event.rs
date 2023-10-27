@@ -54,7 +54,7 @@ macro_rules! type_traits_impl {
                 impl<E: ?Sized, R: ?Sized + crate::RenderHtml> crate::event::type_traits::$type_event<E, R>
                     for $for_ty
                 where
-                    E: crate::event_types::$element_trait_name<R>,
+                    E: crate::html::event_types::$element_trait_name<R>,
                 {
                     type $type_event = E::$_type_event;
                     $(type $type_event_listener = E::$_type_event_listener;)?

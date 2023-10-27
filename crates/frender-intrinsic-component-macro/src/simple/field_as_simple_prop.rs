@@ -162,7 +162,7 @@ impl FieldAsSimpleProp<'_> {
 
                     field.declaration = FieldDeclaration::WithBounds(parse_quote!(
                         : bounds![
-                            #[event(#crate_path::frender_html::event_types::type_of_event::#name)]
+                            #[event(#crate_path::frender_html::html::event_type_helpers::#name)]
                             bounds as #crate_path::impl_bounds::MaybeHandleEvent,
                         ]
                     ));

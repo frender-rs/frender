@@ -106,7 +106,7 @@ macro_rules! impl_behavior_fn {
 
             ::gloo_events::EventListener::new(
                 element,
-                <crate::event_types::event_types::$fn_name as crate::event::HasEventTypeName>::EVENT_TYPE_NAME,
+                <crate::html::event_types::$fn_name as crate::event::HasEventTypeName>::EVENT_TYPE_NAME,
                 move |event| {
                     use wasm_bindgen::JsCast;
                     let event = event.unchecked_ref();
@@ -219,6 +219,8 @@ macro_rules! behaviors_prelude {
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -267,6 +269,8 @@ macro_rules! behavior_type_traits {
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -311,6 +315,8 @@ macro_rules! tags {
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -357,6 +363,8 @@ macro_rules! attributes {
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -388,6 +396,13 @@ macro_rules! attributes {
                 // #[derive(Debug)]
                 pub struct $fn_name<V>(pub V);
             )*
+
+            ::frender_common::expand! {
+                while ($({ $fn_name $fn_args $fn_body_or_semi $trait_name })*) {
+                    wrap {}
+                    prepend( crate::html::macros::impl_attribute! )
+                }
+            }
 
             macro_rules! $trait_name {
                 (fns_without_attributes $commands:tt) => {
@@ -463,6 +478,21 @@ macro_rules! attributes {
     };
 }
 
+macro_rules! impl_attribute {
+    ($fn_name:ident ($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]); $trait_name:tt) => {};
+    ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
+        $(alias! $alias:tt;)?
+        $(attr_name! $attr_name:tt;)?
+        $(update_with! $update_with:tt;)?
+    } $trait_name:ident) => {};
+    ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
+}
+
 macro_rules! RenderHtml {
     (expand_item $vis:vis $item_type:ident $item_name:ident {
         additional_bounds!($(dyn $($additional_bounds:tt)+)?);
@@ -484,6 +514,8 @@ macro_rules! RenderHtml {
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -617,6 +649,157 @@ macro_rules! def_intrinsic_component_props {
     };
 }
 
+macro_rules! event_types {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        common_data({
+            root_path $root_path:tt
+            item_names(
+                behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
+                attributes($mod_attributes:ident)
+                behavior_type_traits($mod_behavior_type_traits:ident)
+                tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
+                RenderHtml($RenderHtml:ident)
+            )
+        })
+        extends($($extends:ident)*)
+        special_super_traits($($($special_super_traits:ident)+)?)
+        special_inter_traits $special_inter_traits:tt
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        #[allow(unused_imports)]
+        use super::$mod_behaviors::$trait_name;
+
+        $(
+            crate::html::macros::event_type! {
+                $fn_name $fn_args $fn_body_or_semi $trait_name
+            }
+        )*
+    };
+}
+
+macro_rules! event_type {
+    ($fn_name:ident ($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]); $trait_name:ident) => {
+        pub enum $fn_name {}
+
+        impl crate::event::HasEventTypeName for $fn_name {
+            const EVENT_TYPE_NAME: &'static str = $event_type_name;
+        }
+
+        crate::event::type_traits_impl::$event_trait_name! {
+            $fn_name,
+            $trait_name,
+            $event_type_ident,
+            $event_type_listener_ident
+        }
+    };
+    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
+}
+
+macro_rules! event_type_helpers {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        common_data({
+            root_path $root_path:tt
+            item_names(
+                behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
+                attributes($mod_attributes:ident)
+                behavior_type_traits($mod_behavior_type_traits:ident)
+                tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
+                RenderHtml($RenderHtml:ident)
+            )
+        })
+        extends($($extends:ident)*)
+        special_super_traits($($($special_super_traits:ident)+)?)
+        special_inter_traits $special_inter_traits:tt
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        $(
+            crate::html::macros::event_type_helper! {
+                $fn_name $fn_args $fn_body_or_semi $trait_name { super::super::$mod_behaviors }
+            }
+        )*
+    };
+}
+
+macro_rules! event_type_helper {
+    ($fn_name:ident ($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]); $trait_name:ident {$($path_to_mod_behaviors:tt)+}) => {
+        pub mod $fn_name {
+            pub use crate::event::$event_trait_name as Event;
+
+            pub type EventOf        <E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_ident;
+            pub type EventListenerOf<E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident;
+
+            pub fn on<
+                'event,
+                E: ?Sized + $($path_to_mod_behaviors)+::$trait_name<R>,
+                R: ?Sized,
+                C: 'static
+                    + Clone
+                    + for<'e> frender_events::callable::Callable<(&'e (dyn Event + 'event),), Output = ()>,
+            >(
+                element: &mut E,
+                renderer: &mut R,
+                callable: &C,
+            ) -> E::$event_type_listener_ident {
+                E::$fn_name(element, renderer, {
+                    let callable = (*callable).clone();
+                    move |ev: &_| frender_events::callable::Callable::call_fn(&callable, (ev,))
+                })
+            }
+        }
+    };
+    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};
+}
+
 pub(crate) use attributes;
 pub(crate) use behavior_type_traits;
 pub(crate) use behaviors;
@@ -625,6 +808,11 @@ pub(crate) use def_intrinsic_component_props;
 pub(crate) use define_behavior_fn;
 pub(crate) use define_behavior_fn_update_with;
 pub(crate) use define_item_and_traverse_traits;
+pub(crate) use event_type;
+pub(crate) use event_type_helper;
+pub(crate) use event_type_helpers;
+pub(crate) use event_types;
+pub(crate) use impl_attribute;
 pub(crate) use impl_behavior_fn;
 pub(crate) use impl_behavior_fn_update_with;
 pub(crate) use tags;

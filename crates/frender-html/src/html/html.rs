@@ -21,6 +21,12 @@ super::macros::def_intrinsic_component_props!(
         #[tags]
         pub mod tags {}
 
+        #[event_types]
+        pub mod event_types {}
+
+        #[event_type_helpers]
+        pub mod event_type_helpers {}
+
         #[RenderHtml]
         pub trait RenderHtml {
             additional_bounds!(
