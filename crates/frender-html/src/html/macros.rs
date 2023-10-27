@@ -166,6 +166,54 @@ macro_rules! behaviors {
     };
 }
 
+macro_rules! behaviors_prelude {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        common_data({
+            root_path $root_path:tt
+            item_names(
+                behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
+                attributes($mod_attributes:ident)
+                behavior_type_traits($mod_behavior_type_traits:ident)
+                tags($mod_tags:ident)
+                RenderHtml($RenderHtml:ident)
+            )
+        })
+        extends($($extends:ident)*)
+        special_super_traits($($($special_super_traits:ident)+)?)
+        special_inter_traits $special_inter_traits:tt
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        $vis mod $trait_name {
+            $vis use super::super::$mod_behaviors::$trait_name as _;
+
+            ::frender_common::expand! {
+                while ($({$extends})* $($({$special_super_traits})+)?) {
+                    prepend( $vis use super:: )
+                    append( ::*;)
+                }
+            }
+        }
+    };
+}
+
 macro_rules! behavior_type_traits {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -173,6 +221,7 @@ macro_rules! behavior_type_traits {
             root_path $root_path:tt
             item_names(
                 behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
@@ -216,6 +265,7 @@ macro_rules! tags {
             root_path $root_path:tt
             item_names(
                 behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
@@ -261,6 +311,7 @@ macro_rules! attributes {
             root_path $root_path:tt
             item_names(
                 behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
@@ -387,6 +438,7 @@ macro_rules! RenderHtml {
             root_path $root_path:tt
             item_names(
                 behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
                 attributes($mod_attributes:ident)
                 behavior_type_traits($mod_behavior_type_traits:ident)
                 tags($mod_tags:ident)
@@ -526,6 +578,7 @@ macro_rules! def_intrinsic_component_props {
 pub(crate) use attributes;
 pub(crate) use behavior_type_traits;
 pub(crate) use behaviors;
+pub(crate) use behaviors_prelude;
 pub(crate) use def_intrinsic_component_props;
 pub(crate) use define_behavior_fn;
 pub(crate) use define_behavior_fn_update_with;

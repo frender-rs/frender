@@ -9,6 +9,9 @@ super::macros::def_intrinsic_component_props!(
         #[behaviors]
         pub mod behaviors {}
 
+        #[behaviors_prelude]
+        pub mod behaviors_prelude {}
+
         #[attributes]
         pub mod attributes {}
 
@@ -472,7 +475,25 @@ super::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithRelAttribute {
-                        impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,););
+                        verbatim_trait_items!(
+                            type RelList<'a>: ::frender_html_common::dom_token::DomTokenList
+                            where
+                                Self: 'a,
+                                Renderer: 'a;
+                            fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a>;
+                        );
+                        impl_for_web!(
+                            only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,);
+                            verbatim_trait_items!(
+                                type RelList<'a> = crate::csr::web::DomTokenList<Renderer::TryBehavior<'a>>
+                                where
+                                    Self: 'a,
+                                    Renderer: 'a;
+                                fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a> {
+                                    crate::csr::web::DomTokenList(self.0.rel_list(), renderer.try_behavior())
+                                }
+                            );
+                        );
 
                         fn rel(
                             value: bounds![

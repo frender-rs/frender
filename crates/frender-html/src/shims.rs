@@ -12,6 +12,10 @@ extern "C" {
     pub fn set_height(this: &SetHeightWidthU32Object, value: u32);
     #[wasm_bindgen(structural, method, setter, js_name = width)]
     pub fn set_width(this: &SetHeightWidthU32Object, value: u32);
+
+    type RelListObject;
+    #[wasm_bindgen(structural, method, getter, js_name = relList)]
+    pub fn rel_list(this: &RelListObject) -> web_sys::DomTokenList;
 }
 
 pub(crate) trait SetReferrerPolicy {
@@ -90,9 +94,20 @@ pub(crate) trait SetBgColor {
     }
 );
 
+pub(crate) trait RelList {
+    fn rel_list(&self) -> web_sys::DomTokenList;
+}
+
+impl RelList for web_sys::HtmlFormElement {
+    fn rel_list(&self) -> web_sys::DomTokenList {
+        // https://html.spec.whatwg.org/multipage/forms.html#dom-form-rellist
+        self.unchecked_ref::<RelListObject>().rel_list()
+    }
+}
+
 pub(crate) mod prelude {
     pub(crate) use super::{
-        SetAccept as _, SetBgColor as _, SetHeightWidthU32 as _, SetHtmlFor as _,
+        RelList as _, SetAccept as _, SetBgColor as _, SetHeightWidthU32 as _, SetHtmlFor as _,
         SetReferrerPolicy as _, SetSizes as _,
     };
 }

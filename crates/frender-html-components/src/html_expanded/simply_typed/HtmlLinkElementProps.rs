@@ -586,7 +586,7 @@ mod imp {
         attr_name = "rel",
         csr {
             get_mut_dom_token_list:
-                frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
+                frender_html::renderer::node_behaviors::ElementWithRelAttribute::rel_list,
         }
     ));
     crate::imports::impl_bounds!(super::props::sizes(
