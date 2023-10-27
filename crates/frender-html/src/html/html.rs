@@ -331,6 +331,7 @@ super::macros::def_intrinsic_component_props!(
                             web_sys::HtmlScriptElement,
                             web_sys::HtmlSourceElement,
                             web_sys::HtmlStyleElement,
+                            web_sys::HtmlUListElement,
                         ););
 
                         fn r#type(value: maybe![&str]) {
@@ -679,6 +680,10 @@ super::macros::def_intrinsic_component_props!(
                     pub trait ElementWithSrcsetAttribute {
                         special_super_traits!(ElementWithSrcAttribute);
                         impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlSourceElement,););
+
+                        fn srcset(value: maybe![&str]) {
+                            update_with!(set_srcset);
+                        }
                     }
 
                     pub trait ElementWithBgColorAttribute {
@@ -796,7 +801,14 @@ super::macros::def_intrinsic_component_props!(
                             ),
                         );
 
-                        impl_for_web!();
+                        verbatim_trait_items!(
+                            fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str);
+                        );
+                        impl_for_web!(verbatim_trait_items!(
+                            fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str) {
+                                AsRef::<::web_sys::HtmlElement>::as_ref(&self.0).set_content_editable(value)
+                            }
+                        ););
 
                         fn access_key(value: maybe![&str]) {
                             attr_name!("accesskey");
@@ -1818,6 +1830,7 @@ super::macros::def_intrinsic_component_props!(
                             }
 
                             pub trait HtmlUListElement {
+                                special_super_traits!(ElementWithTypeAttribute);
                                 define!(Props: HtmlUListElementProps, tags: (ul,));
                                 impl_for_web!();
                                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]

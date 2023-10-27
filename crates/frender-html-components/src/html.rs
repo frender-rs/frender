@@ -423,7 +423,7 @@ frender_macros::def_intrinsic_component_props! {
                 rel: bounds![
                     bounds as DomTokens,
                     csr {
-                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::ElementWithRelAttribute::rel_list,
                     }
                 ],
                 target ? &str { set_target },
@@ -746,7 +746,7 @@ frender_macros::def_intrinsic_component_props! {
                 cross_origin ? &str {"crossorigin" [update |Self { element, renderer, value }| element.set_cross_origin(renderer, Some(value)) ] [remove |Self { element, renderer }| element.set_cross_origin(renderer, None)]},
                 fetch_priority ? &str {"fetchpriority"},
                 href ? &str { set_href },
-                href_lang ? &str { "hreflang" set_hreflang },
+                href_lang ? &str { "hreflang" set_href_lang },
                 image_sizes ? &str {"imagesizes"},
                 image_src_set ? &str {"imagesrcset"},
                 integrity ? &str {set_integrity},
@@ -757,7 +757,7 @@ frender_macros::def_intrinsic_component_props! {
                 rel: bounds![
                     bounds as DomTokens,
                     csr {
-                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::ElementWithRelAttribute::rel_list,
                     }
                 ],
                 sizes ? &str,

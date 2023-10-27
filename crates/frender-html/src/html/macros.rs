@@ -56,7 +56,21 @@ macro_rules! impl_behavior_fn_update_with {
 }
 
 macro_rules! define_behavior_fn {
-    ($fn_name:ident $fn_args:tt ;) => {};
+    ($fn_name:ident ($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]);) => {
+        type $event_type_ident: crate::event::$event_trait_name + 'static;
+        type $event_type_listener_ident;
+
+        fn $fn_name(
+            &mut self,
+            renderer: &mut Renderer,
+            listener: impl FnMut(&Self::$event_type_ident) + 'static,
+        ) -> Self::$event_type_listener_ident;
+    };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name! $attr_name:tt;)?
@@ -70,10 +84,37 @@ macro_rules! define_behavior_fn {
             }
         )?
     };
+    ($fn_name:ident $fn_args:tt ;) => {};
 }
 
 macro_rules! impl_behavior_fn {
-    ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
+    ($fn_name:ident ($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]); $trait_name:tt) => {
+        type $event_type_ident = crate::csr::web::Event<::web_sys::$event_trait_name>;
+        type $event_type_listener_ident = gloo_events::EventListener;
+
+        fn $fn_name(
+            &mut self,
+            _: &mut Renderer,
+            mut listener: impl FnMut(&Self::$event_type_ident) + 'static,
+        ) -> Self::$event_type_listener_ident {
+            let element: &web_sys::Element = self.0.as_ref();
+
+            ::gloo_events::EventListener::new(
+                element,
+                <crate::event_types::event_types::$fn_name as crate::event::HasEventTypeName>::EVENT_TYPE_NAME,
+                move |event| {
+                    use wasm_bindgen::JsCast;
+                    let event = event.unchecked_ref();
+                    listener(crate::csr::web::Event::new_from_ref(event))
+                },
+            )
+        }
+    };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name! $attr_name:tt;)?
@@ -88,6 +129,7 @@ macro_rules! impl_behavior_fn {
             }
         )?
     };
+    ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
 }
 
 macro_rules! behaviors {

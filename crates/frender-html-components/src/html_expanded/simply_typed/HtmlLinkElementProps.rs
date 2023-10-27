@@ -519,7 +519,7 @@ mod imp {
         attr_name = "hreflang",
         csr {
             update: |el: &mut ET::HtmlLinkElement<Renderer>, renderer: &mut _, _, v: &_| el
-                .set_hreflang(renderer, v),
+                .set_href_lang(renderer, v),
             remove: crate::imports::impl_bounds::MaybeValue::csr::default_remove,
         },
     ));

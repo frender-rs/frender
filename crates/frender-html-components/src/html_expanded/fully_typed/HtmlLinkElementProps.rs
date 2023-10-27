@@ -4055,7 +4055,7 @@ mod impl_update_element {
                     str,
                 >>::initialize_state_and_update(
                     this.href_lang,
-                    |v| dom_element.set_hreflang(v),
+                    |v| dom_element.set_href_lang(v),
                     || dom_element.remove_attribute("hreflang").unwrap(),
                 ),
                 image_sizes: <TypeDefs::image_sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
@@ -4198,7 +4198,7 @@ mod impl_update_element {
             >>::maybe_update_value_with_state(
                 this.href_lang,
                 state.href_lang,
-                |v| dom_element.set_hreflang(v),
+                |v| dom_element.set_href_lang(v),
                 || dom_element.remove_attribute("hreflang").unwrap(),
             );
             <TypeDefs::image_sizes as crate::imports::frender_html::props::MaybeUpdateValueWithState<
