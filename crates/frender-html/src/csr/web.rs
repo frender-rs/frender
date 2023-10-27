@@ -52,11 +52,14 @@ impl TryBehavior for UnwrapThrow {
     }
 }
 
+#[cfg(aaa)]
 mod impl_node_behaviors {
     use frender_common::try_behavior::TryWithTryBehavior;
 
     use crate::renderer::node_behaviors;
-    impl<E: AsRef<web_sys::Node>, R: ?Sized + super::Renderer> node_behaviors::Node<R> for super::Node<E> {
+    impl<E: AsRef<web_sys::Node>, R: ?Sized + super::Renderer> node_behaviors::Node<R>
+        for super::Node<E>
+    {
         fn cursor_is_at_self(&self, renderer: &R) -> bool {
             renderer.cursor_is_at_node(self.0.as_ref())
         }
@@ -74,17 +77,23 @@ mod impl_node_behaviors {
         }
     }
 
-    impl<E: AsRef<web_sys::Element> + AsRef<web_sys::Node>, R: ?Sized + super::Renderer> node_behaviors::Element<R> for super::Node<E> {
+    impl<E: AsRef<web_sys::Element> + AsRef<web_sys::Node>, R: ?Sized + super::Renderer>
+        node_behaviors::Element<R> for super::Node<E>
+    {
         fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut R) {
             renderer.move_cursor_at_the_first_child_of_element(self.0.as_ref())
         }
 
         fn set_attribute(&mut self, renderer: &mut R, name: &str, value: &str) {
-            AsRef::<web_sys::Element>::as_ref(&self.0).set_attribute(name, value).unwrap_with_behavior(&mut renderer.try_behavior())
+            AsRef::<web_sys::Element>::as_ref(&self.0)
+                .set_attribute(name, value)
+                .unwrap_with_behavior(&mut renderer.try_behavior())
         }
 
         fn remove_attribute(&mut self, renderer: &mut R, name: &str) {
-            AsRef::<web_sys::Element>::as_ref(&self.0).remove_attribute(name).unwrap_with_behavior(&mut renderer.try_behavior())
+            AsRef::<web_sys::Element>::as_ref(&self.0)
+                .remove_attribute(name)
+                .unwrap_with_behavior(&mut renderer.try_behavior())
         }
 
         type ClassList<'a> = super::DomTokenList<R::TryBehavior<'a>>

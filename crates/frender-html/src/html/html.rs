@@ -1,3 +1,6 @@
+use crate::renderer::RenderTextFrom;
+use crate::shims::prelude::*;
+
 super::macros::def_intrinsic_component_props!(
     #[root_path]
     use crate::imports;
@@ -16,7 +19,36 @@ super::macros::def_intrinsic_component_props!(
         pub mod tags {}
 
         #[RenderHtml]
-        pub trait RenderHtml {}
+        pub trait RenderHtml {
+            additional_bounds!(
+                dyn RenderTextFrom<Self::Text, str>
+                    + RenderTextFrom<Self::Text, i8>
+                    + RenderTextFrom<Self::Text, u8>
+                    + RenderTextFrom<Self::Text, i16>
+                    + RenderTextFrom<Self::Text, u16>
+                    + RenderTextFrom<Self::Text, i32>
+                    + RenderTextFrom<Self::Text, u32>
+                    + RenderTextFrom<Self::Text, i64>
+                    + RenderTextFrom<Self::Text, u64>
+                    + RenderTextFrom<Self::Text, i128>
+                    + RenderTextFrom<Self::Text, u128>
+                    + RenderTextFrom<Self::Text, isize>
+                    + RenderTextFrom<Self::Text, usize>
+                    + RenderTextFrom<Self::Text, f32>
+                    + RenderTextFrom<Self::Text, f64>
+                    + RenderTextFrom<Self::Text, bool>
+                    + RenderTextFrom<Self::Text, char>
+            );
+
+            type Text: behaviors::Node<Self>;
+
+            fn into_render_element<S: crate::RenderState<Self> + Default>(self) -> crate::RenderElement<Self, S>
+            where
+                Self: Sized,
+            {
+                crate::RenderElement::new(self)
+            }
+        }
     }
 
     pub trait Node {
@@ -270,18 +302,34 @@ super::macros::def_intrinsic_component_props!(
 
                 sub_traits!(
                     pub trait ElementWithHrefAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlLinkElement, web_sys::HtmlBaseElement,););
                         fn href(value: maybe![&str]) {
                             update_with!(set_href);
                         }
                     }
 
                     pub trait ElementWithTargetAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlBaseElement, web_sys::HtmlFormElement,););
+
                         fn target(value: maybe![&str]) {
                             update_with!(set_target);
                         }
                     }
 
                     pub trait ElementWithTypeAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlAnchorElement,
+                            web_sys::HtmlButtonElement,
+                            web_sys::HtmlEmbedElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlLinkElement,
+                            web_sys::HtmlObjectElement,
+                            web_sys::HtmlOListElement,
+                            web_sys::HtmlScriptElement,
+                            web_sys::HtmlSourceElement,
+                            web_sys::HtmlStyleElement,
+                        ););
+
                         fn r#type(value: maybe![&str]) {
                             alias!(type_);
                             attr_name!("type");
@@ -290,18 +338,22 @@ super::macros::def_intrinsic_component_props!(
                     }
 
                     pub trait ElementWithCiteAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlQuoteElement, web_sys::HtmlModElement,););
+
                         fn cite(value: maybe![&str]) {
                             update_with!(set_cite);
                         }
                     }
 
                     pub trait ElementWithPlaceHolderAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
                         fn placeholder(value: maybe![&str]) {
                             update_with!(set_placeholder);
                         }
                     }
 
                     pub trait ElementWithMaxMinLengthAttributes {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
                         fn max_length(value: maybe![i32]) {
                             attr_name!("maxlength");
                             update_with!(set_max_length);
@@ -313,6 +365,7 @@ super::macros::def_intrinsic_component_props!(
                     }
 
                     pub trait ElementWithHeightWidthStrAttributes {
+                        impl_for_web!(only_for_types!(web_sys::HtmlEmbedElement, web_sys::HtmlIFrameElement, web_sys::HtmlObjectElement, web_sys::HtmlTableCellElement,););
                         fn height(value: maybe![&str]) {
                             update_with!(set_height);
                         }
@@ -321,6 +374,14 @@ super::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithHeightWidthU32Attributes {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlVideoElement,
+                            web_sys::HtmlCanvasElement,
+                            web_sys::HtmlImageElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlSourceElement,
+                        ););
+
                         fn height(value: maybe![u32]) {
                             update_with!(set_height);
                         }
@@ -329,36 +390,75 @@ super::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithMaxF64Attribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlMeterElement, web_sys::HtmlProgressElement,););
                         fn max(value: maybe![f64]) {
                             update_with!(set_max);
                         }
                     }
                     pub trait ElementWithValueF64Attribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlMeterElement, web_sys::HtmlProgressElement,););
                         fn value(value: maybe![f64]) {
                             update_with!(set_value);
                         }
                     }
                     pub trait ElementWithValueStrAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlButtonElement, web_sys::HtmlDataElement, web_sys::HtmlInputElement, web_sys::HtmlOptionElement,););
+
                         fn value(value: maybe![&str]) {
                             update_with!(set_value);
                         }
                     }
                     pub trait ElementWithOpenAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlDetailsElement, web_sys::HtmlDialogElement,););
                         fn open(value: maybe![bool]) {
                             update_with!(set_open);
                         }
                     }
                     pub trait ElementWithNameAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlButtonElement,
+                            web_sys::HtmlFieldSetElement,
+                            web_sys::HtmlFormElement,
+                            web_sys::HtmlIFrameElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlMapElement,
+                            web_sys::HtmlMetaElement,
+                            web_sys::HtmlObjectElement,
+                            web_sys::HtmlOutputElement,
+                            web_sys::HtmlSelectElement,
+                            web_sys::HtmlSlotElement,
+                            web_sys::HtmlTextAreaElement,
+                        ););
+
                         fn name(value: maybe![&str]) {
                             update_with!(set_name);
                         }
                     }
                     pub trait ElementWithDisabledAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlButtonElement,
+                            web_sys::HtmlFieldSetElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlOptGroupElement,
+                            web_sys::HtmlOptionElement,
+                            web_sys::HtmlSelectElement,
+                            web_sys::HtmlTextAreaElement,
+                        ););
+
                         fn disabled(value: maybe![bool]) {
                             update_with!(set_disabled);
                         }
                     }
                     pub trait ElementWithCrossOriginAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlMediaElement,
+                            web_sys::HtmlAudioElement,
+                            web_sys::HtmlVideoElement,
+                            web_sys::HtmlImageElement,
+                            web_sys::HtmlLinkElement,
+                            web_sys::HtmlScriptElement,
+                        ););
+
                         fn cross_origin(value: maybe![&str]) {
                             attr_name!("crossorigin");
                             update_with!(
@@ -372,6 +472,8 @@ super::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithRelAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,););
+
                         fn rel(
                             value: bounds![
                                 DomTokens,
@@ -382,35 +484,60 @@ super::macros::def_intrinsic_component_props!(
                         );
                     }
                     pub trait ElementWithReferrerPolicyAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlAnchorElement,
+                            web_sys::HtmlAreaElement,
+                            web_sys::HtmlIFrameElement,
+                            web_sys::HtmlImageElement,
+                            web_sys::HtmlLinkElement,
+                            web_sys::HtmlScriptElement,
+                        ););
+
                         fn referrer_policy(value: maybe![&str]) {
                             attr_name!("referrerpolicy");
                             update_with!(set_referrer_policy);
                         }
                     }
                     pub trait ElementWithAltAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlAreaElement, web_sys::HtmlImageElement, web_sys::HtmlInputElement,););
+
                         fn alt(value: maybe![&str]) {
                             update_with!(set_alt);
                         }
                     }
                     pub trait ElementWithLoadingAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlIFrameElement, web_sys::HtmlImageElement,););
                         fn loading(value: maybe![&str]);
                     }
                     pub trait ElementWithAcceptAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlFormElement, web_sys::HtmlInputElement,););
                         fn accept(value: maybe![&str]) {
                             update_with!(set_accept);
                         }
                     }
                     pub trait ElementWithAutoCompleteAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlFormElement, web_sys::HtmlInputElement, web_sys::HtmlSelectElement, web_sys::HtmlTextAreaElement,););
                         fn auto_complete(value: maybe![&str]) {
                             attr_name!("autocomplete");
-                            update_with!(set_auto_complete);
+                            update_with!(set_auto_complete, web_sys_name = set_autocomplete);
                         }
                     }
                     pub trait ElementWithFormAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlButtonElement,
+                            web_sys::HtmlFieldSetElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlObjectElement,
+                            web_sys::HtmlOutputElement,
+                            web_sys::HtmlSelectElement,
+                            web_sys::HtmlTextAreaElement,
+                        ););
+
                         fn form(value: maybe![&str]);
                     }
                     pub trait ElementWithFormAttributes {
                         special_super_traits!(ElementWithFormAttribute);
+                        impl_for_web!(only_for_types!(web_sys::HtmlButtonElement, web_sys::HtmlInputElement,););
 
                         fn form_action(value: maybe![&str]) {
                             attr_name!("formaction");
@@ -434,12 +561,14 @@ super::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithFetchPriorityAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlIFrameElement, web_sys::HtmlLinkElement, web_sys::HtmlScriptElement,););
                         fn fetch_priority(value: maybe![&str]) {
                             attr_name!("fetchpriority");
                         }
                     }
                     pub trait ElementWithHrefLangAttribute {
                         special_super_traits!(ElementWithHrefAttribute);
+                        impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlLinkElement););
 
                         fn href_lang(value: maybe![&str]) {
                             attr_name!("hreflang");
@@ -448,57 +577,79 @@ super::macros::def_intrinsic_component_props!(
                     }
 
                     pub trait ElementWithSizesAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlLinkElement, web_sys::HtmlSourceElement,););
                         fn sizes(value: maybe![&str]) {
                             update_with!(set_sizes);
                         }
                     }
 
                     pub trait ElementWithUseMapAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlObjectElement,););
                         fn use_map(value: maybe![&str]) {
                             attr_name!("usemap");
                             update_with!(set_use_map);
                         }
                     }
                     pub trait ElementWithLabelAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlOptGroupElement, web_sys::HtmlOptionElement, web_sys::HtmlTrackElement,););
                         fn label(value: maybe![&str]) {
                             update_with!(set_label);
                         }
                     }
 
                     pub trait ElementWithForAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlLabelElement, web_sys::HtmlOutputElement,););
                         fn r#for(value: maybe![&str]) {
                             alias!(html_for);
                             attr_name!("for");
-                            update_with!(set_html_for);
+                            update_with!(set_html_for, web_sys_name = set_html_for);
                         }
                     }
                     pub trait ElementWithIntegrityAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlScriptElement,););
                         fn integrity(value: maybe![&str]) {
                             update_with!(set_integrity);
                         }
                     }
                     pub trait ElementWithBlockingAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlScriptElement, web_sys::HtmlStyleElement,););
                         fn blocking(value: maybe![&str]);
                     }
 
                     pub trait ElementWithMultipleAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement,););
                         fn multiple(value: maybe![bool]) {
                             update_with!(set_multiple);
                         }
                     }
                     pub trait ElementWithRequiredAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement, web_sys::HtmlTextAreaElement,););
                         fn required(value: maybe![bool]) {
                             update_with!(set_required);
                         }
                     }
 
                     pub trait ElementWithSizeU32Attribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement,););
                         fn size(value: maybe![u32]) {
                             update_with!(set_size);
                         }
                     }
 
                     pub trait ElementWithSrcAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlMediaElement,
+                            web_sys::HtmlAudioElement,
+                            web_sys::HtmlVideoElement,
+                            web_sys::HtmlEmbedElement,
+                            web_sys::HtmlIFrameElement,
+                            web_sys::HtmlImageElement,
+                            web_sys::HtmlInputElement,
+                            web_sys::HtmlScriptElement,
+                            web_sys::HtmlSourceElement,
+                            web_sys::HtmlTrackElement,
+                        ););
+
                         fn src(value: maybe![&str]) {
                             update_with!(set_src);
                         }
@@ -506,9 +657,17 @@ super::macros::def_intrinsic_component_props!(
 
                     pub trait ElementWithSrcsetAttribute {
                         special_super_traits!(ElementWithSrcAttribute);
+                        impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlSourceElement,););
                     }
 
                     pub trait ElementWithBgColorAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlTableElement,
+                            web_sys::HtmlTableSectionElement,
+                            web_sys::HtmlTableRowElement,
+                            web_sys::HtmlTableColElement,
+                            web_sys::HtmlTableCellElement,
+                        ););
                         fn bg_color(value: maybe![&str]) {
                             attr_name!("bgcolor");
                             update_with!(set_bg_color);
@@ -516,18 +675,28 @@ super::macros::def_intrinsic_component_props!(
                     }
 
                     pub trait ElementWithAlignAttribute {
+                        impl_for_web!(only_for_types!(
+                            web_sys::HtmlTableCaptionElement,
+                            web_sys::HtmlTableElement,
+                            web_sys::HtmlTableSectionElement,
+                            web_sys::HtmlTableRowElement,
+                            web_sys::HtmlTableColElement,
+                            web_sys::HtmlTableCellElement,
+                        ););
                         fn align(value: maybe![&str]) {
                             update_with!(set_align);
                         }
                     }
 
                     pub trait ElementWithMediaAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlSourceElement, web_sys::HtmlStyleElement,););
                         fn media(value: maybe![&str]) {
                             update_with!(set_media);
                         }
                     }
 
                     pub trait ElementWithReadOnlyAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
                         fn read_only(value: maybe![bool]) {
                             attr_name!("readonly");
                             update_with!(set_read_only);
@@ -535,6 +704,7 @@ super::macros::def_intrinsic_component_props!(
                     }
 
                     pub trait ElementWithDateTimeAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlModElement, web_sys::HtmlTimeElement,););
                         fn date_time(value: maybe![&str]) {
                             attr_name!("datetime");
                             update_with!(set_date_time);
@@ -969,11 +1139,13 @@ super::macros::def_intrinsic_component_props!(
                                 sub_traits!(
                                     pub trait HtmlAudioElement {
                                         define!(Props: HtmlAudioElementProps, tags: (audio,));
+                                        impl_for_web!();
                                     }
 
                                     pub trait HtmlVideoElement {
                                         special_super_traits!(ElementWithHeightWidthU32Attributes);
                                         define!(Props: HtmlVideoElementProps, tags: (video,));
+                                        impl_for_web!();
 
                                         fn plays_inline(value: maybe![bool]) {
                                             attr_name!("playsinline");
@@ -985,20 +1157,25 @@ super::macros::def_intrinsic_component_props!(
                                 );
                             }
 
-                            pub trait HtmlBaseElementProps {
+                            pub trait HtmlBaseElement {
                                 special_super_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute);
 
-                                define!(Props: HtmlBaseElement, tags: (base,));
+                                define!(Props: HtmlBaseElementProps, tags: (base,));
+
+                                impl_for_web!();
                             }
 
                             pub trait HtmlQuoteElement {
                                 special_super_traits!(ElementWithCiteAttribute);
 
                                 define!(Props: HtmlQuoteElementProps, tags: (blockquote, q,));
+
+                                impl_for_web!();
                             }
 
                             pub trait HtmlBodyElement {
                                 define!(Props: HtmlBodyElementProps, tags: (body,));
+                                impl_for_web!();
                                 // TODO:
                                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
                                 #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
@@ -1007,6 +1184,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlBrElement {
                                 define!(Props: HtmlBrElementProps, tags: (br,));
+                                impl_for_web!();
                                 #[deprecated]
                                 fn clear(value: maybe![&str]) {
                                     update_with!(set_clear);
@@ -1023,16 +1201,19 @@ super::macros::def_intrinsic_component_props!(
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
                                 define!(Props: HtmlButtonElementProps, tags: (button,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlCanvasElement {
                                 special_super_traits!(ElementWithHeightWidthU32Attributes);
                                 define!(Props: HtmlCanvasElementProps, tags: (canvas,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlTableCaptionElement {
                                 special_super_traits!(ElementWithAlignAttribute);
                                 define!(Props: HtmlTableCaptionElementProps, tags: (caption,));
+                                impl_for_web!();
                                 // TODO: deprecate align
                                 // #[deprecated = "Do not use this attribute, as it has been deprecated. The <caption> element should be styled using the CSS properties caption-side and text-align."]
                             }
@@ -1040,31 +1221,37 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlDataElement {
                                 special_super_traits!(ElementWithValueStrAttribute);
                                 define!(Props: HtmlDataElementProps, tags: (data,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlModElement {
                                 special_super_traits!(ElementWithCiteAttribute, ElementWithDateTimeAttribute);
                                 define!(Props: HtmlModElementProps, tags: (del, ins,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlDetailsElement {
                                 special_super_traits!(ElementWithOpenAttribute);
                                 define!(Props: HtmlDetailsElementProps, tags: (details,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlDialogElement {
                                 special_super_traits!(ElementWithOpenAttribute);
                                 define!(Props: HtmlDialogElementProps, tags: (dialog,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlEmbedElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithSrcAttribute, ElementWithHeightWidthStrAttributes);
                                 define!(Props: HtmlEmbedElementProps, tags: (embed,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlFieldSetElement {
                                 special_super_traits!(ElementWithFormAttribute, ElementWithDisabledAttribute, ElementWithNameAttribute);
                                 define!(Props: HtmlFieldSetElementProps, tags: (fieldset,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlFormElement {
@@ -1076,6 +1263,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                 );
                                 define!(Props: HtmlFormElementProps, tags: (form,));
+                                impl_for_web!();
                                 // TODO: mark HtmlFormElement.accept as deprecated
                                 // #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
                                 fn accept_charset(value: maybe![&str]) {
@@ -1115,6 +1303,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlHtmlElement {
                                 define!(Props: HtmlHtmlElementProps, tags: (html,));
+                                impl_for_web!();
                                 fn xmlns(value: maybe![&str]);
                             }
 
@@ -1128,6 +1317,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithHeightWidthStrAttributes,
                                 );
                                 define!(Props: HtmlIFrameElementProps, tags: (iframe,));
+                                impl_for_web!();
                                 fn allow(value: maybe![&str]);
                                 fn allow_fullscreen(value: maybe![bool]) {
                                     attr_name!("allowfullscreen");
@@ -1161,6 +1351,7 @@ super::macros::def_intrinsic_component_props!(
                                 special_inter_traits!(ElementWithSrcAttribute);
 
                                 define!(Props: HtmlImageElementProps, tags: (img,));
+                                impl_for_web!();
 
                                 fn decoding(value: maybe![&str]) {
                                     update_with!(set_decoding);
@@ -1195,6 +1386,7 @@ super::macros::def_intrinsic_component_props!(
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
                                 define!(Props: HtmlInputElementProps, tags: (input,));
+                                impl_for_web!();
 
                                 fn capture(value: maybe![&str]);
                                 fn checked(value: maybe![bool]) {
@@ -1219,16 +1411,18 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlLabelElement {
                                 special_super_traits!(ElementWithForAttribute);
                                 define!(Props: HtmlLabelElementProps, tags: (label,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlLiElement {
                                 define!(Props: HtmlLiElementProps, tags: (li,));
+                                impl_for_web!();
                                 fn value(value: maybe![i32]) {
                                     update_with!(set_value);
                                 }
                             }
 
-                            pub trait HtmlLinkElementProps {
+                            pub trait HtmlLinkElement {
                                 special_super_traits!(
                                     ElementWithHrefAttribute,
                                     ElementWithTypeAttribute,
@@ -1242,7 +1436,8 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithRelAttribute,
                                     ElementWithCrossOriginAttribute,
                                 );
-                                define!(Props: HtmlLinkElement, tags: (link,));
+                                define!(Props: HtmlLinkElementProps, tags: (link,));
+                                impl_for_web!();
                                 fn r#as(value: maybe![&str]) {
                                     alias!(as_);
                                     attr_name!("as");
@@ -1262,11 +1457,13 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlMapElement {
                                 special_super_traits!(ElementWithNameAttribute);
                                 define!(Props: HtmlMapElementProps, tags: (map,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlMetaElement {
                                 special_super_traits!(ElementWithNameAttribute);
                                 define!(Props: HtmlMetaElementProps, tags: (meta,));
+                                impl_for_web!();
                                 fn charset(value: maybe![&str]);
                                 fn content(value: maybe![&str]) {
                                     update_with!(set_content);
@@ -1280,6 +1477,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlMeterElement {
                                 special_super_traits!(ElementWithMaxF64Attribute, ElementWithValueF64Attribute);
                                 define!(Props: HtmlMeterElementProps, tags: (meter,));
+                                impl_for_web!();
 
                                 fn min(value: maybe![f64]) {
                                     update_with!(set_min);
@@ -1304,6 +1502,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithHeightWidthStrAttributes,
                                 );
                                 define!(Props: HtmlObjectElementProps, tags: (object,));
+                                impl_for_web!();
                                 fn data(value: maybe![&str]) {
                                     update_with!(set_data);
                                 }
@@ -1312,6 +1511,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlOListElement {
                                 special_super_traits!(ElementWithTypeAttribute);
                                 define!(Props: HtmlOListElementProps, tags: (ol,));
+                                impl_for_web!();
                                 fn reversed(value: maybe![bool]) {
                                     update_with!(set_reversed);
                                 }
@@ -1323,11 +1523,13 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlOptGroupElement {
                                 special_super_traits!(ElementWithLabelAttribute, ElementWithDisabledAttribute);
                                 define!(Props: HtmlOptGroupElementProps, tags: (optgroup,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlOptionElement {
                                 special_super_traits!(ElementWithLabelAttribute, ElementWithDisabledAttribute, ElementWithValueStrAttribute);
                                 define!(Props: HtmlOptionElementProps, tags: (option,));
+                                impl_for_web!();
 
                                 fn selected(value: maybe![bool]) {
                                     update_with!(set_selected);
@@ -1337,6 +1539,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlOutputElement {
                                 special_super_traits!(ElementWithForAttribute, ElementWithFormAttribute, ElementWithNameAttribute);
                                 define!(Props: HtmlOutputElementProps, tags: (output,));
+                                impl_for_web!();
 
                                 // TODO: no set_html_for
                             }
@@ -1344,6 +1547,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlProgressElement {
                                 special_super_traits!(ElementWithMaxF64Attribute, ElementWithValueF64Attribute);
                                 define!(Props: HtmlProgressElementProps, tags: (progress,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlScriptElement {
@@ -1357,6 +1561,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithCrossOriginAttribute,
                                 );
                                 define!(Props: HtmlScriptElementProps, tags: (script,)); // TODO: special children
+                                impl_for_web!();
                                 fn r#async(value: maybe![bool]) {
                                     update_with!(set_async);
                                 }
@@ -1381,11 +1586,13 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                 );
                                 define!(Props: HtmlSelectElementProps, tags: (select,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlSlotElement {
                                 special_super_traits!(ElementWithNameAttribute);
                                 define!(Props: HtmlSlotElementProps, tags: (slot,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlSourceElement {
@@ -1398,6 +1605,7 @@ super::macros::def_intrinsic_component_props!(
                                 );
                                 special_inter_traits!(ElementWithSrcAttribute);
                                 define!(Props: HtmlSourceElementProps, tags: (source,));
+                                impl_for_web!();
 
                                 // TODO: no set_height set_width
                             }
@@ -1405,6 +1613,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlStyleElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithMediaAttribute, ElementWithBlockingAttribute);
                                 define!(Props: HtmlStyleElementProps, tags: (style,));
+                                impl_for_web!();
 
                                 // TODO: `HtmlStyleElement.type` should be marked as deprecated
                                 // #[deprecated = "This attribute should not be provided: if it is, the only permitted values are the empty string or a case-insensitive match for \"text/css.\""]
@@ -1413,6 +1622,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlTableElement {
                                 special_super_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(Props: HtmlTableElementProps, tags: (table,));
+                                impl_for_web!();
 
                                 // TODO: #[deprecated] align
                                 // TODO: #[deprecated] bg_color
@@ -1451,6 +1661,12 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlTableChildElement {
                                 special_super_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
+                                impl_for_web!(only_for_types!(
+                                    web_sys::HtmlTableSectionElement,
+                                    web_sys::HtmlTableRowElement,
+                                    web_sys::HtmlTableColElement,
+                                    web_sys::HtmlTableCellElement,
+                                ););
                                 // TODO: #[deprecated] align
                                 // TODO: #[deprecated] bg_color
 
@@ -1468,57 +1684,66 @@ super::macros::def_intrinsic_component_props!(
                                     attr_name!("valign");
                                     update_with!(set_v_align);
                                 }
+                            }
 
-                                sub_traits!(
-                                    pub trait HtmlTableSectionElement {
-                                        define!(Props: HtmlTableSectionElementProps, tags: (tbody, tfoot, thead,));
-                                    }
+                            pub trait HtmlTableSectionElement {
+                                special_super_traits!(HtmlTableChildElement);
+                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
+                                define!(Props: HtmlTableSectionElementProps, tags: (tbody, tfoot, thead,));
+                                impl_for_web!();
+                            }
 
-                                    pub trait HtmlTableRowElement {
-                                        define!(Props: HtmlTableRowElementProps, tags: (tr,));
-                                    }
+                            pub trait HtmlTableRowElement {
+                                special_super_traits!(HtmlTableChildElement);
+                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
+                                define!(Props: HtmlTableRowElementProps, tags: (tr,));
+                                impl_for_web!();
+                            }
 
-                                    pub trait HtmlTableColElement {
-                                        define!(Props: HtmlTableColElementProps, tags: (col, colgroup,));
-                                        fn span(value: maybe![u32]) {
-                                            update_with!(set_span);
-                                        }
-                                        #[deprecated]
-                                        fn width(value: maybe![&str]) {
-                                            update_with!(set_width);
-                                        }
-                                    }
+                            pub trait HtmlTableColElement {
+                                special_super_traits!(HtmlTableChildElement);
+                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
+                                define!(Props: HtmlTableColElementProps, tags: (col, colgroup,));
+                                impl_for_web!();
+                                fn span(value: maybe![u32]) {
+                                    update_with!(set_span);
+                                }
+                                #[deprecated]
+                                fn width(value: maybe![&str]) {
+                                    update_with!(set_width);
+                                }
+                            }
 
-                                    pub trait HtmlTableCellElement {
-                                        special_super_traits!(ElementWithHeightWidthStrAttributes);
-                                        define!(Props: HtmlTableCellElementProps, tags: (td, th,));
+                            pub trait HtmlTableCellElement {
+                                special_super_traits!(ElementWithHeightWidthStrAttributes, HtmlTableChildElement);
+                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
+                                define!(Props: HtmlTableCellElementProps, tags: (td, th,));
+                                impl_for_web!();
 
-                                        fn col_span(value: maybe![u32]) {
-                                            attr_name!("colspan");
-                                            update_with!(set_col_span);
-                                        }
-                                        fn headers(value: maybe![&str]) {
-                                            update_with!(set_headers);
-                                        }
-                                        fn row_span(value: maybe![u32]) {
-                                            attr_name!("rowspan");
-                                            update_with!(set_row_span);
-                                        }
-                                        #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
-                                        fn abbr(value: maybe![&str]);
-                                        #[deprecated]
-                                        fn axis(value: maybe![&str]) {
-                                            update_with!(set_axis);
-                                        }
+                                fn col_span(value: maybe![u32]) {
+                                    attr_name!("colspan");
+                                    update_with!(set_col_span);
+                                }
+                                fn headers(value: maybe![&str]) {
+                                    update_with!(set_headers);
+                                }
+                                fn row_span(value: maybe![u32]) {
+                                    attr_name!("rowspan");
+                                    update_with!(set_row_span);
+                                }
+                                #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
+                                fn abbr(value: maybe![&str]);
+                                #[deprecated]
+                                fn axis(value: maybe![&str]) {
+                                    update_with!(set_axis);
+                                }
 
-                                        // TODO: mark HtmlTableCellElement.height as deprecated
-                                        // #[deprecated = "Use the CSS height property instead."]
-                                        // TODO: mark HtmlTableCellElement.width as deprecated
+                                // TODO: mark HtmlTableCellElement.height as deprecated
+                                // #[deprecated = "Use the CSS height property instead."]
+                                // TODO: mark HtmlTableCellElement.width as deprecated
 
-                                        #[deprecated]
-                                        fn scope(value: maybe![&str]);
-                                    }
-                                );
+                                #[deprecated]
+                                fn scope(value: maybe![&str]);
                             }
 
                             pub trait HtmlTextAreaElement {
@@ -1533,6 +1758,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                 );
                                 define!(Props: HtmlTextAreaElementProps, tags: (textarea,));
+                                impl_for_web!();
 
                                 fn auto_correct(value: maybe![&str]);
                                 fn cols(value: maybe![u32]) {
@@ -1547,13 +1773,16 @@ super::macros::def_intrinsic_component_props!(
                             }
 
                             pub trait HtmlTimeElement {
+                                special_super_traits!(ElementWithDateTimeAttribute);
                                 define!(Props: HtmlTimeElementProps, tags: (time,));
+                                impl_for_web!();
                             }
 
                             pub trait HtmlTrackElement {
                                 special_super_traits!(ElementWithSrcAttribute, ElementWithLabelAttribute);
 
                                 define!(Props: HtmlTrackElementProps, tags: (track,));
+                                impl_for_web!();
 
                                 fn default(value: maybe![bool]) {
                                     update_with!(set_default);
@@ -1563,12 +1792,13 @@ super::macros::def_intrinsic_component_props!(
                                 }
                                 fn src_lang(value: maybe![&str]) {
                                     attr_name!("srclang");
-                                    update_with!(set_src_lang);
+                                    update_with!(set_src_lang, web_sys_name = set_srclang);
                                 }
                             }
 
                             pub trait HtmlUListElement {
                                 define!(Props: HtmlUListElementProps, tags: (ul,));
+                                impl_for_web!();
                                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
                                 fn compact(value: maybe![bool]) {
                                     update_with!(set_compact);

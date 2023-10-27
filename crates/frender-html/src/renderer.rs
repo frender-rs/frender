@@ -445,7 +445,9 @@ define!(
 
         type Text: node_behaviors::Node<Self>;
 
-        fn into_render_element<S: crate::RenderState<Self> + Default>(self) -> crate::RenderElement<Self, S>
+        fn into_render_element<S: crate::RenderState<Self> + Default>(
+            self,
+        ) -> crate::RenderElement<Self, S>
         where
             Self: Sized,
         {
@@ -470,37 +472,9 @@ pub trait RenderTextFrom<Text, V: ?Sized> {
     fn update_text_from(&mut self, text: &mut Text, v: &V);
 }
 
-#[cfg(remove)]
-pub trait RenderHtml:
-    RenderTextFrom<Self::Text, str>
-    + RenderTextFrom<Self::Text, i8>
-    + RenderTextFrom<Self::Text, u8>
-    + RenderTextFrom<Self::Text, i16>
-    + RenderTextFrom<Self::Text, u16>
-    + RenderTextFrom<Self::Text, i32>
-    + RenderTextFrom<Self::Text, u32>
-    + RenderTextFrom<Self::Text, i64>
-    + RenderTextFrom<Self::Text, u64>
-    + RenderTextFrom<Self::Text, i128>
-    + RenderTextFrom<Self::Text, u128>
-    + RenderTextFrom<Self::Text, isize>
-    + RenderTextFrom<Self::Text, usize>
-    + RenderTextFrom<Self::Text, f32>
-    + RenderTextFrom<Self::Text, f64>
-    + RenderTextFrom<Self::Text, bool>
-    + RenderTextFrom<Self::Text, char>
-{
-    #![allow(non_camel_case_types)]
+pub use crate::html::behaviors as node_behaviors;
 
-    type EventListenerId;
-    type Event: node_behaviors::Event;
-
-    type Text: node_behaviors::Node<Self>;
-
-    type div: node_behaviors::HtmlElement<Self>;
-    // type button;
-}
-
+#[cfg(aaa)]
 pub mod node_behaviors {
     use frender_html_common::dom_token::DomTokenList;
 

@@ -21,8 +21,6 @@ pub mod csr;
 pub mod event;
 pub mod event_types;
 
-pub mod html_element_behaviors;
-
 mod render_element;
 pub use render_element::RenderElement;
 
@@ -32,6 +30,8 @@ pub use frender_html_common::dom_token::DomTokenList;
 pub mod touch;
 
 use frender_common::expand;
+
+mod shims;
 
 pub mod html;
 

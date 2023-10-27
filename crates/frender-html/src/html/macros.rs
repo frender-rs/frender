@@ -46,7 +46,11 @@ macro_rules! impl_behavior_fn_update_with {
         trait_name($trait_name:ident $($only_for_types:tt)?)
     ) => {
         fn $set_attribute_ident(&mut self, _: &mut Renderer, $value: $custom_type) {
-            AsRef::<::web_sys::$trait_name>::as_ref(&self.0).$set_attribute_ident($value)
+            ::frender_common::expand! { if ($($only_for_types)?) {
+                self.0
+            } else {
+                AsRef::<::web_sys::$trait_name>::as_ref(&self.0)
+            }}.$set_attribute_ident($value)
         }
     };
 }
@@ -87,7 +91,13 @@ macro_rules! impl_behavior_fn {
 }
 
 macro_rules! behaviors {
-    (expand_item_body {}) => {};
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} {$($item_body_expanded:tt)*}) => {
+        $vis $item_type $item_name {
+            use crate::shims::prelude::*;
+
+            $($item_body_expanded)*
+        }
+    };
     (
         common_data($common_data:tt)
         extends($($extends:ident)*)
@@ -124,8 +134,8 @@ macro_rules! behaviors {
 
         // if `impl_for_web`
         #[cfg(feature = "web")]
-        ::frender_common::expand! { if ($( * $($($verbatim_trait_items_impl_web)*)?)?) {
-            ::frender_common::expand! { if ($($($($impl_for_web_only_for_types)*)?)?) {
+        ::frender_common::expand! { if ($( ! $($($verbatim_trait_items_impl_web)*)?)?) {
+            ::frender_common::expand! { if ($($( ! $($impl_for_web_only_for_types)*)?)?) {
                 ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
                     prepend(impl<Renderer: ?Sized + crate::csr::web::Renderer> $trait_name<Renderer> for crate::csr::web::Node<)
                     append( > $(where Self: $($special_super_traits<Renderer> + )+ )? {
@@ -157,7 +167,7 @@ macro_rules! behaviors {
 }
 
 macro_rules! behavior_type_traits {
-    (expand_item_body {}) => {};
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
         common_data({
             root_path $root_path:tt
@@ -200,7 +210,7 @@ macro_rules! behavior_type_traits {
 }
 
 macro_rules! tags {
-    (expand_item_body {}) => {};
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
         common_data({
             root_path $root_path:tt
@@ -245,7 +255,7 @@ macro_rules! tags {
 }
 
 macro_rules! attributes {
-    (expand_item_body {}) => {};
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
         common_data({
             root_path $root_path:tt
@@ -285,38 +295,6 @@ macro_rules! attributes {
                 // #[derive(Debug)]
                 pub struct $fn_name<V>(pub V);
             )*
-
-            // if `impl_for_web`
-            #[cfg(feature = "aaaaweb")]
-            ::frender_common::expand! { if ($( * $($($verbatim_trait_items_impl_web)*)?)?) {
-                ::frender_common::expand! { if ($($($($impl_for_web_only_for_types)*)?)?) {
-                    ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
-                        prepend(impl<Renderer: ?Sized + crate::csr::web::Renderer> $trait_name<Renderer> for crate::csr::web::Node<)
-                        append( > $(where Self: $($special_super_traits<Renderer> + )+ )? {
-                            $($($($verbatim_trait_items_impl_web)*)?)?
-
-                            ::frender_common::expand! { while ($({$fn_name $fn_args $fn_body_or_semi})*) {
-                                append( ($trait_name ($($($($impl_for_web_only_for_types)*)?)?)) )
-                                wrap {}
-                                prepend(crate::html::macros::impl_behavior_fn!)
-                            }}
-                        })
-                    }}
-                } else {
-                    impl<
-                        Renderer: ?Sized + crate::csr::web::Renderer,
-                        E: AsRef<::web_sys::$trait_name> $(+ AsRef<::web_sys::$extends>)*
-                    > $trait_name<Renderer> for crate::csr::web::Node<E>
-                    $(where Self: $($special_super_traits<Renderer> + )+ )?
-                    {
-                        $($($($verbatim_trait_items_impl_web)*)?)?
-
-                        $(crate::html::macros::impl_behavior_fn! {
-                            $fn_name $fn_args $fn_body_or_semi ($trait_name)
-                        })*
-                    }
-                }}
-            }}
 
             macro_rules! $trait_name {
                 (fns_without_attributes $commands:tt) => {
@@ -393,7 +371,17 @@ macro_rules! attributes {
 }
 
 macro_rules! RenderHtml {
-    (expand_item_body {}) => {};
+    (expand_item $vis:vis $item_type:ident $item_name:ident {
+        additional_bounds!($(dyn $($additional_bounds:tt)+)?);
+        $($items:tt)*
+    } {$($item_body_expanded:tt)*}) => {
+        $vis $item_type $item_name
+        $(: $($additional_bounds)+)?
+        {
+            $($items)*
+            $($item_body_expanded)*
+        }
+    };
     (
         common_data({
             root_path $root_path:tt
@@ -495,17 +483,18 @@ macro_rules! define_item_and_traverse_traits {
         $t:tt // {}
         $($macro_name:ident ($vis:vis $item_type:ident $item_name:ident $item_body:tt))*
     ) => {
-        $($vis $item_type $item_name {
+        $(
             crate::html::macros::$macro_name! {
-                expand_item_body $item_body
+                expand_item $vis $item_type $item_name $item_body
+                {
+                    crate::html::macros::traverse_traits! {
+                        $prepend
+                        $t
+                        { prepend(crate::html::macros::$macro_name!) }
+                    }
+                }
             }
-
-            crate::html::macros::traverse_traits! {
-                $prepend
-                $t
-                { prepend(crate::html::macros::$macro_name!) }
-            }
-        })*
+        )*
     };
 }
 
