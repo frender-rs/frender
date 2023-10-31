@@ -2,7 +2,7 @@ use std::{mem::MaybeUninit, pin::Pin, task::Poll};
 
 use frender_common::write;
 
-use crate::{pin_mut_maybe_uninit::PinMutMaybeUninit, renderer::RenderHtml};
+use crate::{html::RenderHtml, pin_mut_maybe_uninit::PinMutMaybeUninit};
 
 pub trait RenderState<R> {
     fn unmount(self: Pin<&mut Self>, renderer: &mut R);

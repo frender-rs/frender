@@ -941,6 +941,7 @@ dependencies = [
  "frender-common",
  "frender-events",
  "frender-html-common",
+ "frender-ssr",
  "futures-lite",
  "ghost-lite",
  "gloo",

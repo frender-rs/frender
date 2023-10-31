@@ -5,8 +5,8 @@ pub mod props;
 
 pub use frender_html_common::{AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
 
+pub mod convert;
 pub mod renderer;
-pub use renderer::{element_type_traits, element_types, RenderHtml};
 
 mod element;
 mod update_element;
@@ -33,6 +33,15 @@ use frender_common::expand;
 mod shims;
 
 pub mod html;
+pub use html::RenderHtml;
+
+pub mod html_expanded;
+
+pub mod impl_bounds;
+
+pub mod __private {
+    pub use frender_common::write::attrs::IntoAsyncWritableAttrs;
+}
 
 macro_rules! for_each_trait {
     ({$($vis:vis trait $trait_name:ident $body:tt)*} $commands:tt) => {

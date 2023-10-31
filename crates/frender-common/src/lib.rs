@@ -95,9 +95,18 @@ macro_rules! expand {
     ({{$($first:tt)*} $({$($others:tt)*})*} get {0} $($commands:tt)*) => {
         $crate::expand! { {$($first)*} $($commands)* }
     };
+    ({{$($last:tt)*}                   } get {-1} $($commands:tt)*) => {
+        $crate::expand! { {$($last)*} $($commands)* }
+    };
+    ({{$($item:tt)*} $({$($last:tt)*})+} get {-1} $($commands:tt)*) => {
+        $crate::expand! { {$({$($last)*})+} get {-1} $($commands)* }
+    };
     ({         } get_or_exit {0} $($commands:tt)*) => {};
     ({$($t:tt)+} get_or_exit {0} $($commands:tt)*) => {
         $crate::expand! { {$($t)+} get {0} $($commands)* }
+    };
+    ({$($t:tt)+} reset {} $($commands:tt)*) => {
+        $crate::expand! { $($commands)* }
     };
     // $each must be wrapped with `{}`
     // $commands must be wrapped with `{}`

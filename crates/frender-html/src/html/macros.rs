@@ -15,6 +15,41 @@ macro_rules! define_behavior_fn_update_with {
     };
 }
 
+macro_rules! parse_update_with {
+    (match ($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)?) {
+        simple => $do_simple:tt
+        impl_with => $do_impl_with:tt
+    }) => {
+        ::frender_common::expand! { { $set_attribute_ident } do $do_simple }
+    };
+    (match ($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?) {
+        simple => $do_simple:tt
+        impl_with => $do_impl_with:tt
+    }) => {
+        ::frender_common::expand! { { $set_attribute_ident $impl_with } do $do_impl_with }
+    };
+}
+
+macro_rules! parse_impl_with {
+    ($set_attribute_ident:ident (
+        update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr,
+        remove = $($t:tt)*
+    ) as update(
+        value($value:pat_param)
+        element_type($element_type:ty)
+    )) => {
+        |$element: &mut $element_type, $renderer: &mut _, _, $value: &_| $update
+    };
+    ($set_attribute_ident:ident (
+        update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr,
+        remove = |$element:pat_param, $renderer:pat_param $(,)?| $remove:expr $(,)?
+    ) as remove(
+        element_type($element_type:ty)
+    )) => {
+        |$element: &mut $element_type, $renderer: &mut _, _| $remove
+    };
+}
+
 macro_rules! impl_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -299,7 +334,18 @@ macro_rules! behavior_type_traits {
             $($extends +)*
             $($($special_super_traits +)+)?
         {
-            type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::$mod_behaviors::$trait_name<Renderer>;
+            type $trait_name<Renderer: ?Sized + super::$RenderHtml>: super::$mod_behaviors::$trait_name<Renderer>
+                $(  + crate::convert::IdentityAs<Self::$extends             <Renderer>>)*
+                $($(+ crate::convert::IdentityAs<Self::$special_super_traits<Renderer>>)+)?
+            ;
+
+            fn from_identity_mut_root<Renderer: ?Sized + super::$RenderHtml>(
+                root: &mut ::frender_common::expand![
+                    {{$trait_name} $({$extends})*} get {-1}
+                    prepend(Self::)
+                    append(<Renderer>)
+                ]
+            ) -> &mut Self::$trait_name<Renderer>;
         }
     };
 }
@@ -342,6 +388,14 @@ macro_rules! tags {
     ) => {
         $($($(
             pub struct $tags;
+            impl crate::renderer::HasIntrinsicComponentTag for $tags {
+                const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
+            }
+            impl crate::renderer::CreateNode for $tags {
+                fn create_node<R: super::$RenderHtml>(renderer: &mut R) -> <Self as super::$mod_behavior_type_traits::Node>::Node<R> {
+                    renderer.$tags()
+                }
+            }
         )*)?)?
 
         ::frender_common::expand! { while ($($($({$tags})*)?)?) {
@@ -393,7 +447,7 @@ macro_rules! attributes {
 
         $vis mod $trait_name {
             $(
-                // #[derive(Debug)]
+                #[derive(Debug, Default)]
                 pub struct $fn_name<V>(pub V);
             )*
 
@@ -427,6 +481,21 @@ macro_rules! attributes {
                                 append $prepend_path
                                 append(
                                     ::$RenderHtml > = Renderer::$for_tag;
+                                )
+                            }
+                            ::frender_common::expand! {
+                                { fn from_identity_mut_root<Renderer: ?Sized + }
+                                append $prepend_path
+                                append(
+                                    ::$RenderHtml >(
+                                        root: &mut ::frender_common::expand![
+                                            {{$trait_name} $({$extends})*} get {-1}
+                                            prepend(Self::)
+                                            append(<Renderer>)
+                                        ]
+                                    ) -> &mut Self::$trait_name<Renderer> {
+                                        root
+                                    }
                                 )
                             }
                         })
@@ -485,11 +554,104 @@ macro_rules! impl_attribute {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {};
+    ($fn_name:ident ($value:ident : maybe![&$maybe_ty:ty]) {
+        $(alias! $alias:tt;)?
+        $(attr_name!($attr_name:expr);)?
+        $(update_with! $update_with:tt;)?
+    } $trait_name:ident) => {
+        crate::impl_bounds! {
+            self::$fn_name(
+                bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
+                element as $trait_name,
+                attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
+                csr {
+                    update: ::frender_common::expand! {
+                        if ($($update_with)?) {
+                                crate::html::macros::parse_update_with!(match $($update_with)? {
+                                    simple => {
+                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
+                                        append( (renderer, v) )
+                                    }
+                                    impl_with => {
+                                        append( as update(value($value) element_type(ET::$trait_name<Renderer>)))
+                                        wrap {}
+                                        prepend( crate::html::macros::parse_impl_with! )
+                                    }
+                                })
+                        } else {
+                            crate::impl_bounds::MaybeValue::csr::default_update
+                        }
+                    },
+                    remove: ::frender_common::expand! {
+                        if ($($update_with)?) {
+                            crate::html::macros::parse_update_with!(match $($update_with)? {
+                                simple => {
+                                    reset {}
+                                    {crate::impl_bounds::MaybeValue::csr::default_remove}
+                                }
+                                impl_with => {
+                                    append( as remove(element_type(ET::$trait_name<Renderer>)))
+                                    wrap {}
+                                    prepend( crate::html::macros::parse_impl_with! )
+                                }
+                            })
+                        } else {
+                            crate::impl_bounds::MaybeValue::csr::default_remove
+                        }
+                    },
+                },
+            )
+        }
+    };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
-        $(attr_name! $attr_name:tt;)?
+        $(attr_name!($attr_name:expr);)?
         $(update_with! $update_with:tt;)?
-    } $trait_name:ident) => {};
+    } $trait_name:ident) => {
+        crate::impl_bounds! {
+            self::$fn_name(
+                bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
+                element as $trait_name,
+                attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
+                csr {
+                    update: ::frender_common::expand! {
+                        if ($($update_with)?) {
+                                crate::html::macros::parse_update_with!(match $($update_with)? {
+                                    simple => {
+                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
+                                        append( (renderer, *v) )
+                                    }
+                                    impl_with => {
+                                        append( as update(value(&$value) element_type(ET::$trait_name<Renderer>)))
+                                        wrap {}
+                                        prepend( crate::html::macros::parse_impl_with! )
+                                    }
+                                })
+                        } else {
+                            crate::impl_bounds::MaybeValue::csr::default_update
+                        }
+                    },
+                    remove: ::frender_common::expand! {
+                        if ($($update_with)?) {
+                            crate::html::macros::parse_update_with!(match $($update_with)? {
+                                simple => {
+                                    reset {}
+                                    {crate::impl_bounds::MaybeValue::csr::default_remove}
+                                }
+                                impl_with => {
+                                    append( as remove(element_type(ET::$trait_name<Renderer>)))
+                                    wrap {}
+                                    prepend( crate::html::macros::parse_impl_with! )
+                                }
+                            })
+                        } else {
+                            crate::impl_bounds::MaybeValue::csr::default_remove
+                        }
+                    },
+                },
+            )
+        }
+    };
     ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
 }
 
@@ -815,6 +977,8 @@ pub(crate) use event_types;
 pub(crate) use impl_attribute;
 pub(crate) use impl_behavior_fn;
 pub(crate) use impl_behavior_fn_update_with;
+pub(crate) use parse_impl_with;
+pub(crate) use parse_update_with;
 pub(crate) use tags;
 pub(crate) use traverse_traits;
 pub(crate) use RenderHtml;

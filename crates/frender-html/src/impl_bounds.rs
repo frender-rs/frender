@@ -141,25 +141,25 @@ macro_rules! default_impl_csr {
     ) => {
         impl<
             V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
-            ET: $crate::__private::frender_html::element_type_traits::$csr_element_ty,
+            ET: $crate::html::behavior_type_traits::$csr_element_ty,
         >
-            $crate::__private::frender_html::UpdateElementNonReactive<
+            $crate::UpdateElementNonReactive<
                 ET
             >
         for $($wrapper)*::<V> {
-            type State<Renderer: $crate::__private::frender_html::RenderHtml> =
+            type State<Renderer: $crate::RenderHtml> =
                 $($wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-            fn update_element_non_reactive<Renderer: $crate::__private::frender_html::RenderHtml>(
+            fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
                 Self(this): Self,
                 renderer: &mut Renderer,
-                element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
+                element: &mut ET::Node<Renderer>,
                 state: &mut Self::State<Renderer>,
             ) {
                 // #[allow(unused_imports)]
-                use $crate::__private::frender_html::html::behaviors_prelude::$csr_element_ty::*;
+                use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
+                let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
                 $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
                     this,
                     element,
@@ -238,24 +238,24 @@ pub mod DomTokens {
         ) => {
             impl<
                 V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
-                ET: $crate::__private::frender_html::element_type_traits::$csr_element_ty,
+                ET: $crate::html::behavior_type_traits::$csr_element_ty,
             >
-                $crate::__private::frender_html::UpdateElementNonReactive<
+                $crate::UpdateElementNonReactive<
                     ET
                 >
             for $($wrapper)*::<V> {
-                type State<Renderer: $crate::__private::frender_html::RenderHtml> =
+                type State<Renderer: $crate::RenderHtml> =
                     $($wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-                fn update_element_non_reactive<Renderer: $crate::__private::frender_html::RenderHtml>(
+                fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
+                    element: &mut ET::Node<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
-                    use $crate::__private::frender_html::html::behaviors_prelude::$csr_element_ty::*;
+                    use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                    let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
+                    let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
 
                     let input = $($bounds)*::$csr::Input {
                         this,
@@ -354,11 +354,9 @@ pub mod MaybeValue {
     pub use crate::default_impl_csr as csr;
     pub use crate::default_impl_ssr as ssr;
 
-    #[cfg(feature = "csr")]
     pub mod csr {
         use std::borrow::Cow;
 
-        use frender_csr::{props::UpdateElementAttribute, web_sys, CsrContext};
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
 
         pub use super::super::CsrInputWithUpdater as Input;
@@ -407,7 +405,7 @@ pub mod MaybeValue {
 
         pub fn default_update<
             V: ?Sized + AsAttributeValue,
-            E: ?Sized + frender_html::renderer::node_behaviors::Element<RR>,
+            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
             RR: ?Sized,
         >(
             element: &mut E,
@@ -419,7 +417,7 @@ pub mod MaybeValue {
         }
 
         pub fn default_remove<
-            E: ?Sized + frender_html::renderer::node_behaviors::Element<RR>,
+            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
             RR: ?Sized,
         >(
             element: &mut E,
@@ -430,7 +428,6 @@ pub mod MaybeValue {
         }
     }
 
-    #[cfg(feature = "ssr")]
     pub mod ssr {
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
         use frender_ssr::element::html::simple::AttrPair;
@@ -472,28 +469,28 @@ pub mod MaybeHandleEvent {
         ) => {
             impl<
                 V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>,
-                ET: $crate::__private::frender_html::element_type_traits::$csr_element_ty,
+                ET: $crate::html::behavior_type_traits::$csr_element_ty,
             >
-                $crate::__private::frender_html::UpdateElementNonReactive<
+                $crate::UpdateElementNonReactive<
                     ET
                 >
             for $($wrapper)*::<V> {
-                type State<Renderer: $crate::__private::frender_html::RenderHtml> =
+                type State<Renderer: $crate::RenderHtml> =
                     $($wrapper)*::<$($bounds)*::$csr::State<
                         dyn $($bounds_tp)* ::Event,
                         V,
                         $($bounds_tp)*::EventListenerOf<ET::$csr_element_ty<Renderer>, Renderer>
                     >>;
 
-                fn update_element_non_reactive<Renderer: $crate::__private::frender_html::RenderHtml>(
+                fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut $crate::__private::frender_html::ElementOfType<ET, Renderer>,
+                    element: &mut ET::Node<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
-                    use $crate::__private::frender_html::html::behaviors_prelude::$csr_element_ty::*;
+                    use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                    let element = <ET as $crate::__private::frender_html::element_type_traits::$csr_element_ty>::from_identity_mut_element::<Renderer>(element);
+                    let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
                     $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
                         this,
                         element,
@@ -511,9 +508,8 @@ pub mod MaybeHandleEvent {
 
     #[cfg(feature = "csr")]
     pub mod csr {
-        use frender_csr::wasm_bindgen::JsCast;
-        use frender_csr::web_sys;
         use frender_events::{callable::StatedEvent, EventListener, MaybeHandleEvent, NewFromRef};
+        use wasm_bindgen::JsCast;
 
         pub struct Input<'a, V, E: ?Sized, R: ?Sized, F> {
             pub this: V,
@@ -529,7 +525,7 @@ pub mod MaybeHandleEvent {
             Ev: ?Sized,
             V: MaybeHandleEvent<Ev>,
             S,
-            E: ?Sized + frender_html::renderer::node_behaviors::Element<RR>,
+            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
             RR: ?Sized,
             F: FnOnce(&mut E, &mut RR, &<V as MaybeHandleEvent<Ev>>::StaticCloneCallable) -> S,
         >(
@@ -604,6 +600,7 @@ pub mod MaybeContentEditable {
 
         pub use super::super::MaybeValue::csr::default_remove;
     }
+
     pub mod ssr {
         use frender_common::write::attrs::AsyncWritableAttrValueStr;
         use frender_html_common::MaybeContentEditable;
@@ -639,6 +636,7 @@ pub mod Css {
 
         pub fn update_with_state<V, E, R>(input: Input<V, E, R>, state: &mut State<V>) {}
     }
+
     pub mod ssr {
         use frender_common::write::str::StrWriting;
 

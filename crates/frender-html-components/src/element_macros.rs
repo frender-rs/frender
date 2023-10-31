@@ -256,7 +256,7 @@ mod simple {
 
                     impl crate::imports::frender_html::IntrinsicComponent for $component_name {
                         const INTRINSIC_TAG: &'static ::core::primitive::str = ::core::stringify!($component_name);
-                        type ElementType = $crate::imports::frender_html::element_types::$component_name;
+                        type ElementType = $crate::imports::frender_html::html::tags::$component_name;
                         type ElementTagType = $crate::imports::frender_html::element_tag_types::EncloseAnyElement;
                     }
                 }

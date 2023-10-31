@@ -1,5 +1,4 @@
 use crate::renderer::RenderTextFrom;
-use crate::shims::prelude::*;
 
 super::macros::def_intrinsic_component_props!(
     #[root_path]

@@ -74,7 +74,7 @@ pub trait ElementWithChildren<Children> {
 mod imp {
     use frender_csr::element::intrinsic::ElementAndMounted;
     use frender_html::{
-        renderer::{node_behaviors, CreateElement},
+        renderer::{node_behaviors, CreateNode},
         Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
         UpdateElementNonReactive,
     };
@@ -211,7 +211,7 @@ mod imp {
                 render_state
                     .element_and_mounted
                     .get_or_insert_with(|| ElementAndMounted {
-                        element: <C::ElementType as CreateElement>::create_element(renderer),
+                        element: <C::ElementType as CreateNode>::create_node(renderer).into(),
                         mounted: false,
                     });
 
@@ -222,7 +222,7 @@ mod imp {
                     <P::Attrs>::update_element_non_reactive(
                         attributes,
                         renderer,
-                        element,
+                        frender_html::convert::IntoMut::into_mut(element),
                         props_state.attrs_state,
                     );
                     <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::children_render_update(

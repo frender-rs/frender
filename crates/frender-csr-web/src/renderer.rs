@@ -49,7 +49,7 @@ macro_rules! html_elements {
 
             let element = self
                 .document
-                .create_element(<frender_html::element_types::$tag as frender_html::renderer::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG)
+                .create_element(<frender_html::html::tags::$tag as frender_html::renderer::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG)
                 .unwrap_with_behavior(&mut self.try_behavior);
             Node(element.unchecked_into())
         }
