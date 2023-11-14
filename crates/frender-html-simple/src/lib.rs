@@ -1,14 +1,9 @@
 mod macros;
 
 // mod chain;
-mod component;
-mod props;
-mod states;
-
 // pub use chain::*;
-pub use component::*;
-pub use props::*;
-pub use states::*;
+
+pub use frender_html::component::*; // TODO: remove
 
 #[cfg(feature = "csr")]
 pub use frender_csr;

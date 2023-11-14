@@ -1,51 +1,16 @@
 use frender_html_common::IntrinsicComponent;
 
-use crate::IntoElementProps;
+use super::IntoElementProps;
 
-#[cfg(feature = "csr")]
-pub trait DomIntrinsicComponent {
-    type Element: AsRef<frender_csr::web_sys::Element> + frender_csr::wasm_bindgen::JsCast;
-}
-
-#[cfg(feature = "csr")]
-pub trait CsrWithChildren<Children> {
-    type ChildrenState: frender_csr::RenderState;
-
-    fn children_into_csr_state(
-        self,
-        children: Children,
-        ctx: &mut frender_csr::CsrContext,
-    ) -> Self::ChildrenState;
-    fn children_update_csr_state(
-        self,
-        children: Children,
-        ctx: &mut frender_csr::CsrContext,
-        children_state: std::pin::Pin<&mut Self::ChildrenState>,
-    );
-}
-
-#[cfg(feature = "ssr")]
-pub trait SsrWithChildren<Children> {
-    type ChildrenSsrState: frender_ssr::RenderState;
-
-    fn into_children_ssr_state(self, children: Children) -> Self::ChildrenSsrState;
+#[derive(Default)]
+pub struct ElementAndMounted<E> {
+    pub element: E,
+    pub mounted: bool,
 }
 
 pub struct IntrinsicChildrenAsElement<C, Children> {
     pub component_type: C,
     pub children: Children,
-}
-
-#[cfg(feature = "ssr")]
-impl<C, Children> frender_ssr::Element for IntrinsicChildrenAsElement<C, Children>
-where
-    C: SsrWithChildren<Children>,
-{
-    type SsrState = C::ChildrenSsrState;
-
-    fn into_ssr_state(self) -> Self::SsrState {
-        self.component_type.into_children_ssr_state(self.children)
-    }
 }
 
 #[cfg(feature = "ssr")]
@@ -61,9 +26,9 @@ pub trait SsrIntrinsicComponent {
 pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, pub P);
 
 pub trait ElementWithChildren<Children> {
-    type ChildrenRenderState<R: frender_html::RenderHtml>: frender_html::RenderState<R> + Default;
+    type ChildrenRenderState<R: crate::RenderHtml>: crate::RenderState<R> + Default;
 
-    fn children_render_update<Renderer: frender_html::RenderHtml>(
+    fn children_render_update<Renderer: crate::RenderHtml>(
         self,
         children: Children,
         renderer: &mut Renderer,
@@ -72,14 +37,14 @@ pub trait ElementWithChildren<Children> {
 }
 
 mod imp {
-    use frender_csr::element::intrinsic::ElementAndMounted;
-    use frender_html::{
+    use crate::{
+        component::IntoElementProps,
         renderer::{node_behaviors, CreateNode},
         Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
         UpdateElementNonReactive,
     };
 
-    use crate::IntoElementProps;
+    use super::ElementAndMounted;
 
     pin_project_lite::pin_project!(
         pub struct IntrinsicElementRenderState<E, S> {
@@ -176,23 +141,23 @@ mod imp {
         }
     }
 
-    impl<C: IntrinsicComponent + frender_html_common::IntrinsicComponent, P: IntoElementProps>
-        Element for super::IntrinsicElement<C, P>
+    impl<C: IntrinsicComponent + crate_common::IntrinsicComponent, P: IntoElementProps> Element
+        for super::IntrinsicElement<C, P>
     where
-        C::ElementTagType: frender_html::ElementSupportChildren<P::Children>,
+        C::ElementTagType: crate::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C::ElementType>,
     {
-        type RenderState<R: frender_html::RenderHtml> = IntrinsicElementRenderState<
+        type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             ElementOfType<C::ElementType, R>,
             ElementPropsState<
-                <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::ChildrenRenderState<
+                <C::ElementTagType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<
                     R,
                 >,
                 <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State<R>,
             >,
         >;
 
-        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml>(
+        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(
             self,
             renderer: &mut Renderer,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
@@ -222,10 +187,10 @@ mod imp {
                     <P::Attrs>::update_element_non_reactive(
                         attributes,
                         renderer,
-                        frender_html::convert::IntoMut::into_mut(element),
+                        crate::convert::IntoMut::into_mut(element),
                         props_state.attrs_state,
                     );
-                    <C::ElementTagType as frender_html::ElementSupportChildren<P::Children>>::children_render_update(
+                    <C::ElementTagType as crate::ElementSupportChildren<P::Children>>::children_render_update(
                             children,
                             renderer,
                             props_state.children_render_state,
@@ -237,7 +202,7 @@ mod imp {
     }
 
     pub fn update_element_maybe_reposition<
-        E: frender_html::renderer::node_behaviors::Element<R>,
+        E: crate::renderer::node_behaviors::Element<R>,
         R: ?Sized + RenderHtml,
     >(
         element_and_mounted: &mut ElementAndMounted<E>,
@@ -268,92 +233,13 @@ mod imp {
     }
 }
 
-#[cfg(feature = "csr")]
-mod dom {
-    use frender_csr::Element;
-    use frender_csr::{props::UpdateElementNonReactive, CsrContext};
-    use frender_html_common::IntrinsicComponent;
-
-    use crate::{states::ElementPropsStates, ElementProps};
-
-    use super::{DomIntrinsicComponent, IntoElementProps};
-
-    impl<C: IntrinsicComponent, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
-    where
-        C: DomIntrinsicComponent,
-        C: crate::CsrWithChildren<P::Children>,
-        P::Attrs: UpdateElementNonReactive<C::Element>,
-    {
-        type CsrState = ::frender_csr::element::intrinsic::IntrinsicComponentRenderState<
-            C::Element,
-            ElementPropsStates<
-                C::ChildrenState,
-                <P::Attrs as UpdateElementNonReactive<C::Element>>::State,
-            >,
-        >;
-
-        fn into_csr_state(self, ctx: &mut CsrContext) -> Self::CsrState {
-            let ElementProps {
-                children,
-                attributes,
-            } = P::into_element_props(self.1);
-            Self::CsrState::initialize_with_tag(
-                move |element, children_ctx| ElementPropsStates {
-                    children: C::children_into_csr_state(self.0, children, children_ctx),
-                    other_state:
-                        UpdateElementNonReactive::<C::Element>::initialize_state_non_reactive(
-                            attributes,
-                            element,
-                            children_ctx,
-                        ),
-                },
-                ctx,
-                C::INTRINSIC_TAG,
-            )
-        }
-
-        fn update_csr_state_maybe_reposition(
-            self,
-            ctx: &mut frender_csr::CsrContext,
-            state: std::pin::Pin<&mut Self::CsrState>,
-            force_reposition: bool,
-        ) where
-            Self: Sized,
-        {
-            #[cfg(debug_assertions)]
-            frender_csr::web_sys::console::log_2(
-                &"IntrinsicElement force_reposition".into(),
-                &force_reposition.into(),
-            );
-            let (node_and_mounted, state) = state.pin_project();
-            let (children_state, attrs_state) = state.pin_project();
-            node_and_mounted.update_maybe_reposition(
-                ctx,
-                |element, children_ctx| {
-                    let ElementProps {
-                        children,
-                        attributes,
-                    } = P::into_element_props(self.1);
-                    UpdateElementNonReactive::<C::Element>::update_element_non_reactive(
-                        attributes,
-                        element,
-                        children_ctx,
-                        attrs_state,
-                    );
-                    C::children_update_csr_state(self.0, children, children_ctx, children_state);
-                },
-                force_reposition,
-            )
-        }
-    }
-}
-
+#[cfg(aaa)]
 #[cfg(feature = "ssr")]
 mod ssr {
     use std::borrow::Cow;
 
+    use crate_common::IntrinsicComponent;
     use frender_common::write::attrs::IntoAsyncWritableAttrs;
-    use frender_html_common::IntrinsicComponent;
     use frender_ssr::{AsyncWrite, Element};
 
     use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};

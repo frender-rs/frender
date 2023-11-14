@@ -119,7 +119,7 @@ macro_rules! define_behavior_fn {
             }
         )?
     };
-    ($fn_name:ident $fn_args:tt ;) => {};
+    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt) => {};
 }
 
 macro_rules! impl_behavior_fn {
@@ -164,7 +164,7 @@ macro_rules! impl_behavior_fn {
             }
         )?
     };
-    ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
+    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
 macro_rules! behaviors {
@@ -256,6 +256,7 @@ macro_rules! behaviors_prelude {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -306,6 +307,7 @@ macro_rules! behavior_type_traits {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -363,6 +365,7 @@ macro_rules! tags {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -401,7 +404,7 @@ macro_rules! tags {
         ::frender_common::expand! { while ($($($({$tags})*)?)?) {
             prepend( impl_all_traits { super } for )
             wrap {}
-            prepend( super::$mod_attributes::$trait_name! )
+            prepend( super::$mod_attributes::$trait_name::helper_macro! )
         }}
     };
 }
@@ -419,6 +422,7 @@ macro_rules! attributes {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -443,9 +447,22 @@ macro_rules! attributes {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        pub(crate) use $trait_name::$trait_name;
-
         $vis mod $trait_name {
+            $vis mod attributes {
+                ::frender_common::expand! {
+                    while (
+                        $({$extends})*
+                        $($({$special_super_traits})+)?
+                        $({$special_inter_traits})*
+                    ) {
+                        prepend( $vis use super::super:: )
+                        append( ::attributes::*; )
+                    }
+                }
+
+                $($vis use super::$fn_name;)*
+            }
+
             $(
                 #[derive(Debug, Default)]
                 pub struct $fn_name<V>(pub V);
@@ -458,7 +475,7 @@ macro_rules! attributes {
                 }
             }
 
-            macro_rules! $trait_name {
+            macro_rules! helper_macro {
                 (fns_without_attributes $commands:tt) => {
                     ::frender_common::expand! {
                         {$({ fn $fn_name $fn_args $fn_body_or_semi })*}
@@ -511,7 +528,7 @@ macro_rules! attributes {
                             // Node
                             prepend {::$mod_attributes::}
                             prepend $prepend_path
-                            append (!{
+                            append (::helper_macro!{
                                 impl $prepend_path for $for_tag
                             })
                         }
@@ -530,19 +547,19 @@ macro_rules! attributes {
                 (impl_all_traits $prepend_path:tt for $for_tag:ident) => {
                     ::frender_common::expand! {
                         $prepend_path
-                        append(::$mod_attributes::$trait_name! {
+                        append(::$mod_attributes::$trait_name::helper_macro! {
                             impl $prepend_path for $for_tag
                         })
                     }
                     ::frender_common::expand! {
                         $prepend_path
-                        append(::$mod_attributes::$trait_name! {
+                        append(::$mod_attributes::$trait_name::helper_macro! {
                             impl_all_super_traits $prepend_path for $for_tag
                         })
                     }
                 };
             }
-            pub(crate) use $trait_name;
+            pub(crate) use helper_macro;
         }
     };
 }
@@ -554,6 +571,9 @@ macro_rules! impl_attribute {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {};
+    ($fn_name:ident ($value:ident : maybe![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
+        crate::html::macros::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
+    };
     ($fn_name:ident ($value:ident : maybe![&$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name!($attr_name:expr);)?
@@ -652,7 +672,7 @@ macro_rules! impl_attribute {
             )
         }
     };
-    ($fn_name:ident $fn_args:tt ; $trait_name:tt) => {};
+    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
 macro_rules! RenderHtml {
@@ -678,6 +698,7 @@ macro_rules! RenderHtml {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -824,6 +845,7 @@ macro_rules! event_types {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -895,6 +917,7 @@ macro_rules! event_type_helpers {
                 tags($mod_tags:ident)
                 event_types($mod_event_types:ident)
                 event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
                 RenderHtml($RenderHtml:ident)
             )
         })
@@ -962,10 +985,242 @@ macro_rules! event_type_helper {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};
 }
 
+macro_rules! components {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        common_data({
+            root_path $root_path:tt
+            item_names(
+                behaviors($mod_behaviors:ident)
+                behaviors_prelude($mod_behaviors_prelude:ident)
+                attributes($mod_attributes:ident)
+                behavior_type_traits($mod_behavior_type_traits:ident)
+                tags($mod_tags:ident)
+                event_types($mod_event_types:ident)
+                event_type_helpers($mod_event_type_helpers:ident)
+                components($mod_components:ident)
+                RenderHtml($RenderHtml:ident)
+            )
+        })
+        extends($($extends:ident)*)
+        special_super_traits($($($special_super_traits:ident)+)?)
+        special_inter_traits($($special_inter_traits:ident)*)
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        $vis mod $trait_name {
+            pub mod data_struct {
+                // #[allow(unused_imports)]
+                // use super::super::*;
+
+                #[derive(Debug, Clone, Copy, Default)]
+                pub struct $trait_name<Children = (), Attrs = ()> {
+                    pub props: $crate::component::ElementProps<Children, Attrs>,
+                }
+
+                impl<Children, Attrs> $crate::component::IntoElementProps for $trait_name<Children, Attrs> {
+                    type Children = Children;
+                    type Attrs = Attrs;
+
+                    fn into_element_props(this: Self) -> $crate::component::ElementProps<Children, Attrs> {
+                        this.props
+                    }
+                }
+            }
+
+            pub mod building_struct {
+                pub struct $trait_name<Children = (), Attrs = ()>(pub super::Data<Children, Attrs>);
+            }
+
+            pub use building_struct::$trait_name as Building;
+            pub use data_struct::$trait_name as Data;
+            pub type DataInitial = data_struct::$trait_name;
+            pub mod prelude {}
+
+            #[inline(always)]
+            pub fn build<Children, Attrs>(
+                building: Building<Children, Attrs>,
+            ) -> Data<Children, Attrs> {
+                building.0
+            }
+            pub use build as valid;
+
+            pub use super::super::$mod_attributes::$trait_name::attributes;
+
+            macro_rules! impl_props_builder_fns {
+                // only children is overridable
+                (impl_children $overrides:tt) => {
+
+                };
+                (impl_self_attrs) => {
+                    $(
+                        // #fn_attr
+                        // fn #attr_builder_fn_name<V: #parse_fn_args_as_bounds>(
+                        //     v: V
+                        // ) -> super::Building<Children, (Attrs, super::props::$fn_name<V>)> {
+                        //     super::Building(super::Data {
+                        //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
+                        //     })
+                        // }
+                        crate::html::macros::parse_fn_args_as_bounds! {
+                            $fn_args
+                            do {
+                                wrap()
+                                prepend(
+                                    prepend(
+                                        $(#$fn_attr)*
+                                        fn
+                                    )
+                                    append(<V: )
+                                    append
+                                )
+                                append(
+                                    append(
+                                        >(self, value: V) -> super::Building<Children, (Attrs, super::attributes::$fn_name<V>)> {
+                                            super::Building(super::Data {
+                                                props: self.0.props.chain_prop(super::attributes::$fn_name(value)),
+                                            })
+                                        }
+                                    )
+                                )
+                                wrap {}
+                                prepend( for_each )
+                                wrap {}
+                                prepend( {$fn_name $fn_body_or_semi} do )
+                                wrap {}
+                                prepend( crate::html::macros::extract_attr_builder_fn_names! )
+                            }
+                        }
+                    )*
+                };
+                (impl_all_attrs) => {
+                    ::frender_common::expand! {
+                        while (
+                            {$trait_name}
+                            $({$extends})*
+                            $($({$special_super_traits})+)?
+                            $({$special_inter_traits})*
+                        ) {
+                            prepend( super::super:: )
+                            append( ::impl_props_builder_fns! { impl_self_attrs } )
+                        }
+                    }
+                };
+            }
+
+            pub(crate) use impl_props_builder_fns;
+
+            mod props_builder {
+                #[allow(unused_imports)]
+                use super::super::super::*;
+
+                impl<Attrs> super::Building<(), Attrs> {
+
+                }
+                    // $crate::__impl_children_fns! $fields ;
+
+                impl<Children, Attrs> super::Building<Children, Attrs> {
+                    super::impl_props_builder_fns! { impl_all_attrs }
+                }
+            }
+        }
+
+        #[allow(non_snake_case)]
+        #[inline(always)]
+        $vis fn $trait_name() -> $trait_name::Building {
+            $trait_name::Building(Default::default())
+        }
+    };
+}
+
+/// `children` is excluded
+macro_rules! extract_attr_builder_fn_names {
+    ({children $fn_body_or_semi:tt} do $commands:tt) => {
+        ::frender_common::expand! { {} do $commands }
+    };
+    ({$fn_name:ident ;} do $commands:tt) => {
+        ::frender_common::expand! { { {$fn_name} } do $commands }
+    };
+    ({$fn_name:ident {
+        alias!($($alias:ident),* $(,)?);
+        $($other:ident ! $other_macro:tt;)*
+    }} do $commands:tt) => {
+        ::frender_common::expand! { { {$fn_name} $({$alias})* } do $commands }
+    };
+    ({$fn_name:ident {
+        $($other:ident ! $other_macro:tt;)*
+    }} do $commands:tt) => {
+        ::frender_common::expand! { { {$fn_name} } do $commands }
+    };
+}
+
+macro_rules! parse_fn_args_as_bounds {
+    (($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { crate::impl_bounds::MaybeHandleEvent::Bounds::<dyn crate::event::$event_trait_name> }
+            do $commands
+        }
+    };
+    (($value:ident : maybe![&$maybe_ty:ty]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { crate::impl_bounds::MaybeValue::Bounds::<$maybe_ty> }
+            do $commands
+        }
+    };
+    (($value:ident : maybe![$maybe_ty:ty]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { crate::impl_bounds::MaybeValue::Bounds::<$maybe_ty> }
+            do $commands
+        }
+    };
+    (($value:ident : children![impl $($bounds:tt)+]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { $($bounds)+ }
+            do $commands
+        }
+    };
+    (($value:ident : children![impl $($bounds:tt)+]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { $($bounds)+ }
+            do $commands
+        }
+    };
+    (($value:ident : bounds![ $($mod_path_start:ident)? $(:: $mod_path:ident)*  $($(::)? <$($ty:ty),* $(,)?>)?]) do $commands:tt) => {
+        ::frender_common::expand! {
+            { $($mod_path_start)? $(:: $mod_path)* ::Bounds $(::<$($ty),*>)? }
+            do $commands
+        }
+    };
+    ($fn_args:tt do $commands:tt) => {
+        compile_error! { stringify!($fn_args) }
+    };
+}
+
 pub(crate) use attributes;
 pub(crate) use behavior_type_traits;
 pub(crate) use behaviors;
 pub(crate) use behaviors_prelude;
+pub(crate) use components;
 pub(crate) use def_intrinsic_component_props;
 pub(crate) use define_behavior_fn;
 pub(crate) use define_behavior_fn_update_with;
@@ -974,9 +1229,11 @@ pub(crate) use event_type;
 pub(crate) use event_type_helper;
 pub(crate) use event_type_helpers;
 pub(crate) use event_types;
+pub(crate) use extract_attr_builder_fn_names;
 pub(crate) use impl_attribute;
 pub(crate) use impl_behavior_fn;
 pub(crate) use impl_behavior_fn_update_with;
+pub(crate) use parse_fn_args_as_bounds;
 pub(crate) use parse_impl_with;
 pub(crate) use parse_update_with;
 pub(crate) use tags;

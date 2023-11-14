@@ -152,18 +152,20 @@ macro_rules! __impl_builder_fns {
 
 #[macro_export]
 macro_rules! __impl_prop_struct {
-    (children) => {};
-    ($name:ident) => {
-        #[derive(Debug, Clone, Copy, Default)]
-        pub struct $name<V>(pub V);
-        impl<V> Unpin for $name<V> {}
+    (children $props_name:ident) => {};
+    ($name:ident $props_name:ident) => {
+        pub use ::frender_html::html::attributes::$props_name::$name;
+        // #[derive(Debug, Clone, Copy, Default)]
+        // pub struct $name<V>(pub V);
+        // impl<V> Unpin for $name<V> {}
     };
 }
 
 #[macro_export]
 macro_rules! __impl_mod_props {
     (
-        $(
+        $props_name:ident
+        ($(
             ..
             $inherit_from:ident
             $inherit_fields:tt
@@ -175,7 +177,7 @@ macro_rules! __impl_mod_props {
             $(:)?
             $( $field_macro:ident ! $field_macro_tt:tt $(+)? )*
             ,
-        )*
+        )*)
     ) => {
         pub mod props {
             $(
@@ -183,7 +185,7 @@ macro_rules! __impl_mod_props {
             )*
 
             $(
-                $crate::__impl_prop_struct!{ $name }
+                $crate::__impl_prop_struct!{ $name $props_name }
             )*
         }
     };
@@ -251,7 +253,7 @@ macro_rules! def_props_type {
             Building(Default::default())
         }
 
-        $crate::__impl_mod_props! $fields ;
+        $crate::__impl_mod_props! { $name $fields }
 
         $crate::__impl_children_fns! $fields ;
 

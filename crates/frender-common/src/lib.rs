@@ -108,6 +108,12 @@ macro_rules! expand {
     ({$($t:tt)+} reset {} $($commands:tt)*) => {
         $crate::expand! { $($commands)* }
     };
+    ({$({$($t:tt)*})*} for_each {$($for_each_commands:tt)*} $($commands:tt)*) => {
+        $crate::expand! { while ($({$($t)*})*) {
+            $($for_each_commands)*
+            $($commands)*
+        } }
+    };
     // $each must be wrapped with `{}`
     // $commands must be wrapped with `{}`
     (while ($($each:tt)*) $commands:tt) => {

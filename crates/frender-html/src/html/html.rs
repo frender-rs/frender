@@ -1,4 +1,7 @@
-use crate::renderer::RenderTextFrom;
+use crate::{
+    impl_bounds::{Css, DomTokens, MaybeContentEditable},
+    renderer::RenderTextFrom,
+};
 
 super::macros::def_intrinsic_component_props!(
     #[root_path]
@@ -25,6 +28,9 @@ super::macros::def_intrinsic_component_props!(
 
         #[event_type_helpers]
         pub mod event_type_helpers {}
+
+        #[components]
+        pub mod components {}
 
         #[RenderHtml]
         pub trait RenderHtml {
@@ -138,16 +144,13 @@ super::macros::def_intrinsic_component_props!(
                     );
                 );
 
-                fn children(value: children![]);
+                fn children(value: children![impl crate::Element]);
                 fn css(value: bounds![Css]);
-                fn class(
-                    value: bounds![
-                        DomTokens,
-                        csr {
-                            get_mut_dom_token_list: frender_html::renderer::node_behaviors::Element::class_list,
-                        }
-                    ],
-                );
+                fn class(value: bounds![DomTokens]) {
+                    impl_with!(csr {
+                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::Element::class_list,
+                    });
+                }
 
                 fn id(value: maybe![&str]) {
                     update_with!(set_id);
@@ -501,14 +504,11 @@ super::macros::def_intrinsic_component_props!(
                             );
                         );
 
-                        fn rel(
-                            value: bounds![
-                                DomTokens,
-                                csr {
-                                    get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
-                                }
-                            ],
-                        );
+                        fn rel(value: bounds![DomTokens]) {
+                            impl_with!(csr {
+                                get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
+                            });
+                        }
                     }
                     pub trait ElementWithReferrerPolicyAttribute {
                         impl_for_web!(only_for_types!(
@@ -825,16 +825,13 @@ super::macros::def_intrinsic_component_props!(
                         fn auto_focus(value: maybe![bool]) {
                             attr_name!("autofocus");
                         }
-                        fn content_editable(
-                            value: bounds![
-                                MaybeContentEditable,
-                                attr_name = "contenteditable",
-                                csr {
-                                    update: |el: &mut _, renderer: &mut _, _, v: &_| { frender_html::renderer::node_behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
-                                    remove: MaybeContentEditable::csr::default_remove,
-                                },
-                            ],
-                        );
+                        fn content_editable(value: bounds![MaybeContentEditable]) {
+                            attr_name!("contenteditable");
+                            impl_with!(csr {
+                                update: |el: &mut _, renderer: &mut _, _, v: &_| { frender_html::renderer::node_behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
+                                remove: MaybeContentEditable::csr::default_remove,
+                            });
+                        }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
                         fn context_menu(value: maybe![&str]) {
                             attr_name!("contextmenu");
@@ -883,7 +880,7 @@ super::macros::def_intrinsic_component_props!(
                         fn spellcheck(value: maybe![bool]) {
                             update_with!(set_spellcheck);
                         }
-                        fn style(value: maybe![&str]);
+                        fn style(value: maybe![&str]); // TODO: UpdateStyle
                         fn tab_index(value: maybe![i32]) {
                             attr_name!("tabindex");
                             update_with!(set_tab_index);
