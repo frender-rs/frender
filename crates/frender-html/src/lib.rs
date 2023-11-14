@@ -30,7 +30,7 @@ pub use frender_html_common::dom_token::DomTokenList;
 // pub mod data_transfer;
 pub mod touch;
 
-use frender_common::expand;
+pub use frender_common::expand;
 
 mod shims;
 

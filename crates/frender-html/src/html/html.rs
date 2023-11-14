@@ -3,9 +3,13 @@ use crate::{
     renderer::RenderTextFrom,
 };
 
-super::macros::def_intrinsic_component_props!(
+crate::def_intrinsic_component_props!(
     #[root_path]
     use crate::imports;
+
+    #[expand_html_traits]
+    #[macro_export]
+    use expand_html_traits;
 
     mod items {
         #[behaviors]
@@ -29,8 +33,11 @@ super::macros::def_intrinsic_component_props!(
         #[event_type_helpers]
         pub mod event_type_helpers {}
 
+        #[props]
+        pub mod define_props {}
+
         #[components]
-        pub mod components {}
+        pub mod define_components {}
 
         #[RenderHtml]
         pub trait RenderHtml {
@@ -99,8 +106,6 @@ super::macros::def_intrinsic_component_props!(
 
         sub_traits!(
             pub trait Element {
-                define!(Props: ElementProps,);
-
                 verbatim_trait_items!(
                     fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer);
 
@@ -744,7 +749,6 @@ super::macros::def_intrinsic_component_props!(
 
                     pub trait HtmlElement {
                         define!(
-                            Props: HtmlElementProps,
                             tags: (
                                 abbr,
                                 address,
@@ -1039,13 +1043,13 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlAnchorElement {
                                 special_super_traits!(HtmlElementWithHref, ElementWithTypeAttribute, ElementWithHrefLangAttribute);
                                 special_inter_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute);
-                                define!(Props: HtmlAnchorElementProps, tags: (a,));
+                                define!(tags: (a,));
                                 impl_for_web!();
                             }
                             pub trait HtmlAreaElement {
                                 special_super_traits!(HtmlElementWithHref, ElementWithAltAttribute);
                                 special_inter_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute);
-                                define!(Props: HtmlAreaElementProps, tags: (area,));
+                                define!(tags: (area,));
                                 impl_for_web!();
 
                                 fn coords(value: maybe![&str]) {
@@ -1058,7 +1062,6 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlMediaElement {
                                 special_super_traits!(ElementWithSrcAttribute, ElementWithCrossOriginAttribute);
-                                define!(Props: HtmlMediaElementProps);
                                 impl_for_web!();
 
                                 fn auto_play(value: maybe![bool]) {
@@ -1173,13 +1176,13 @@ super::macros::def_intrinsic_component_props!(
 
                                 sub_traits!(
                                     pub trait HtmlAudioElement {
-                                        define!(Props: HtmlAudioElementProps, tags: (audio,));
+                                        define!(tags: (audio,));
                                         impl_for_web!();
                                     }
 
                                     pub trait HtmlVideoElement {
                                         special_super_traits!(ElementWithHeightWidthU32Attributes);
-                                        define!(Props: HtmlVideoElementProps, tags: (video,));
+                                        define!(tags: (video,));
                                         impl_for_web!();
 
                                         fn plays_inline(value: maybe![bool]) {
@@ -1195,7 +1198,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlBaseElement {
                                 special_super_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute);
 
-                                define!(Props: HtmlBaseElementProps, tags: (base,));
+                                define!(tags: (base,));
 
                                 impl_for_web!();
                             }
@@ -1203,13 +1206,13 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlQuoteElement {
                                 special_super_traits!(ElementWithCiteAttribute);
 
-                                define!(Props: HtmlQuoteElementProps, tags: (blockquote, q,));
+                                define!(tags: (blockquote, q,));
 
                                 impl_for_web!();
                             }
 
                             pub trait HtmlBodyElement {
-                                define!(Props: HtmlBodyElementProps, tags: (body,));
+                                define!(tags: (body,));
                                 impl_for_web!();
                                 // TODO:
                                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
@@ -1218,7 +1221,7 @@ super::macros::def_intrinsic_component_props!(
                             }
 
                             pub trait HtmlBrElement {
-                                define!(Props: HtmlBrElementProps, tags: (br,));
+                                define!(tags: (br,));
                                 impl_for_web!();
                                 #[deprecated]
                                 fn clear(value: maybe![&str]) {
@@ -1235,19 +1238,19 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithValueStrAttribute,
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
-                                define!(Props: HtmlButtonElementProps, tags: (button,));
+                                define!(tags: (button,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlCanvasElement {
                                 special_super_traits!(ElementWithHeightWidthU32Attributes);
-                                define!(Props: HtmlCanvasElementProps, tags: (canvas,));
+                                define!(tags: (canvas,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTableCaptionElement {
                                 special_super_traits!(ElementWithAlignAttribute);
-                                define!(Props: HtmlTableCaptionElementProps, tags: (caption,));
+                                define!(tags: (caption,));
                                 impl_for_web!();
                                 // TODO: deprecate align
                                 // #[deprecated = "Do not use this attribute, as it has been deprecated. The <caption> element should be styled using the CSS properties caption-side and text-align."]
@@ -1255,37 +1258,37 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlDataElement {
                                 special_super_traits!(ElementWithValueStrAttribute);
-                                define!(Props: HtmlDataElementProps, tags: (data,));
+                                define!(tags: (data,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlModElement {
                                 special_super_traits!(ElementWithCiteAttribute, ElementWithDateTimeAttribute);
-                                define!(Props: HtmlModElementProps, tags: (del, ins,));
+                                define!(tags: (del, ins,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlDetailsElement {
                                 special_super_traits!(ElementWithOpenAttribute);
-                                define!(Props: HtmlDetailsElementProps, tags: (details,));
+                                define!(tags: (details,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlDialogElement {
                                 special_super_traits!(ElementWithOpenAttribute);
-                                define!(Props: HtmlDialogElementProps, tags: (dialog,));
+                                define!(tags: (dialog,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlEmbedElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithSrcAttribute, ElementWithHeightWidthStrAttributes);
-                                define!(Props: HtmlEmbedElementProps, tags: (embed,));
+                                define!(tags: (embed,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlFieldSetElement {
                                 special_super_traits!(ElementWithFormAttribute, ElementWithDisabledAttribute, ElementWithNameAttribute);
-                                define!(Props: HtmlFieldSetElementProps, tags: (fieldset,));
+                                define!(tags: (fieldset,));
                                 impl_for_web!();
                             }
 
@@ -1297,7 +1300,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithRelAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                define!(Props: HtmlFormElementProps, tags: (form,));
+                                define!(tags: (form,));
                                 impl_for_web!();
                                 // TODO: mark HtmlFormElement.accept as deprecated
                                 // #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
@@ -1337,7 +1340,7 @@ super::macros::def_intrinsic_component_props!(
                             }
 
                             pub trait HtmlHtmlElement {
-                                define!(Props: HtmlHtmlElementProps, tags: (html,));
+                                define!(tags: (html,));
                                 impl_for_web!();
                                 fn xmlns(value: maybe![&str]);
                             }
@@ -1351,7 +1354,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithHeightWidthStrAttributes,
                                 );
-                                define!(Props: HtmlIFrameElementProps, tags: (iframe,));
+                                define!(tags: (iframe,));
                                 impl_for_web!();
                                 fn allow(value: maybe![&str]);
                                 fn allow_fullscreen(value: maybe![bool]) {
@@ -1385,7 +1388,7 @@ super::macros::def_intrinsic_component_props!(
                                 );
                                 special_inter_traits!(ElementWithSrcAttribute);
 
-                                define!(Props: HtmlImageElementProps, tags: (img,));
+                                define!(tags: (img,));
                                 impl_for_web!();
 
                                 fn decoding(value: maybe![&str]) {
@@ -1420,7 +1423,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
-                                define!(Props: HtmlInputElementProps, tags: (input,));
+                                define!(tags: (input,));
                                 impl_for_web!();
 
                                 fn capture(value: maybe![&str]);
@@ -1445,12 +1448,12 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlLabelElement {
                                 special_super_traits!(ElementWithForAttribute);
-                                define!(Props: HtmlLabelElementProps, tags: (label,));
+                                define!(tags: (label,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlLiElement {
-                                define!(Props: HtmlLiElementProps, tags: (li,));
+                                define!(tags: (li,));
                                 impl_for_web!();
                                 fn value(value: maybe![i32]) {
                                     update_with!(set_value);
@@ -1471,7 +1474,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithRelAttribute,
                                     ElementWithCrossOriginAttribute,
                                 );
-                                define!(Props: HtmlLinkElementProps, tags: (link,));
+                                define!(tags: (link,));
                                 impl_for_web!();
                                 fn r#as(value: maybe![&str]) {
                                     alias!(as_);
@@ -1491,13 +1494,13 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlMapElement {
                                 special_super_traits!(ElementWithNameAttribute);
-                                define!(Props: HtmlMapElementProps, tags: (map,));
+                                define!(tags: (map,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlMetaElement {
                                 special_super_traits!(ElementWithNameAttribute);
-                                define!(Props: HtmlMetaElementProps, tags: (meta,));
+                                define!(tags: (meta,));
                                 impl_for_web!();
                                 fn charset(value: maybe![&str]);
                                 fn content(value: maybe![&str]) {
@@ -1511,7 +1514,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlMeterElement {
                                 special_super_traits!(ElementWithMaxF64Attribute, ElementWithValueF64Attribute);
-                                define!(Props: HtmlMeterElementProps, tags: (meter,));
+                                define!(tags: (meter,));
                                 impl_for_web!();
 
                                 fn min(value: maybe![f64]) {
@@ -1536,7 +1539,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithHeightWidthStrAttributes,
                                 );
-                                define!(Props: HtmlObjectElementProps, tags: (object,));
+                                define!(tags: (object,));
                                 impl_for_web!();
                                 fn data(value: maybe![&str]) {
                                     update_with!(set_data);
@@ -1545,7 +1548,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlOListElement {
                                 special_super_traits!(ElementWithTypeAttribute);
-                                define!(Props: HtmlOListElementProps, tags: (ol,));
+                                define!(tags: (ol,));
                                 impl_for_web!();
                                 fn reversed(value: maybe![bool]) {
                                     update_with!(set_reversed);
@@ -1557,13 +1560,13 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlOptGroupElement {
                                 special_super_traits!(ElementWithLabelAttribute, ElementWithDisabledAttribute);
-                                define!(Props: HtmlOptGroupElementProps, tags: (optgroup,));
+                                define!(tags: (optgroup,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlOptionElement {
                                 special_super_traits!(ElementWithLabelAttribute, ElementWithDisabledAttribute, ElementWithValueStrAttribute);
-                                define!(Props: HtmlOptionElementProps, tags: (option,));
+                                define!(tags: (option,));
                                 impl_for_web!();
 
                                 fn selected(value: maybe![bool]) {
@@ -1573,7 +1576,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlOutputElement {
                                 special_super_traits!(ElementWithForAttribute, ElementWithFormAttribute, ElementWithNameAttribute);
-                                define!(Props: HtmlOutputElementProps, tags: (output,));
+                                define!(tags: (output,));
                                 impl_for_web!();
 
                                 // TODO: no set_html_for
@@ -1581,7 +1584,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlProgressElement {
                                 special_super_traits!(ElementWithMaxF64Attribute, ElementWithValueF64Attribute);
-                                define!(Props: HtmlProgressElementProps, tags: (progress,));
+                                define!(tags: (progress,));
                                 impl_for_web!();
                             }
 
@@ -1595,7 +1598,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithReferrerPolicyAttribute,
                                     ElementWithCrossOriginAttribute,
                                 );
-                                define!(Props: HtmlScriptElementProps, tags: (script,)); // TODO: special children
+                                define!(tags: (script,)); // TODO: special children
                                 impl_for_web!();
                                 fn r#async(value: maybe![bool]) {
                                     update_with!(set_async);
@@ -1620,13 +1623,13 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                define!(Props: HtmlSelectElementProps, tags: (select,));
+                                define!(tags: (select,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlSlotElement {
                                 special_super_traits!(ElementWithNameAttribute);
-                                define!(Props: HtmlSlotElementProps, tags: (slot,));
+                                define!(tags: (slot,));
                                 impl_for_web!();
                             }
 
@@ -1639,7 +1642,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithSrcAttribute);
-                                define!(Props: HtmlSourceElementProps, tags: (source,));
+                                define!(tags: (source,));
                                 impl_for_web!();
 
                                 // TODO: no set_height set_width
@@ -1647,7 +1650,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlStyleElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithMediaAttribute, ElementWithBlockingAttribute);
-                                define!(Props: HtmlStyleElementProps, tags: (style,));
+                                define!(tags: (style,));
                                 impl_for_web!();
 
                                 // TODO: `HtmlStyleElement.type` should be marked as deprecated
@@ -1656,7 +1659,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlTableElement {
                                 special_super_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(Props: HtmlTableElementProps, tags: (table,));
+                                define!(tags: (table,));
                                 impl_for_web!();
 
                                 // TODO: #[deprecated] align
@@ -1724,21 +1727,21 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlTableSectionElement {
                                 special_super_traits!(HtmlTableChildElement);
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(Props: HtmlTableSectionElementProps, tags: (tbody, tfoot, thead,));
+                                define!(tags: (tbody, tfoot, thead,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTableRowElement {
                                 special_super_traits!(HtmlTableChildElement);
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(Props: HtmlTableRowElementProps, tags: (tr,));
+                                define!(tags: (tr,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTableColElement {
                                 special_super_traits!(HtmlTableChildElement);
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(Props: HtmlTableColElementProps, tags: (col, colgroup,));
+                                define!(tags: (col, colgroup,));
                                 impl_for_web!();
                                 fn span(value: maybe![u32]) {
                                     update_with!(set_span);
@@ -1752,7 +1755,7 @@ super::macros::def_intrinsic_component_props!(
                             pub trait HtmlTableCellElement {
                                 special_super_traits!(ElementWithHeightWidthStrAttributes, HtmlTableChildElement);
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(Props: HtmlTableCellElementProps, tags: (td, th,));
+                                define!(tags: (td, th,));
                                 impl_for_web!();
 
                                 fn col_span(value: maybe![u32]) {
@@ -1792,7 +1795,7 @@ super::macros::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                define!(Props: HtmlTextAreaElementProps, tags: (textarea,));
+                                define!(tags: (textarea,));
                                 impl_for_web!();
 
                                 fn auto_correct(value: maybe![&str]);
@@ -1809,14 +1812,14 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlTimeElement {
                                 special_super_traits!(ElementWithDateTimeAttribute);
-                                define!(Props: HtmlTimeElementProps, tags: (time,));
+                                define!(tags: (time,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTrackElement {
                                 special_super_traits!(ElementWithSrcAttribute, ElementWithLabelAttribute);
 
-                                define!(Props: HtmlTrackElementProps, tags: (track,));
+                                define!(tags: (track,));
                                 impl_for_web!();
 
                                 fn default(value: maybe![bool]) {
@@ -1833,7 +1836,7 @@ super::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlUListElement {
                                 special_super_traits!(ElementWithTypeAttribute);
-                                define!(Props: HtmlUListElementProps, tags: (ul,));
+                                define!(tags: (ul,));
                                 impl_for_web!();
                                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
                                 fn compact(value: maybe![bool]) {

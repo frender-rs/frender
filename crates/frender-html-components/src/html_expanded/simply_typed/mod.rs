@@ -1,7 +1,7 @@
 #[allow(unused_imports)]
 use super::*;
 
-pub use frender_html::html::components::{Element, HtmlElement};
+pub use frender_html::html::props::{Element, HtmlElement};
 crate::imports::def_intrinsic_component_simple!(
     type Props = HtmlElement;
     type Element = HtmlElement;

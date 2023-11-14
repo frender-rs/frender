@@ -38,10 +38,8 @@ pub trait ElementWithChildren<Children> {
 
 mod imp {
     use crate::{
-        component::IntoElementProps,
-        renderer::{node_behaviors, CreateNode},
-        Element, ElementOfType, IntrinsicComponent, RenderHtml, RenderState,
-        UpdateElementNonReactive,
+        component::IntoElementProps, renderer::CreateNode, Element, ElementOfType,
+        IntrinsicComponent, RenderHtml, RenderState, UpdateElementNonReactive,
     };
 
     use super::ElementAndMounted;
@@ -63,7 +61,7 @@ mod imp {
         }
     }
 
-    impl<E: node_behaviors::Element<R>, S: RenderState<R>, R> RenderState<R>
+    impl<E: crate::html::behaviors::Element<R>, S: RenderState<R>, R> RenderState<R>
         for IntrinsicElementRenderState<E, S>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
@@ -141,8 +139,8 @@ mod imp {
         }
     }
 
-    impl<C: IntrinsicComponent + crate_common::IntrinsicComponent, P: IntoElementProps> Element
-        for super::IntrinsicElement<C, P>
+    impl<C: IntrinsicComponent + frender_html_common::IntrinsicComponent, P: IntoElementProps>
+        Element for super::IntrinsicElement<C, P>
     where
         C::ElementTagType: crate::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C::ElementType>,
@@ -167,7 +165,7 @@ mod imp {
 
             let props_state = render_state.props_state.project();
 
-            let crate::ElementProps {
+            let super::super::ElementProps {
                 children,
                 attributes,
             } = P::into_element_props(self.1);

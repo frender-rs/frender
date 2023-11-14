@@ -6,10 +6,39 @@ pub mod html;
 // #[cfg(feature = "html_macro_not_expand")]
 pub mod element_macros;
 
-#[cfg(not(feature = "html_macro_not_expand"))]
-pub mod html_expanded;
-#[cfg(not(feature = "html_macro_not_expand"))]
-pub use html_expanded as html;
+// #[cfg(not(feature = "html_macro_not_expand"))]
+// pub mod html_expanded;
+// #[cfg(not(feature = "html_macro_not_expand"))]
+// pub use html_expanded as html;
+
+pub mod html {
+    macro_rules! component {
+        (
+            common_data($common_data:tt)
+            extends $extends:tt
+            $(special_super_traits $special_super_traits:tt)?
+            $(special_inter_traits $special_inter_traits:tt)?
+            vis($vis:vis)
+            trait_name($trait_name:ident)
+            $(define $define:tt)?
+            $(verbatim_trait_items $verbatim_trait_items:tt)?
+            $(impl_for_web $impl_for_web:tt)?
+            fns($(
+                $(#$fn_attr:tt)*
+                fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+            )*)
+        ) => {
+            ::frender_common
+        };
+    }
+    // frender_html::define_props!();
+    frender_html::expand_html_traits!({
+        for_each {
+            wrap {}
+            prepend( frender_html::components! )
+        }
+    });
+}
 
 // mod special_implementations;
 
@@ -41,7 +70,7 @@ pub mod ignore_first_ty;
 
 #[cfg(feature = "simply-typed")]
 pub mod html_components {
-    pub use super::html::simply_typed::{
+    pub use super::html::{
         //
         // a,
         abbr,
