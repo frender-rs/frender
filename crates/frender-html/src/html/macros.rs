@@ -1084,6 +1084,8 @@ macro_rules! props_builders {
         $($rest:ident $rest_paren:tt)*
     ) => {
         mod $trait_name {
+            use super::super::props::$trait_name::*;
+
             $crate::define_props_builders! {
                 extends $extends
                 $(special_super_traits $special_super_traits)?
