@@ -1,12 +1,9 @@
-use crate::{
-    impl_bounds::{Css, DomTokens, MaybeContentEditable},
-    renderer::RenderTextFrom,
-};
+use crate::html_imports::*;
 
 crate::def_intrinsic_component_props!(
     #[expand_html_traits]
     #[macro_export]
-    use expand_html_traits;
+    use __impl_expand_html_traits;
 
     mod items {
         #[behaviors]

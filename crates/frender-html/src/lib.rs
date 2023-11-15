@@ -45,6 +45,13 @@ pub mod __private {
     pub use frender_common::write::attrs::IntoAsyncWritableAttrs;
 }
 
+pub mod html_imports {
+    pub use crate::{
+        impl_bounds::{Css, DomTokens, MaybeContentEditable},
+        renderer::RenderTextFrom,
+    };
+}
+
 macro_rules! for_each_trait {
     ({$($vis:vis trait $trait_name:ident $body:tt)*} $commands:tt) => {
         $(crate::expand! {
@@ -58,3 +65,36 @@ macro_rules! for_each_trait {
 }
 
 use for_each_trait;
+
+#[macro_export]
+macro_rules! expand_html_traits {
+    ($(
+        #[$macro_name:ident]
+        $item_vis:vis $item_type:ident $item_name:ident $item_body_or_semi:tt
+    )*) => {
+        use $crate::html_imports::*;
+        use $crate::html::*;
+
+        $crate::__impl_expand_html_traits! {{
+            wrap {}
+            append($(
+                $macro_name ( $item_vis $item_type $item_name $item_body_or_semi )
+            )*)
+            wrap {}
+            prepend { $crate::define_item_and_traverse_traits! }
+        }}
+    };
+    ($macro_name:ident $bang:tt) => {
+        $crate::__impl_expand_html_traits! {{
+            for_each {
+                wrap {}
+                prepend(
+                    $crate::$macro_name $bang
+                )
+            }
+        }}
+    };
+    ($commands:tt) => {
+        $crate::__impl_expand_html_traits! { $commands }
+    };
+}
