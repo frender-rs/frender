@@ -183,10 +183,9 @@ macro_rules! behaviors {
         }
     };
     (
-        common_data($common_data:tt)
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -207,7 +206,7 @@ macro_rules! behaviors {
     ) => {
         $vis trait $trait_name<Renderer: ?Sized> :
             $($extends<Renderer> +)*
-            $($($special_super_traits<Renderer> +)+)?
+            $($($($special_super_traits<Renderer> +)+)?)?
         {
             $($($verbatim_trait_items)*)?
 
@@ -222,7 +221,7 @@ macro_rules! behaviors {
             ::frender_common::expand! { if ($($( ! $($impl_for_web_only_for_types)*)?)?) {
                 ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
                     prepend(impl<Renderer: ?Sized + crate::csr::web::Renderer> $trait_name<Renderer> for crate::csr::web::Node<)
-                    append( > $(where Self: $($special_super_traits<Renderer> + )+ )? {
+                    append( > $($(where Self: $($special_super_traits<Renderer> + )+ )?)? {
                         $($($($verbatim_trait_items_impl_web)*)?)?
 
                         ::frender_common::expand! { while ($({$fn_name $fn_args $fn_body_or_semi})*) {
@@ -235,9 +234,11 @@ macro_rules! behaviors {
             } else {
                 impl<
                     Renderer: ?Sized + crate::csr::web::Renderer,
-                    E: AsRef<::web_sys::$trait_name> $(+ AsRef<::web_sys::$extends>)*
+                    E: AsRef<::web_sys::$trait_name>
                 > $trait_name<Renderer> for crate::csr::web::Node<E>
-                $(where Self: $($special_super_traits<Renderer> + )+ )?
+                where Self:
+                    $($extends<Renderer> +)*
+                    $($($($special_super_traits<Renderer> + )+ )?)?
                 {
                     $($($($verbatim_trait_items_impl_web)*)?)?
 
@@ -254,22 +255,9 @@ macro_rules! behaviors {
 macro_rules! behaviors_prelude {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -289,10 +277,10 @@ macro_rules! behaviors_prelude {
         )*)
     ) => {
         $vis mod $trait_name {
-            $vis use super::super::$mod_behaviors::$trait_name as _;
+            $vis use super::super::behaviors::$trait_name as _;
 
             ::frender_common::expand! {
-                while ($({$extends})* $($({$special_super_traits})+)?) {
+                while ($({$extends})* $($($({$special_super_traits})+)?)?) {
                     prepend( $vis use super:: )
                     append( ::*;)
                 }
@@ -305,22 +293,9 @@ macro_rules! behaviors_prelude {
 macro_rules! behavior_type_traits {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -341,18 +316,20 @@ macro_rules! behavior_type_traits {
     ) => {
         $vis trait $trait_name:
             $($extends +)*
-            $($($special_super_traits +)+)?
+            $($($($special_super_traits +)+)?)?
         {
-            type $trait_name<Renderer: ?Sized + super::$RenderHtml>: super::$mod_behaviors::$trait_name<Renderer>
+            type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
                 $(  + crate::convert::IdentityAs<Self::$extends             <Renderer>>)*
-                $($(+ crate::convert::IdentityAs<Self::$special_super_traits<Renderer>>)+)?
+                $($($(+ crate::convert::IdentityAs<Self::$special_super_traits<Renderer>>)+)?)?
             ;
 
-            fn from_identity_mut_root<Renderer: ?Sized + super::$RenderHtml>(
-                root: &mut ::frender_common::expand![
-                    {{$trait_name} $({$extends})*} get {-1}
-                    prepend(Self::)
-                    append(<Renderer>)
+            fn from_identity_mut_root<Renderer: ?Sized + super::RenderHtml>(
+                root: &mut super::attributes::$trait_name::helper_macro![
+                    use_root_trait_name { super }
+                    {
+                        prepend(Self::)
+                        append(<Renderer>)
+                    }
                 ]
             ) -> &mut Self::$trait_name<Renderer>;
         }
@@ -363,22 +340,9 @@ macro_rules! behavior_type_traits {
 macro_rules! tags {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($special_super_traits:ident)*)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($special_super_traits:ident),* $(,)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define(
@@ -401,7 +365,7 @@ macro_rules! tags {
                 const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
             }
             impl crate::renderer::CreateNode for $tags {
-                fn create_node<R: super::$RenderHtml>(renderer: &mut R) -> <Self as super::$mod_behavior_type_traits::Node>::Node<R> {
+                fn create_node<R: super::RenderHtml>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
                     renderer.$tags()
                 }
             }
@@ -420,7 +384,7 @@ macro_rules! tags {
         ::frender_common::expand! { while ($($($({$tags})*)?)?) {
             prepend( impl_all_traits { super } for )
             wrap {}
-            prepend( super::$mod_attributes::$trait_name::helper_macro! )
+            prepend( super::attributes::$trait_name::helper_macro! )
         }}
     };
 }
@@ -429,22 +393,9 @@ macro_rules! tags {
 macro_rules! attributes {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits($($special_inter_traits:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits($($special_inter_traits:ident),* $(,)?    ))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -468,8 +419,8 @@ macro_rules! attributes {
                 ::frender_common::expand! {
                     while (
                         $({$extends})*
-                        $($({$special_super_traits})+)?
-                        $({$special_inter_traits})*
+                        $($($({$special_super_traits})+)?)?
+                        $($({$special_inter_traits})*)?
                     ) {
                         prepend( $vis use super::super:: )
                         append( ::attributes::*; )
@@ -492,39 +443,46 @@ macro_rules! attributes {
             }
 
             macro_rules! helper_macro {
-                (fns_without_attributes $commands:tt) => {
+                (use_root_trait_name $prepend_path:tt $commands:tt) => {
                     ::frender_common::expand! {
-                        {$({ fn $fn_name $fn_args $fn_body_or_semi })*}
-                        do $commands
-                    }
-                };
-                (fn_names $commands:tt) => {
-                    ::frender_common::expand! {
-                        {$({ $fn_name })*}
-                        do $commands
+                        if ($($extends)*) {
+                            ::frender_common::expand! {
+                                $prepend_path
+                                append(::attributes::$($extends)*::helper_macro! {
+                                    use_root_trait_name $prepend_path $commands
+                                })
+                            }
+                        } else {
+                            ::frender_common::expand! {
+                                {$trait_name}
+                                do $commands
+                            }
+                        }
                     }
                 };
                 (impl $prepend_path:tt for $for_tag:ident ) => {
                     ::frender_common::expand! {
                         { impl }
                         append $prepend_path
-                        append(::$mod_behavior_type_traits::$trait_name for $for_tag {
+                        append(::behavior_type_traits::$trait_name for $for_tag {
                             ::frender_common::expand! {
                                 { type $trait_name<Renderer: ?Sized + }
                                 append $prepend_path
                                 append(
-                                    ::$RenderHtml > = Renderer::$for_tag;
+                                    ::RenderHtml > = Renderer::$for_tag;
                                 )
                             }
                             ::frender_common::expand! {
                                 { fn from_identity_mut_root<Renderer: ?Sized + }
                                 append $prepend_path
                                 append(
-                                    ::$RenderHtml >(
-                                        root: &mut ::frender_common::expand![
-                                            {{$trait_name} $({$extends})*} get {-1}
-                                            prepend(Self::)
-                                            append(<Renderer>)
+                                    ::RenderHtml >(
+                                        root: &mut super::attributes::$trait_name::helper_macro![
+                                            use_root_trait_name $prepend_path
+                                            {
+                                                prepend(Self::)
+                                                append(<Renderer>)
+                                            }
                                         ]
                                     ) -> &mut Self::$trait_name<Renderer> {
                                         root
@@ -534,42 +492,58 @@ macro_rules! attributes {
                         })
                     }
                 };
+                (impl_self_and_all_super $prepend_path:tt for $for_tag:ident) => {
+                    ::frender_common::expand! {
+                        $prepend_path
+                        append(::attributes::$trait_name::helper_macro! {
+                            impl $prepend_path for $for_tag
+                        })
+                    }
+                    ::frender_common::expand! {
+                        $prepend_path
+                        append(::attributes::$trait_name::helper_macro! {
+                            impl_all_super_traits $prepend_path for $for_tag
+                        })
+                    }
+                };
                 (impl_all_super_traits $prepend_path:tt for $for_tag:ident) => {
                     ::frender_common::expand! {
                         while (
-                            $({$extends})*
-                            $($({$special_super_traits})+)?
-                            $({$special_inter_traits})*
+                            $({$extends})* // actually there will be at most one
                         ) {
                             // Node
-                            prepend {::$mod_attributes::}
+                            prepend {::attributes::}
+                            prepend $prepend_path
+                            append (::helper_macro!{
+                                impl_self_and_all_super $prepend_path for $for_tag
+                            })
+                        }
+                    }
+
+                    ::frender_common::expand! {
+                        while (
+                            $($($({$special_super_traits})+)?)?
+                            $($({$special_inter_traits})*)?
+                        ) {
+                            // Node
+                            prepend {::attributes::}
                             prepend $prepend_path
                             append (::helper_macro!{
                                 impl $prepend_path for $for_tag
                             })
                         }
                     }
-
-                    // ::frender_common::expand! {
-                    //     {$({$extends})* $($({$special_super_traits})+)?}
-                    //     get_or_exit {0} // Node
-                    //     prepend {::$mod_attributes::}
-                    //     prepend $prepend_path
-                    //     append (!{
-                    //         impl_all_super_traits $prepend_path for $for_tag
-                    //     })
-                    // }
                 };
                 (impl_all_traits $prepend_path:tt for $for_tag:ident) => {
                     ::frender_common::expand! {
                         $prepend_path
-                        append(::$mod_attributes::$trait_name::helper_macro! {
+                        append(::attributes::$trait_name::helper_macro! {
                             impl $prepend_path for $for_tag
                         })
                     }
                     ::frender_common::expand! {
                         $prepend_path
-                        append(::$mod_attributes::$trait_name::helper_macro! {
+                        append(::attributes::$trait_name::helper_macro! {
                             impl_all_super_traits $prepend_path for $for_tag
                         })
                     }
@@ -715,22 +689,9 @@ macro_rules! RenderHtml {
         }
     };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define(
@@ -748,7 +709,7 @@ macro_rules! RenderHtml {
         )*)
     ) => {
         $($($(
-            type $tags: super::$mod_behaviors::$trait_name<Self>;
+            type $tags: super::behaviors::$trait_name<Self>;
             fn $tags(&mut self) -> Self::$tags;
         )*)?)?
     };
@@ -819,67 +780,8 @@ macro_rules! expand_nested_traits {
 }
 
 #[macro_export]
-macro_rules! traverse_traits {
-    (
-        $common_data:tt {
-            $(@extends($($extends:ident)*))?
-            $(@inherited_special_super_traits($($inherited_special_super_traits:ident)*))?
-            $vis:vis trait $trait_name:ident {
-                $(special_super_traits!($($special_super_traits:ident),* $(,)?);)?
-                $(special_inter_traits!($($special_inter_traits:ident),* $(,)?);)?
-                $(define! $define:tt;)?
-
-                $(verbatim_trait_items! $verbatim_trait_items:tt;)?
-
-                $(impl_for_web! $impl_for_web:tt;)?
-
-                $(
-                    $(#$fn_attr:tt)*
-                    fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-                )*
-
-                $(sub_traits! $sub_traits:tt ;)?
-            }
-        } $commands:tt
-    ) => {
-        ::frender_common::expand! {{{
-            common_data($common_data)
-            extends($($($extends)*)?)
-            special_super_traits($($($special_super_traits)*)? $($($inherited_special_super_traits)*)?)
-            special_inter_traits($($($special_inter_traits)*)?)
-            vis($vis)
-            trait_name($trait_name)
-            $(define $define)?
-            $(verbatim_trait_items $verbatim_trait_items)?
-            $(impl_for_web $impl_for_web)?
-            fns($(
-                $(#$fn_attr)*
-                fn $fn_name $fn_args $fn_body_or_semi
-            )*)
-        }} do $commands }
-
-        ::frender_common::expand! { if ($($sub_traits)?) {
-            crate::for_each_trait! { $($sub_traits)? {
-                prepend(
-                    @extends($trait_name $($($extends)*)?)
-                    @inherited_special_super_traits($($($special_super_traits)*)? $($($inherited_special_super_traits)*)?)
-                )
-                wrap {}
-                prepend($common_data)
-                append($commands)
-                wrap {}
-                prepend(
-                    crate::traverse_traits!
-                )
-            }}
-        }}
-    };
-}
-
-#[macro_export]
 macro_rules! define_item_and_traverse_traits {
     (
-        $prepend:tt // {}
         $t:tt // {}
         $($macro_name:ident ($vis:vis $item_type:ident $item_name:ident $item_body:tt))*
     ) => {
@@ -887,10 +789,11 @@ macro_rules! define_item_and_traverse_traits {
             crate::$macro_name! {
                 expand_item $vis $item_type $item_name $item_body
                 {
-                    $crate::traverse_traits! {
-                        $prepend
-                        $t
-                        { prepend(crate::$macro_name!) }
+                    $crate::expand! {
+                        $t for_each {
+                            wrap{}
+                            prepend(crate::$macro_name!)
+                        }
                     }
                 }
             }
@@ -901,9 +804,6 @@ macro_rules! define_item_and_traverse_traits {
 #[macro_export]
 macro_rules! def_intrinsic_component_props {
     (
-        #[root_path]
-        use $($root_path_1:ident)? $(::$root_path_2:ident)*;
-
         #[expand_html_traits]
         $(#$expand_html_traits_attrs:tt)*
         use $expand_html_traits:ident;
@@ -918,27 +818,28 @@ macro_rules! def_intrinsic_component_props {
         crate::expand_nested_traits! {
             {}{{{extends()}($($t)*)}} do {
                 wrap {} // { ... }
-                append( do $commands ) // { ... } do $commands
-                wrap {}
-                prepend( $crate::expand! ) // $crate::expand!{ { ... } do $commands }
-                wrap {}
-                prepend ( ($commands:tt) => )
-                wrap {} // { { (...) => { ... } } }
-                prepend {
-                    $(#$expand_html_traits_attrs)*
-                    macro_rules! $expand_html_traits
-                }
+                duplex_concat ({
+                    append( do $commands ) // { ... } do $commands
+                    wrap {}
+                    prepend( $crate::expand! ) // $crate::expand!{ { ... } do $commands }
+                    wrap {}
+                    prepend ( ($commands:tt) => )
+                    wrap {} // { { (...) => { ... } } }
+                    prepend {
+                        $(#$expand_html_traits_attrs)*
+                        macro_rules! $expand_html_traits
+                    }
+                }{
+                    append(
+                        $($item_macro (
+                            $item_vis $item_type $item_name { $($item_body)* }
+                        ))*
+                    )
+                    wrap {}
+                    prepend( crate::define_item_and_traverse_traits! )
+                })
+
             }
-        }
-        crate::define_item_and_traverse_traits! {
-            {
-                root_path($($root_path_1)? $(::$root_path_2)*)
-                item_names( $( $item_macro ($item_name) )+ )
-            }
-            { $($t)* }
-            $($item_macro (
-                $item_vis $item_type $item_name { $($item_body)* }
-            ))*
         }
     };
 }
@@ -947,22 +848,9 @@ macro_rules! def_intrinsic_component_props {
 macro_rules! event_types {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -982,7 +870,7 @@ macro_rules! event_types {
         )*)
     ) => {
         #[allow(unused_imports)]
-        use super::$mod_behaviors::$trait_name;
+        use super::behaviors::$trait_name;
 
         $(
             crate::event_type! {
@@ -1020,22 +908,9 @@ macro_rules! event_type {
 macro_rules! event_type_helpers {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
-        common_data({
-            root_path $root_path:tt
-            item_names(
-                behaviors($mod_behaviors:ident)
-                behaviors_prelude($mod_behaviors_prelude:ident)
-                attributes($mod_attributes:ident)
-                behavior_type_traits($mod_behavior_type_traits:ident)
-                tags($mod_tags:ident)
-                event_types($mod_event_types:ident)
-                event_type_helpers($mod_event_type_helpers:ident)
-                RenderHtml($RenderHtml:ident)
-            )
-        })
         extends($($extends:ident)*)
-        special_super_traits($($($special_super_traits:ident)+)?)
-        special_inter_traits $special_inter_traits:tt
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(define $define:tt)?
@@ -1056,7 +931,7 @@ macro_rules! event_type_helpers {
     ) => {
         $(
             crate::event_type_helper! {
-                $fn_name $fn_args $fn_body_or_semi $trait_name { super::super::$mod_behaviors }
+                $fn_name $fn_args $fn_body_or_semi $trait_name { super::super::behaviors }
             }
         )*
     };

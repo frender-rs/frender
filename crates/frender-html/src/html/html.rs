@@ -4,9 +4,6 @@ use crate::{
 };
 
 crate::def_intrinsic_component_props!(
-    #[root_path]
-    use crate::imports;
-
     #[expand_html_traits]
     #[macro_export]
     use expand_html_traits;
