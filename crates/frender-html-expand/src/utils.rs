@@ -13,14 +13,45 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html(file_path: impl AsRef<std::path::Path>) -> io::Result<syn::File> {
-    let content = std::fs::read_to_string(file_path)?;
-    let mut code = syn::parse_file(&content).expect("file content is valid rust code");
-    let mut visitor = crate::expand::ExpandIntrinsicComponentMacro::new();
-    visitor.visit_file_mut(&mut code);
-    let ref mut items = visitor.finish().map_err(crate::utils::io_error_other)?;
-    code.items.append(items);
-    Ok(code)
+pub fn cargo_expand_html(mod_path: &str) -> io::Result<syn::File> {
+    let output = std::process::Command::new("cargo")
+        .arg("expand")
+        .arg("-p")
+        .arg("frender-html-components")
+        .arg(mod_path)
+        .arg("--features")
+        .arg("html_macro_not_expand")
+        .output()?;
+
+    if !output.status.success() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Failed to run cargo expand".to_string(),
+        ));
+    }
+
+    io::stderr().write_all(&output.stderr)?;
+
+    let output = output.stdout;
+    let code = string_from_utf8(output)?;
+    let code = code.replace("pub(crate) use impl_props_builder_fns;", "");
+    let syn::ItemMod {
+        attrs: _,
+        vis: _,
+        mod_token: _,
+        ident: _,
+        content,
+        semi,
+    } = syn::parse_str(&code).map_err(io_error_other)?;
+
+    assert!(semi.is_none());
+    let (_, items) = content.unwrap();
+
+    Ok(syn::File {
+        shebang: None,
+        attrs: vec![],
+        items,
+    })
 }
 
 pub fn locate_cargo_workspace_root() -> io::Result<PathBuf> {
@@ -41,7 +72,7 @@ pub fn string_from_utf8(utf8: Vec<u8>) -> Result<String, io::Error> {
     Ok(s)
 }
 
-pub fn io_error_other<E: std::error::Error + Send + Sync + 'static>(error: E) -> io::Error {
+pub fn io_error_other<E: Into<Box<dyn std::error::Error + Send + Sync>>>(error: E) -> io::Error {
     io::Error::new(io::ErrorKind::Other, error)
 }
 

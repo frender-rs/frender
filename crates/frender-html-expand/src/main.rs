@@ -13,11 +13,11 @@ fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
     let src_root = workspace_root.join("crates/frender-html-components/src");
 
-    let code = utils::cargo_expand_html(src_root.join("html.rs"))?;
+    let code = utils::cargo_expand_html("html_builders")?;
 
     assert!(code.shebang.is_none());
 
-    write_mod_content_into_dir(&src_root, "html_expanded", code.attrs, code.items, 2)?;
+    write_mod_content_into_dir(&src_root, "html_builders", code.attrs, code.items, 2)?;
 
     utils::cargo_fmt_package("frender-html-components")
 }
