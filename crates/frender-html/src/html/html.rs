@@ -30,6 +30,9 @@ crate::def_intrinsic_component_props!(
         #[event_type_helpers]
         pub mod event_type_helpers {}
 
+        #[props]
+        pub mod props {}
+
         #[RenderHtml]
         pub trait RenderHtml {
             additional_bounds!(
@@ -140,7 +143,7 @@ crate::def_intrinsic_component_props!(
                     );
                 );
 
-                fn children(value: children![impl ::frender_html::Element]);
+                fn children(value: children![impl crate::Element]);
                 fn css(value: bounds![Css]);
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {

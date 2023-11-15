@@ -975,6 +975,7 @@ macro_rules! event_type_helper {
 
 #[macro_export]
 macro_rules! props {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -1240,6 +1241,20 @@ macro_rules! extract_only_children_or {
         $crate::extract_only_children_or! {
             @{$($t)*}
             [$($resolved_children)* $children]
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
+        $crate::extract_only_children_or! {
+            @{$($t)*}
+            [$($resolved_children)* $children]
+            $do_or
+        }
+    };
+    (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { $other_name2:ident $other2:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
+        $crate::extract_only_children_or! {
+            @{$($t)*}
+            $resolved_children
             $do_or
         }
     };

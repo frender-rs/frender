@@ -7,15 +7,6 @@ pub mod html {
         impl_bounds::{Css, DomTokens, MaybeContentEditable},
     };
 
-    pub mod props {
-        frender_html::expand_html_traits! {{
-            for_each {
-                wrap {}
-                prepend( ::frender_html::props! )
-            }
-        }}
-    }
-
     pub mod components {
         macro_rules! component {
             (
