@@ -823,7 +823,19 @@ macro_rules! def_intrinsic_component_props {
                     wrap {}
                     prepend( $crate::expand! ) // $crate::expand!{ { ... } do $commands }
                     wrap {}
-                    prepend ( ($commands:tt) => )
+                    prepend (
+                        ($macro_name:ident $bang:tt) => {
+                            $crate::$expand_html_traits! {{
+                                for_each {
+                                    wrap {}
+                                    prepend(
+                                        $crate::$macro_name $bang
+                                    )
+                                }
+                            }}
+                        };
+                        ($commands:tt) =>
+                    )
                     wrap {} // { { (...) => { ... } } }
                     prepend {
                         $(#$expand_html_traits_attrs)*
@@ -1168,11 +1180,11 @@ macro_rules! components {
         $(impl_for_web $impl_for_web:tt)?
         fns $fns:tt
     ) => {
-        crate::expand! {
+        $crate::expand! {
             while ($($($({$tags})*)?)?) {
                 prepend( $trait_name $vis )
                 wrap {}
-                prepend( crate::define_component! )
+                prepend( $crate::define_component! )
             }
         }
     };
