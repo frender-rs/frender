@@ -587,7 +587,16 @@ macro_rules! impl_attribute {
         $event_type_name:literal,
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
-    ]); $trait_name:tt) => {};
+    ]); $trait_name:tt) => {
+        crate::impl_bounds! {
+            self::$fn_name(
+                #[event(super::super::event_type_helpers::$fn_name)]
+                bounds as crate::impl_bounds::MaybeHandleEvent,
+                element as $trait_name,
+                attr_name = $event_type_name,
+            )
+        }
+    };
     ($fn_name:ident ($value:ident : maybe![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
         crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
     };
@@ -1218,11 +1227,20 @@ macro_rules! props {
                         }
                     )*
                 };
+                (impl_self_and_extended_attrs) => {
+                    super::super::$trait_name::impl_props_builder_fns! { impl_self_attrs }
+                    $crate::expand! {
+                        {$({$extends})*}
+                        get_or_exit {0}
+                        prepend( super::super:: )
+                        append( ::impl_props_builder_fns! { impl_self_and_extended_attrs } )
+                    }
+                };
                 (impl_all_attrs) => {
+                    super::super::$trait_name::impl_props_builder_fns! { impl_self_and_extended_attrs }
+
                     $crate::expand! {
                         while (
-                            {$trait_name}
-                            $({$extends})*
                             $($($({$special_super_traits})+)?)?
                             $($({$special_inter_traits})*)?
                         ) {

@@ -24,11 +24,11 @@ component_fn!(
 
         intrinsic!(
             div[[
-                // button.on_click(decrement).disabled(state == 0)[["-"]],
+                button.on_click(decrement).disabled(state == 0)[["-"]],
                 " ",
                 { state },
                 " ",
-                // button.on_click(increment).disabled(state == u32::MAX)[["+"]]
+                button.on_click(increment).disabled(state == u32::MAX)[["+"]]
             ]]
         )
     }
@@ -85,11 +85,11 @@ component_fn!(
                 "): ",
                 { state },
                 " ",
-                // button.on_click(toggle_stopped).children(if stopped {
-                //     " RESUME "
-                // } else {
-                //     "  STOP  "
-                // }),
+                button.on_click(toggle_stopped).children(if stopped {
+                    " RESUME "
+                } else {
+                    "  STOP  "
+                }),
             ]]
         )
     }
@@ -112,9 +112,9 @@ max-width: 768px;
             )[[
                 h1[[
                     "Counter & Timer (without proc-macro) - ",
-                    // div[[a
-                    //     .href("https://github.com/frender-rs/frender")
-                    //     .target("_blank")[[b.children("f"), "render"]]]]
+                    div[[a
+                        .href("https://github.com/frender-rs/frender")
+                        .target("_blank")[[b.children("f"), "render"]]]]
                 ]],
                 main.children((
                     DivCode("Counter(0)", Counter(0)),
