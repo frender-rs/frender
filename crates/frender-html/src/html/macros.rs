@@ -977,27 +977,51 @@ macro_rules! event_type_helper {
 macro_rules! props {
     (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
+        extends $extends:tt
+        $(special_super_traits $special_super_traits:tt)?
+        $(special_inter_traits $special_inter_traits:tt)?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $($rest:ident $rest_paren:tt)*
+    ) => {
+        $crate::define_props!(
+            $vis mod $trait_name {
+                $crate::define_props_builders! {
+                    extends $extends
+                    $(special_super_traits $special_super_traits)?
+                    $(special_inter_traits $special_inter_traits)?
+                    vis($vis)
+                    trait_name($trait_name)
+                    $($rest $rest_paren)*
+                }
+            }
+        );
+    };
+}
+
+#[macro_export]
+macro_rules! props_without_builders {
+    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
         $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($trait_name:ident)
-        $(define $define:tt)?
-        // $(define(
-        //     Props: $Props:ident
-        //     $(, components: ($($components:ident),* $(,)?))?
-        //     $(,)?
-        // ))?
-        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
-        $(impl_for_web(
-            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
-            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
-        ))?
-        fns($(
-            $(#$fn_attr:tt)*
-            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-        )*)
+        $($rest:ident $rest_:tt)*
     ) => {
+        $crate::define_props!(
+            $vis mod $trait_name;
+        );
+    };
+}
+
+#[macro_export]
+macro_rules! define_props {
+    ($vis:vis mod $trait_name:ident ;) => {
+        $crate::define_props! { $vis mod $trait_name {} }
+    };
+    ($vis:vis mod $trait_name:ident {$($include:tt)*}) => {
         $vis mod $trait_name {
             pub mod data_struct {
                 // #[allow(unused_imports)]
@@ -1037,116 +1061,168 @@ macro_rules! props {
 
             pub use super::super::attributes::$trait_name::attributes;
 
-            macro_rules! impl_props_builder_fns {
-                // only children is overridable
-                (impl_children) => {
-                    $crate::extract_only_children_or! {
-                        {$(
-                            {
-                                $fn_name {
-                                    $(#$fn_attr)*
-                                    fn $fn_name $fn_args $fn_body_or_semi
-                                }
-                            }
-                        )*}
-                        {
-                            // there is a children
-                            wrap {}
-                            prepend( $crate::define_fn_children! )
-                        }
-                        {
-                            {$({$extends})*}
-                            get_or_exit {0}
-                            prepend( super::super:: )
-                            append( ::impl_props_builder_fns! { impl_children } )
-                        }
-                    }
-                };
-                (impl_self_attrs) => {
-                    $(
-                        // #fn_attr
-                        // fn #attr_builder_fn_name<V: #parse_fn_args_as_bounds>(
-                        //     v: V
-                        // ) -> super::Building<Children, (Attrs, super::props::$fn_name<V>)> {
-                        //     super::Building(super::Data {
-                        //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
-                        //     })
-                        // }
-                        $crate::parse_fn_args_as_bounds! {
-                            $fn_args
-                            do {
-                                wrap()
-                                prepend(
-                                    prepend(
-                                        $(#$fn_attr)*
-                                        pub fn
-                                    )
-                                    append(<V: )
-                                    append
-                                )
-                                append(
-                                    append(
-                                        >(self, value: V) -> super::Building<Children, (Attrs, super::attributes::$fn_name<V>)> {
-                                            super::Building(super::Data {
-                                                props: self.0.props.chain_prop(super::attributes::$fn_name(value)),
-                                            })
-                                        }
-                                    )
-                                )
-                                wrap {}
-                                prepend( for_each )
-                                wrap {}
-                                prepend( {$fn_name $fn_body_or_semi} do )
-                                wrap {}
-                                prepend( $crate::extract_attr_builder_fn_names! )
-                            }
-                        }
-                    )*
-                };
-                (impl_self_and_extended_attrs) => {
-                    super::super::$trait_name::impl_props_builder_fns! { impl_self_attrs }
-                    $crate::expand! {
-                        {$({$extends})*}
-                        get_or_exit {0}
-                        prepend( super::super:: )
-                        append( ::impl_props_builder_fns! { impl_self_and_extended_attrs } )
-                    }
-                };
-                (impl_all_attrs) => {
-                    super::super::$trait_name::impl_props_builder_fns! { impl_self_and_extended_attrs }
-
-                    $crate::expand! {
-                        while (
-                            $($($({$special_super_traits})+)?)?
-                            $($({$special_inter_traits})*)?
-                        ) {
-                            prepend( super::super:: )
-                            append( ::impl_props_builder_fns! { impl_self_attrs } )
-                        }
-                    }
-                };
-            }
-
-            pub(crate) use impl_props_builder_fns;
-
-            mod props_builder {
-                #[allow(unused_imports)]
-                use super::super::super::*;
-
-                impl<Attrs> super::Building<(), Attrs> {
-                    super::impl_props_builder_fns! { impl_children }
-                }
-
-                impl<Children, Attrs> super::Building<Children, Attrs> {
-                    super::impl_props_builder_fns! { impl_all_attrs }
-                }
-            }
+            $($include)*
         }
 
         #[allow(non_snake_case)]
         #[inline(always)]
         $vis fn $trait_name() -> $trait_name::Building {
             $trait_name::Building(Default::default())
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! props_builders {
+    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        extends $extends:tt
+        $(special_super_traits $special_super_traits:tt)?
+        $(special_inter_traits $special_inter_traits:tt)?
+        vis $vis:tt
+        trait_name($trait_name:ident)
+        $($rest:ident $rest_paren:tt)*
+    ) => {
+        mod $trait_name {
+            $crate::define_props_builders! {
+                extends $extends
+                $(special_super_traits $special_super_traits)?
+                $(special_inter_traits $special_inter_traits)?
+                vis $vis
+                trait_name($trait_name)
+                $($rest $rest_paren)*
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! define_props_builders {
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        macro_rules! impl_props_builder_fns {
+            // only children is overridable
+            (impl_children) => {
+                $crate::extract_only_children_or! {
+                    {$(
+                        {
+                            $fn_name {
+                                $(#$fn_attr)*
+                                fn $fn_name $fn_args $fn_body_or_semi
+                            }
+                        }
+                    )*}
+                    {
+                        // there is a children
+                        wrap {}
+                        prepend( $crate::define_fn_children! )
+                    }
+                    {
+                        {$({$extends})*}
+                        get_or_exit {0}
+                        prepend( super::super:: )
+                        append( ::impl_props_builder_fns! { impl_children } )
+                    }
+                }
+            };
+            (impl_self_attrs) => {
+                $(
+                    // #fn_attr
+                    // fn #attr_builder_fn_name<V: #parse_fn_args_as_bounds>(
+                    //     v: V
+                    // ) -> super::Building<Children, (Attrs, super::props::$fn_name<V>)> {
+                    //     super::Building(super::Data {
+                    //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
+                    //     })
+                    // }
+                    $crate::parse_fn_args_as_bounds! {
+                        $fn_args
+                        do {
+                            wrap()
+                            prepend(
+                                prepend(
+                                    $(#$fn_attr)*
+                                    pub fn
+                                )
+                                append(<V: )
+                                append
+                            )
+                            append(
+                                append(
+                                    >(self, value: V) -> super::Building<Children, (Attrs, super::attributes::$fn_name<V>)> {
+                                        super::Building(super::Data {
+                                            props: self.0.props.chain_prop(super::attributes::$fn_name(value)),
+                                        })
+                                    }
+                                )
+                            )
+                            wrap {}
+                            prepend( for_each )
+                            wrap {}
+                            prepend( {$fn_name $fn_body_or_semi} do )
+                            wrap {}
+                            prepend( $crate::extract_attr_builder_fn_names! )
+                        }
+                    }
+                )*
+            };
+            (impl_self_and_extended_attrs) => {
+                super::super::$trait_name::impl_props_builder_fns! { impl_self_attrs }
+                $crate::expand! {
+                    {$({$extends})*}
+                    get_or_exit {0}
+                    prepend( super::super:: )
+                    append( ::impl_props_builder_fns! { impl_self_and_extended_attrs } )
+                }
+            };
+            (impl_all_attrs) => {
+                super::super::$trait_name::impl_props_builder_fns! { impl_self_and_extended_attrs }
+
+                $crate::expand! {
+                    while (
+                        $($($({$special_super_traits})+)?)?
+                        $($({$special_inter_traits})*)?
+                    ) {
+                        prepend( super::super:: )
+                        append( ::impl_props_builder_fns! { impl_self_attrs } )
+                    }
+                }
+            };
+        }
+
+        pub(crate) use impl_props_builder_fns;
+
+        mod props_builder {
+            #[allow(unused_imports)]
+            use super::super::super::*;
+
+            impl<Attrs> super::Building<(), Attrs> {
+                super::impl_props_builder_fns! { impl_children }
+            }
+
+            impl<Children, Attrs> super::Building<Children, Attrs> {
+                super::impl_props_builder_fns! { impl_all_attrs }
+            }
         }
     };
 }
