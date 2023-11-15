@@ -3,7 +3,7 @@ use crate::{
     renderer::RenderTextFrom,
 };
 
-crate::def_intrinsic_component_props!(
+super::macros::def_intrinsic_component_props!(
     #[expand_html_traits]
     #[macro_export]
     use expand_html_traits;
