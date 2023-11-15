@@ -788,6 +788,10 @@ macro_rules! define_item_and_traverse_traits {
 
 macro_rules! def_intrinsic_component_props {
     (
+        #[expand_html_traits]
+        $(#$expand_html_traits_attrs:tt)*
+        use $expand_html_traits:ident;
+
         mod items {$(
             #[$item_macro:ident]
             $item_vis:vis $item_type:ident $item_name:ident { $($item_body:tt)* }
@@ -798,13 +802,27 @@ macro_rules! def_intrinsic_component_props {
         crate::html::macros::expand_nested_traits! {
             {}{{{extends()}($($t)*)}} do {
                 wrap {} // { ... }
-                append(
-                    $($item_macro (
-                        $item_vis $item_type $item_name { $($item_body)* }
-                    ))*
-                )
-                wrap {}
-                prepend( crate::html::macros::define_item_and_traverse_traits! )
+                duplex_concat ({
+                    append( do $commands ) // { ... } do $commands
+                    wrap {}
+                    prepend( $crate::expand! ) // $crate::expand!{ { ... } do $commands }
+                    wrap {}
+                    prepend ( ($commands:tt) => )
+                    wrap {} // { { (...) => { ... } } }
+                    prepend {
+                        $(#$expand_html_traits_attrs)*
+                        macro_rules! $expand_html_traits
+                    }
+                }{
+                    append(
+                        $($item_macro (
+                            $item_vis $item_type $item_name { $($item_body)* }
+                        ))*
+                    )
+                    wrap {}
+                    prepend( crate::html::macros::define_item_and_traverse_traits! )
+                })
+
             }
         }
     };
