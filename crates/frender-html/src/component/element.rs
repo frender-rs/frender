@@ -1,5 +1,3 @@
-use frender_html_common::IntrinsicComponent;
-
 use super::IntoElementProps;
 
 #[derive(Default)]
@@ -23,7 +21,7 @@ pub trait SsrIntrinsicComponent {
     }
 }
 
-pub struct IntrinsicElement<C: IntrinsicComponent, P: IntoElementProps>(pub C, pub P);
+pub struct IntrinsicElement<C, P: IntoElementProps>(pub C, pub P);
 
 pub trait ElementWithChildren<Children> {
     type ChildrenRenderState<R: crate::RenderHtml>: crate::RenderState<R> + Default;
@@ -139,19 +137,21 @@ mod imp {
         }
     }
 
-    impl<C: IntrinsicComponent + frender_html_common::IntrinsicComponent, P: IntoElementProps>
-        Element for super::IntrinsicElement<C, P>
+    impl<
+            C: IntrinsicComponent + crate::html::behavior_type_traits::Element + CreateNode,
+            P: IntoElementProps,
+        > Element for super::IntrinsicElement<C, P>
     where
         C::ElementTagType: crate::ElementSupportChildren<P::Children>,
-        P::Attrs: UpdateElementNonReactive<C::ElementType>,
+        P::Attrs: UpdateElementNonReactive<C>,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
-            ElementOfType<C::ElementType, R>,
+            ElementOfType<C, R>,
             ElementPropsState<
                 <C::ElementTagType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<
                     R,
                 >,
-                <P::Attrs as UpdateElementNonReactive<C::ElementType>>::State<R>,
+                <P::Attrs as UpdateElementNonReactive<C>>::State<R>,
             >,
         >;
 
@@ -174,7 +174,7 @@ mod imp {
                 render_state
                     .element_and_mounted
                     .get_or_insert_with(|| ElementAndMounted {
-                        element: <C::ElementType as CreateNode>::create_node(renderer).into(),
+                        element: <C as CreateNode>::create_node(renderer).into(),
                         mounted: false,
                     });
 

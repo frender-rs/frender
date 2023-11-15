@@ -12,32 +12,54 @@ pub mod element_macros;
 // pub use html_expanded as html;
 
 pub mod html {
-    macro_rules! component {
-        (
-            common_data($common_data:tt)
-            extends $extends:tt
-            $(special_super_traits $special_super_traits:tt)?
-            $(special_inter_traits $special_inter_traits:tt)?
-            vis($vis:vis)
-            trait_name($trait_name:ident)
-            $(define $define:tt)?
-            $(verbatim_trait_items $verbatim_trait_items:tt)?
-            $(impl_for_web $impl_for_web:tt)?
-            fns($(
-                $(#$fn_attr:tt)*
-                fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-            )*)
-        ) => {
-            ::frender_common
-        };
+    use frender_html::{
+        html::*,
+        // TODO: remove
+        impl_bounds::{Css, DomTokens, MaybeContentEditable},
+    };
+
+    pub mod props {
+        frender_html::expand_html_traits! {{
+            for_each {
+                wrap {}
+                prepend( ::frender_html::props! )
+            }
+        }}
     }
-    // frender_html::define_props!();
-    frender_html::expand_html_traits!({
-        for_each {
-            wrap {}
-            prepend( frender_html::components! )
+
+    pub mod components {
+        macro_rules! component {
+            (
+                extends($($extends:ident)*)
+                $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+                $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
+                vis($vis:vis)
+                trait_name($trait_name:ident)
+                $(define(
+                    $(tags: ($($tags:ident),* $(,)?))?
+                    $(,)?
+                ))?
+                $(verbatim_trait_items $verbatim_trait_items:tt)?
+                $(impl_for_web $impl_for_web:tt)?
+                fns $fns:tt
+            ) => {
+                ::frender_html::expand! {
+                    while ($($($({$tags})*)?)?) {
+                        prepend( $trait_name $vis )
+                        wrap {}
+                        prepend( ::frender_html::define_component! )
+                    }
+                }
+            };
         }
-    });
+
+        frender_html::expand_html_traits! {{
+            for_each {
+                wrap {}
+                prepend( component! )
+            }
+        }}
+    }
 }
 
 // mod special_implementations;
@@ -70,7 +92,7 @@ pub mod ignore_first_ty;
 
 #[cfg(feature = "simply-typed")]
 pub mod html_components {
-    pub use super::html::{
+    pub use super::html::components::{
         //
         // a,
         abbr,

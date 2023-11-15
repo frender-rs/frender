@@ -70,7 +70,7 @@ impl<ET: ElementType, A: UpdateElementNonReactive<ET>, B: UpdateElementNonReacti
 pub trait IntrinsicComponent {
     const INTRINSIC_TAG: &'static str;
 
-    type ElementType: ElementType + CreateNode;
+    // type ElementType: ElementType + CreateNode;
     type ElementTagType: ElementTagType;
 }
 
