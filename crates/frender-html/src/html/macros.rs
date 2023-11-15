@@ -1151,6 +1151,33 @@ macro_rules! props {
     };
 }
 
+#[macro_export]
+macro_rules! components {
+    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(define(
+            $(tags: ($($tags:ident),* $(,)?))?
+            $(,)?
+        ))?
+        $(verbatim_trait_items $verbatim_trait_items:tt)?
+        $(impl_for_web $impl_for_web:tt)?
+        fns $fns:tt
+    ) => {
+        crate::expand! {
+            while ($($($({$tags})*)?)?) {
+                prepend( $trait_name $vis )
+                wrap {}
+                prepend( crate::define_component! )
+            }
+        }
+    };
+}
+
 /// `children` is excluded
 #[macro_export]
 macro_rules! extract_attr_builder_fn_names {

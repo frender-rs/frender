@@ -33,6 +33,9 @@ crate::def_intrinsic_component_props!(
         #[props]
         pub mod props {}
 
+        #[components]
+        pub mod components {}
+
         #[RenderHtml]
         pub trait RenderHtml {
             additional_bounds!(
