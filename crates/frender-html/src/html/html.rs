@@ -4,10 +4,6 @@ use crate::{
 };
 
 super::macros::def_intrinsic_component_props!(
-    #[expand_html_traits]
-    #[macro_export]
-    use expand_html_traits;
-
     mod items {
         #[behaviors]
         pub mod behaviors {}
