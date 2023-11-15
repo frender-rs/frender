@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! define_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -15,6 +16,7 @@ macro_rules! define_behavior_fn_update_with {
     };
 }
 
+#[macro_export]
 macro_rules! parse_update_with {
     (match ($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)?) {
         simple => $do_simple:tt
@@ -30,6 +32,7 @@ macro_rules! parse_update_with {
     };
 }
 
+#[macro_export]
 macro_rules! parse_impl_with {
     ($set_attribute_ident:ident (
         update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr,
@@ -50,6 +53,7 @@ macro_rules! parse_impl_with {
     };
 }
 
+#[macro_export]
 macro_rules! impl_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -90,6 +94,7 @@ macro_rules! impl_behavior_fn_update_with {
     };
 }
 
+#[macro_export]
 macro_rules! define_behavior_fn {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -112,7 +117,7 @@ macro_rules! define_behavior_fn {
         $(update_with! $update_with:tt;)?
     }) => {
         $(
-            crate::html::macros::define_behavior_fn_update_with! {
+            crate::define_behavior_fn_update_with! {
                 update_with $update_with
                 value($value)
                 type($maybe_ty)
@@ -122,6 +127,7 @@ macro_rules! define_behavior_fn {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt) => {};
 }
 
+#[macro_export]
 macro_rules! impl_behavior_fn {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -156,7 +162,7 @@ macro_rules! impl_behavior_fn {
         $(update_with! $update_with:tt;)?
     } $trait_name:tt) => {
         $(
-            crate::html::macros::impl_behavior_fn_update_with! {
+            crate::impl_behavior_fn_update_with! {
                 update_with $update_with
                 value($value)
                 type($maybe_ty)
@@ -167,6 +173,7 @@ macro_rules! impl_behavior_fn {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
+#[macro_export]
 macro_rules! behaviors {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} {$($item_body_expanded:tt)*}) => {
         $vis $item_type $item_name {
@@ -203,7 +210,7 @@ macro_rules! behaviors {
         {
             $($($verbatim_trait_items)*)?
 
-            $(crate::html::macros::define_behavior_fn!{
+            $(crate::define_behavior_fn!{
                 $fn_name $fn_args $fn_body_or_semi
             })*
         }
@@ -220,7 +227,7 @@ macro_rules! behaviors {
                         ::frender_common::expand! { while ($({$fn_name $fn_args $fn_body_or_semi})*) {
                             append( ($trait_name ($($($($impl_for_web_only_for_types)*)?)?)) )
                             wrap {}
-                            prepend(crate::html::macros::impl_behavior_fn!)
+                            prepend(crate::impl_behavior_fn!)
                         }}
                     })
                 }}
@@ -235,7 +242,7 @@ macro_rules! behaviors {
                 {
                     $($($($verbatim_trait_items_impl_web)*)?)?
 
-                    $(crate::html::macros::impl_behavior_fn! {
+                    $(crate::impl_behavior_fn! {
                         $fn_name $fn_args $fn_body_or_semi ($trait_name)
                     })*
                 }
@@ -244,6 +251,7 @@ macro_rules! behaviors {
     };
 }
 
+#[macro_export]
 macro_rules! behaviors_prelude {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -281,6 +289,7 @@ macro_rules! behaviors_prelude {
     };
 }
 
+#[macro_export]
 macro_rules! behavior_type_traits {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -327,6 +336,7 @@ macro_rules! behavior_type_traits {
     };
 }
 
+#[macro_export]
 macro_rules! tags {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -379,6 +389,7 @@ macro_rules! tags {
     };
 }
 
+#[macro_export]
 macro_rules! attributes {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -427,7 +438,7 @@ macro_rules! attributes {
             ::frender_common::expand! {
                 while ($({ $fn_name $fn_args $fn_body_or_semi $trait_name })*) {
                     wrap {}
-                    prepend( crate::html::macros::impl_attribute! )
+                    prepend( crate::impl_attribute! )
                 }
             }
 
@@ -543,6 +554,7 @@ macro_rules! attributes {
     };
 }
 
+#[macro_export]
 macro_rules! impl_attribute {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -560,7 +572,7 @@ macro_rules! impl_attribute {
         }
     };
     ($fn_name:ident ($value:ident : maybe![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
-        crate::html::macros::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
+        crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
     };
     ($fn_name:ident ($value:ident : maybe![&$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
@@ -575,7 +587,7 @@ macro_rules! impl_attribute {
                 csr {
                     update: ::frender_common::expand! {
                         if ($($update_with)?) {
-                                crate::html::macros::parse_update_with!(match $($update_with)? {
+                                crate::parse_update_with!(match $($update_with)? {
                                     simple => {
                                         prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
                                         append( (renderer, v) )
@@ -583,7 +595,7 @@ macro_rules! impl_attribute {
                                     impl_with => {
                                         append( as update(value($value) element_type(ET::$trait_name<Renderer>)))
                                         wrap {}
-                                        prepend( crate::html::macros::parse_impl_with! )
+                                        prepend( crate::parse_impl_with! )
                                     }
                                 })
                         } else {
@@ -592,7 +604,7 @@ macro_rules! impl_attribute {
                     },
                     remove: ::frender_common::expand! {
                         if ($($update_with)?) {
-                            crate::html::macros::parse_update_with!(match $($update_with)? {
+                            crate::parse_update_with!(match $($update_with)? {
                                 simple => {
                                     reset {}
                                     {crate::impl_bounds::MaybeValue::csr::default_remove}
@@ -600,7 +612,7 @@ macro_rules! impl_attribute {
                                 impl_with => {
                                     append( as remove(element_type(ET::$trait_name<Renderer>)))
                                     wrap {}
-                                    prepend( crate::html::macros::parse_impl_with! )
+                                    prepend( crate::parse_impl_with! )
                                 }
                             })
                         } else {
@@ -624,7 +636,7 @@ macro_rules! impl_attribute {
                 csr {
                     update: ::frender_common::expand! {
                         if ($($update_with)?) {
-                                crate::html::macros::parse_update_with!(match $($update_with)? {
+                                crate::parse_update_with!(match $($update_with)? {
                                     simple => {
                                         prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
                                         append( (renderer, *v) )
@@ -641,7 +653,7 @@ macro_rules! impl_attribute {
                     },
                     remove: ::frender_common::expand! {
                         if ($($update_with)?) {
-                            crate::html::macros::parse_update_with!(match $($update_with)? {
+                            crate::parse_update_with!(match $($update_with)? {
                                 simple => {
                                     reset {}
                                     {crate::impl_bounds::MaybeValue::csr::default_remove}
@@ -663,6 +675,7 @@ macro_rules! impl_attribute {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
+#[macro_export]
 macro_rules! RenderHtml {
     (expand_item $vis:vis $item_type:ident $item_name:ident {
         additional_bounds!($(dyn $($additional_bounds:tt)+)?);
@@ -702,6 +715,7 @@ macro_rules! RenderHtml {
     };
 }
 
+#[macro_export]
 macro_rules! expand_nested_traits {
     (
         // already expanded tokens
@@ -732,7 +746,7 @@ macro_rules! expand_nested_traits {
         })+}
         do $commands:tt
     ) => {
-        crate::html::macros::expand_nested_traits! {
+        $crate::expand_nested_traits! {
             {
                 $($expanded)*
                 $($({
@@ -765,19 +779,20 @@ macro_rules! expand_nested_traits {
     };
 }
 
+#[macro_export]
 macro_rules! define_item_and_traverse_traits {
     (
         $t:tt // {}
         $($macro_name:ident ($vis:vis $item_type:ident $item_name:ident $item_body:tt))*
     ) => {
         $(
-            crate::html::macros::$macro_name! {
+            crate::$macro_name! {
                 expand_item $vis $item_type $item_name $item_body
                 {
                     $crate::expand! {
                         $t for_each {
                             wrap{}
-                            prepend(crate::html::macros::$macro_name!)
+                            prepend(crate::$macro_name!)
                         }
                     }
                 }
@@ -786,6 +801,7 @@ macro_rules! define_item_and_traverse_traits {
     };
 }
 
+#[macro_export]
 macro_rules! def_intrinsic_component_props {
     (
         #[expand_html_traits]
@@ -799,7 +815,7 @@ macro_rules! def_intrinsic_component_props {
 
         $($t:tt)*
     ) => {
-        crate::html::macros::expand_nested_traits! {
+        crate::expand_nested_traits! {
             {}{{{extends()}($($t)*)}} do {
                 wrap {} // { ... }
                 duplex_concat ({
@@ -820,7 +836,7 @@ macro_rules! def_intrinsic_component_props {
                         ))*
                     )
                     wrap {}
-                    prepend( crate::html::macros::define_item_and_traverse_traits! )
+                    prepend( crate::define_item_and_traverse_traits! )
                 })
 
             }
@@ -828,6 +844,7 @@ macro_rules! def_intrinsic_component_props {
     };
 }
 
+#[macro_export]
 macro_rules! event_types {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -856,13 +873,14 @@ macro_rules! event_types {
         use super::behaviors::$trait_name;
 
         $(
-            crate::html::macros::event_type! {
+            crate::event_type! {
                 $fn_name $fn_args $fn_body_or_semi $trait_name
             }
         )*
     };
 }
 
+#[macro_export]
 macro_rules! event_type {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -886,6 +904,7 @@ macro_rules! event_type {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
+#[macro_export]
 macro_rules! event_type_helpers {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -911,13 +930,14 @@ macro_rules! event_type_helpers {
         )*)
     ) => {
         $(
-            crate::html::macros::event_type_helper! {
+            crate::event_type_helper! {
                 $fn_name $fn_args $fn_body_or_semi $trait_name { super::super::behaviors }
             }
         )*
     };
 }
 
+#[macro_export]
 macro_rules! event_type_helper {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -953,6 +973,7 @@ macro_rules! event_type_helper {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};
 }
 
+#[macro_export]
 macro_rules! props {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -1019,7 +1040,7 @@ macro_rules! props {
             macro_rules! impl_props_builder_fns {
                 // only children is overridable
                 (impl_children) => {
-                    crate::html::macros::extract_only_children_or! {
+                    $crate::extract_only_children_or! {
                         {$(
                             {
                                 $fn_name {
@@ -1031,7 +1052,7 @@ macro_rules! props {
                         {
                             // there is a children
                             wrap {}
-                            prepend( crate::html::macros::define_fn_children! )
+                            prepend( $crate::define_fn_children! )
                         }
                         {
                             {$({$extends})*}
@@ -1051,7 +1072,7 @@ macro_rules! props {
                         //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
                         //     })
                         // }
-                        crate::html::macros::parse_fn_args_as_bounds! {
+                        $crate::parse_fn_args_as_bounds! {
                             $fn_args
                             do {
                                 wrap()
@@ -1077,7 +1098,7 @@ macro_rules! props {
                                 wrap {}
                                 prepend( {$fn_name $fn_body_or_semi} do )
                                 wrap {}
-                                prepend( crate::html::macros::extract_attr_builder_fn_names! )
+                                prepend( $crate::extract_attr_builder_fn_names! )
                             }
                         }
                     )*
@@ -1130,6 +1151,7 @@ macro_rules! props {
     };
 }
 
+#[macro_export]
 macro_rules! components {
     (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
     (
@@ -1150,14 +1172,14 @@ macro_rules! components {
             while ($($($({$tags})*)?)?) {
                 prepend( $trait_name $vis )
                 wrap {}
-                prepend( crate::html::macros::define_component! )
+                prepend( crate::define_component! )
             }
         }
     };
 }
 
 /// `children` is excluded
-
+#[macro_export]
 macro_rules! extract_attr_builder_fn_names {
     ({children $fn_body_or_semi:tt} do $commands:tt) => {
         $crate::expand! { {} do $commands }
@@ -1178,6 +1200,7 @@ macro_rules! extract_attr_builder_fn_names {
     };
 }
 
+#[macro_export]
 macro_rules! parse_fn_args_as_bounds {
     (($value:ident : event![
         $event_trait_name:ident,
@@ -1225,51 +1248,52 @@ macro_rules! parse_fn_args_as_bounds {
     };
 }
 
+#[macro_export]
 macro_rules! extract_only_children_or {
     ($t:tt $do:tt $or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @ $t
             []
             { $do $or }
         }
     };
     (@{ { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             [$($resolved_children)* $children]
             $do_or
         }
     };
     (@{ { $other_name:ident $other:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             [$($resolved_children)* $children]
             $do_or
         }
     };
     (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { children $children:tt } $($t:tt)* } [$($resolved_children:tt)*] $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             [$($resolved_children)* $children]
             $do_or
         }
     };
     (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } { $other_name2:ident $other2:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             $resolved_children
             $do_or
         }
     };
     (@{ { $other_name:ident $other:tt } { $other_name1:ident $other1:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             $resolved_children
             $do_or
         }
     };
     (@{ { $other_name:ident $other:tt } $($t:tt)* } $resolved_children:tt $do_or:tt) => {
-        crate::html::macros::extract_only_children_or! {
+        $crate::extract_only_children_or! {
             @{$($t)*}
             $resolved_children
             $do_or
@@ -1286,6 +1310,7 @@ macro_rules! extract_only_children_or {
     };
 }
 
+#[macro_export]
 macro_rules! define_fn_children {
     (
         $(#$fn_attr:tt)*
@@ -1299,6 +1324,7 @@ macro_rules! define_fn_children {
     };
 }
 
+#[macro_export]
 macro_rules! define_component {
     (
         $props_name:ident
@@ -1339,31 +1365,3 @@ macro_rules! define_component {
         }
     };
 }
-
-pub(crate) use attributes;
-pub(crate) use behavior_type_traits;
-pub(crate) use behaviors;
-pub(crate) use behaviors_prelude;
-pub(crate) use components;
-pub(crate) use def_intrinsic_component_props;
-pub(crate) use define_behavior_fn;
-pub(crate) use define_behavior_fn_update_with;
-pub(crate) use define_component;
-pub(crate) use define_fn_children;
-pub(crate) use define_item_and_traverse_traits;
-pub(crate) use event_type;
-pub(crate) use event_type_helper;
-pub(crate) use event_type_helpers;
-pub(crate) use event_types;
-pub(crate) use expand_nested_traits;
-pub(crate) use extract_attr_builder_fn_names;
-pub(crate) use extract_only_children_or;
-pub(crate) use impl_attribute;
-pub(crate) use impl_behavior_fn;
-pub(crate) use impl_behavior_fn_update_with;
-pub(crate) use parse_fn_args_as_bounds;
-pub(crate) use parse_impl_with;
-pub(crate) use parse_update_with;
-pub(crate) use props;
-pub(crate) use tags;
-pub(crate) use RenderHtml;
