@@ -36,10 +36,3 @@ pub mod impl_bounds;
 pub mod __private {
     pub use frender_common::write::attrs::IntoAsyncWritableAttrs;
 }
-
-pub mod html_imports {
-    pub use crate::{
-        impl_bounds::{Css, DomTokens, MaybeContentEditable},
-        renderer::RenderTextFrom,
-    };
-}
