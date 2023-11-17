@@ -1,10 +1,5 @@
 pub use frender_dom as dom;
 
-mod data_types;
-pub use data_types::*;
-
-pub mod props;
-
 pub mod component;
 
 pub use frender_html_common::{AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
@@ -34,8 +29,6 @@ mod shims;
 pub mod html;
 pub use html::RenderHtml;
 
-pub mod html_expanded;
-
 pub mod impl_bounds;
 
 pub mod __private {
@@ -48,20 +41,6 @@ pub mod html_imports {
         renderer::RenderTextFrom,
     };
 }
-
-macro_rules! for_each_trait {
-    ({$($vis:vis trait $trait_name:ident $body:tt)*} $commands:tt) => {
-        $(crate::expand! {
-            {$vis trait $trait_name $body}
-            do $commands
-        })*
-    };
-    (($($t:tt)*) $commands:tt) => {
-        crate::for_each_trait! { {$($t)*} $commands }
-    };
-}
-
-use for_each_trait;
 
 #[macro_export]
 macro_rules! expand_html_traits {
