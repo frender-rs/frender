@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use frender_html::{csr::web::Node, RenderHtml};
+use frender_html::{dom::csr::web::Node, RenderHtml};
 
 use crate::try_behavior::{TryBehavior, TryWithTryBehavior};
 
@@ -30,12 +30,12 @@ impl<'a, TB: TryBehavior> Renderer<'a, TB> {
     }
 }
 
-impl<'a> Renderer<'a, frender_html::csr::web::UnwrapThrow> {
+impl<'a> Renderer<'a, frender_html::dom::csr::web::UnwrapThrow> {
     pub fn new(document: &'a web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {
             document,
             next_node_position: NextNodePosition::FirstChildOf(Cow::Owned(root_parent)),
-            try_behavior: frender_html::csr::web::UnwrapThrow,
+            try_behavior: frender_html::dom::csr::web::UnwrapThrow,
         }
     }
 }
@@ -174,7 +174,7 @@ impl<TB: TryBehavior> RenderHtml for Renderer<'_, TB> {
     );
 }
 
-impl<'r, TB: TryBehavior> frender_html::csr::web::Renderer for Renderer<'r, TB> {
+impl<'r, TB: TryBehavior> frender_html::dom::csr::web::Renderer for Renderer<'r, TB> {
     fn document(&self) -> Cow<web_sys::Document> {
         Cow::Borrowed(&self.document)
     }

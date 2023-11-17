@@ -102,7 +102,7 @@ macro_rules! define_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]);) => {
-        type $event_type_ident: crate::event::$event_trait_name + 'static;
+        type $event_type_ident: ::frender_dom::event::$event_trait_name + 'static;
         type $event_type_listener_ident;
 
         fn $fn_name(
@@ -135,7 +135,7 @@ macro_rules! impl_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
-        type $event_type_ident = crate::csr::web::Event<::web_sys::$event_trait_name>;
+        type $event_type_ident = ::frender_dom::csr::web::Event<::web_sys::$event_trait_name>;
         type $event_type_listener_ident = gloo_events::EventListener;
 
         fn $fn_name(
@@ -147,11 +147,11 @@ macro_rules! impl_behavior_fn {
 
             ::gloo_events::EventListener::new(
                 element,
-                <crate::html::event_types::$fn_name as crate::event::HasEventTypeName>::EVENT_TYPE_NAME,
+                <crate::html::event_types::$fn_name as ::frender_dom::event::HasEventTypeName>::EVENT_TYPE_NAME,
                 move |event| {
                     use wasm_bindgen::JsCast;
                     let event = event.unchecked_ref();
-                    listener(crate::csr::web::Event::new_from_ref(event))
+                    listener(::frender_dom::csr::web::Event::new_from_ref(event))
                 },
             )
         }
@@ -220,7 +220,7 @@ macro_rules! behaviors {
         ::frender_common::expand! { if ($( ! $($($verbatim_trait_items_impl_web)*)?)?) {
             ::frender_common::expand! { if ($($( ! $($impl_for_web_only_for_types)*)?)?) {
                 ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
-                    prepend(impl<Renderer: ?Sized + crate::csr::web::Renderer> $trait_name<Renderer> for crate::csr::web::Node<)
+                    prepend(impl<Renderer: ?Sized + ::frender_dom::csr::web::Renderer> $trait_name<Renderer> for ::frender_dom::csr::web::Node<)
                     append( > $($(where Self: $($special_super_traits<Renderer> + )+ )?)? {
                         $($($($verbatim_trait_items_impl_web)*)?)?
 
@@ -233,9 +233,9 @@ macro_rules! behaviors {
                 }}
             } else {
                 impl<
-                    Renderer: ?Sized + crate::csr::web::Renderer,
+                    Renderer: ?Sized + ::frender_dom::csr::web::Renderer,
                     E: AsRef<::web_sys::$trait_name>
-                > $trait_name<Renderer> for crate::csr::web::Node<E>
+                > $trait_name<Renderer> for ::frender_dom::csr::web::Node<E>
                 where Self:
                     $($extends<Renderer> +)*
                     $($($($special_super_traits<Renderer> + )+ )?)?
@@ -806,7 +806,7 @@ macro_rules! def_intrinsic_component_props {
     (
         #[expand_html_traits]
         $(#$expand_html_traits_attrs:tt)*
-        use $expand_html_traits:ident;
+        $vis_expand_html_traits:vis use $expand_html_traits:ident;
 
         mod items {$(
             #[$item_macro:ident]
@@ -828,6 +828,9 @@ macro_rules! def_intrinsic_component_props {
                     prepend {
                         $(#$expand_html_traits_attrs)*
                         macro_rules! $expand_html_traits
+                    }
+                    append {
+                        $vis_expand_html_traits use $expand_html_traits;
                     }
                 }{
                     append(
@@ -890,11 +893,11 @@ macro_rules! event_type {
     ]); $trait_name:ident) => {
         pub enum $fn_name {}
 
-        impl crate::event::HasEventTypeName for $fn_name {
+        impl ::frender_dom::event::HasEventTypeName for $fn_name {
             const EVENT_TYPE_NAME: &'static str = $event_type_name;
         }
 
-        crate::event::type_traits_impl::$event_trait_name! {
+        ::frender_dom::event::type_traits_impl::$event_trait_name! {
             $fn_name,
             $trait_name,
             $event_type_ident,
@@ -946,7 +949,7 @@ macro_rules! event_type_helper {
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:ident {$($path_to_mod_behaviors:tt)+}) => {
         pub mod $fn_name {
-            pub use crate::event::$event_trait_name as Event;
+            pub use ::frender_dom::event::$event_trait_name as Event;
 
             pub type EventOf        <E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_ident;
             pub type EventListenerOf<E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident;
@@ -1290,7 +1293,7 @@ macro_rules! parse_fn_args_as_bounds {
         $event_type_listener_ident:ident $(,)?
     ]) do $commands:tt) => {
         $crate::expand! {
-            { $crate::impl_bounds::MaybeHandleEvent::Bounds::<dyn $crate::event::$event_trait_name> }
+            { $crate::impl_bounds::MaybeHandleEvent::Bounds::<dyn $crate::dom::event::$event_trait_name> }
             do $commands
         }
     };

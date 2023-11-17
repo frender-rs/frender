@@ -49,10 +49,10 @@ macro_rules! type_traits_impl {
         macro_rules! $type_event {
             ($for_ty:ty, $element_trait_name:ident, $_type_event:ident, $_type_event_listener:ident) => {
                 $(
-                    crate::event::type_traits_impl::$super_trait! { $for_ty, $element_trait_name, $_type_event, $_type_event_listener }
+                    $crate::event::type_traits_impl::$super_trait! { $for_ty, $element_trait_name, $_type_event, $_type_event_listener }
                 )?
 
-                impl<E: ?Sized, R: ?Sized + crate::RenderHtml> crate::event::type_traits::$type_event<E, R>
+                impl<E: ?Sized, R: ?Sized + crate::RenderHtml> $crate::event::type_traits::$type_event<E, R>
                     for $for_ty
                 where
                     E: crate::html::behaviors::$element_trait_name<R>,

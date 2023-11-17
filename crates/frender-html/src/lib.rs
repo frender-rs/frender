@@ -1,3 +1,5 @@
+pub use frender_dom as dom;
+
 mod data_types;
 pub use data_types::*;
 
@@ -17,9 +19,6 @@ pub use update_element::*;
 
 pub mod elements;
 pub mod pin_mut_maybe_uninit;
-
-// TODO: refactor
-pub use frender_dom::{csr, event, touch};
 
 mod render_element;
 pub use render_element::RenderElement;
@@ -73,7 +72,7 @@ macro_rules! expand_html_traits {
         use $crate::html_imports::*;
         use $crate::html::*;
 
-        $crate::__impl_expand_html_traits! {{
+        $crate::html::__impl_expand_html_traits! {{
             wrap {}
             append($(
                 $macro_name ( $item_vis $item_type $item_name $item_body_or_semi )
@@ -83,7 +82,7 @@ macro_rules! expand_html_traits {
         }}
     };
     ($macro_name:ident $bang:tt) => {
-        $crate::__impl_expand_html_traits! {{
+        $crate::html::__impl_expand_html_traits! {{
             for_each {
                 wrap {}
                 prepend(
@@ -93,7 +92,7 @@ macro_rules! expand_html_traits {
         }}
     };
     ($commands:tt) => {
-        $crate::__impl_expand_html_traits! { $commands }
+        $crate::html::__impl_expand_html_traits! { $commands }
     };
 }
 
