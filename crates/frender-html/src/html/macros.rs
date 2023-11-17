@@ -1070,6 +1070,9 @@ macro_rules! define_props {
             $trait_name::Building(Default::default())
         }
     };
+    ($($vis:vis mod $trait_name:ident $body_or_semi:tt)+) => {
+        $($crate::define_props! { $vis mod $trait_name $body_or_semi })+
+    };
 }
 
 #[macro_export]
