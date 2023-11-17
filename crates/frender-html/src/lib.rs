@@ -74,15 +74,3 @@ macro_rules! expand_html_traits {
         $crate::html::__impl_expand_html_traits! { $commands }
     };
 }
-
-#[cfg(feature = "html_builders_not_expanded")]
-mod html_builders {
-    use super::html::*;
-    crate::expand_html_traits!(
-        #[props_builders]
-        mod props_builders;
-    );
-}
-
-#[cfg(not(feature = "html_builders_not_expanded"))]
-mod html_builders;

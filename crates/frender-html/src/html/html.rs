@@ -1,5 +1,8 @@
 use crate::html_imports::*;
 
+#[cfg(not(feature = "props_builders_not_expanded"))]
+mod props_builders;
+
 crate::def_intrinsic_component_props!(
     #[expand_html_traits]
     // #[macro_export]
@@ -7,7 +10,9 @@ crate::def_intrinsic_component_props!(
 
     mod items {
         #[behaviors]
-        pub mod behaviors {}
+        pub mod behaviors {
+            use crate::shims::prelude::*;
+        }
 
         #[behaviors_prelude]
         pub mod behaviors_prelude {}
@@ -32,6 +37,10 @@ crate::def_intrinsic_component_props!(
 
         #[components]
         pub mod components;
+
+        #[props_builders]
+        #[cfg(feature = "props_builders_not_expanded")]
+        mod props_builders;
 
         #[RenderHtml]
         pub trait RenderHtml {

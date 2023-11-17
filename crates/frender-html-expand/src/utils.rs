@@ -20,7 +20,7 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<syn::File
         .arg(pkg_name)
         .arg(mod_path)
         .arg("--features")
-        .arg("html_builders_not_expanded")
+        .arg("props_builders_not_expanded")
         .output()?;
 
     if !output.status.success() {

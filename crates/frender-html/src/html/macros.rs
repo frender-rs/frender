@@ -175,13 +175,7 @@ macro_rules! impl_behavior_fn {
 
 #[macro_export]
 macro_rules! behaviors {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} {$($item_body_expanded:tt)*}) => {
-        $vis $item_type $item_name {
-            use crate::shims::prelude::*;
-
-            $($item_body_expanded)*
-        }
-    };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -253,7 +247,7 @@ macro_rules! behaviors {
 
 #[macro_export]
 macro_rules! behaviors_prelude {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -291,7 +285,7 @@ macro_rules! behaviors_prelude {
 
 #[macro_export]
 macro_rules! behavior_type_traits {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -338,7 +332,7 @@ macro_rules! behavior_type_traits {
 
 #[macro_export]
 macro_rules! tags {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($special_super_traits:ident),* $(,)?))?
@@ -391,7 +385,7 @@ macro_rules! tags {
 
 #[macro_export]
 macro_rules! attributes {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -677,10 +671,17 @@ macro_rules! impl_attribute {
 
 #[macro_export]
 macro_rules! RenderHtml {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {
-        additional_bounds!($(dyn $($additional_bounds:tt)+)?);
-        $($items:tt)*
-    } {$($item_body_expanded:tt)*}) => {
+    (expand_item {
+        (
+            $(#$item_attrs:tt)*
+            $vis:vis $item_type:ident $item_name:ident {
+                additional_bounds!($(dyn $($additional_bounds:tt)+)?);
+                $($items:tt)*
+            }
+        )
+        {$($item_body_expanded:tt)*}
+    }) => {
+        $(#$item_attrs)*
         $vis $item_type $item_name
         $(: $($additional_bounds)+)?
         {
@@ -783,16 +784,18 @@ macro_rules! expand_nested_traits {
 macro_rules! define_item_and_traverse_traits {
     (
         $t:tt // {}
-        $($macro_name:ident ($vis:vis $item_type:ident $item_name:ident $item_body:tt))*
+        $($macro_name:ident $macro_expand_item:tt)*
     ) => {
         $(
             $crate::$macro_name! {
-                expand_item $vis $item_type $item_name $item_body
-                {
-                    $crate::expand! {
-                        $t for_each {
-                            wrap{}
-                            prepend($crate::$macro_name!)
+                expand_item {
+                    $macro_expand_item
+                    {
+                        $crate::expand! {
+                            $t for_each {
+                                wrap{}
+                                prepend($crate::$macro_name!)
+                            }
                         }
                     }
                 }
@@ -810,6 +813,7 @@ macro_rules! def_intrinsic_component_props {
 
         mod items {$(
             #[$item_macro:ident]
+            $(# $item_attrs:tt)*
             $item_vis:vis $item_type:ident $item_name:ident $item_body_or_semi:tt
         )*}
 
@@ -835,6 +839,7 @@ macro_rules! def_intrinsic_component_props {
                 }{
                     append(
                         $($item_macro (
+                            $(# $item_attrs)*
                             $item_vis $item_type $item_name $item_body_or_semi
                         ))*
                     )
@@ -849,7 +854,7 @@ macro_rules! def_intrinsic_component_props {
 
 #[macro_export]
 macro_rules! event_types {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -909,7 +914,7 @@ macro_rules! event_type {
 
 #[macro_export]
 macro_rules! event_type_helpers {
-    (expand_item $vis:vis $item_type:ident $item_name:ident {} $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -978,7 +983,7 @@ macro_rules! event_type_helper {
 
 #[macro_export]
 macro_rules! props {
-    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends $extends:tt
         $(special_super_traits $special_super_traits:tt)?
@@ -1004,7 +1009,7 @@ macro_rules! props {
 
 #[macro_export]
 macro_rules! props_without_builders {
-    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -1080,7 +1085,7 @@ macro_rules! define_props {
 
 #[macro_export]
 macro_rules! props_builders {
-    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends $extends:tt
         $(special_super_traits $special_super_traits:tt)?
@@ -1237,7 +1242,7 @@ macro_rules! define_props_builders {
 
 #[macro_export]
 macro_rules! components {
-    (expand_item $vis:vis $item_type:ident $item_name:ident ; $item_body_expanded:tt) => { $vis $item_type $item_name $item_body_expanded };
+    (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -1446,6 +1451,46 @@ macro_rules! define_component {
         $vis fn $component_name (
         ) -> super::props::$props_name::Building {
             super::props::$props_name ()
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! expand_item_simple {
+    (
+        (
+            $(#$item_attrs:tt)*
+            $vis:vis $item_type:ident $item_name:ident ;
+        )
+        $item_body_expanded:tt
+    ) => {
+        $(#$item_attrs)*
+        $vis $item_type $item_name
+        $item_body_expanded
+    };
+    (
+        (
+            $(#$item_attrs:tt)*
+            $vis:vis $item_type:ident $item_name:ident {}
+        )
+        $item_body_expanded:tt
+    ) => {
+        $(#$item_attrs)*
+        $vis $item_type $item_name
+        $item_body_expanded
+    };
+    (
+        (
+            $(#$item_attrs:tt)*
+            $vis:vis $item_type:ident $item_name:ident
+            { $($item_body:tt)* }
+        )
+        { $($item_body_expanded:tt)* }
+    ) => {
+        $(#$item_attrs)*
+        $vis $item_type $item_name {
+            $($item_body)*
+            $($item_body_expanded)*
         }
     };
 }
