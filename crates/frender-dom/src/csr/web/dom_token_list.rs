@@ -1,6 +1,6 @@
 use frender_common::try_behavior::{TryBehavior, TryWithTryBehavior};
 
-pub struct DomTokenList<TB: TryBehavior>(pub(crate) web_sys::DomTokenList, pub(crate) TB);
+pub struct DomTokenList<TB: TryBehavior>(pub web_sys::DomTokenList, pub TB);
 
 impl<TB: TryBehavior> crate::DomTokenList for DomTokenList<TB> {
     fn set_value(&mut self, value: &str) {
@@ -16,6 +16,9 @@ impl<TB: TryBehavior> crate::DomTokenList for DomTokenList<TB> {
     }
 
     fn replace(&mut self, old_token: &str, new_token: &str) {
-        _ = self.0.replace(old_token, new_token).unwrap_with_behavior(&mut self.1)
+        _ = self
+            .0
+            .replace(old_token, new_token)
+            .unwrap_with_behavior(&mut self.1)
     }
 }

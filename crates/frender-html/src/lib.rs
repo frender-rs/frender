@@ -18,9 +18,8 @@ pub use update_element::*;
 pub mod elements;
 pub mod pin_mut_maybe_uninit;
 
-pub mod csr;
-
-pub mod event;
+// TODO: refactor
+pub use frender_dom::{csr, event, touch};
 
 mod render_element;
 pub use render_element::RenderElement;
@@ -28,7 +27,6 @@ pub use render_element::RenderElement;
 pub use frender_html_common::dom_token::DomTokenList;
 
 // pub mod data_transfer;
-pub mod touch;
 
 pub use frender_common::expand;
 

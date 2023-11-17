@@ -45,6 +45,7 @@ macro_rules! type_traits_impl {
             )*})?
         }
     ) => {
+        #[macro_export]
         macro_rules! $type_event {
             ($for_ty:ty, $element_trait_name:ident, $_type_event:ident, $_type_event_listener:ident) => {
                 $(
@@ -62,7 +63,7 @@ macro_rules! type_traits_impl {
             };
         }
 
-        pub(crate) use $type_event;
+        pub use $type_event;
 
         crate::expand! {
             while ($($({
@@ -380,7 +381,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::SecurityPolicyViolationEvent> + AsRef<web_sys::Event>> super::SecurityPolicyViolationEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::SecurityPolicyViolationEvent> + AsRef<web_sys::Event>>
+        super::SecurityPolicyViolationEvent for crate::csr::web::Event<E>
+    {
         fn document_uri(&self) -> Cow<str> {
             web_sys::SecurityPolicyViolationEvent::document_uri(self.0.as_ref()).into()
         }
@@ -416,7 +419,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::UiEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::UiEvent
+        for crate::csr::web::Event<E>
+    {
         fn detail(&self) -> i32 {
             web_sys::UiEvent::detail(self.0.as_ref())
         }
@@ -440,7 +445,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::MouseEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::MouseEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::MouseEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::MouseEvent for crate::csr::web::Event<E>
+    {
         fn screen_x(&self) -> i32 {
             web_sys::MouseEvent::screen_x(self.0.as_ref())
         }
@@ -497,7 +504,13 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::WheelEvent> + AsRef<web_sys::MouseEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::WheelEvent for crate::csr::web::Event<E> {
+    impl<
+            E: AsRef<web_sys::WheelEvent>
+                + AsRef<web_sys::MouseEvent>
+                + AsRef<web_sys::UiEvent>
+                + AsRef<web_sys::Event>,
+        > super::WheelEvent for crate::csr::web::Event<E>
+    {
         fn delta_x(&self) -> f64 {
             web_sys::WheelEvent::delta_x(self.0.as_ref())
         }
@@ -512,7 +525,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::CompositionEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::CompositionEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::CompositionEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::CompositionEvent for crate::csr::web::Event<E>
+    {
         fn data(&self) -> Option<Cow<str>> {
             web_sys::CompositionEvent::data(self.0.as_ref()).map(Cow::Owned)
         }
@@ -521,9 +536,14 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::FocusEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::FocusEvent for crate::csr::web::Event<E> {}
+    impl<E: AsRef<web_sys::FocusEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::FocusEvent for crate::csr::web::Event<E>
+    {
+    }
 
-    impl<E: AsRef<web_sys::KeyboardEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::KeyboardEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::KeyboardEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::KeyboardEvent for crate::csr::web::Event<E>
+    {
         fn char_code(&self) -> u32 {
             web_sys::KeyboardEvent::char_code(self.0.as_ref())
         }
@@ -559,15 +579,23 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::TouchEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::TouchEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::TouchEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::TouchEvent for crate::csr::web::Event<E>
+    {
         fn touches_to_vec(&self) -> Vec<Touch> {
-            AsRef::<web_sys::TouchEvent>::as_ref(&self.0).touches().into_vec_of_touches()
+            AsRef::<web_sys::TouchEvent>::as_ref(&self.0)
+                .touches()
+                .into_vec_of_touches()
         }
         fn target_touches_to_vec(&self) -> Vec<Touch> {
-            AsRef::<web_sys::TouchEvent>::as_ref(&self.0).target_touches().into_vec_of_touches()
+            AsRef::<web_sys::TouchEvent>::as_ref(&self.0)
+                .target_touches()
+                .into_vec_of_touches()
         }
         fn changed_touches_to_vec(&self) -> Vec<Touch> {
-            AsRef::<web_sys::TouchEvent>::as_ref(&self.0).changed_touches().into_vec_of_touches()
+            AsRef::<web_sys::TouchEvent>::as_ref(&self.0)
+                .changed_touches()
+                .into_vec_of_touches()
         }
         fn alt_key(&self) -> bool {
             web_sys::TouchEvent::alt_key(self.0.as_ref())
@@ -583,7 +611,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::AnimationEvent> + AsRef<web_sys::Event>> super::AnimationEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::AnimationEvent> + AsRef<web_sys::Event>> super::AnimationEvent
+        for crate::csr::web::Event<E>
+    {
         fn animation_name(&self) -> Cow<str> {
             web_sys::AnimationEvent::animation_name(self.0.as_ref()).into()
         }
@@ -595,7 +625,9 @@ mod web {
         }
     }
 
-    impl<E: AsRef<web_sys::InputEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::InputEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::InputEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
+        super::InputEvent for crate::csr::web::Event<E>
+    {
         fn is_composing(&self) -> bool {
             web_sys::InputEvent::is_composing(self.0.as_ref())
         }
@@ -608,7 +640,13 @@ mod web {
         // fn data_transfer(&self) -> Option<DataTransfer>; // TODO:
     }
 
-    impl<E: AsRef<web_sys::PointerEvent> + AsRef<web_sys::MouseEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>> super::PointerEvent for crate::csr::web::Event<E> {
+    impl<
+            E: AsRef<web_sys::PointerEvent>
+                + AsRef<web_sys::MouseEvent>
+                + AsRef<web_sys::UiEvent>
+                + AsRef<web_sys::Event>,
+        > super::PointerEvent for crate::csr::web::Event<E>
+    {
         fn pointer_id(&self) -> i32 {
             web_sys::PointerEvent::pointer_id(self.0.as_ref())
         }
@@ -642,7 +680,9 @@ mod web {
         // fn get_coalesced_events(&self) -> ::js_sys::Array; // TODO:
     }
 
-    impl<E: AsRef<web_sys::TransitionEvent> + AsRef<web_sys::Event>> super::TransitionEvent for crate::csr::web::Event<E> {
+    impl<E: AsRef<web_sys::TransitionEvent> + AsRef<web_sys::Event>> super::TransitionEvent
+        for crate::csr::web::Event<E>
+    {
         fn property_name(&self) -> Cow<str> {
             web_sys::TransitionEvent::property_name(self.0.as_ref()).into()
         }

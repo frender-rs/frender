@@ -102,5 +102,5 @@ features = [
 default = ["csr", "ssr", "web"] # TODO: remove
 csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen", "frender-events/csr", "frender-html-common/csr"]
 ssr = ["dep:html-escape", "dep:futures-lite"]
-web = ["dep:gloo-events", "dep:js-sys"]
+web = ["dep:gloo-events", "dep:js-sys", "frender-dom/web"]
 html_builders_not_expanded = []
