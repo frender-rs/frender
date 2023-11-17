@@ -20,8 +20,6 @@ pub use render_element::RenderElement;
 
 pub use frender_html_common::dom_token::DomTokenList;
 
-// pub mod data_transfer;
-
 pub use frender_common::expand;
 
 mod shims;
