@@ -355,7 +355,7 @@ macro_rules! tags {
     ) => {
         $($($(
             pub struct $tags;
-            impl crate::renderer::HasIntrinsicComponentTag for $tags {
+            impl crate::dom::component::HasIntrinsicComponentTag for $tags {
                 const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
             }
             impl crate::renderer::CreateNode for $tags {

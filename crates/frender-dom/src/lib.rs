@@ -10,3 +10,5 @@ pub mod event;
 pub mod render;
 
 pub mod csr;
+
+pub mod component;
