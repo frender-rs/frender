@@ -6,7 +6,6 @@ use std::{
 
 use quote::ToTokens;
 
-mod expand;
 mod utils;
 
 fn main() -> io::Result<()> {

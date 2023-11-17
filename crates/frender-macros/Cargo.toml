@@ -17,11 +17,3 @@ darling = "0.14"
 proc-macro2 = "1.0.36"
 hooks-macro-core = { version = "0.1.0" }
 frender-macro-utils = { version = "0.1.0", path = "../frender-macro-utils" }
-
-[dependencies.frender-intrinsic-component-macro]
-version = "0.1.0"
-path = "../frender-intrinsic-component-macro"
-optional = true
-
-[features]
-intrinsic-component = ["dep:frender-intrinsic-component-macro"]
