@@ -43,36 +43,3 @@ pub mod html_imports {
         renderer::RenderTextFrom,
     };
 }
-
-#[macro_export]
-macro_rules! expand_html_traits {
-    ($(
-        #[$macro_name:ident]
-        $item_vis:vis $item_type:ident $item_name:ident $item_body_or_semi:tt
-    )*) => {
-        use $crate::html_imports::*;
-        use $crate::html::*;
-
-        $crate::html::__impl_expand_html_traits! {{
-            wrap {}
-            append($(
-                $macro_name ( $item_vis $item_type $item_name $item_body_or_semi )
-            )*)
-            wrap {}
-            prepend { $crate::define_item_and_traverse_traits! }
-        }}
-    };
-    ($macro_name:ident $bang:tt) => {
-        $crate::html::__impl_expand_html_traits! {{
-            for_each {
-                wrap {}
-                prepend(
-                    $crate::$macro_name $bang
-                )
-            }
-        }}
-    };
-    ($commands:tt) => {
-        $crate::html::__impl_expand_html_traits! { $commands }
-    };
-}

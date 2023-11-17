@@ -822,31 +822,14 @@ macro_rules! def_intrinsic_component_props {
         crate::expand_nested_traits! {
             {}{{{extends()}($($t)*)}} do {
                 wrap {} // { ... }
-                duplex_concat ({
-                    append( do $commands ) // { ... } do $commands
-                    wrap {}
-                    prepend( $crate::expand! ) // $crate::expand!{ { ... } do $commands }
-                    wrap {}
-                    prepend ( ($commands:tt) => )
-                    wrap {} // { { (...) => { ... } } }
-                    prepend {
-                        $(#$expand_html_traits_attrs)*
-                        macro_rules! $expand_html_traits
-                    }
-                    append {
-                        $vis_expand_html_traits use $expand_html_traits;
-                    }
-                }{
-                    append(
-                        $($item_macro (
-                            $(# $item_attrs)*
-                            $item_vis $item_type $item_name $item_body_or_semi
-                        ))*
-                    )
-                    wrap {}
-                    prepend( crate::define_item_and_traverse_traits! )
-                })
-
+                append(
+                    $($item_macro (
+                        $(# $item_attrs)*
+                        $item_vis $item_type $item_name $item_body_or_semi
+                    ))*
+                )
+                wrap {}
+                prepend( crate::define_item_and_traverse_traits! )
             }
         }
     };
