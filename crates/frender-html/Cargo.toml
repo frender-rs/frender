@@ -103,3 +103,4 @@ default = ["csr", "ssr", "web"] # TODO: remove
 csr = ["dep:gloo", "dep:web-sys", "dep:wasm-bindgen", "frender-events/csr", "frender-html-common/csr"]
 ssr = ["dep:html-escape", "dep:futures-lite"]
 web = ["dep:gloo-events", "dep:js-sys"]
+html_builders_not_expanded = []

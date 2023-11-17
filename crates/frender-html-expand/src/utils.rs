@@ -13,14 +13,14 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html(mod_path: &str) -> io::Result<syn::File> {
+pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<syn::File> {
     let output = std::process::Command::new("cargo")
         .arg("expand")
         .arg("-p")
-        .arg("frender-html-components")
+        .arg(pkg_name)
         .arg(mod_path)
         .arg("--features")
-        .arg("html_macro_not_expand")
+        .arg("html_builders_not_expanded")
         .output()?;
 
     if !output.status.success() {
