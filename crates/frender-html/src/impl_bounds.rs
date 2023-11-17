@@ -379,11 +379,11 @@ pub mod MaybeValue {
             }
         }
 
-        pub fn default_update<V: ?Sized + AsAttributeValue, E: ?Sized + crate::html::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str, value: &V) {
+        pub fn default_update<V: ?Sized + AsAttributeValue, E: ?Sized + frender_dom::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str, value: &V) {
             element.set_attribute(renderer, prop_name, &value.as_attribute_value())
         }
 
-        pub fn default_remove<E: ?Sized + crate::html::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str) {
+        pub fn default_remove<E: ?Sized + frender_dom::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str) {
             element.remove_attribute(renderer, prop_name)
         }
     }

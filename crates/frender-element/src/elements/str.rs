@@ -6,7 +6,7 @@ use std::ops::Deref;
 #[cfg(feature = "StaticText")]
 use frender_core::{StaticStr, StaticText};
 use frender_html::dom::render::RenderTextFrom;
-use frender_html::{html::behaviors::Node, RenderHtml};
+use frender_html::{dom::behaviors::Node, RenderHtml};
 
 use crate::{Element, RenderState};
 

@@ -71,45 +71,14 @@ crate::def_intrinsic_component_props!(
     }
 
     pub trait Node {
-        verbatim_trait_items!(
-            fn cursor_is_at_self(&self, renderer: &Renderer) -> bool;
-
-            fn move_cursor_after_self(&mut self, renderer: &mut Renderer);
-
-            /// should move cursor
-            fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool);
-
-            fn remove_self(&mut self, renderer: &mut Renderer);
-        );
-
-        impl_for_web!(
-            verbatim_trait_items!(
-                fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
-                    renderer.cursor_is_at_node(self.0.as_ref())
-                }
-
-                fn move_cursor_after_self(&mut self, renderer: &mut Renderer) {
-                    renderer.move_cursor_after_node(self.0.as_ref())
-                }
-
-                fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool) {
-                    renderer.readd_node(self.0.as_ref(), force_reposition)
-                }
-
-                fn remove_self(&mut self, renderer: &mut Renderer) {
-                    renderer.remove_node(self.0.as_ref())
-                }
-            );
-        );
+        trait_bounds!(frender_dom::behaviors::Node<Renderer>);
+        impl_for_web!();
 
         sub_traits!(
             pub trait Element {
+                trait_bounds!(frender_dom::behaviors::Element<Renderer>);
+
                 verbatim_trait_items!(
-                    fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer);
-
-                    fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str);
-                    fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
-
                     type ClassList<'a>: frender_html_common::dom_token::DomTokenList
                     where
                         Self: 'a,
@@ -119,22 +88,6 @@ crate::def_intrinsic_component_props!(
 
                 impl_for_web!(
                     verbatim_trait_items!(
-                        fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer) {
-                            renderer.move_cursor_at_the_first_child_of_element(self.0.as_ref())
-                        }
-
-                        fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str) {
-                            use frender_common::try_behavior::TryWithTryBehavior;
-
-                            AsRef::<web_sys::Element>::as_ref(&self.0).set_attribute(name, value).unwrap_with_behavior(&mut renderer.try_behavior())
-                        }
-
-                        fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str) {
-                            use frender_common::try_behavior::TryWithTryBehavior;
-
-                            AsRef::<web_sys::Element>::as_ref(&self.0).remove_attribute(name).unwrap_with_behavior(&mut renderer.try_behavior())
-                        }
-
                         type ClassList<'a> = ::frender_dom::csr::web::DomTokenList<Renderer::TryBehavior<'a>>
                         where
                             Self: 'a,

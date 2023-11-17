@@ -182,6 +182,7 @@ macro_rules! behaviors {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds($($trait_bounds:tt)*))?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -201,6 +202,7 @@ macro_rules! behaviors {
         $vis trait $trait_name<Renderer: ?Sized> :
             $($extends<Renderer> +)*
             $($($($special_super_traits<Renderer> +)+)?)?
+            $($($trait_bounds)*)?
         {
             $($($verbatim_trait_items)*)?
 
@@ -233,6 +235,7 @@ macro_rules! behaviors {
                 where Self:
                     $($extends<Renderer> +)*
                     $($($($special_super_traits<Renderer> + )+ )?)?
+                    $($($trait_bounds)*)?
                 {
                     $($($($verbatim_trait_items_impl_web)*)?)?
 
@@ -254,6 +257,7 @@ macro_rules! behaviors_prelude {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -292,6 +296,7 @@ macro_rules! behavior_type_traits {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -339,6 +344,7 @@ macro_rules! tags {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define(
             $(tags: ($($tags:ident),* $(,)?))?
             $(,)?
@@ -390,6 +396,7 @@ macro_rules! attributes {
         $(special_inter_traits($($special_inter_traits:ident),* $(,)?    ))?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -693,6 +700,7 @@ macro_rules! RenderHtml {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define(
             $(tags: ($($tags:ident),* $(,)?))?
             $(,)?
@@ -728,6 +736,7 @@ macro_rules! expand_nested_traits {
                 $vis:vis trait $trait_name:ident {
                     $(special_super_traits! $special_super_traits:tt;)?
                     $(special_inter_traits! $special_inter_traits:tt;)?
+                    $(trait_bounds! $trait_bounds:tt;)?
                     $(define! $define:tt;)?
 
                     $(verbatim_trait_items! $verbatim_trait_items:tt;)?
@@ -754,6 +763,7 @@ macro_rules! expand_nested_traits {
                     $(special_inter_traits $special_inter_traits)?
                     vis($vis)
                     trait_name($trait_name)
+                    $(trait_bounds $trait_bounds)?
                     $(define $define)?
                     $(verbatim_trait_items $verbatim_trait_items)?
                     $(impl_for_web $impl_for_web)?
@@ -842,6 +852,7 @@ macro_rules! event_types {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -902,6 +913,7 @@ macro_rules! event_type_helpers {
         $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -1098,6 +1110,7 @@ macro_rules! define_props_builders {
         $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define $define:tt)?
         // $(define(
         //     Props: $Props:ident
@@ -1230,6 +1243,7 @@ macro_rules! components {
         $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
         $(define(
             $(tags: ($($tags:ident),* $(,)?))?
             $(,)?
