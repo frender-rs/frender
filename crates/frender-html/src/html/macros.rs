@@ -810,7 +810,7 @@ macro_rules! def_intrinsic_component_props {
 
         mod items {$(
             #[$item_macro:ident]
-            $item_vis:vis $item_type:ident $item_name:ident { $($item_body:tt)* }
+            $item_vis:vis $item_type:ident $item_name:ident $item_body_or_semi:tt
         )*}
 
         $($t:tt)*
@@ -832,7 +832,7 @@ macro_rules! def_intrinsic_component_props {
                 }{
                     append(
                         $($item_macro (
-                            $item_vis $item_type $item_name { $($item_body)* }
+                            $item_vis $item_type $item_name $item_body_or_semi
                         ))*
                     )
                     wrap {}
