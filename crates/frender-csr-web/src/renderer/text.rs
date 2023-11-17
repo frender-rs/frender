@@ -1,5 +1,5 @@
 use frender_common::try_behavior::TryBehavior;
-use frender_html::{dom::csr::web::Node, renderer::RenderTextFrom};
+use frender_html::{dom::csr::web::Node, dom::render::RenderTextFrom};
 
 use super::Renderer;
 

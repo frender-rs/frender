@@ -1,9 +1,11 @@
 use std::borrow::{Borrow, Cow};
 use std::ops::Deref;
 
+use frender_dom::render::RenderTextFrom;
+
 use crate::{
     pin_mut_maybe_uninit::PinMutMaybeUninit,
-    renderer::{self, node_behaviors::Node, RenderTextFrom},
+    renderer::{self, node_behaviors::Node},
     Element, RenderHtml, RenderState,
 };
 #[cfg(feature = "StaticText")]

@@ -1,7 +1,6 @@
-use crate::{
-    impl_bounds::{Css, DomTokens, MaybeContentEditable},
-    renderer::RenderTextFrom,
-};
+use frender_dom::render::RenderTextFrom;
+
+use crate::impl_bounds::{Css, DomTokens, MaybeContentEditable};
 
 #[cfg(not(feature = "props_builders_not_expanded"))]
 mod props_builders;
