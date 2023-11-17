@@ -12,3 +12,5 @@ pub mod render;
 pub mod csr;
 
 pub mod component;
+
+pub mod element_types;

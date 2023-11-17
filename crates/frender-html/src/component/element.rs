@@ -14,9 +14,7 @@ pub struct IntrinsicChildrenAsElement<C, Children> {
 #[cfg(feature = "ssr")]
 pub trait SsrIntrinsicComponent {
     #[inline]
-    fn wrap_children<Children>(
-        children: Children,
-    ) -> frender_ssr::element::html::HtmlElementChildren<Children> {
+    fn wrap_children<Children>(children: Children) -> frender_ssr::element::html::HtmlElementChildren<Children> {
         frender_ssr::element::html::HtmlElementChildren::Children(children)
     }
 }
@@ -26,19 +24,13 @@ pub struct IntrinsicElement<C, P: IntoElementProps>(pub C, pub P);
 pub trait ElementWithChildren<Children> {
     type ChildrenRenderState<R: crate::RenderHtml>: crate::RenderState<R> + Default;
 
-    fn children_render_update<Renderer: crate::RenderHtml>(
-        self,
-        children: Children,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::ChildrenRenderState<Renderer>>,
-    );
+    fn children_render_update<Renderer: crate::RenderHtml>(self, children: Children, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::ChildrenRenderState<Renderer>>);
 }
 
 mod imp {
-    use crate::{
-        component::IntoElementProps, renderer::CreateNode, Element, ElementOfType,
-        IntrinsicComponent, RenderHtml, RenderState, UpdateElementNonReactive,
-    };
+    use frender_dom::component::{HasIntrinsicComponentTag, HasIntrinsicElementType};
+
+    use crate::{component::IntoElementProps, renderer::CreateNode, Element, ElementOfType, RenderHtml, RenderState, UpdateElementNonReactive};
 
     use super::ElementAndMounted;
 
@@ -59,9 +51,7 @@ mod imp {
         }
     }
 
-    impl<E: crate::html::behaviors::Element<R>, S: RenderState<R>, R> RenderState<R>
-        for IntrinsicElementRenderState<E, S>
-    {
+    impl<E: crate::html::behaviors::Element<R>, S: RenderState<R>, R> RenderState<R> for IntrinsicElementRenderState<E, S> {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
             let this = self.project();
             if let Some(ElementAndMounted { element, mounted }) = this.element_and_mounted {
@@ -76,20 +66,12 @@ mod imp {
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
             let this = self.project();
-            if this
-                .element_and_mounted
-                .as_ref()
-                .map_or(false, |v| v.mounted)
-            {
+            if this.element_and_mounted.as_ref().map_or(false, |v| v.mounted) {
                 this.props_state.state_unmount();
             }
         }
 
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
+        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let this = self.project();
             let element = if let Some(v) = this.element_and_mounted {
                 &mut v.element
@@ -126,83 +108,46 @@ mod imp {
             self.project().children_render_state.state_unmount()
         }
 
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            self.project()
-                .children_render_state
-                .poll_render(renderer, cx)
+        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            self.project().children_render_state.poll_render(renderer, cx)
         }
     }
 
-    impl<
-            C: IntrinsicComponent + crate::html::behavior_type_traits::Element + CreateNode,
-            P: IntoElementProps,
-        > Element for super::IntrinsicElement<C, P>
+    impl<C: HasIntrinsicComponentTag + HasIntrinsicElementType + crate::html::behavior_type_traits::Element + CreateNode, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
     where
-        C::ElementTagType: crate::ElementSupportChildren<P::Children>,
+        C::IntrinsicElementType: crate::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C>,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             ElementOfType<C, R>,
-            ElementPropsState<
-                <C::ElementTagType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<
-                    R,
-                >,
-                <P::Attrs as UpdateElementNonReactive<C>>::State<R>,
-            >,
+            ElementPropsState<<C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<R>, <P::Attrs as UpdateElementNonReactive<C>>::State<R>>,
         >;
 
-        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(
-            self,
-            renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-            force_reposition: bool,
-        ) {
+        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
             let render_state = render_state.project();
 
             let props_state = render_state.props_state.project();
 
-            let super::super::ElementProps {
-                children,
-                attributes,
-            } = P::into_element_props(self.1);
+            let super::super::ElementProps { children, attributes } = P::into_element_props(self.1);
 
-            let element_and_mounted =
-                render_state
-                    .element_and_mounted
-                    .get_or_insert_with(|| ElementAndMounted {
-                        element: <C as CreateNode>::create_node(renderer).into(),
-                        mounted: false,
-                    });
+            let element_and_mounted = render_state.element_and_mounted.get_or_insert_with(|| ElementAndMounted {
+                element: <C as CreateNode>::create_node(renderer).into(),
+                mounted: false,
+            });
 
             update_element_maybe_reposition(
                 element_and_mounted,
                 renderer,
                 |element, renderer| {
-                    <P::Attrs>::update_element_non_reactive(
-                        attributes,
-                        renderer,
-                        crate::convert::IntoMut::into_mut(element),
-                        props_state.attrs_state,
-                    );
-                    <C::ElementTagType as crate::ElementSupportChildren<P::Children>>::children_render_update(
-                            children,
-                            renderer,
-                            props_state.children_render_state,
-                        )
+                    <P::Attrs>::update_element_non_reactive(attributes, renderer, crate::convert::IntoMut::into_mut(element), props_state.attrs_state);
+                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::children_render_update(children, renderer, props_state.children_render_state)
                 },
                 force_reposition,
             )
         }
     }
 
-    pub fn update_element_maybe_reposition<
-        E: crate::renderer::node_behaviors::Element<R>,
-        R: ?Sized + RenderHtml,
-    >(
+    pub fn update_element_maybe_reposition<E: crate::renderer::node_behaviors::Element<R>, R: ?Sized + RenderHtml>(
         element_and_mounted: &mut ElementAndMounted<E>,
         renderer: &mut R,
         update: impl FnOnce(&mut E, &mut R),
@@ -250,21 +195,11 @@ mod ssr {
         C: SsrWithChildren<P::Children>,
         P::Attrs: IntoAsyncWritableAttrs,
     {
-        type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
-            'static,
-            C::ChildrenSsrState,
-            <P::Attrs as IntoAsyncWritableAttrs>::AsyncWritableAttrs,
-        >;
+        type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<'static, C::ChildrenSsrState, <P::Attrs as IntoAsyncWritableAttrs>::AsyncWritableAttrs>;
 
         fn into_ssr_state(self) -> Self::SsrState {
-            let ElementProps {
-                children,
-                attributes,
-            } = P::into_element_props(self.1);
-            let children = IntrinsicChildrenAsElement {
-                component_type: self.0,
-                children,
-            };
+            let ElementProps { children, attributes } = P::into_element_props(self.1);
+            let children = IntrinsicChildrenAsElement { component_type: self.0, children };
             ::frender_ssr::element::html::HtmlElement {
                 tag: Cow::Borrowed(C::INTRINSIC_TAG),
                 attributes,

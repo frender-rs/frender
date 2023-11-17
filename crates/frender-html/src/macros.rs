@@ -366,12 +366,10 @@ macro_rules! tags {
             impl crate::component::SsrIntrinsicComponent for $tags {
                 // TODO: some components are void or self closing
             }
-            impl crate::IntrinsicComponent for $tags {
-                const INTRINSIC_TAG: &'static str = stringify!($tags);
-
+            impl crate::dom::component::HasIntrinsicElementType for $tags {
                 // type ElementType = super::::$trait_name;
                 // TODO: some components are void or self closing
-                type ElementTagType = crate::element_tag_types::EncloseAnyElement;
+                type IntrinsicElementType = crate::dom::element_types::EncloseAnyElement;
             }
         )*)?)?
 
