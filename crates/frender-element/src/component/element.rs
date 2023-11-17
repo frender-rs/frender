@@ -25,7 +25,7 @@ mod imp {
         HasIntrinsicComponentTag, HasIntrinsicElementType, IntoElementProps,
     };
 
-    use frender_html::{renderer::CreateNode, ElementOfType, RenderHtml, UpdateElementNonReactive};
+    use frender_html::{CreateNode, RenderHtml, UpdateElementNonReactive};
 
     use crate::{Element, RenderState};
 
@@ -138,7 +138,7 @@ mod imp {
         P::Attrs: UpdateElementNonReactive<C>,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
-            ElementOfType<C, R>,
+            C::Element<R>,
             ElementPropsState<<C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<R>, <P::Attrs as UpdateElementNonReactive<C>>::State<R>>,
         >;
 
@@ -183,7 +183,7 @@ mod imp {
     }
 
     pub fn update_element_maybe_reposition<
-        E: frender_html::renderer::node_behaviors::Element<R>,
+        E: frender_html::html::behaviors::Element<R>,
         R: ?Sized + RenderHtml,
     >(
         element_and_mounted: &mut ElementAndMounted<E>,

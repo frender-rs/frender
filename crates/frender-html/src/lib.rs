@@ -2,10 +2,11 @@ pub use frender_dom as dom;
 
 pub use frender_html_common::{AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
 
-pub mod renderer;
+pub use renderer::CreateNode;
+pub use update_element::UpdateElementNonReactive;
 
+mod renderer;
 mod update_element;
-pub use update_element::*;
 
 pub use frender_html_common::dom_token::DomTokenList;
 

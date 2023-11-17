@@ -302,19 +302,10 @@ pub mod DomTokens {
         pub use super::super::SsrInput as Input;
         pub use crate::DefaultSsrAttrs as Attrs;
 
-        pub type Attrs<V> = Option<
-            frender_ssr::element::html::simple::AttrPairStr<
-                <V as DomTokens>::AsyncWritableDomTokens,
-            >,
-        >;
+        pub type Attrs<V> = Option<frender_ssr::element::html::simple::AttrPairStr<<V as DomTokens>::AsyncWritableDomTokens>>;
 
         pub fn into_attrs<V: DomTokens>(Input { this, attr_name }: Input<V>) -> Attrs<V> {
-            V::maybe_into_async_writable_dom_tokens(this).map(|value| {
-                frender_ssr::element::html::simple::AttrPairStr::new_from_str(
-                    attr_name,
-                    AsyncWritableAttrValueStr::new(value),
-                )
-            })
+            V::maybe_into_async_writable_dom_tokens(this).map(|value| frender_ssr::element::html::simple::AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value)))
         }
     }
 }
@@ -328,15 +319,7 @@ mod updater {
         pub(super) remove: R,
     }
 
-    impl<
-            'a,
-            VT: ?Sized,
-            E,
-            RR,
-            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        > frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R>
-    {
+    impl<'a, VT: ?Sized, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &VT), R: FnOnce(&mut E, &mut RR, &'static str)> frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R> {
         fn update(mut self, value: &VT) {
             (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
         }
@@ -364,14 +347,7 @@ pub mod MaybeValue {
 
         pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::UpdateWithState;
 
-        pub fn update_with_state<
-            VT: ?Sized + ValueType,
-            V: MaybeUpdateValueWithState<VT>,
-            E,
-            RR,
-            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        >(
+        pub fn update_with_state<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &VT), R: FnOnce(&mut E, &mut RR, &'static str)>(
             input: Input<V, E, RR, U, R>,
             state: &mut State<VT, V>,
         ) {
@@ -403,27 +379,11 @@ pub mod MaybeValue {
             }
         }
 
-        pub fn default_update<
-            V: ?Sized + AsAttributeValue,
-            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
-            RR: ?Sized,
-        >(
-            element: &mut E,
-            renderer: &mut RR,
-            prop_name: &'static str,
-            value: &V,
-        ) {
+        pub fn default_update<V: ?Sized + AsAttributeValue, E: ?Sized + crate::html::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str, value: &V) {
             element.set_attribute(renderer, prop_name, &value.as_attribute_value())
         }
 
-        pub fn default_remove<
-            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
-            RR: ?Sized,
-        >(
-            element: &mut E,
-            renderer: &mut RR,
-            prop_name: &'static str,
-        ) {
+        pub fn default_remove<E: ?Sized + crate::html::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str) {
             element.remove_attribute(renderer, prop_name)
         }
     }
@@ -438,14 +398,11 @@ pub mod MaybeValue {
 
         pub use crate::DefaultSsrAttrs as Attrs;
 
-        pub fn into_attrs<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(
-            Input { this, attr_name }: Input<V>,
-        ) -> Attrs<VT, V>
+        pub fn into_attrs<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(Input { this, attr_name }: Input<V>) -> Attrs<VT, V>
         where
             VT::SupportIntoAttrValue: Default,
         {
-            V::maybe_into_attr_value(this, Default::default())
-                .map(|value| AttrPair::new_from_str(attr_name, value))
+            V::maybe_into_attr_value(this, Default::default()).map(|value| AttrPair::new_from_str(attr_name, value))
         }
     }
 }
@@ -518,28 +475,20 @@ pub mod MaybeHandleEvent {
             pub new_event_state: F,
         }
 
-        pub type State<Ev, V, S> =
-            <V as frender_events::callable::gat::MaybeHandleEvent<Ev>>::UpdateWithState<S>;
+        pub type State<Ev, V, S> = <V as frender_events::callable::gat::MaybeHandleEvent<Ev>>::UpdateWithState<S>;
 
         pub fn update_with_state<
             Ev: ?Sized,
             V: MaybeHandleEvent<Ev>,
             S,
-            E: ?Sized + crate::renderer::node_behaviors::Element<RR>,
+            E: ?Sized + crate::html::behaviors::Element<RR>,
             RR: ?Sized,
             F: FnOnce(&mut E, &mut RR, &<V as MaybeHandleEvent<Ev>>::StaticCloneCallable) -> S,
         >(
-            Input {
-                this,
-                element,
-                renderer,
-                new_event_state,
-            }: Input<V, E, RR, F>,
+            Input { this, element, renderer, new_event_state }: Input<V, E, RR, F>,
             state: &mut State<Ev, V, S>,
         ) {
-            V::update_with_state(this, state, |callable| {
-                new_event_state(element, renderer, callable)
-            })
+            V::update_with_state(this, state, |callable| new_event_state(element, renderer, callable))
         }
     }
 
@@ -583,16 +532,7 @@ pub mod MaybeContentEditable {
 
         pub type State<V> = <V as MaybeContentEditable>::UpdateWithState;
 
-        pub fn update_with_state<
-            V: MaybeContentEditable,
-            E,
-            RR,
-            U: FnOnce(&mut E, &mut RR, &'static str, &str),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        >(
-            input: Input<V, E, RR, U, R>,
-            state: &mut State<V>,
-        ) {
+        pub fn update_with_state<V: MaybeContentEditable, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &str), R: FnOnce(&mut E, &mut RR, &'static str)>(input: Input<V, E, RR, U, R>, state: &mut State<V>) {
             let (this, updater) = input.into_value_and_updater();
 
             V::update_with_state(this, updater, state)
@@ -611,12 +551,8 @@ pub mod MaybeContentEditable {
 
         pub type Attrs<V> = Option<AttrPairStr<<V as MaybeContentEditable>::AttrValueStr>>;
 
-        pub fn into_attrs<V: MaybeContentEditable>(
-            Input { this, attr_name }: Input<V>,
-        ) -> Attrs<V> {
-            V::maybe_into_attr_value_str(this).map(|value| {
-                AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value))
-            })
+        pub fn into_attrs<V: MaybeContentEditable>(Input { this, attr_name }: Input<V>) -> Attrs<V> {
+            V::maybe_into_attr_value_str(this).map(|value| AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value)))
         }
     }
 }
@@ -643,8 +579,7 @@ pub mod Css {
         pub use super::super::SsrInput as Input;
         pub use crate::css_type_attrs as Attrs;
 
-        pub type Attrs =
-            Option<frender_ssr::element::html::simple::AttrPairStr<StrWriting<String>>>;
+        pub type Attrs = Option<frender_ssr::element::html::simple::AttrPairStr<StrWriting<String>>>;
 
         #[macro_export]
         macro_rules! css_type_attrs {

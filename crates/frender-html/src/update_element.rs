@@ -1,34 +1,4 @@
-use frender_dom::component::IntrinsicElementType as ElementTagType;
-
-use crate::{
-    html::behavior_type_traits::Element as ElementType,
-    renderer::{node_behaviors, CreateNode},
-    RenderHtml,
-};
-
-pub trait Identity {
-    type This: ?Sized;
-    fn from_identity_mut(this: &mut Self::This) -> &mut Self;
-    fn from_identity(this: Self::This) -> Self
-    where
-        Self: Sized;
-}
-
-impl<T: ?Sized> Identity for T {
-    type This = T;
-    fn from_identity_mut(v: &mut T) -> &mut Self {
-        v
-    }
-
-    fn from_identity(this: Self::This) -> Self
-    where
-        Self: Sized,
-    {
-        this
-    }
-}
-
-pub type ElementOfType<ET, R> = <ET as ElementType>::Element<R>;
+use crate::{html::behavior_type_traits::Element as ElementType, RenderHtml};
 
 pub trait UpdateElementNonReactive<ET: ElementType> {
     type State<Renderer: RenderHtml>: Default;
