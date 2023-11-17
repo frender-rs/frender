@@ -26,6 +26,8 @@ pub use frender_common::expand;
 
 mod shims;
 
+mod macros;
+
 pub mod html;
 pub use html::RenderHtml;
 

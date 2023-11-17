@@ -710,7 +710,7 @@ macro_rules! RenderHtml {
         )*)
     ) => {
         $($($(
-            type $tags: super::behaviors::$trait_name<Self>;
+            type $tags: self::behaviors::$trait_name<Self>;
             fn $tags(&mut self) -> Self::$tags;
         )*)?)?
     };
