@@ -2,7 +2,8 @@
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::{Element, RenderHtml, RenderState};
+use frender_element::{Element, RenderState};
+use frender_html::RenderHtml;
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 
 pin_project_lite::pin_project!(

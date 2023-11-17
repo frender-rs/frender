@@ -1,14 +1,36 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+// TODO: remove
+use frender_html::RenderHtml;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub use element::{Element, RenderState};
+pub use element_types::ElementSupportChildren;
+pub use into_render_element_ext::IntoRenderElementExt;
+pub use render_element::RenderElement;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+pub mod pin_mut_maybe_uninit;
+
+mod element;
+
+mod render_element;
+
+mod element_types;
+
+mod component;
+
+pub mod elements;
+
+mod into_render_element_ext {
+    use frender_html::RenderHtml;
+
+    pub trait IntoRenderElementExt: RenderHtml {
+        fn into_render_element<S: crate::RenderState<Self> + Default>(
+            self,
+        ) -> crate::RenderElement<Self, S>
+        where
+            Self: Sized,
+        {
+            crate::RenderElement::new(self)
+        }
     }
+
+    impl<R: ?Sized + RenderHtml> IntoRenderElementExt for R {}
 }

@@ -363,7 +363,7 @@ macro_rules! tags {
                     renderer.$tags()
                 }
             }
-            impl crate::component::SsrIntrinsicComponent for $tags {
+            impl crate::dom::component::SsrIntrinsicComponent for $tags {
                 // TODO: some components are void or self closing
             }
             impl crate::dom::component::HasIntrinsicElementType for $tags {
@@ -1018,14 +1018,14 @@ macro_rules! define_props {
 
                 #[derive(Debug, Clone, Copy, Default)]
                 pub struct $trait_name<Children = (), Attrs = ()> {
-                    pub props: $crate::component::ElementProps<Children, Attrs>,
+                    pub props: $crate::dom::component::ElementProps<Children, Attrs>,
                 }
 
-                impl<Children, Attrs> $crate::component::IntoElementProps for $trait_name<Children, Attrs> {
+                impl<Children, Attrs> $crate::dom::component::IntoElementProps for $trait_name<Children, Attrs> {
                     type Children = Children;
                     type Attrs = Attrs;
 
-                    fn into_element_props(this: Self) -> $crate::component::ElementProps<Children, Attrs> {
+                    fn into_element_props(this: Self) -> $crate::dom::component::ElementProps<Children, Attrs> {
                         this.props
                     }
                 }
@@ -1405,7 +1405,7 @@ macro_rules! define_component {
         $vis mod $component_name {
             pub use super::super::props::$props_name as Props;
 
-            pub type Data<Children, Props> = $crate::component::IntrinsicElement<
+            pub type Data<Children, Props> = $crate::dom::component::IntrinsicElement<
                 ComponentType,
                 super::super::props::$props_name::Data<Children, Props>,
             >;
@@ -1419,7 +1419,7 @@ macro_rules! define_component {
             pub fn build<Children, Props>(
                 building: Building<Children, Props>,
             ) -> Data<Children, Props> {
-                $crate::component::IntrinsicElement(
+                $crate::dom::component::IntrinsicElement(
                     self::ComponentType,
                     self::Props::build(building),
                 )

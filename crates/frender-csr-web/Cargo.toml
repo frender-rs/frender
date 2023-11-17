@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-element = { version = "0.1.0", path = "../frender-element" }
 frender-html = { version = "0.1.0", path = "../frender-html" }
 futures-lite = "1.13.0"
 gloo-events = "0.2.0"

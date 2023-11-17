@@ -1,17 +1,18 @@
 use std::borrow::{Borrow, Cow};
 use std::ops::Deref;
 
-use frender_dom::render::RenderTextFrom;
+// use wasm_bindgen::{JsCast, JsValue};
 
-use crate::{
-    pin_mut_maybe_uninit::PinMutMaybeUninit,
-    renderer::{self, node_behaviors::Node},
-    Element, RenderHtml, RenderState,
-};
 #[cfg(feature = "StaticText")]
 use frender_core::{StaticStr, StaticText};
+use frender_html::dom::render::RenderTextFrom;
+use frender_html::{
+    // pin_mut_maybe_uninit::PinMutMaybeUninit,
+    renderer::{self, node_behaviors::Node},
+    RenderHtml,
+};
 
-use wasm_bindgen::{JsCast, JsValue};
+use crate::{Element, RenderState};
 
 pub struct State<Cache, Text> {
     node: Text,
@@ -137,10 +138,15 @@ impl<Cache, Text> State<Cache, Text> {
     where
         Text: Node<R>,
     {
-        self.node.readd_self(renderer, force_reposition || self.unmounted);
+        self.node
+            .readd_self(renderer, force_reposition || self.unmounted);
     }
 
-    fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>, S: Borrow<V>, V: ?Sized>(
+    fn update_with_str_maybe_reposition<
+        R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
+        S: Borrow<V>,
+        V: ?Sized,
+    >(
         &mut self,
         data: S,
         renderer: &mut R,
@@ -159,7 +165,15 @@ impl<Cache, Text> State<Cache, Text> {
         self.add_self_to_dom(renderer, force_reposition)
     }
 
-    pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>, S: Borrow<V>, V: ?Sized>(data: S, renderer: &mut R, create_cache: impl FnOnce(S) -> Cache) -> Self
+    pub fn initialize_with_str<
+        R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
+        S: Borrow<V>,
+        V: ?Sized,
+    >(
+        data: S,
+        renderer: &mut R,
+        create_cache: impl FnOnce(S) -> Cache,
+    ) -> Self
     where
         Text: Node<R>,
     {
@@ -175,18 +189,32 @@ impl<Cache, Text> State<Cache, Text> {
     #[cfg(remove)]
     /// The js value returned by `to_js` will be called with `String(value)`
     /// and then set as data of `Text` node.
-    pub(crate) fn update_with_js_value_maybe_reposition(&mut self, data: Cache, renderer: &mut R, to_js: impl FnOnce(&Cache) -> JsValue, force_reposition: bool)
-    where
+    pub(crate) fn update_with_js_value_maybe_reposition(
+        &mut self,
+        data: Cache,
+        renderer: &mut R,
+        to_js: impl FnOnce(&Cache) -> JsValue,
+        force_reposition: bool,
+    ) where
         Cache: PartialEq<Cache>,
     {
-        self.update_with_js_string_maybe_reposition(data, renderer, move |v| js::js_string(to_js(v)), force_reposition)
+        self.update_with_js_string_maybe_reposition(
+            data,
+            renderer,
+            move |v| js::js_string(to_js(v)),
+            force_reposition,
+        )
     }
 
     #[cfg(remove)]
     /// The js value returned by `to_js` will be called with `String(value)`
     /// and then set as data of `Text` node.
     #[inline]
-    pub fn initialize_with_js_value(data: Cache, dom_ctx: &mut CsrContext, to_js: impl FnOnce(&Cache) -> JsValue) -> Self
+    pub fn initialize_with_js_value(
+        data: Cache,
+        dom_ctx: &mut CsrContext,
+        to_js: impl FnOnce(&Cache) -> JsValue,
+    ) -> Self
     where
         Cache: PartialEq<Cache>,
     {
@@ -194,8 +222,13 @@ impl<Cache, Text> State<Cache, Text> {
     }
 
     #[cfg(remove)]
-    pub(crate) fn update_with_js_string_maybe_reposition(&mut self, data: Cache, dom_ctx: &mut R, to_js: impl FnOnce(&Cache) -> JsString, force_reposition: bool)
-    where
+    pub(crate) fn update_with_js_string_maybe_reposition(
+        &mut self,
+        data: Cache,
+        dom_ctx: &mut R,
+        to_js: impl FnOnce(&Cache) -> JsString,
+        force_reposition: bool,
+    ) where
         Cache: PartialEq<Cache>,
     {
         if self.cache != data {
@@ -208,10 +241,19 @@ impl<Cache, Text> State<Cache, Text> {
     }
 
     #[cfg(remove)]
-    pub fn initialize_with_js_string(data: Cache, dom_ctx: &mut R, to_js: impl FnOnce(&Cache) -> JsString) -> Self {
+    pub fn initialize_with_js_string(
+        data: Cache,
+        dom_ctx: &mut R,
+        to_js: impl FnOnce(&Cache) -> JsString,
+    ) -> Self {
         let s = to_js(&data);
-        let text = dom_ctx.document.unchecked_ref::<js::Document>().create_text_node(s);
-        dom_ctx.next_node_position.add_node(Cow::Owned(text.clone().into()));
+        let text = dom_ctx
+            .document
+            .unchecked_ref::<js::Document>()
+            .create_text_node(s);
+        dom_ctx
+            .next_node_position
+            .add_node(Cow::Owned(text.clone().into()));
         Self {
             node: text,
             cache: data,
@@ -231,7 +273,11 @@ impl<Cache, Text: Node<R>, R> RenderState<R> for State<Cache, Text> {
 
     fn state_unmount(mut self: std::pin::Pin<&mut Self>) {}
 
-    fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(
+        self: std::pin::Pin<&mut Self>,
+        renderer: &mut R,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }
@@ -281,7 +327,12 @@ impl_render_str! {
     @[S: StaticStr] StaticText<S>,
 }
 
-pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V>>(
+pub(crate) fn render_update_maybe_reposition<
+    V: ?Sized,
+    S: Borrow<V>,
+    Cache,
+    Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V>,
+>(
     data: S,
     renderer: &mut Renderer,
     render_state: std::pin::Pin<&mut Option<State<Cache, Renderer::Text>>>,
@@ -291,7 +342,19 @@ pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Ren
     create_cache: impl FnOnce(S) -> Cache,
 ) {
     match render_state.get_mut() {
-        Some(render_state) => render_state.update_with_str_maybe_reposition::<Renderer, S, V>(data, renderer, force_reposition, not_match_cache, update_cache),
-        render_state @ None => *render_state = Some(State::initialize_with_str::<Renderer, S, V>(data, renderer, create_cache)),
+        Some(render_state) => render_state.update_with_str_maybe_reposition::<Renderer, S, V>(
+            data,
+            renderer,
+            force_reposition,
+            not_match_cache,
+            update_cache,
+        ),
+        render_state @ None => {
+            *render_state = Some(State::initialize_with_str::<Renderer, S, V>(
+                data,
+                renderer,
+                create_cache,
+            ))
+        }
     }
 }

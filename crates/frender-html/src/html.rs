@@ -67,13 +67,6 @@ crate::def_intrinsic_component_props!(
             );
 
             type Text: behaviors::Node<Self>;
-
-            fn into_render_element<S: crate::RenderState<Self> + Default>(self) -> crate::RenderElement<Self, S>
-            where
-                Self: Sized,
-            {
-                crate::RenderElement::new(self)
-            }
         }
     }
 
@@ -154,7 +147,7 @@ crate::def_intrinsic_component_props!(
                     );
                 );
 
-                fn children(value: children![impl crate::Element]);
+                fn children(value: children![impl Sized]); // TODO: limit bounds
                 fn css(value: bounds![Css]);
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {

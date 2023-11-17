@@ -23,6 +23,7 @@ hooks = { version = "2.3.0-alpha", default-features = false, features = [
     "ShareValue",
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../crates/frender-events" }
+frender-element = { version = "0.1.0", path = "../crates/frender-element" }
 
 [dependencies.frender-hook-element]
 path = "../crates/frender-hook-element"

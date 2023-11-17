@@ -45,6 +45,8 @@ pub mod __private {
     // pub use frender_ssr::Element as ssr;
 
     pub use frender_html;
+
+    pub use frender_element::Element;
 }
 
 #[doc(hidden)]
@@ -117,7 +119,7 @@ macro_rules! __impl_component_fn_options_parsed {
         $($outer_attrs)*
         #[allow(non_snake_case)]
         $vis fn $ident $paren_inputs ->
-            $crate::__private::expand_or![[$($output_ty)?] impl $crate::__private::frender_html::Element]
+            $crate::__private::expand_or![[$($output_ty)?] impl $crate::__private::Element]
         {
             #[allow(unused_imports)]
             use $crate::__private::hooks_core::prelude_h::*;

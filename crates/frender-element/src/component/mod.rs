@@ -1,7 +1,7 @@
 mod element;
-mod props;
 mod states;
 
 pub use element::*;
-pub use props::*;
 pub use states::*;
+
+use frender_html::dom::component::IntoElementProps;

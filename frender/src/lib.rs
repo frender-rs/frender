@@ -54,7 +54,7 @@ pub mod prelude {
 
     pub use frender_hook_element::component_fn;
 
-    pub use frender_html::Element;
+    pub use frender_element::Element;
 
     pub use frender_common::{Elements, Keyed};
 

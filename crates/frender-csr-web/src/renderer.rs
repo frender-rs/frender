@@ -19,7 +19,9 @@ pub struct Renderer<'a, TB: TryBehavior> {
 }
 
 impl<'a, TB: TryBehavior> Renderer<'a, TB> {
-    pub async fn render_element<E: frender_html::Element>(self, element: E) {
+    pub async fn render_element<E: frender_element::Element>(self, element: E) {
+        use frender_element::IntoRenderElementExt;
+
         let render = self.into_render_element();
 
         futures_lite::pin!(render);
