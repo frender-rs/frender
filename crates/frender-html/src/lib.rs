@@ -2,7 +2,6 @@ pub use frender_dom as dom;
 
 pub use frender_html_common::{AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
 
-pub mod convert;
 pub mod renderer;
 
 mod update_element;

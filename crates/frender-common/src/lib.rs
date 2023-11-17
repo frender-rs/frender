@@ -1,6 +1,7 @@
 mod keyed;
 pub use keyed::*;
 
+pub mod convert;
 pub mod try_behavior;
 
 #[doc(hidden)]

@@ -172,7 +172,7 @@ mod imp {
                     <P::Attrs>::update_element_non_reactive(
                         attributes,
                         renderer,
-                        frender_html::convert::IntoMut::into_mut(element),
+                        frender_common::convert::IntoMut::into_mut(element),
                         props_state.attrs_state,
                     );
                     <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::children_render_update(children, renderer, props_state.children_render_state)

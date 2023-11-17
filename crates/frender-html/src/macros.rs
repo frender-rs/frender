@@ -313,8 +313,8 @@ macro_rules! behavior_type_traits {
             $($($($special_super_traits +)+)?)?
         {
             type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
-                $(  + crate::convert::IdentityAs<Self::$extends             <Renderer>>)*
-                $($($(+ crate::convert::IdentityAs<Self::$special_super_traits<Renderer>>)+)?)?
+                $(  + ::frender_common::convert::IdentityAs<Self::$extends             <Renderer>>)*
+                $($($(+ ::frender_common::convert::IdentityAs<Self::$special_super_traits<Renderer>>)+)?)?
             ;
 
             fn from_identity_mut_root<Renderer: ?Sized + super::RenderHtml>(
