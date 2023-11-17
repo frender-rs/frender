@@ -33,11 +33,6 @@ path = "../crates/frender-html"
 version = "0.1.0"
 optional = true
 
-[dependencies.frender-html-components]
-path = "../crates/frender-html-components"
-version = "0.1.0"
-optional = true
-
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
 path = "../crates/frender-macros"
@@ -50,12 +45,10 @@ features = ["console", "Window", "Document", "Element"]
 wasm-bindgen-test = "0.3.13"
 
 [features]
-default = ["html-components-simply-typed", "either", "hooks"]
-csr = ["frender-hook-element/csr", "frender-html-components?/csr", "frender-csr"]
-ssr = ["frender-hook-element/ssr", "frender-html-components?/ssr", "frender-ssr"]
+default = ["html-components", "either", "hooks"]
+csr = ["frender-hook-element/csr", "frender-csr"]
+ssr = ["frender-hook-element/ssr", "frender-ssr"]
 spawn = ["frender-hook-element/spawn"]
 html = ["frender-html"]
-html-components = ["html", "frender-html-components"]
-html-components-simply-typed = ["html-components", "frender-html-components/simply-typed"]
-html-components-fully-typed = ["html-components", "frender-html-components/fully-typed"]
+html-components = ["html"]
 either = ["dep:either", "frender-ssr?/either", "frender-csr?/either"]
