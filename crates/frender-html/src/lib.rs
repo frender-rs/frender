@@ -1,26 +1,16 @@
+pub use frender_common::expand;
 pub use frender_dom as dom;
+pub use frender_html_common::{dom_token::DomTokenList, AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
 
-pub use frender_html_common::{AsyncWritableAttrs, DomTokens, IntoAsyncWritableAttrs};
-
-pub use renderer::CreateNode;
+pub use create_node::CreateNode;
+pub use html::RenderHtml;
 pub use update_element::UpdateElementNonReactive;
 
-mod renderer;
-mod update_element;
-
-pub use frender_html_common::dom_token::DomTokenList;
-
-pub use frender_common::expand;
-
-mod shims;
-
-mod macros;
-
 pub mod html;
-pub use html::RenderHtml;
-
 pub mod impl_bounds;
 
-pub mod __private {
-    pub use frender_common::write::attrs::IntoAsyncWritableAttrs;
-}
+mod create_node;
+mod update_element;
+
+mod macros;
+mod shims;

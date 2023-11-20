@@ -185,7 +185,7 @@ macro_rules! default_impl_ssr {
         $ssr:ident !{ $($ssr_fields:tt)* }
     ) => {
         #[cfg(feature = "ssr")]
-        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::__private::IntoAsyncWritableAttrs
+        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::IntoAsyncWritableAttrs
             for $($wrapper)*::<V>
         {
             type AsyncWritableAttrs = $($bounds)*::$ssr::Attrs![{$($bounds)*}[$($bounds_tp),*][V]];
@@ -506,7 +506,7 @@ pub mod MaybeHandleEvent {
             $ssr:ident !{ $($ssr_fields:tt)* }
         ) => {
             #[cfg(feature = "ssr")]
-            impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::__private::IntoAsyncWritableAttrs
+            impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::IntoAsyncWritableAttrs
                 for $($wrapper)*::<V>
             {
                 type AsyncWritableAttrs = ();
