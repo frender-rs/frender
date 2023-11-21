@@ -104,7 +104,7 @@ crate::def_intrinsic_component_props!(
                 fn css(value: bounds![Css]);
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
-                        get_mut_dom_token_list: frender_html::renderer::node_behaviors::Element::class_list,
+                        get_mut_dom_token_list: behaviors::Element::class_list,
                     });
                 }
 
@@ -462,7 +462,7 @@ crate::def_intrinsic_component_props!(
 
                         fn rel(value: bounds![DomTokens]) {
                             impl_with!(csr {
-                                get_mut_dom_token_list: frender_html::renderer::node_behaviors::HtmlElementWithRelList::rel_list,
+                                get_mut_dom_token_list: behaviors::ElementWithRelAttribute::rel_list,
                             });
                         }
                     }
@@ -783,7 +783,7 @@ crate::def_intrinsic_component_props!(
                         fn content_editable(value: bounds![MaybeContentEditable]) {
                             attr_name!("contenteditable");
                             impl_with!(csr {
-                                update: |el: &mut _, renderer: &mut _, _, v: &_| { frender_html::renderer::node_behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
+                                update: |el: &mut _, renderer: &mut _, _, v: &_| { behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
                                 remove: MaybeContentEditable::csr::default_remove,
                             });
                         }

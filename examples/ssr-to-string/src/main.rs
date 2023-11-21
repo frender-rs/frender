@@ -1,8 +1,8 @@
-use frender::{prelude::*, SsrElementExt};
+use frender::{prelude::*, ssr::ElementExt};
 
 component_fn!(
     #[component(ssr)]
-    fn Main(main_id: &str) -> impl SsrElement + '_ {
+    fn Main(main_id: &str) -> impl Element + '_ {
         intrinsic!(
             div.class("main").id(main_id).style(
                 r#"margin: auto;

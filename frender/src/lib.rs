@@ -25,6 +25,8 @@ pub use frender_macros::{component, def_props};
 // #[cfg(feature = "ssr")]
 // pub use frender_hook_element::frender_ssr as ssr;
 
+pub use frender_ssr as ssr;
+
 pub use prelude::*;
 
 // #[cfg(feature = "html")]

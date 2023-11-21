@@ -4,11 +4,6 @@ pub struct ElementAndMounted<E> {
     pub mounted: bool,
 }
 
-pub struct IntrinsicChildrenAsElement<C, Children> {
-    pub component_type: C,
-    pub children: Children,
-}
-
 pub trait ElementWithChildren<Children> {
     type ChildrenRenderState<R: crate::RenderHtml>: crate::RenderState<R> + Default;
 
@@ -130,12 +125,15 @@ mod imp {
             C: HasIntrinsicComponentTag
                 + HasIntrinsicElementType
                 + frender_html::html::behavior_type_traits::Element
-                + CreateNode,
+                + CreateNode
+                + frender_html::dom::component::SsrIntrinsicComponent,
             P: IntoElementProps,
         > Element for frender_html::dom::component::IntrinsicElement<C, P>
     where
         C::IntrinsicElementType: crate::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C>,
+        <P as IntoElementProps>::Children: frender_ssr::SsrElement,
+        <P as IntoElementProps>::Attrs: frender_html::IntoAsyncWritableAttrs,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             C::Element<R>,
@@ -211,49 +209,5 @@ mod imp {
         };
 
         element.move_cursor_after_self(renderer);
-    }
-}
-
-#[cfg(aaa)]
-#[cfg(feature = "ssr")]
-mod ssr {
-    use std::borrow::Cow;
-
-    use crate_common::IntrinsicComponent;
-    use frender_common::write::attrs::IntoAsyncWritableAttrs;
-    use frender_ssr::{AsyncWrite, Element};
-
-    use crate::{ElementProps, IntoElementProps, IntrinsicChildrenAsElement, SsrWithChildren};
-
-    use super::{CsrWithChildren, SsrIntrinsicComponent};
-
-    impl<C: IntrinsicComponent, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
-    where
-        C: SsrIntrinsicComponent,
-        C: SsrWithChildren<P::Children>,
-        P::Attrs: IntoAsyncWritableAttrs,
-    {
-        type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
-            'static,
-            C::ChildrenSsrState,
-            <P::Attrs as IntoAsyncWritableAttrs>::AsyncWritableAttrs,
-        >;
-
-        fn into_ssr_state(self) -> Self::SsrState {
-            let ElementProps {
-                children,
-                attributes,
-            } = P::into_element_props(self.1);
-            let children = IntrinsicChildrenAsElement {
-                component_type: self.0,
-                children,
-            };
-            ::frender_ssr::element::html::HtmlElement {
-                tag: Cow::Borrowed(C::INTRINSIC_TAG),
-                attributes,
-                children: C::wrap_children(children),
-            }
-            .into_ssr_state()
-        }
     }
 }

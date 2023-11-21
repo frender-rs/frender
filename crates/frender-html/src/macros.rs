@@ -426,18 +426,20 @@ macro_rules! attributes {
                     }
                 }
 
-                $($vis use super::$fn_name;)*
+                $(
+                    #[derive(Debug, Default)]
+                    pub struct $fn_name<V>(pub V);
+                )*
             }
 
-            $(
-                #[derive(Debug, Default)]
-                pub struct $fn_name<V>(pub V);
-            )*
-
-            ::frender_common::expand! {
-                while ($({ $fn_name $fn_args $fn_body_or_semi $trait_name })*) {
-                    wrap {}
-                    prepend( crate::impl_attribute! )
+            mod imps {
+                #[allow(unused_imports)]
+                use super::super::super::*;
+                ::frender_common::expand! {
+                    while ($({ $fn_name $fn_args $fn_body_or_semi $trait_name })*) {
+                        wrap {}
+                        prepend( crate::impl_attribute! )
+                    }
                 }
             }
 
@@ -562,8 +564,8 @@ macro_rules! impl_attribute {
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
         crate::impl_bounds! {
-            self::$fn_name(
-                #[event(super::super::event_type_helpers::$fn_name)]
+            super::attributes::$fn_name(
+                #[event(super::super::super::event_type_helpers::$fn_name)]
                 bounds as crate::impl_bounds::MaybeHandleEvent,
                 element as $trait_name,
                 attr_name = $event_type_name,
@@ -579,7 +581,7 @@ macro_rules! impl_attribute {
         $(update_with! $update_with:tt;)?
     } $trait_name:ident) => {
         crate::impl_bounds! {
-            self::$fn_name(
+            super::attributes::$fn_name(
                 bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
@@ -628,7 +630,7 @@ macro_rules! impl_attribute {
         $(update_with! $update_with:tt;)?
     } $trait_name:ident) => {
         crate::impl_bounds! {
-            self::$fn_name(
+            super::attributes::$fn_name(
                 bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
@@ -671,7 +673,22 @@ macro_rules! impl_attribute {
             )
         }
     };
-    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
+    ($fn_name:ident ($value:ident : children! $children:tt) $fn_body_or_semi:tt $trait_name:ident) => {
+        // children is not an attribute
+    };
+    ($fn_name:ident ($value:ident : bounds![$($bounds:tt)+]) $(;)? $({
+        $(attr_name!($attr_name:expr);)?
+        $(impl_with!($($impl_with:tt)*);)?
+    })? $trait_name:ident) => {
+        crate::impl_bounds! {
+            super::attributes::$fn_name(
+                bounds as $($bounds)+,
+                element as $trait_name,
+                attr_name = ::frender_common::expand!({$($($attr_name)?)?} or (stringify!($fn_name))),
+                $($($($impl_with)*)?)?
+            )
+        }
+    };
 }
 
 #[macro_export]

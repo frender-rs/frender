@@ -184,7 +184,6 @@ macro_rules! default_impl_ssr {
         }
         $ssr:ident !{ $($ssr_fields:tt)* }
     ) => {
-        #[cfg(feature = "ssr")]
         impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::IntoAsyncWritableAttrs
             for $($wrapper)*::<V>
         {
@@ -294,7 +293,6 @@ pub mod DomTokens {
         }
     }
 
-    #[cfg(feature = "ssr")]
     pub mod ssr {
         use frender_common::write::attrs::AsyncWritableAttrValueStr;
         use frender_html_common::DomTokens;
