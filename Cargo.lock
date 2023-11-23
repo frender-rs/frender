@@ -60,7 +60,7 @@ dependencies = [
  "async-task",
  "concurrent-queue",
  "fastrand 1.9.0",
- "futures-lite",
+ "futures-lite 1.13.0",
  "slab",
 ]
 
@@ -73,7 +73,7 @@ dependencies = [
  "async-lock",
  "autocfg",
  "blocking",
- "futures-lite",
+ "futures-lite 1.13.0",
 ]
 
 [[package]]
@@ -86,7 +86,7 @@ dependencies = [
  "autocfg",
  "cfg-if",
  "concurrent-queue",
- "futures-lite",
+ "futures-lite 1.13.0",
  "log",
  "parking",
  "polling",
@@ -117,7 +117,7 @@ dependencies = [
  "blocking",
  "cfg-if",
  "event-listener",
- "futures-lite",
+ "futures-lite 1.13.0",
  "rustix 0.37.23",
  "signal-hook",
  "windows-sys",
@@ -249,7 +249,7 @@ dependencies = [
  "async-task",
  "atomic-waker",
  "fastrand 1.9.0",
- "futures-lite",
+ "futures-lite 1.13.0",
  "log",
 ]
 
@@ -475,15 +475,6 @@ dependencies = [
  "bitflags 1.3.2",
  "core-foundation",
  "libc",
-]
-
-[[package]]
-name = "counter"
-version = "0.1.0"
-dependencies = [
- "frender",
- "gloo",
- "hooks",
 ]
 
 [[package]]
@@ -842,10 +833,10 @@ dependencies = [
  "either",
  "frender-common",
  "frender-csr",
+ "frender-element",
  "frender-events",
  "frender-hook-element",
  "frender-html",
- "frender-html-components",
  "frender-macros",
  "frender-ssr",
  "hooks",
@@ -868,7 +859,7 @@ dependencies = [
  "either",
  "frender-common",
  "frender-html-common",
- "futures-lite",
+ "futures-lite 1.13.0",
  "gloo",
  "indexmap 1.9.3",
  "js-sys",
@@ -884,8 +875,9 @@ name = "frender-csr-web"
 version = "0.1.0"
 dependencies = [
  "frender-common",
+ "frender-element",
  "frender-html",
- "futures-lite",
+ "futures-lite 1.13.0",
  "gloo-events 0.2.0",
  "js-sys",
  "pin-project-lite",
@@ -899,7 +891,7 @@ name = "frender-csr-wry"
 version = "0.1.0"
 dependencies = [
  "async-io",
- "futures-lite",
+ "futures-lite 1.13.0",
  "waker-fn",
  "wry",
 ]
@@ -913,7 +905,7 @@ dependencies = [
  "frender-events",
  "frender-html-common",
  "frender-ssr",
- "futures-lite",
+ "futures-lite 1.13.0",
  "ghost-lite",
  "gloo",
  "gloo-events 0.2.0",
@@ -934,6 +926,13 @@ dependencies = [
 [[package]]
 name = "frender-element"
 version = "0.1.0"
+dependencies = [
+ "frender-common",
+ "frender-html",
+ "frender-ssr",
+ "futures-lite 1.13.0",
+ "pin-project-lite",
+]
 
 [[package]]
 name = "frender-events"
@@ -952,6 +951,7 @@ version = "0.1.0"
 dependencies = [
  "frender-csr",
  "frender-csr-web",
+ "frender-element",
  "frender-html",
  "frender-ssr",
  "hooks-core",
@@ -971,7 +971,7 @@ dependencies = [
  "frender-events",
  "frender-html-common",
  "frender-ssr",
- "futures-lite",
+ "futures-lite 1.13.0",
  "ghost-lite",
  "gloo",
  "gloo-events 0.2.0",
@@ -992,49 +992,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "frender-html-components"
-version = "0.1.0"
-dependencies = [
- "frender-csr",
- "frender-events",
- "frender-html",
- "frender-html-simple",
- "frender-macros",
- "frender-ssr",
- "pin-project-lite",
- "web-sys",
-]
-
-[[package]]
 name = "frender-html-expand"
 version = "0.1.0"
 dependencies = [
- "frender-intrinsic-component-macro",
  "prettyplease",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "frender-html-simple"
-version = "0.1.0"
-dependencies = [
- "frender-common",
- "frender-csr",
- "frender-events",
- "frender-html",
- "frender-html-common",
- "frender-ssr",
- "pin-project-lite",
-]
-
-[[package]]
-name = "frender-intrinsic-component-macro"
-version = "0.1.0"
-dependencies = [
- "darling 0.14.4",
- "frender-macro-utils",
  "proc-macro2",
  "quote",
  "syn 1.0.109",
@@ -1056,7 +1017,6 @@ name = "frender-macros"
 version = "1.0.0-alpha.8"
 dependencies = [
  "darling 0.14.4",
- "frender-intrinsic-component-macro",
  "frender-macro-utils",
  "hooks-macro-core",
  "proc-macro2",
@@ -1072,6 +1032,7 @@ dependencies = [
  "frender-common",
  "frender-html-common",
  "futures-io",
+ "futures-lite 2.0.1",
  "html-escape",
  "pin-project-lite",
 ]
@@ -1131,6 +1092,20 @@ dependencies = [
  "parking",
  "pin-project-lite",
  "waker-fn",
+]
+
+[[package]]
+name = "futures-lite"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3831c2651acb5177cbd83943f3d9c8912c5ad03c76afcc0e9511ba568ec5ebb"
+dependencies = [
+ "fastrand 2.0.0",
+ "futures-core",
+ "futures-io",
+ "memchr",
+ "parking",
+ "pin-project-lite",
 ]
 
 [[package]]
@@ -1883,16 +1858,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "keyed-elements"
-version = "0.1.0"
-dependencies = [
- "either",
- "frender",
- "gloo",
- "hooks",
-]
-
-[[package]]
 name = "kuchiki"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2199,9 +2164,9 @@ dependencies = [
 
 [[package]]
 name = "parking"
-version = "2.0.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "427c3892f9e783d91cc128285287e70a59e206ca452770ece88a76f7a3eddd72"
+checksum = "bb813b8af86854136c6922af0598d719255ecb2179515e6e7730d468f05c9cae"
 
 [[package]]
 name = "parking_lot"
@@ -2874,7 +2839,7 @@ name = "ssr-to-string"
 version = "0.1.0"
 dependencies = [
  "frender",
- "futures-lite",
+ "futures-lite 1.13.0",
 ]
 
 [[package]]
@@ -3076,15 +3041,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "tic-tac-toe"
-version = "0.1.0"
-dependencies = [
- "frender",
- "gloo",
- "hooks",
 ]
 
 [[package]]

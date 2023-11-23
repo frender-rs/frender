@@ -44,6 +44,12 @@ where
     fn into_ssr_state(self) -> Self::SsrState {
         Elements(self).into_ssr_state()
     }
+
+    type IntoIterStrings = crate::str_iter::Vectored<Vec<E::IntoIterStrings>>;
+
+    fn into_iter_strings(self) -> Self::IntoIterStrings {
+        todo!()
+    }
 }
 
 impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> Element for Elements<I, A>

@@ -190,6 +190,12 @@ where
                 .map_children(|children| children.into_ssr_state()),
         )
     }
+
+    type IntoIterStrings = Option<&'static str>;
+
+    fn into_iter_strings(self) -> Self::IntoIterStrings {
+        todo!()
+    }
 }
 
 pub struct WritableAttrValue<'a, V: Iterator<Item = Cow<'a, str>>> {

@@ -1,3 +1,4 @@
+use frender_ssr::{AsyncStrIterator, EscapeSafe, IntoAsyncStrIterator};
 pub use props::{ElementProps, IntoElementProps};
 
 mod props;
@@ -38,6 +39,94 @@ impl<C: SsrIntrinsicComponent, Children: frender_ssr::SsrElement> SsrSupportChil
 }
 
 pub struct IntrinsicElement<C, P: IntoElementProps>(pub C, pub P);
+
+frender_ssr::Strings!(
+    enum IntrinsicElementEnclosingIterState {}
+    pub struct IntrinsicElementEnclosingIter<
+        C: AsyncStrIterator,
+        Attrs: AsyncStrIterator,
+        Children: AsyncStrIterator,
+    >(
+        lt!("<"),
+        tag!(C),
+        attrs!(Attrs),
+        gt!(">"),
+        children!(Children),
+        lt_close!("<"),
+        tag_close!(C),
+        gt_close!(">"),
+    );
+);
+
+pub trait IntoAsyncAttributeIterator {
+    type IntoAsyncAttributeIterator: AsyncStrIterator;
+    fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator;
+}
+
+frender_ssr::Strings!(
+    enum IterAttrPairState {}
+    pub struct IterAttrPair<N: AsyncStrIterator, V: AsyncStrIterator>(
+        space!(" "),
+        name!(frender_ssr::Encode::<frender_ssr::UnquotedAttribute, N>),
+        eq_quote!("=\""),
+        value!(frender_ssr::Encode::<frender_ssr::DoubleQuotedAttribute, V>),
+        quote!("\""),
+    );
+);
+
+pub struct AttrPair<N: IntoAsyncStrIterator, V: IntoAsyncStrIterator>(pub N, pub V);
+
+impl<N: IntoAsyncStrIterator, V: IntoAsyncStrIterator> IntoAsyncStrIterator for AttrPair<N, V> {
+    type IntoAsyncStrIterator = IterAttrPair<N::IntoAsyncStrIterator, V::IntoAsyncStrIterator>;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        IterAttrPair {
+            _state: IterAttrPairState(),
+            space: (),
+            name: frender_ssr::Encode::new(
+                frender_ssr::UnquotedAttribute,
+                self.0.into_async_str_iterator(),
+            ),
+            eq_quote: (),
+            value: frender_ssr::Encode::new(
+                frender_ssr::DoubleQuotedAttribute,
+                self.1.into_async_str_iterator(),
+            ),
+            quote: (),
+        }
+    }
+}
+
+impl<C, P: IntoElementProps> frender_ssr::IntoAsyncStrIterator for IntrinsicElement<C, P>
+where
+    C: HasIntrinsicComponentTag,
+    P::Attrs: IntoAsyncAttributeIterator,
+    P::Children: IntoAsyncStrIterator,
+{
+    type IntoAsyncStrIterator = IntrinsicElementEnclosingIter<
+        Option<&'static str>,
+        <P::Attrs as IntoAsyncAttributeIterator>::IntoAsyncAttributeIterator,
+        <P::Children as IntoAsyncStrIterator>::IntoAsyncStrIterator,
+    >;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        let ElementProps {
+            children,
+            attributes,
+        } = P::into_element_props(self.1);
+        IntrinsicElementEnclosingIter {
+            _state: IntrinsicElementEnclosingIterState(),
+            lt: (),
+            tag: Some(C::INTRINSIC_COMPONENT_TAG),
+            attrs: attributes.into_async_attribute_iterator(),
+            gt: (),
+            children: children.into_async_str_iterator(),
+            lt_close: (),
+            tag_close: Some(C::INTRINSIC_COMPONENT_TAG),
+            gt_close: (),
+        }
+    }
+}
 
 pub struct IntrinsicChildrenAsElement<C, Children> {
     pub component_type: C,

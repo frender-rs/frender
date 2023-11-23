@@ -13,10 +13,30 @@ pub mod write;
 pub mod element;
 
 #[macro_export]
+macro_rules! ready {
+    ($e:expr $(,)?) => {
+        match $e {
+            ::core::task::Poll::Ready(t) => t,
+            ::core::task::Poll::Pending => return ::core::task::Poll::Pending,
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! ready_ok {
     ($e:expr) => {
         match $e {
             ::core::task::Poll::Ready(::core::result::Result::Ok(v)) => v,
+            non_ready_ok => return non_ready_ok,
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! ready_some {
+    ($e:expr) => {
+        match $e {
+            ::core::task::Poll::Ready(::core::option::Option::Some(v)) => v,
             non_ready_ok => return non_ready_ok,
         }
     };

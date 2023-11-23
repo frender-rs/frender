@@ -42,6 +42,12 @@ macro_rules! impl_ssr_for_bytes {
             fn into_ssr_state($self_ident) -> Self::SsrState {
                 $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).into_ssr_state()
             }
+
+            type IntoIterStrings = Option<&'static str>;
+
+            fn into_iter_strings(self) -> Self::IntoIterStrings {
+                todo!()
+            }
         }
     )*};
 }
@@ -53,5 +59,11 @@ impl<B: IntoAsyncWritableBytes> Element for UnsafeRawHtmlBytes<B> {
         State {
             buf: <B as crate::bytes::IntoAsyncWritableBytes>::into_async_writable_bytes(self.0),
         }
+    }
+
+    type IntoIterStrings = Option<&'static str>;
+
+    fn into_iter_strings(self) -> Self::IntoIterStrings {
+        todo!()
     }
 }

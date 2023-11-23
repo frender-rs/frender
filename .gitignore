@@ -1,3 +1,5 @@
+/crates/frender-html/src/html/props_builders
+
 .parcel-cache
 
 # yarn berry without zero-Installs (https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored)

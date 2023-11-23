@@ -2,7 +2,10 @@ use std::{borrow::Cow, convert::identity};
 
 use frender_common::write::str::AsyncWritableStr;
 
-use crate::{bytes::CowSlicedBytes, impl_ssr_for_bytes, Element, EscapeSafe, IntoStaticStr};
+use crate::{
+    bytes::CowSlicedBytes, impl_ssr_for_bytes, AsyncStrIterator, Element, EscapeSafe,
+    IntoAsyncStrIterator, IntoStaticStr,
+};
 
 use super::bytes::State;
 
@@ -89,3 +92,38 @@ impl_ssr_for_bytes!(
         EscapeStr(self, html_escape::encode_safe).into_static_escaped(Into::into, Cow::Owned)
     };
 );
+
+pub struct AnyStrIter<S: AsRef<str>> {
+    s: S,
+    taken: bool,
+}
+
+impl<S: AsRef<str>> Unpin for AnyStrIter<S> {}
+
+impl<S: AsRef<str>> AsyncStrIterator for AnyStrIter<S> {
+    fn poll_next_str(
+        self: std::pin::Pin<&mut Self>,
+        _: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Option<&str>> {
+        let this = self.get_mut();
+        std::task::Poll::Ready(if this.taken {
+            None
+        } else {
+            this.taken = true;
+            Some(this.s.as_ref())
+        })
+    }
+}
+
+pub struct AnyStr<S: AsRef<str>>(pub S);
+
+impl<S: AsRef<str>> IntoAsyncStrIterator for AnyStr<S> {
+    type IntoAsyncStrIterator = AnyStrIter<S>;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        AnyStrIter {
+            s: self.0,
+            taken: false,
+        }
+    }
+}
