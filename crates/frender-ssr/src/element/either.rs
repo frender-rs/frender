@@ -43,12 +43,12 @@ where
         }
     }
 
-    type IntoIterHtmlChunk = Either<L::IntoIterHtmlChunk, R::IntoIterHtmlChunk>;
+    type IntoAsyncHtmlChunks = Either<L::IntoAsyncHtmlChunks, R::IntoAsyncHtmlChunks>;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         match self {
-            Either::Left(e) => Either::Left(e.into_iter_html_chunk()),
-            Either::Right(e) => Either::Right(e.into_iter_html_chunk()),
+            Either::Left(e) => Either::Left(e.into_async_html_chunks()),
+            Either::Right(e) => Either::Right(e.into_async_html_chunks()),
         }
     }
 }

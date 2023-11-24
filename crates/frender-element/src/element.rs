@@ -14,7 +14,7 @@ pub trait RenderState<R> {
     ) -> Poll<()>;
 }
 
-pub trait Element: frender_ssr::SsrElement + frender_ssr::IntoAsyncStrIterator {
+pub trait Element: frender_ssr::SsrElement {
     type RenderState<R: RenderHtml>: RenderState<R> + Default;
 
     #[cfg(feature = "render_into")]

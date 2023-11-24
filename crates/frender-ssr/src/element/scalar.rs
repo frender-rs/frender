@@ -10,9 +10,9 @@ macro_rules! impl_render_scalar {
                 self.to_string().into_ssr_state()
             }
 
-            type IntoIterHtmlChunk = super::str::AnyStrIter<String>;
+            type IntoAsyncHtmlChunks = super::str::AnyStrIter<String>;
 
-            fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+            fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
                 use crate::IntoAsyncStrIterator;
                 super::str::AnyStr(self.to_string()).into_async_str_iterator()
             }

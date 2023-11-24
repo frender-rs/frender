@@ -14,6 +14,7 @@ pin_project_lite::pin_project!(
         iter: I,
         #[pin]
         current: Option<<I::Item as IntoAsyncStrIterator>::IntoAsyncStrIterator>,
+        current_is_over: bool,
     }
 );
 
@@ -25,7 +26,11 @@ where
         let current = iter
             .next()
             .map(IntoAsyncStrIterator::into_async_str_iterator);
-        Self { iter, current }
+        Self {
+            iter,
+            current,
+            current_is_over: false,
+        }
     }
 }
 
@@ -34,30 +39,27 @@ where
     I::Item: IntoAsyncStrIterator,
 {
     fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
-        let this = self.project();
+        let mut this = self.project();
 
-        // SAFETY: current is never used to mutate its content except overwriting
-        let current = unsafe { this.current.get_unchecked_mut() };
+        if *this.current_is_over || this.current.is_none() {
+            if let Some(v) = this.iter.next() {
+                *this.current_is_over = false;
+                this.current.set(Some(v.into_async_str_iterator()));
 
-        loop {
-            if let None = current {
-                if let Some(v) = this.iter.next() {
-                    *current = Some(v.into_async_str_iterator());
-                    continue;
-                } else {
-                    return Poll::Ready(None);
-                }
-            };
+                let () = crate::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
+                // this.current.set(None);
+                *this.current_is_over = true;
 
-            debug_assert!(current.is_some());
-
-            let () = crate::ready_none!(
-                unsafe { Pin::new_unchecked(current.as_mut().unwrap()) }.poll_next_str(cx)
-            );
-
-            // current is over
-
-            // *current = None;
+                Poll::Ready(Some(""))
+            } else {
+                this.current.set(None);
+                Poll::Ready(None)
+            }
+        } else {
+            let () = crate::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
+            // this.current.set(None);
+            *this.current_is_over = true;
+            Poll::Ready(Some(""))
         }
     }
 }
@@ -77,6 +79,16 @@ pin_project_lite::pin_project!(
         b: B,
     }
 );
+
+impl<A, B> Chain<A, B> {
+    pub fn new(a: A, b: B) -> Self {
+        Self {
+            a_ready: false,
+            a,
+            b,
+        }
+    }
+}
 
 impl<A: AsyncStrIterator, B: AsyncStrIterator> AsyncStrIterator for Chain<A, B> {
     fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {

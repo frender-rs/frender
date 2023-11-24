@@ -196,6 +196,24 @@ macro_rules! default_impl_ssr {
                 })
             }
         }
+
+        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::dom::component::IntoAsyncAttributeIterator
+            for $($wrapper)*::<V>
+        {
+            type IntoAsyncAttributeIterator = $crate::dom::component::IterAttrPair<
+                Option<&'static str>,
+                $($bounds)*::$ssr::AttrValue![{$($bounds)*}[$($bounds_tp),*][V]],
+            >;
+            fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator {
+                $crate::dom::component::AttrPair(
+                    $attr_name,
+                    $($bounds)*::$ssr::into_attr_value($($bounds)*::$ssr::InputValue {
+                        this,
+                        $($ssr_fields)*
+                    })
+                ).into_async_attribute_iterator()
+            }
+        }
     };
 }
 
@@ -210,6 +228,13 @@ macro_rules! DefaultCsrState {
 macro_rules! DefaultSsrAttrs {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
         $($mod_path)* ::ssr::Attrs::<$($($t0)*,)? $($t1)*>
+    };
+}
+
+#[macro_export]
+macro_rules! DefaultSsrAttrValue {
+    ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
+        $($mod_path)* ::ssr::AttrValue::<$($($t0)*,)? $($t1)*>
     };
 }
 
@@ -392,8 +417,10 @@ pub mod MaybeValue {
 
         pub use super::super::SsrInput as Input;
 
+        pub type AttrValue<VT, V> = ();
         pub type Attrs<VT, V> = Option<AttrPair<<V as MaybeUpdateValueWithState<VT>>::AttrValue>>;
 
+        pub use crate::DefaultSsrAttrValue as AttrValue;
         pub use crate::DefaultSsrAttrs as Attrs;
 
         pub fn into_attrs<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(Input { this, attr_name }: Input<V>) -> Attrs<VT, V>

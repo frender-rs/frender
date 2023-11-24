@@ -73,9 +73,9 @@ impl<S: IntoStaticStr, E: EscapeSafe> Element for EscapeStr<S, E> {
         crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow()).into_ssr_state()
     }
 
-    type IntoIterHtmlChunk = Option<&'static str>;
+    type IntoAsyncHtmlChunks = Option<&'static str>;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         todo!()
     }
 }

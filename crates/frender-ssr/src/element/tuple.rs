@@ -15,9 +15,9 @@ impl Element for () {
 
     fn into_ssr_state(self) -> Self::SsrState {}
 
-    type IntoIterHtmlChunk = crate::str_iter::Empty;
+    type IntoAsyncHtmlChunks = crate::str_iter::Empty;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         crate::str_iter::Empty
     }
 }
@@ -29,10 +29,10 @@ impl<R0: Element> Element for (R0,) {
         R0::into_ssr_state(self.0)
     }
 
-    type IntoIterHtmlChunk = R0::IntoIterHtmlChunk;
+    type IntoAsyncHtmlChunks = R0::IntoAsyncHtmlChunks;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
-        self.0.into_iter_html_chunk()
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+        self.0.into_async_html_chunks()
     }
 }
 
@@ -92,13 +92,13 @@ macro_rules! impl_render_for_tuple {
                             )+)
                         }
 
-                        type IntoIterHtmlChunk = self::Strings<$($field::IntoIterHtmlChunk),+>;
+                        type IntoAsyncHtmlChunks = self::Strings<$($field::IntoAsyncHtmlChunks),+>;
 
-                        fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+                        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
                             let ($($field,)+) = self;
                             self::Strings {
                                 _state: self::State(),
-                                $($field: $field.into_iter_html_chunk(),)+
+                                $($field: $field.into_async_html_chunks(),)+
                             }
                         }
                     }

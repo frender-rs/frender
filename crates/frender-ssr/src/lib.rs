@@ -35,7 +35,7 @@ pub mod write_attrs;
 
 mod str_iter;
 
-pub use str_iter::{AsyncStrIterator, Chain, Encode, IntoAsyncStrIterator};
+pub use str_iter::{AsyncStrIterator, Chain, Empty, Encode, IntoAsyncStrIterator};
 
 pub(crate) use frender_common::{ready, ready_ok, ready_ok_rewrap_err};
 

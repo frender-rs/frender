@@ -45,9 +45,9 @@ where
         Elements(self).into_ssr_state()
     }
 
-    type IntoIterHtmlChunk = crate::str_iter::Flat<std::vec::IntoIter<Keyed<K, E>>>;
+    type IntoAsyncHtmlChunks = crate::str_iter::Flat<std::vec::IntoIter<Keyed<K, E>>>;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         crate::str_iter::Flat::new(self.into_iter())
     }
 }
@@ -57,10 +57,10 @@ where
     K: std::hash::Hash + Eq, // TODO: ToString ?
     E: Element,
 {
-    type IntoAsyncStrIterator = E::IntoIterHtmlChunk;
+    type IntoAsyncStrIterator = E::IntoAsyncHtmlChunks;
 
     fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
-        self.1.into_iter_html_chunk()
+        self.1.into_async_html_chunks()
     }
 }
 
@@ -87,9 +87,9 @@ where
         }
     }
 
-    type IntoIterHtmlChunk = crate::str_iter::Flat<I::IntoIter>;
+    type IntoAsyncHtmlChunks = crate::str_iter::Flat<I::IntoIter>;
 
-    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         crate::str_iter::Flat::new(self.iter.into_iter())
     }
 }

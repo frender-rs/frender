@@ -63,6 +63,28 @@ pub trait IntoAsyncAttributeIterator {
     fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator;
 }
 
+impl IntoAsyncAttributeIterator for () {
+    type IntoAsyncAttributeIterator = frender_ssr::Empty;
+
+    fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator {
+        frender_ssr::Empty
+    }
+}
+
+impl<A: IntoAsyncAttributeIterator, B: IntoAsyncAttributeIterator> IntoAsyncAttributeIterator
+    for (A, B)
+{
+    type IntoAsyncAttributeIterator =
+        frender_ssr::Chain<A::IntoAsyncAttributeIterator, B::IntoAsyncAttributeIterator>;
+
+    fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator {
+        frender_ssr::Chain::new(
+            self.0.into_async_attribute_iterator(),
+            self.1.into_async_attribute_iterator(),
+        )
+    }
+}
+
 frender_ssr::Strings!(
     enum IterAttrPairState {}
     pub struct IterAttrPair<N: AsyncStrIterator, V: AsyncStrIterator>(
@@ -138,11 +160,12 @@ mod ssr {
 
     use frender_common::write::attrs::IntoAsyncWritableAttrs;
     // use frender_html::dom::component::ElementProps;
-    use frender_ssr::Element;
+    use frender_ssr::{Element, IntoAsyncStrIterator};
 
     use super::{
-        ElementProps, HasIntrinsicComponentTag, IntoElementProps, IntrinsicChildrenAsElement,
-        SsrIntrinsicComponent, SsrSupportChildren,
+        ElementProps, HasIntrinsicComponentTag, IntoAsyncAttributeIterator, IntoElementProps,
+        IntrinsicChildrenAsElement, IntrinsicElementEnclosingIter, SsrIntrinsicComponent,
+        SsrSupportChildren,
     };
 
     impl<C: SsrSupportChildren<Children>, Children> Element
@@ -153,6 +176,12 @@ mod ssr {
         fn into_ssr_state(self) -> Self::SsrState {
             C::children_into_ssr_state(self.children)
         }
+
+        type IntoAsyncHtmlChunks = Option<&'static str>;
+
+        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+            todo!()
+        }
     }
 
     impl<C, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
@@ -161,6 +190,8 @@ mod ssr {
         C: SsrIntrinsicComponent + HasIntrinsicComponentTag,
         P::Attrs: IntoAsyncWritableAttrs,
         P::Children: Element,
+        P::Attrs: IntoAsyncAttributeIterator,
+        P::Children: IntoAsyncStrIterator,
     {
         type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
             'static,
@@ -183,6 +214,16 @@ mod ssr {
                 children: C::wrap_children(children),
             }
             .into_ssr_state()
+        }
+
+        type IntoAsyncHtmlChunks = IntrinsicElementEnclosingIter<
+            Option<&'static str>,
+            <P::Attrs as IntoAsyncAttributeIterator>::IntoAsyncAttributeIterator,
+            <P::Children as IntoAsyncStrIterator>::IntoAsyncStrIterator,
+        >;
+
+        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+            self.into_async_str_iterator()
         }
     }
 }
