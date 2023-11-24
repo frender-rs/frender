@@ -1,6 +1,6 @@
 use frender_common::{Elements, Keyed};
 
-use crate::{Element, RenderState};
+use crate::{AsyncStrIterator, Element, IntoAsyncStrIterator, RenderState};
 
 pin_project_lite::pin_project!(
     pub struct State<S> {
@@ -45,10 +45,22 @@ where
         Elements(self).into_ssr_state()
     }
 
-    type IntoIterStrings = crate::str_iter::Vectored<Vec<E::IntoIterStrings>>;
+    type IntoIterHtmlChunk = crate::str_iter::Flat<std::vec::IntoIter<Keyed<K, E>>>;
 
-    fn into_iter_strings(self) -> Self::IntoIterStrings {
-        todo!()
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        crate::str_iter::Flat::new(self.into_iter())
+    }
+}
+
+impl<K, E> IntoAsyncStrIterator for Keyed<K, E>
+where
+    K: std::hash::Hash + Eq, // TODO: ToString ?
+    E: Element,
+{
+    type IntoAsyncStrIterator = E::IntoIterHtmlChunk;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        self.1.into_iter_html_chunk()
     }
 }
 
@@ -73,5 +85,11 @@ where
             },
             states,
         }
+    }
+
+    type IntoIterHtmlChunk = crate::str_iter::Flat<I::IntoIter>;
+
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        crate::str_iter::Flat::new(self.iter.into_iter())
     }
 }

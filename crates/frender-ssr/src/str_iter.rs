@@ -1,32 +1,64 @@
 use std::{pin::Pin, task::Poll};
 
+use crate::ready_none;
+
 pub trait AsyncStrIterator {
     fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>>;
 }
 
 pin_project_lite::pin_project!(
-    pub struct Vectored<T> {
+    pub struct Flat<I: Iterator>
+    where
+        I::Item: IntoAsyncStrIterator,
+    {
+        iter: I,
         #[pin]
-        v: T,
-        current: usize,
+        current: Option<<I::Item as IntoAsyncStrIterator>::IntoAsyncStrIterator>,
     }
 );
 
-impl<Item> AsyncStrIterator for Vectored<Vec<Item>>
+impl<I: Iterator> Flat<I>
 where
-    Item: AsyncStrIterator,
+    I::Item: IntoAsyncStrIterator,
+{
+    pub fn new(mut iter: I) -> Self {
+        let current = iter
+            .next()
+            .map(IntoAsyncStrIterator::into_async_str_iterator);
+        Self { iter, current }
+    }
+}
+
+impl<I: Iterator> AsyncStrIterator for Flat<I>
+where
+    I::Item: IntoAsyncStrIterator,
 {
     fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
         let this = self.project();
 
-        while *this.current < this.v.len() {
-            let item = frender_common::utils::pin_project_index_vec(this.v, *this.current);
-            let () = crate::ready_none!(item.poll_next_str(cx), {
-                *this.current += 1;
-            });
-        }
+        // SAFETY: current is never used to mutate its content except overwriting
+        let current = unsafe { this.current.get_unchecked_mut() };
 
-        Poll::Ready(None)
+        loop {
+            if let None = current {
+                if let Some(v) = this.iter.next() {
+                    *current = Some(v.into_async_str_iterator());
+                    continue;
+                } else {
+                    return Poll::Ready(None);
+                }
+            };
+
+            debug_assert!(current.is_some());
+
+            let () = crate::ready_none!(
+                unsafe { Pin::new_unchecked(current.as_mut().unwrap()) }.poll_next_str(cx)
+            );
+
+            // current is over
+
+            // *current = None;
+        }
     }
 }
 
@@ -51,9 +83,8 @@ impl<A: AsyncStrIterator, B: AsyncStrIterator> AsyncStrIterator for Chain<A, B> 
         let ChainProj { a_ready, a, b } = self.project();
 
         if !*a_ready {
-            crate::ready_none!(a.poll_next_str(cx), {
-                *a_ready = true;
-            })
+            let () = crate::ready_none!(a.poll_next_str(cx));
+            *a_ready = true;
         }
 
         b.poll_next_str(cx)
@@ -82,10 +113,40 @@ impl AsyncStrIterator for Option<&str> {
     }
 }
 
+pin_project_lite::pin_project!(
+    pub struct IterMaybe<T> {
+        #[pin]
+        inner: Option<T>,
+        // TODO: fuse?
+        // ended: bool,
+    }
+);
+
+impl<T: AsyncStrIterator> AsyncStrIterator for IterMaybe<T> {
+    fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
+        match self.project().inner.as_pin_mut() {
+            Some(this) => this.poll_next_str(cx),
+            None => Poll::Ready(None),
+        }
+    }
+}
+
+pub struct Maybe<T>(pub Option<T>);
+
+impl<T: IntoAsyncStrIterator> IntoAsyncStrIterator for Maybe<T> {
+    type IntoAsyncStrIterator = IterMaybe<T::IntoAsyncStrIterator>;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        IterMaybe {
+            inner: self.0.map(IntoAsyncStrIterator::into_async_str_iterator),
+        }
+    }
+}
+
 #[macro_export]
 macro_rules! Strings {
     (
-        enum $state_name:ident {}
+        $vis_state:vis enum $state_name:ident {}
         $vis:vis struct $name:ident
         $(<
             $($tp0:ident $($tp1:ident)? $(: $bounds:path)? $(= $tp_default:ty)?),*
@@ -96,7 +157,7 @@ macro_rules! Strings {
         $($rest:tt)+
     ) => {
         #[allow(non_camel_case_types)]
-        enum $state_name {
+        $vis_state enum $state_name {
             $($field,)*
             __AllDone
         }
@@ -107,7 +168,7 @@ macro_rules! Strings {
             wrap {}
             prepend(
                 #[allow(non_snake_case)]
-                fn $state_name() -> $state_name
+                $vis_state fn $state_name() -> $state_name
             )
         }
 
@@ -165,12 +226,13 @@ macro_rules! __field_ty {
 
 #[macro_export]
 macro_rules! __field_value {
-    (($lit:literal), $v:expr , {$($mut_state:tt)*}) => {
+    (($lit:literal), $v:expr, {$($mut_state:tt)*}) => {
         $($mut_state)*
         return ::core::task::Poll::Ready(Some($lit))
     };
-    (($ty:ty      ), $v:expr, $mut_state:tt) => {
-        let () = $crate::ready_none!($v, $mut_state);
+    (($ty:ty      ), $v:expr, {$($mut_state:tt)*}) => {
+        let () = $crate::ready_none!($v);
+        $($mut_state)*
     };
 }
 
@@ -276,5 +338,13 @@ mod test {
 
             assert_eq!(s, "<div>")
         })
+    }
+}
+
+pub struct Empty;
+
+impl AsyncStrIterator for Empty {
+    fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
+        Poll::Ready(None)
     }
 }

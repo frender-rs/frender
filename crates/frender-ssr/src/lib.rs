@@ -46,15 +46,10 @@ pub mod __private {
 
 #[macro_export]
 macro_rules! ready_none {
-    ($e:expr $(, {$($do_if_ready:tt)*})?) => {
+    ($e:expr) => {
         match $e {
-            ret @ ::core::task::Poll::Ready(ref v) => {
-                $($($do_if_ready)*)?
-                if let ::core::option::Option::Some(_) = v {
-                    return ret;
-                }
-            }
-            ret @ ::core::task::Poll::Pending => return ret,
+            ::core::task::Poll::Ready(::core::option::Option::None) => {}
+            ret => return ret,
         }
     };
 }

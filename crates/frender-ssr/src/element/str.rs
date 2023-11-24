@@ -3,7 +3,7 @@ use std::{borrow::Cow, convert::identity};
 use frender_common::write::str::AsyncWritableStr;
 
 use crate::{
-    bytes::CowSlicedBytes, impl_ssr_for_bytes, AsyncStrIterator, Element, EscapeSafe,
+    bytes::CowSlicedBytes, impl_ssr_for_bytes, AsyncStrIterator, Element, Encode, EscapeSafe,
     IntoAsyncStrIterator, IntoStaticStr,
 };
 
@@ -71,6 +71,12 @@ impl<S: IntoStaticStr, E: EscapeSafe> Element for EscapeStr<S, E> {
     type SsrState = State<CowSlicedBytes<'static>>;
     fn into_ssr_state(self) -> Self::SsrState {
         crate::element::bytes::UnsafeRawHtmlBytes(self.into_static_escaped_cow()).into_ssr_state()
+    }
+
+    type IntoIterHtmlChunk = Option<&'static str>;
+
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        todo!()
     }
 }
 

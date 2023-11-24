@@ -14,6 +14,12 @@ impl Element for () {
     type SsrState = ();
 
     fn into_ssr_state(self) -> Self::SsrState {}
+
+    type IntoIterHtmlChunk = crate::str_iter::Empty;
+
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        crate::str_iter::Empty
+    }
 }
 
 impl<R0: Element> Element for (R0,) {
@@ -21,6 +27,12 @@ impl<R0: Element> Element for (R0,) {
 
     fn into_ssr_state(self) -> Self::SsrState {
         R0::into_ssr_state(self.0)
+    }
+
+    type IntoIterHtmlChunk = R0::IntoIterHtmlChunk;
+
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        self.0.into_iter_html_chunk()
     }
 }
 
@@ -51,18 +63,46 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            impl<$($field: Element),+> Element for ($($field),+) {
-                type SsrState = ($($field::SsrState,)+);
-
-                #[inline]
-                fn into_ssr_state(self) -> Self::SsrState {
+            frender_common::expand! {
+                {$({$field})+} get {-1}
+                prepend(
                     #[allow(non_snake_case)]
-                    let ($($field,)+) = self;
+                    pub mod
+                )
+                append({
+                    use crate::Element;
 
-                    ($(
-                        $field::into_ssr_state($field),
-                    )+)
-                }
+                    crate::Strings! {
+                        enum State {}
+                        pub struct Strings<$($field: crate::AsyncStrIterator),+>(
+                            $($field!($field),)+
+                        );
+                    }
+
+                    impl<$($field: Element),+> Element for ($($field),+) {
+                        type SsrState = ($($field::SsrState,)+);
+
+                        #[inline]
+                        fn into_ssr_state(self) -> Self::SsrState {
+                            #[allow(non_snake_case)]
+                            let ($($field,)+) = self;
+
+                            ($(
+                                $field::into_ssr_state($field),
+                            )+)
+                        }
+
+                        type IntoIterHtmlChunk = self::Strings<$($field::IntoIterHtmlChunk),+>;
+
+                        fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+                            let ($($field,)+) = self;
+                            self::Strings {
+                                _state: self::State(),
+                                $($field: $field.into_iter_html_chunk(),)+
+                            }
+                        }
+                    }
+                })
             }
         )+
     };

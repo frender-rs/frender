@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use crate::{Element, RenderState};
+use crate::{Element, IntoAsyncStrIterator, RenderState};
 
 impl<S: RenderState> RenderState for Option<S> {
     fn poll_render<W: futures_io::AsyncWrite + ?Sized>(
@@ -21,5 +21,11 @@ impl<E: Element> Element for Option<E> {
 
     fn into_ssr_state(self) -> Self::SsrState {
         self.map(E::into_ssr_state)
+    }
+
+    type IntoIterHtmlChunk = crate::str_iter::IterMaybe<E::IntoIterHtmlChunk>;
+
+    fn into_iter_html_chunk(self) -> Self::IntoIterHtmlChunk {
+        crate::str_iter::Maybe(self.map(E::into_iter_html_chunk)).into_async_str_iterator()
     }
 }
