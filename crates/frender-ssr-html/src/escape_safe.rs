@@ -39,3 +39,11 @@ impl EscapeSafe for DoubleQuotedAttribute {
         html_escape::encode_double_quoted_attribute(input)
     }
 }
+
+pub struct Safe;
+
+impl EscapeSafe for Safe {
+    fn escape_safe<'a>(&mut self, input: &'a str) -> Cow<'a, str> {
+        html_escape::encode_safe(input)
+    }
+}

@@ -17,14 +17,28 @@ impl<L: RenderState, R: RenderState> RenderState for Either<L, R> {
     }
 }
 
-impl<L: AsyncStrIterator, R: AsyncStrIterator> AsyncStrIterator for Either<L, R> {
+pin_project_lite::pin_project!(
+    #[project = IterEitherProj]
+    pub enum IterEither<L, R> {
+        Left {
+            #[pin]
+            inner: L,
+        },
+        Right {
+            #[pin]
+            inner: R,
+        },
+    }
+);
+
+impl<L: AsyncStrIterator, R: AsyncStrIterator> AsyncStrIterator for IterEither<L, R> {
     fn poll_next_str(
         self: Pin<&mut Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Option<&str>> {
-        match self.as_pin_mut() {
-            Either::Left(s) => s.poll_next_str(cx),
-            Either::Right(s) => s.poll_next_str(cx),
+        match self.project() {
+            IterEitherProj::Left { inner } => inner.poll_next_str(cx),
+            IterEitherProj::Right { inner } => inner.poll_next_str(cx),
         }
     }
 }
@@ -43,12 +57,16 @@ where
         }
     }
 
-    type IntoAsyncHtmlChunks = Either<L::IntoAsyncHtmlChunks, R::IntoAsyncHtmlChunks>;
+    type IntoAsyncHtmlChunks = IterEither<L::IntoAsyncHtmlChunks, R::IntoAsyncHtmlChunks>;
 
     fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         match self {
-            Either::Left(e) => Either::Left(e.into_async_html_chunks()),
-            Either::Right(e) => Either::Right(e.into_async_html_chunks()),
+            Either::Left(e) => IterEither::Left {
+                inner: e.into_async_html_chunks(),
+            },
+            Either::Right(e) => IterEither::Right {
+                inner: e.into_async_html_chunks(),
+            },
         }
     }
 }

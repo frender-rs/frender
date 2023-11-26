@@ -1552,6 +1552,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags: (script,)); // TODO: special children
                                 impl_for_web!();
                                 fn r#async(value: maybe![bool]) {
+                                    attr_name!("async");
                                     update_with!(set_async);
                                 }
                                 fn defer(value: maybe![bool]) {
@@ -1749,7 +1750,9 @@ crate::def_intrinsic_component_props!(
                                 define!(tags: (textarea,));
                                 impl_for_web!();
 
-                                fn auto_correct(value: maybe![&str]);
+                                fn auto_correct(value: maybe![&str]) {
+                                    attr_name!("autocorrect");
+                                }
                                 fn cols(value: maybe![u32]) {
                                     update_with!(set_cols);
                                 }

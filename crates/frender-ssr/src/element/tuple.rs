@@ -15,10 +15,10 @@ impl Element for () {
 
     fn into_ssr_state(self) -> Self::SsrState {}
 
-    type IntoAsyncHtmlChunks = crate::str_iter::Empty;
+    type IntoAsyncHtmlChunks = crate::Empty;
 
     fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-        crate::str_iter::Empty
+        crate::Empty
     }
 }
 
@@ -72,7 +72,7 @@ macro_rules! impl_render_for_tuple {
                 append({
                     use crate::Element;
 
-                    crate::Strings! {
+                    ::frender_common::Strings! {
                         enum State {}
                         pub struct Strings<$($field: crate::AsyncStrIterator),+>(
                             $($field!($field),)+

@@ -23,9 +23,10 @@ impl<E: Element> Element for Option<E> {
         self.map(E::into_ssr_state)
     }
 
-    type IntoAsyncHtmlChunks = crate::str_iter::IterMaybe<E::IntoAsyncHtmlChunks>;
+    type IntoAsyncHtmlChunks = crate::async_str::option::IterOption<E::IntoAsyncHtmlChunks>;
 
     fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-        crate::str_iter::Maybe(self.map(E::into_async_html_chunks)).into_async_str_iterator()
+        self.map(E::into_async_html_chunks)
+            .into_async_str_iterator()
     }
 }

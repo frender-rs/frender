@@ -134,8 +134,7 @@ mod imp {
         P::Attrs: UpdateElementNonReactive<C>,
         <P as IntoElementProps>::Children: frender_ssr::SsrElement,
         <P as IntoElementProps>::Attrs: frender_html::IntoAsyncWritableAttrs,
-        P::Attrs: frender_html::dom::component::IntoAsyncAttributeIterator,
-        P::Children: frender_ssr::IntoAsyncStrIterator,
+        P::Attrs: frender_html::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             C::Element<R>,

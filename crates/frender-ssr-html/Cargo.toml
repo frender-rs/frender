@@ -1,9 +1,11 @@
 [package]
-name = "frender-common"
+name = "frender-ssr-html"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+frender-common = { version = "0.1.0", path = "../frender-common" }
+html-escape = "0.2.13"
 pin-project-lite = "0.2.13"

@@ -197,21 +197,26 @@ macro_rules! default_impl_ssr {
             }
         }
 
-        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::dom::component::IntoAsyncAttributeIterator
+        impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
             for $($wrapper)*::<V>
         {
-            type IntoAsyncAttributeIterator = $crate::dom::component::IterAttrPair<
-                Option<&'static str>,
-                $($bounds)*::$ssr::AttrValue![{$($bounds)*}[$($bounds_tp),*][V]],
-            >;
-            fn into_async_attribute_iterator(self) -> Self::IntoAsyncAttributeIterator {
-                $crate::dom::component::AttrPair(
-                    $attr_name,
-                    $($bounds)*::$ssr::into_attr_value($($bounds)*::$ssr::InputValue {
-                        this,
-                        $($ssr_fields)*
-                    })
-                ).into_async_attribute_iterator()
+            type SpaceAndHtmlAttributesOrEmpty = ::frender_ssr::async_str::option::IterOption<::frender_ssr::html::attr::SpaceAndHtmlAttribute<
+                ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName<&'static str>,
+                $($bounds)*::$ssr::Haevoe![{$($bounds)*}[$($bounds_tp),*][V]],
+            >>;
+
+            fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
+                const SPACE_AND_ATTR_NAME: ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName<&'static str> =
+                    ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName::new_from_str(
+                        ::core::concat!(" ", $attr_name)
+                    );
+
+                ::frender_ssr::IntoAsyncStrIterator::into_async_str_iterator(
+                    $($bounds)*::$ssr::maybe_into_haevoe(self.0, $($ssr_fields)*).map(|v| ::frender_ssr::html::attr::SpaceAndHtmlAttribute(
+                        SPACE_AND_ATTR_NAME,
+                        v,
+                    ))
+                )
             }
         }
     };
@@ -232,9 +237,9 @@ macro_rules! DefaultSsrAttrs {
 }
 
 #[macro_export]
-macro_rules! DefaultSsrAttrValue {
+macro_rules! DefaultSsrHaevoe {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
-        $($mod_path)* ::ssr::AttrValue::<$($($t0)*,)? $($t1)*>
+        $($mod_path)* ::ssr::Haevoe::<$($($t0)*,)? $($t1)*>
     };
 }
 
@@ -324,11 +329,17 @@ pub mod DomTokens {
 
         pub use super::super::SsrInput as Input;
         pub use crate::DefaultSsrAttrs as Attrs;
+        pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub type Attrs<V> = Option<frender_ssr::element::html::simple::AttrPairStr<<V as DomTokens>::AsyncWritableDomTokens>>;
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
 
         pub fn into_attrs<V: DomTokens>(Input { this, attr_name }: Input<V>) -> Attrs<V> {
             V::maybe_into_async_writable_dom_tokens(this).map(|value| frender_ssr::element::html::simple::AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value)))
+        }
+
+        pub fn maybe_into_haevoe<V: DomTokens>(this: V) -> Option<Haevoe<V>> {
+            V::dom_tokens_maybe_into_async_str_iter(this).map(Haevoe::<V>::new)
         }
     }
 }
@@ -417,17 +428,21 @@ pub mod MaybeValue {
 
         pub use super::super::SsrInput as Input;
 
-        pub type AttrValue<VT, V> = ();
+        pub type Haevoe<VT, V> = <V as MaybeUpdateValueWithState<VT>>::HtmlAttributeEqValueOrEmpty;
         pub type Attrs<VT, V> = Option<AttrPair<<V as MaybeUpdateValueWithState<VT>>::AttrValue>>;
 
-        pub use crate::DefaultSsrAttrValue as AttrValue;
         pub use crate::DefaultSsrAttrs as Attrs;
+        pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub fn into_attrs<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(Input { this, attr_name }: Input<V>) -> Attrs<VT, V>
         where
             VT::SupportIntoAttrValue: Default,
         {
             V::maybe_into_attr_value(this, Default::default()).map(|value| AttrPair::new_from_str(attr_name, value))
+        }
+
+        pub fn maybe_into_haevoe<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+            V::maybe_into_html_attribute_eq_value_or_empty(this)
         }
     }
 }
@@ -537,6 +552,16 @@ pub mod MaybeHandleEvent {
                 type AsyncWritableAttrs = ();
                 fn into_async_writable_attrs(_: Self) {}
             }
+
+            impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+                for $($wrapper)*::<V>
+            {
+                type SpaceAndHtmlAttributesOrEmpty = ::frender_ssr::async_str::empty::Empty;
+
+                fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
+                    ::frender_ssr::async_str::empty::Empty
+                }
+            }
         };
     }
 
@@ -573,11 +598,17 @@ pub mod MaybeContentEditable {
 
         pub use super::super::SsrInput as Input;
         pub use crate::DefaultSsrAttrs as Attrs;
+        pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub type Attrs<V> = Option<AttrPairStr<<V as MaybeContentEditable>::AttrValueStr>>;
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeContentEditable>::ContentEditableIntoAsyncStrIter>;
 
         pub fn into_attrs<V: MaybeContentEditable>(Input { this, attr_name }: Input<V>) -> Attrs<V> {
             V::maybe_into_attr_value_str(this).map(|value| AttrPairStr::new_from_str(attr_name, AsyncWritableAttrValueStr::new(value)))
+        }
+
+        pub fn maybe_into_haevoe<V: MaybeContentEditable>(this: V) -> Option<Haevoe<V>> {
+            V::content_editable_maybe_into_async_str_iter(this).map(Haevoe::<V>::new)
         }
     }
 }
@@ -603,8 +634,10 @@ pub mod Css {
 
         pub use super::super::SsrInput as Input;
         pub use crate::css_type_attrs as Attrs;
+        pub use crate::css_type_haevoe as Haevoe;
 
         pub type Attrs = Option<frender_ssr::element::html::simple::AttrPairStr<StrWriting<String>>>;
+        pub type Haevoe = frender_common::async_str::empty::Empty;
 
         #[macro_export]
         macro_rules! css_type_attrs {
@@ -613,8 +646,19 @@ pub mod Css {
             };
         }
 
+        #[macro_export]
+        macro_rules! css_type_haevoe {
+            ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
+                $crate::impl_bounds::Css::ssr::Haevoe
+            };
+        }
+
         pub fn into_attrs<V>(input: Input<V>) -> Attrs {
             None
+        }
+
+        pub fn maybe_into_haevoe<V>(this: V) -> Option<Haevoe> {
+            todo!()
         }
     }
 }

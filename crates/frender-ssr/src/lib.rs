@@ -1,3 +1,5 @@
+pub use frender_ssr_html as html;
+
 mod maybe_owned;
 pub use maybe_owned::*;
 
@@ -13,8 +15,9 @@ pub use render_state::*;
 mod trait_element;
 pub use trait_element::*;
 
-mod escape_safe;
+// TODO: refactor
 pub use escape_safe::*;
+use frender_ssr_html::escape_safe;
 
 mod ssr_ext;
 pub use ssr_ext::*;
@@ -33,23 +36,13 @@ pub mod utils;
 
 pub mod write_attrs;
 
-mod str_iter;
+pub mod async_str;
+pub use async_str::{chain::Chain, empty::Empty, encode::Encode};
+pub use frender_common::{AsyncStrIterator, IntoAsyncStrIterator};
 
-pub use str_iter::{AsyncStrIterator, Chain, Empty, Encode, IntoAsyncStrIterator};
-
-pub(crate) use frender_common::{ready, ready_ok, ready_ok_rewrap_err};
+pub(crate) use frender_common::{ready, ready_none, ready_ok, ready_ok_rewrap_err};
 
 pub mod __private {
-    pub use frender_common::{expand, ready};
+    pub use frender_common::{expand, ready, ready_none};
     pub use pin_project_lite::pin_project;
-}
-
-#[macro_export]
-macro_rules! ready_none {
-    ($e:expr) => {
-        match $e {
-            ::core::task::Poll::Ready(::core::option::Option::None) => {}
-            ret => return ret,
-        }
-    };
 }

@@ -851,6 +851,9 @@ dependencies = [
 [[package]]
 name = "frender-common"
 version = "0.1.0"
+dependencies = [
+ "pin-project-lite",
+]
 
 [[package]]
 name = "frender-csr"
@@ -988,6 +991,7 @@ version = "0.1.0"
 dependencies = [
  "either",
  "frender-common",
+ "frender-ssr-html",
  "web-sys",
 ]
 
@@ -1031,8 +1035,18 @@ dependencies = [
  "either",
  "frender-common",
  "frender-html-common",
+ "frender-ssr-html",
  "futures-io",
  "futures-lite 2.0.1",
+ "html-escape",
+ "pin-project-lite",
+]
+
+[[package]]
+name = "frender-ssr-html"
+version = "0.1.0"
+dependencies = [
+ "frender-common",
  "html-escape",
  "pin-project-lite",
 ]

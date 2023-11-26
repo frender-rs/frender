@@ -1,10 +1,15 @@
-use frender_common::write::{
-    attrs::{
-        writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
-        AsyncWritableAttrValueStr,
+use frender_common::{
+    async_str::any_str::{AnyStr, IterAnyStr},
+    write::{
+        attrs::{
+            writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
+            AsyncWritableAttrValueStr,
+        },
+        str::{AsyncWritableStr, StrWriting},
     },
-    str::{AsyncWritableStr, StrWriting},
+    AsyncStrIterator, IntoAsyncStrIterator,
 };
+use frender_ssr_html::{assert::HtmlAttributeEqValueOrEmpty, attr_value::AttrEqValue};
 
 use crate::impl_many;
 
@@ -83,6 +88,13 @@ pub trait MaybeUpdateValueWithState<V: ?Sized + ValueType> {
         supported: <V as ValueType>::SupportIntoChildStr,
     ) -> Option<Self::ChildStr>;
 
+    type HtmlAttributeEqValueOrEmpty: HtmlAttributeEqValueOrEmpty;
+
+    /// `None` indicates this attributes is not present
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty>;
+
     type AttrValue: AsyncWritableAttrValue;
     fn maybe_into_attr_value(
         this: Self,
@@ -139,6 +151,14 @@ impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
     type UpdateWithState = ();
 
     fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
+
+    type HtmlAttributeEqValueOrEmpty = frender_common::async_str::never::Never;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        (): Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        None
+    }
 }
 
 impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWithState<V>
@@ -216,6 +236,14 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWit
             *state = Default::default()
         }
     }
+
+    type HtmlAttributeEqValueOrEmpty = T::HtmlAttributeEqValueOrEmpty;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        this.and_then(T::maybe_into_html_attribute_eq_value_or_empty)
+    }
 }
 
 /// No cache
@@ -271,6 +299,14 @@ impl MaybeUpdateValueWithState<str> for &str {
         updater: impl ValueUpdater<str>,
     ) {
         updater.update(this)
+    }
+
+    type HtmlAttributeEqValueOrEmpty = AttrEqValue<Self>;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        Some(AttrEqValue(this))
     }
 }
 
@@ -350,6 +386,14 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
                 updater.update(this)
             }
         }
+    }
+
+    type HtmlAttributeEqValueOrEmpty = AttrEqValue<IterAnyStr<Self>>;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        Some(AttrEqValue(AnyStr(this).into_async_str_iterator()))
     }
 }
 
@@ -453,6 +497,14 @@ impl MaybeUpdateValueWithState<str> for String {
         updater.update(&this);
         *state = Some(this);
     }
+
+    type HtmlAttributeEqValueOrEmpty = AttrEqValue<IterAnyStr<Self>>;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        Some(AttrEqValue(AnyStr(this).into_async_str_iterator()))
+    }
 }
 
 impl_many!(
@@ -532,6 +584,14 @@ impl_many!(
             updater.update(&this);
             *state = Some(this);
         }
+
+        type HtmlAttributeEqValueOrEmpty = AttrEqValue<IterAnyStr<String>>;
+
+        fn maybe_into_html_attribute_eq_value_or_empty(
+            this: Self,
+        ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+            String::maybe_into_html_attribute_eq_value_or_empty(this.to_string())
+        }
     }
 );
 
@@ -601,5 +661,30 @@ impl MaybeUpdateValueWithState<bool> for bool {
 
         updater.update(&this);
         *state = Some(this);
+    }
+
+    type HtmlAttributeEqValueOrEmpty = frender_common::async_str::empty::Empty;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        this: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        if this {
+            Some(frender_common::async_str::empty::Empty)
+        } else {
+            None
+        }
+    }
+}
+
+pub struct BooleanTrue;
+
+impl Unpin for BooleanTrue {}
+
+impl AsyncStrIterator for BooleanTrue {
+    fn poll_next_str(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Option<&str>> {
+        std::task::Poll::Ready(None)
     }
 }

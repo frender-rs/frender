@@ -191,7 +191,7 @@ where
         )
     }
 
-    type IntoAsyncHtmlChunks = Option<&'static str>;
+    type IntoAsyncHtmlChunks = frender_common::async_str::never::Never;
 
     fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
         todo!()

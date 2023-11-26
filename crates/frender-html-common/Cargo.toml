@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 either = { version = "1.8.1", default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html" }
 
 [dependencies.web-sys]
 version = "0.3.60"

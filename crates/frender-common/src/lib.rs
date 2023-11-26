@@ -1,8 +1,16 @@
+pub use async_str::{AsyncStrIterator, IntoAsyncStrIterator};
+
+pub mod async_str;
+
 mod keyed;
 pub use keyed::*;
 
 pub mod convert;
 pub mod try_behavior;
+
+pub mod __private {
+    pub use pin_project_lite::pin_project;
+}
 
 #[doc(hidden)]
 /// This is only for inner usage of frender
@@ -51,6 +59,16 @@ macro_rules! ready_ok_rewrap_err {
                 return ::core::task::Poll::Ready(::core::result::Result::Err(e))
             }
             ::core::task::Poll::Pending => return ::core::task::Poll::Pending,
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! ready_none {
+    ($e:expr) => {
+        match $e {
+            ::core::task::Poll::Ready(::core::option::Option::None) => {}
+            ret => return ret,
         }
     };
 }

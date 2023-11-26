@@ -1,6 +1,9 @@
 use std::borrow::Cow;
 
-use frender_common::write::str::{AsyncWritableStr, StrWriting};
+use frender_common::{
+    write::str::{AsyncWritableStr, StrWriting},
+    AsyncStrIterator, IntoAsyncStrIterator,
+};
 
 use crate::NeverWritable;
 
@@ -26,6 +29,12 @@ pub trait MaybeContentEditable {
     type AttrValueStr: AsyncWritableStr;
 
     fn maybe_into_attr_value_str(this: Self) -> Option<Self::AttrValueStr>;
+
+    type ContentEditableIntoAsyncStrIter: AsyncStrIterator;
+
+    fn content_editable_maybe_into_async_str_iter(
+        this: Self,
+    ) -> Option<Self::ContentEditableIntoAsyncStrIter>;
 }
 
 // TODO: only static string is implemented
@@ -70,6 +79,14 @@ crate::impl_many!(
 
         fn maybe_into_attr_value_str(this: Self) -> Option<Self::AttrValueStr> {
             Some(StrWriting::new(this))
+        }
+
+        type ContentEditableIntoAsyncStrIter = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
+
+        fn content_editable_maybe_into_async_str_iter(
+            this: Self,
+        ) -> Option<Self::ContentEditableIntoAsyncStrIter> {
+            Some(this.into_async_str_iterator())
         }
     }
 );
@@ -119,6 +136,14 @@ impl MaybeContentEditable for bool {
 
     fn maybe_into_attr_value_str(this: Self) -> Option<Self::AttrValueStr> {
         <&'static str as MaybeContentEditable>::maybe_into_attr_value_str(bool_to_str(this))
+    }
+
+    type ContentEditableIntoAsyncStrIter = &'static str;
+
+    fn content_editable_maybe_into_async_str_iter(
+        this: Self,
+    ) -> Option<Self::ContentEditableIntoAsyncStrIter> {
+        Some(bool_to_str(this))
     }
 }
 
@@ -173,6 +198,14 @@ impl<V: MaybeContentEditable> MaybeContentEditable for Option<V> {
     fn maybe_into_attr_value_str(this: Self) -> Option<Self::AttrValueStr> {
         this.and_then(V::maybe_into_attr_value_str)
     }
+
+    type ContentEditableIntoAsyncStrIter = V::ContentEditableIntoAsyncStrIter;
+
+    fn content_editable_maybe_into_async_str_iter(
+        this: Self,
+    ) -> Option<Self::ContentEditableIntoAsyncStrIter> {
+        this.and_then(V::content_editable_maybe_into_async_str_iter)
+    }
 }
 
 impl MaybeContentEditable for () {
@@ -194,6 +227,14 @@ impl MaybeContentEditable for () {
     type AttrValueStr = NeverWritable;
 
     fn maybe_into_attr_value_str((): Self) -> Option<Self::AttrValueStr> {
+        None
+    }
+
+    type ContentEditableIntoAsyncStrIter = frender_common::async_str::never::Never;
+
+    fn content_editable_maybe_into_async_str_iter(
+        (): Self,
+    ) -> Option<Self::ContentEditableIntoAsyncStrIter> {
         None
     }
 }
