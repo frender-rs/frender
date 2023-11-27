@@ -24,8 +24,7 @@ pub(crate) trait SetReferrerPolicy {
 
 impl SetReferrerPolicy for web_sys::HtmlScriptElement {
     fn set_referrer_policy(&self, value: &str) {
-        self.unchecked_ref::<SetReferrerPolicyObject>()
-            .set_referrer_policy(value)
+        self.unchecked_ref::<SetReferrerPolicyObject>().set_referrer_policy(value)
     }
 }
 
@@ -36,13 +35,11 @@ pub(crate) trait SetHeightWidthU32 {
 
 impl SetHeightWidthU32 for web_sys::HtmlSourceElement {
     fn set_height(&self, value: u32) {
-        self.unchecked_ref::<SetHeightWidthU32Object>()
-            .set_height(value)
+        self.unchecked_ref::<SetHeightWidthU32Object>().set_height(value)
     }
 
     fn set_width(&self, value: u32) {
-        self.unchecked_ref::<SetHeightWidthU32Object>()
-            .set_width(value)
+        self.unchecked_ref::<SetHeightWidthU32Object>().set_width(value)
     }
 }
 
@@ -82,12 +79,7 @@ pub(crate) trait SetBgColor {
 }
 
 ::frender_common::impl_many!(
-    impl<__> SetBgColor
-        for each_of![
-            web_sys::HtmlTableSectionElement,
-            web_sys::HtmlTableColElement
-        ]
-    {
+    impl<__> SetBgColor for each_of![web_sys::HtmlTableSectionElement, web_sys::HtmlTableColElement] {
         fn set_bg_color(&self, value: &str) {
             self.set_attribute("bgcolor", value).unwrap()
         }
@@ -106,8 +98,5 @@ impl RelList for web_sys::HtmlFormElement {
 }
 
 pub(crate) mod prelude {
-    pub(crate) use super::{
-        RelList as _, SetAccept as _, SetBgColor as _, SetHeightWidthU32 as _, SetHtmlFor as _,
-        SetReferrerPolicy as _, SetSizes as _,
-    };
+    pub(crate) use super::{RelList as _, SetAccept as _, SetBgColor as _, SetHeightWidthU32 as _, SetHtmlFor as _, SetReferrerPolicy as _, SetSizes as _};
 }
