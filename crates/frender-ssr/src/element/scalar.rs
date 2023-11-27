@@ -10,11 +10,10 @@ macro_rules! impl_render_scalar {
                 self.to_string().into_ssr_state()
             }
 
-            type IntoAsyncHtmlChunks = frender_common::async_str::any_str::IterAnyStr<String>;
+            type HtmlChildren = frender_ssr_html::scalar::Scalar;
 
-            fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-                use crate::IntoAsyncStrIterator;
-                frender_common::async_str::any_str::AnyStr(self.to_string()).into_async_str_iterator()
+            fn into_html_children(self) -> Self::HtmlChildren {
+                Self::HtmlChildren::new(self)
             }
         }
     )*};
@@ -23,7 +22,5 @@ macro_rules! impl_render_scalar {
 impl_render_scalar! {
     i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize,
     f32, f64,
-    // TODO: optimize for bool and char
-    bool,
     char,
 }

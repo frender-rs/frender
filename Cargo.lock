@@ -135,6 +135,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "async-str-iter"
+version = "0.1.0"
+dependencies = [
+ "either",
+ "frender-common",
+ "futures-lite 2.0.1",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "async-task"
 version = "4.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -693,9 +703,9 @@ checksum = "56ce8c6da7551ec6c462cbaf3bfbc75131ebbfa1c944aeaa9dab51ca1c5f0c3b"
 
 [[package]]
 name = "either"
-version = "1.8.1"
+version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "enumflags2"
@@ -851,9 +861,6 @@ dependencies = [
 [[package]]
 name = "frender-common"
 version = "0.1.0"
-dependencies = [
- "pin-project-lite",
-]
 
 [[package]]
 name = "frender-csr"
@@ -903,6 +910,7 @@ dependencies = [
 name = "frender-dom"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "convert-js",
  "frender-common",
  "frender-events",
@@ -967,6 +975,7 @@ dependencies = [
 name = "frender-html"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "convert-js",
  "frender-common",
  "frender-dom",
@@ -989,6 +998,7 @@ dependencies = [
 name = "frender-html-common"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "either",
  "frender-common",
  "frender-ssr-html",
@@ -1032,6 +1042,7 @@ dependencies = [
 name = "frender-ssr"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "either",
  "frender-common",
  "frender-html-common",
@@ -1046,6 +1057,7 @@ dependencies = [
 name = "frender-ssr-html"
 version = "0.1.0"
 dependencies = [
+ "async-str-iter",
  "frender-common",
  "html-escape",
  "pin-project-lite",

@@ -1,12 +1,11 @@
-use frender_ssr::{
-    html::assert::SpaceAndHtmlAttributesOrEmpty, AsyncStrIterator, EscapeSafe, IntoAsyncStrIterator,
-};
+use frender_ssr::html::{assert::SpaceAndHtmlAttributesOrEmpty, tag::AssertTagName};
 pub use props::{ElementProps, IntoElementProps};
 
 mod props;
 
 pub trait HasIntrinsicComponentTag {
     const INTRINSIC_COMPONENT_TAG: &'static str;
+    const ASSERT_TAG_NAME: AssertTagName<&'static str>;
 }
 
 pub trait HasIntrinsicElementType {
@@ -42,24 +41,6 @@ impl<C: SsrIntrinsicComponent, Children: frender_ssr::SsrElement> SsrSupportChil
 
 pub struct IntrinsicElement<C, P: IntoElementProps>(pub C, pub P);
 
-frender_common::Strings!(
-    enum IntrinsicElementEnclosingIterState {}
-    pub struct IntrinsicElementEnclosingIter<
-        C: AsyncStrIterator,
-        Attrs: SpaceAndHtmlAttributesOrEmpty,
-        Children: AsyncStrIterator,
-    >(
-        lt!("<"),
-        tag!(C),
-        attrs!(Attrs),
-        gt!(">"),
-        children!(Children),
-        lt_slash!("</"),
-        tag_close!(C),
-        gt_close!(">"),
-    );
-);
-
 pub trait IntoSpaceAndHtmlAttributesOrEmpty {
     type SpaceAndHtmlAttributesOrEmpty: SpaceAndHtmlAttributesOrEmpty;
     fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty;
@@ -93,10 +74,10 @@ where
     P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
     P::Children: frender_ssr::SsrElement,
 {
-    type IntoAsyncStrIterator = IntrinsicElementEnclosingIter<
-        &'static str,
+    type IntoAsyncStrIterator = frender_ssr::html::element::NormalElement<
+        AssertTagName<&'static str>,
         <P::Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
-        <P::Children as frender_ssr::SsrElement>::IntoAsyncHtmlChunks,
+        <P::Children as frender_ssr::SsrElement>::HtmlChildren,
     >;
 
     fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
@@ -104,17 +85,11 @@ where
             children,
             attributes,
         } = P::into_element_props(self.1);
-        IntrinsicElementEnclosingIter {
-            _state: IntrinsicElementEnclosingIterState(),
-            lt: (),
-            tag: C::INTRINSIC_COMPONENT_TAG,
-            attrs: attributes.into_space_and_html_attributes_or_empty(),
-            gt: (),
-            children: frender_ssr::SsrElement::into_async_html_chunks(children),
-            lt_slash: (),
-            tag_close: C::INTRINSIC_COMPONENT_TAG,
-            gt_close: (),
-        }
+        frender_ssr::html::element::NormalElement::new(
+            C::ASSERT_TAG_NAME,
+            attributes.into_space_and_html_attributes_or_empty(),
+            frender_ssr::SsrElement::into_html_children(children),
+        )
     }
 }
 
@@ -132,8 +107,8 @@ mod ssr {
 
     use super::{
         ElementProps, HasIntrinsicComponentTag, IntoElementProps,
-        IntoSpaceAndHtmlAttributesOrEmpty, IntrinsicChildrenAsElement,
-        IntrinsicElementEnclosingIter, SsrIntrinsicComponent, SsrSupportChildren,
+        IntoSpaceAndHtmlAttributesOrEmpty, IntrinsicChildrenAsElement, SsrIntrinsicComponent,
+        SsrSupportChildren,
     };
 
     impl<C: SsrSupportChildren<Children>, Children> Element
@@ -145,9 +120,9 @@ mod ssr {
             C::children_into_ssr_state(self.children)
         }
 
-        type IntoAsyncHtmlChunks = frender_common::async_str::never::Never;
+        type HtmlChildren = async_str_iter::empty::Empty;
 
-        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+        fn into_html_children(self) -> Self::HtmlChildren {
             todo!()
         }
     }
@@ -183,13 +158,13 @@ mod ssr {
             .into_ssr_state()
         }
 
-        type IntoAsyncHtmlChunks = IntrinsicElementEnclosingIter<
-            &'static str,
+        type HtmlChildren = frender_ssr::html::element::NormalElement<
+            super::AssertTagName<&'static str>,
             <P::Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
-            <P::Children as Element>::IntoAsyncHtmlChunks,
+            <P::Children as frender_ssr::SsrElement>::HtmlChildren,
         >;
 
-        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+        fn into_html_children(self) -> Self::HtmlChildren {
             self.into_async_str_iterator()
         }
     }

@@ -22,6 +22,7 @@ js-sys = { version = "0.3.64", optional = true }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 frender-dom = { version = "0.1.0", path = "../frender-dom" }
 frender-dom-macros = { version = "0.1.0", path = "../frender-dom-macros" }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 
 [dependencies.web-sys]
 version = "0.3.60"

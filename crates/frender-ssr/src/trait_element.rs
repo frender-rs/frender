@@ -7,7 +7,7 @@ pub trait SsrElement {
 
     fn into_ssr_state(self) -> Self::SsrState;
 
-    type IntoAsyncHtmlChunks: crate::AsyncStrIterator;
+    type HtmlChildren: frender_ssr_html::assert::HtmlChildren;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks;
+    fn into_html_children(self) -> Self::HtmlChildren;
 }

@@ -36,9 +36,12 @@ pub mod utils;
 
 pub mod write_attrs;
 
-pub mod async_str;
+pub mod async_str {
+    pub use async_str_iter::{chain, empty, flat, option};
+    pub use frender_ssr_html::encode;
+}
 pub use async_str::{chain::Chain, empty::Empty, encode::Encode};
-pub use frender_common::{AsyncStrIterator, IntoAsyncStrIterator};
+pub use async_str_iter::{AsyncStrIterator, IntoAsyncStrIterator};
 
 pub(crate) use frender_common::{ready, ready_none, ready_ok, ready_ok_rewrap_err};
 

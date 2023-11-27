@@ -363,6 +363,8 @@ macro_rules! tags {
             pub struct $tags;
             impl crate::dom::component::HasIntrinsicComponentTag for $tags {
                 const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
+                const ASSERT_TAG_NAME: ::frender_ssr::html::tag::AssertTagName<&'static str> =
+                    ::frender_ssr::html::tag::AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
             }
             impl crate::CreateNode for $tags {
                 fn create_node<R: super::RenderHtml>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {

@@ -637,7 +637,7 @@ pub mod Css {
         pub use crate::css_type_haevoe as Haevoe;
 
         pub type Attrs = Option<frender_ssr::element::html::simple::AttrPairStr<StrWriting<String>>>;
-        pub type Haevoe = frender_common::async_str::empty::Empty;
+        pub type Haevoe = ::async_str_iter::empty::Empty;
 
         #[macro_export]
         macro_rules! css_type_attrs {

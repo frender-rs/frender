@@ -45,10 +45,9 @@ where
         Elements(self).into_ssr_state()
     }
 
-    type IntoAsyncHtmlChunks =
-        crate::async_str::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
+    type HtmlChildren = crate::async_str::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(self) -> Self::HtmlChildren {
         crate::async_str::flat::Flat::new(IterKeyed(self.into_iter()))
     }
 }
@@ -59,10 +58,10 @@ impl<K, E, I: Iterator<Item = Keyed<K, E>>> Iterator for IterKeyed<I>
 where
     E: Element,
 {
-    type Item = E::IntoAsyncHtmlChunks;
+    type Item = E::HtmlChildren;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next().map(|Keyed(_, e)| e.into_async_html_chunks())
+        self.0.next().map(|Keyed(_, e)| e.into_html_children())
     }
 }
 
@@ -71,10 +70,10 @@ where
 //     K: std::hash::Hash + Eq, // TODO: ToString ?
 //     E: Element,
 // {
-//     type IntoAsyncStrIterator = E::IntoAsyncHtmlChunks;
+//     type IntoAsyncStrIterator = E::HtmlElements;
 
 //     fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
-//         self.1.into_async_html_chunks()
+//         self.1.into_html_elements()
 //     }
 // }
 
@@ -101,9 +100,9 @@ where
         }
     }
 
-    type IntoAsyncHtmlChunks = crate::async_str::flat::Flat<IterKeyed<I::IntoIter>>;
+    type HtmlChildren = crate::async_str::flat::Flat<IterKeyed<I::IntoIter>>;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(self) -> Self::HtmlChildren {
         crate::async_str::flat::Flat::new(IterKeyed(self.iter.into_iter()))
     }
 }

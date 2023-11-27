@@ -28,7 +28,7 @@ impl<A: AsyncStrIterator, B: AsyncStrIterator> AsyncStrIterator for Chain<A, B> 
         let ChainProj { a_ready, a, b } = self.project();
 
         if !*a_ready {
-            let () = crate::ready_none!(a.poll_next_str(cx));
+            let () = crate::__private::ready_none!(a.poll_next_str(cx));
             *a_ready = true;
         }
 

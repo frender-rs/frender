@@ -43,12 +43,12 @@ macro_rules! impl_ssr_for_bytes {
                 $crate::element::bytes::UnsafeRawHtmlBytes::<$buffer_ty>($expr).into_ssr_state()
             }
 
-            type IntoAsyncHtmlChunks = frender_ssr_html::encode::Encode<frender_ssr_html::escape_safe::Safe, <Self as frender_common::IntoAsyncStrIterator>::IntoAsyncStrIterator>;
+            type HtmlChildren = frender_ssr_html::encode::Encode<frender_ssr_html::escape_safe::Safe, <Self as async_str_iter::IntoAsyncStrIterator>::IntoAsyncStrIterator>;
 
-            fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-                Self::IntoAsyncHtmlChunks::new(
+            fn into_html_children(self) -> Self::HtmlChildren {
+                Self::HtmlChildren::new(
                     frender_ssr_html::escape_safe::Safe,
-                    frender_common::IntoAsyncStrIterator::into_async_str_iterator(self),
+                    async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(self),
                 )
             }
         }
@@ -64,9 +64,9 @@ impl<B: IntoAsyncWritableBytes> Element for UnsafeRawHtmlBytes<B> {
         }
     }
 
-    type IntoAsyncHtmlChunks = frender_common::async_str::never::Never;
+    type HtmlChildren = async_str_iter::empty::Empty;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(self) -> Self::HtmlChildren {
         todo!()
     }
 }

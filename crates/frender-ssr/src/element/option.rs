@@ -23,10 +23,10 @@ impl<E: Element> Element for Option<E> {
         self.map(E::into_ssr_state)
     }
 
-    type IntoAsyncHtmlChunks = crate::async_str::option::IterOption<E::IntoAsyncHtmlChunks>;
+    type HtmlChildren = crate::async_str::option::IterOption<E::HtmlChildren>;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-        self.map(E::into_async_html_chunks)
+    fn into_html_children(self) -> Self::HtmlChildren {
+        self.map(E::into_html_children)
             .into_async_str_iterator()
     }
 }

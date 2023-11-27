@@ -191,9 +191,9 @@ where
         )
     }
 
-    type IntoAsyncHtmlChunks = frender_common::async_str::never::Never;
+    type HtmlChildren = async_str_iter::empty::Empty;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(self) -> Self::HtmlChildren {
         todo!()
     }
 }

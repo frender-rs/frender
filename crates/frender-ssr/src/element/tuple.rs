@@ -15,9 +15,9 @@ impl Element for () {
 
     fn into_ssr_state(self) -> Self::SsrState {}
 
-    type IntoAsyncHtmlChunks = crate::Empty;
+    type HtmlChildren = crate::Empty;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(self) -> Self::HtmlChildren {
         crate::Empty
     }
 }
@@ -29,10 +29,10 @@ impl<R0: Element> Element for (R0,) {
         R0::into_ssr_state(self.0)
     }
 
-    type IntoAsyncHtmlChunks = R0::IntoAsyncHtmlChunks;
+    type HtmlChildren = R0::HtmlChildren;
 
-    fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-        self.0.into_async_html_chunks()
+    fn into_html_children(self) -> Self::HtmlChildren {
+        self.0.into_html_children()
     }
 }
 
@@ -63,46 +63,32 @@ macro_rules! impl_render_for_tuple {
                 }
             }
 
-            frender_common::expand! {
-                {$({$field})+} get {-1}
-                prepend(
+            impl<$($field: Element),+> Element for ($($field),+) {
+                type SsrState = ($($field::SsrState,)+);
+
+                #[inline]
+                fn into_ssr_state(self) -> Self::SsrState {
                     #[allow(non_snake_case)]
-                    pub mod
-                )
-                append({
-                    use crate::Element;
+                    let ($($field,)+) = self;
 
-                    ::frender_common::Strings! {
-                        enum State {}
-                        pub struct Strings<$($field: crate::AsyncStrIterator),+>(
-                            $($field!($field),)+
-                        );
-                    }
+                    ($(
+                        $field::into_ssr_state($field),
+                    )+)
+                }
 
-                    impl<$($field: Element),+> Element for ($($field),+) {
-                        type SsrState = ($($field::SsrState,)+);
+                type HtmlChildren = <
+                    async_str_iter::concat::Concat<($($field::HtmlChildren),+)>
+                    as async_str_iter::IntoAsyncStrIterator
+                >::IntoAsyncStrIterator;
 
-                        #[inline]
-                        fn into_ssr_state(self) -> Self::SsrState {
-                            #[allow(non_snake_case)]
-                            let ($($field,)+) = self;
-
-                            ($(
-                                $field::into_ssr_state($field),
-                            )+)
-                        }
-
-                        type IntoAsyncHtmlChunks = self::Strings<$($field::IntoAsyncHtmlChunks),+>;
-
-                        fn into_async_html_chunks(self) -> Self::IntoAsyncHtmlChunks {
-                            let ($($field,)+) = self;
-                            self::Strings {
-                                _state: self::State(),
-                                $($field: $field.into_async_html_chunks(),)+
-                            }
-                        }
-                    }
-                })
+                fn into_html_children(self) -> Self::HtmlChildren {
+                    let ($($field,)+) = self;
+                    async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(
+                        async_str_iter::concat::Concat(
+                            ($($field.into_html_children(),)+)
+                        )
+                    )
+                }
             }
         )+
     };

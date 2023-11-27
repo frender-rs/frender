@@ -1,6 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
-use frender_common::{AsyncStrIterator, IntoAsyncStrIterator};
+use crate::{AsyncStrIterator, IntoAsyncStrIterator};
 
 pin_project_lite::pin_project!(
     pub struct Flat<I: Iterator>
@@ -42,7 +42,11 @@ where
                 *this.current_is_over = false;
                 this.current.set(Some(v.into_async_str_iterator()));
 
-                let () = crate::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
+                let () = frender_common::ready_none!(this
+                    .current
+                    .as_pin_mut()
+                    .unwrap()
+                    .poll_next_str(cx));
                 // this.current.set(None);
                 *this.current_is_over = true;
 
@@ -52,7 +56,8 @@ where
                 Poll::Ready(None)
             }
         } else {
-            let () = crate::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
+            let () =
+                frender_common::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
             // this.current.set(None);
             *this.current_is_over = true;
             Poll::Ready(Some(""))

@@ -1,9 +1,7 @@
 use std::borrow::Cow;
 
-use frender_common::{
-    write::str::{AsyncWritableStr, StrWriting},
-    AsyncStrIterator, IntoAsyncStrIterator,
-};
+use async_str_iter::{AsyncStrIterator, IntoAsyncStrIterator};
+use frender_common::write::str::{AsyncWritableStr, StrWriting};
 
 use crate::NeverWritable;
 
@@ -230,7 +228,7 @@ impl MaybeContentEditable for () {
         None
     }
 
-    type ContentEditableIntoAsyncStrIter = frender_common::async_str::never::Never;
+    type ContentEditableIntoAsyncStrIter = async_str_iter::never::Never;
 
     fn content_editable_maybe_into_async_str_iter(
         (): Self,

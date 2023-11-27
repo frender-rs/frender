@@ -13,6 +13,7 @@ pin-project-lite = "0.2.9"
 either = { version = "1.8.1", default-features = false, optional = true }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html" }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 
 [dev-dependencies]
 futures-lite = "2.0.1"

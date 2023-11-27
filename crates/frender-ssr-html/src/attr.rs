@@ -1,6 +1,6 @@
 use crate::assert::{HtmlAttributeEqValueOrEmpty, SpaceAndHtmlAttributeName};
 
-frender_common::Strings!(
+async_str_iter::Strings!(
     enum SpaceAndHtmlAttributeState {}
     pub struct SpaceAndHtmlAttribute<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty>(
         name!(N),

@@ -114,12 +114,12 @@ where
         (self.use_hook)(hook_data).into_ssr_state()
     }
 
-    type IntoAsyncHtmlChunks = E::IntoAsyncHtmlChunks;
+    type HtmlChildren = E::HtmlChildren;
 
-    fn into_async_html_chunks(mut self) -> Self::IntoAsyncHtmlChunks {
+    fn into_html_children(mut self) -> Self::HtmlChildren {
         let hook_data = HookData::default();
         let hook_data = std::pin::pin!(hook_data); // TODO: compatibility
-        (self.use_hook)(hook_data).into_async_html_chunks()
+        (self.use_hook)(hook_data).into_html_children()
     }
 }
 

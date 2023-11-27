@@ -1,12 +1,7 @@
 // mod advanced; // TODO: impl advanced dom tokens
 
-use frender_common::{
-    write::{
-        attrs::IntoAsyncWritableAttrs,
-        str::{AsyncWritableStr, IntoAsyncWritableStr},
-    },
-    AsyncStrIterator,
-};
+use async_str_iter::AsyncStrIterator;
+use frender_common::write::str::AsyncWritableStr;
 
 #[doc(hidden)]
 pub mod custom_const_dom_tokens {
@@ -216,7 +211,8 @@ pub trait DomTokens {
 mod impl_for_static_string {
     use std::borrow::Cow;
 
-    use frender_common::{write::str::StrWriting, IntoAsyncStrIterator};
+    use async_str_iter::IntoAsyncStrIterator;
+    use frender_common::write::str::StrWriting;
 
     use super::DomTokens;
 
@@ -322,7 +318,7 @@ mod impl_for_unit_tuple {
             None
         }
 
-        type DomTokensIntoAsyncStrIter = frender_common::async_str::never::Never;
+        type DomTokensIntoAsyncStrIter = async_str_iter::never::Never;
 
         fn dom_tokens_maybe_into_async_str_iter(
             (): Self,

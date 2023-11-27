@@ -1,16 +1,11 @@
-pub use frender_common::async_str::{chain, empty, option};
-pub use frender_ssr_html::encode;
-
-pub mod flat;
-
 #[cfg(test)]
 mod test {
-    use frender_common::Strings;
+    use async_str_iter::Strings;
 
     // use super::AsyncStrIterator;
     Strings![
         enum MyDivState {}
-        pub struct MyElement<Attrs: crate::AsyncStrIterator>(
+        pub struct MyElement<Attrs: async_str_iter::AsyncStrIterator>(
             //
             lt!("<"),
             tag!(&'static str),
@@ -20,7 +15,7 @@ mod test {
     ];
 
     #[allow(non_snake_case)]
-    pub fn MyElement<Attrs: crate::AsyncStrIterator>(
+    pub fn MyElement<Attrs: async_str_iter::AsyncStrIterator>(
         tag: &'static str,
         attrs: Attrs,
     ) -> MyElement<Attrs> {
@@ -41,7 +36,7 @@ mod test {
         futures_lite::future::block_on(async {
             let mut s = String::new();
             while let Some(()) = std::future::poll_fn(|cx| {
-                use crate::AsyncStrIterator;
+                use async_str_iter::AsyncStrIterator;
                 el.as_mut()
                     .poll_next_str(cx)
                     .map(|v| v.map(|v| s.push_str(v)))

@@ -1,8 +1,8 @@
-use frender_common::AsyncStrIterator;
+use async_str_iter::AsyncStrIterator;
 
 use crate::{encode::Encode, escape_safe::DoubleQuotedAttribute};
 
-frender_common::Strings!(
+async_str_iter::Strings!(
     enum AttrEqValueState {}
     pub struct AttrEqValue<V: AsyncStrIterator>(
         eq_double_quote!("=\""),

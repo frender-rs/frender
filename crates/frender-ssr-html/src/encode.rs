@@ -1,6 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
-use frender_common::AsyncStrIterator;
+use async_str_iter::AsyncStrIterator;
 
 use crate::escape_safe::EscapeSafe;
 

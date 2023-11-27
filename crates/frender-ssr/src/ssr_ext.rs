@@ -135,7 +135,7 @@ impl<E: Element> ElementExt for E {}
 
 pub async fn render_element_as_string<E: Element>(element: E) -> String {
     use crate::AsyncStrIterator;
-    let s = element.into_async_html_chunks();
+    let s = element.into_html_children();
     let mut s = std::pin::pin!(s);
 
     let mut ret = String::new();

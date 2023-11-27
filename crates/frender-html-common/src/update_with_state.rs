@@ -1,13 +1,13 @@
-use frender_common::{
-    async_str::any_str::{AnyStr, IterAnyStr},
-    write::{
-        attrs::{
-            writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
-            AsyncWritableAttrValueStr,
-        },
-        str::{AsyncWritableStr, StrWriting},
-    },
+use async_str_iter::{
+    any_str::{AnyStr, IterAnyStr},
     AsyncStrIterator, IntoAsyncStrIterator,
+};
+use frender_common::write::{
+    attrs::{
+        writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
+        AsyncWritableAttrValueStr,
+    },
+    str::{AsyncWritableStr, StrWriting},
 };
 use frender_ssr_html::{assert::HtmlAttributeEqValueOrEmpty, attr_value::AttrEqValue};
 
@@ -152,7 +152,7 @@ impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
 
     fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
 
-    type HtmlAttributeEqValueOrEmpty = frender_common::async_str::never::Never;
+    type HtmlAttributeEqValueOrEmpty = async_str_iter::never::Never;
 
     fn maybe_into_html_attribute_eq_value_or_empty(
         (): Self,
@@ -663,13 +663,13 @@ impl MaybeUpdateValueWithState<bool> for bool {
         *state = Some(this);
     }
 
-    type HtmlAttributeEqValueOrEmpty = frender_common::async_str::empty::Empty;
+    type HtmlAttributeEqValueOrEmpty = async_str_iter::empty::Empty;
 
     fn maybe_into_html_attribute_eq_value_or_empty(
         this: Self,
     ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
         if this {
-            Some(frender_common::async_str::empty::Empty)
+            Some(async_str_iter::empty::Empty)
         } else {
             None
         }
