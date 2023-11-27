@@ -1,4 +1,4 @@
-use frender::{prelude::*, ssr::ElementExt};
+use frender::prelude::*;
 
 component_fn!(
     #[component(ssr)]

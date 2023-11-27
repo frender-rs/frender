@@ -371,7 +371,7 @@ macro_rules! tags {
                     renderer.$tags()
                 }
             }
-            impl crate::dom::component::SsrIntrinsicComponent for $tags {
+            impl crate::dom::component::SsrComponentNormalElement for $tags {
                 // TODO: some components are void or self closing
             }
             impl crate::dom::component::HasIntrinsicElementType for $tags {

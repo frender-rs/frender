@@ -1,10 +1,9 @@
-pub mod bytes;
 #[cfg(feature = "either")]
 pub mod either;
-pub mod html;
 pub mod intrinsic;
 pub mod keyed;
 pub mod option;
-pub mod scalar;
 pub mod str;
 pub mod tuple;
+
+mod scalar;

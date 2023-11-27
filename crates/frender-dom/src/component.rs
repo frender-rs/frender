@@ -1,4 +1,7 @@
-use frender_ssr::html::{assert::SpaceAndHtmlAttributesOrEmpty, tag::AssertTagName};
+use frender_ssr::{
+    html::{assert::SpaceAndHtmlAttributesOrEmpty, tag::AssertTagName},
+    SsrElement,
+};
 pub use props::{ElementProps, IntoElementProps};
 
 mod props;
@@ -14,28 +17,32 @@ pub trait HasIntrinsicElementType {
 
 pub trait IntrinsicElementType {}
 
-pub trait SsrIntrinsicComponent {
-    #[inline]
-    fn wrap_children<Children>(
-        children: Children,
-    ) -> frender_ssr::element::html::HtmlElementChildren<Children> {
-        frender_ssr::element::html::HtmlElementChildren::Children(children)
-    }
-}
+pub trait SsrComponentNormalElement: HasIntrinsicComponentTag {}
 
-pub trait SsrSupportChildren<Children> {
-    type ChildrenSsrState: frender_ssr::SsrRenderState;
-
-    fn children_into_ssr_state(children: Children) -> Self::ChildrenSsrState;
-}
-
-impl<C: SsrIntrinsicComponent, Children: frender_ssr::SsrElement> SsrSupportChildren<Children>
-    for C
+pub trait SsrComponent<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrElement>:
+    HasIntrinsicComponentTag
 {
-    type ChildrenSsrState = Children::SsrState;
+    type OneElement: frender_ssr::html::assert::OneElement;
+    fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement;
+}
 
-    fn children_into_ssr_state(children: Children) -> Self::ChildrenSsrState {
-        Children::into_ssr_state(children)
+impl<C, Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrElement>
+    SsrComponent<Attrs, Children> for C
+where
+    C: SsrComponentNormalElement,
+{
+    type OneElement = frender_ssr::html::element::NormalElement<
+        AssertTagName<&'static str>,
+        <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
+        Children::HtmlChildren,
+    >;
+
+    fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
+        frender_ssr::html::element::NormalElement::new(
+            C::ASSERT_TAG_NAME,
+            attrs.into_space_and_html_attributes_or_empty(),
+            SsrElement::into_html_children(children),
+        )
     }
 }
 
@@ -68,104 +75,31 @@ impl<A: IntoSpaceAndHtmlAttributesOrEmpty, B: IntoSpaceAndHtmlAttributesOrEmpty>
     }
 }
 
-impl<C, P: IntoElementProps> frender_ssr::IntoAsyncStrIterator for IntrinsicElement<C, P>
-where
-    C: HasIntrinsicComponentTag,
-    P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
-    P::Children: frender_ssr::SsrElement,
-{
-    type IntoAsyncStrIterator = frender_ssr::html::element::NormalElement<
-        AssertTagName<&'static str>,
-        <P::Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
-        <P::Children as frender_ssr::SsrElement>::HtmlChildren,
-    >;
-
-    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
-        let ElementProps {
-            children,
-            attributes,
-        } = P::into_element_props(self.1);
-        frender_ssr::html::element::NormalElement::new(
-            C::ASSERT_TAG_NAME,
-            attributes.into_space_and_html_attributes_or_empty(),
-            frender_ssr::SsrElement::into_html_children(children),
-        )
-    }
-}
-
 pub struct IntrinsicChildrenAsElement<C, Children> {
     pub component_type: C,
     pub children: Children,
 }
 
 mod ssr {
-    use std::borrow::Cow;
+    use frender_ssr::SsrElement;
 
-    use frender_common::write::attrs::IntoAsyncWritableAttrs;
-    // use frender_html::dom::component::ElementProps;
-    use frender_ssr::{Element, IntoAsyncStrIterator};
+    use super::{ElementProps, IntoElementProps, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 
-    use super::{
-        ElementProps, HasIntrinsicComponentTag, IntoElementProps,
-        IntoSpaceAndHtmlAttributesOrEmpty, IntrinsicChildrenAsElement, SsrIntrinsicComponent,
-        SsrSupportChildren,
-    };
-
-    impl<C: SsrSupportChildren<Children>, Children> Element
-        for IntrinsicChildrenAsElement<C, Children>
+    impl<C, P: IntoElementProps> SsrElement for super::IntrinsicElement<C, P>
+    where
+        P::Children: SsrElement,
+        P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
+        C: SsrComponent<P::Attrs, P::Children>,
     {
-        type SsrState = C::ChildrenSsrState;
-
-        fn into_ssr_state(self) -> Self::SsrState {
-            C::children_into_ssr_state(self.children)
-        }
-
-        type HtmlChildren = async_str_iter::empty::Empty;
+        type HtmlChildren = C::OneElement;
 
         fn into_html_children(self) -> Self::HtmlChildren {
-            todo!()
-        }
-    }
-
-    impl<C, P: IntoElementProps> Element for super::IntrinsicElement<C, P>
-    where
-        // C: super::SsrSupportChildren<P::Children>,
-        C: SsrIntrinsicComponent + HasIntrinsicComponentTag,
-        P::Attrs: IntoAsyncWritableAttrs,
-        P::Children: Element,
-        P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
-    {
-        type SsrState = ::frender_ssr::element::html::HtmlElementRenderState<
-            'static,
-            <C as super::SsrSupportChildren<P::Children>>::ChildrenSsrState,
-            <P::Attrs as IntoAsyncWritableAttrs>::AsyncWritableAttrs,
-        >;
-
-        fn into_ssr_state(self) -> Self::SsrState {
             let ElementProps {
                 children,
                 attributes,
             } = P::into_element_props(self.1);
-            let children = IntrinsicChildrenAsElement {
-                component_type: self.0,
-                children,
-            };
-            ::frender_ssr::element::html::HtmlElement {
-                tag: Cow::Borrowed(C::INTRINSIC_COMPONENT_TAG),
-                attributes,
-                children: C::wrap_children(children),
-            }
-            .into_ssr_state()
-        }
 
-        type HtmlChildren = frender_ssr::html::element::NormalElement<
-            super::AssertTagName<&'static str>,
-            <P::Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
-            <P::Children as frender_ssr::SsrElement>::HtmlChildren,
-        >;
-
-        fn into_html_children(self) -> Self::HtmlChildren {
-            self.into_async_str_iterator()
+            C::ssr_component(attributes, children)
         }
     }
 }

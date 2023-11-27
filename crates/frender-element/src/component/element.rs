@@ -125,16 +125,16 @@ mod imp {
             C: HasIntrinsicComponentTag
                 + HasIntrinsicElementType
                 + frender_html::html::behavior_type_traits::Element
-                + CreateNode
-                + frender_html::dom::component::SsrIntrinsicComponent,
+                + CreateNode,
             P: IntoElementProps,
         > Element for frender_html::dom::component::IntrinsicElement<C, P>
     where
         C::IntrinsicElementType: crate::ElementSupportChildren<P::Children>,
         P::Attrs: UpdateElementNonReactive<C>,
-        <P as IntoElementProps>::Children: frender_ssr::SsrElement,
-        <P as IntoElementProps>::Attrs: frender_html::IntoAsyncWritableAttrs,
+        // ssr bounds
         P::Attrs: frender_html::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
+        P::Children: frender_ssr::SsrElement,
+        C: frender_html::dom::component::SsrComponent<P::Attrs, P::Children>,
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             C::Element<R>,

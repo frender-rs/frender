@@ -182,6 +182,20 @@ mod html_children {
     );
 }
 
+pub trait OneElement: HtmlChildren {}
+
+mod one_element {
+    use super::{HtmlChildren, OneElement};
+
+    impl<
+            T: super::TagName,
+            Attrs: super::SpaceAndHtmlAttributesOrEmpty,
+            Children: HtmlChildren,
+        > OneElement for crate::element::NormalElement<T, Attrs, Children>
+    {
+    }
+}
+
 pub trait TagName: tag_name::Sealed + AsyncStrIterator {}
 mod tag_name {
     use async_str_iter::AsyncStrIterator;

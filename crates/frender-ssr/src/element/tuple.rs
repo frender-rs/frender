@@ -1,20 +1,6 @@
-use crate::{Element, RenderState};
+use crate::SsrElement;
 
-impl RenderState for () {
-    fn poll_render<W: crate::AsyncWrite + ?Sized>(
-        self: std::pin::Pin<&mut Self>,
-        _: std::pin::Pin<&mut W>,
-        _: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<std::io::Result<()>> {
-        std::task::Poll::Ready(Ok(()))
-    }
-}
-
-impl Element for () {
-    type SsrState = ();
-
-    fn into_ssr_state(self) -> Self::SsrState {}
-
+impl SsrElement for () {
     type HtmlChildren = crate::Empty;
 
     fn into_html_children(self) -> Self::HtmlChildren {
@@ -22,13 +8,7 @@ impl Element for () {
     }
 }
 
-impl<R0: Element> Element for (R0,) {
-    type SsrState = R0::SsrState;
-
-    fn into_ssr_state(self) -> Self::SsrState {
-        R0::into_ssr_state(self.0)
-    }
-
+impl<R0: SsrElement> SsrElement for (R0,) {
     type HtmlChildren = R0::HtmlChildren;
 
     fn into_html_children(self) -> Self::HtmlChildren {
@@ -39,49 +19,14 @@ impl<R0: Element> Element for (R0,) {
 macro_rules! impl_render_for_tuple {
     ($(($($field:ident),+) ,)+) => {
         $(
-            impl<$($field: RenderState),+> RenderState for ($($field,)+) {
-                fn poll_render<W: crate::AsyncWrite + ?Sized>(
-                    self: std::pin::Pin<&mut Self>,
-                    mut writer: std::pin::Pin<&mut W>,
-                    cx: &mut std::task::Context<'_>,
-                ) -> std::task::Poll<std::io::Result<()>> {
-                    #[allow(non_snake_case)]
-                    // SAFETY: pin projection
-                    let ($($field,)+) = unsafe {
-                        match std::pin::Pin::get_unchecked_mut(self) {
-                            ($($field,)+) => (
-                                $(std::pin::Pin::new_unchecked($field),)+
-                            )
-                        }
-                    };
-
-                    $(
-                        crate::ready_ok!($field::poll_render($field, writer.as_mut(), cx));
-                    )+
-
-                    std::task::Poll::Ready(Ok(()))
-                }
-            }
-
-            impl<$($field: Element),+> Element for ($($field),+) {
-                type SsrState = ($($field::SsrState,)+);
-
-                #[inline]
-                fn into_ssr_state(self) -> Self::SsrState {
-                    #[allow(non_snake_case)]
-                    let ($($field,)+) = self;
-
-                    ($(
-                        $field::into_ssr_state($field),
-                    )+)
-                }
-
+            impl<$($field: SsrElement),+> SsrElement for ($($field),+) {
                 type HtmlChildren = <
                     async_str_iter::concat::Concat<($($field::HtmlChildren),+)>
                     as async_str_iter::IntoAsyncStrIterator
                 >::IntoAsyncStrIterator;
 
                 fn into_html_children(self) -> Self::HtmlChildren {
+                    #[allow(non_snake_case)]
                     let ($($field,)+) = self;
                     async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(
                         async_str_iter::concat::Concat(
