@@ -18,12 +18,3 @@ impl<S: StaticStr> Deref for StaticText<S> {
         &self.0
     }
 }
-
-#[cfg(feature = "ssr")]
-impl<S: 'static + StaticStr> frender_ssr::IntoStaticStr for StaticText<S> {
-    type StaticStr = S;
-
-    fn into_static_str(self) -> Self::StaticStr {
-        self.0
-    }
-}
