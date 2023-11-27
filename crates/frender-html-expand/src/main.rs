@@ -24,8 +24,10 @@ fn main() -> io::Result<()> {
         1,
     )?;
 
-    Ok(())
-    // utils::cargo_fmt_package("frender-html")
+    // Ok(())
+    // run twice
+    utils::cargo_fmt_package("frender-html")?;
+    utils::cargo_fmt_package("frender-html")
 }
 
 pub fn write_mod_content_into_dir(
