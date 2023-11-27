@@ -32,12 +32,8 @@ pub mod __private {
     pub use hooks_core::transform_hook_fn_body_as_closure;
     pub use syn_lite::{expand_or, parse_item_fn};
 
-    #[cfg(feature = "csr")]
-    pub use frender_csr::Element as csr;
-
     pub mod main {
-        #[cfg(all(feature = "csr", feature = "spawn"))]
-        // pub use frender_csr::spawn_mount_to_dom_element;
+        #[cfg(all(feature = "web", feature = "spawn"))]
         pub use frender_csr_web::mount::spawn_mount_to_dom_element;
     }
 

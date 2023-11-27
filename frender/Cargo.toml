@@ -15,7 +15,6 @@ js-sys = "0.3"
 bg = { version = "0.2.0", optional = true }
 frender-common = { version = "0.1.0", path = "../crates/frender-common" }
 frender-ssr = { version = "0.1.0", path = "../crates/frender-ssr", default-features = false, optional = true }
-frender-csr = { version = "0.1.0", path = "../crates/frender-csr", default-features = false, optional = true }
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
@@ -47,9 +46,9 @@ wasm-bindgen-test = "0.3.13"
 
 [features]
 default = ["html-components", "either", "hooks"]
-csr = ["frender-hook-element/csr", "frender-csr"]
 ssr = ["frender-hook-element/ssr", "frender-ssr"]
-spawn = ["frender-hook-element/spawn"]
 html = ["frender-html"]
 html-components = ["html"]
-either = ["dep:either", "frender-ssr?/either", "frender-csr?/either"]
+either = ["dep:either", "frender-ssr?/either"]
+web = ["frender-hook-element/web"]
+spawn = ["frender-hook-element/spawn"]

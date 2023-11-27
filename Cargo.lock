@@ -842,7 +842,6 @@ dependencies = [
  "bg",
  "either",
  "frender-common",
- "frender-csr",
  "frender-element",
  "frender-events",
  "frender-hook-element",
@@ -861,24 +860,6 @@ dependencies = [
 [[package]]
 name = "frender-common"
 version = "0.1.0"
-
-[[package]]
-name = "frender-csr"
-version = "0.1.0"
-dependencies = [
- "either",
- "frender-common",
- "frender-html-common",
- "futures-lite 1.13.0",
- "gloo",
- "indexmap 1.9.3",
- "js-sys",
- "lazy-pinned",
- "pin-project-lite",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
 
 [[package]]
 name = "frender-csr-web"
@@ -960,7 +941,6 @@ dependencies = [
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
- "frender-csr",
  "frender-csr-web",
  "frender-element",
  "frender-html",
@@ -1452,7 +1432,6 @@ version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8d5564e570a38b43d78bdc063374a0c3098c4f0d64005b12f9bbe87e869b6d7"
 dependencies = [
- "futures-channel",
  "gloo-events 0.1.2",
  "js-sys",
  "wasm-bindgen",
@@ -1526,8 +1505,6 @@ version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b995a66bb87bebce9a0f4a95aed01daca4872c050bfcb21653361c03bc35e5c"
 dependencies = [
- "futures-channel",
- "futures-core",
  "js-sys",
  "wasm-bindgen",
 ]
@@ -1627,12 +1604,6 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
-
-[[package]]
-name = "hashbrown"
-version = "0.12.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hashbrown"
@@ -1769,22 +1740,12 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "1.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99"
-dependencies = [
- "autocfg",
- "hashbrown 0.12.3",
-]
-
-[[package]]
-name = "indexmap"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d5477fe2230a79769d8dc68e0eabf5437907c0457a5614a9e8dddb67f65eb65d"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.0",
+ "hashbrown",
 ]
 
 [[package]]
@@ -3108,7 +3069,7 @@ version = "0.19.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8123f27e969974a3dfba720fdb560be359f57b44302d280ba72e76a74480e8a"
 dependencies = [
- "indexmap 2.0.0",
+ "indexmap",
  "serde",
  "serde_spanned",
  "toml_datetime",

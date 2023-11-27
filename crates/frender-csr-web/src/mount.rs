@@ -38,7 +38,7 @@ pub fn mount_to_dom_element<'e, E: Element + 'e>(
     }
 }
 
-// #[cfg(feature = "spawn")] // TODO: feature-ize
+#[cfg(feature = "spawn")]
 pub fn spawn_mount_to_dom_element<E: Element + 'static>(
     get_element: E,
     get_dom_element: impl GetDomElement,
