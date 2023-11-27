@@ -62,7 +62,6 @@ crate::def_intrinsic_component_props!(
                     + RenderTextFrom<Self::Text, usize>
                     + RenderTextFrom<Self::Text, f32>
                     + RenderTextFrom<Self::Text, f64>
-                    + RenderTextFrom<Self::Text, bool>
                     + RenderTextFrom<Self::Text, char>
             );
 
