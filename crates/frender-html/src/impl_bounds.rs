@@ -506,14 +506,6 @@ pub mod MaybeHandleEvent {
             }
             $ssr:ident !{ $($ssr_fields:tt)* }
         ) => {
-            #[cfg(feature = "ssr")]
-            impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::IntoAsyncWritableAttrs
-                for $($wrapper)*::<V>
-            {
-                type AsyncWritableAttrs = ();
-                fn into_async_writable_attrs(_: Self) {}
-            }
-
             impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
                 for $($wrapper)*::<V>
             {
@@ -553,7 +545,6 @@ pub mod MaybeContentEditable {
     }
 
     pub mod ssr {
-        use frender_common::write::attrs::AsyncWritableAttrValueStr;
         use frender_html_common::MaybeContentEditable;
 
         pub use crate::DefaultSsrHaevoe as Haevoe;

@@ -2,13 +2,7 @@ use async_str_iter::{
     any_str::{AnyStr, IterAnyStr},
     AsyncStrIterator, IntoAsyncStrIterator,
 };
-use frender_common::write::{
-    attrs::{
-        writable::AsyncWritableAttrValue, AsyncWritableAttrValueBooleanTrue,
-        AsyncWritableAttrValueStr,
-    },
-    str::{AsyncWritableStr, StrWriting},
-};
+
 use frender_ssr_html::{assert::HtmlAttributeEqValueOrEmpty, attr_value::AttrEqValue};
 
 use crate::impl_many;
@@ -27,29 +21,6 @@ impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
 
     fn remove(self) {
         self.1()
-    }
-}
-
-pub enum NeverWritable {}
-impl AsyncWritableAttrValue for NeverWritable {
-    fn poll_write_attr_value_into<
-        W: frender_common::write::attrs::write_traits::AsyncWriteAttrValue,
-    >(
-        &mut self,
-        cx: &mut std::task::Context,
-        write: W,
-    ) -> std::task::Poll<std::io::Result<W::AsyncWriteAttrName>> {
-        match *self {}
-    }
-}
-
-impl AsyncWritableStr for NeverWritable {
-    fn poll_write_str_into<W: frender_common::write::str::AsyncWriteStr>(
-        &mut self,
-        cx: &mut std::task::Context,
-        write: &mut W,
-    ) -> std::task::Poll<std::io::Result<()>> {
-        match *self {}
     }
 }
 
@@ -82,24 +53,12 @@ pub trait MaybeUpdateValueWithState<V: ?Sized + ValueType> {
         remove: impl FnOnce(),
     );
 
-    type ChildStr: AsyncWritableStr;
-    fn maybe_into_child_str(
-        this: Self,
-        supported: <V as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr>;
-
     type HtmlAttributeEqValueOrEmpty: HtmlAttributeEqValueOrEmpty;
 
     /// `None` indicates this attributes is not present
     fn maybe_into_html_attribute_eq_value_or_empty(
         this: Self,
     ) -> Option<Self::HtmlAttributeEqValueOrEmpty>;
-
-    type AttrValue: AsyncWritableAttrValue;
-    fn maybe_into_attr_value(
-        this: Self,
-        supported: <V as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue>;
 
     type UpdateWithState: Default;
 
@@ -128,24 +87,6 @@ impl<V: ?Sized + ValueType> MaybeUpdateValueWithState<V> for () {
         _: impl FnOnce(&V),
         _: impl FnOnce(),
     ) {
-    }
-
-    type ChildStr = NeverWritable;
-
-    fn maybe_into_child_str(
-        (): Self,
-        _: <V as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        None
-    }
-
-    type AttrValue = NeverWritable;
-
-    fn maybe_into_attr_value(
-        (): Self,
-        _: <V as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        None
     }
 
     type UpdateWithState = ();
@@ -204,24 +145,6 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized + ValueType> MaybeUpdateValueWit
         }
     }
 
-    type ChildStr = T::ChildStr;
-
-    fn maybe_into_child_str(
-        this: Self,
-        supported: <V as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        this.and_then(|this| T::maybe_into_child_str(this, supported))
-    }
-
-    type AttrValue = T::AttrValue;
-
-    fn maybe_into_attr_value(
-        this: Self,
-        supported: <V as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        this.and_then(|this| T::maybe_into_attr_value(this, supported))
-    }
-
     type UpdateWithState = T::UpdateWithState;
 
     fn update_with_state(
@@ -271,24 +194,6 @@ impl MaybeUpdateValueWithState<str> for &str {
         _: impl FnOnce(),
     ) {
         update(this)
-    }
-
-    type ChildStr = StrWriting<Self>;
-
-    fn maybe_into_child_str(
-        this: Self,
-        (): <str as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        Some(StrWriting::new(this))
-    }
-
-    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
-
-    fn maybe_into_attr_value(
-        this: Self,
-        (): <str as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        Some(AsyncWritableAttrValueStr::new_from_str(this))
     }
 
     type UpdateWithState = ();
@@ -348,24 +253,6 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
                 update(this)
             }
         }
-    }
-
-    type ChildStr = StrWriting<Self>;
-
-    fn maybe_into_child_str(
-        this: Self,
-        (): <str as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        Some(StrWriting::new(this))
-    }
-
-    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
-
-    fn maybe_into_attr_value(
-        this: Self,
-        supported: <str as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        Some(AsyncWritableAttrValueStr::new_from_str(this))
     }
 
     type UpdateWithState = Self::State;
@@ -463,24 +350,6 @@ impl MaybeUpdateValueWithState<str> for String {
         *state = this;
     }
 
-    type ChildStr = StrWriting<Self>;
-
-    fn maybe_into_child_str(
-        this: Self,
-        (): <str as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        Some(StrWriting::new(this))
-    }
-
-    type AttrValue = AsyncWritableAttrValueStr<StrWriting<Self>>;
-
-    fn maybe_into_attr_value(
-        this: Self,
-        supported: <str as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        Some(AsyncWritableAttrValueStr::new_from_str(this))
-    }
-
     type UpdateWithState = Option<Self::State>;
 
     fn update_with_state(
@@ -553,21 +422,6 @@ impl_many!(
             *state = this;
         }
 
-        type ChildStr = StrWriting<String>;
-
-        fn maybe_into_child_str(
-            this: Self,
-            supported: <Self as ValueType>::SupportIntoChildStr,
-        ) -> Option<Self::ChildStr> {
-            String::maybe_into_child_str(this.to_string(), supported)
-        }
-
-        type AttrValue = AsyncWritableAttrValueStr<StrWriting<String>>;
-
-        fn maybe_into_attr_value(this: Self, supported: ()) -> Option<Self::AttrValue> {
-            String::maybe_into_attr_value(this.to_string(), supported)
-        }
-
         type UpdateWithState = Option<Self::State>;
 
         fn update_with_state(
@@ -622,28 +476,6 @@ impl MaybeUpdateValueWithState<bool> for bool {
         }
         update(&this);
         *state = this;
-    }
-
-    type ChildStr = NeverWritable;
-
-    fn maybe_into_child_str(
-        this: Self,
-        supported: <bool as ValueType>::SupportIntoChildStr,
-    ) -> Option<Self::ChildStr> {
-        match supported {}
-    }
-
-    type AttrValue = AsyncWritableAttrValueBooleanTrue;
-
-    fn maybe_into_attr_value(
-        this: Self,
-        (): <bool as ValueType>::SupportIntoAttrValue,
-    ) -> Option<Self::AttrValue> {
-        if this {
-            Some(AsyncWritableAttrValueBooleanTrue)
-        } else {
-            None
-        }
     }
 
     type UpdateWithState = Option<Self::State>;

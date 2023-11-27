@@ -29,10 +29,6 @@ pub use html_escape;
 
 pub mod element;
 
-pub mod utils;
-
-pub mod write_attrs;
-
 pub mod async_str {
     pub use async_str_iter::{chain, empty, flat, option};
     pub use frender_ssr_html::encode;

@@ -1,7 +1,6 @@
 // mod advanced; // TODO: impl advanced dom tokens
 
 use async_str_iter::AsyncStrIterator;
-use frender_common::write::str::AsyncWritableStr;
 
 #[doc(hidden)]
 pub mod custom_const_dom_tokens {
@@ -199,10 +198,6 @@ pub trait DomTokens {
         state: &mut Self::UpdateWithState,
     );
 
-    type AsyncWritableDomTokens: AsyncWritableStr;
-
-    fn maybe_into_async_writable_dom_tokens(this: Self) -> Option<Self::AsyncWritableDomTokens>;
-
     type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
     fn dom_tokens_maybe_into_async_str_iter(this: Self) -> Option<Self::DomTokensIntoAsyncStrIter>;
@@ -212,7 +207,6 @@ mod impl_for_static_string {
     use std::borrow::Cow;
 
     use async_str_iter::IntoAsyncStrIterator;
-    use frender_common::write::str::StrWriting;
 
     use super::DomTokens;
 
@@ -264,13 +258,6 @@ mod impl_for_static_string {
                 *state = Some(this)
             }
 
-            type AsyncWritableDomTokens = StrWriting<Self>;
-            fn maybe_into_async_writable_dom_tokens(
-                this: Self,
-            ) -> Option<Self::AsyncWritableDomTokens> {
-                Some(StrWriting::new(this))
-            }
-
             type DomTokensIntoAsyncStrIter = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
 
             fn dom_tokens_maybe_into_async_str_iter(
@@ -283,7 +270,6 @@ mod impl_for_static_string {
 }
 
 mod impl_for_unit_tuple {
-    use crate::NeverWritable;
 
     use super::DomTokens;
 
@@ -310,12 +296,6 @@ mod impl_for_unit_tuple {
             _: &mut impl super::DomTokenList,
             (): &mut Self::UpdateWithState,
         ) {
-        }
-
-        type AsyncWritableDomTokens = NeverWritable;
-
-        fn maybe_into_async_writable_dom_tokens((): Self) -> Option<Self::AsyncWritableDomTokens> {
-            None
         }
 
         type DomTokensIntoAsyncStrIter = async_str_iter::never::Never;

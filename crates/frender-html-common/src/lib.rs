@@ -11,6 +11,4 @@ pub use content_editable::MaybeContentEditable;
 pub mod css;
 pub use css::Css;
 
-pub use frender_common::write::attrs::{AsyncWritableAttrs, IntoAsyncWritableAttrs};
-
 use frender_common::impl_many;
