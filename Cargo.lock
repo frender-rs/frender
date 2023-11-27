@@ -1047,9 +1047,6 @@ dependencies = [
  "frender-common",
  "frender-html-common",
  "frender-ssr-html",
- "futures-io",
- "futures-lite 2.0.1",
- "html-escape",
  "pin-project-lite",
 ]
 
