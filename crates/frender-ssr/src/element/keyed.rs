@@ -7,10 +7,10 @@ where
     K: std::hash::Hash + Eq, // TODO: ToString ?
     E: Element,
 {
-    type HtmlChildren = crate::async_str::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
+    type HtmlChildren = async_str_iter::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
 
     fn into_html_children(self) -> Self::HtmlChildren {
-        crate::async_str::flat::Flat::new(IterKeyed(self.into_iter()))
+        async_str_iter::flat::Flat::new(IterKeyed(self.into_iter()))
     }
 }
 
@@ -44,9 +44,9 @@ where
     K: std::hash::Hash + Eq, // TODO: ToString ?
     E: Element,
 {
-    type HtmlChildren = crate::async_str::flat::Flat<IterKeyed<I::IntoIter>>;
+    type HtmlChildren = async_str_iter::flat::Flat<IterKeyed<I::IntoIter>>;
 
     fn into_html_children(self) -> Self::HtmlChildren {
-        crate::async_str::flat::Flat::new(IterKeyed(self.iter.into_iter()))
+        async_str_iter::flat::Flat::new(IterKeyed(self.iter.into_iter()))
     }
 }

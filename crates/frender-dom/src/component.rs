@@ -54,21 +54,23 @@ pub trait IntoSpaceAndHtmlAttributesOrEmpty {
 }
 
 impl IntoSpaceAndHtmlAttributesOrEmpty for () {
-    type SpaceAndHtmlAttributesOrEmpty = frender_ssr::Empty;
+    type SpaceAndHtmlAttributesOrEmpty = async_str_iter::empty::Empty;
 
     fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-        frender_ssr::Empty
+        async_str_iter::empty::Empty
     }
 }
 
 impl<A: IntoSpaceAndHtmlAttributesOrEmpty, B: IntoSpaceAndHtmlAttributesOrEmpty>
     IntoSpaceAndHtmlAttributesOrEmpty for (A, B)
 {
-    type SpaceAndHtmlAttributesOrEmpty =
-        frender_ssr::Chain<A::SpaceAndHtmlAttributesOrEmpty, B::SpaceAndHtmlAttributesOrEmpty>;
+    type SpaceAndHtmlAttributesOrEmpty = async_str_iter::chain::Chain<
+        A::SpaceAndHtmlAttributesOrEmpty,
+        B::SpaceAndHtmlAttributesOrEmpty,
+    >;
 
     fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-        frender_ssr::Chain::new(
+        async_str_iter::chain::Chain::new(
             self.0.into_space_and_html_attributes_or_empty(),
             self.1.into_space_and_html_attributes_or_empty(),
         )

@@ -187,7 +187,7 @@ macro_rules! default_impl_ssr {
         impl<V: $($bounds)*::Bounds::<$($bounds_tp,)*>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
             for $($wrapper)*::<V>
         {
-            type SpaceAndHtmlAttributesOrEmpty = ::frender_ssr::async_str::option::IterOption<::frender_ssr::html::attr::SpaceAndHtmlAttribute<
+            type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::option::IterOption<::frender_ssr::html::attr::SpaceAndHtmlAttribute<
                 ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName<&'static str>,
                 $($bounds)*::$ssr::Haevoe![{$($bounds)*}[$($bounds_tp),*][V]],
             >>;
@@ -198,7 +198,7 @@ macro_rules! default_impl_ssr {
                         ::core::concat!(" ", $attr_name)
                     );
 
-                ::frender_ssr::IntoAsyncStrIterator::into_async_str_iterator(
+                ::async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(
                     $($bounds)*::$ssr::maybe_into_haevoe(self.0, $($ssr_fields)*).map(|v| ::frender_ssr::html::attr::SpaceAndHtmlAttribute(
                         SPACE_AND_ATTR_NAME,
                         v,
@@ -509,10 +509,10 @@ pub mod MaybeHandleEvent {
             impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
                 for $($wrapper)*::<V>
             {
-                type SpaceAndHtmlAttributesOrEmpty = ::frender_ssr::async_str::empty::Empty;
+                type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;
 
                 fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-                    ::frender_ssr::async_str::empty::Empty
+                    ::async_str_iter::empty::Empty
                 }
             }
         };
