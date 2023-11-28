@@ -488,6 +488,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "counter"
+version = "0.1.0"
+dependencies = [
+ "frender",
+ "gloo",
+ "hooks",
+]
+
+[[package]]
 name = "counter-no-proc-macro"
 version = "0.1.0"
 dependencies = [
@@ -919,6 +928,7 @@ dependencies = [
 name = "frender-element"
 version = "0.1.0"
 dependencies = [
+ "either",
  "frender-common",
  "frender-html",
  "frender-ssr",
@@ -1840,6 +1850,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c5f195fe497f702db0f318b07fdd68edb16955aed830df8363d837542f8f935a"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "keyed-elements"
+version = "0.1.0"
+dependencies = [
+ "either",
+ "frender",
+ "gloo",
+ "hooks",
 ]
 
 [[package]]

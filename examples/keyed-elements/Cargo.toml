@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 frender = { path = "../../frender", features = [
-    "csr",
+    "web",
     "spawn",
     "bg",
     "either",

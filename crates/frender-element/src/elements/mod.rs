@@ -5,8 +5,8 @@ pub mod keyed;
 pub mod option;
 pub mod tuple;
 
-// #[cfg(feature = "either")]
-// pub mod either;
+#[cfg(feature = "either")]
+pub mod either;
 
 // pub mod intrinsic;
 pub mod scalar;

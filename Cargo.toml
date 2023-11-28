@@ -4,10 +4,7 @@ members = [
     #
     "frender",
     "crates/*",
-    "examples/counter-no-proc-macro",
-    "examples/ssr-to-string",
-    # "examples/counter",
-    "examples/tic-tac-toe",
+    "examples/*",
 ]
 
 [profile.release]

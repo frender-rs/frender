@@ -69,7 +69,7 @@ impl Data {
     }
 }
 
-#[component(main(get_dom_element = "frender-root"), only_dom)]
+#[component(main(get_dom_element = "frender-root"))]
 fn Main() {
     let data = hooks::use_shared_state_with(Data::new);
 

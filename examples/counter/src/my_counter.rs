@@ -7,8 +7,8 @@ frender::bg::builder! {
     }
 }
 
-#[component(only_dom, bg = "frender::bg")]
-pub fn MyCounter(ctx: _, props: MyCounterProps) {
+#[component(bg = "frender::bg")]
+pub fn MyCounter(props: MyCounterProps) {
     let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
     let shared_state = hooks::use_shared_state(initial_value);
 
@@ -28,7 +28,7 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
 
     let state = shared_state.get();
 
-    ctx.render(rsx!(
+    rsx!(
         <div>
             <button on_click={on_decrement} disabled={state == 0}>
                 " - "
@@ -40,5 +40,5 @@ pub fn MyCounter(ctx: _, props: MyCounterProps) {
                 " + "
             </button>
         </div>
-    ))
+    )
 }

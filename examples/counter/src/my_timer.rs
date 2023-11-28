@@ -6,7 +6,7 @@ frender::bg::builder! {
     }
 }
 
-#[component(only_dom, bg)]
+#[component(bg)]
 pub fn MyTimer(props: MyTimerProps) {
     // store the initial_interval value,
     // so that the value never changes in the component life.
