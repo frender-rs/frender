@@ -51,6 +51,11 @@ You can also [sponsor me](https://ko-fi.com/equalma) and I would be very gratefu
 
 ## Development
 
+Files in [`crates/frender-html/src/html/props_builders`](crates/frender-html/src/html/props_builders)
+are generated from `mod props_builders`
+in [`crates/frender-html/src/html.rs`](crates/frender-html/src/html.rs)
+with the following command:
+
 ```
 cargo run --bin frender-html-expand
 ```
