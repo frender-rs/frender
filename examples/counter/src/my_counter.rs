@@ -1,13 +1,14 @@
+use bg::Maybe;
 use frender::prelude::*;
 use hooks::{shared_state::SharedState, ShareValue};
 
-frender::bg::builder! {
+bg::builder! {
     pub struct MyCounterProps {
         initial_value[? u32],
     }
 }
 
-#[component(bg = "frender::bg")]
+#[component(bg = "bg")]
 pub fn MyCounter(props: MyCounterProps) {
     let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
     let shared_state = hooks::use_shared_state(initial_value);

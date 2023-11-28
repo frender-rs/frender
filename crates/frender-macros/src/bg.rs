@@ -68,7 +68,7 @@ impl FromMeta for BgOptions {
 impl BgOptions {
     pub fn path_to_ts(&self) -> TokenStream {
         self.options.path.as_ref().map_or_else(
-            || quote_spanned! (self.span=> ::frender::bg ),
+            || quote_spanned! (self.span=> bg ),
             ToTokens::to_token_stream,
         )
     }

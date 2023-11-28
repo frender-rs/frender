@@ -491,6 +491,7 @@ dependencies = [
 name = "counter"
 version = "0.1.0"
 dependencies = [
+ "bg",
  "frender",
  "gloo",
  "hooks",
@@ -848,7 +849,6 @@ dependencies = [
 name = "frender"
 version = "2.0.0-alpha.1"
 dependencies = [
- "bg",
  "either",
  "frender-common",
  "frender-element",
