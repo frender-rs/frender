@@ -7,8 +7,8 @@ use frender::prelude::*;
 
 pub struct Square<V, OnClick>
 where
-    V: frender::CsrElement,
-    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
+    V: Element,
+    OnClick: frender::MaybeHandleEvent<dyn frender::MouseEvent>,
 {
     value: V,
     on_click: OnClick,
@@ -16,11 +16,11 @@ where
 
 impl<V, OnClick> Square<V, OnClick>
 where
-    V: frender::CsrElement,
-    OnClick: frender::MaybeHandleEvent<frender::events::MouseEvent>,
+    V: Element,
+    OnClick: frender::MaybeHandleEvent<dyn frender::MouseEvent>,
 {
     // #[component(only_dom)] // TODO: optimize with zero hooks
-    fn into_element(self) -> impl CsrElement {
+    fn into_element(self) -> impl Element {
         rsx!(
             <button class="square" on_click={self.on_click}>
                 {self.value}
@@ -43,7 +43,7 @@ impl<
             + 'static,
     > Board<OnClick>
 {
-    #[component(only_dom)]
+    #[component]
     fn into_element(self) {
         let render_square = |i: usize| {
             let on_click = self.on_click.clone();
@@ -76,7 +76,7 @@ impl<
     }
 }
 
-#[component(only_dom)]
+#[component]
 fn Game() {
     let (state, state_setter) = hooks::use_state_with(data::Game::new);
 
@@ -140,7 +140,7 @@ fn Game() {
     )
 }
 
-#[component(only_dom, main(get_dom_element = "frender-root"))]
+#[component(main(get_dom_element = "frender-root"))]
 fn Main() {
     rsx!(
         <div style=r#"

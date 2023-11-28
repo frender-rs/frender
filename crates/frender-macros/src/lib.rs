@@ -40,18 +40,3 @@ pub fn rsx(input: TokenStream) -> TokenStream {
 
     value.map(rsx_data::RsxChild::into_ts).into()
 }
-
-#[proc_macro]
-pub fn def_props(input: TokenStream) -> TokenStream {
-    use props_data::PropsDefinitionWithOptions;
-    let value = parse_macro_input!(input with PropsDefinitionWithOptions::parse_proc_macro_input);
-    let mut ts = proc_macro2::TokenStream::new();
-    value.into_tokens(&mut ts);
-    ts.into()
-}
-
-#[cfg(feature = "intrinsic-component")]
-#[proc_macro]
-pub fn def_intrinsic_component_props(input: TokenStream) -> TokenStream {
-    frender_intrinsic_component_macro::into_ts(parse_macro_input!(input)).into()
-}

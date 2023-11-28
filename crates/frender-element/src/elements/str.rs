@@ -308,6 +308,8 @@ macro_rules! impl_render_str {
                     render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, renderer, RenderingStr::create_cache))
                 }
             }
+
+            crate::impl_unpinned_render_for_unpin! {}
         }
     )*};
 }

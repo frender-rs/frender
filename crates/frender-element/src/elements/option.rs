@@ -40,6 +40,19 @@ macro_rules! update_option {
     };
 }
 
+macro_rules! unpinned_update_option {
+    ($_self:ident . $method:ident ($ctx:ident, $state:ident $(, $arg:expr)? )) => {
+        if let Some(this) = $_self {
+            this.$method($ctx, $state $(, $arg)?);
+        } else {
+            <E::UnpinnedRenderState<Renderer> as RenderState<_>>::unmount(
+                Pin::new($state),
+                $ctx
+            )
+        }
+    };
+}
+
 impl<E: Element> Element for Option<E> {
     type RenderState<R: crate::RenderHtml> = E::RenderState<R>;
 
@@ -82,6 +95,41 @@ impl<E: Element> Element for Option<E> {
         force_reposition: bool,
     ) {
         update_option!(self.render_update_maybe_reposition(
+            renderer,
+            render_state,
+            force_reposition
+        ))
+    }
+
+    type UnpinnedRenderState<R: RenderHtml> = E::UnpinnedRenderState<R>;
+
+    fn unpinned_render_update<Renderer: RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+    ) where
+        Self: Sized,
+    {
+        unpinned_update_option!(self.unpinned_render_update(renderer, render_state))
+    }
+
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+    ) where
+        Self: Sized,
+    {
+        unpinned_update_option!(self.unpinned_render_update_force_reposition(renderer, render_state))
+    }
+
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        force_reposition: bool,
+    ) {
+        unpinned_update_option!(self.unpinned_render_update_maybe_reposition(
             renderer,
             render_state,
             force_reposition

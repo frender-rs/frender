@@ -7,6 +7,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-frender = { path = "../../frender", features = ["csr", "spawn", "bg"] }
+frender = { path = "../../frender", features = ["web", "spawn"] }
 hooks = "2.3.0-alpha"
 gloo = "0.8.0"

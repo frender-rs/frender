@@ -31,7 +31,7 @@ impl<'a> MainItem<'a> {
         let ident = proc_macro2::Ident::new("main", span_fn_ident);
 
         let path_dom = quote_spanned! {get_dom_element.original.path().span()=>
-            ::frender_csr::spawn_mount_to_dom_element
+            ::__private::main::spawn_mount_to_dom_element
         };
         let get_dom_element = &get_dom_element.parsed;
 

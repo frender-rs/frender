@@ -3,7 +3,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::{quote, quote_spanned};
 use syn::{parse_quote_spanned, spanned::Spanned};
 
-use crate::{component_data::RenderCtx, err::RecordError};
+use crate::err::RecordError;
 
 use super::transform_item_fn_with;
 
@@ -14,7 +14,7 @@ pub struct ItemFnToBg<'a> {
     pub hook_element_path: &'a syn::Path,
     pub bg_path: &'a TokenStream,
     pub item_fn: syn::ItemFn,
-    pub render_ctx: RenderCtx,
+    pub ssr_only: darling::util::Flag,
     pub use_fn_once: darling::util::Flag,
 }
 
@@ -125,7 +125,7 @@ impl ItemFnToBg<'_> {
             hook_element_path,
             bg_path,
             mut item_fn,
-            render_ctx,
+            ssr_only,
             use_fn_once,
         } = self;
 
@@ -149,7 +149,7 @@ impl ItemFnToBg<'_> {
             &mut item_fn,
             errors,
             hook_element_path,
-            render_ctx,
+            ssr_only,
             use_fn_once,
             |item_fn, errors| {
                 before_stmts(

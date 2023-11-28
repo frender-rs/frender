@@ -34,3 +34,7 @@ mod into_render_element_ext {
 
     impl<R: ?Sized + RenderHtml> IntoRenderElementExt for R {}
 }
+
+pub mod __private {
+    pub use frender_html::RenderHtml;
+}

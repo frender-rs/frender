@@ -11,3 +11,4 @@ pin-project-lite = "0.2.9"
 frender-html = { version = "0.1.0", path = "../frender-html", default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
+indexmap = { version = "2.1.0", features = ["std"] }

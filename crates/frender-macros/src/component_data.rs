@@ -15,32 +15,17 @@ pub struct ComponentMainOptions {
     pub get_dom_element: WithOriginal<ValueOrPath<syn::LitStr>, syn::Meta>,
 }
 
-pub enum RenderCtx {
-    Ssr,
-    Dom,
-    SsrAndDom,
-}
-
 pub type MainOptionsWithOriginal = darling::util::WithOriginal<ComponentMainOptions, syn::Meta>;
 
 #[derive(Debug, FromMeta, Default)]
-pub struct ComponentOptionsInput {
-    #[darling(default)]
-    pub main: Option<MainOptionsWithOriginal>,
-    pub hook_element_path: Option<syn::Path>,
-    pub only_ssr: darling::util::Flag,
-    pub only_dom: darling::util::Flag,
-    #[darling(rename = "FnOnce")]
-    pub use_fn_once: darling::util::Flag,
-    pub bg: Option<BgOptions>,
-}
-
 pub struct ComponentOptions {
+    #[darling(default)]
     pub main: Option<MainOptionsWithOriginal>,
     /// Defaults to `::frender::hook_element`
     pub hook_element_path: Option<syn::Path>,
-    pub render_ctx: RenderCtx,
+    pub ssr_only: darling::util::Flag,
     /// use `FnOnce` instead of `FnMut`
+    #[darling(rename = "FnOnce")]
     pub use_fn_once: darling::util::Flag,
     pub bg: Option<BgOptions>,
 }
@@ -54,35 +39,12 @@ pub struct ComponentDefinition {
 impl ComponentDefinition {
     pub fn from_attrs_and_fn(attr_args: syn::AttributeArgs, item_fn: syn::ItemFn) -> Self {
         let mut errors = vec![];
-        let options = match ComponentOptionsInput::from_list(&attr_args) {
+        let options = match ComponentOptions::from_list(&attr_args) {
             Ok(v) => v,
             Err(err) => {
                 errors.push(err);
-                ComponentOptionsInput::default()
+                ComponentOptions::default()
             }
-        };
-
-        let render_ctx = if options.only_ssr.is_present() {
-            if options.only_dom.is_present() {
-                const MSG: &str = "`only_ssr` and `only_dom` can't be both present";
-                errors.push(darling::Error::custom(MSG).with_span(&options.only_ssr));
-                errors.push(darling::Error::custom(MSG).with_span(&options.only_dom));
-                RenderCtx::SsrAndDom
-            } else {
-                RenderCtx::Ssr
-            }
-        } else if options.only_dom.is_present() {
-            RenderCtx::Dom
-        } else {
-            RenderCtx::SsrAndDom
-        };
-
-        let options = ComponentOptions {
-            main: options.main,
-            hook_element_path: options.hook_element_path,
-            render_ctx,
-            use_fn_once: options.use_fn_once,
-            bg: options.bg,
         };
 
         Self {

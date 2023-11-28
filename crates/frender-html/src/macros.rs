@@ -147,7 +147,7 @@ macro_rules! impl_behavior_fn {
 
             ::gloo_events::EventListener::new(
                 element,
-                <crate::html::event_types::$fn_name as ::frender_dom::event::HasEventTypeName>::EVENT_TYPE_NAME,
+                <crate::html::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME,
                 move |event| {
                     use wasm_bindgen::JsCast;
                     let event = event.unchecked_ref();
@@ -909,11 +909,11 @@ macro_rules! event_type {
     ]); $trait_name:ident) => {
         pub enum $fn_name {}
 
-        impl ::frender_dom::event::HasEventTypeName for $fn_name {
+        impl ::frender_dom::HasEventTypeName for $fn_name {
             const EVENT_TYPE_NAME: &'static str = $event_type_name;
         }
 
-        ::frender_dom::event::type_traits_impl::$event_trait_name! {
+        ::frender_dom::event_types::type_traits_impl::$event_trait_name! {
             $fn_name,
             $trait_name,
             $event_type_ident,

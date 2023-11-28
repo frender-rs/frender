@@ -466,8 +466,7 @@ pub mod MaybeHandleEvent {
 
     #[cfg(feature = "csr")]
     pub mod csr {
-        use frender_events::{callable::StatedEvent, EventListener, MaybeHandleEvent, NewFromRef};
-        use wasm_bindgen::JsCast;
+        use frender_events::MaybeHandleEvent;
 
         pub struct Input<'a, V, E: ?Sized, R: ?Sized, F> {
             pub this: V,

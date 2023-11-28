@@ -17,7 +17,7 @@ pub mod omitted;
 pub use elements::static_text::StaticText;
 
 pub use frender_common::{Elements, Keyed};
-pub use frender_macros::{component, def_props};
+pub use frender_macros::component;
 
 // #[cfg(feature = "csr")]
 // pub use frender_hook_element::frender_csr as csr;
@@ -40,7 +40,8 @@ pub use prelude::*;
 pub use frender_hook_element as hook_element;
 pub use frender_hook_element::component_fn;
 
-pub use frender_events::{events, MaybeHandleEvent};
+pub use event::*;
+pub use frender_events::{event, MaybeHandleEvent};
 
 #[cfg(feature = "bg")]
 pub use bg;

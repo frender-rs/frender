@@ -179,6 +179,52 @@ mod imp {
                 force_reposition,
             )
         }
+
+        type UnpinnedRenderState<R: RenderHtml> =
+            IntrinsicElementRenderState<
+                C::Element<R>,
+                ElementPropsState<
+                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::ChildrenUnpinnedRenderState<R>,
+                    <P::Attrs as UpdateElementNonReactive<C>>::State<R>
+                >,
+            >;
+
+        fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
+            self,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<Renderer>,
+            force_reposition: bool,
+        ) {
+            let props_state = &mut render_state.props_state;
+
+            let frender_html::dom::component::ElementProps {
+                children,
+                attributes,
+            } = P::into_element_props(self.1);
+
+            let element_and_mounted =
+                render_state
+                    .element_and_mounted
+                    .get_or_insert_with(|| ElementAndMounted {
+                        element: <C as CreateNode>::create_node(renderer).into(),
+                        mounted: false,
+                    });
+
+            update_element_maybe_reposition(
+                element_and_mounted,
+                renderer,
+                |element, renderer| {
+                    <P::Attrs>::update_element_non_reactive(
+                        attributes,
+                        renderer,
+                        frender_common::convert::IntoMut::into_mut(element),
+                        &mut props_state.attrs_state,
+                    );
+                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::children_unpinned_render_update(children, renderer, &mut props_state.children_render_state)
+                },
+                force_reposition,
+            )
+        }
     }
 
     pub fn update_element_maybe_reposition<

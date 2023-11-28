@@ -1,6 +1,6 @@
 // pub mod array;
 // pub mod boxed;
-// pub mod keyed;
+pub mod keyed;
 // pub mod non_reactive;
 pub mod option;
 pub mod tuple;

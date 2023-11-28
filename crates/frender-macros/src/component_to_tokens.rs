@@ -17,7 +17,7 @@ impl ComponentDefinition {
                 ComponentOptions {
                     //
                     main,
-                    render_ctx,
+                    ssr_only,
                     hook_element_path,
                     use_fn_once,
                     bg,
@@ -60,7 +60,7 @@ impl ComponentDefinition {
                 hook_element_path: &hook_element_path,
                 bg_path: &bg.path_to_ts(),
                 item_fn,
-                render_ctx,
+                ssr_only,
                 use_fn_once,
             }
             .into_ts()
@@ -69,7 +69,7 @@ impl ComponentDefinition {
                 &mut item_fn,
                 &mut errors,
                 &hook_element_path,
-                render_ctx,
+                ssr_only,
                 use_fn_once,
             );
 

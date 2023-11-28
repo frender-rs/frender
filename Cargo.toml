@@ -6,6 +6,8 @@ members = [
     "crates/*",
     "examples/counter-no-proc-macro",
     "examples/ssr-to-string",
+    # "examples/counter",
+    "examples/tic-tac-toe",
 ]
 
 [profile.release]

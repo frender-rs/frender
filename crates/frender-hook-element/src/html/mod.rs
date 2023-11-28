@@ -73,6 +73,72 @@ where
     }
 }
 
+#[derive(Default)]
+pub struct UnpinnedState<HookData, S, U> {
+    use_hook: U,
+    render_iteration_count: u8,
+    hook_data: HookData,
+    render_state: S,
+}
+
+impl<HookData, S, U> Unpin for UnpinnedState<HookData, S, U> {}
+
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: Element, R: RenderHtml>
+    RenderState<R> for UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>
+where
+    U: FnMut(Pin<&mut HookData>) -> E,
+    HookData: Unpin,
+{
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+        let this = self.get_mut();
+        Pin::new(&mut this.hook_data).unmount();
+        RenderState::<_>::unmount(Pin::new(&mut this.render_state), renderer);
+    }
+
+    fn state_unmount(self: Pin<&mut Self>) {
+        let this = self.get_mut();
+        Pin::new(&mut this.hook_data).unmount();
+        Pin::new(&mut this.render_state).state_unmount();
+    }
+
+    fn poll_render(
+        self: Pin<&mut Self>,
+        renderer: &mut R,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        let this = self.get_mut();
+
+        let use_hook = if let Some(use_hook) = &mut this.use_hook {
+            use_hook
+        } else {
+            return Poll::Ready(());
+        };
+
+        loop {
+            let a = Pin::new(&mut this.hook_data).poll_next_update(cx);
+            let b = Pin::new(&mut this.render_state).poll_render(renderer, cx);
+
+            match (a, b) {
+                (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
+                (Poll::Ready(true), _) => {
+                    let element = use_hook(Pin::new(&mut this.hook_data));
+
+                    element.unpinned_render_update(renderer, &mut this.render_state);
+
+                    if this.render_iteration_count == u8::MAX {
+                        this.render_iteration_count = 0;
+                        cx.waker().wake_by_ref();
+                        return Poll::Pending;
+                    } else {
+                        this.render_iteration_count += 1;
+                    }
+                }
+                _ => return Poll::Pending,
+            }
+        }
+    }
+}
+
 pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U> {
     use_hook: U,
     _phantom: PhantomData<HookData>,
@@ -82,6 +148,7 @@ impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: Element> Elemen
     for FnHookElement<HookData, U>
 where
     U: FnMut(Pin<&mut HookData>) -> E,
+    HookData: Unpin,
 {
     type RenderState<R: RenderHtml> = State<HookData, E::RenderState<R>, Option<U>>;
 
@@ -98,6 +165,24 @@ where
             force_reposition,
         );
         *render_state.use_hook = Some(self.use_hook);
+    }
+
+    type UnpinnedRenderState<R: RenderHtml> =
+        UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>;
+
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
+        mut self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        force_reposition: bool,
+    ) {
+        (self.use_hook)(Pin::new(&mut render_state.hook_data))
+            .unpinned_render_update_maybe_reposition(
+                renderer,
+                &mut render_state.render_state,
+                force_reposition,
+            );
+        render_state.use_hook = Some(self.use_hook);
     }
 }
 

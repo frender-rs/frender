@@ -11,20 +11,11 @@
 mod html;
 pub use html::*;
 
-// #[cfg(feature = "csr")]
-// pub use frender_csr;
+pub use frender_element::Element;
 
-// #[cfg(feature = "ssr")]
-// pub mod ssr;
-
-// #[cfg(feature = "csr")]
-// pub mod csr;
-
-// #[cfg(feature = "ssr")]
-// pub use ssr::{SsrRenderContext, UseSsr};
-
-// #[cfg(feature = "ssr")]
-// pub use frender_ssr;
+pub mod ssr_only {
+    pub use frender_ssr::SsrElement;
+}
 
 #[doc(hidden)]
 pub mod __private {

@@ -7,11 +7,13 @@ edition = "2021"
 
 [dependencies]
 callable = "0.3.0"
-gloo = "0.8.0"
-wasm-bindgen = "0.2.84"
+frender-common = { version = "0.1.0", path = "../frender-common" }
+gloo = { version = "0.8.0", optional = true }
+wasm-bindgen = { version = "0.2.84", optional = true }
 
 [dependencies.web-sys]
 version = "0.3.61"
+optional = true
 features = [
     # "ClipboardEvent",
     "AnimationEvent",
@@ -32,7 +34,5 @@ features = [
 ]
 
 [features]
-csr = []
-
-[dev-dependencies]
-static_assertions = "1.1.0"
+default = ["web"]
+web = ["dep:web-sys"]

@@ -99,4 +99,4 @@ features = [
 
 [features]
 default = ["web"]
-web = ["dep:web-sys", "dep:wasm-bindgen"]
+web = ["dep:web-sys", "dep:wasm-bindgen", "frender-events/web"]
