@@ -17,11 +17,11 @@ _**f**render_ is still in alpha and it's api might change.
 For now it is recommended to specify the exact version in `Cargo.toml`.
 Before updating, please see the full [changelog](https://github.com/frender-rs/frender/blob/alpha/CHANGELOG.md) in case there are breaking changes.
 
-Development is at [alpha](https://github.com/frender-rs/frender/tree/alpha#readme) branch.
+Development is at [v2](https://github.com/frender-rs/frender/tree/v2#readme) branch.
 
 There are some example apps in
-[`examples`](https://github.com/frender-rs/frender/tree/alpha/examples)
-folder. You can preview them at [this site](https://frender-rs.github.io/frender/).
+[`examples`](https://github.com/frender-rs/frender/tree/v2/examples)
+folder. You can preview them at [this site](https://frender-rs.github.io/frender/v2/).
 
 You can quick start with the
 [frender book](https://frender-rs.github.io/frender/book).
@@ -30,17 +30,8 @@ You can quick start with the
 
 - Functional components and hooks
 - Statically typed props
-- Forced immutability with [`Rc`](https://doc.rust-lang.org/std/rc/struct.Rc.html)
-
-## Future Development Plans
-
-- [ ] Documentation
-- [ ] Intrinsic svg components
-- [ ] Export `frender` components to js
-- [ ] Server Side Rendering
-- [ ] Type checking for `CssProperties`
-- [ ] Css-in-rust (For example, integrate with [`emotion/react`](https://emotion.sh/docs/@emotion/react))
-- [ ] Performance benchmarking
+- SSR (Server side rendering)
+  - [ ] hydration
 
 ## Contributing
 
