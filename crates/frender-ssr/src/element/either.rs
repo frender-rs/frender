@@ -2,12 +2,12 @@ use either::Either;
 
 use async_str_iter::either::IterEither;
 
-use crate::Element;
+use crate::SsrElement;
 
-impl<L, R> Element for Either<L, R>
+impl<L, R> SsrElement for Either<L, R>
 where
-    L: Element,
-    R: Element,
+    L: SsrElement,
+    R: SsrElement,
 {
     type HtmlChildren = IterEither<L::HtmlChildren, R::HtmlChildren>;
 

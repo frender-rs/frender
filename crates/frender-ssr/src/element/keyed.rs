@@ -1,11 +1,11 @@
 use frender_common::{Elements, Keyed};
 
-use crate::Element;
+use crate::SsrElement;
 
-impl<K, E> Element for Vec<Keyed<K, E>>
+impl<K, E> SsrElement for Vec<Keyed<K, E>>
 where
     K: std::hash::Hash + Eq, // TODO: ToString ?
-    E: Element,
+    E: SsrElement,
 {
     type HtmlChildren = async_str_iter::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
 
@@ -18,7 +18,7 @@ pub struct IterKeyed<I>(I);
 
 impl<K, E, I: Iterator<Item = Keyed<K, E>>> Iterator for IterKeyed<I>
 where
-    E: Element,
+    E: SsrElement,
 {
     type Item = E::HtmlChildren;
 
@@ -27,22 +27,10 @@ where
     }
 }
 
-// impl<K, E> IntoAsyncStrIterator for crate::Keyed<K, E>
-// where
-//     K: std::hash::Hash + Eq, // TODO: ToString ?
-//     E: Element,
-// {
-//     type IntoAsyncStrIterator = E::HtmlElements;
-
-//     fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
-//         self.1.into_html_elements()
-//     }
-// }
-
-impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> Element for Elements<I, A>
+impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> SsrElement for Elements<I, A>
 where
     K: std::hash::Hash + Eq, // TODO: ToString ?
-    E: Element,
+    E: SsrElement,
 {
     type HtmlChildren = async_str_iter::flat::Flat<IterKeyed<I::IntoIter>>;
 

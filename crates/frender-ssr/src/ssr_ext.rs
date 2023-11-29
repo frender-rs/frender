@@ -1,6 +1,6 @@
-use crate::Element;
+use crate::SsrElement;
 
-pub async fn render_element_as_string<E: Element>(element: E) -> String {
+pub async fn render_element_as_string<E: SsrElement>(element: E) -> String {
     use async_str_iter::AsyncStrIterator;
     let s = element.into_html_children();
     let mut s = std::pin::pin!(s);

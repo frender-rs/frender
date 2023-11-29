@@ -1,8 +1,8 @@
 use async_str_iter::IntoAsyncStrIterator;
 
-use crate::Element;
+use crate::SsrElement;
 
-impl<E: Element> Element for Option<E> {
+impl<E: SsrElement> SsrElement for Option<E> {
     type HtmlChildren = async_str_iter::option::IterOption<E::HtmlChildren>;
 
     fn into_html_children(self) -> Self::HtmlChildren {
