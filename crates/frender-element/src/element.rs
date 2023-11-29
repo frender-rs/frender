@@ -71,12 +71,56 @@ macro_rules! stringify_ty {
     };
 }
 
+macro_rules! doc_inline_multiple {
+    (doc_element!(
+        #[doc = $name:expr]
+        $((($example:expr) as $($ty:tt)+)),+ $(,)?
+    )) => {
+        doc_row!(
+            concat!($("`", stringify_ty!($($ty)+), "` ",)+),
+            concat!($("`", stringify!($example)  , "` ",)+),
+            concat!(
+                $name,
+                "\n<div hidden>\n\n",
+                doc_assert_element!($(
+                    concat!("# ", stringify_ty!($($ty)+)) => [stringify!($example)]
+                ),+),
+                "\n\n</div>"
+            )
+        )
+    };
+}
+
+macro_rules! doc_row {
+    ($types:expr, $examples:expr $(, $($name:expr $(, $($row_span:expr $(,)?)?)?)?)?) => {
+        concat!(
+            "<tr>",
+            $($(
+                "<th",
+                $($(
+                    " rowspan=\"",
+                    $row_span,
+                    "\"",
+                )?)?
+                ">",
+                $name,
+                "</th>",
+            )?)?
+            "<td>\n\n",
+            $types,
+            "\n\n</td><td>\n\n",
+            $examples,
+            "\n\n</td></tr>",
+        )
+    };
+}
+
 macro_rules! doc_element {
     (
-        $cfg_macro_name:ident $bang:tt
+        $doc_macro_name:ident $bang:tt
         $content:tt
     ) => {
-        $cfg_macro_name $bang (
+        $doc_macro_name $bang (
             doc_element!
             $content
         )
@@ -85,28 +129,14 @@ macro_rules! doc_element {
         $($({ $row_span:literal })? #[doc = $name:literal])?
         (($($example:expr),+) as $($ty:tt)+)
     ) => {
-        concat!(
-            "<tr>",
-            $(
-                "<th",
-                $(
-                    " rowspan=\"",
-                    stringify!($row_span),
-                    "\"",
-                )?
-                ">",
-                $name,
-                "</th>",
-            )?
-            "<td style=\"max-width:100%;\">\n\n",
+        doc_row!(
             doc_assert_element!(stringify_ty!($($ty)+) => [$(stringify!($example)),+]),
-            "\n\n</td><td>\n\n",
-            $(
+            concat!($(
                 "`",
                 stringify!($example),
                 "`\n\n",
-            )+
-            "\n\n</td></tr>",
+            )+),
+            $($name, $($row_span)?)?
         )
     };
     (
@@ -145,7 +175,7 @@ macro_rules! doc_elements_all {
                 (("abc".to_string()) as String),
                 ((Cow::Borrowed("abc")) as Cow<'_, str>),
             ],
-            13 = [
+            doc_inline_multiple!(
                 /// Numbers
                 ((0i8) as i8),
                 ((0u8) as u8),
@@ -160,7 +190,7 @@ macro_rules! doc_elements_all {
                 ((0usize) as usize),
                 ((0f32) as f32),
                 ((0f64) as f64),
-            ],
+            ),
             /// Option
             ((None::<&str>, Some(0)) as Option<impl Element>),
             doc_cfg_either!(
