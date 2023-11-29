@@ -13,6 +13,7 @@ crate::def_intrinsic_component_props!(
     mod items {
         #[behaviors]
         pub mod behaviors {
+            #[cfg(feature = "web")]
             use crate::shims::prelude::*;
         }
 

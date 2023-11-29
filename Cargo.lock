@@ -858,7 +858,6 @@ dependencies = [
  "pin-project-lite",
  "wasm-bindgen",
  "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
@@ -970,10 +969,7 @@ dependencies = [
  "frender-html-common",
  "frender-ssr",
  "futures-lite 1.13.0",
- "ghost-lite",
- "gloo",
  "gloo-events 0.2.0",
- "html-escape",
  "js-sys",
  "pin-project-lite",
  "wasm-bindgen",
@@ -988,7 +984,6 @@ dependencies = [
  "either",
  "frender-common",
  "frender-ssr-html",
- "web-sys",
 ]
 
 [[package]]

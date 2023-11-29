@@ -13,4 +13,5 @@ mod create_node;
 mod update_element;
 
 mod macros;
+#[cfg(feature = "web")]
 mod shims;

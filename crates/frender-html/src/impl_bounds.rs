@@ -287,7 +287,6 @@ pub mod DomTokens {
     pub use crate::default_impl_ssr as ssr;
     pub use __csr_DomTokens as csr;
 
-    #[cfg(feature = "csr")]
     pub mod csr {
         use frender_html_common::DomTokens;
 
@@ -464,7 +463,6 @@ pub mod MaybeHandleEvent {
 
     pub use __impl_csr_MaybeHandleEvent as csr;
 
-    #[cfg(feature = "csr")]
     pub mod csr {
         use frender_events::MaybeHandleEvent;
 

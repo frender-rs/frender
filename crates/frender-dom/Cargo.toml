@@ -27,6 +27,8 @@ version = "0.3.60"
 optional = true
 features = [
     #
+    "Document",
+    "DomTokenList",
     "DataTransfer",
     "Element",
     "HtmlAnchorElement",
@@ -93,8 +95,6 @@ features = [
     "HtmlVideoElement",
     "Node",
     "Text",
-    "Touch",
-    "TouchList",
 ]
 
 [features]

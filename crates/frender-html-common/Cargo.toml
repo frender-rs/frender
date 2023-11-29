@@ -9,14 +9,6 @@ either = { version = "1.8.1", default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html" }
 
-[dependencies.web-sys]
-version = "0.3.60"
-optional = true
-features = [
-    #
-    "DomTokenList",
-]
-
 [features]
-csr = ["dep:web-sys"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
