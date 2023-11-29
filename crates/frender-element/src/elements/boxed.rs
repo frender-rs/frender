@@ -2,33 +2,58 @@ use std::pin::Pin;
 
 use crate::Element;
 
-impl<R: Element> Element for Box<R> {
-    type CsrState = R::CsrState;
+impl<E: Element> Element for Box<E> {
+    type RenderState<R: frender_html::RenderHtml> = E::RenderState<R>;
 
-    #[inline]
-    fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
-        R::into_csr_state(*self, ctx)
-    }
-
-    #[inline]
-    fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
-        R::update_csr_state(*self, ctx, state)
-    }
-
-    fn update_csr_state_force_reposition(
+    fn render_update<Renderer: frender_html::RenderHtml>(
         self,
-        ctx: &mut crate::CsrContext,
-        state: Pin<&mut Self::CsrState>,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) {
-        R::update_csr_state_force_reposition(*self, ctx, state)
+        E::render_update(*self, renderer, render_state)
     }
 
-    fn update_csr_state_maybe_reposition(
+    fn render_update_force_reposition<Renderer: frender_html::RenderHtml>(
         self,
-        ctx: &mut crate::CsrContext,
-        state: Pin<&mut Self::CsrState>,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
+    ) {
+        E::render_update_force_reposition(*self, renderer, render_state)
+    }
+
+    fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
-        R::update_csr_state_maybe_reposition(*self, ctx, state, force_reposition)
+        E::render_update_maybe_reposition(*self, renderer, render_state, force_reposition)
+    }
+
+    type UnpinnedRenderState<R: frender_html::RenderHtml> = E::UnpinnedRenderState<R>;
+
+    fn unpinned_render_update<Renderer: frender_html::RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+    ) {
+        E::unpinned_render_update(*self, renderer, render_state)
+    }
+
+    fn unpinned_render_update_force_reposition<Renderer: frender_html::RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+    ) {
+        E::unpinned_render_update_force_reposition(*self, renderer, render_state)
+    }
+
+    fn unpinned_render_update_maybe_reposition<Renderer: frender_html::RenderHtml>(
+        self,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        force_reposition: bool,
+    ) {
+        E::unpinned_render_update_maybe_reposition(*self, renderer, render_state, force_reposition)
     }
 }

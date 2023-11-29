@@ -1332,7 +1332,6 @@ where
 impl<I, A, K, E> Element for Elements<I, A>
 where
     I: IntoIterator<Item = Keyed<K, E>>,
-    I::IntoIter: ExactSizeIterator,
     K: std::hash::Hash + Eq,
     E: Element,
     A: ElementsAlgorithm<K, E>,

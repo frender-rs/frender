@@ -28,6 +28,189 @@ pub trait FromUnpinned {
 //     }
 // }
 
+#[cfg(feature = "either")]
+macro_rules! doc_cfg_either {
+    ($e:expr) => {
+        $e
+    };
+}
+#[cfg(not(feature = "either"))]
+macro_rules! doc_cfg_either {
+    ($e:expr) => {
+        ""
+    };
+}
+
+macro_rules! doc_assert_element {
+    ($($ty_str:expr => [$($example_str:expr),+]),+) => {
+        concat!(
+            "```\n# use std::{borrow::Cow, hash::Hash}; use frender_element::Element; use frender_common::{Keyed, Elements};",
+            doc_cfg_either!("use either::Either;"),
+            "const N: usize = 33;",
+            "fn _assert_element(_: impl Element) {}\n",
+            $(
+                "# { fn __(v: \n",
+                $ty_str,
+                "\n# ) { _assert_element(v) }\n",
+                $(
+                    concat!("# let _ = __(", $example_str, ");\n")
+                ,)+
+                "# }\n",
+            )+
+            "```"
+        )
+    };
+}
+
+macro_rules! stringify_ty {
+    (stringified![$stringified:expr]) => {
+        $stringified
+    };
+    ($ty:ty) => {
+        stringify!($ty)
+    };
+}
+
+macro_rules! doc_element {
+    (
+        $cfg_macro_name:ident $bang:tt
+        $content:tt
+    ) => {
+        $cfg_macro_name $bang (
+            doc_element!
+            $content
+        )
+    };
+    (
+        $($({ $row_span:literal })? #[doc = $name:literal])?
+        (($($example:expr),+) as $($ty:tt)+)
+    ) => {
+        concat!(
+            "<tr>",
+            $(
+                "<th",
+                $(
+                    " rowspan=\"",
+                    stringify!($row_span),
+                    "\"",
+                )?
+                ">",
+                $name,
+                "</th>",
+            )?
+            "<td style=\"max-width:100%;\">\n\n",
+            doc_assert_element!(stringify_ty!($($ty)+) => [$(stringify!($example)),+]),
+            "\n\n</td><td>\n\n",
+            $(
+                "`",
+                stringify!($example),
+                "`\n\n",
+            )+
+            "\n\n</td></tr>",
+        )
+    };
+    (
+        $row_span:literal = [$(
+            $(#$doc:tt)?
+            ($($content:tt)+)
+        ),+ $(,)?]
+    ) => {
+        concat!($(
+            doc_element!(
+                $( { $row_span } #$doc)?
+                ($($content)+)
+            ),
+        )+)
+    };
+}
+
+macro_rules! doc_elements {
+    ($(
+        $t1:tt $t2:tt $t3:tt
+    ),+ $(,)?) => {
+        concat!($(
+            doc_element!($t1 $t2 $t3),
+        )+)
+    };
+}
+
+macro_rules! doc_elements_all {
+    () => {
+        doc_elements!(
+            /// Char
+            (('a') as char),
+            3 = [
+                /// Strings
+                (("abc") as &str),
+                (("abc".to_string()) as String),
+                ((Cow::Borrowed("abc")) as Cow<'_, str>),
+            ],
+            13 = [
+                /// Numbers
+                ((0i8) as i8),
+                ((0u8) as u8),
+                ((0u16) as u16),
+                ((0i32) as i32),
+                ((0u32) as u32),
+                ((0i64) as i64),
+                ((0u64) as u64),
+                ((0i128) as i128),
+                ((0u128) as u128),
+                ((0isize) as isize),
+                ((0usize) as usize),
+                ((0f32) as f32),
+                ((0f64) as f64),
+            ],
+            /// Option
+            ((None::<&str>, Some(0)) as Option<impl Element>),
+            doc_cfg_either!(
+                #[doc = "Either (under\n\n`\"either\"` feature)"]
+                ((Either::<_, &str>::Left(0), Either::<i32, _>::Right("1"))
+                    as Either<impl Element, impl Element>)
+            ),
+            /// Box
+            ((Box::new("")) as Box<impl Element>),
+            4 = [
+                #[doc = "Tuple\n\n(up to 12\n\nelements)"]
+                ((()) as ()),
+                (((1,)) as (impl Element,)),
+                (((1, 2)) as (impl Element, impl Element)),
+                (((1, 2, 3)) as (impl Element, impl Element, impl Element)),
+            ],
+            /// Array
+            (([""; N]) as [impl Element; N]),
+            2 = [
+                /// Keyed elements
+                ((vec![Keyed(1, "abc"), Keyed(2, "def"), Keyed(2, "ghi"),])
+                    as Vec<Keyed<impl Hash + Eq, impl Element>>),
+                ((Elements((0..10).map(|i| Keyed(i, i))))
+                    as stringified![
+                        r##"Elements<impl IntoIterator<
+    Item = Keyed<
+        impl Hash + Eq,
+        impl Element,
+    >
+>>"##
+                    ])
+            ],
+        )
+    };
+}
+
+/// Element(s) that can be html children.
+///
+/// ## Notable implementors
+///
+/// <table>
+/// <thead><tr>
+///     <th></th>
+///     <th>Types</th>
+///     <th>Examples</th>
+/// </tr></thead>
+/// <tbody>
+#[doc = doc_elements_all!()]
+/// </tbody>
+/// </table>
 pub trait Element: frender_ssr::SsrElement {
     type RenderState<R: RenderHtml>: RenderState<R> + Default;
 
@@ -136,4 +319,40 @@ macro_rules! impl_unpinned_render_for_unpin {
             )
         }
     };
+}
+
+#[cfg(any(test, doctest))]
+mod tests {
+    /// ```compile_fail
+    /// # use frender_element::Element;
+    /// # fn __(v: (impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,)) -> impl Element {
+    /// #   v
+    /// # }
+    /// # _ = __((1,2,3,4,5,6,7,8,9,10,11,12,13));
+    /// ```
+    enum _TupleMaxElements {}
+
+    #[test]
+    fn tuple_max_elements() {
+        use crate::Element;
+        fn __(
+            v: (
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+                impl Element,
+            ),
+        ) -> impl Element {
+            v
+        }
+        _ = __((1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
+    }
 }
