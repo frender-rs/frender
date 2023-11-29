@@ -2,7 +2,7 @@ use frender_common::try_behavior::{TryBehavior, TryWithTryBehavior};
 
 pub struct DomTokenList<TB: TryBehavior>(pub web_sys::DomTokenList, pub TB);
 
-impl<TB: TryBehavior> crate::DomTokenList for DomTokenList<TB> {
+impl<TB: TryBehavior> frender_html_common::dom_token::DomTokenList for DomTokenList<TB> {
     fn set_value(&mut self, value: &str) {
         self.0.set_value(value)
     }
