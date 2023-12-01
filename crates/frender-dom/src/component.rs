@@ -77,11 +77,6 @@ impl<A: IntoSpaceAndHtmlAttributesOrEmpty, B: IntoSpaceAndHtmlAttributesOrEmpty>
     }
 }
 
-pub struct IntrinsicChildrenAsElement<C, Children> {
-    pub component_type: C,
-    pub children: Children,
-}
-
 mod ssr {
     use frender_ssr::SsrElement;
 
