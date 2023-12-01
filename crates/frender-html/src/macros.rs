@@ -346,7 +346,7 @@ macro_rules! tags {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags: ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
@@ -721,7 +721,7 @@ macro_rules! RenderHtml {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags: ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
@@ -1264,7 +1264,7 @@ macro_rules! components {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags: ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items $verbatim_trait_items:tt)?
