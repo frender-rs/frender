@@ -12,3 +12,6 @@ either = { version = "1.8.1", default-features = false, optional = true }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 frender-ssr-html = { version = "0.1.0", path = "../frender-ssr-html" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
+
+[features]
+either = ["dep:either", "frender-ssr-html/either"]

@@ -1,4 +1,4 @@
-use crate::assert::{HtmlChildren, SpaceAndHtmlAttributesOrEmpty, TagName};
+use crate::assert::{HtmlChildren, ScriptContent, SpaceAndHtmlAttributesOrEmpty, TagName};
 
 async_str_iter::Strings!(
     enum NormalElementState {}
@@ -32,6 +32,31 @@ impl<T: TagName, Attrs: SpaceAndHtmlAttributesOrEmpty, Children: HtmlChildren>
             lt_slash: (),
             tag_close: tag,
             gt_close: (),
+        }
+    }
+}
+
+async_str_iter::Strings!(
+    enum ScriptElementState {}
+    /// https://html.spec.whatwg.org/multipage/syntax.html#normal-elements
+    pub struct ScriptElement<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: ScriptContent>(
+        tag_start!("<script"),
+        attrs!(Attrs),
+        gt!(">"),
+        children!(Children),
+        tag_end!("</script>"),
+    );
+);
+
+impl<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: ScriptContent> ScriptElement<Attrs, Children> {
+    pub const fn new(attrs: Attrs, children: Children) -> Self {
+        Self {
+            _state: ScriptElementState(),
+            tag_start: (),
+            attrs,
+            gt: (),
+            children,
+            tag_end: (),
         }
     }
 }

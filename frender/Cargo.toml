@@ -37,6 +37,7 @@ version = "1.0.0-alpha.8"
 path = "../crates/frender-macros"
 
 [dev-dependencies]
+futures-lite = "2.0.1"
 wasm-bindgen-test = "0.3.13"
 
 [features]

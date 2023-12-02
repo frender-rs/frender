@@ -10,3 +10,4 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 html-escape = "0.2.13"
 pin-project-lite = "0.2.13"
+either = { version = "1.9.0", default-features = false, optional = true }

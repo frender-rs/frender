@@ -336,6 +336,16 @@ macro_rules! behavior_type_traits {
 }
 
 #[macro_export]
+macro_rules! tag_custom_content_model {
+    ({custom_content_model} {$($custom_content_model:tt)*} $or:tt) => {
+        $($custom_content_model)*
+    };
+    ({} $custom_content_model:tt {$($or:tt)*}) => {
+        $($or)*
+    };
+}
+
+#[macro_export]
 macro_rules! tags {
     (expand_item $expand_item:tt) => { $crate::expand_item_simple! $expand_item };
     (
@@ -346,7 +356,7 @@ macro_rules! tags {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags = ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident $({$($tag_info:tt)*})?),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
@@ -371,9 +381,9 @@ macro_rules! tags {
                     renderer.$tags()
                 }
             }
-            impl crate::dom::component::SsrComponentNormalElement for $tags {
-                // TODO: some components are void or self closing
-            }
+            $crate::tag_custom_content_model! {{$($($tag_info)*)?}{}{
+                impl crate::dom::component::SsrComponentNormalElement for $tags {}
+            }}
             impl crate::dom::component::HasIntrinsicElementType for $tags {
                 // type ElementType = super::::$trait_name;
                 // TODO: some components are void or self closing
@@ -721,7 +731,7 @@ macro_rules! RenderHtml {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags = ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident $({$($tag_info:tt)*})?),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
@@ -1264,7 +1274,7 @@ macro_rules! components {
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
         $(define(
-            $(tags = ($($tags:ident),* $(,)?))?
+            $(tags = ($($tags:ident $({$($tag_info:tt)*})?),* $(,)?))?
             $(,)?
         ))?
         $(verbatim_trait_items $verbatim_trait_items:tt)?

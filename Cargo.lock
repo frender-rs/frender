@@ -852,6 +852,7 @@ dependencies = [
  "frender-html",
  "frender-macros",
  "frender-ssr",
+ "futures-lite 2.0.1",
  "hooks",
  "js-sys",
  "lazy-pinned",
@@ -1036,6 +1037,7 @@ name = "frender-ssr-html"
 version = "0.1.0"
 dependencies = [
  "async-str-iter",
+ "either",
  "frender-common",
  "html-escape",
  "pin-project-lite",

@@ -5,10 +5,11 @@ pub mod element;
 pub mod encode;
 pub mod escape_safe;
 pub mod scalar;
+pub mod script;
 pub mod tag;
 
-pub(crate) mod sealed {
+mod sealed {
     pub trait Sealed {}
 }
 
-pub(crate) mod utils;
+mod utils;

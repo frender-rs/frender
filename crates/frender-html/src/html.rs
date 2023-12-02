@@ -1507,7 +1507,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithReferrerPolicyAttribute,
                                     ElementWithCrossOriginAttribute,
                                 );
-                                define!(tags = (script,)); // TODO: special children
+                                define!(tags = (script { custom_content_model },)); // TODO: special children
                                 impl_for_web!();
                                 fn r#async(value: maybe![bool]) {
                                     attr_name!("async");

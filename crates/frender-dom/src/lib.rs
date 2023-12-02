@@ -9,3 +9,5 @@ pub mod component;
 pub mod element_types;
 
 pub mod behaviors;
+
+pub mod script;

@@ -19,7 +19,7 @@ pub trait IntrinsicElementType {}
 
 pub trait SsrComponentNormalElement: HasIntrinsicComponentTag {}
 
-pub trait SsrComponent<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrElement>:
+pub trait SsrComponent<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children>:
     HasIntrinsicComponentTag
 {
     type OneElement: frender_ssr::html::assert::OneElement;
@@ -84,7 +84,6 @@ mod ssr {
 
     impl<C, P: IntoElementProps> SsrElement for super::IntrinsicElement<C, P>
     where
-        P::Children: SsrElement,
         P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
         C: SsrComponent<P::Attrs, P::Children>,
     {

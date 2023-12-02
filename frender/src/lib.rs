@@ -46,6 +46,8 @@ pub use frender_events::{event, MaybeHandleEvent};
 #[cfg(feature = "bg")]
 pub use bg;
 
+pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
+
 pub mod prelude {
     #[cfg(feature = "bg")]
     pub use bg::{Maybe as _, MaybeBorrow as _};

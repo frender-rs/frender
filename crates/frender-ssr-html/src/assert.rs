@@ -159,6 +159,15 @@ mod html_children {
     {
     }
 
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::ScriptContent> Sealed
+        for crate::element::ScriptElement<Attrs, Children>
+    {
+    }
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::ScriptContent> HtmlChildren
+        for crate::element::ScriptElement<Attrs, Children>
+    {
+    }
+
     macro_rules! impl_for_tuple {
         ($($iter:ident ($($field:ident),+) ,)+) => {$(
                 impl<$($field: Sealed + AsyncStrIterator),+> Sealed for async_str_iter::concat::$iter<$($field),+> {}
@@ -194,6 +203,11 @@ mod one_element {
         > OneElement for crate::element::NormalElement<T, Attrs, Children>
     {
     }
+
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::ScriptContent> OneElement
+        for crate::element::ScriptElement<Attrs, Children>
+    {
+    }
 }
 
 pub trait TagName: tag_name::Sealed + AsyncStrIterator {}
@@ -205,4 +219,69 @@ mod tag_name {
 
     impl<S: AsyncStrIterator> Sealed for crate::tag::AssertTagName<S> {}
     impl<S: AsyncStrIterator> TagName for crate::tag::AssertTagName<S> {}
+}
+
+pub trait ScriptContent: script_content::Sealed + AsyncStrIterator {}
+
+mod script_content {
+    use super::ScriptContent;
+
+    pub trait Sealed {}
+
+    impl Sealed for async_str_iter::empty::Empty {}
+    impl ScriptContent for async_str_iter::empty::Empty {}
+
+    impl<T: ScriptContent> Sealed for async_str_iter::option::IterOption<T> {}
+    impl<T: ScriptContent> ScriptContent for async_str_iter::option::IterOption<T> {}
+
+    impl<L: ScriptContent, R: ScriptContent> Sealed for async_str_iter::either::IterEither<L, R> {}
+    impl<L: ScriptContent, R: ScriptContent> ScriptContent
+        for async_str_iter::either::IterEither<L, R>
+    {
+    }
+
+    impl<S: async_str_iter::AsyncStrIterator> Sealed
+        for crate::script::IterScriptInnerTextWronglyEncoded<S>
+    {
+    }
+    impl<S: async_str_iter::AsyncStrIterator> ScriptContent
+        for crate::script::IterScriptInnerTextWronglyEncoded<S>
+    {
+    }
+}
+
+pub trait OneStringOrEmpty: one_string_or_empty::Sealed + AsyncStrIterator {}
+
+mod one_string_or_empty {
+    use super::OneStringOrEmpty;
+
+    pub trait Sealed {}
+
+    impl Sealed for async_str_iter::empty::Empty {}
+    impl OneStringOrEmpty for async_str_iter::empty::Empty {}
+
+    impl Sealed for &str {}
+    impl OneStringOrEmpty for &str {}
+
+    impl<S: AsRef<str>> Sealed for async_str_iter::any_str::IterAnyStr<S> {}
+    impl<S: AsRef<str>> OneStringOrEmpty for async_str_iter::any_str::IterAnyStr<S> {}
+
+    impl<T: OneStringOrEmpty> Sealed for async_str_iter::option::IterOption<T> {}
+    impl<T: OneStringOrEmpty> OneStringOrEmpty for async_str_iter::option::IterOption<T> {}
+
+    impl<L: OneStringOrEmpty, R: OneStringOrEmpty> Sealed for async_str_iter::either::IterEither<L, R> {}
+    impl<L: OneStringOrEmpty, R: OneStringOrEmpty> OneStringOrEmpty
+        for async_str_iter::either::IterEither<L, R>
+    {
+    }
+}
+
+pub trait OneString: OneStringOrEmpty {}
+
+mod one_string {
+    use super::OneString;
+
+    impl OneString for &str {}
+    impl<S: AsRef<str>> OneString for async_str_iter::any_str::IterAnyStr<S> {}
+    impl<L: OneString, R: OneString> OneString for async_str_iter::either::IterEither<L, R> {}
 }
