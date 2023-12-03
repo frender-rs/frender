@@ -16,9 +16,7 @@ pub trait ElementWithChildren<Children> {
 }
 
 mod imp {
-    use frender_html::dom::component::{
-        HasIntrinsicComponentTag, HasIntrinsicElementType, IntoElementProps,
-    };
+    use frender_html::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
 
     use frender_html::{CreateNode, RenderHtml, UpdateElementNonReactive};
 
@@ -123,13 +121,12 @@ mod imp {
 
     impl<
             C: HasIntrinsicComponentTag
-                + HasIntrinsicElementType
                 + frender_html::html::behavior_type_traits::Element
                 + CreateNode,
             P: IntoElementProps,
         > Element for frender_html::dom::component::IntrinsicElement<C, P>
     where
-        C::IntrinsicElementType: crate::ElementSupportChildren<P::Children>,
+        C: crate::CsrComponent<P::Children>,
         P::Attrs: UpdateElementNonReactive<C>,
         // ssr bounds
         P::Attrs: frender_html::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
@@ -138,7 +135,10 @@ mod imp {
     {
         type RenderState<R: crate::RenderHtml> = IntrinsicElementRenderState<
             C::Element<R>,
-            ElementPropsState<<C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::ChildrenRenderState<R>, <P::Attrs as UpdateElementNonReactive<C>>::State<R>>,
+            ElementPropsState<
+                <C as crate::CsrComponent<P::Children>>::ChildrenRenderState<R>,
+                <P::Attrs as UpdateElementNonReactive<C>>::State<R>,
+            >,
         >;
 
         fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(
@@ -174,20 +174,23 @@ mod imp {
                         frender_common::convert::IntoMut::into_mut(element),
                         props_state.attrs_state,
                     );
-                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::children_render_update(children, renderer, props_state.children_render_state)
+                    <C as crate::CsrComponent<P::Children>>::children_render_update(
+                        children,
+                        renderer,
+                        props_state.children_render_state,
+                    )
                 },
                 force_reposition,
             )
         }
 
-        type UnpinnedRenderState<R: RenderHtml> =
-            IntrinsicElementRenderState<
-                C::Element<R>,
-                ElementPropsState<
-                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::ChildrenUnpinnedRenderState<R>,
-                    <P::Attrs as UpdateElementNonReactive<C>>::State<R>
-                >,
-            >;
+        type UnpinnedRenderState<R: RenderHtml> = IntrinsicElementRenderState<
+            C::Element<R>,
+            ElementPropsState<
+                <C as crate::CsrComponent<P::Children>>::ChildrenUnpinnedRenderState<R>,
+                <P::Attrs as UpdateElementNonReactive<C>>::State<R>,
+            >,
+        >;
 
         fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
             self,
@@ -220,7 +223,7 @@ mod imp {
                         frender_common::convert::IntoMut::into_mut(element),
                         &mut props_state.attrs_state,
                     );
-                    <C::IntrinsicElementType as crate::ElementSupportChildren<P::Children>>::children_unpinned_render_update(children, renderer, &mut props_state.children_render_state)
+                    <C as crate::CsrComponent<P::Children>>::children_unpinned_render_update(children, renderer, &mut props_state.children_render_state)
                 },
                 force_reposition,
             )

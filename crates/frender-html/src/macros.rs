@@ -384,11 +384,6 @@ macro_rules! tags {
             $crate::tag_custom_content_model! {{$($($tag_info)*)?}{}{
                 impl crate::dom::component::SsrComponentNormalElement for $tags {}
             }}
-            impl crate::dom::component::HasIntrinsicElementType for $tags {
-                // type ElementType = super::::$trait_name;
-                // TODO: some components are void or self closing
-                type IntrinsicElementType = crate::dom::element_types::EncloseAnyElement;
-            }
         )*)?)?
 
         ::frender_common::expand! { while ($($($({$tags})*)?)?) {

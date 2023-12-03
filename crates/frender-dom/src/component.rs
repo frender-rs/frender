@@ -11,12 +11,6 @@ pub trait HasIntrinsicComponentTag {
     const ASSERT_TAG_NAME: AssertTagName<&'static str>;
 }
 
-pub trait HasIntrinsicElementType {
-    type IntrinsicElementType: IntrinsicElementType;
-}
-
-pub trait IntrinsicElementType {}
-
 pub trait SsrComponentNormalElement: HasIntrinsicComponentTag {}
 
 pub trait SsrComponent<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children>:

@@ -2,7 +2,7 @@
 use frender_html::RenderHtml;
 
 pub use element::{Element, RenderState};
-pub use element_types::ElementSupportChildren;
+pub use element_types::CsrComponent;
 pub use into_render_element_ext::IntoRenderElementExt;
 pub use render_element::RenderElement;
 

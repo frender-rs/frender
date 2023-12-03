@@ -1,10 +1,14 @@
-use frender_html::{dom::component::IntrinsicElementType as ElementTagType, RenderHtml};
+use frender_html::RenderHtml;
 
-pub trait ElementSupportChildren<C>: ElementTagType {
+use crate::Element;
+
+pub trait CsrComponentNormalElement {}
+
+pub trait CsrComponent<Children> {
     type ChildrenRenderState<R: RenderHtml>: crate::RenderState<R> + Default;
 
     fn children_render_update<R: RenderHtml>(
-        children: C,
+        children: Children,
         renderer: &mut R,
         children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>,
     );
@@ -12,36 +16,33 @@ pub trait ElementSupportChildren<C>: ElementTagType {
     type ChildrenUnpinnedRenderState<R: RenderHtml>: crate::RenderState<R> + Default + Unpin;
 
     fn children_unpinned_render_update<R: RenderHtml>(
-        children: C,
+        children: Children,
         renderer: &mut R,
         children_state: &mut Self::ChildrenUnpinnedRenderState<R>,
     );
 }
 
-mod element_types {
-    use frender_html::dom::element_types::EncloseAnyElement;
+impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for C {
+    type ChildrenRenderState<R: RenderHtml> = Children::RenderState<R>;
 
-    use crate::Element;
+    fn children_render_update<R: RenderHtml>(
+        children: Children,
+        renderer: &mut R,
+        children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>,
+    ) {
+        Children::render_update(children, renderer, children_state)
+    }
 
-    impl<E: Element> super::ElementSupportChildren<E> for EncloseAnyElement {
-        type ChildrenRenderState<R: crate::RenderHtml> = E::RenderState<R>;
+    type ChildrenUnpinnedRenderState<R: RenderHtml> = Children::UnpinnedRenderState<R>;
 
-        fn children_render_update<R: crate::RenderHtml>(
-            children: E,
-            renderer: &mut R,
-            children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>,
-        ) {
-            children.render_update(renderer, children_state)
-        }
-
-        type ChildrenUnpinnedRenderState<R: frender_html::RenderHtml> = E::UnpinnedRenderState<R>;
-
-        fn children_unpinned_render_update<R: frender_html::RenderHtml>(
-            children: E,
-            renderer: &mut R,
-            children_state: &mut Self::ChildrenUnpinnedRenderState<R>,
-        ) {
-            children.unpinned_render_update(renderer, children_state)
-        }
+    fn children_unpinned_render_update<R: RenderHtml>(
+        children: Children,
+        renderer: &mut R,
+        children_state: &mut Self::ChildrenUnpinnedRenderState<R>,
+    ) {
+        Children::unpinned_render_update(children, renderer, children_state)
     }
 }
+
+// TODO: remove
+impl<C> CsrComponentNormalElement for C {}
