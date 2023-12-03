@@ -6,8 +6,6 @@ pub use element_types::CsrComponent;
 pub use into_render_element_ext::IntoRenderElementExt;
 pub use render_element::RenderElement;
 
-pub mod pin_mut_maybe_uninit;
-
 mod element;
 
 mod render_element;

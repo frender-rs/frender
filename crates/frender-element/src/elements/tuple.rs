@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::{pin_mut_maybe_uninit::PinMutMaybeUninit, Element, RenderHtml, RenderState};
+use crate::{Element, RenderHtml, RenderState};
 
 impl<R> RenderState<R> for () {
     #[inline]

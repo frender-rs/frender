@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use crate::{pin_mut_maybe_uninit::PinMutMaybeUninit, Element, RenderHtml, RenderState};
+use crate::{Element, RenderHtml, RenderState};
 
 impl<R, S: RenderState<R>> RenderState<R> for Option<S> {
     fn unmount(mut self: Pin<&mut Self>, renderer: &mut R) {
