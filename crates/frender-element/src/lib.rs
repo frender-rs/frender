@@ -1,20 +1,8 @@
-// TODO: remove
-use frender_html::RenderHtml;
-
-pub use element::{Element, RenderState};
-pub use element_types::CsrComponent;
+pub use frender_html::{CsrComponent, Element, RenderState};
 pub use into_render_element_ext::IntoRenderElementExt;
 pub use render_element::RenderElement;
 
-mod element;
-
 mod render_element;
-
-mod element_types;
-
-mod component;
-
-pub mod elements;
 
 mod into_render_element_ext {
     use frender_html::RenderHtml;
@@ -31,8 +19,4 @@ mod into_render_element_ext {
     }
 
     impl<R: ?Sized + RenderHtml> IntoRenderElementExt for R {}
-}
-
-pub mod __private {
-    pub use frender_html::RenderHtml;
 }

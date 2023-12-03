@@ -963,6 +963,7 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "convert-js",
+ "either",
  "frender-common",
  "frender-dom",
  "frender-dom-macros",
@@ -971,6 +972,7 @@ dependencies = [
  "frender-ssr",
  "futures-lite 1.13.0",
  "gloo-events 0.2.0",
+ "indexmap",
  "js-sys",
  "pin-project-lite",
  "wasm-bindgen",

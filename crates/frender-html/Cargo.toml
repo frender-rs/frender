@@ -20,6 +20,8 @@ frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 frender-dom = { version = "0.1.0", path = "../frender-dom" }
 frender-dom-macros = { version = "0.1.0", path = "../frender-dom-macros" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
+indexmap = { version = "2.1.0", features = ["std"] }
+either = { version = "1.9.0", default-features = false, optional = true }
 
 [dependencies.web-sys]
 version = "0.3.60"

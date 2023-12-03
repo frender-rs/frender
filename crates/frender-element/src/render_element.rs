@@ -1,6 +1,6 @@
 use futures_lite::Future;
 
-use crate::{RenderHtml, RenderState};
+use frender_html::{RenderHtml, RenderState};
 
 pin_project_lite::pin_project!(
     pub struct RenderElement<R, State, Stop = std::future::Pending<()>> {

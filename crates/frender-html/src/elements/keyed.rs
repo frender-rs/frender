@@ -1,41 +1,19 @@
 use std::pin::Pin;
 
 use frender_common::{Elements, Keyed};
-use frender_html::RenderHtml;
 
-use crate::{Element, RenderState};
+use crate::{Element, RenderHtml, RenderState};
 
 pub trait ElementsAlgorithm<K, E> {
     type CsrState<R: RenderHtml>: RenderState<R> + Unpin + Default;
 
-    fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(
-        self,
-        keyed_elements: I,
-        renderer: &mut R,
-        state: Pin<&mut Self::CsrState<R>>,
-    );
+    fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>);
 
     /// The element needs to be repositioned (re-add to the ctx)
-    fn keyed_elements_update_csr_state_force_reposition<
-        I: IntoIterator<Item = Keyed<K, E>>,
-        R: RenderHtml,
-    >(
-        self,
-        keyed_elements: I,
-        renderer: &mut R,
-        state: Pin<&mut Self::CsrState<R>>,
-    );
+    fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>);
 
-    fn keyed_elements_update_csr_state_maybe_reposition<
-        I: IntoIterator<Item = Keyed<K, E>>,
-        R: RenderHtml,
-    >(
-        self,
-        keyed_elements: I,
-        renderer: &mut R,
-        state: Pin<&mut Self::CsrState<R>>,
-        force_reposition: bool,
-    ) where
+    fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>, force_reposition: bool)
+    where
         Self: Sized,
     {
         if force_reposition {
@@ -50,10 +28,9 @@ pub mod default {
     use std::{collections::HashMap, hash::Hash, pin::Pin};
 
     use frender_common::{DefaultElementsAlgorithm, Keyed};
-    use frender_html::RenderHtml;
     use indexmap::IndexMap;
 
-    use crate::{Element, RenderState};
+    use crate::{Element, RenderHtml, RenderState};
 
     use super::ElementsAlgorithm;
 
@@ -82,11 +59,7 @@ pub mod default {
             }
         }
 
-        fn poll_render(
-            self: Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
+        fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let mut res = std::task::Poll::Ready(());
 
             for state in self.get_mut().0.values_mut() {
@@ -105,12 +78,7 @@ pub mod default {
     impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
         type CsrState<R: RenderHtml> = States<K, E::UnpinnedRenderState<R>>;
 
-        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(
-            self,
-            keyed_elements: I,
-            renderer: &mut R,
-            state: Pin<&mut Self::CsrState<R>>,
-        ) {
+        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
             let state = state.get_mut();
 
             let elements = keyed_elements.into_iter();
@@ -147,8 +115,7 @@ pub mod default {
 
                                 debug_assert!(*key_old == key);
 
-                                element
-                                    .unpinned_render_update_force_reposition(renderer, old_state);
+                                element.unpinned_render_update_force_reposition(renderer, old_state);
 
                                 cur = 0;
                                 continue;
@@ -165,30 +132,21 @@ pub mod default {
                     }
 
                     // "equal" or "greater but drained"
-                    let state_old: &mut <E as Element>::UnpinnedRenderState<R> =
-                        &mut old_states[old_idx];
+                    let state_old: &mut <E as Element>::UnpinnedRenderState<R> = &mut old_states[old_idx];
                     element.unpinned_render_update(renderer, state_old);
                     cur += 1;
                 } else {
                     states.extend(old_states.drain(..cur));
                     cur = 0;
                     state_vacant_and_then(states, key, |entry| {
-                        let old_state = if let Some(old_state) = removed.remove(entry.key()) {
-                            old_state
-                        } else {
-                            Default::default()
-                        };
+                        let old_state = if let Some(old_state) = removed.remove(entry.key()) { old_state } else { Default::default() };
                         let state = entry.insert(old_state);
                         element.unpinned_render_update_force_reposition(renderer, state)
                     });
                 }
             }
 
-            old_states
-                .drain(cur..)
-                .map(|(_, v)| v)
-                .chain(removed.into_values())
-                .for_each(|ref mut state| Pin::new(state).unmount(renderer));
+            old_states.drain(cur..).map(|(_, v)| v).chain(removed.into_values()).for_each(|ref mut state| Pin::new(state).unmount(renderer));
 
             if states.is_empty() {
                 *states = old_states;
@@ -197,15 +155,7 @@ pub mod default {
             }
         }
 
-        fn keyed_elements_update_csr_state_force_reposition<
-            I: IntoIterator<Item = Keyed<K, E>>,
-            R: RenderHtml,
-        >(
-            self,
-            keyed_elements: I,
-            renderer: &mut R,
-            state: Pin<&mut Self::CsrState<R>>,
-        ) {
+        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
             let states = &mut state.get_mut().0;
 
             let elements = keyed_elements.into_iter();
@@ -233,11 +183,8 @@ pub mod default {
 
     /// If `states` contains `key`, then warns.
     /// Else, call f.
-    fn state_vacant_and_then<'a, K, S>(
-        states: &'a mut IndexMap<K, S>,
-        key: K,
-        f: impl FnOnce(indexmap::map::VacantEntry<'a, K, S>),
-    ) where
+    fn state_vacant_and_then<'a, K, S>(states: &'a mut IndexMap<K, S>, key: K, f: impl FnOnce(indexmap::map::VacantEntry<'a, K, S>))
+    where
         K: std::hash::Hash + Eq,
     {
         match states.entry(key) {
@@ -245,9 +192,7 @@ pub mod default {
             indexmap::map::Entry::Occupied(_) => {
                 if cfg!(all(debug_assertions, target_arch = "wasm32")) {
                     #[cfg(not_working_yet)]
-                    gloo::console::warn!(
-                        "the same key has been inserted so the latter element is ignored"
-                    );
+                    gloo::console::warn!("the same key has been inserted so the latter element is ignored");
                 }
             }
         }
@@ -272,66 +217,35 @@ pub mod linked_vec {
 
     impl<Impl> Default for LinkedVecAlgorithm<Impl> {
         fn default() -> Self {
-            Self {
-                __phantom: std::marker::PhantomData,
-            }
+            Self { __phantom: std::marker::PhantomData }
         }
     }
 
-    impl<K: Hash + Eq, E: Element, Impl: IndexMapForStates<K, E::CsrState>> ElementsAlgorithm<K, E>
-        for LinkedVecAlgorithm<Impl>
+    impl<K: Hash + Eq, E: Element, Impl: IndexMapForStates<K, E::CsrState>> ElementsAlgorithm<K, E> for LinkedVecAlgorithm<Impl>
     where
         E::CsrState: Unpin,
     {
         type CsrState = States<K, E::CsrState, Impl>;
 
-        fn keyed_elements_into_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
-            self,
-            keyed_elements: I,
-            ctx: &mut crate::CsrContext,
-        ) -> Self::CsrState {
-            States::from_entries(
-                keyed_elements
-                    .into_iter()
-                    .map(|Keyed(key, element)| (key, element.into_csr_state(ctx))),
-            )
+        fn keyed_elements_into_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(self, keyed_elements: I, ctx: &mut crate::CsrContext) -> Self::CsrState {
+            States::from_entries(keyed_elements.into_iter().map(|Keyed(key, element)| (key, element.into_csr_state(ctx))))
         }
 
-        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(
-            self,
-            keyed_elements: I,
-            ctx: &mut crate::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-        ) {
+        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>>(self, keyed_elements: I, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
             self.keyed_elements_update_csr_state_maybe_reposition(keyed_elements, ctx, state, false)
         }
 
-        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
-            self,
-            keyed_elements: I,
-            ctx: &mut crate::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-        ) {
+        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>>(self, keyed_elements: I, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
             self.keyed_elements_update_csr_state_maybe_reposition(keyed_elements, ctx, state, true)
         }
 
-        fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>>(
-            self,
-            keyed_elements: I,
-            ctx: &mut crate::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-            force_reposition: bool,
-        ) where
+        fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>>(self, keyed_elements: I, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>, force_reposition: bool)
+        where
             Self: Sized,
         {
-            state.get_mut().update_maybe_reposition(
-                keyed_elements.into_iter(),
-                E::into_csr_state,
-                E::update_csr_state_maybe_reposition,
-                E::CsrState::unmount,
-                ctx,
-                force_reposition,
-            );
+            state
+                .get_mut()
+                .update_maybe_reposition(keyed_elements.into_iter(), E::into_csr_state, E::update_csr_state_maybe_reposition, E::CsrState::unmount, ctx, force_reposition);
         }
     }
 
@@ -412,13 +326,7 @@ pub mod linked_vec {
         type Item = u32;
         type State = u32;
 
-        const ORIGINAL: [(Key, Item); 5] = [
-            (Cow::Borrowed("a"), 0),
-            (Cow::Borrowed("b"), 1),
-            (Cow::Borrowed("c"), 2),
-            (Cow::Borrowed("d"), 3),
-            (Cow::Borrowed("e"), 4),
-        ];
+        const ORIGINAL: [(Key, Item); 5] = [(Cow::Borrowed("a"), 0), (Cow::Borrowed("b"), 1), (Cow::Borrowed("c"), 2), (Cow::Borrowed("d"), 3), (Cow::Borrowed("e"), 4)];
 
         fn get_original_state<Impl: IndexMapForStates<Key, State>>() -> States<Key, State, Impl> {
             States::<Key, State, Impl>::from_entries(ORIGINAL)
@@ -446,15 +354,7 @@ pub mod linked_vec {
             }
 
             impl Records {
-                fn record_while_updating_states<
-                    Impl: IndexMapForStates<Key, State>,
-                    E: Iterator<Item = Keyed<Key, Item>>,
-                >(
-                    &mut self,
-                    states: &mut States<Key, State, Impl>,
-                    entries: E,
-                    force_reposition: bool,
-                ) {
+                fn record_while_updating_states<Impl: IndexMapForStates<Key, State>, E: Iterator<Item = Keyed<Key, Item>>>(&mut self, states: &mut States<Key, State, Impl>, entries: E, force_reposition: bool) {
                     states.update_maybe_reposition(
                         entries,
                         |v, _| {
@@ -477,10 +377,7 @@ pub mod linked_vec {
             }
 
             fn original<Impl: IndexMapForStates<Key, State>>() {
-                let values = get_original_state::<Impl>()
-                    .iter_ordered()
-                    .map(|(k, &v)| (k.clone(), v))
-                    .collect::<Vec<_>>();
+                let values = get_original_state::<Impl>().iter_ordered().map(|(k, &v)| (k.clone(), v)).collect::<Vec<_>>();
 
                 assert_eq!(values, ORIGINAL);
             }
@@ -488,18 +385,8 @@ pub mod linked_vec {
             fn update_with_unchanged<Impl: IndexMapForStates<Key, State>>() {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
-                records.record_while_updating_states(
-                    &mut states,
-                    ORIGINAL.map(|(k, v)| Keyed(k, v)).into_iter(),
-                    false,
-                );
-                assert_eq!(
-                    states
-                        .iter_ordered()
-                        .map(clone_key_state)
-                        .collect::<Vec<_>>(),
-                    ORIGINAL
-                );
+                records.record_while_updating_states(&mut states, ORIGINAL.map(|(k, v)| Keyed(k, v)).into_iter(), false);
+                assert_eq!(states.iter_ordered().map(clone_key_state).collect::<Vec<_>>(), ORIGINAL);
 
                 assert_eq!(
                     records,
@@ -521,22 +408,13 @@ pub mod linked_vec {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
-                let entries = ORIGINAL
-                    .into_iter()
-                    .chain([(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)])
-                    .map(Keyed::from_tuple);
+                let entries = ORIGINAL.into_iter().chain([(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)]).map(Keyed::from_tuple);
 
                 records.record_while_updating_states(&mut states, entries, false);
 
                 assert_eq!(
-                    states
-                        .iter_ordered()
-                        .map(clone_key_state)
-                        .collect::<Vec<_>>(),
-                    ORIGINAL
-                        .into_iter()
-                        .chain([(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)])
-                        .collect::<Vec<_>>()
+                    states.iter_ordered().map(clone_key_state).collect::<Vec<_>>(),
+                    ORIGINAL.into_iter().chain([(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)]).collect::<Vec<_>>()
                 );
 
                 assert_eq!(
@@ -562,19 +440,13 @@ pub mod linked_vec {
 
                 records.record_while_updating_states(
                     &mut states,
-                    [(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)]
-                        .into_iter()
-                        .chain(ORIGINAL.into_iter())
-                        .map(Keyed::from_tuple),
+                    [(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)].into_iter().chain(ORIGINAL.into_iter()).map(Keyed::from_tuple),
                     false,
                 );
 
                 assert_eq!(
                     states.clone_ordered(),
-                    [(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)]
-                        .into_iter()
-                        .chain(ORIGINAL.into_iter())
-                        .collect::<Vec<_>>()
+                    [(ORIGINAL.len().to_string().into(), ORIGINAL.len() as Item)].into_iter().chain(ORIGINAL.into_iter()).collect::<Vec<_>>()
                 );
 
                 assert_eq!(
@@ -602,11 +474,7 @@ pub mod linked_vec {
                     .chain(ORIGINAL.into_iter().map(|(key, item)| (key, item + 1)))
                     .collect::<Vec<_>>();
 
-                records.record_while_updating_states(
-                    &mut states,
-                    expected.clone().into_iter().map(Keyed::from_tuple),
-                    false,
-                );
+                records.record_while_updating_states(&mut states, expected.clone().into_iter().map(Keyed::from_tuple), false);
 
                 assert_eq!(states.clone_ordered(), expected);
 
@@ -637,11 +505,7 @@ pub mod linked_vec {
                     swapped
                 };
 
-                records.record_while_updating_states(
-                    &mut states,
-                    swapped.clone().map(Keyed::from_tuple).into_iter(),
-                    false,
-                );
+                records.record_while_updating_states(&mut states, swapped.clone().map(Keyed::from_tuple).into_iter(), false);
 
                 assert_eq!(states.clone_ordered(), swapped);
 
@@ -706,11 +570,7 @@ pub mod linked_vec {
 
                 const NEW: [(Key, Item); 2] = [(Cow::Borrowed("f"), 5), (Cow::Borrowed("g"), 6)];
 
-                records.record_while_updating_states(
-                    &mut states,
-                    NEW.into_iter().map(Keyed::from_tuple),
-                    false,
-                );
+                records.record_while_updating_states(&mut states, NEW.into_iter().map(Keyed::from_tuple), false);
 
                 assert_eq!(states.clone_ordered(), NEW);
 
@@ -728,16 +588,9 @@ pub mod linked_vec {
                 let mut states = get_original_state::<Impl>();
                 let mut records = Records::default();
 
-                records.record_while_updating_states(
-                    &mut states,
-                    ORIGINAL.into_iter().skip(1).map(Keyed::from_tuple),
-                    false,
-                );
+                records.record_while_updating_states(&mut states, ORIGINAL.into_iter().skip(1).map(Keyed::from_tuple), false);
 
-                assert_eq!(
-                    states.clone_ordered(),
-                    ORIGINAL.into_iter().skip(1).collect::<Vec<_>>()
-                );
+                assert_eq!(states.clone_ordered(), ORIGINAL.into_iter().skip(1).collect::<Vec<_>>());
 
                 assert_eq!(
                     records,
@@ -763,11 +616,7 @@ pub mod linked_vec {
 
                 let mut records = Records::default();
 
-                records.record_while_updating_states(
-                    &mut states,
-                    ORIGINAL.into_iter().map(Keyed::from_tuple),
-                    false,
-                );
+                records.record_while_updating_states(&mut states, ORIGINAL.into_iter().map(Keyed::from_tuple), false);
 
                 assert_eq!(states.clone_ordered(), ORIGINAL);
             }
@@ -844,24 +693,11 @@ pub mod linked_vec {
                     )
                 })
                 .collect::<indexmap::IndexMap<_, _>>();
-            if let Some((
-                _,
-                Node {
-                    next: next_of_last, ..
-                },
-            )) = map.last_mut()
-            {
+            if let Some((_, Node { next: next_of_last, .. })) = map.last_mut() {
                 *next_of_last = usize::MAX;
             }
 
-            if let Some((
-                _,
-                Node {
-                    prev: prev_of_first,
-                    ..
-                },
-            )) = map.first_mut()
-            {
+            if let Some((_, Node { prev: prev_of_first, .. })) = map.first_mut() {
                 *prev_of_first = usize::MAX;
             }
 
@@ -922,16 +758,8 @@ pub mod linked_vec {
             }
 
             if index != swapped_index {
-                let Position {
-                    value: (),
-                    prev,
-                    next,
-                } = self.get_position_by_index(index);
-                let next_of_prev = if prev == usize::MAX {
-                    &mut *first_index
-                } else {
-                    self.get_mut_next_by_index(prev)
-                };
+                let Position { value: (), prev, next } = self.get_position_by_index(index);
+                let next_of_prev = if prev == usize::MAX { &mut *first_index } else { self.get_mut_next_by_index(prev) };
                 *next_of_prev = index;
 
                 if next != usize::MAX {
@@ -942,19 +770,8 @@ pub mod linked_vec {
 
             #[cfg(debug_assertions)]
             if index != swapped_index {
-                let Position {
-                    value: (),
-                    prev,
-                    next,
-                } = self.get_position_by_index(index);
-                assert_eq!(
-                    *if prev == usize::MAX {
-                        first_index
-                    } else {
-                        self.get_mut_next_by_index(prev)
-                    },
-                    index
-                );
+                let Position { value: (), prev, next } = self.get_position_by_index(index);
+                assert_eq!(*if prev == usize::MAX { first_index } else { self.get_mut_next_by_index(prev) }, index);
                 if next != usize::MAX {
                     assert_eq!(*self.get_mut_prev_by_index(next), index);
                 }
@@ -1042,11 +859,7 @@ pub mod linked_vec {
 
             let first_index = if map.is_empty() { usize::MAX } else { 0 };
 
-            Self {
-                map,
-                first_index,
-                _phantom: PhantomData,
-            }
+            Self { map, first_index, _phantom: PhantomData }
         }
 
         pub(super) fn update_maybe_reposition<T, Ctx, E: Iterator<Item = Keyed<K, T>>>(
@@ -1059,9 +872,7 @@ pub mod linked_vec {
             force_reposition: bool,
         ) {
             if self.map.is_empty() {
-                self.map = IndexMapImpl::from_entries(
-                    entries.map(|Keyed(key, item)| (key, item_into_value(item, ctx))),
-                );
+                self.map = IndexMapImpl::from_entries(entries.map(|Keyed(key, item)| (key, item_into_value(item, ctx))));
                 debug_assert!(self.map.len() < usize::MAX);
                 self.first_index = 0;
 
@@ -1089,10 +900,7 @@ pub mod linked_vec {
             for Keyed(key, item) in entries {
                 let index;
 
-                if let Some(i) = self
-                    .map
-                    .get_index_by_key_with_index_hint(&key, next_of_prev)
-                {
+                if let Some(i) = self.map.get_index_by_key_with_index_hint(&key, next_of_prev) {
                     index = i;
 
                     if index == next_of_prev {
@@ -1127,11 +935,7 @@ pub mod linked_vec {
                         }
 
                         {
-                            let next = if prev_of_node == usize::MAX {
-                                &mut self.first_index
-                            } else {
-                                self.map.get_mut_next_by_index(prev_of_node)
-                            };
+                            let next = if prev_of_node == usize::MAX { &mut self.first_index } else { self.map.get_mut_next_by_index(prev_of_node) };
                             debug_assert_eq!(*next, index);
                             *next = next_of_node;
                         }
@@ -1155,11 +959,7 @@ pub mod linked_vec {
                     );
 
                     {
-                        let nop = if prev == usize::MAX {
-                            &mut self.first_index
-                        } else {
-                            self.map.get_mut_next_by_index(prev)
-                        };
+                        let nop = if prev == usize::MAX { &mut self.first_index } else { self.map.get_mut_next_by_index(prev) };
 
                         debug_assert_eq!(*nop, next_of_prev);
 
@@ -1190,9 +990,7 @@ pub mod linked_vec {
             }
 
             while next_of_prev != usize::MAX {
-                let mut removed = self
-                    .map
-                    .remove_by_index(next_of_prev, &mut self.first_index);
+                let mut removed = self.map.remove_by_index(next_of_prev, &mut self.first_index);
 
                 value_unmount(Pin::new(&mut removed.value));
 
@@ -1202,10 +1000,7 @@ pub mod linked_vec {
 
         #[cfg(test)]
         fn iter_ordered(&self) -> IterOrdered<'_, K, V, IndexMapImpl> {
-            IterOrdered {
-                this: self,
-                cursor: self.first_index,
-            }
+            IterOrdered { this: self, cursor: self.first_index }
         }
 
         #[cfg(test)]
@@ -1214,17 +1009,13 @@ pub mod linked_vec {
             K: Clone,
             V: Clone,
         {
-            self.iter_ordered()
-                .map(|(key, state)| (key.clone(), state.clone()))
-                .collect::<Vec<_>>()
+            self.iter_ordered().map(|(key, state)| (key.clone(), state.clone())).collect::<Vec<_>>()
         }
     }
 
     impl<K: Hash + Eq, S: Unpin, Impl: IndexMapForStates<K, S>> Unpin for States<K, S, Impl> {}
 
-    impl<K: Hash + Eq, S: RenderState + Unpin, Impl: IndexMapForStates<K, S>> RenderState
-        for States<K, S, Impl>
-    {
+    impl<K: Hash + Eq, S: RenderState + Unpin, Impl: IndexMapForStates<K, S>> RenderState for States<K, S, Impl> {
         fn unmount(self: std::pin::Pin<&mut Self>) {
             self.get_mut().for_each_value_pin_mut(S::unmount)
         }
@@ -1233,20 +1024,15 @@ pub mod linked_vec {
             self.get_mut().for_each_value_pin_mut(S::state_unmount)
         }
 
-        fn poll_csr(
-            self: std::pin::Pin<&mut Self>,
-            ctx: &mut crate::CsrContext,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
+        fn poll_csr(self: std::pin::Pin<&mut Self>, ctx: &mut crate::CsrContext, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let mut res = std::task::Poll::Ready(());
 
-            self.get_mut()
-                .for_each_value_pin_mut(|state| match S::poll_csr(state, ctx, cx) {
-                    std::task::Poll::Ready(()) => {}
-                    std::task::Poll::Pending => {
-                        res = std::task::Poll::Pending;
-                    }
-                });
+            self.get_mut().for_each_value_pin_mut(|state| match S::poll_csr(state, ctx, cx) {
+                std::task::Poll::Ready(()) => {}
+                std::task::Poll::Pending => {
+                    res = std::task::Poll::Pending;
+                }
+            });
 
             res
         }
@@ -1257,32 +1043,16 @@ pub mod linked_vec {
         cursor: usize,
     }
 
-    impl<'a, K, V, IndexMapImpl: IndexMapForStates<K, V>> Iterator
-        for IterOrdered<'a, K, V, IndexMapImpl>
-    {
+    impl<'a, K, V, IndexMapImpl: IndexMapForStates<K, V>> Iterator for IterOrdered<'a, K, V, IndexMapImpl> {
         type Item = (&'a K, &'a V);
 
         fn next(&mut self) -> Option<Self::Item> {
             if self.cursor == usize::MAX {
                 return None;
             }
-            let (
-                key,
-                Node {
-                    value,
-                    prev: &prev,
-                    next: &next,
-                },
-            ) = self.this.map.get_by_index(self.cursor);
+            let (key, Node { value, prev: &prev, next: &next }) = self.this.map.get_by_index(self.cursor);
 
-            assert_eq!(
-                if prev == usize::MAX {
-                    self.this.first_index
-                } else {
-                    self.this.map.get_position_by_index(prev).next
-                },
-                self.cursor
-            );
+            assert_eq!(if prev == usize::MAX { self.this.first_index } else { self.this.map.get_position_by_index(prev).next }, self.cursor);
 
             if next != usize::MAX {
                 assert_eq!(self.this.map.get_position_by_index(next).prev, self.cursor)
@@ -1301,28 +1071,15 @@ where
 {
     type RenderState<R: RenderHtml> = default::States<K, E::UnpinnedRenderState<R>>;
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-        force_reposition: bool,
-    ) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         Elements(self).render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 
-    fn render_update<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-    ) {
+    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         Elements(self).render_update(renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-    ) {
+    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         Elements(self).render_update_force_reposition(renderer, render_state)
     }
 
@@ -1336,65 +1093,28 @@ where
     E: Element,
     A: ElementsAlgorithm<K, E>,
 {
-    type RenderState<R: frender_html::RenderHtml> = A::CsrState<R>;
+    type RenderState<R: RenderHtml> = A::CsrState<R>;
 
-    fn render_update<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-    ) {
+    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         A::keyed_elements_update_csr_state(self.algorithm, self.iter, renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-    ) {
-        A::keyed_elements_update_csr_state_force_reposition(
-            self.algorithm,
-            self.iter,
-            renderer,
-            render_state,
-        )
+    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
+        A::keyed_elements_update_csr_state_force_reposition(self.algorithm, self.iter, renderer, render_state)
     }
 
-    fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
-        force_reposition: bool,
-    ) {
-        A::keyed_elements_update_csr_state_maybe_reposition(
-            self.algorithm,
-            self.iter,
-            renderer,
-            render_state,
-            force_reposition,
-        )
+    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        A::keyed_elements_update_csr_state_maybe_reposition(self.algorithm, self.iter, renderer, render_state, force_reposition)
     }
 
     crate::impl_unpinned_render_for_unpin! {}
 }
 
 #[cfg(not_working_yet)]
-pub type ElementsLinkedVec<I> = Elements<
-    I,
-    linked_vec::Algorithm<
-        linked_vec::RealIndexMap<
-            <<I as IntoIterator>::Item as IsKeyed>::Key,
-            <<<I as IntoIterator>::Item as IsKeyed>::Element as Element>::CsrState,
-        >,
-    >,
->;
+pub type ElementsLinkedVec<I> = Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<<<I as IntoIterator>::Item as IsKeyed>::Key, <<<I as IntoIterator>::Item as IsKeyed>::Element as Element>::CsrState>>>;
 
 #[cfg(not_working_yet)]
 #[allow(non_snake_case)]
-pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(
-    iter: I,
-) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
-    Elements {
-        iter,
-        algorithm: Default::default(),
-    }
+pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(iter: I) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
+    Elements { iter, algorithm: Default::default() }
 }
