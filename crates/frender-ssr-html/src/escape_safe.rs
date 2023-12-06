@@ -62,6 +62,14 @@ impl EscapeSafe for Script {
     }
 }
 
+pub(crate) struct Style;
+
+impl EscapeSafe for Style {
+    fn escape_safe<'a>(&mut self, input: &'a str) -> Cow<'a, str> {
+        html_escape::encode_style(input)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[ignore = "escaping script content is too complex"]

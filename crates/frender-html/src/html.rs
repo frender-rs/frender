@@ -1604,7 +1604,7 @@ crate::def_intrinsic_component_props!(
 
                             pub trait HtmlStyleElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithMediaAttribute, ElementWithBlockingAttribute);
-                                define!(tags = (style,));
+                                define!(tags = (style { custom_content_model },));
                                 impl_for_web!();
 
                                 // TODO: `HtmlStyleElement.type` should be marked as deprecated

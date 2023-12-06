@@ -189,6 +189,15 @@ mod html_children {
     {
     }
 
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::OneStringOrEmpty> Sealed
+        for crate::element::StyleElement<Attrs, Children>
+    {
+    }
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::OneStringOrEmpty>
+        HtmlChildren for crate::element::StyleElement<Attrs, Children>
+    {
+    }
+
     impl<T: super::TagName, Attrs: super::SpaceAndHtmlAttributesOrEmpty> Sealed
         for crate::element::VoidElement<T, Attrs>
     {
@@ -241,6 +250,11 @@ mod one_element {
 
     impl<T: super::TagName, Attrs: super::SpaceAndHtmlAttributesOrEmpty> OneElement
         for crate::element::VoidElement<T, Attrs>
+    {
+    }
+
+    impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::OneStringOrEmpty> OneElement
+        for crate::element::StyleElement<Attrs, Children>
     {
     }
 }

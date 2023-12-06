@@ -14,7 +14,7 @@ pin_project_lite::pin_project!(
 );
 
 impl<E: EscapeSafe, S: AsyncStrIterator> Encode<E, S> {
-    pub fn new(escape: E, s: S) -> Self {
+    pub const fn new(escape: E, s: S) -> Self {
         Self {
             escape,
             s,

@@ -1,4 +1,9 @@
-use crate::assert::{HtmlChildren, ScriptContent, SpaceAndHtmlAttributesOrEmpty, TagName};
+use crate::{
+    assert::{
+        HtmlChildren, OneStringOrEmpty, ScriptContent, SpaceAndHtmlAttributesOrEmpty, TagName,
+    },
+    encode::Encode,
+};
 
 async_str_iter::Strings!(
     enum NormalElementState {}
@@ -56,6 +61,32 @@ impl<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: ScriptContent> ScriptElemen
             attrs,
             gt: (),
             children,
+            tag_end: (),
+        }
+    }
+}
+
+async_str_iter::Strings!(
+    enum StyleElementState {}
+    pub struct StyleElement<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: OneStringOrEmpty>(
+        tag_start!("<style"),
+        attrs!(Attrs),
+        gt!(">"),
+        children!(Encode<crate::escape_safe::Style, Children>),
+        tag_end!("</style>"),
+    );
+);
+
+impl<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: OneStringOrEmpty>
+    StyleElement<Attrs, Children>
+{
+    pub const fn new(attrs: Attrs, children: Children) -> Self {
+        Self {
+            _state: StyleElementState(),
+            tag_start: (),
+            attrs,
+            gt: (),
+            children: Encode::new(crate::escape_safe::Style, children),
             tag_end: (),
         }
     }

@@ -25,7 +25,16 @@ fn script() -> impl Element {
     )
 }
 
+fn style() -> impl Element {
+    intrinsic!(
+        div[[div.id("my_styled_div")[["Style"]]]],
+        style[[r#"#my_styled_div {
+color: blue;
+}"#]],
+    )
+}
+
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
-    (input(), script())
+    (input(), script(), style())
 }
