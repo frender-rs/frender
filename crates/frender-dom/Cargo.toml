@@ -21,6 +21,7 @@ js-sys = { version = "0.3.64", optional = true }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 wasm-bindgen = { version = "0.2.83", optional = true }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
+either = { version = "1.9.0", default-features = false, optional = true }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -100,3 +101,4 @@ features = [
 [features]
 default = ["web"]
 web = ["dep:web-sys", "dep:wasm-bindgen", "frender-events/web"]
+either = ["dep:either", "frender-html-common/either", "frender-ssr/either"]

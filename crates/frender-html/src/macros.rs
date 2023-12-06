@@ -383,6 +383,7 @@ macro_rules! tags {
             }
             $crate::tag_custom_content_model! {{$($($tag_info)*)?}{}{
                 impl crate::dom::component::SsrComponentNormalElement for $tags {}
+                impl crate::CsrComponentNormalElement for $tags {}
             }}
         )*)?)?
 

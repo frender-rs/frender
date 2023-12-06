@@ -897,6 +897,7 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "convert-js",
+ "either",
  "frender-common",
  "frender-events",
  "frender-html-common",
@@ -1678,6 +1679,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "html-elements"
+version = "0.1.0"
+dependencies = [
+ "frender",
 ]
 
 [[package]]

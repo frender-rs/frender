@@ -1,42 +1,6 @@
-use async_str_iter::{AsyncStrIterator, IntoAsyncStrIterator};
+use async_str_iter::AsyncStrIterator;
 
-use crate::{assert, encode::Encode};
-
-pub trait SsrElementScriptContent {
-    type ScriptContent: assert::ScriptContent;
-    fn into_script_content(self) -> Self::ScriptContent;
-}
-
-impl SsrElementScriptContent for () {
-    type ScriptContent = async_str_iter::empty::Empty;
-
-    fn into_script_content(self) -> Self::ScriptContent {
-        async_str_iter::empty::Empty
-    }
-}
-
-impl<T: SsrElementScriptContent> SsrElementScriptContent for Option<T> {
-    type ScriptContent = async_str_iter::option::IterOption<T::ScriptContent>;
-
-    fn into_script_content(self) -> Self::ScriptContent {
-        self.map(T::into_script_content).into_async_str_iterator()
-    }
-}
-
-#[cfg(feature = "either")]
-impl<L: SsrElementScriptContent, R: SsrElementScriptContent> SsrElementScriptContent
-    for either::Either<L, R>
-{
-    type ScriptContent = async_str_iter::either::IterEither<L::ScriptContent, R::ScriptContent>;
-
-    fn into_script_content(self) -> Self::ScriptContent {
-        use async_str_iter::either::IterEither;
-        match self {
-            either::Either::Left(this) => IterEither::Left(this.into_script_content()),
-            either::Either::Right(this) => IterEither::Right(this.into_script_content()),
-        }
-    }
-}
+use crate::encode::Encode;
 
 pin_project_lite::pin_project!(
     /// Currently this might not work as expected due to the following reasons:

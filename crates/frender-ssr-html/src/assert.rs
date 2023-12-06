@@ -72,20 +72,41 @@ impl<'a> AssertSpaceAndHtmlAttributeName<&'a str> {
 // }
 
 /// `=value` or ` ` (empty)
-pub trait HtmlAttributeEqValueOrEmpty: Sealed + AsyncStrIterator {}
+pub trait HtmlAttributeEqValueOrEmpty:
+    html_attribute_eq_value_or_empty::Sealed + AsyncStrIterator
+{
+}
 
-impl Sealed for async_str_iter::never::Never {}
-impl HtmlAttributeEqValueOrEmpty for async_str_iter::never::Never {}
+mod html_attribute_eq_value_or_empty {
+    use async_str_iter::AsyncStrIterator;
 
-impl Sealed for async_str_iter::empty::Empty {}
-impl HtmlAttributeEqValueOrEmpty for async_str_iter::empty::Empty {}
+    use super::HtmlAttributeEqValueOrEmpty;
 
-impl<V: AsyncStrIterator> Sealed for crate::attr_value::AttrEqValue<V> {}
-impl<V: AsyncStrIterator> HtmlAttributeEqValueOrEmpty for crate::attr_value::AttrEqValue<V> {}
+    pub trait Sealed {}
+
+    impl Sealed for async_str_iter::never::Never {}
+    impl HtmlAttributeEqValueOrEmpty for async_str_iter::never::Never {}
+
+    impl Sealed for async_str_iter::empty::Empty {}
+    impl HtmlAttributeEqValueOrEmpty for async_str_iter::empty::Empty {}
+
+    impl<V: AsyncStrIterator> Sealed for crate::attr_value::AttrEqValue<V> {}
+    impl<V: AsyncStrIterator> HtmlAttributeEqValueOrEmpty for crate::attr_value::AttrEqValue<V> {}
+
+    impl<L: HtmlAttributeEqValueOrEmpty, R: HtmlAttributeEqValueOrEmpty> Sealed
+        for async_str_iter::either::IterEither<L, R>
+    {
+    }
+    impl<L: HtmlAttributeEqValueOrEmpty, R: HtmlAttributeEqValueOrEmpty> HtmlAttributeEqValueOrEmpty
+        for async_str_iter::either::IterEither<L, R>
+    {
+    }
+}
 
 // Empty or ` a=b c=d`
 pub trait SpaceAndHtmlAttributesOrEmpty: Sealed + AsyncStrIterator {}
 
+impl Sealed for async_str_iter::empty::Empty {}
 impl SpaceAndHtmlAttributesOrEmpty for async_str_iter::empty::Empty {}
 
 impl<V: AsyncStrIterator> SpaceAndHtmlAttributesOrEmpty for AssertSpaceAndHtmlAttributeName<V> {}

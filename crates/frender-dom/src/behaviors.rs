@@ -16,6 +16,10 @@ pub trait Element<Renderer: ?Sized>: Node<Renderer> {
     fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
 }
 
+pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
+    fn set_inner_text(&mut self, renderer: &mut Renderer, value: &str);
+}
+
 #[cfg(feature = "web")]
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
@@ -61,5 +65,16 @@ impl<
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .remove_attribute(name)
             .unwrap_with_behavior(&mut renderer.try_behavior())
+    }
+}
+
+#[cfg(feature = "web")]
+impl<
+        N: AsRef<web_sys::Node> + AsRef<web_sys::Element> + AsRef<web_sys::HtmlElement>,
+        Renderer: ?Sized + crate::csr::web::Renderer,
+    > HtmlElement<Renderer> for crate::csr::web::Node<N>
+{
+    fn set_inner_text(&mut self, _: &mut Renderer, value: &str) {
+        AsRef::<web_sys::HtmlElement>::as_ref(&self.0).set_inner_text(value)
     }
 }

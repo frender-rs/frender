@@ -699,6 +699,8 @@ crate::def_intrinsic_component_props!(
                     }
 
                     pub trait HtmlElement {
+                        trait_bounds!(frender_dom::behaviors::HtmlElement<Renderer>);
+
                         define!(
                             tags = (
                                 abbr, address, article, aside, b, bdi, bdo, cite, code, datalist, // HTMLDataListElement

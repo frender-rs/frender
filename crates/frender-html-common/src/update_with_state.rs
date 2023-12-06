@@ -520,3 +520,133 @@ impl AsyncStrIterator for BooleanTrue {
         std::task::Poll::Ready(None)
     }
 }
+
+#[cfg(feature = "either")]
+pub mod either {
+    use ::either::Either;
+
+    use super::*;
+
+    pub enum EitherState<L, R> {
+        Left(L),
+        Right(R),
+    }
+
+    impl<L, R> EitherState<L, R> {
+        fn get_left_or_insert_default(&mut self) -> &mut L
+        where
+            L: Default,
+        {
+            match self {
+                EitherState::Left(this) => this,
+                this @ EitherState::Right(_) => {
+                    *this = Self::Left(Default::default());
+                    if let Self::Left(this) = this {
+                        this
+                    } else {
+                        unreachable!()
+                    }
+                }
+            }
+        }
+
+        fn get_right_or_insert_default(&mut self) -> &mut R
+        where
+            R: Default,
+        {
+            match self {
+                EitherState::Right(this) => this,
+                this @ EitherState::Left(_) => {
+                    *this = Self::Right(Default::default());
+                    if let Self::Right(this) = this {
+                        this
+                    } else {
+                        unreachable!()
+                    }
+                }
+            }
+        }
+    }
+
+    impl<L: Default, R: Default> Default for EitherState<L, R> {
+        fn default() -> Self {
+            Self::Left(Default::default())
+        }
+    }
+
+    impl<
+            V: ?Sized + ValueType,
+            L: MaybeUpdateValueWithState<V>,
+            R: MaybeUpdateValueWithState<V>,
+        > MaybeUpdateValueWithState<V> for Either<L, R>
+    {
+        type State = Either<L::State, R::State>;
+
+        fn maybe_as(this: &Self) -> Option<&V> {
+            match this {
+                Either::Left(this) => L::maybe_as(this),
+                Either::Right(this) => R::maybe_as(this),
+            }
+        }
+
+        fn initialize_state_and_update(
+            this: Self,
+            update: impl FnOnce(&V),
+            remove: impl FnOnce(),
+        ) -> Self::State {
+            match this {
+                Either::Left(this) => {
+                    Either::Left(L::initialize_state_and_update(this, update, remove))
+                }
+                Either::Right(this) => {
+                    Either::Right(R::initialize_state_and_update(this, update, remove))
+                }
+            }
+        }
+
+        fn maybe_update_value_with_state(
+            this: Self,
+            state: &mut Self::State,
+            update: impl FnOnce(&V),
+            remove: impl FnOnce(),
+        ) {
+            match (this, state) {
+                (Either::Left(this), Either::Left(state)) => {
+                    L::maybe_update_value_with_state(this, state, update, remove)
+                }
+                (Either::Right(this), Either::Right(state)) => {
+                    R::maybe_update_value_with_state(this, state, update, remove)
+                }
+                (this, state) => *state = Self::initialize_state_and_update(this, update, remove),
+            }
+        }
+
+        type HtmlAttributeEqValueOrEmpty = async_str_iter::either::IterEither<
+            L::HtmlAttributeEqValueOrEmpty,
+            R::HtmlAttributeEqValueOrEmpty,
+        >;
+
+        fn maybe_into_html_attribute_eq_value_or_empty(
+            this: Self,
+        ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+            todo!()
+        }
+
+        type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
+
+        fn update_with_state(
+            this: Self,
+            state: &mut Self::UpdateWithState,
+            updater: impl ValueUpdater<V>,
+        ) {
+            match this {
+                Either::Left(this) => {
+                    L::update_with_state(this, state.get_left_or_insert_default(), updater)
+                }
+                Either::Right(this) => {
+                    R::update_with_state(this, state.get_right_or_insert_default(), updater)
+                }
+            }
+        }
+    }
+}

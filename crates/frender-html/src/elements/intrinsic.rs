@@ -98,7 +98,6 @@ mod imp {
         P::Attrs: UpdateElementNonReactive<C>,
         // ssr bounds
         P::Attrs: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
-        P::Children: frender_ssr::SsrElement,
         C: crate::dom::component::SsrComponent<P::Attrs, P::Children>,
     {
         type RenderState<R: crate::RenderHtml> =
@@ -121,7 +120,7 @@ mod imp {
                 renderer,
                 |element, renderer| {
                     <P::Attrs>::update_element_non_reactive(attributes, renderer, frender_common::convert::IntoMut::into_mut(element), props_state.attrs_state);
-                    <C as crate::CsrComponent<P::Children>>::children_render_update(children, renderer, props_state.children_render_state)
+                    <C as crate::CsrComponent<P::Children>>::children_render_update(children, element, renderer, props_state.children_render_state)
                 },
                 force_reposition,
             )
@@ -145,7 +144,7 @@ mod imp {
                 renderer,
                 |element, renderer| {
                     <P::Attrs>::update_element_non_reactive(attributes, renderer, frender_common::convert::IntoMut::into_mut(element), &mut props_state.attrs_state);
-                    <C as crate::CsrComponent<P::Children>>::children_unpinned_render_update(children, renderer, &mut props_state.children_render_state)
+                    <C as crate::CsrComponent<P::Children>>::children_unpinned_render_update(children, element, renderer, &mut props_state.children_render_state)
                 },
                 force_reposition,
             )

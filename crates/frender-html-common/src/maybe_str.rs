@@ -28,6 +28,20 @@ impl<T: MaybeStr> MaybeStr for Option<T> {
     }
 }
 
+#[cfg(feature = "either")]
+impl<L: MaybeStr, R: MaybeStr> MaybeStr for either::Either<L, R> {
+    type OneStringOrEmpty =
+        async_str_iter::either::IterEither<L::OneStringOrEmpty, R::OneStringOrEmpty>;
+
+    fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
+        this.map_either(
+            MaybeStr::into_one_string_or_empty,
+            MaybeStr::into_one_string_or_empty,
+        )
+        .into_async_str_iterator()
+    }
+}
+
 frender_common::impl_many!(
     impl<__> MaybeStr for each_of![&str, String, Cow<'_, str>] {
         type OneStringOrEmpty = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;

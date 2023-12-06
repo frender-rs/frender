@@ -4,6 +4,7 @@ pub mod boxed;
 pub mod either;
 pub mod intrinsic;
 pub mod keyed;
+pub mod non_reactive;
 pub mod option;
 pub mod scalar;
 pub mod str;
