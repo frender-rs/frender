@@ -189,6 +189,15 @@ mod html_children {
     {
     }
 
+    impl<T: super::TagName, Attrs: super::SpaceAndHtmlAttributesOrEmpty> Sealed
+        for crate::element::VoidElement<T, Attrs>
+    {
+    }
+    impl<T: super::TagName, Attrs: super::SpaceAndHtmlAttributesOrEmpty> HtmlChildren
+        for crate::element::VoidElement<T, Attrs>
+    {
+    }
+
     macro_rules! impl_for_tuple {
         ($($iter:ident ($($field:ident),+) ,)+) => {$(
                 impl<$($field: Sealed + AsyncStrIterator),+> Sealed for async_str_iter::concat::$iter<$($field),+> {}
@@ -227,6 +236,11 @@ mod one_element {
 
     impl<Attrs: super::SpaceAndHtmlAttributesOrEmpty, Children: super::ScriptContent> OneElement
         for crate::element::ScriptElement<Attrs, Children>
+    {
+    }
+
+    impl<T: super::TagName, Attrs: super::SpaceAndHtmlAttributesOrEmpty> OneElement
+        for crate::element::VoidElement<T, Attrs>
     {
     }
 }

@@ -60,3 +60,26 @@ impl<Attrs: SpaceAndHtmlAttributesOrEmpty, Children: ScriptContent> ScriptElemen
         }
     }
 }
+
+async_str_iter::Strings!(
+    enum VoidElementState {}
+    /// https://html.spec.whatwg.org/multipage/syntax.html#normal-elements
+    pub struct VoidElement<T: TagName, Attrs: SpaceAndHtmlAttributesOrEmpty>(
+        lt!("<"),
+        tag!(T),
+        attrs!(Attrs),
+        gt!(">"),
+    );
+);
+
+impl<T: TagName, Attrs: SpaceAndHtmlAttributesOrEmpty> VoidElement<T, Attrs> {
+    pub const fn new(tag: T, attrs: Attrs) -> Self {
+        Self {
+            _state: VoidElementState(),
+            lt: (),
+            tag,
+            attrs,
+            gt: (),
+        }
+    }
+}

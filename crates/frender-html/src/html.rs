@@ -703,21 +703,63 @@ crate::def_intrinsic_component_props!(
 
                         define!(
                             tags = (
-                                abbr, address, article, aside, b, bdi, bdo, cite, code, datalist, // HTMLDataListElement
-                                dd, dfn, div, // HTMLDivElement
+                                abbr,
+                                address,
+                                article,
+                                aside,
+                                b,
+                                bdi,
+                                bdo,
+                                cite,
+                                code,
+                                datalist, // HTMLDataListElement
+                                dd,
+                                dfn,
+                                div, // HTMLDivElement
                                 dl,  // HTMLDListElement
-                                dt, em, figcaption, figure, footer, h1, h2, h3, h4, h5, h6,   // HTMLHeadingElement
+                                dt,
+                                em,
+                                figcaption,
+                                figure,
+                                footer,
+                                h1,
+                                h2,
+                                h3,
+                                h4,
+                                h5,
+                                h6,   // HTMLHeadingElement
                                 head, // HTMLHeadElement
-                                header, hgroup, hr, // HTMLHRElement
-                                i, kbd, legend, // HTMLLegendElement
-                                main, mark, menu, // HTMLMenuElement
-                                nav, noscript, p,       // HTMLParagraphElement
+                                header,
+                                hgroup,
+                                hr { custom_content_model }, // HTMLHRElement
+                                i,
+                                kbd,
+                                legend, // HTMLLegendElement
+                                main,
+                                mark,
+                                menu, // HTMLMenuElement
+                                nav,
+                                noscript,
+                                p,       // HTMLParagraphElement
                                 picture, // HTMLPictureElement
                                 pre,     // HTMLPreElement with non-standard attributes
-                                rp, rt, ruby, s, samp, section, small, span, // HTMLSpanElement
-                                strong, sub, summary, sup, template, // HTMLTemplateElement
+                                rp,
+                                rt,
+                                ruby,
+                                s,
+                                samp,
+                                section,
+                                small,
+                                span, // HTMLSpanElement
+                                strong,
+                                sub,
+                                summary,
+                                sup,
+                                template, // HTMLTemplateElement
                                 title,    // HTMLTitleElement
-                                u, var, wbr,
+                                u,
+                                var,
+                                wbr { custom_content_model },
                             ),
                         );
 
@@ -960,7 +1002,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlAreaElement {
                                 special_super_traits!(HtmlElementWithHref, ElementWithAltAttribute);
                                 special_inter_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute);
-                                define!(tags = (area,));
+                                define!(tags = (area { custom_content_model },));
                                 impl_for_web!();
 
                                 fn coords(value: maybe![&str]) {
@@ -1109,7 +1151,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlBaseElement {
                                 special_super_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute);
 
-                                define!(tags = (base,));
+                                define!(tags = (base { custom_content_model },));
 
                                 impl_for_web!();
                             }
@@ -1132,7 +1174,7 @@ crate::def_intrinsic_component_props!(
                             }
 
                             pub trait HtmlBrElement {
-                                define!(tags = (br,));
+                                define!(tags = (br { custom_content_model },));
                                 impl_for_web!();
                                 #[deprecated]
                                 fn clear(value: maybe![&str]) {
@@ -1193,7 +1235,7 @@ crate::def_intrinsic_component_props!(
 
                             pub trait HtmlEmbedElement {
                                 special_super_traits!(ElementWithTypeAttribute, ElementWithSrcAttribute, ElementWithHeightWidthStrAttributes);
-                                define!(tags = (embed,));
+                                define!(tags = (embed { custom_content_model },));
                                 impl_for_web!();
                             }
 
@@ -1299,7 +1341,7 @@ crate::def_intrinsic_component_props!(
                                 );
                                 special_inter_traits!(ElementWithSrcAttribute);
 
-                                define!(tags = (img,));
+                                define!(tags = (img { custom_content_model },));
                                 impl_for_web!();
 
                                 fn decoding(value: maybe![&str]) {
@@ -1334,7 +1376,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
-                                define!(tags = (input,));
+                                define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
 
                                 fn capture(value: maybe![&str]);
@@ -1385,7 +1427,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithRelAttribute,
                                     ElementWithCrossOriginAttribute,
                                 );
-                                define!(tags = (link,));
+                                define!(tags = (link { custom_content_model },));
                                 impl_for_web!();
                                 fn r#as(value: maybe![&str]) {
                                     alias!(as_);
@@ -1411,7 +1453,7 @@ crate::def_intrinsic_component_props!(
 
                             pub trait HtmlMetaElement {
                                 special_super_traits!(ElementWithNameAttribute);
-                                define!(tags = (meta,));
+                                define!(tags = (meta { custom_content_model },));
                                 impl_for_web!();
                                 fn charset(value: maybe![&str]);
                                 fn content(value: maybe![&str]) {
@@ -1554,7 +1596,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithSrcAttribute);
-                                define!(tags = (source,));
+                                define!(tags = (source { custom_content_model },));
                                 impl_for_web!();
 
                                 // TODO: no set_height set_width
@@ -1653,7 +1695,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlTableColElement {
                                 special_super_traits!(HtmlTableChildElement);
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
-                                define!(tags = (col, colgroup,));
+                                define!(tags = (col { custom_content_model }, colgroup,));
                                 impl_for_web!();
                                 fn span(value: maybe![u32]) {
                                     update_with!(set_span);
@@ -1733,7 +1775,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlTrackElement {
                                 special_super_traits!(ElementWithSrcAttribute, ElementWithLabelAttribute);
 
-                                define!(tags = (track,));
+                                define!(tags = (track { custom_content_model },));
                                 impl_for_web!();
 
                                 fn default(value: maybe![bool]) {
