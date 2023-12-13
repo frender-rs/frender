@@ -422,7 +422,16 @@ macro_rules! attributes {
         )*)
     ) => {
         $vis mod $trait_name {
+            $vis mod states {
+                $(
+                    #[derive(Debug, Default)]
+                    pub struct $fn_name<V>(pub V);
+                )*
+            }
             $vis mod attributes {
+                #[allow(unused_imports)]
+                use super::super::super::*;
+
                 ::frender_common::expand! {
                     while (
                         $({$extends})*
@@ -435,8 +444,15 @@ macro_rules! attributes {
                 }
 
                 $(
-                    #[derive(Debug, Default)]
-                    pub struct $fn_name<V>(pub V);
+                    $crate::parse_fn_args_as_bounds! { $fn_args do {
+                        prepend(
+                            #[derive(Debug)]
+                            pub struct $fn_name<V:
+                        )
+                        append(
+                            >(pub V);
+                        )
+                    }}
                 )*
             }
 
@@ -573,6 +589,7 @@ macro_rules! impl_attribute {
     ]); $trait_name:tt) => {
         crate::impl_bounds! {
             super::attributes::$fn_name(
+                csr_state_wrapper(super::states::$fn_name),
                 #[event(super::super::super::event_type_helpers::$fn_name)]
                 bounds as crate::impl_bounds::MaybeHandleEvent,
                 element as $trait_name,
@@ -590,6 +607,7 @@ macro_rules! impl_attribute {
     } $trait_name:ident) => {
         crate::impl_bounds! {
             super::attributes::$fn_name(
+                csr_state_wrapper(super::states::$fn_name),
                 bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
@@ -639,6 +657,7 @@ macro_rules! impl_attribute {
     } $trait_name:ident) => {
         crate::impl_bounds! {
             super::attributes::$fn_name(
+                csr_state_wrapper(super::states::$fn_name),
                 bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
@@ -690,12 +709,28 @@ macro_rules! impl_attribute {
     })? $trait_name:ident) => {
         crate::impl_bounds! {
             super::attributes::$fn_name(
+                csr_state_wrapper(super::states::$fn_name),
                 bounds as $($bounds)+,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($($attr_name)?)?} or (stringify!($fn_name))),
                 $($($($impl_with)*)?)?
             )
         }
+    };
+    // custom impl
+    ($fn_name:ident ($value:ident : custom_with_bounds![impl $($bounds:tt)+]); $trait_name:tt) => {
+        const _: () = {
+            fn asserts_csr<
+                V: $($bounds)+,
+                ET: $crate::html::behavior_type_traits::$trait_name,
+            >(v: V) -> impl $crate::UpdateElementNonReactive<ET> {
+                super::attributes::$fn_name(v)
+            }
+
+            fn asserts_ssr<V: $($bounds)+>(v: V) -> impl $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty {
+                super::attributes::$fn_name(v)
+            }
+        };
     };
 }
 

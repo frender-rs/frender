@@ -41,6 +41,7 @@ impl<'a, V, E, RR, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
 macro_rules! impl_bounds {
     (
         $($wrapper_path_start:ident)? $(:: $wrapper_path:ident)* (
+            csr_state_wrapper($($csr_state_wrapper:tt)+),
             $($(#$bounds_attrs:tt)+)?
             bounds as $($mod_path_start:ident)?
                 $(:: $mod_path:ident)*
@@ -53,6 +54,7 @@ macro_rules! impl_bounds {
     ) => {
         $crate::impl_bounds! {@impl { $($mod_path_start)? $(:: $mod_path)* } {
             wrapper! { $($wrapper_path_start)? $(:: $wrapper_path)* }
+            csr_state_wrapper! { $($csr_state_wrapper)+ }
             $(bounds_attrs! { $(#$bounds_attrs)+ })?
             bounds!  { $($mod_path_start)? $(:: $mod_path)* }
             bounds_tps! { $($($ty,)*)? }
@@ -132,6 +134,7 @@ macro_rules! default_impl_csr {
     (
         meta! {
             wrapper! {$($wrapper:tt)*}
+            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ident }
@@ -148,7 +151,7 @@ macro_rules! default_impl_csr {
             >
         for $($wrapper)*::<V> {
             type State<Renderer: $crate::RenderHtml> =
-                $($wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
+                $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
             fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
                 Self(this): Self,
@@ -177,6 +180,7 @@ macro_rules! default_impl_ssr {
     (
         meta! {
             wrapper! {$($wrapper:tt)*}
+            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ty }
@@ -239,6 +243,7 @@ pub mod DomTokens {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
+                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {$($bounds_tp:ty,)*}
                 csr_element_ty! { $csr_element_ty:ident }
@@ -255,7 +260,7 @@ pub mod DomTokens {
                 >
             for $($wrapper)*::<V> {
                 type State<Renderer: $crate::RenderHtml> =
-                    $($wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
+                    $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
                 fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
                     Self(this): Self,
@@ -416,6 +421,7 @@ pub mod MaybeHandleEvent {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
+                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
                 bounds_attrs! { #[event($($bounds_tp:tt)*)] }
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {}
@@ -433,7 +439,7 @@ pub mod MaybeHandleEvent {
                 >
             for $($wrapper)*::<V> {
                 type State<Renderer: $crate::RenderHtml> =
-                    $($wrapper)*::<$($bounds)*::$csr::State<
+                    $($csr_state_wrapper)*::<$($bounds)*::$csr::State<
                         dyn $($bounds_tp)* ::Event,
                         V,
                         $($bounds_tp)*::EventListenerOf<ET::$csr_element_ty<Renderer>, Renderer>
@@ -495,6 +501,7 @@ pub mod MaybeHandleEvent {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
+                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
                 bounds_attrs! { #[event($($bounds_tp:tt)*)] }
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {}
