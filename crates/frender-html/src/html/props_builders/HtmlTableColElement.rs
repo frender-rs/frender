@@ -212,7 +212,7 @@ mod props_builder {
         /// Event [`input`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event)
         ///
         /// Fired when the `value` of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element has been changed.
-        pub fn on_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> super::Building<Children, (Attrs, super::attributes::on_input<V>)> {
+        pub fn on_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::InputEvent>>(self, value: V) -> super::Building<Children, (Attrs, super::attributes::on_input<V>)> {
             super::Building(super::Data {
                 props: self.0.props.chain_prop(super::attributes::on_input(value)),
             })
