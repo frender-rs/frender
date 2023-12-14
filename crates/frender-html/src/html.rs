@@ -1749,7 +1749,9 @@ crate::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                define!(tags = (textarea,));
+                                trait_bounds!(frender_dom::behaviors::HtmlTextAreaElement<Renderer>);
+
+                                define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
 
                                 fn auto_correct(value: maybe![&str]) {

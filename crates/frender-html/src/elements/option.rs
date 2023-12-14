@@ -19,6 +19,7 @@ impl<R, S: RenderState<R>> RenderState<R> for Option<S> {
     }
 
     fn poll_render(
+        //
         self: Pin<&mut Self>,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
@@ -58,6 +59,7 @@ impl<E: Element> Element for Option<E> {
 
     #[cfg(feature = "render_into")]
     fn render_into<'s, Renderer: crate::RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>,
@@ -69,6 +71,7 @@ impl<E: Element> Element for Option<E> {
     }
 
     fn render_update<Renderer: crate::RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         mut render_state: Pin<&mut Self::RenderState<Renderer>>,
@@ -79,6 +82,7 @@ impl<E: Element> Element for Option<E> {
     }
 
     fn render_update_force_reposition<Renderer: crate::RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         mut render_state: Pin<&mut Self::RenderState<Renderer>>,
@@ -89,12 +93,14 @@ impl<E: Element> Element for Option<E> {
     }
 
     fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         mut render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
         update_option!(self.render_update_maybe_reposition(
+            //
             renderer,
             render_state,
             force_reposition
@@ -104,6 +110,7 @@ impl<E: Element> Element for Option<E> {
     type UnpinnedRenderState<R: RenderHtml> = E::UnpinnedRenderState<R>;
 
     fn unpinned_render_update<Renderer: RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
@@ -114,6 +121,7 @@ impl<E: Element> Element for Option<E> {
     }
 
     fn unpinned_render_update_force_reposition<Renderer: RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
@@ -124,12 +132,14 @@ impl<E: Element> Element for Option<E> {
     }
 
     fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
+        //
         self,
         renderer: &mut Renderer,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
         force_reposition: bool,
     ) {
         unpinned_update_option!(self.unpinned_render_update_maybe_reposition(
+            //
             renderer,
             render_state,
             force_reposition

@@ -10,11 +10,7 @@ impl<R> RenderState<R> for () {
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 
     #[inline]
-    fn poll_render(
-        self: std::pin::Pin<&mut Self>,
-        _: &mut R,
-        _: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
+    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }
@@ -23,36 +19,20 @@ impl Element for () {
     type RenderState<R: RenderHtml> = ();
 
     #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>,
-    ) -> std::pin::Pin<&'s mut Self::RenderState<Renderer>> {
+    fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>) -> std::pin::Pin<&'s mut Self::RenderState<Renderer>> {
         render_state.write(())
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-        force_reposition: bool,
-    ) {
-    }
+    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {}
 
-    fn render_update<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-    ) where
+    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    where
         Self: Sized,
     {
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-    ) where
+    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    where
         Self: Sized,
     {
     }
@@ -64,72 +44,40 @@ impl<E0: Element> Element for (E0,) {
     type RenderState<R: RenderHtml> = E0::RenderState<R>;
 
     #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>,
-    ) -> std::pin::Pin<&'s mut Self::RenderState<Renderer>> {
+    fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>) -> std::pin::Pin<&'s mut Self::RenderState<Renderer>> {
         self.0.render_into(renderer, render_state)
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-        force_reposition: bool,
-    ) {
-        self.0
-            .render_update_maybe_reposition(renderer, render_state, force_reposition)
+    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        self.0.render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 
-    fn render_update<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-    ) where
+    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    where
         Self: Sized,
     {
         self.0.render_update(renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-    ) where
+    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    where
         Self: Sized,
     {
-        self.0
-            .render_update_force_reposition(renderer, render_state)
+        self.0.render_update_force_reposition(renderer, render_state)
     }
 
     type UnpinnedRenderState<R: RenderHtml> = E0::UnpinnedRenderState<R>;
 
-    fn unpinned_render_update<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<Renderer>,
-    ) {
+    fn unpinned_render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         self.0.unpinned_render_update(renderer, render_state)
     }
 
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<Renderer>,
-    ) {
-        self.0
-            .unpinned_render_update_force_reposition(renderer, render_state)
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+        self.0.unpinned_render_update_force_reposition(renderer, render_state)
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(
-        self,
-        renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<Renderer>,
-        force_reposition: bool,
-    ) {
-        self.0
-            .unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+        self.0.unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 }
 

@@ -11,21 +11,8 @@ frender_common::impl_many!(
     {
         type RenderState<R: crate::RenderHtml> = Option<super::str::State<Self, R::Text>>;
 
-        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(
-            self,
-            renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-            force_reposition: bool,
-        ) {
-            super::str::render_update_maybe_reposition::<Self, Self, Self, _>(
-                self,
-                renderer,
-                render_state,
-                force_reposition,
-                PartialEq::ne,
-                |vv, v| *vv = v,
-                std::convert::identity,
-            )
+        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+            super::str::render_update_maybe_reposition::<Self, Self, Self, _>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
         }
 
         crate::impl_unpinned_render_for_unpin! {}

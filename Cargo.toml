@@ -10,3 +10,6 @@ members = [
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"
+
+[replace]
+"callable:0.4.0" = { path = "../callable" }

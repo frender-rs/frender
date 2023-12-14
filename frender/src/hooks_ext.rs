@@ -47,6 +47,74 @@ pub mod argument {
     );
 }
 
+pub mod setter {
+    use frender_events::callable::{
+        ArgumentTypes, Callable, CallableWithFixedArguments, IsCallable,
+    };
+    use hooks::ShareValue;
+
+    #[derive(Debug, Clone)]
+    pub struct Setter<S: ShareValue>(pub S);
+
+    #[derive(Debug, Clone)]
+    pub struct SetterConditional<S: ShareValue>(pub S);
+
+    impl<S: ShareValue> PartialEq for Setter<S> {
+        fn eq(&self, other: &Self) -> bool {
+            S::equivalent_to(&self.0, &other.0)
+        }
+    }
+
+    impl<S: ShareValue> IsCallable for Setter<S> {}
+
+    impl<S: ShareValue> Callable<(S::Value,)> for Setter<S> {
+        type Output = ();
+
+        fn call_fn(&self, (new_value,): (S::Value,)) -> Self::Output {
+            self.0.set(new_value)
+        }
+    }
+
+    impl<S: ShareValue> CallableWithFixedArguments for Setter<S> {
+        type FixedArgumentTypes = ArgumentTypes!(S::Value,);
+    }
+
+    impl<S: ShareValue> PartialEq for SetterConditional<S> {
+        fn eq(&self, other: &Self) -> bool {
+            S::equivalent_to(&self.0, &other.0)
+        }
+    }
+
+    impl<S: ShareValue> IsCallable for SetterConditional<S> {}
+
+    impl<S: ShareValue> Callable<(Option<S::Value>,)> for SetterConditional<S> {
+        type Output = ();
+
+        fn call_fn(&self, (new_value,): (Option<S::Value>,)) -> Self::Output {
+            if let Some(new_value) = new_value {
+                self.0.set(new_value)
+            }
+        }
+    }
+
+    impl<S: ShareValue> CallableWithFixedArguments for SetterConditional<S> {
+        type FixedArgumentTypes = ArgumentTypes!(Option<S::Value>,);
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub struct EventTargetFormControlValue;
+
+    impl IsCallable for EventTargetFormControlValue {}
+    impl<E: ?Sized + frender_events::event::Event> Callable<(&E,)> for EventTargetFormControlValue {
+        type Output = Option<String>;
+
+        fn call_fn(&self, (e,): (&E,)) -> Self::Output {
+            e.target_form_control_value()
+                .map(std::borrow::Cow::into_owned)
+        }
+    }
+}
+
 pub trait ShareValueExt: ShareValue {
     fn into_argument_shared(self) -> argument::Shared<Self>
     where
@@ -105,6 +173,32 @@ pub trait ShareValueExt: ShareValue {
             callable::argument::ArgumentTypes<First = ArgumentType![&mut Self::Value]>,
     {
         f.provide_first_argument(argument::MappedMut(self))
+    }
+
+    fn into_setter(self) -> setter::Setter<Self>
+    where
+        Self: Sized,
+    {
+        setter::Setter(self)
+    }
+
+    fn into_setter_conditional(self) -> setter::SetterConditional<Self>
+    where
+        Self: Sized,
+    {
+        setter::SetterConditional(self)
+    }
+
+    fn into_setter_form_control_value(
+        self,
+    ) -> callable::chain::Chain<setter::EventTargetFormControlValue, setter::SetterConditional<Self>>
+    where
+        Self: Sized + ShareValue<Value = String>,
+    {
+        callable::chain::Chain(
+            setter::EventTargetFormControlValue,
+            setter::SetterConditional(self),
+        )
     }
 }
 

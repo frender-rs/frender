@@ -32,6 +32,7 @@ You can quick start with the
 
 ## Future Development Plans
 
+- [ ] Clarify static text / uncached text / cached text for csr.
 - [ ] Documentation
 - [ ] Intrinsic svg components
 - [ ] Export `frender` components to js

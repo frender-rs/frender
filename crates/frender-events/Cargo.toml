@@ -36,4 +36,4 @@ features = [
 ]
 
 [features]
-web = ["dep:web-sys"]
+web = ["dep:web-sys", "dep:wasm-bindgen"]

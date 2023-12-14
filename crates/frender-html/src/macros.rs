@@ -150,6 +150,7 @@ macro_rules! impl_behavior_fn {
                 <crate::html::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME,
                 move |event| {
                     use wasm_bindgen::JsCast;
+                    // TODO: check event type
                     let event = event.unchecked_ref();
                     listener(::frender_dom::csr::web::Event::new_from_ref(event))
                 },
@@ -1384,6 +1385,12 @@ macro_rules! parse_fn_args_as_bounds {
     (($value:ident : bounds![ $($mod_path_start:ident)? $(:: $mod_path:ident)*  $($(::)? <$($ty:ty),* $(,)?>)?]) do $commands:tt) => {
         $crate::expand! {
             { $($mod_path_start)? $(:: $mod_path)* ::Bounds $(::<$($ty),*>)? }
+            do $commands
+        }
+    };
+    (($value:ident : custom_with_bounds![impl $($bounds:tt)+]) do $commands:tt) => {
+        $crate::expand! {
+            { $($bounds)+ }
             do $commands
         }
     };

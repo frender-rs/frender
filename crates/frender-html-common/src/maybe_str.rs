@@ -5,13 +5,18 @@ use frender_ssr_html::assert::OneStringOrEmpty;
 
 use crate::MaybeUpdateValueWithState;
 
-pub trait MaybeStr: MaybeUpdateValueWithState<str> {
+pub trait IntoOneStringOrEmpty {
     type OneStringOrEmpty: OneStringOrEmpty;
 
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty;
 }
 
-impl MaybeStr for () {
+/// This is a trait alias.
+pub trait MaybeStr: MaybeUpdateValueWithState<str> + IntoOneStringOrEmpty {}
+
+impl<T: ?Sized + MaybeUpdateValueWithState<str> + IntoOneStringOrEmpty> MaybeStr for T {}
+
+impl IntoOneStringOrEmpty for () {
     type OneStringOrEmpty = async_str_iter::empty::Empty;
 
     fn into_one_string_or_empty((): Self) -> Self::OneStringOrEmpty {
@@ -19,7 +24,7 @@ impl MaybeStr for () {
     }
 }
 
-impl<T: MaybeStr> MaybeStr for Option<T> {
+impl<T: IntoOneStringOrEmpty> IntoOneStringOrEmpty for Option<T> {
     type OneStringOrEmpty = async_str_iter::option::IterOption<T::OneStringOrEmpty>;
 
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
@@ -29,21 +34,23 @@ impl<T: MaybeStr> MaybeStr for Option<T> {
 }
 
 #[cfg(feature = "either")]
-impl<L: MaybeStr, R: MaybeStr> MaybeStr for either::Either<L, R> {
+impl<L: IntoOneStringOrEmpty, R: IntoOneStringOrEmpty> IntoOneStringOrEmpty
+    for either::Either<L, R>
+{
     type OneStringOrEmpty =
         async_str_iter::either::IterEither<L::OneStringOrEmpty, R::OneStringOrEmpty>;
 
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
         this.map_either(
-            MaybeStr::into_one_string_or_empty,
-            MaybeStr::into_one_string_or_empty,
+            IntoOneStringOrEmpty::into_one_string_or_empty,
+            IntoOneStringOrEmpty::into_one_string_or_empty,
         )
         .into_async_str_iterator()
     }
 }
 
 frender_common::impl_many!(
-    impl<__> MaybeStr for each_of![&str, String, Cow<'_, str>] {
+    impl<__> IntoOneStringOrEmpty for each_of![&str, String, Cow<'_, str>] {
         type OneStringOrEmpty = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
 
         fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {

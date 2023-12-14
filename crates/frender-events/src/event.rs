@@ -17,6 +17,23 @@ pub trait Event {
     fn prevent_default(&self);
     fn stop_immediate_propagation(&self);
     fn stop_propagation(&self);
+
+    /// Returns `Some(value)` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
+    fn target_form_control_value(&self) -> Option<Cow<str>>;
+
+    /// Returns `true` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
+    fn set_target_form_control_default_value(&self, value: &str) -> bool;
+
+    /// Returns `true` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
+    fn set_target_form_control_value(&self, value: &str) -> bool;
+
+    // /// See [`the valueAsDate IDL attribute`](https://html.spec.whatwg.org/multipage/input.html#dom-input-valueasdate).
+    // fn target_input_value_as_date(&self) -> Option<Date>;
+
+    /// Returns `Some(valueAsNumber)` when `event.target` is `HtmlInputElement`.
+    ///
+    /// See [`the valueAsNumber IDL attribute`](https://html.spec.whatwg.org/multipage/input.html#dom-input-valueasnumber).
+    fn target_input_value_as_number(&self) -> Option<f64>;
 }
 
 pub trait SecurityPolicyViolationEvent: Event {
@@ -157,6 +174,42 @@ mod web {
 
     use crate::touch::{Touch, TouchList};
 
+    mod shims {
+        use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
+
+        #[wasm_bindgen]
+        extern "C" {
+            #[wasm_bindgen(js_name = "HTMLInputElement")]
+            pub(super) type HtmlInputElement;
+
+            #[wasm_bindgen(
+                structural,
+                method,
+                setter,
+                js_class = "HTMLInputElement",
+                js_name = "value",
+                catch
+            )]
+            /// Setting `input.value` might
+            /// [throw an error](https://html.spec.whatwg.org/multipage/input.html#dom-input-value-dev)
+            /// .
+            pub(super) fn set_value(this: &HtmlInputElement, value: &str) -> Result<(), JsValue>;
+
+            #[wasm_bindgen(
+                structural,
+                method,
+                setter,
+                js_class = "HTMLInputElement",
+                js_name = "defaultValue",
+                catch
+            )]
+            pub(super) fn set_default_value(
+                this: &HtmlInputElement,
+                value: &str,
+            ) -> Result<(), JsValue>;
+        }
+    }
+
     impl<E: AsRef<web_sys::Event>> super::Event for crate::web::Event<E> {
         fn type_(&self) -> Cow<str> {
             self.0.as_ref().type_().into()
@@ -196,6 +249,79 @@ mod web {
         }
         fn stop_propagation(&self) {
             self.0.as_ref().stop_propagation()
+        }
+
+        fn target_form_control_value(&self) -> Option<Cow<str>> {
+            use wasm_bindgen::JsCast;
+            self.0.as_ref().target().and_then(|target| {
+                target
+                    .dyn_ref::<web_sys::HtmlInputElement>()
+                    .map(|input| Cow::Owned(input.value()))
+                    .or_else(|| {
+                        target
+                            .dyn_ref::<web_sys::HtmlTextAreaElement>()
+                            .map(|input| Cow::Owned(input.value()))
+                    })
+            })
+        }
+
+        fn set_target_form_control_default_value(&self, value: &str) -> bool {
+            use wasm_bindgen::JsCast;
+            {
+                let res = self.0.as_ref().target().and_then(|target| {
+                    target
+                        .dyn_ref::<shims::HtmlInputElement>()
+                        .map(|input| input.set_default_value(value))
+                        .or_else(|| {
+                            target
+                                .dyn_ref::<web_sys::HtmlTextAreaElement>()
+                                .map(|input| input.set_default_value(value))
+                        })
+                });
+
+                if let Some(res) = res {
+                    // TODO: handle error when setting `input.defaultValue`
+                    let _ = res;
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
+        fn set_target_form_control_value(&self, value: &str) -> bool {
+            use wasm_bindgen::JsCast;
+            {
+                let res = self.0.as_ref().target().and_then(|target| {
+                    target
+                        .dyn_ref::<shims::HtmlInputElement>()
+                        .map(|input| {
+                            let _ = input.set_value(value);
+                            // TODO: handle error when setting `input.value`
+                        })
+                        .or_else(|| {
+                            target
+                                .dyn_ref::<web_sys::HtmlTextAreaElement>()
+                                .map(|input| input.set_value(value))
+                        })
+                });
+
+                // asserts res is `Option<()>`
+                if let Some(()) = res {
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
+        fn target_input_value_as_number(&self) -> Option<f64> {
+            use wasm_bindgen::JsCast;
+            self.0.as_ref().target().and_then(|target| {
+                target
+                    .dyn_ref::<web_sys::HtmlInputElement>()
+                    .map(web_sys::HtmlInputElement::value_as_number)
+            })
         }
     }
 

@@ -1,5 +1,6 @@
 mod script;
 mod style;
+mod textarea;
 mod void_elements;
 
 mod utils {

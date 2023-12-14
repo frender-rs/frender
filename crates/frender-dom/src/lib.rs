@@ -9,3 +9,7 @@ pub mod component;
 pub mod behaviors;
 
 pub mod script;
+
+pub mod value_updaters;
+
+pub mod value;

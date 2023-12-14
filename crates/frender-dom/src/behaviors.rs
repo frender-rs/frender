@@ -20,6 +20,11 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
     fn set_inner_text(&mut self, renderer: &mut Renderer, value: &str);
 }
 
+pub trait HtmlTextAreaElement<Renderer: ?Sized>: HtmlElement<Renderer> {
+    fn set_value(&mut self, renderer: &mut Renderer, value: &str);
+    fn set_default_value(&mut self, renderer: &mut Renderer, value: &str);
+}
+
 #[cfg(feature = "web")]
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
@@ -76,5 +81,27 @@ impl<
 {
     fn set_inner_text(&mut self, _: &mut Renderer, value: &str) {
         AsRef::<web_sys::HtmlElement>::as_ref(&self.0).set_inner_text(value)
+    }
+}
+
+#[cfg(feature = "web")]
+impl<
+        N: AsRef<web_sys::Node>
+            + AsRef<web_sys::Element>
+            + AsRef<web_sys::HtmlElement>
+            + AsRef<web_sys::HtmlTextAreaElement>,
+        Renderer: ?Sized + crate::csr::web::Renderer,
+    > HtmlTextAreaElement<Renderer> for crate::csr::web::Node<N>
+{
+    fn set_value(&mut self, _: &mut Renderer, value: &str) {
+        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0).set_value(value)
+    }
+
+    fn set_default_value(&mut self, renderer: &mut Renderer, value: &str) {
+        use frender_common::try_behavior::TryWithTryBehavior;
+
+        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0)
+            .set_default_value(value)
+            .unwrap_with_behavior(&mut renderer.try_behavior())
     }
 }
