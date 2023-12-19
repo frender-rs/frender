@@ -6,6 +6,8 @@ use frender_common::try_behavior::TryBehavior;
 
 pub use dom_token_list::DomTokenList;
 
+pub mod event;
+
 mod dom_token_list;
 
 pub struct Node<N>(pub N);

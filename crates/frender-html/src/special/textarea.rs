@@ -70,7 +70,7 @@ pub mod csr {
         type ChildrenUnpinnedRenderState<R: RenderHtml> = NonReactiveRenderState<
             Children::State<
                 //
-                <R::textarea as behaviors::HtmlElement<R>>::OnBeforeInputEventListener,
+                <R::textarea as frender_dom::behaviors::HtmlElement<R>>::OnBeforeInputPreventDefault,
                 <R::textarea as behaviors::HtmlElement<R>>::OnInputEventListener,
             >,
         >;
@@ -101,10 +101,10 @@ pub mod csr {
                 self.element.set_value(self.renderer, value)
             }
 
-            type ForceValue = E::OnBeforeInputEventListener;
+            type ForceValue = E::OnBeforeInputPreventDefault;
 
             fn force_value<V: frender_dom::value::TempAsRef<str> + 'static>(&mut self, value: V) -> Self::ForceValue {
-                self.element.on_before_input(self.renderer, move |e| e.prevent_default())
+                self.element.on_before_input_prevent_default(self.renderer)
             }
 
             type OnValueChangeEventListener = E::OnInputEventListener;

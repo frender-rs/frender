@@ -18,6 +18,13 @@ pub trait Element<Renderer: ?Sized>: Node<Renderer> {
 
 pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
     fn set_inner_text(&mut self, renderer: &mut Renderer, value: &str);
+
+    /// On drop, the event listener should be removed.
+    type OnBeforeInputPreventDefault;
+    fn on_before_input_prevent_default(
+        &mut self,
+        renderer: &mut Renderer,
+    ) -> Self::OnBeforeInputPreventDefault;
 }
 
 pub trait HtmlTextAreaElement<Renderer: ?Sized>: HtmlElement<Renderer> {
@@ -81,6 +88,19 @@ impl<
 {
     fn set_inner_text(&mut self, _: &mut Renderer, value: &str) {
         AsRef::<web_sys::HtmlElement>::as_ref(&self.0).set_inner_text(value)
+    }
+
+    type OnBeforeInputPreventDefault =
+        crate::csr::web::event::EventListenerPreventDefault<&'static str>;
+
+    fn on_before_input_prevent_default(
+        &mut self,
+        _: &mut Renderer,
+    ) -> Self::OnBeforeInputPreventDefault {
+        let node: &web_sys::Node = self.0.as_ref();
+        let node: &web_sys::EventTarget = node.as_ref();
+
+        Self::OnBeforeInputPreventDefault::new(node.clone(), "beforeinput")
     }
 }
 
