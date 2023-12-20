@@ -22,6 +22,7 @@ hooks = { version = "3.0.0-alpha", default-features = false, features = [
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../crates/frender-events" }
 frender-element = { version = "0.1.0", path = "../crates/frender-element" }
+async-str-iter = { version = "0.1.0", path = "../crates/async-str-iter" }
 
 [dependencies.frender-hook-element]
 path = "../crates/frender-hook-element"

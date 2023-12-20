@@ -844,6 +844,7 @@ dependencies = [
 name = "frender"
 version = "2.0.0-alpha.1"
 dependencies = [
+ "async-str-iter",
  "either",
  "frender-common",
  "frender-element",

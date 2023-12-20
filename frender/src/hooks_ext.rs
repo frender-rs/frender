@@ -115,7 +115,102 @@ pub mod setter {
     }
 }
 
+pub mod form_control {
+    use frender_html::dom::value::FormControlValue;
+    use hooks::ShareValue;
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct ControlledSharedValue<S>(pub S);
+
+    pub struct State<S, Cbk> {
+        share_value: S,
+        #[allow(dead_code)]
+        callback: Cbk,
+    }
+
+    impl<S> FormControlValue for ControlledSharedValue<S>
+    where
+        S: Clone + 'static,
+        S: ShareValue<Value = String>,
+    {
+        type State<ForceValue, OnValueChangeEventListener> =
+            Option<State<S, OnValueChangeEventListener>>;
+
+        fn update_with_state<C: frender_html::dom::value::FormControlController>(
+            this: Self,
+            state: &mut Self::State<C::ForceValue, C::OnValueChangeEventListener>,
+            mut controller: C,
+        ) {
+            if let Some(state) = state {
+                if state.share_value.equivalent_to(&this.0) {
+                    return;
+                }
+            }
+
+            this.0.map(|value| {
+                controller.set_default_value(value);
+                controller.set_value(value);
+            });
+
+            *state = Some(State {
+                share_value: this.0.clone(),
+                callback: controller.on_value_change(move |value| this.0.set(value.into_owned())),
+            });
+        }
+
+        type OneStringOrEmpty = async_str_iter::any_str::IterAnyStr<S::Value>;
+
+        fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
+            use async_str_iter::IntoAsyncStrIterator;
+
+            async_str_iter::any_str::AnyStr(this.0.unwrap_or_get_cloned()).into_async_str_iterator()
+        }
+    }
+}
+
+pub mod eq {
+    use hooks::ShareValue;
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct EquivalentShareValue<S: ShareValue>(pub S);
+
+    impl<S: ShareValue> PartialEq for EquivalentShareValue<S> {
+        fn eq(&self, other: &Self) -> bool {
+            self.0.equivalent_to(&other.0)
+        }
+    }
+
+    impl<S: ShareValue> std::ops::Deref for EquivalentShareValue<S> {
+        type Target = S;
+
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+}
+
 pub trait ShareValueExt: ShareValue {
+    fn into_controlled(self) -> form_control::ControlledSharedValue<Self>
+    where
+        Self: Sized,
+    {
+        form_control::ControlledSharedValue(self)
+    }
+
+    fn to_eq(&self) -> eq::EquivalentShareValue<Self>
+    where
+        Self: Sized + Clone,
+    {
+        eq::EquivalentShareValue(Self::clone(self))
+    }
+
+    fn into_eq(self) -> eq::EquivalentShareValue<Self>
+    where
+        Self: Sized,
+    {
+        eq::EquivalentShareValue(self)
+    }
+
     fn into_argument_shared(self) -> argument::Shared<Self>
     where
         Self: Sized,
