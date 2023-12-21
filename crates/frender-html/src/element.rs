@@ -1,28 +1,6 @@
-use std::{mem::MaybeUninit, pin::Pin, task::Poll};
+use std::pin::Pin;
 
-use crate::RenderHtml;
-
-pub trait RenderState<R> {
-    fn unmount(self: Pin<&mut Self>, renderer: &mut R);
-
-    fn state_unmount(self: Pin<&mut Self>);
-
-    fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> Poll<()>;
-}
-
-pub trait FromUnpinned {
-    type Unpinned;
-
-    fn from_unpinned(this: &mut Self::Unpinned) -> Pin<&mut Self>;
-}
-
-// impl<T: Unpin> FromUnpinned for T {
-//     type Unpinned = T;
-
-//     fn from_unpinned(this: &mut Self::Unpinned) -> Pin<&mut Self> {
-//         Pin::new(this)
-//     }
-// }
+use crate::{RenderHtml, RenderState};
 
 #[cfg(feature = "either")]
 macro_rules! doc_cfg_either {

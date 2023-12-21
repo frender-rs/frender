@@ -1,19 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::{Element, RenderHtml, RenderState};
-
-impl<R> RenderState<R> for () {
-    #[inline]
-    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut R) {}
-
-    #[inline]
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {}
-
-    #[inline]
-    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-        std::task::Poll::Ready(())
-    }
-}
+use crate::{Element, RenderHtml};
 
 impl Element for () {
     type RenderState<R: RenderHtml> = ();
@@ -84,32 +71,6 @@ impl<E0: Element> Element for (E0,) {
 macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
         $(
-            impl<R,$($field: RenderState<R>),+> RenderState<R> for ($($field,)+) {
-                fn unmount(self: ::core::pin::Pin<&mut Self>, renderer: &mut R) {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-                    $( $field.unmount(renderer); )+
-                }
-
-                fn state_unmount(self: std::pin::Pin<&mut Self>) {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-                    $( $field.state_unmount(); )+
-                }
-
-                fn poll_render(
-                    self: std::pin::Pin<&mut Self>,
-                    renderer: &mut R,
-                    cx: &mut std::task::Context<'_>,
-                ) -> std::task::Poll<()> {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-
-                    match ($($field::poll_render($field, renderer, cx) ,)+) {
-                        #[allow(unused_variables)]
-                        ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
-                        _ => std::task::Poll::Pending,
-                    }
-                }
-            }
-
             impl<$($field: Element),+> Element for ($($field,)+) {
                 type RenderState<R: RenderHtml> = ($($field::RenderState<R>,)+);
 

@@ -4,29 +4,6 @@ use either::Either;
 
 use crate::{Element, RenderHtml, RenderState};
 
-impl<Renderer, L: RenderState<Renderer>, R: RenderState<Renderer>> RenderState<Renderer> for Either<L, R> {
-    fn unmount(self: Pin<&mut Self>, renderer: &mut Renderer) {
-        match self.as_pin_mut() {
-            Either::Left(s) => s.unmount(renderer),
-            Either::Right(s) => s.unmount(renderer),
-        }
-    }
-
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {
-        match self.as_pin_mut() {
-            Either::Left(s) => s.state_unmount(),
-            Either::Right(s) => s.state_unmount(),
-        }
-    }
-
-    fn poll_render(self: Pin<&mut Self>, renderer: &mut Renderer, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-        match self.as_pin_mut() {
-            Either::Left(s) => s.poll_render(renderer, cx),
-            Either::Right(s) => s.poll_render(renderer, cx),
-        }
-    }
-}
-
 macro_rules! update_either {
     ($_self:ident . $method:ident($ctx:ident, $state:ident $(, $arg:expr)?)) => {{
         let mut $state = $state.project().inner;
