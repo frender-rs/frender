@@ -34,21 +34,31 @@ impl<Renderer, L: RenderState<Renderer>, R: RenderState<Renderer>> RenderState<R
 }
 
 pin_project_lite::pin_project!(
-    pub struct EitherState<A, B> {
+    pub struct EitherRenderState<A, B> {
         #[pin]
         inner: Either<A, B>,
     }
 );
 
-impl<A: Default, B: Default> Default for EitherState<A, B> {
+impl<A, B> EitherRenderState<A, B> {
+    pub fn inner_mut(&mut self) -> &mut Either<A, B> {
+        &mut self.inner
+    }
+
+    pub fn project_inner(self: Pin<&mut Self>) -> Pin<&mut Either<A, B>> {
+        self.project().inner
+    }
+}
+
+impl<A: Default, B: Default> Default for EitherRenderState<A, B> {
     fn default() -> Self {
-        EitherState {
+        EitherRenderState {
             inner: Either::Left(A::default()),
         }
     }
 }
 
-impl<R, A: RenderState<R>, B: RenderState<R>> RenderState<R> for EitherState<A, B> {
+impl<R, A: RenderState<R>, B: RenderState<R>> RenderState<R> for EitherRenderState<A, B> {
     fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
         self.project().inner.unmount(renderer)
     }

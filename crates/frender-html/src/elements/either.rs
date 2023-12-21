@@ -2,11 +2,11 @@ use std::pin::Pin;
 
 use either::Either;
 
-use crate::{Element, RenderHtml, RenderState};
+use crate::{render_state::either::EitherRenderState, Element, RenderHtml, RenderState};
 
 macro_rules! update_either {
     ($_self:ident . $method:ident($ctx:ident, $state:ident $(, $arg:expr)?)) => {{
-        let mut $state = $state.project().inner;
+        let mut $state = $state.project_inner();
         match $_self {
             Either::Left(e) => {
                 if let Either::Right(other_state) = $state.as_mut().as_pin_mut() {
@@ -42,7 +42,7 @@ macro_rules! update_either {
 
 macro_rules! unpinned_update_either {
     ($_self:ident . $method:ident($ctx:ident, $state:ident $(, $arg:expr)?)) => {{
-        let $state = &mut $state.inner;
+        let $state = $state.inner_mut();
         match $_self {
             Either::Left(e) => {
                 if let Either::Right(other_state) = $state {
@@ -76,39 +76,12 @@ macro_rules! unpinned_update_either {
     }};
 }
 
-pin_project_lite::pin_project!(
-    pub struct EitherState<A, B> {
-        #[pin]
-        inner: Either<A, B>,
-    }
-);
-
-impl<A: Default, B: Default> Default for EitherState<A, B> {
-    fn default() -> Self {
-        EitherState { inner: Either::Left(A::default()) }
-    }
-}
-
-impl<R, A: RenderState<R>, B: RenderState<R>> RenderState<R> for EitherState<A, B> {
-    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
-        self.project().inner.unmount(renderer)
-    }
-
-    fn state_unmount(self: Pin<&mut Self>) {
-        self.project().inner.state_unmount()
-    }
-
-    fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-        self.project().inner.poll_render(renderer, cx)
-    }
-}
-
 impl<L, R> Element for Either<L, R>
 where
     L: Element,
     R: Element,
 {
-    type RenderState<Renderer: RenderHtml> = EitherState<L::RenderState<Renderer>, R::RenderState<Renderer>>;
+    type RenderState<Renderer: RenderHtml> = EitherRenderState<L::RenderState<Renderer>, R::RenderState<Renderer>>;
 
     fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         update_either!(self.render_update(renderer, render_state))
@@ -122,7 +95,7 @@ where
         update_either!(self.render_update_maybe_reposition(renderer, render_state, force_reposition))
     }
 
-    type UnpinnedRenderState<Renderer: RenderHtml> = EitherState<L::UnpinnedRenderState<Renderer>, R::UnpinnedRenderState<Renderer>>;
+    type UnpinnedRenderState<Renderer: RenderHtml> = EitherRenderState<L::UnpinnedRenderState<Renderer>, R::UnpinnedRenderState<Renderer>>;
 
     fn unpinned_render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         unpinned_update_either!(self.unpinned_render_update(renderer, render_state))
