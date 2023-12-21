@@ -867,6 +867,15 @@ name = "frender-common"
 version = "0.1.0"
 
 [[package]]
+name = "frender-csr"
+version = "0.1.0"
+dependencies = [
+ "either",
+ "frender-common",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "frender-csr-web"
 version = "0.1.0"
 dependencies = [
@@ -900,6 +909,7 @@ dependencies = [
  "convert-js",
  "either",
  "frender-common",
+ "frender-csr",
  "frender-events",
  "frender-html-common",
  "frender-ssr",

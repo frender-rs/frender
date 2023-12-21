@@ -14,7 +14,11 @@ impl<R, S: RenderState<R>, const N: usize> RenderState<R> for [S; N] {
         pin_project_map_array(self, S::state_unmount)
     }
 
-    fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(
+        self: std::pin::Pin<&mut Self>,
+        renderer: &mut R,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
         pin_project_map_array(self, |state| match S::poll_render(state, renderer, cx) {
@@ -54,7 +58,11 @@ impl<R, S: RenderState<R>, const N: usize> RenderState<R> for ArrayRenderState<S
         self.project_inner().state_unmount()
     }
 
-    fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(
+        self: Pin<&mut Self>,
+        renderer: &mut R,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
         self.project_inner().poll_render(renderer, cx)
     }
 }

@@ -8,7 +8,7 @@ pub use update_element::UpdateElementNonReactive;
 
 pub use element::Element;
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
-pub use render_state::RenderState;
+pub use frender_dom::{render_state, RenderState};
 
 pub mod html;
 pub mod impl_bounds;
@@ -21,8 +21,6 @@ mod element;
 mod element_types;
 
 pub mod elements;
-
-pub mod render_state;
 
 mod macros;
 #[cfg(feature = "web")]
