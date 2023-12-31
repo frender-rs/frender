@@ -27,11 +27,6 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
     ) -> Self::OnBeforeInputPreventDefault;
 }
 
-pub trait HtmlTextAreaElement<Renderer: ?Sized>: HtmlElement<Renderer> {
-    fn set_value(&mut self, renderer: &mut Renderer, value: &str);
-    fn set_default_value(&mut self, renderer: &mut Renderer, value: &str);
-}
-
 #[cfg(feature = "web")]
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
@@ -101,27 +96,5 @@ impl<
         let node: &web_sys::EventTarget = node.as_ref();
 
         Self::OnBeforeInputPreventDefault::new(node.clone(), "beforeinput")
-    }
-}
-
-#[cfg(feature = "web")]
-impl<
-        N: AsRef<web_sys::Node>
-            + AsRef<web_sys::Element>
-            + AsRef<web_sys::HtmlElement>
-            + AsRef<web_sys::HtmlTextAreaElement>,
-        Renderer: ?Sized + crate::csr::web::Renderer,
-    > HtmlTextAreaElement<Renderer> for crate::csr::web::Node<N>
-{
-    fn set_value(&mut self, _: &mut Renderer, value: &str) {
-        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0).set_value(value)
-    }
-
-    fn set_default_value(&mut self, renderer: &mut Renderer, value: &str) {
-        use frender_common::try_behavior::TryWithTryBehavior;
-
-        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0)
-            .set_default_value(value)
-            .unwrap_with_behavior(&mut renderer.try_behavior())
     }
 }

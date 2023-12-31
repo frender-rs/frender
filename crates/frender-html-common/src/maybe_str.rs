@@ -50,7 +50,15 @@ impl<L: IntoOneStringOrEmpty, R: IntoOneStringOrEmpty> IntoOneStringOrEmpty
 }
 
 frender_common::impl_many!(
-    impl<__> IntoOneStringOrEmpty for each_of![&str, String, Cow<'_, str>] {
+    impl<__> IntoOneStringOrEmpty
+        for each_of![
+            &str,
+            String,
+            Cow<'_, str>,
+            //
+            std::rc::Rc<str>,
+        ]
+    {
         type OneStringOrEmpty = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
 
         fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {

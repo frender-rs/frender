@@ -1,6 +1,7 @@
 use std::{pin::Pin, task::Poll};
 
 pub mod any_str;
+pub mod borrow_str;
 pub mod chain;
 pub mod concat;
 pub mod either;

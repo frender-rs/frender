@@ -315,6 +315,12 @@ mod one_string_or_empty {
     impl<S: AsRef<str>> Sealed for async_str_iter::any_str::IterAnyStr<S> {}
     impl<S: AsRef<str>> OneStringOrEmpty for async_str_iter::any_str::IterAnyStr<S> {}
 
+    impl<S: std::borrow::Borrow<str>> Sealed for async_str_iter::borrow_str::IterBorrowStr<S> {}
+    impl<S: std::borrow::Borrow<str>> OneStringOrEmpty
+        for async_str_iter::borrow_str::IterBorrowStr<S>
+    {
+    }
+
     impl<T: OneStringOrEmpty> Sealed for async_str_iter::option::IterOption<T> {}
     impl<T: OneStringOrEmpty> OneStringOrEmpty for async_str_iter::option::IterOption<T> {}
 

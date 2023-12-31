@@ -777,7 +777,8 @@ macro_rules! RenderHtml {
         )*)
     ) => {
         $($($(
-            type $tags: self::behaviors::$trait_name<Self>;
+            // TODO: remove Clone bound
+            type $tags: self::behaviors::$trait_name<Self> + Clone;
             fn $tags(&mut self) -> Self::$tags;
         )*)?)?
     };

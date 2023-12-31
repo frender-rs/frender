@@ -17,6 +17,7 @@ pub mod omitted;
 pub use elements::static_text::StaticText;
 
 pub use frender_common::{Elements, Keyed};
+pub use frender_html as html;
 pub use frender_html::dom;
 pub use frender_macros::component;
 

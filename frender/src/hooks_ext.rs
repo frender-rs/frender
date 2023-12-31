@@ -116,54 +116,153 @@ pub mod setter {
 }
 
 pub mod form_control {
-    use frender_html::dom::value::FormControlValue;
-    use hooks::ShareValue;
+    use std::borrow::Borrow;
+
+    use async_str_iter::IntoAsyncStrIterator;
+    use frender_html::{
+        form_control::{
+            element::FormControlElement,
+            value::{FormControlValue, OfValue, Value},
+        },
+        RenderState,
+    };
+    use hooks::{Hook, HookValue, ShareValue};
 
     #[derive(Debug, Clone, Copy)]
     pub struct ControlledSharedValue<S>(pub S);
 
-    pub struct State<S, Cbk> {
-        share_value: S,
-        #[allow(dead_code)]
-        callback: Cbk,
+    impl<S, Val: Clone> frender_html::maybe_str::IntoOneStringOrEmpty for ControlledSharedValue<S>
+    where
+        S: ShareValue<Value = Val>,
+        Val: OfValue<Value = str>,
+    {
+        type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<Val>;
+
+        fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
+            let val = this.0.unwrap_or_get_cloned();
+            async_str_iter::borrow_str::BorrowStr(val).into_async_str_iterator()
+        }
     }
 
-    impl<S> FormControlValue for ControlledSharedValue<S>
-    where
-        S: Clone + 'static,
-        S: ShareValue<Value = String>,
-    {
-        type State<ForceValue, OnValueChangeEventListener> =
-            Option<State<S, OnValueChangeEventListener>>;
+    pin_project_lite::pin_project!(
+        pub struct CompoundState<S, T> {
+            #[pin]
+            reactive: S,
+            non_reactive: T,
+        }
+    );
 
-        fn update_with_state<C: frender_html::dom::value::FormControlController>(
+    impl<S: RenderState<R>, T, R> RenderState<R> for CompoundState<S, T> {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            self.project().reactive.unmount(renderer)
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            self.project().reactive.state_unmount()
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            self.project().reactive.poll_render(renderer, cx)
+        }
+    }
+
+    pin_project_lite::pin_project!(
+        #[project = ProjReactiveState]
+        pub struct ReactiveState<S, E> {
+            element: E,
+            #[pin]
+            inner: S,
+        }
+    );
+
+    impl<
+            V: ?Sized + Value,
+            E: FormControlElement<V, R>,
+            S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S>,
+            R,
+        > RenderState<R> for ReactiveState<S, E>
+    where
+        <S as ShareValue>::Value: OfValue<Value = V>,
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            let ProjReactiveState { element, inner } = self.project();
+
+            element.remove_value(renderer);
+
+            S::unmount(inner);
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            S::unmount(self.project().inner)
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let ProjReactiveState { element, mut inner } = self.project();
+
+            match inner.as_mut().poll_next_update(cx) {
+                std::task::Poll::Ready(active) => {
+                    if active {
+                        let state = inner.use_hook(); // mark as seen
+
+                        state.map(|value| {
+                            element.set_default_value(renderer, value.borrow());
+                            element.set_value(renderer, value.borrow());
+                        });
+                    }
+
+                    std::task::Poll::Ready(())
+                }
+                std::task::Poll::Pending => std::task::Poll::Pending,
+            }
+        }
+    }
+
+    impl<S, Val> FormControlValue<Val::Value> for ControlledSharedValue<S>
+    where
+        S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
+        S: ShareValue<Value = Val>,
+        Val: OfValue,
+    {
+        type State<E: frender_html::form_control::element::FormControlElement<Val::Value, R>, R> =
+            Option<CompoundState<ReactiveState<S, E>, E::OnValueChangeEventListener>>;
+
+        fn update_with_state<
+            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + Clone,
+            R,
+        >(
             this: Self,
-            state: &mut Self::State<C::ForceValue, C::OnValueChangeEventListener>,
-            mut controller: C,
+            state: &mut Self::State<E, R>,
+            element: &mut E,
+            renderer: &mut R,
         ) {
             if let Some(state) = state {
-                if state.share_value.equivalent_to(&this.0) {
+                if state.reactive.inner.equivalent_to(&this.0) {
                     return;
                 }
             }
 
             this.0.map(|value| {
-                controller.set_default_value(value);
-                controller.set_value(value);
+                let value = value.borrow();
+                element.set_default_value(renderer, value);
+                element.set_value(renderer, value);
             });
 
-            *state = Some(State {
-                share_value: this.0.clone(),
-                callback: controller.on_value_change(move |value| this.0.set(value.into_owned())),
+            *state = Some(CompoundState {
+                reactive: ReactiveState {
+                    element: element.clone(),
+                    inner: this.0.clone(),
+                },
+                non_reactive: element
+                    .on_value_change(renderer, move |value| this.0.set(Val::from(value))),
             });
-        }
-
-        type OneStringOrEmpty = async_str_iter::any_str::IterAnyStr<S::Value>;
-
-        fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-            use async_str_iter::IntoAsyncStrIterator;
-
-            async_str_iter::any_str::AnyStr(this.0.unwrap_or_get_cloned()).into_async_str_iterator()
         }
     }
 }

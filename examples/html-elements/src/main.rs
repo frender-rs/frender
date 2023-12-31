@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use frender::{
-    dom::value::{Controlled, OneWayBinding, UncontrolledWithDefaultValue},
+    html::form_control::value::{Controlled, OneWayBinding, UncontrolledWithDefaultValue},
     prelude::*,
     ScriptInnerTextWronglyEncoded,
 };

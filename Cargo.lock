@@ -1648,9 +1648,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hooks"
-version = "3.0.0-alpha"
+version = "3.0.0-alpha.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef27c14d75b601b9c0c4369ae5b116ead1c38511abbeef5bea5896bf60e8efdb"
+checksum = "12892aeb03dc84b9e41c717d8ba2d6f8298f48dab587633ab06219b88dbecdc4"
 dependencies = [
  "hooks-core",
  "pin-project-lite",

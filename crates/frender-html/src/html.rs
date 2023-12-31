@@ -1749,7 +1749,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                trait_bounds!(frender_dom::behaviors::HtmlTextAreaElement<Renderer>);
+                                trait_bounds!(crate::form_control::element::FormControlElement<str, Renderer>);
 
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
