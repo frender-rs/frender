@@ -5,13 +5,14 @@ pub struct NonReactiveRenderState<T>(pub T);
 
 impl<T> Unpin for NonReactiveRenderState<T> {}
 
-impl<T, R> RenderState<R> for NonReactiveRenderState<T> {
-    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut R) {}
+impl<PEH: ?Sized, T, R: ?Sized> RenderState<PEH, R> for NonReactiveRenderState<T> {
+    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, _: &mut R) {}
 
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 
     fn poll_render(
         self: std::pin::Pin<&mut Self>,
+        _: &mut PEH,
         _: &mut R,
         _: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {

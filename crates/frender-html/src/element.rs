@@ -214,70 +214,121 @@ macro_rules! doc_elements_all {
 /// </tbody>
 /// </table>
 pub trait Element: frender_ssr::SsrElement {
-    type RenderState<R: RenderHtml>: RenderState<R> + Default;
+    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized>: RenderState<PEH, R> + Default;
 
     #[cfg(feature = "render_into")]
     fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>) -> Pin<&'s mut Self::RenderState<Renderer>>;
 
-    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>)
-    where
+    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+    ) where
         Self: Sized,
     {
-        self.render_update_maybe_reposition(renderer, render_state, false)
+        self.render_update_maybe_reposition(parent_elements_handle, renderer, render_state, false)
     }
 
     /// The element needs to be repositioned (re-add to the ctx)
-    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>)
-    where
+    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+    ) where
         Self: Sized,
     {
-        self.render_update_maybe_reposition(renderer, render_state, true)
+        self.render_update_maybe_reposition(parent_elements_handle, renderer, render_state, true)
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool);
+    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        force_reposition: bool,
+    );
 
-    type UnpinnedRenderState<R: RenderHtml>: RenderState<R> + Default + Unpin;
+    type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized>: RenderState<PEH, R> + Default + Unpin;
 
-    fn unpinned_render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>)
-    where
+    fn unpinned_render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+    ) where
         Self: Sized,
     {
-        self.unpinned_render_update_maybe_reposition(renderer, render_state, false)
+        self.unpinned_render_update_maybe_reposition(parent_elements_handle, renderer, render_state, false)
     }
 
     /// The element needs to be repositioned (re-add to the ctx)
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>)
-    where
+    fn unpinned_render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+    ) where
         Self: Sized,
     {
-        self.unpinned_render_update_maybe_reposition(renderer, render_state, true)
+        self.unpinned_render_update_maybe_reposition(parent_elements_handle, renderer, render_state, true)
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool);
+    fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        //
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        force_reposition: bool,
+    );
 }
 
 #[macro_export]
 macro_rules! impl_unpinned_render_for_unpin {
     () => {
-        type UnpinnedRenderState<R: $crate::__private::RenderHtml> = Self::RenderState<R>;
+        type UnpinnedRenderState<PEH: ?Sized, R: $crate::__private::RenderHtml + ?Sized> = Self::RenderState<PEH, R>;
 
-        fn unpinned_render_update<Renderer: $crate::__private::RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>)
-        where
+        fn unpinned_render_update<PEH: ?Sized, Renderer: $crate::__private::RenderHtml + ?Sized>(
+            //
+            self,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
             Self: Sized,
         {
-            self.render_update(renderer, ::core::pin::Pin::new(render_state))
+            self.render_update(peh, renderer, ::core::pin::Pin::new(render_state))
         }
 
         /// The element needs to be repositioned (re-add to the ctx)
-        fn unpinned_render_update_force_reposition<Renderer: $crate::__private::RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>)
-        where
+        fn unpinned_render_update_force_reposition<PEH: ?Sized, Renderer: $crate::__private::RenderHtml + ?Sized>(
+            //
+            self,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
             Self: Sized,
         {
-            self.render_update_force_reposition(renderer, ::core::pin::Pin::new(render_state))
+            self.render_update_force_reposition(peh, renderer, ::core::pin::Pin::new(render_state))
         }
 
-        fn unpinned_render_update_maybe_reposition<Renderer: $crate::__private::RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
-            self.render_update_maybe_reposition(renderer, ::core::pin::Pin::new(render_state), force_reposition)
+        fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: $crate::__private::RenderHtml + ?Sized>(
+            //
+            self,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            force_reposition: bool,
+        ) {
+            self.render_update_maybe_reposition(peh, renderer, ::core::pin::Pin::new(render_state), force_reposition)
         }
     };
 }

@@ -12,15 +12,15 @@ impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: MaybeStr> SsrComponent<
 }
 
 impl<Children: MaybeStr> CsrComponent<Children> for crate::html::tags::style {
-    type ChildrenRenderState<R: crate::RenderHtml> = NonReactiveRenderState<<Children as MaybeUpdateValueWithState<str>>::UpdateWithState>;
+    type ChildrenRenderState<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<<Children as MaybeUpdateValueWithState<str>>::UpdateWithState>;
 
-    fn children_render_update<R: crate::RenderHtml>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+    fn children_render_update<R: crate::RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
         Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
     }
 
-    type ChildrenUnpinnedRenderState<R: crate::RenderHtml> = Self::ChildrenRenderState<R>;
+    type ChildrenUnpinnedRenderState<R: crate::RenderHtml + ?Sized> = Self::ChildrenRenderState<R>;
 
-    fn children_unpinned_render_update<R: crate::RenderHtml>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+    fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
         MaybeUpdateValueWithState::<str>::update_with_state(
             //
             children,

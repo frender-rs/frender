@@ -59,19 +59,19 @@ pub mod csr {
     where
         Children: FormControlValue<str> + IntoOneStringOrEmpty,
     {
-        type ChildrenRenderState<R: RenderHtml> = Self::ChildrenUnpinnedRenderState<R>;
+        type ChildrenRenderState<R: RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
 
-        fn children_render_update<R: RenderHtml>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+        fn children_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
             Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
         }
 
-        type ChildrenUnpinnedRenderState<R: RenderHtml> = Children::State<
+        type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = Children::State<
             //
             R::textarea,
             R,
         >;
 
-        fn children_unpinned_render_update<R: RenderHtml>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
             let element: &mut R::textarea = element;
             Children::update_with_state(children, children_state, element, renderer)
         }

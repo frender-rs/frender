@@ -8,13 +8,14 @@ mod into_render_element_ext {
     use frender_html::RenderHtml;
 
     pub trait IntoRenderElementExt: RenderHtml {
-        fn into_render_element<S: crate::RenderState<Self> + Default>(
+        fn into_render_element<E, S: crate::RenderState<E, Self> + Default>(
             self,
-        ) -> crate::RenderElement<Self, S>
+            root: E,
+        ) -> crate::RenderElement<Self, E, S>
         where
             Self: Sized,
         {
-            crate::RenderElement::new(self)
+            crate::RenderElement::new(self, root)
         }
     }
 

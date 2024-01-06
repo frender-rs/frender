@@ -378,7 +378,7 @@ macro_rules! tags {
                     ::frender_ssr::html::tag::AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
             }
             impl crate::CreateNode for $tags {
-                fn create_node<R: super::RenderHtml>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
+                fn create_node<R: super::RenderHtml + ?::core::marker::Sized>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
                     renderer.$tags()
                 }
             }

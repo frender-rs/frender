@@ -2,15 +2,20 @@
 
 use crate::RenderState;
 
-impl<R> RenderState<R> for () {
+impl<PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for () {
     #[inline]
-    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut R) {}
+    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, _: &mut R) {}
 
     #[inline]
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 
     #[inline]
-    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(
+        self: std::pin::Pin<&mut Self>,
+        _: &mut PEH,
+        _: &mut R,
+        _: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }
@@ -18,10 +23,14 @@ impl<R> RenderState<R> for () {
 macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
         $(
-            impl<R,$($field: RenderState<R>),+> RenderState<R> for ($($field,)+) {
-                fn unmount(self: ::core::pin::Pin<&mut Self>, renderer: &mut R) {
+            impl<PEH:?Sized, R: ?Sized, $($field: RenderState<PEH, R>),+> RenderState<PEH, R> for ($($field,)+) {
+                fn unmount(
+                    self: ::core::pin::Pin<&mut Self>,
+                    peh: &mut PEH,
+                    renderer: &mut R,
+                ) {
                     let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-                    $( $field.unmount(renderer); )+
+                    $( $field.unmount(peh, renderer); )+
                 }
 
                 fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -31,12 +40,13 @@ macro_rules! impl_render_for_tuple {
 
                 fn poll_render(
                     self: std::pin::Pin<&mut Self>,
+                    peh: &mut PEH,
                     renderer: &mut R,
                     cx: &mut std::task::Context<'_>,
                 ) -> std::task::Poll<()> {
                     let ($($field,)+) = frender_common::utils::pin_project::$name(self);
 
-                    match ($($field::poll_render($field, renderer, cx) ,)+) {
+                    match ($($field::poll_render($field, peh, renderer, cx) ,)+) {
                         #[allow(unused_variables)]
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
                         _ => std::task::Poll::Pending,

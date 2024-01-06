@@ -5,7 +5,7 @@ pub struct CsrInput<'a, V, E: ?Sized, R: ?Sized> {
     pub attr_name: &'static str,
 }
 
-pub struct CsrInputWithUpdater<'a, V, E, RR, U, R> {
+pub struct CsrInputWithUpdater<'a, V, E: ?Sized, RR: ?Sized, U, R> {
     pub this: V,
     pub element: &'a mut E,
     pub renderer: &'a mut RR,
@@ -14,7 +14,7 @@ pub struct CsrInputWithUpdater<'a, V, E, RR, U, R> {
     pub remove: R,
 }
 
-impl<'a, V, E, RR, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
+impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
     fn into_value_and_updater(self) -> (V, updater::Updater<'a, E, RR, U, R>) {
         let Self {
             this,
@@ -150,10 +150,10 @@ macro_rules! default_impl_csr {
                 ET
             >
         for $($wrapper)*::<V> {
-            type State<Renderer: $crate::RenderHtml> =
+            type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
                 $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-            fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
+            fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                 Self(this): Self,
                 renderer: &mut Renderer,
                 element: &mut ET::Node<Renderer>,
@@ -259,10 +259,10 @@ pub mod DomTokens {
                     ET
                 >
             for $($wrapper)*::<V> {
-                type State<Renderer: $crate::RenderHtml> =
+                type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
                     $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-                fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
+                fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
                     element: &mut ET::Node<Renderer>,
@@ -322,7 +322,7 @@ pub mod DomTokens {
 }
 
 mod updater {
-    pub(super) struct Updater<'a, E, RR, U, R> {
+    pub(super) struct Updater<'a, E: ?Sized, RR: ?Sized, U, R> {
         pub(super) element: &'a mut E,
         pub(super) renderer: &'a mut RR,
         pub(super) attr_name: &'static str,
@@ -330,7 +330,16 @@ mod updater {
         pub(super) remove: R,
     }
 
-    impl<'a, VT: ?Sized, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &VT), R: FnOnce(&mut E, &mut RR, &'static str)> frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R> {
+    impl<
+            //
+            'a,
+            VT: ?Sized,
+            E: ?Sized,
+            RR: ?Sized,
+            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+            R: FnOnce(&mut E, &mut RR, &'static str),
+        > frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R>
+    {
         fn update(mut self, value: &VT) {
             (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
         }
@@ -358,7 +367,15 @@ pub mod MaybeValue {
 
         pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::UpdateWithState;
 
-        pub fn update_with_state<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &VT), R: FnOnce(&mut E, &mut RR, &'static str)>(
+        pub fn update_with_state<
+            //
+            VT: ?Sized + ValueType,
+            V: MaybeUpdateValueWithState<VT>,
+            E,
+            RR: ?Sized,
+            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+            R: FnOnce(&mut E, &mut RR, &'static str),
+        >(
             input: Input<V, E, RR, U, R>,
             state: &mut State<VT, V>,
         ) {
@@ -438,14 +455,14 @@ pub mod MaybeHandleEvent {
                     ET
                 >
             for $($wrapper)*::<V> {
-                type State<Renderer: $crate::RenderHtml> =
+                type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
                     $($csr_state_wrapper)*::<$($bounds)*::$csr::State<
                         dyn $($bounds_tp)* ::Event,
                         V,
                         $($bounds_tp)*::EventListenerOf<ET::$csr_element_ty<Renderer>, Renderer>
                     >>;
 
-                fn update_element_non_reactive<Renderer: $crate::RenderHtml>(
+                fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
                     element: &mut ET::Node<Renderer>,
@@ -539,7 +556,17 @@ pub mod MaybeContentEditable {
 
         pub type State<V> = <V as MaybeContentEditable>::UpdateWithState;
 
-        pub fn update_with_state<V: MaybeContentEditable, E, RR, U: FnOnce(&mut E, &mut RR, &'static str, &str), R: FnOnce(&mut E, &mut RR, &'static str)>(input: Input<V, E, RR, U, R>, state: &mut State<V>) {
+        pub fn update_with_state<
+            //
+            V: MaybeContentEditable,
+            E: ?Sized,
+            RR: ?Sized,
+            U: FnOnce(&mut E, &mut RR, &'static str, &str),
+            R: FnOnce(&mut E, &mut RR, &'static str),
+        >(
+            input: Input<V, E, RR, U, R>,
+            state: &mut State<V>,
+        ) {
             let (this, updater) = input.into_value_and_updater();
 
             V::update_with_state(this, updater, state)
@@ -574,7 +601,7 @@ pub mod Css {
 
         pub type State<V> = Option<V>;
 
-        pub fn update_with_state<V, E, R>(input: Input<V, E, R>, state: &mut State<V>) {}
+        pub fn update_with_state<V, E, R: ?Sized>(input: Input<V, E, R>, state: &mut State<V>) {}
     }
 
     pub mod ssr {

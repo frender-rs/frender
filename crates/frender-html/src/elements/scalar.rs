@@ -9,9 +9,16 @@ frender_common::impl_many!(
             char,
         ]
     {
-        type RenderState<R: crate::RenderHtml> = Option<super::str::State<Self, R::Text>>;
+        type RenderState<PEH: ?Sized, R: crate::RenderHtml + ?Sized> = Option<super::str::State<Self, R::Text>>;
 
-        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        fn render_update_maybe_reposition<PEH: ?Sized, Renderer: crate::RenderHtml + ?Sized>(
+            //
+            self,
+            _: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
             super::str::render_update_maybe_reposition::<Self, Self, Self, _>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
         }
 

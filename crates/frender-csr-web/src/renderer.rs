@@ -22,7 +22,10 @@ impl<'a, TB: TryBehavior> Renderer<'a, TB> {
     pub async fn render_element<E: frender_element::Element>(self, element: E) {
         use frender_element::IntoRenderElementExt;
 
-        let render = self.into_render_element();
+        let render = self.into_render_element(
+            // TODO: root
+            (),
+        );
 
         futures_lite::pin!(render);
 

@@ -131,14 +131,14 @@ mod js {
 }
 
 impl<Cache, Text> State<Cache, Text> {
-    fn add_self_to_dom<R>(&mut self, renderer: &mut R, force_reposition: bool)
+    fn add_self_to_dom<R: ?Sized>(&mut self, renderer: &mut R, force_reposition: bool)
     where
         Text: Node<R>,
     {
         self.node.readd_self(renderer, force_reposition || self.unmounted);
     }
 
-    fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>, S: Borrow<V>, V: ?Sized>(
+    fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(
         &mut self,
         data: S,
         renderer: &mut R,
@@ -157,7 +157,7 @@ impl<Cache, Text> State<Cache, Text> {
         self.add_self_to_dom(renderer, force_reposition)
     }
 
-    pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V>, S: Borrow<V>, V: ?Sized>(data: S, renderer: &mut R, create_cache: impl FnOnce(S) -> Cache) -> Self
+    pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(data: S, renderer: &mut R, create_cache: impl FnOnce(S) -> Cache) -> Self
     where
         Text: Node<R>,
     {
@@ -220,8 +220,8 @@ impl<Cache, Text> State<Cache, Text> {
 
 impl<Cache, Text> Unpin for State<Cache, Text> {}
 
-impl<Cache, Text: Node<R>, R> RenderState<R> for State<Cache, Text> {
-    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+impl<Cache, Text: Node<R>, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for State<Cache, Text> {
+    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R) {
         let this = self.get_mut();
         this.unmounted = true;
         this.node.remove_self(renderer);
@@ -229,59 +229,50 @@ impl<Cache, Text: Node<R>, R> RenderState<R> for State<Cache, Text> {
 
     fn state_unmount(mut self: std::pin::Pin<&mut Self>) {}
 
-    fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }
 
-macro_rules! impl_render_str {
-    ($(
-        $(@[$($generics:tt)*])?
-        $for_ty:ty
-    ),* $(,)?) => {$(
-        impl $(<$($generics)*>)? Element for $for_ty {
-            type RenderState<Renderer: RenderHtml> = Option<State<<Self as RenderingStr>::Cache, Renderer::Text>>;
+frender_common::impl_many!(
+    impl<__> Element
+        for each_of![
+            //
+            Cow<'_, str>,
+            &str,
+            String,
+        ]
+    {
+        type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<<Self as RenderingStr>::Cache, Renderer::Text>>;
 
-            #[cfg(feature = "render_into")]
-            fn render_into<'s, Renderer: RenderHtml>(
-                self,
-                renderer: &mut Renderer,
-                render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>,
-            ) -> std::pin::Pin<&'s mut Self::RenderState<Renderer>> {
-                render_state.write(
-                    Self::RenderState::<Renderer>::initialize_with_str(self, renderer)
-                )
-            }
-
-            fn render_update_maybe_reposition<Renderer: RenderHtml>(
-                self,
-                renderer: &mut Renderer,
-                render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-                force_reposition: bool,
-            ) {
-                match render_state.get_mut() {
-                    Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(self, renderer, force_reposition, RenderingStr::not_match_cache, RenderingStr::update_cache),
-                    render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, renderer, RenderingStr::create_cache))
-                }
-            }
-
-            crate::impl_unpinned_render_for_unpin! {}
+        #[cfg(feature = "render_into")]
+        fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
+            render_state.write(Self::RenderState::<Renderer>::initialize_with_str(self, renderer))
         }
-    )*};
-}
 
-impl_render_str! {
-    Cow<'_, str>,
-    &str,
-    String,
-}
+        fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+            self,
+            _: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
+            match render_state.get_mut() {
+                Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(self, renderer, force_reposition, RenderingStr::not_match_cache, RenderingStr::update_cache),
+                render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, renderer, RenderingStr::create_cache)),
+            }
+        }
+
+        crate::impl_unpinned_render_for_unpin! {}
+    }
+);
 
 #[cfg(feature = "StaticText")]
 impl_render_str! {
     @[S: StaticStr] StaticText<S>,
 }
 
-pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V>>(
+pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V> + ?Sized>(
     data: S,
     renderer: &mut Renderer,
     render_state: std::pin::Pin<&mut Option<State<Cache, Renderer::Text>>>,

@@ -42,9 +42,9 @@ impl OfValue for bool {
 }
 
 pub trait FormControlValue<V: ?Sized + Value> {
-    type State<E: FormControlElement<V, R>, R>: Default + RenderState<R> + Unpin;
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default + RenderState<E, R> + Unpin;
 
-    fn update_with_state<E: FormControlElement<V, R> + Clone, R>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
+    fn update_with_state<E: FormControlElement<V, R> + Clone + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
 }
 
 pub trait TempAsRef<T: ?Sized> {
@@ -152,9 +152,9 @@ pub struct OneWayBindingState<V, F> {
 }
 
 impl<Val: OfValue<Value = V> + 'static, V: ?Sized + Value + PartialEq> FormControlValue<V> for OneWayBinding<Val> {
-    type State<E: FormControlElement<V, R>, R> = NonReactiveRenderState<Option<OneWayBindingState<RefCell<Val>, E::ForceValue>>>;
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<OneWayBindingState<RefCell<Val>, E::ForceValue>>>;
 
-    fn update_with_state<E: FormControlElement<V, R>, R>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
         let state = &mut state.0;
         let owned_value = this.0;
         let value = owned_value.borrow();
@@ -208,9 +208,9 @@ impl<
         Cbk: for<'a> Callable<(Val,), Output = ()> + 'static + PartialEq + Clone,
     > FormControlValue<V> for Controlled<Val, Cbk>
 {
-    type State<E: FormControlElement<V, R>, R> = NonReactiveRenderState<Option<ControlledState<Val, Cbk, E::OnValueChangeEventListener>>>;
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<ControlledState<Val, Cbk, E::OnValueChangeEventListener>>>;
 
-    fn update_with_state<E: FormControlElement<V, R>, R>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
         let state = &mut state.0;
         if let Some(state) = state {
             let Self(value, cbk) = this;
@@ -246,9 +246,9 @@ impl<
 
 /// Uncontrolled form control value (no default value).
 impl<V: ?Sized + Value> FormControlValue<V> for () {
-    type State<E: FormControlElement<V, R>, R> = ();
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
 
-    fn update_with_state<E: FormControlElement<V, R>, R>((): Self, (): &mut Self::State<E, R>, _: &mut E, _: &mut R) {}
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>((): Self, (): &mut Self::State<E, R>, _: &mut E, _: &mut R) {}
 }
 
 pub struct UncontrolledWithDefaultValue<V: MaybeStr>(pub V);
@@ -262,9 +262,9 @@ impl<V: MaybeStr> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
 }
 
 impl<V: MaybeStr> FormControlValue<str> for UncontrolledWithDefaultValue<V> {
-    type State<E: FormControlElement<str, R>, R> = NonReactiveRenderState<V::UpdateWithState>;
+    type State<E: FormControlElement<str, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<V::UpdateWithState>;
 
-    fn update_with_state<E: FormControlElement<str, R>, R>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn update_with_state<E: FormControlElement<str, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
         let state = &mut state.0;
 
         // TODO: refactor

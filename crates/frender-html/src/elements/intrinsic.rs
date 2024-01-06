@@ -30,8 +30,15 @@ mod imp {
         }
     }
 
-    impl<E: crate::html::behaviors::Element<R>, S: RenderState<R>, R> RenderState<R> for IntrinsicElementRenderState<E, S> {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+    impl<
+            //
+            PEH: ?Sized,
+            R: ?Sized,
+            E: crate::html::behaviors::Element<R>,
+            S: RenderState<E, R>,
+        > RenderState<PEH, R> for IntrinsicElementRenderState<E, S>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R) {
             let this = self.project();
             if let Some(ElementAndMounted { element, mounted }) = this.element_and_mounted {
                 if *mounted {
@@ -50,7 +57,7 @@ mod imp {
             }
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let this = self.project();
             let element = if let Some(v) = this.element_and_mounted {
                 &mut v.element
@@ -60,7 +67,7 @@ mod imp {
 
             element.move_cursor_at_the_first_child_of_self(renderer);
             // renderer.mark_position_at_first_child(element);
-            let result = S::poll_render(this.props_state, renderer, cx);
+            let result = S::poll_render(this.props_state, element, renderer, cx);
 
             element.move_cursor_after_self(renderer);
             // renderer.mark_position_after(element);
@@ -78,17 +85,24 @@ mod imp {
         }
     }
 
-    impl<R, C: RenderState<R>, A> RenderState<R> for ElementPropsState<C, A> {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-            self.project().children_render_state.unmount(renderer)
+    impl<
+            //
+            PEH: ?Sized,
+            R: ?Sized,
+            C: RenderState<PEH, R>,
+            A,
+        > RenderState<PEH, R> for ElementPropsState<C, A>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            self.project().children_render_state.unmount(peh, renderer)
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
             self.project().children_render_state.state_unmount()
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-            self.project().children_render_state.poll_render(renderer, cx)
+        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            self.project().children_render_state.poll_render(peh, renderer, cx)
         }
     }
 
@@ -100,10 +114,16 @@ mod imp {
         P::Attrs: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
         C: crate::dom::component::SsrComponent<P::Attrs, P::Children>,
     {
-        type RenderState<R: crate::RenderHtml> =
+        type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
             IntrinsicElementRenderState<C::Element<R>, ElementPropsState<<C as crate::CsrComponent<P::Children>>::ChildrenRenderState<R>, <P::Attrs as UpdateElementNonReactive<C>>::State<R>>>;
 
-        fn render_update_maybe_reposition<Renderer: crate::RenderHtml>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+            self,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
             let render_state = render_state.project();
 
             let props_state = render_state.props_state.project();
@@ -126,10 +146,16 @@ mod imp {
             )
         }
 
-        type UnpinnedRenderState<R: RenderHtml> =
+        type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
             IntrinsicElementRenderState<C::Element<R>, ElementPropsState<<C as crate::CsrComponent<P::Children>>::ChildrenUnpinnedRenderState<R>, <P::Attrs as UpdateElementNonReactive<C>>::State<R>>>;
 
-        fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+        fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+            self,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            force_reposition: bool,
+        ) {
             let props_state = &mut render_state.props_state;
 
             let crate::dom::component::ElementProps { children, attributes } = P::into_element_props(self.1);

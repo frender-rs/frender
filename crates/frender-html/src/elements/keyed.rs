@@ -5,21 +5,39 @@ use frender_common::{Elements, Keyed};
 use crate::{Element, RenderHtml, RenderState};
 
 pub trait ElementsAlgorithm<K, E> {
-    type CsrState<R: RenderHtml>: RenderState<R> + Unpin + Default;
+    type CsrState<PEH: ?Sized, R: RenderHtml + ?Sized>: RenderState<PEH, R> + Unpin + Default;
 
-    fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>);
+    fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, PEH: ?Sized, R: RenderHtml + ?Sized>(
+        self,
+        keyed_elements: I,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut R,
+        state: Pin<&mut Self::CsrState<PEH, R>>,
+    );
 
     /// The element needs to be repositioned (re-add to the ctx)
-    fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>);
+    fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, PEH: ?Sized, R: RenderHtml + ?Sized>(
+        self,
+        keyed_elements: I,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut R,
+        state: Pin<&mut Self::CsrState<PEH, R>>,
+    );
 
-    fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>, force_reposition: bool)
-    where
+    fn keyed_elements_update_csr_state_maybe_reposition<I: IntoIterator<Item = Keyed<K, E>>, PEH: ?Sized, R: RenderHtml + ?Sized>(
+        self,
+        keyed_elements: I,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut R,
+        state: Pin<&mut Self::CsrState<PEH, R>>,
+        force_reposition: bool,
+    ) where
         Self: Sized,
     {
         if force_reposition {
-            self.keyed_elements_update_csr_state_force_reposition(keyed_elements, renderer, state)
+            self.keyed_elements_update_csr_state_force_reposition(keyed_elements, parent_elements_handle, renderer, state)
         } else {
-            self.keyed_elements_update_csr_state(keyed_elements, renderer, state)
+            self.keyed_elements_update_csr_state(keyed_elements, parent_elements_handle, renderer, state)
         }
     }
 }
@@ -44,11 +62,11 @@ pub mod default {
 
     impl<K, S> Unpin for States<K, S> {}
 
-    impl<K, S: RenderState<R> + Unpin, R> RenderState<R> for States<K, S> {
-        fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+    impl<K, S: RenderState<PEH, R> + Unpin, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for States<K, S> {
+        fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
             let this = self.get_mut();
             for state in this.0.values_mut() {
-                S::unmount(Pin::new(state), renderer)
+                S::unmount(Pin::new(state), peh, renderer)
             }
             this.0 = Default::default();
         }
@@ -59,11 +77,11 @@ pub mod default {
             }
         }
 
-        fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+        fn poll_render(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let mut res = std::task::Poll::Ready(());
 
             for state in self.get_mut().0.values_mut() {
-                match S::poll_render(std::pin::Pin::new(state), renderer, cx) {
+                match S::poll_render(std::pin::Pin::new(state), peh, renderer, cx) {
                     std::task::Poll::Ready(()) => {}
                     v @ std::task::Poll::Pending => {
                         res = v;
@@ -76,9 +94,15 @@ pub mod default {
     }
 
     impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
-        type CsrState<R: RenderHtml> = States<K, E::UnpinnedRenderState<R>>;
+        type CsrState<PEH: ?Sized, R: RenderHtml + ?Sized> = States<K, E::UnpinnedRenderState<PEH, R>>;
 
-        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
+        fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, PEH: ?Sized, R: RenderHtml + ?Sized>(
+            self,
+            keyed_elements: I,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut R,
+            state: Pin<&mut Self::CsrState<PEH, R>>,
+        ) {
             let state = state.get_mut();
 
             let elements = keyed_elements.into_iter();
@@ -115,7 +139,7 @@ pub mod default {
 
                                 debug_assert!(*key_old == key);
 
-                                element.unpinned_render_update_force_reposition(renderer, old_state);
+                                element.unpinned_render_update_force_reposition(parent_elements_handle, renderer, old_state);
 
                                 cur = 0;
                                 continue;
@@ -132,8 +156,8 @@ pub mod default {
                     }
 
                     // "equal" or "greater but drained"
-                    let state_old: &mut <E as Element>::UnpinnedRenderState<R> = &mut old_states[old_idx];
-                    element.unpinned_render_update(renderer, state_old);
+                    let state_old: &mut <E as Element>::UnpinnedRenderState<PEH, R> = &mut old_states[old_idx];
+                    element.unpinned_render_update(parent_elements_handle, renderer, state_old);
                     cur += 1;
                 } else {
                     states.extend(old_states.drain(..cur));
@@ -141,12 +165,16 @@ pub mod default {
                     state_vacant_and_then(states, key, |entry| {
                         let old_state = if let Some(old_state) = removed.remove(entry.key()) { old_state } else { Default::default() };
                         let state = entry.insert(old_state);
-                        element.unpinned_render_update_force_reposition(renderer, state)
+                        element.unpinned_render_update_force_reposition(parent_elements_handle, renderer, state)
                     });
                 }
             }
 
-            old_states.drain(cur..).map(|(_, v)| v).chain(removed.into_values()).for_each(|ref mut state| Pin::new(state).unmount(renderer));
+            old_states
+                .drain(cur..)
+                .map(|(_, v)| v)
+                .chain(removed.into_values())
+                .for_each(|ref mut state| Pin::new(state).unmount(parent_elements_handle, renderer));
 
             if states.is_empty() {
                 *states = old_states;
@@ -155,7 +183,13 @@ pub mod default {
             }
         }
 
-        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
+        fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, PEH: ?Sized, R: RenderHtml + ?Sized>(
+            self,
+            keyed_elements: I,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut R,
+            state: Pin<&mut Self::CsrState<PEH, R>>,
+        ) {
             let states = &mut state.get_mut().0;
 
             let elements = keyed_elements.into_iter();
@@ -172,11 +206,11 @@ pub mod default {
 
                 let render_state = entry.or_insert(state.unwrap_or_default());
 
-                E::unpinned_render_update_force_reposition(element, renderer, render_state);
+                E::unpinned_render_update_force_reposition(element, parent_elements_handle, renderer, render_state);
             }
 
             for state in old_states.values_mut().map(std::pin::Pin::new) {
-                state.unmount(renderer)
+                state.unmount(parent_elements_handle, renderer)
             }
         }
     }
@@ -1069,18 +1103,24 @@ where
     K: std::hash::Hash + Eq,
     E: Element,
 {
-    type RenderState<R: RenderHtml> = default::States<K, E::UnpinnedRenderState<R>>;
+    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = default::States<K, E::UnpinnedRenderState<PEH, R>>;
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
-        Elements(self).render_update_maybe_reposition(renderer, render_state, force_reposition)
+    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        force_reposition: bool,
+    ) {
+        Elements(self).render_update_maybe_reposition(parent_elements_handle, renderer, render_state, force_reposition)
     }
 
-    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        Elements(self).render_update(renderer, render_state)
+    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, parent_elements_handle: &mut PEH, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<PEH, Renderer>>) {
+        Elements(self).render_update(parent_elements_handle, renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        Elements(self).render_update_force_reposition(renderer, render_state)
+    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, parent_elements_handle: &mut PEH, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<PEH, Renderer>>) {
+        Elements(self).render_update_force_reposition(parent_elements_handle, renderer, render_state)
     }
 
     crate::impl_unpinned_render_for_unpin! {}
@@ -1093,18 +1133,24 @@ where
     E: Element,
     A: ElementsAlgorithm<K, E>,
 {
-    type RenderState<R: RenderHtml> = A::CsrState<R>;
+    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = A::CsrState<PEH, R>;
 
-    fn render_update<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        A::keyed_elements_update_csr_state(self.algorithm, self.iter, renderer, render_state)
+    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, parent_elements_handle: &mut PEH, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<PEH, Renderer>>) {
+        A::keyed_elements_update_csr_state(self.algorithm, self.iter, parent_elements_handle, renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        A::keyed_elements_update_csr_state_force_reposition(self.algorithm, self.iter, renderer, render_state)
+    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, parent_elements_handle: &mut PEH, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<PEH, Renderer>>) {
+        A::keyed_elements_update_csr_state_force_reposition(self.algorithm, self.iter, parent_elements_handle, renderer, render_state)
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
-        A::keyed_elements_update_csr_state_maybe_reposition(self.algorithm, self.iter, renderer, render_state, force_reposition)
+    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+        self,
+        parent_elements_handle: &mut PEH,
+        renderer: &mut Renderer,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        force_reposition: bool,
+    ) {
+        A::keyed_elements_update_csr_state_maybe_reposition(self.algorithm, self.iter, parent_elements_handle, renderer, render_state, force_reposition)
     }
 
     crate::impl_unpinned_render_for_unpin! {}
@@ -1115,6 +1161,6 @@ pub type ElementsLinkedVec<I> = Elements<I, linked_vec::Algorithm<linked_vec::Re
 
 #[cfg(not_working_yet)]
 #[allow(non_snake_case)]
-pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(iter: I) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
+pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(iter: I) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<PEH, R>>>> {
     Elements { iter, algorithm: Default::default() }
 }

@@ -152,9 +152,11 @@ pub mod form_control {
         }
     );
 
-    impl<S: RenderState<R>, T, R> RenderState<R> for CompoundState<S, T> {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-            self.project().reactive.unmount(renderer)
+    impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, T> RenderState<PEH, R>
+        for CompoundState<S, T>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            self.project().reactive.unmount(peh, renderer)
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -163,33 +165,32 @@ pub mod form_control {
 
         fn poll_render(
             self: std::pin::Pin<&mut Self>,
+            peh: &mut PEH,
             renderer: &mut R,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            self.project().reactive.poll_render(renderer, cx)
+            self.project().reactive.poll_render(peh, renderer, cx)
         }
     }
 
     pin_project_lite::pin_project!(
-        #[project = ProjReactiveState]
-        pub struct ReactiveState<S, E> {
-            element: E,
+        pub struct ReactiveState<S> {
             #[pin]
             inner: S,
         }
     );
 
     impl<
+            E: FormControlElement<V, R> + ?Sized,
+            R: ?Sized,
             V: ?Sized + Value,
-            E: FormControlElement<V, R>,
             S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S>,
-            R,
-        > RenderState<R> for ReactiveState<S, E>
+        > RenderState<E, R> for ReactiveState<S>
     where
         <S as ShareValue>::Value: OfValue<Value = V>,
     {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-            let ProjReactiveState { element, inner } = self.project();
+        fn unmount(self: std::pin::Pin<&mut Self>, element: &mut E, renderer: &mut R) {
+            let inner = self.project().inner;
 
             element.remove_value(renderer);
 
@@ -202,10 +203,11 @@ pub mod form_control {
 
         fn poll_render(
             self: std::pin::Pin<&mut Self>,
+            element: &mut E,
             renderer: &mut R,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            let ProjReactiveState { element, mut inner } = self.project();
+            let mut inner = self.project().inner;
 
             match inner.as_mut().poll_next_update(cx) {
                 std::task::Poll::Ready(active) => {
@@ -231,12 +233,14 @@ pub mod form_control {
         S: ShareValue<Value = Val>,
         Val: OfValue,
     {
-        type State<E: frender_html::form_control::element::FormControlElement<Val::Value, R>, R> =
-            Option<CompoundState<ReactiveState<S, E>, E::OnValueChangeEventListener>>;
+        type State<
+            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + ?Sized,
+            R: ?Sized,
+        > = Option<CompoundState<ReactiveState<S>, E::OnValueChangeEventListener>>;
 
         fn update_with_state<
-            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + Clone,
-            R,
+            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + Clone + ?Sized,
+            R: ?Sized,
         >(
             this: Self,
             state: &mut Self::State<E, R>,
@@ -257,7 +261,6 @@ pub mod form_control {
 
             *state = Some(CompoundState {
                 reactive: ReactiveState {
-                    element: element.clone(),
                     inner: this.0.clone(),
                 },
                 non_reactive: element
