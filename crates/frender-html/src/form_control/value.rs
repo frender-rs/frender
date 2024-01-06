@@ -44,7 +44,7 @@ impl OfValue for bool {
 pub trait FormControlValue<V: ?Sized + Value> {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default + RenderState<E, R> + Unpin;
 
-    fn update_with_state<E: FormControlElement<V, R> + Clone + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
 }
 
 pub trait TempAsRef<T: ?Sized> {

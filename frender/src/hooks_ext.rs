@@ -239,7 +239,7 @@ pub mod form_control {
         > = Option<CompoundState<ReactiveState<S>, E::OnValueChangeEventListener>>;
 
         fn update_with_state<
-            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + Clone + ?Sized,
+            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + ?Sized,
             R: ?Sized,
         >(
             this: Self,
