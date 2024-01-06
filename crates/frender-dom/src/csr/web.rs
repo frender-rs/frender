@@ -10,7 +10,7 @@ pub mod event;
 
 mod dom_token_list;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Node<N>(pub N);
 
 pub trait Renderer {
