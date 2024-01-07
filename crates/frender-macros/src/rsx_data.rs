@@ -10,6 +10,14 @@ pub struct RsxElement {
     pub children: RsxElementChildren,
 }
 
+/// `component_type` is a path, no `key`.
+pub struct PureRsxElement {
+    pub start_lt: syn::Token![<],
+    pub component_path: syn::Path,
+    pub props: Vec<RsxProp>,
+    pub children: RsxElementChildren,
+}
+
 pub enum RsxElementChildren {
     /// <a />
     No {
