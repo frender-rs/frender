@@ -161,33 +161,77 @@ impl RsxChild {
     }
 }
 
+fn tuple_of(
+    items: impl Iterator<Item = proc_macro2::TokenStream>,
+    span: proc_macro2::Span,
+) -> proc_macro2::TokenStream {
+    let mut group = proc_macro2::Group::new(
+        proc_macro2::Delimiter::Parenthesis,
+        items
+            .flat_map(|ts| {
+                [
+                    ts,
+                    proc_macro2::TokenTree::Punct(proc_macro2::Punct::new(
+                        ',',
+                        proc_macro2::Spacing::Alone,
+                    ))
+                    .into(),
+                ]
+            })
+            .collect(),
+    );
+
+    group.set_span(span);
+    proc_macro2::TokenTree::Group(group).into()
+}
+
+fn children_into_tuple(
+    children: Vec<RsxChild>,
+    crate_path: &proc_macro2::TokenStream,
+    errors: &mut impl RecordError<syn::Error>,
+    span: proc_macro2::Span,
+) -> proc_macro2::TokenStream {
+    tuple_of(
+        children
+            .into_iter()
+            .map(|child| child.try_into_ts(crate_path, errors)),
+        span,
+    )
+}
+
+/// At most 12 elements.
+fn children_into_auto_tuple(
+    mut children: Vec<RsxChild>,
+    crate_path: &proc_macro2::TokenStream,
+    errors: &mut impl RecordError<syn::Error>,
+    span: proc_macro2::Span,
+) -> proc_macro2::TokenStream {
+    if children.len() == 1 {
+        let child = children.into_iter().next().unwrap();
+        child.try_into_ts(crate_path, errors)
+    } else if children.len() <= 12 {
+        children_into_tuple(children, crate_path, errors, span)
+    } else {
+        let rest = children.split_off(12);
+        tuple_of(
+            [
+                children_into_auto_tuple(children, crate_path, errors, span),
+                children_into_auto_tuple(rest, crate_path, errors, span),
+            ]
+            .into_iter(),
+            span,
+        )
+    }
+}
+
 impl RsxElementChildren {
     pub fn try_into_ts(
         self,
         crate_path: &proc_macro2::TokenStream,
         errors: &mut impl RecordError<syn::Error>,
     ) -> Option<proc_macro2::TokenStream> {
-        if let Some((children, span)) = self.unwrap_children_and_span() {
-            if children.len() == 1 {
-                let child = children.into_iter().next().unwrap();
-                return Some(child.try_into_ts(crate_path, errors));
-            }
-            let mut group = proc_macro2::Group::new(
-                proc_macro2::Delimiter::Parenthesis,
-                children
-                    .into_iter()
-                    .map(|child| child.try_into_ts(crate_path, errors))
-                    .map(|mut ts| {
-                        ts.append(proc_macro2::Punct::new(',', proc_macro2::Spacing::Alone));
-                        ts
-                    })
-                    .collect(),
-            );
-            group.set_span(span);
-            Some(proc_macro2::TokenTree::Group(group).into())
-        } else {
-            None
-        }
+        self.unwrap_children_and_span()
+            .map(|(children, span)| children_into_auto_tuple(children, crate_path, errors, span))
     }
 }
 
