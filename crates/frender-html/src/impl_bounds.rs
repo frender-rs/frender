@@ -382,38 +382,6 @@ pub mod MaybeValue {
             let (this, updater) = input.into_value_and_updater();
             V::update_with_state(this, state, updater)
         }
-
-        // TODO: remove and use UpdateElementAttribute
-        pub trait AsAttributeValue {
-            fn as_attribute_value(&self) -> Cow<str>;
-        }
-
-        impl AsAttributeValue for str {
-            fn as_attribute_value(&self) -> Cow<str> {
-                Cow::Borrowed(self)
-            }
-        }
-
-        impl AsAttributeValue for bool {
-            fn as_attribute_value(&self) -> Cow<str> {
-                debug_assert!(*self);
-                Cow::Borrowed("")
-            }
-        }
-
-        impl AsAttributeValue for u32 {
-            fn as_attribute_value(&self) -> Cow<str> {
-                Cow::Owned(self.to_string())
-            }
-        }
-
-        pub fn default_update<V: ?Sized + AsAttributeValue, E: ?Sized + frender_dom::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str, value: &V) {
-            element.set_attribute(renderer, prop_name, &value.as_attribute_value())
-        }
-
-        pub fn default_remove<E: ?Sized + frender_dom::behaviors::Element<RR>, RR: ?Sized>(element: &mut E, renderer: &mut RR, prop_name: &'static str) {
-            element.remove_attribute(renderer, prop_name)
-        }
     }
 
     pub mod ssr {
@@ -571,8 +539,6 @@ pub mod MaybeContentEditable {
 
             V::update_with_state(this, updater, state)
         }
-
-        pub use super::super::MaybeValue::csr::default_remove;
     }
 
     pub mod ssr {

@@ -627,7 +627,7 @@ macro_rules! impl_attribute {
                                     }
                                 })
                         } else {
-                            crate::impl_bounds::MaybeValue::csr::default_update
+                            crate::dom::attr::SetAsAttributeValue::set_as_attribute_value
                         }
                     },
                     remove: ::frender_common::expand! {
@@ -635,7 +635,7 @@ macro_rules! impl_attribute {
                             crate::parse_update_with!(match $($update_with)? {
                                 simple => {
                                     reset {}
-                                    {crate::impl_bounds::MaybeValue::csr::default_remove}
+                                    {crate::dom::behaviors::Element::remove_attribute}
                                 }
                                 impl_with => {
                                     append( as remove(element_type(ET::$trait_name<Renderer>)))
@@ -644,7 +644,7 @@ macro_rules! impl_attribute {
                                 }
                             })
                         } else {
-                            crate::impl_bounds::MaybeValue::csr::default_remove
+                            crate::dom::behaviors::Element::remove_attribute
                         }
                     },
                 },
@@ -677,7 +677,7 @@ macro_rules! impl_attribute {
                                     }
                                 })
                         } else {
-                            crate::impl_bounds::MaybeValue::csr::default_update
+                            crate::dom::attr::SetAsAttributeValue::set_as_attribute_value
                         }
                     },
                     remove: ::frender_common::expand! {
@@ -685,7 +685,7 @@ macro_rules! impl_attribute {
                             crate::parse_update_with!(match $($update_with)? {
                                 simple => {
                                     reset {}
-                                    {crate::impl_bounds::MaybeValue::csr::default_remove}
+                                    {crate::dom::behaviors::Element::remove_attribute}
                                 }
                                 impl_with => {
                                     append( as remove(element_type(ET::$trait_name<Renderer>)))
@@ -694,7 +694,7 @@ macro_rules! impl_attribute {
                                 }
                             })
                         } else {
-                            crate::impl_bounds::MaybeValue::csr::default_remove
+                            crate::dom::behaviors::Element::remove_attribute
                         }
                     },
                 },

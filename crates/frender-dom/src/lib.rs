@@ -10,3 +10,5 @@ pub mod component;
 pub mod behaviors;
 
 pub mod script;
+
+pub mod attr;

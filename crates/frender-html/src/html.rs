@@ -786,7 +786,7 @@ crate::def_intrinsic_component_props!(
                             attr_name!("contenteditable");
                             impl_with!(csr {
                                 update: |el: &mut _, renderer: &mut _, _, v: &_| { behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
-                                remove: MaybeContentEditable::csr::default_remove,
+                                remove: frender_dom::behaviors::Element::remove_attribute,
                             });
                         }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
