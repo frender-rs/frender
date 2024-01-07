@@ -71,7 +71,7 @@ macro_rules! element {
             $([[$($children:tt)*]])?
         ),+ $(,)?
     ) => {
-        ($(
+        $crate::__impl_elements_many! {$({
             $crate::__impl_element_one! {
                 $first
                 $($component_path_start)?
@@ -80,8 +80,7 @@ macro_rules! element {
                 $( . $method $(($($method_arg)*))? )*
                 $(.children($crate::element![$($children)*]))?
             }
-            ,
-        )+)
+        })+}
     };
 }
 
@@ -128,7 +127,7 @@ macro_rules! intrinsic {
             $([[$($children:tt)*]])?
         ),+ $(,)?
     ) => {
-        $crate::__impl_intrinsic_many! {$({
+        $crate::__impl_elements_many! {$({
             $crate::__impl_intrinsic_one! {
                 $first
                 $(($($inner)*))?
@@ -139,14 +138,15 @@ macro_rules! intrinsic {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_intrinsic_many {
+macro_rules! __impl_elements_many {
     ({ $t0:expr } { $t1:expr } { $t2:expr } { $t3:expr } { $t4:expr } { $t5:expr } { $t6:expr } { $t7:expr } { $t8:expr } { $t9:expr } { $t10:expr } { $t11:expr } $($t:tt)+) => {
         (
             (
                 $t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10, $t11,
             ),
-            $crate::__impl_intrinsic_many! { $($t)+ },
+            $crate::__impl_elements_many! { $($t)+ },
         )
     };
     ($({ $t0:expr })+)=>{
