@@ -18,23 +18,6 @@ pub struct Renderer<'a, TB: TryBehavior> {
     try_behavior: TB,
 }
 
-impl<'a, TB: TryBehavior> Renderer<'a, TB> {
-    pub async fn render_element<E: frender_element::Element>(self, element: E) {
-        use frender_element::IntoRenderElementExt;
-
-        let render = self.into_render_element(
-            // TODO: root
-            (),
-        );
-
-        futures_lite::pin!(render);
-
-        render.as_mut().update_with_element(element);
-
-        render.await
-    }
-}
-
 impl<'a> Renderer<'a, frender_html::dom::csr::web::UnwrapThrow> {
     pub fn new(document: &'a web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {

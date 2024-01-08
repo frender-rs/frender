@@ -1,52 +1,39 @@
 use futures_lite::Future;
 
-use frender_html::{RenderHtml, RenderState};
+use frender_html::{Element, RenderHtml, RenderState};
 
 pin_project_lite::pin_project!(
-    pub struct RenderElement<R, E, State, Stop = std::future::Pending<()>> {
+    pub struct RenderElement<R: RenderHtml, E: Element, Stop = std::future::Pending<()>> {
         renderer: R,
-        root: E,
+        element: Option<E>,
         #[pin]
-        state: State,
+        state: E::RenderState<(), R>,
         #[pin]
         stop: Stop,
+        root_element: (),
     }
 );
 
-impl<R, E, State: Default> RenderElement<R, E, State> {
-    pub fn new(renderer: R, root: E) -> Self {
-        Self {
-            renderer,
-            root,
-            state: Default::default(),
-            stop: std::future::pending(),
-        }
+impl<R: RenderHtml, E: Element> RenderElement<R, E> {
+    pub fn new(renderer: R, element: E) -> Self {
+        Self::new_with_stop(renderer, element, std::future::pending())
     }
 }
 
-impl<R, E, State: Default, Stop> RenderElement<R, E, State, Stop> {
-    pub fn new_with_stop(renderer: R, root: E, stop: Stop) -> Self {
+impl<R: RenderHtml, E: Element, Stop> RenderElement<R, E, Stop> {
+    pub fn new_with_stop(renderer: R, element: E, stop: Stop) -> Self {
         Self {
             renderer,
-            root,
+            element: Some(element),
             state: Default::default(),
             stop,
+            root_element: (),
         }
     }
 }
 
-impl<R: RenderHtml, RE, State: RenderState<RE, R>, Stop> RenderElement<R, RE, State, Stop> {
-    pub fn update_with_element<E: crate::Element<RenderState<RE, R> = State>>(
-        self: std::pin::Pin<&mut Self>,
-        element: E,
-    ) {
-        let this = self.project();
-        element.render_update(this.root, this.renderer, this.state)
-    }
-}
-
-impl<R, RE, State: RenderState<RE, R>, Stop: Future<Output = ()>> std::future::Future
-    for RenderElement<R, RE, State, Stop>
+impl<R: RenderHtml, E: Element, Stop: Future<Output = ()>> std::future::Future
+    for RenderElement<R, E, Stop>
 {
     type Output = ();
 
@@ -56,16 +43,20 @@ impl<R, RE, State: RenderState<RE, R>, Stop: Future<Output = ()>> std::future::F
     ) -> std::task::Poll<Self::Output> {
         let mut this = self.project();
 
+        if let Some(element) = this.element.take() {
+            element.render_update(this.root_element, this.renderer, this.state.as_mut())
+        }
+
         if let std::task::Poll::Pending =
             this.state
                 .as_mut()
-                .poll_render(this.root, this.renderer, cx)
+                .poll_render(this.root_element, this.renderer, cx)
         {
             return std::task::Poll::Pending;
         }
 
         if let std::task::Poll::Ready(()) = this.stop.poll(cx) {
-            this.state.unmount(this.root, this.renderer);
+            this.state.unmount(this.root_element, this.renderer);
             return std::task::Poll::Ready(());
         }
 

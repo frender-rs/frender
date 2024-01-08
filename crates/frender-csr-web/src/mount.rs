@@ -1,4 +1,4 @@
-use frender_element::Element;
+use frender_element::{Element, IntoRenderElementExt as _};
 
 pub trait GetDomElement {
     fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element;
@@ -33,7 +33,7 @@ pub fn mount_to_dom_element<'e, E: Element + 'e>(
 
     async move {
         crate::renderer::Renderer::new(&document, current_parent)
-            .render_element(element)
+            .into_render_element(element)
             .await
     }
 }
