@@ -1,0 +1,11 @@
+[package]
+name = "frender-csr-ext"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frender-html = { version = "0.1.0", path = "../frender-html", default-features = false }
+futures-lite = { version = "1.12.0", default-features = false }
+pin-project-lite = "0.2.13"

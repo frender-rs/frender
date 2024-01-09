@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 frender-common = { version = "0.1.0", path = "../frender-common" }
-frender-element = { version = "0.1.0", path = "../frender-element" }
+frender-csr-ext = { version = "0.1.0", path = "../frender-csr-ext" }
 frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "web",
 ] }

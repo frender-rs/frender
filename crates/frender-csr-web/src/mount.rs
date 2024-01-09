@@ -1,4 +1,5 @@
-use frender_element::{Element, IntoRenderElementExt as _};
+use frender_csr_ext::IntoRenderElementExt as _;
+use frender_html::Element;
 
 pub trait GetDomElement {
     fn get_dom_element(self, document: &web_sys::Document) -> web_sys::Element;

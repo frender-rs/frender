@@ -11,7 +11,7 @@
 mod html;
 pub use html::*;
 
-pub use frender_element::Element;
+pub use frender_html::Element;
 
 pub mod ssr_only {
     pub use frender_ssr::SsrElement;
@@ -33,7 +33,7 @@ pub mod __private {
 
     pub use frender_html;
 
-    pub use frender_element::Element;
+    pub use frender_html::Element;
 }
 
 #[doc(hidden)]

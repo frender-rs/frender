@@ -847,7 +847,6 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
- "frender-element",
  "frender-events",
  "frender-hook-element",
  "frender-html",
@@ -876,11 +875,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-csr-ext"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
+ "futures-lite 1.13.0",
+ "pin-project-lite",
+]
+
+[[package]]
 name = "frender-csr-web"
 version = "0.1.0"
 dependencies = [
  "frender-common",
- "frender-element",
+ "frender-csr-ext",
  "frender-html",
  "futures-lite 1.13.0",
  "gloo-events 0.2.0",
@@ -925,26 +933,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "frender-dom-macros"
-version = "0.1.0"
-dependencies = [
- "frender-dom",
-]
-
-[[package]]
-name = "frender-element"
-version = "0.1.0"
-dependencies = [
- "either",
- "frender-common",
- "frender-html",
- "frender-ssr",
- "futures-lite 1.13.0",
- "indexmap",
- "pin-project-lite",
-]
-
-[[package]]
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
@@ -960,7 +948,6 @@ name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
  "frender-csr-web",
- "frender-element",
  "frender-html",
  "frender-ssr",
  "hooks-core",
@@ -978,7 +965,6 @@ dependencies = [
  "either",
  "frender-common",
  "frender-dom",
- "frender-dom-macros",
  "frender-events",
  "frender-html-common",
  "frender-ssr",

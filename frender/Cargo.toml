@@ -21,7 +21,6 @@ hooks = { version = "3.0.0-alpha.2", default-features = false, features = [
     "ShareValue",
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../crates/frender-events" }
-frender-element = { version = "0.1.0", path = "../crates/frender-element" }
 async-str-iter = { version = "0.1.0", path = "../crates/async-str-iter" }
 
 [dependencies.frender-hook-element]
@@ -45,7 +44,7 @@ wasm-bindgen-test = "0.3.13"
 default = ["html-components", "either", "hooks"]
 html = ["frender-html"]
 html-components = ["html"]
-either = ["dep:either", "frender-ssr/either", "frender-element/either"]
+either = ["dep:either", "frender-ssr/either", "frender-html?/either"]
 web = ["frender-hook-element/web"]
 spawn = ["frender-hook-element/spawn"]
 ssr = []
