@@ -1,7 +1,7 @@
 use frender::prelude::*;
 
 component_fn!(
-    #[component(ssr)]
+    #[component(ssr_only)]
     fn Main(main_id: &str) -> impl Element + '_ {
         intrinsic!(
             div.class("main").id(main_id).style(

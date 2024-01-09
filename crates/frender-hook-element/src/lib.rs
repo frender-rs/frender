@@ -3,8 +3,12 @@ pub use html::*;
 
 pub use frender_html::Element;
 
-pub mod ssr_only {
-    pub use frender_ssr::SsrElement;
+pub mod component_fn_options {
+    pub use frender_html::Element;
+
+    pub mod ssr_only {
+        pub use frender_ssr::SsrElement as Element;
+    }
 }
 
 #[doc(hidden)]
@@ -89,8 +93,16 @@ macro_rules! __impl_component_fn_options_parsed {
         $($outer_attrs)*
         #[allow(non_snake_case)]
         $vis fn $ident $paren_inputs ->
-            $crate::__private::expand_or![[$($output_ty)?] impl $crate::Element]
+            $crate::__private::expand_or![
+                [$($output_ty)?]
+                impl $crate ::component_fn_options $(::$ctxs)* ::Element
+            ]
         {
+            {
+                #[allow(unused_imports)]
+                use $crate ::component_fn_options $(::$ctxs)*::Element as _;
+            }
+
             #[allow(unused_imports)]
             use $crate::__private::hooks_core::prelude_h::*;
 
@@ -322,56 +334,5 @@ macro_rules! component_fn {
             { $($item_fn)* }
             => $crate::__impl_component_fn_item_fn_parsed!
         }
-    };
-}
-
-#[macro_export]
-macro_rules! Element {
-    (
-        $($p:ident ,)+
-        $($rest:tt)*
-    ) => {
-        $crate::__impl_element_type! {
-            [$($p),+]
-            [$($p),+]
-            $($rest)*
-        }
-    };
-    (
-        $($p:ident),+
-        $($rest:tt)*
-    ) => {
-        $crate::__impl_element_type! {
-            [$($p),+]
-            [$($p),+]
-            $($rest)*
-        }
-    };
-    ($($rest:tt)*) => {
-        $crate::__impl_element_type! {
-            []
-            []
-            $($rest)*
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impl_element_type {
-    ([][] $($rest:tt)*) => {
-        $crate::__impl_element_type! {[ssr,csr][ssr,csr] $($rest)*}
-    };
-    ([ssr][$ssr:ident] $($($rest:tt)+)?) => {
-        impl $crate::__private::$ssr $(+ $($rest)+)?
-    };
-    ([csr][$csr:ident] $($($rest:tt)+)?) => {
-        impl $crate::__private::$csr $(+ $($rest)+)?
-    };
-    ([ssr,csr][$ssr:ident,$csr:ident] $($($rest:tt)+)?) => {
-        impl $crate::__private::$ssr + $crate::__private::$csr $(+ $($rest)+)?
-    };
-    ([csr,ssr][$csr:ident,$ssr:ident] $($rest:tt)*) => {
-        $crate::__impl_element_type! {[$ssr,$csr][$ssr,$csr] $($rest)*}
     };
 }

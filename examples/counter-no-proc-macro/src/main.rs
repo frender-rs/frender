@@ -35,7 +35,7 @@ component_fn!(
 );
 
 component_fn!(
-    #[component(csr)]
+    #[component]
     pub fn MyTimer(initial_interval: u32) {
         // store the initial_interval value,
         // so that the value never changes in the component life.
@@ -101,7 +101,7 @@ fn DivCode(code: impl Element, children: impl Element) -> impl Element {
 }
 
 component_fn!(
-    #[component(csr, main)]
+    #[component(main)]
     fn Main() {
         intrinsic!(
             div.id("a").style(
