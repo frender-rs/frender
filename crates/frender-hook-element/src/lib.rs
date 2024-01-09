@@ -1,13 +1,3 @@
-// pub mod fn_wrapper;
-
-// mod element;
-// mod render;
-// mod state;
-
-// pub use element::*;
-// pub use render::*;
-// pub use state::*;
-
 mod html;
 pub use html::*;
 
@@ -27,13 +17,6 @@ pub mod __private {
         #[cfg(all(feature = "web", feature = "spawn"))]
         pub use frender_csr_web::mount::spawn_mount_to_dom_element;
     }
-
-    // #[cfg(feature = "ssr")]
-    // pub use frender_ssr::Element as ssr;
-
-    pub use frender_html;
-
-    pub use frender_html::Element;
 }
 
 #[doc(hidden)]
@@ -106,7 +89,7 @@ macro_rules! __impl_component_fn_options_parsed {
         $($outer_attrs)*
         #[allow(non_snake_case)]
         $vis fn $ident $paren_inputs ->
-            $crate::__private::expand_or![[$($output_ty)?] impl $crate::__private::Element]
+            $crate::__private::expand_or![[$($output_ty)?] impl $crate::Element]
         {
             #[allow(unused_imports)]
             use $crate::__private::hooks_core::prelude_h::*;
