@@ -6,6 +6,7 @@ pub mod chain;
 pub mod concat;
 pub mod either;
 pub mod empty;
+pub mod ext;
 pub mod flat;
 pub mod never;
 pub mod option;

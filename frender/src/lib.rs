@@ -83,7 +83,7 @@ pub mod prelude {
     // };
 
     // #[cfg(feature = "ssr")]
-    // pub use frender_hook_element::frender_ssr::{SsrElement, SsrElementExt, SsrRenderState};
+    pub use frender_ssr::{SsrElement, SsrElementExt};
 }
 
 #[macro_export]

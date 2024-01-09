@@ -1,18 +1,16 @@
+use async_str_iter::ext::{collect::Collect, AsyncStrIteratorExt};
+
 use crate::SsrElement;
 
-pub async fn render_element_as_string<E: SsrElement>(element: E) -> String {
-    use async_str_iter::AsyncStrIterator;
-    let s = element.into_html_children();
-    let mut s = std::pin::pin!(s);
+pub type RenderToString<S> = Collect<S, String>;
 
-    let mut ret = String::new();
-    while let Some(()) = std::future::poll_fn(|cx| {
-        s.as_mut()
-            .poll_next_str(cx)
-            .map(|chunk| chunk.map(|chunk| ret.push_str(chunk)))
-    })
-    .await
-    {}
-
-    ret
+pub trait SsrElementExt: SsrElement {
+    fn render_to_string(self) -> RenderToString<Self::HtmlChildren>
+    where
+        Self: Sized,
+    {
+        self.into_html_children().collect()
+    }
 }
+
+impl<E: SsrElement + ?Sized> SsrElementExt for E {}

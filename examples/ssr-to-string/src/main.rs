@@ -28,6 +28,6 @@ max-width: 768px;
 fn main() {
     let element = Main("frender-root");
     // let output = futures_lite::future::block_on(element.render_as_string()).unwrap();
-    let output = futures_lite::future::block_on(frender::ssr::render_element_as_string(element));
+    let output = futures_lite::future::block_on(element.render_to_string());
     assert_eq!(output, EXPECTED.trim());
 }
