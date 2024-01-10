@@ -1,4 +1,4 @@
-use futures_lite::Future;
+use std::future::Future;
 
 use frender_html::{Element, RenderHtml, RenderState};
 

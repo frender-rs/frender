@@ -7,5 +7,4 @@ edition = "2021"
 
 [dependencies]
 frender-html = { version = "0.1.0", path = "../frender-html", default-features = false }
-futures-lite = { version = "1.12.0", default-features = false }
 pin-project-lite = "0.2.13"
