@@ -10,4 +10,3 @@ edition = "2021"
 frender = { path = "../../frender", features = ["web", "spawn"] }
 hooks = "3.0.0-alpha.2"
 gloo = "0.8.0"
-bg = "0.2.0"

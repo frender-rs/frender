@@ -1,16 +1,34 @@
-use bg::Maybe;
 use frender::prelude::*;
 use hooks::{shared_state::SharedState, ShareValue};
 
-bg::builder! {
-    pub struct MyCounterProps {
-        initial_value[? u32],
+pub struct MyCounterProps {
+    pub initial_value: Option<u32>,
+}
+
+impl MyCounterProps {
+    pub fn initial_value(mut self, v: impl Into<Option<u32>>) -> Self {
+        self.initial_value = v.into();
+        self
     }
 }
 
-#[component(bg = "bg")]
-pub fn MyCounter(props: MyCounterProps) {
-    let initial_value: u32 = *props.initial_value.as_some().unwrap_or(&0);
+#[allow(non_snake_case)]
+pub mod MyCounter {
+    pub mod prelude {}
+
+    pub use super::MyCounterImpl as build_element;
+}
+
+#[allow(non_snake_case)]
+pub fn MyCounter() -> MyCounterProps {
+    MyCounterProps {
+        initial_value: None,
+    }
+}
+
+#[component]
+pub fn MyCounterImpl(props: MyCounterProps) {
+    let initial_value: u32 = props.initial_value.unwrap_or(0);
     let shared_state = hooks::use_shared_state(initial_value);
 
     let on_increment = shared_state

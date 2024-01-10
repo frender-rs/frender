@@ -1,13 +1,32 @@
 use frender::prelude::*;
 
-bg::builder! {
-    pub struct MyTimerProps {
-        initial_interval: u32 = 0,
+pub struct MyTimerProps {
+    pub initial_interval: u32,
+}
+
+impl MyTimerProps {
+    pub fn initial_interval(mut self, v: u32) -> Self {
+        self.initial_interval = v;
+        self
     }
 }
 
-#[component(bg)]
-pub fn MyTimer(props: MyTimerProps) {
+#[allow(non_snake_case)]
+pub mod MyTimer {
+    pub mod prelude {}
+
+    pub use super::MyTimerImpl as build_element;
+}
+
+#[allow(non_snake_case)]
+pub fn MyTimer() -> MyTimerProps {
+    MyTimerProps {
+        initial_interval: 0,
+    }
+}
+
+#[component]
+pub fn MyTimerImpl(props: MyTimerProps) {
     // store the initial_interval value,
     // so that the value never changes in the component life.
     let ref_initial_interval = hooks::use_mut_default::<Option<u32>>();
