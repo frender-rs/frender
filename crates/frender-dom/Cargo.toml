@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ghost-lite = "0.1.2"
 gloo = { version = "0.8.0", optional = true }
 html-escape = { version = "0.2.13", optional = true }
 pin-project-lite = "0.2.9"

@@ -910,7 +910,6 @@ dependencies = [
  "frender-events",
  "frender-html-common",
  "frender-ssr",
- "ghost-lite",
  "gloo",
  "gloo-events 0.2.0",
  "html-escape",
