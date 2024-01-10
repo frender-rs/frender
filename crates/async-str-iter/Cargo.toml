@@ -2,6 +2,7 @@
 name = "async-str-iter"
 version = "0.1.0"
 edition = "2021"
+description = "LendingAsyncIterator but only for strings"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
