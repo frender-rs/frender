@@ -146,23 +146,23 @@ macro_rules! default_impl_csr {
             V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
             ET: $crate::html::behavior_type_traits::$csr_element_ty,
         >
-            $crate::UpdateElementNonReactive<
+            $crate::UpdateNodeNonReactive<
                 ET
             >
         for $($wrapper)*::<V> {
             type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
                 $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-            fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+            fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                 Self(this): Self,
                 renderer: &mut Renderer,
-                element: &mut ET::Node<Renderer>,
+                element: &mut ET::NodeOfBehaviorType<Renderer>,
                 state: &mut Self::State<Renderer>,
             ) {
                 // #[allow(unused_imports)]
                 use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
+                let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
                 $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
                     this,
                     element,
@@ -255,22 +255,22 @@ pub mod DomTokens {
                 V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
                 ET: $crate::html::behavior_type_traits::$csr_element_ty,
             >
-                $crate::UpdateElementNonReactive<
+                $crate::UpdateNodeNonReactive<
                     ET
                 >
             for $($wrapper)*::<V> {
                 type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
                     $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
 
-                fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+                fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut ET::Node<Renderer>,
+                    element: &mut ET::NodeOfBehaviorType<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                    let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
+                    let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
 
                     let input = $($bounds)*::$csr::Input {
                         this,
@@ -419,7 +419,7 @@ pub mod MaybeHandleEvent {
                 V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>,
                 ET: $crate::html::behavior_type_traits::$csr_element_ty,
             >
-                $crate::UpdateElementNonReactive<
+                $crate::UpdateNodeNonReactive<
                     ET
                 >
             for $($wrapper)*::<V> {
@@ -430,15 +430,15 @@ pub mod MaybeHandleEvent {
                         $($bounds_tp)*::EventListenerOf<ET::$csr_element_ty<Renderer>, Renderer>
                     >>;
 
-                fn update_element_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+                fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut ET::Node<Renderer>,
+                    element: &mut ET::NodeOfBehaviorType<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
-                    let element = <ET as $crate::html::behavior_type_traits::$csr_element_ty>::from_identity_mut_root::<Renderer>(element);
+                    let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
                     $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
                         this,
                         element,

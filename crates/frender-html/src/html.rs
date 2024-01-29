@@ -712,37 +712,21 @@ crate::def_intrinsic_component_props!(
                                 bdo,
                                 cite,
                                 code,
-                                datalist, // HTMLDataListElement
                                 dd,
                                 dfn,
-                                div, // HTMLDivElement
-                                dl,  // HTMLDListElement
                                 dt,
                                 em,
                                 figcaption,
                                 figure,
                                 footer,
-                                h1,
-                                h2,
-                                h3,
-                                h4,
-                                h5,
-                                h6,   // HTMLHeadingElement
-                                head, // HTMLHeadElement
                                 header,
                                 hgroup,
-                                hr { custom_content_model }, // HTMLHRElement
                                 i,
                                 kbd,
-                                legend, // HTMLLegendElement
                                 main,
                                 mark,
-                                menu, // HTMLMenuElement
                                 nav,
                                 noscript,
-                                p,       // HTMLParagraphElement
-                                picture, // HTMLPictureElement
-                                pre,     // HTMLPreElement with non-standard attributes
                                 rp,
                                 rt,
                                 ruby,
@@ -750,13 +734,10 @@ crate::def_intrinsic_component_props!(
                                 samp,
                                 section,
                                 small,
-                                span, // HTMLSpanElement
                                 strong,
                                 sub,
                                 summary,
                                 sup,
-                                template, // HTMLTemplateElement
-                                title,    // HTMLTitleElement
                                 u,
                                 var,
                                 wbr { custom_content_model },
@@ -980,6 +961,65 @@ crate::def_intrinsic_component_props!(
                         fn on_drop(value: event![Event, "drop", OnDropEvent, OnDropEventListener]);
 
                         sub_traits!(
+                            pub trait HtmlDataListElement {
+                                define!(tags = (datalist,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlDivElement {
+                                define!(tags = (div,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlDListElement {
+                                define!(tags = (dl,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlHeadingElement {
+                                define!(tags = (h1, h2, h3, h4, h5, h6,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlHeadElement {
+                                define!(tags = (head,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlHrElement {
+                                define!(tags = (hr { custom_content_model },));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlLegendElement {
+                                define!(tags = (legend,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlMenuElement {
+                                define!(tags = (menu,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlParagraphElement {
+                                define!(tags = (p,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlPictureElement {
+                                define!(tags = (picture,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlPreElement {
+                                define!(tags = (pre,));
+                                impl_for_web!();
+
+                                // TODO: pre with non-standard attributes
+                            }
+                            pub trait HtmlSpanElement {
+                                define!(tags = (span,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlTemplateElement {
+                                define!(tags = (template,));
+                                impl_for_web!();
+                            }
+                            pub trait HtmlTitleElement {
+                                define!(tags = (title,));
+                                impl_for_web!();
+                            }
+
                             pub trait HtmlElementWithHref {
                                 special_super_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute,);
 

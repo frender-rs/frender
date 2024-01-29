@@ -8,6 +8,8 @@ mod props_builder {
     impl<Attrs> HtmlTextAreaElement::Building<(), Attrs> {
         /// Alias for [`Self::children`]
         pub fn value<Children: FormControlValue<str> + IntoOneStringOrEmpty>(self, value: Children) -> HtmlTextAreaElement::Building<Children, Attrs> {
+            use HtmlTextAreaElement::prelude::*;
+
             self.children(value)
         }
     }
