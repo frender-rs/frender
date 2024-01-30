@@ -5,12 +5,6 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::Node::Building<C
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Node::Building<(), A> {
-    type WithChildren = super::props::Node::Building<C, A>;
-    fn children(self, children: C) -> Self::WithChildren {
-        super::props::Node::Building(super::props::Node::Data { props: self.0.props.children(children) })
-    }
-}
 impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::Node::Building<Children, Attributes> {
     type AppendAttributes<A> = super::props::Node::Building<Children, (Attributes, A)>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
@@ -260,7 +254,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::Element::Buildin
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element::Building<(), A> {
     type WithChildren = super::props::Element::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::Element::Building(super::props::Element::Data { props: self.0.props.children(children) })
@@ -284,7 +278,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithHrefAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefAttribute::Building(super::props::ElementWithHrefAttribute::Data { props: self.0.props.children(children) })
@@ -308,7 +302,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTarge
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithTargetAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTargetAttribute::Building(super::props::ElementWithTargetAttribute::Data { props: self.0.props.children(children) })
@@ -335,7 +329,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTypeA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithTypeAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTypeAttribute::Building(super::props::ElementWithTypeAttribute::Data { props: self.0.props.children(children) })
@@ -359,7 +353,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCiteA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithCiteAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCiteAttribute::Building(super::props::ElementWithCiteAttribute::Data { props: self.0.props.children(children) })
@@ -383,7 +377,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithPlace
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithPlaceHolderAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithPlaceHolderAttribute::Building(super::props::ElementWithPlaceHolderAttribute::Data { props: self.0.props.children(children) })
@@ -410,7 +404,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxMi
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes::Building<(), A> {
     type WithChildren = super::props::ElementWithMaxMinLengthAttributes::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxMinLengthAttributes::Building(super::props::ElementWithMaxMinLengthAttributes::Data { props: self.0.props.children(children) })
@@ -437,7 +431,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeigh
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes::Building<(), A> {
     type WithChildren = super::props::ElementWithHeightWidthStrAttributes::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthStrAttributes::Building(super::props::ElementWithHeightWidthStrAttributes::Data { props: self.0.props.children(children) })
@@ -464,7 +458,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeigh
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes::Building<(), A> {
     type WithChildren = super::props::ElementWithHeightWidthU32Attributes::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthU32Attributes::Building(super::props::ElementWithHeightWidthU32Attributes::Data { props: self.0.props.children(children) })
@@ -488,7 +482,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxF6
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute::Building<(), A> {
     type WithChildren = super::props::ElementWithMaxF64Attribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxF64Attribute::Building(super::props::ElementWithMaxF64Attribute::Data { props: self.0.props.children(children) })
@@ -512,7 +506,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValue
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute::Building<(), A> {
     type WithChildren = super::props::ElementWithValueF64Attribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueF64Attribute::Building(super::props::ElementWithValueF64Attribute::Data { props: self.0.props.children(children) })
@@ -536,7 +530,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValue
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithValueStrAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueStrAttribute::Building(super::props::ElementWithValueStrAttribute::Data { props: self.0.props.children(children) })
@@ -560,7 +554,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithOpenA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithOpenAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithOpenAttribute::Building(super::props::ElementWithOpenAttribute::Data { props: self.0.props.children(children) })
@@ -584,7 +578,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithNameA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithNameAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithNameAttribute::Building(super::props::ElementWithNameAttribute::Data { props: self.0.props.children(children) })
@@ -608,7 +602,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDisab
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithDisabledAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDisabledAttribute::Building(super::props::ElementWithDisabledAttribute::Data { props: self.0.props.children(children) })
@@ -632,7 +626,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCross
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithCrossOriginAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCrossOriginAttribute::Building(super::props::ElementWithCrossOriginAttribute::Data { props: self.0.props.children(children) })
@@ -656,7 +650,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRelAt
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithRelAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRelAttribute::Building(super::props::ElementWithRelAttribute::Data { props: self.0.props.children(children) })
@@ -680,7 +674,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRefer
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithReferrerPolicyAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReferrerPolicyAttribute::Building(super::props::ElementWithReferrerPolicyAttribute::Data { props: self.0.props.children(children) })
@@ -704,7 +698,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAltAt
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithAltAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAltAttribute::Building(super::props::ElementWithAltAttribute::Data { props: self.0.props.children(children) })
@@ -728,7 +722,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLoadi
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithLoadingAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLoadingAttribute::Building(super::props::ElementWithLoadingAttribute::Data { props: self.0.props.children(children) })
@@ -752,7 +746,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAccep
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithAcceptAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAcceptAttribute::Building(super::props::ElementWithAcceptAttribute::Data { props: self.0.props.children(children) })
@@ -776,7 +770,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAutoC
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithAutoCompleteAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAutoCompleteAttribute::Building(super::props::ElementWithAutoCompleteAttribute::Data { props: self.0.props.children(children) })
@@ -800,7 +794,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithFormAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttribute::Building(super::props::ElementWithFormAttribute::Data { props: self.0.props.children(children) })
@@ -836,7 +830,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormA
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes::Building<(), A> {
     type WithChildren = super::props::ElementWithFormAttributes::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttributes::Building(super::props::ElementWithFormAttributes::Data { props: self.0.props.children(children) })
@@ -860,7 +854,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFetch
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithFetchPriorityAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFetchPriorityAttribute::Building(super::props::ElementWithFetchPriorityAttribute::Data { props: self.0.props.children(children) })
@@ -884,7 +878,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefL
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithHrefLangAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefLangAttribute::Building(super::props::ElementWithHrefLangAttribute::Data { props: self.0.props.children(children) })
@@ -908,7 +902,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizes
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithSizesAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizesAttribute::Building(super::props::ElementWithSizesAttribute::Data { props: self.0.props.children(children) })
@@ -932,7 +926,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithUseMa
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithUseMapAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithUseMapAttribute::Building(super::props::ElementWithUseMapAttribute::Data { props: self.0.props.children(children) })
@@ -956,7 +950,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLabel
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithLabelAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLabelAttribute::Building(super::props::ElementWithLabelAttribute::Data { props: self.0.props.children(children) })
@@ -983,7 +977,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithForAt
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithForAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithForAttribute::Building(super::props::ElementWithForAttribute::Data { props: self.0.props.children(children) })
@@ -1007,7 +1001,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithInteg
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithIntegrityAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithIntegrityAttribute::Building(super::props::ElementWithIntegrityAttribute::Data { props: self.0.props.children(children) })
@@ -1031,7 +1025,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBlock
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithBlockingAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBlockingAttribute::Building(super::props::ElementWithBlockingAttribute::Data { props: self.0.props.children(children) })
@@ -1055,7 +1049,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMulti
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithMultipleAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMultipleAttribute::Building(super::props::ElementWithMultipleAttribute::Data { props: self.0.props.children(children) })
@@ -1079,7 +1073,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRequi
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithRequiredAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRequiredAttribute::Building(super::props::ElementWithRequiredAttribute::Data { props: self.0.props.children(children) })
@@ -1103,7 +1097,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizeU
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute::Building<(), A> {
     type WithChildren = super::props::ElementWithSizeU32Attribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizeU32Attribute::Building(super::props::ElementWithSizeU32Attribute::Data { props: self.0.props.children(children) })
@@ -1127,7 +1121,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcAt
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithSrcAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcAttribute::Building(super::props::ElementWithSrcAttribute::Data { props: self.0.props.children(children) })
@@ -1151,7 +1145,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcse
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithSrcsetAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcsetAttribute::Building(super::props::ElementWithSrcsetAttribute::Data { props: self.0.props.children(children) })
@@ -1175,7 +1169,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBgCol
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithBgColorAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBgColorAttribute::Building(super::props::ElementWithBgColorAttribute::Data { props: self.0.props.children(children) })
@@ -1199,7 +1193,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAlign
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithAlignAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAlignAttribute::Building(super::props::ElementWithAlignAttribute::Data { props: self.0.props.children(children) })
@@ -1223,7 +1217,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMedia
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithMediaAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMediaAttribute::Building(super::props::ElementWithMediaAttribute::Data { props: self.0.props.children(children) })
@@ -1247,7 +1241,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithReadO
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithReadOnlyAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReadOnlyAttribute::Building(super::props::ElementWithReadOnlyAttribute::Data { props: self.0.props.children(children) })
@@ -1271,7 +1265,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDateT
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute::Building<(), A> {
     type WithChildren = super::props::ElementWithDateTimeAttribute::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDateTimeAttribute::Building(super::props::ElementWithDateTimeAttribute::Data { props: self.0.props.children(children) })
@@ -1575,7 +1569,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElement::Bui
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement::Building<(), A> {
     type WithChildren = super::props::HtmlElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElement::Building(super::props::HtmlElement::Data { props: self.0.props.children(children) })
@@ -1595,7 +1589,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataListElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement::Building<(), A> {
     type WithChildren = super::props::HtmlDataListElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataListElement::Building(super::props::HtmlDataListElement::Data { props: self.0.props.children(children) })
@@ -1615,7 +1609,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDivElement::
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement::Building<(), A> {
     type WithChildren = super::props::HtmlDivElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDivElement::Building(super::props::HtmlDivElement::Data { props: self.0.props.children(children) })
@@ -1635,7 +1629,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDListElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement::Building<(), A> {
     type WithChildren = super::props::HtmlDListElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDListElement::Building(super::props::HtmlDListElement::Data { props: self.0.props.children(children) })
@@ -1655,7 +1649,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadingEleme
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement::Building<(), A> {
     type WithChildren = super::props::HtmlHeadingElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadingElement::Building(super::props::HtmlHeadingElement::Data { props: self.0.props.children(children) })
@@ -1675,7 +1669,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement::Building<(), A> {
     type WithChildren = super::props::HtmlHeadElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadElement::Building(super::props::HtmlHeadElement::Data { props: self.0.props.children(children) })
@@ -1695,7 +1689,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHrElement::B
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement::Building<(), A> {
     type WithChildren = super::props::HtmlHrElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHrElement::Building(super::props::HtmlHrElement::Data { props: self.0.props.children(children) })
@@ -1715,7 +1709,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLegendElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement::Building<(), A> {
     type WithChildren = super::props::HtmlLegendElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLegendElement::Building(super::props::HtmlLegendElement::Data { props: self.0.props.children(children) })
@@ -1735,7 +1729,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMenuElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement::Building<(), A> {
     type WithChildren = super::props::HtmlMenuElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMenuElement::Building(super::props::HtmlMenuElement::Data { props: self.0.props.children(children) })
@@ -1755,7 +1749,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlParagraphEle
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement::Building<(), A> {
     type WithChildren = super::props::HtmlParagraphElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlParagraphElement::Building(super::props::HtmlParagraphElement::Data { props: self.0.props.children(children) })
@@ -1775,7 +1769,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPictureEleme
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement::Building<(), A> {
     type WithChildren = super::props::HtmlPictureElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPictureElement::Building(super::props::HtmlPictureElement::Data { props: self.0.props.children(children) })
@@ -1795,7 +1789,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPreElement::
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement::Building<(), A> {
     type WithChildren = super::props::HtmlPreElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPreElement::Building(super::props::HtmlPreElement::Data { props: self.0.props.children(children) })
@@ -1815,7 +1809,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSpanElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement::Building<(), A> {
     type WithChildren = super::props::HtmlSpanElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSpanElement::Building(super::props::HtmlSpanElement::Data { props: self.0.props.children(children) })
@@ -1835,7 +1829,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTemplateElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement::Building<(), A> {
     type WithChildren = super::props::HtmlTemplateElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTemplateElement::Building(super::props::HtmlTemplateElement::Data { props: self.0.props.children(children) })
@@ -1855,7 +1849,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTitleElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement::Building<(), A> {
     type WithChildren = super::props::HtmlTitleElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTitleElement::Building(super::props::HtmlTitleElement::Data { props: self.0.props.children(children) })
@@ -1882,7 +1876,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElementWithH
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref::Building<(), A> {
     type WithChildren = super::props::HtmlElementWithHref::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElementWithHref::Building(super::props::HtmlElementWithHref::Data { props: self.0.props.children(children) })
@@ -1902,7 +1896,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAnchorElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement::Building<(), A> {
     type WithChildren = super::props::HtmlAnchorElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAnchorElement::Building(super::props::HtmlAnchorElement::Data { props: self.0.props.children(children) })
@@ -1929,7 +1923,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAreaElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement::Building<(), A> {
     type WithChildren = super::props::HtmlAreaElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAreaElement::Building(super::props::HtmlAreaElement::Data { props: self.0.props.children(children) })
@@ -2103,7 +2097,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMediaElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement::Building<(), A> {
     type WithChildren = super::props::HtmlMediaElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMediaElement::Building(super::props::HtmlMediaElement::Data { props: self.0.props.children(children) })
@@ -2123,7 +2117,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBaseElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement::Building<(), A> {
     type WithChildren = super::props::HtmlBaseElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBaseElement::Building(super::props::HtmlBaseElement::Data { props: self.0.props.children(children) })
@@ -2143,7 +2137,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlQuoteElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement::Building<(), A> {
     type WithChildren = super::props::HtmlQuoteElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlQuoteElement::Building(super::props::HtmlQuoteElement::Data { props: self.0.props.children(children) })
@@ -2168,7 +2162,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBodyElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement::Building<(), A> {
     type WithChildren = super::props::HtmlBodyElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBodyElement::Building(super::props::HtmlBodyElement::Data { props: self.0.props.children(children) })
@@ -2193,7 +2187,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBrElement::B
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement::Building<(), A> {
     type WithChildren = super::props::HtmlBrElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBrElement::Building(super::props::HtmlBrElement::Data { props: self.0.props.children(children) })
@@ -2213,7 +2207,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlButtonElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement::Building<(), A> {
     type WithChildren = super::props::HtmlButtonElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlButtonElement::Building(super::props::HtmlButtonElement::Data { props: self.0.props.children(children) })
@@ -2233,7 +2227,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlCanvasElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement::Building<(), A> {
     type WithChildren = super::props::HtmlCanvasElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlCanvasElement::Building(super::props::HtmlCanvasElement::Data { props: self.0.props.children(children) })
@@ -2253,7 +2247,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCaption
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableCaptionElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCaptionElement::Building(super::props::HtmlTableCaptionElement::Data { props: self.0.props.children(children) })
@@ -2273,7 +2267,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement::Building<(), A> {
     type WithChildren = super::props::HtmlDataElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataElement::Building(super::props::HtmlDataElement::Data { props: self.0.props.children(children) })
@@ -2293,7 +2287,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlModElement::
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement::Building<(), A> {
     type WithChildren = super::props::HtmlModElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlModElement::Building(super::props::HtmlModElement::Data { props: self.0.props.children(children) })
@@ -2313,7 +2307,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDetailsEleme
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement::Building<(), A> {
     type WithChildren = super::props::HtmlDetailsElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDetailsElement::Building(super::props::HtmlDetailsElement::Data { props: self.0.props.children(children) })
@@ -2333,7 +2327,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDialogElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement::Building<(), A> {
     type WithChildren = super::props::HtmlDialogElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDialogElement::Building(super::props::HtmlDialogElement::Data { props: self.0.props.children(children) })
@@ -2353,7 +2347,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlEmbedElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement::Building<(), A> {
     type WithChildren = super::props::HtmlEmbedElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlEmbedElement::Building(super::props::HtmlEmbedElement::Data { props: self.0.props.children(children) })
@@ -2373,7 +2367,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFieldSetElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement::Building<(), A> {
     type WithChildren = super::props::HtmlFieldSetElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFieldSetElement::Building(super::props::HtmlFieldSetElement::Data { props: self.0.props.children(children) })
@@ -2427,7 +2421,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFormElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement::Building<(), A> {
     type WithChildren = super::props::HtmlFormElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFormElement::Building(super::props::HtmlFormElement::Data { props: self.0.props.children(children) })
@@ -2451,7 +2445,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHtmlElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement::Building<(), A> {
     type WithChildren = super::props::HtmlHtmlElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHtmlElement::Building(super::props::HtmlHtmlElement::Data { props: self.0.props.children(children) })
@@ -2490,7 +2484,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlIFrameElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement::Building<(), A> {
     type WithChildren = super::props::HtmlIFrameElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlIFrameElement::Building(super::props::HtmlIFrameElement::Data { props: self.0.props.children(children) })
@@ -2520,7 +2514,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlImageElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement::Building<(), A> {
     type WithChildren = super::props::HtmlImageElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlImageElement::Building(super::props::HtmlImageElement::Data { props: self.0.props.children(children) })
@@ -2565,7 +2559,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlInputElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement::Building<(), A> {
     type WithChildren = super::props::HtmlInputElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlInputElement::Building(super::props::HtmlInputElement::Data { props: self.0.props.children(children) })
@@ -2585,7 +2579,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLabelElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement::Building<(), A> {
     type WithChildren = super::props::HtmlLabelElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLabelElement::Building(super::props::HtmlLabelElement::Data { props: self.0.props.children(children) })
@@ -2609,7 +2603,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLiElement::B
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement::Building<(), A> {
     type WithChildren = super::props::HtmlLiElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLiElement::Building(super::props::HtmlLiElement::Data { props: self.0.props.children(children) })
@@ -2645,7 +2639,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLinkElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement::Building<(), A> {
     type WithChildren = super::props::HtmlLinkElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLinkElement::Building(super::props::HtmlLinkElement::Data { props: self.0.props.children(children) })
@@ -2665,7 +2659,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMapElement::
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement::Building<(), A> {
     type WithChildren = super::props::HtmlMapElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMapElement::Building(super::props::HtmlMapElement::Data { props: self.0.props.children(children) })
@@ -2695,7 +2689,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMetaElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement::Building<(), A> {
     type WithChildren = super::props::HtmlMetaElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMetaElement::Building(super::props::HtmlMetaElement::Data { props: self.0.props.children(children) })
@@ -2728,7 +2722,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMeterElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement::Building<(), A> {
     type WithChildren = super::props::HtmlMeterElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMeterElement::Building(super::props::HtmlMeterElement::Data { props: self.0.props.children(children) })
@@ -2752,7 +2746,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlObjectElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement::Building<(), A> {
     type WithChildren = super::props::HtmlObjectElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlObjectElement::Building(super::props::HtmlObjectElement::Data { props: self.0.props.children(children) })
@@ -2779,7 +2773,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOListElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement::Building<(), A> {
     type WithChildren = super::props::HtmlOListElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOListElement::Building(super::props::HtmlOListElement::Data { props: self.0.props.children(children) })
@@ -2799,7 +2793,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptGroupElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement::Building<(), A> {
     type WithChildren = super::props::HtmlOptGroupElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptGroupElement::Building(super::props::HtmlOptGroupElement::Data { props: self.0.props.children(children) })
@@ -2823,7 +2817,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptionElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement::Building<(), A> {
     type WithChildren = super::props::HtmlOptionElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptionElement::Building(super::props::HtmlOptionElement::Data { props: self.0.props.children(children) })
@@ -2843,7 +2837,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOutputElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement::Building<(), A> {
     type WithChildren = super::props::HtmlOutputElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOutputElement::Building(super::props::HtmlOutputElement::Data { props: self.0.props.children(children) })
@@ -2863,7 +2857,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlProgressElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement::Building<(), A> {
     type WithChildren = super::props::HtmlProgressElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlProgressElement::Building(super::props::HtmlProgressElement::Data { props: self.0.props.children(children) })
@@ -2893,7 +2887,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlScriptElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement::Building<(), A> {
+impl<A, C: frender_dom::script::SsrElementScriptContent> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement::Building<(), A> {
     type WithChildren = super::props::HtmlScriptElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlScriptElement::Building(super::props::HtmlScriptElement::Data { props: self.0.props.children(children) })
@@ -2913,7 +2907,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSelectElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement::Building<(), A> {
     type WithChildren = super::props::HtmlSelectElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSelectElement::Building(super::props::HtmlSelectElement::Data { props: self.0.props.children(children) })
@@ -2933,7 +2927,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSlotElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement::Building<(), A> {
     type WithChildren = super::props::HtmlSlotElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSlotElement::Building(super::props::HtmlSlotElement::Data { props: self.0.props.children(children) })
@@ -2953,7 +2947,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSourceElemen
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement::Building<(), A> {
     type WithChildren = super::props::HtmlSourceElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSourceElement::Building(super::props::HtmlSourceElement::Data { props: self.0.props.children(children) })
@@ -2973,7 +2967,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlStyleElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement::Building<(), A> {
     type WithChildren = super::props::HtmlStyleElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlStyleElement::Building(super::props::HtmlStyleElement::Data { props: self.0.props.children(children) })
@@ -3022,7 +3016,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableElement::Building(super::props::HtmlTableElement::Data { props: self.0.props.children(children) })
@@ -3055,7 +3049,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableChildEl
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableChildElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableChildElement::Building(super::props::HtmlTableChildElement::Data { props: self.0.props.children(children) })
@@ -3075,7 +3069,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableSection
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableSectionElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableSectionElement::Building(super::props::HtmlTableSectionElement::Data { props: self.0.props.children(children) })
@@ -3095,7 +3089,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableRowElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableRowElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableRowElement::Building(super::props::HtmlTableRowElement::Data { props: self.0.props.children(children) })
@@ -3123,7 +3117,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableColElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableColElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableColElement::Building(super::props::HtmlTableColElement::Data { props: self.0.props.children(children) })
@@ -3165,7 +3159,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCellEle
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement::Building<(), A> {
     type WithChildren = super::props::HtmlTableCellElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCellElement::Building(super::props::HtmlTableCellElement::Data { props: self.0.props.children(children) })
@@ -3198,7 +3192,9 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTextAreaElem
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTextAreaElement::Building<(), A> {
+impl<A, C: crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C>
+    for super::props::HtmlTextAreaElement::Building<(), A>
+{
     type WithChildren = super::props::HtmlTextAreaElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTextAreaElement::Building(super::props::HtmlTextAreaElement::Data { props: self.0.props.children(children) })
@@ -3218,7 +3214,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTimeElement:
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement::Building<(), A> {
     type WithChildren = super::props::HtmlTimeElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTimeElement::Building(super::props::HtmlTimeElement::Data { props: self.0.props.children(children) })
@@ -3248,7 +3244,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTrackElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement::Building<(), A> {
     type WithChildren = super::props::HtmlTrackElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTrackElement::Building(super::props::HtmlTrackElement::Data { props: self.0.props.children(children) })
@@ -3273,7 +3269,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlUListElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement::Building<(), A> {
     type WithChildren = super::props::HtmlUListElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlUListElement::Building(super::props::HtmlUListElement::Data { props: self.0.props.children(children) })
@@ -3293,7 +3289,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAudioElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement::Building<(), A> {
     type WithChildren = super::props::HtmlAudioElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAudioElement::Building(super::props::HtmlAudioElement::Data { props: self.0.props.children(children) })
@@ -3320,7 +3316,7 @@ impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlVideoElement
     type Attributes = A;
     type Children = C;
 }
-impl<A, C> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement::Building<(), A> {
+impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement::Building<(), A> {
     type WithChildren = super::props::HtmlVideoElement::Building<C, A>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlVideoElement::Building(super::props::HtmlVideoElement::Data { props: self.0.props.children(children) })

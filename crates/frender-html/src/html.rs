@@ -100,7 +100,7 @@ crate::def_intrinsic_component_props!(
                     );
                 );
 
-                fn children(value: children![impl Sized]); // TODO: limit bounds
+                fn children(value: children![impl frender_ssr::SsrElement]);
                 fn css(value: bounds![Css]);
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
@@ -1593,6 +1593,9 @@ crate::def_intrinsic_component_props!(
                                 );
                                 define!(tags = (script { custom_content_model },)); // TODO: special children
                                 impl_for_web!();
+
+                                fn children(value: children![impl frender_dom::script::SsrElementScriptContent]);
+
                                 fn r#async(value: maybe![bool]) {
                                     attr_name!("async");
                                     update_with!(set_async);
@@ -1793,6 +1796,8 @@ crate::def_intrinsic_component_props!(
 
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
+
+                                fn children(value: children![impl crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty]);
 
                                 fn auto_correct(value: maybe![&str]) {
                                     attr_name!("autocorrect");
