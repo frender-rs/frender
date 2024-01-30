@@ -630,7 +630,16 @@ pub mod either {
         fn maybe_into_html_attribute_eq_value_or_empty(
             this: Self,
         ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
-            todo!()
+            match this {
+                Either::Left(this) => {
+                    MaybeUpdateValueWithState::maybe_into_html_attribute_eq_value_or_empty(this)
+                        .map(async_str_iter::either::IterEither::Left)
+                }
+                Either::Right(this) => {
+                    MaybeUpdateValueWithState::maybe_into_html_attribute_eq_value_or_empty(this)
+                        .map(async_str_iter::either::IterEither::Right)
+                }
+            }
         }
 
         type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
