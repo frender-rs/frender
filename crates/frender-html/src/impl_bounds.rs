@@ -553,37 +553,3 @@ pub mod MaybeContentEditable {
         }
     }
 }
-
-#[allow(non_snake_case)]
-pub mod Css {
-    pub use frender_html_common::Css as Bounds;
-
-    pub use crate::default_impl_csr as csr;
-    pub use crate::default_impl_ssr as ssr;
-
-    pub mod csr {
-        pub use super::super::CsrInput as Input;
-        pub use crate::DefaultCsrState as State;
-
-        pub type State<V> = Option<V>;
-
-        pub fn update_with_state<V, E, R: ?Sized>(input: Input<V, E, R>, state: &mut State<V>) {}
-    }
-
-    pub mod ssr {
-        pub use crate::css_type_haevoe as Haevoe;
-
-        pub type Haevoe = ::async_str_iter::empty::Empty;
-
-        #[macro_export]
-        macro_rules! css_type_haevoe {
-            ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
-                $crate::impl_bounds::Css::ssr::Haevoe
-            };
-        }
-
-        pub fn maybe_into_haevoe<V>(this: V) -> Option<Haevoe> {
-            todo!()
-        }
-    }
-}

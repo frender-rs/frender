@@ -14,9 +14,6 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait Element: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {
-    fn css<V: Css::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::css<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::css(value))
-    }
     fn class<V: DomTokens::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::class<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::class(value))
     }

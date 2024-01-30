@@ -1,6 +1,6 @@
 use frender_dom::render::RenderTextFrom;
 
-use crate::impl_bounds::{Css, DomTokens, MaybeContentEditable};
+use crate::impl_bounds::{DomTokens, MaybeContentEditable};
 
 #[cfg(not(feature = "props_builders_not_expanded"))]
 pub mod props_builders;
@@ -101,7 +101,6 @@ crate::def_intrinsic_component_props!(
                 );
 
                 fn children(value: children![impl frender_ssr::SsrElement]);
-                fn css(value: bounds![Css]);
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
                         get_mut_dom_token_list: behaviors::Element::class_list,

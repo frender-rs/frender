@@ -8,8 +8,6 @@ pub mod dom_token;
 pub use dom_token::DomTokens;
 pub mod content_editable;
 pub use content_editable::MaybeContentEditable;
-pub mod css;
-pub use css::Css;
 pub mod maybe_str;
 
 use frender_common::impl_many;
