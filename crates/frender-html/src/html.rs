@@ -740,6 +740,10 @@ crate::def_intrinsic_component_props!(
                                 sup,
                                 u,
                                 var,
+                                // wbr is void element,
+                                // however its builder trait is HtmlElement,
+                                // which might not be void element.
+                                // Thus, wbr's builder allows children other than `()`.
                                 wbr { custom_content_model },
                             ),
                         );
@@ -748,7 +752,7 @@ crate::def_intrinsic_component_props!(
                             fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str);
                         );
                         impl_for_web!(verbatim_trait_items!(
-                            fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str) {
+                            fn set_content_editable(&mut self, _: &mut Renderer, value: &str) {
                                 AsRef::<::web_sys::HtmlElement>::as_ref(&self.0).set_content_editable(value)
                             }
                         ););

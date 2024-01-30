@@ -275,6 +275,7 @@ macro_rules! behaviors_prelude {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
+        #[allow(non_snake_case)]
         $vis mod $trait_name {
             $vis use super::super::behaviors::$trait_name as _;
 
@@ -360,6 +361,7 @@ macro_rules! tags {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
+        #[allow(unused)]
         macro_rules! $trait_name {
             (for_each_extends $commands:tt) => {
                 frender_common::expand! {
@@ -406,6 +408,7 @@ macro_rules! tags {
         }
 
         $($($(
+            #[allow(non_camel_case_types)]
             pub struct $tags;
 
             impl crate::BehaviorType for $tags {
@@ -458,14 +461,19 @@ macro_rules! attributes {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
+        #[allow(non_snake_case)]
         $vis mod $trait_name {
             $vis mod states {
+                #![allow(non_camel_case_types)]
+
                 $(
                     #[derive(Debug, Default)]
                     pub struct $fn_name<V>(pub V);
                 )*
             }
             $vis mod attributes {
+                #![allow(non_camel_case_types)]
+
                 #[allow(unused_imports)]
                 use super::super::super::*;
 
@@ -704,6 +712,7 @@ macro_rules! RenderHtml {
         )*)
     ) => {
         $($($(
+            #[allow(non_camel_case_types)]
             type $tags: self::behaviors::$trait_name<Self>;
             fn $tags(&mut self) -> Self::$tags;
         )*)?)?
@@ -876,6 +885,7 @@ macro_rules! event_type {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:ident) => {
+        #[allow(non_camel_case_types)]
         pub enum $fn_name {}
 
         impl ::frender_dom::HasEventTypeName for $fn_name {
@@ -1000,6 +1010,7 @@ macro_rules! define_props {
         $crate::define_props! { $vis mod $trait_name {} }
     };
     ($vis:vis mod $trait_name:ident {$($prelude:tt)*}) => {
+        #[allow(non_snake_case)]
         $vis mod $trait_name {
             pub mod data_struct {
                 // #[allow(unused_imports)]
