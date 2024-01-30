@@ -1,21 +1,21 @@
 use std::time::Duration;
 
 use futures_lite::StreamExt;
-use wry::{
-    application::{
-        event::{Event, StartCause, WindowEvent},
-        event_loop::{ControlFlow, EventLoop},
-        window::WindowBuilder,
-    },
-    webview::WebViewBuilder,
+use tao::{
+    event::{Event, StartCause, WindowEvent},
+    event_loop::{ControlFlow, EventLoop},
+    window::WindowBuilder,
 };
+use wry::WebViewBuilder;
 
 fn main() -> wry::Result<()> {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_title("Hello World")
-        .build(&event_loop)?;
-    let webview = WebViewBuilder::new(window)?
+        .build(&event_loop)
+        .unwrap();
+
+    let webview = WebViewBuilder::new(&window)
         .with_html("")?
         // .with_url("https://tauri.studio")?
         .build()?;

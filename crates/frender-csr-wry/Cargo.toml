@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 async-io = "2.2.2"
 futures-lite = "2.2.0"
+tao = { version = "0.24.1", default-features = false, features = ["rwh_05"] }
 waker-fn = "1.1.0"
-wry = "0.30.0"
+wry = "0.35.2"
