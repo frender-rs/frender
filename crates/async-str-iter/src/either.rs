@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use crate::{AsyncStrIterator, IntoAsyncStrIterator};
+use crate::AsyncStrIterator;
 
 pin_project_lite::pin_project!(
     #[project = IterEitherProj]

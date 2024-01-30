@@ -159,7 +159,7 @@ macro_rules! default_impl_csr {
                 element: &mut ET::NodeOfBehaviorType<Renderer>,
                 state: &mut Self::State<Renderer>,
             ) {
-                // #[allow(unused_imports)]
+                #[allow(unused_imports)]
                 use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
                 let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
@@ -268,6 +268,7 @@ pub mod DomTokens {
                     element: &mut ET::NodeOfBehaviorType<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
+                    #[allow(unused_imports)]
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
                     let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
@@ -358,8 +359,6 @@ pub mod MaybeValue {
     pub use crate::default_impl_ssr as ssr;
 
     pub mod csr {
-        use std::borrow::Cow;
-
         use frender_html_common::{MaybeUpdateValueWithState, ValueType};
 
         pub use super::super::CsrInputWithUpdater as Input;
@@ -436,6 +435,7 @@ pub mod MaybeHandleEvent {
                     element: &mut ET::NodeOfBehaviorType<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
+                    #[allow(unused_imports)]
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
                     let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);

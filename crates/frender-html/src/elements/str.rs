@@ -227,9 +227,9 @@ impl<Cache, Text: Node<R>, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for State
         this.node.remove_self(renderer);
     }
 
-    fn state_unmount(mut self: std::pin::Pin<&mut Self>) {}
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 
-    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }

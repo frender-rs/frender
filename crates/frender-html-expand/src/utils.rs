@@ -3,8 +3,6 @@ use std::{
     path::PathBuf,
 };
 
-use syn::visit_mut::VisitMut;
-
 pub fn format_item(item: syn::Item) -> String {
     prettyplease::unparse(&syn::File {
         shebang: None,

@@ -48,7 +48,7 @@ impl<E: Element> Element for Option<E> {
         self,
         peh: &mut PEH,
         renderer: &mut Renderer,
-        mut render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
     ) where
         Self: Sized,
     {
@@ -60,7 +60,7 @@ impl<E: Element> Element for Option<E> {
         self,
         peh: &mut PEH,
         renderer: &mut Renderer,
-        mut render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
     ) where
         Self: Sized,
     {
@@ -72,7 +72,7 @@ impl<E: Element> Element for Option<E> {
         self,
         peh: &mut PEH,
         renderer: &mut Renderer,
-        mut render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
         force_reposition: bool,
     ) {
         update_option!(self.render_update_maybe_reposition(

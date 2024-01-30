@@ -1,14 +1,9 @@
-use std::borrow::Cow;
-
 use frender::{
     html::form_control::value::{Controlled, OneWayBinding, UncontrolledWithDefaultValue},
     prelude::*,
     ScriptInnerTextWronglyEncoded,
 };
-use hooks::{
-    shared_state::{SharedState, SharedStateEq},
-    ShareValue,
-};
+use hooks::ShareValue;
 
 fn input() -> impl Element {
     intrinsic!(

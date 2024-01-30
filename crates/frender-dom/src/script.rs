@@ -14,7 +14,7 @@ pub trait SsrElementScriptContent {
 impl SsrElementScriptContent for () {
     type ScriptContent = async_str_iter::empty::Empty;
 
-    fn into_script_content(this: Self) -> Self::ScriptContent {
+    fn into_script_content((): Self) -> Self::ScriptContent {
         async_str_iter::empty::Empty
     }
 

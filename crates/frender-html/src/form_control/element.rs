@@ -42,7 +42,7 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
 
     type ForceValue = <Self as frender_dom::behaviors::HtmlElement<Renderer>>::OnBeforeInputPreventDefault;
 
-    fn force_value<Val: TempAsRef<str> + 'static>(&mut self, renderer: &mut Renderer, value: Val) -> Self::ForceValue {
+    fn force_value<Val: TempAsRef<str> + 'static>(&mut self, renderer: &mut Renderer, _: Val) -> Self::ForceValue {
         frender_dom::behaviors::HtmlElement::on_before_input_prevent_default(self, renderer)
     }
 

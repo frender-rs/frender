@@ -15,22 +15,15 @@ impl Element for () {
         render_state.write(())
     }
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
-        force_reposition: bool,
-    ) {
-    }
+    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>, _: bool) {}
 
-    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
     where
         Self: Sized,
     {
     }
 
-    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
     where
         Self: Sized,
     {

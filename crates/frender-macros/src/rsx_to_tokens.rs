@@ -2,7 +2,7 @@ use crate::err::RecordError;
 
 use super::rsx_data::*;
 
-use quote::{quote_spanned, ToTokens, TokenStreamExt};
+use quote::{quote_spanned, ToTokens};
 
 impl ToTokens for LitOrBraced {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {

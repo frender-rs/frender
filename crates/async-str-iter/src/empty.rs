@@ -5,7 +5,7 @@ use crate::AsyncStrIterator;
 pub struct Empty;
 
 impl AsyncStrIterator for Empty {
-    fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
+    fn poll_next_str(self: Pin<&mut Self>, _: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
         Poll::Ready(None)
     }
 }

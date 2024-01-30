@@ -350,6 +350,7 @@ fn should_use_raw(ident_str: &str) -> bool {
         // Copied from https://docs.rs/proc-macro2/1.0.53/src/proc_macro2/fallback.rs.html#784-789
         "_" | "super" | "self" | "Self" | "crate" => false,
         #[rustfmt::skip]
+        #[allow(unreachable_patterns)]
         // Copied from https://docs.rs/syn/2.0.5/src/syn/ident.rs.html#57-71
         // Based on https://doc.rust-lang.org/1.65.0/reference/keywords.html
         "abstract" | "as" | "async" | "await" | "become" | "box" | "break" |

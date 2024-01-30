@@ -57,7 +57,7 @@ mod imp {
             }
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+        fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let this = self.project();
             let element = if let Some(v) = this.element_and_mounted {
                 &mut v.element
@@ -119,7 +119,7 @@ mod imp {
 
         fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
             self,
-            peh: &mut PEH,
+            _: &mut PEH,
             renderer: &mut Renderer,
             render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
             force_reposition: bool,
@@ -151,7 +151,7 @@ mod imp {
 
         fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
             self,
-            peh: &mut PEH,
+            _: &mut PEH,
             renderer: &mut Renderer,
             render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
             force_reposition: bool,

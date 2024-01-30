@@ -512,10 +512,11 @@ pub struct BooleanTrue;
 
 impl Unpin for BooleanTrue {}
 
+// TODO: is this needed?
 impl AsyncStrIterator for BooleanTrue {
     fn poll_next_str(
         self: std::pin::Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
+        _: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Option<&str>> {
         std::task::Poll::Ready(None)
     }

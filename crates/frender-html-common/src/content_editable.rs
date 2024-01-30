@@ -191,9 +191,9 @@ impl MaybeContentEditable for () {
     type UpdateWithState = ();
 
     fn update_with_state(
-        this: Self,
-        updater: impl crate::ValueUpdater<str>,
-        state: &mut Self::UpdateWithState,
+        (): Self,
+        _: impl crate::ValueUpdater<str>,
+        (): &mut Self::UpdateWithState,
     ) {
     }
 
