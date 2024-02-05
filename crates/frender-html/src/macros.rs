@@ -1125,10 +1125,29 @@ macro_rules! define_props_builders {
         )*)
     ) => {
         macro_rules! $trait_name {
-            (for_each_extends_and_self $commands:tt) => {
-                frender_common::expand! { { $trait_name } do $commands }
+            // $or_trait_bounds should be (...)
+            (trait_bounds $commands:tt) => {
                 frender_common::expand! {
-                    while ($({ $extends })*) {
+                    {
+                        $( $extends + )*
+                        $($($( $special_super_traits + )+)?)?
+                        $($( $special_inter_traits + )*)?
+                    } do $commands
+                }
+            };
+            (for_each_extends_and_self $commands:tt) => {
+                frender_common::expand! {
+                    while (
+                        { $trait_name }
+                        $($($({$special_super_traits})+)?)?
+                        $($({$special_inter_traits})*)?
+                    ) $commands
+                }
+                frender_common::expand! {
+                    while (
+                        $({ $extends })*
+
+                    ) {
                         append(
                             ! {
                                 for_each_extends_and_self $commands
@@ -1138,13 +1157,8 @@ macro_rules! define_props_builders {
                 }
             };
             (for_each_trait $commands:tt) => {
+                // TODO: $special_inter_traits might duplicate $special_super_traits of $extends
                 $trait_name! { for_each_extends_and_self $commands }
-                frender_common::expand! {
-                    while (
-                        $($($({$special_super_traits})+)?)?
-                        $($({$special_inter_traits})*)?
-                    ) $commands
-                }
             };
             // children (if present)
             ($commands:tt) => {
@@ -1170,49 +1184,55 @@ macro_rules! define_props_builders {
             };
         }
 
-        $vis trait $trait_name:
-            crate::props_builder::PropsBuilder +
-            crate::props_builder::PropsBuilderAppendAnySupportedAttributes +
-        {
-            $(
-                // #fn_attr
-                // fn #attr_builder_fn_name<V: #parse_fn_args_as_bounds>(
-                //     v: V
-                // ) -> super::Building<Children, (Attrs, super::props::$fn_name<V>)> {
-                //     super::Building(super::Data {
-                //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
-                //     })
-                // }
-                $crate::parse_fn_args_as_bounds! {
-                    $fn_args
-                    do {
-                        prepend( <V: )
-                        append(
-                            >(self, value: V) -> Self::AppendAttributes<super::attributes::$trait_name::attributes::$fn_name<V>> {
-                                Self::append_attributes(self, super::attributes::$trait_name::attributes::$fn_name(value))
-                            }
-                        )
-                        wrap()
-                        prepend(
-                            prepend(
-                                $(#$fn_attr)*
-                                fn
+        $trait_name! { trait_bounds {
+            or(
+                crate::props_builder::PropsBuilder +
+                crate::props_builder::PropsBuilderAppendAnySupportedAttributes +
+            )
+            prepend {
+                $vis trait $trait_name:
+            }
+            append {{
+                $(
+                    // #fn_attr
+                    // fn #attr_builder_fn_name<V: #parse_fn_args_as_bounds>(
+                    //     v: V
+                    // ) -> super::Building<Children, (Attrs, super::props::$fn_name<V>)> {
+                    //     super::Building(super::Data {
+                    //         props: self.0.props.chain_prop(super::props::$fn_name(v)),
+                    //     })
+                    // }
+                    $crate::parse_fn_args_as_bounds! {
+                        $fn_args
+                        do {
+                            prepend( <V: )
+                            append(
+                                >(self, value: V) -> Self::AppendAttributes<super::attributes::$trait_name::attributes::$fn_name<V>> {
+                                    Self::append_attributes(self, super::attributes::$trait_name::attributes::$fn_name(value))
+                                }
                             )
-                            append
-                        )
-                        // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do { for_each {...} } }
-                        wrap {}
-                        prepend( for_each )
-                        // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do {...} }
-                        wrap {}
-                        prepend( {$fn_name $fn_body_or_semi} do )
-                        // $crate::extract_attr_builder_fn_names! { ... }
-                        wrap {}
-                        prepend( $crate::extract_attr_builder_fn_names! )
+                            wrap()
+                            prepend(
+                                prepend(
+                                    $(#$fn_attr)*
+                                    fn
+                                )
+                                append
+                            )
+                            // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do { for_each {...} } }
+                            wrap {}
+                            prepend( for_each )
+                            // $crate::extract_attr_builder_fn_names! { {$fn_name $fn_body_or_semi} do {...} }
+                            wrap {}
+                            prepend( {$fn_name $fn_body_or_semi} do )
+                            // $crate::extract_attr_builder_fn_names! { ... }
+                            wrap {}
+                            prepend( $crate::extract_attr_builder_fn_names! )
+                        }
                     }
-                }
-            )*
-        }
+                )*
+            }}
+        }}
 
         $trait_name! { for_each_trait {
             prepend {
