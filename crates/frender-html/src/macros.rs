@@ -1124,8 +1124,29 @@ macro_rules! define_props_builders {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        // children (if present)
         macro_rules! $trait_name {
+            (for_each_extends_and_self $commands:tt) => {
+                frender_common::expand! { { $trait_name } do $commands }
+                frender_common::expand! {
+                    while ($({ $extends })*) {
+                        append(
+                            ! {
+                                for_each_extends_and_self $commands
+                            }
+                        )
+                    }
+                }
+            };
+            (for_each_trait $commands:tt) => {
+                $trait_name! { for_each_extends_and_self $commands }
+                frender_common::expand! {
+                    while (
+                        $($($({$special_super_traits})+)?)?
+                        $($({$special_inter_traits})*)?
+                    ) $commands
+                }
+            };
+            // children (if present)
             ($commands:tt) => {
                 $crate::extract_only_children_or! {
                     {$(
@@ -1193,11 +1214,15 @@ macro_rules! define_props_builders {
             )*
         }
 
-        impl<PB: crate::props_builder::PropsBuilder> $trait_name for PB
-            where
-                PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes,
-        {
-        }
+        $trait_name! { for_each_trait {
+            prepend {
+                impl<C, A>
+            }
+            append {
+                for super::props::$trait_name::Building<C, A> {
+                }
+            }
+        }}
 
         impl<C, A> crate::props_builder::PropsBuilder
             for super::props::$trait_name::Building<C, A> {

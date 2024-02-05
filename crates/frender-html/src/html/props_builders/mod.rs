@@ -1,6 +1,6 @@
 use super::*;
 pub trait Node: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> Node for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> Node for super::props::Node::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::Node::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -246,7 +246,8 @@ pub trait Element: crate::props_builder::PropsBuilder + crate::props_builder::Pr
         Self::append_attributes(self, super::attributes::Element::attributes::on_touch_start(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> Element for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> Element for super::props::Element::Building<C, A> {}
+impl<C, A> Node for super::props::Element::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::Element::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -270,7 +271,9 @@ pub trait ElementWithHrefAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithHrefAttribute::attributes::href(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithHrefAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithHrefAttribute for super::props::ElementWithHrefAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithHrefAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithHrefAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -294,7 +297,9 @@ pub trait ElementWithTargetAttribute: crate::props_builder::PropsBuilder + crate
         Self::append_attributes(self, super::attributes::ElementWithTargetAttribute::attributes::target(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithTargetAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithTargetAttribute for super::props::ElementWithTargetAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithTargetAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithTargetAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTargetAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -321,7 +326,9 @@ pub trait ElementWithTypeAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithTypeAttribute::attributes::r#type(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithTypeAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithTypeAttribute for super::props::ElementWithTypeAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithTypeAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithTypeAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTypeAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -345,7 +352,9 @@ pub trait ElementWithCiteAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithCiteAttribute::attributes::cite(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithCiteAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithCiteAttribute for super::props::ElementWithCiteAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithCiteAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithCiteAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCiteAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -369,7 +378,9 @@ pub trait ElementWithPlaceHolderAttribute: crate::props_builder::PropsBuilder + 
         Self::append_attributes(self, super::attributes::ElementWithPlaceHolderAttribute::attributes::placeholder(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithPlaceHolderAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithPlaceHolderAttribute for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -396,7 +407,9 @@ pub trait ElementWithMaxMinLengthAttributes: crate::props_builder::PropsBuilder 
         Self::append_attributes(self, super::attributes::ElementWithMaxMinLengthAttributes::attributes::min_length(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithMaxMinLengthAttributes for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithMaxMinLengthAttributes for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -423,7 +436,9 @@ pub trait ElementWithHeightWidthStrAttributes: crate::props_builder::PropsBuilde
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthStrAttributes::attributes::width(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithHeightWidthStrAttributes for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithHeightWidthStrAttributes for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -450,7 +465,9 @@ pub trait ElementWithHeightWidthU32Attributes: crate::props_builder::PropsBuilde
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthU32Attributes::attributes::width(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithHeightWidthU32Attributes for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -474,7 +491,9 @@ pub trait ElementWithMaxF64Attribute: crate::props_builder::PropsBuilder + crate
         Self::append_attributes(self, super::attributes::ElementWithMaxF64Attribute::attributes::max(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithMaxF64Attribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithMaxF64Attribute for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxF64Attribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -498,7 +517,9 @@ pub trait ElementWithValueF64Attribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithValueF64Attribute::attributes::value(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithValueF64Attribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithValueF64Attribute for super::props::ElementWithValueF64Attribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithValueF64Attribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithValueF64Attribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValueF64Attribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -522,7 +543,9 @@ pub trait ElementWithValueStrAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithValueStrAttribute::attributes::value(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithValueStrAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithValueStrAttribute for super::props::ElementWithValueStrAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithValueStrAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithValueStrAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValueStrAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -546,7 +569,9 @@ pub trait ElementWithOpenAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithOpenAttribute::attributes::open(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithOpenAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithOpenAttribute for super::props::ElementWithOpenAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithOpenAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithOpenAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithOpenAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -570,7 +595,9 @@ pub trait ElementWithNameAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithNameAttribute::attributes::name(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithNameAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithNameAttribute for super::props::ElementWithNameAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithNameAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithNameAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithNameAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -594,7 +621,9 @@ pub trait ElementWithDisabledAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithDisabledAttribute::attributes::disabled(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithDisabledAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithDisabledAttribute for super::props::ElementWithDisabledAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithDisabledAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithDisabledAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDisabledAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -618,7 +647,9 @@ pub trait ElementWithCrossOriginAttribute: crate::props_builder::PropsBuilder + 
         Self::append_attributes(self, super::attributes::ElementWithCrossOriginAttribute::attributes::cross_origin(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithCrossOriginAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithCrossOriginAttribute for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCrossOriginAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -642,7 +673,9 @@ pub trait ElementWithRelAttribute: crate::props_builder::PropsBuilder + crate::p
         Self::append_attributes(self, super::attributes::ElementWithRelAttribute::attributes::rel(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithRelAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithRelAttribute for super::props::ElementWithRelAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithRelAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithRelAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRelAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -666,7 +699,9 @@ pub trait ElementWithReferrerPolicyAttribute: crate::props_builder::PropsBuilder
         Self::append_attributes(self, super::attributes::ElementWithReferrerPolicyAttribute::attributes::referrer_policy(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithReferrerPolicyAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -690,7 +725,9 @@ pub trait ElementWithAltAttribute: crate::props_builder::PropsBuilder + crate::p
         Self::append_attributes(self, super::attributes::ElementWithAltAttribute::attributes::alt(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithAltAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithAltAttribute for super::props::ElementWithAltAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithAltAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithAltAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAltAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -714,7 +751,9 @@ pub trait ElementWithLoadingAttribute: crate::props_builder::PropsBuilder + crat
         Self::append_attributes(self, super::attributes::ElementWithLoadingAttribute::attributes::loading(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithLoadingAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithLoadingAttribute for super::props::ElementWithLoadingAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithLoadingAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithLoadingAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLoadingAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -738,7 +777,9 @@ pub trait ElementWithAcceptAttribute: crate::props_builder::PropsBuilder + crate
         Self::append_attributes(self, super::attributes::ElementWithAcceptAttribute::attributes::accept(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithAcceptAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithAcceptAttribute for super::props::ElementWithAcceptAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithAcceptAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithAcceptAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAcceptAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -762,7 +803,9 @@ pub trait ElementWithAutoCompleteAttribute: crate::props_builder::PropsBuilder +
         Self::append_attributes(self, super::attributes::ElementWithAutoCompleteAttribute::attributes::auto_complete(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithAutoCompleteAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithAutoCompleteAttribute for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -786,7 +829,9 @@ pub trait ElementWithFormAttribute: crate::props_builder::PropsBuilder + crate::
         Self::append_attributes(self, super::attributes::ElementWithFormAttribute::attributes::form(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithFormAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithFormAttribute for super::props::ElementWithFormAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithFormAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithFormAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -822,7 +867,10 @@ pub trait ElementWithFormAttributes: crate::props_builder::PropsBuilder + crate:
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_target(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithFormAttributes for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithFormAttributes for super::props::ElementWithFormAttributes::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithFormAttributes::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithFormAttributes::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::ElementWithFormAttributes::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttributes::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -846,7 +894,9 @@ pub trait ElementWithFetchPriorityAttribute: crate::props_builder::PropsBuilder 
         Self::append_attributes(self, super::attributes::ElementWithFetchPriorityAttribute::attributes::fetch_priority(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithFetchPriorityAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithFetchPriorityAttribute for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -870,7 +920,10 @@ pub trait ElementWithHrefLangAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithHrefLangAttribute::attributes::href_lang(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithHrefLangAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithHrefLangAttribute for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefLangAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -894,7 +947,9 @@ pub trait ElementWithSizesAttribute: crate::props_builder::PropsBuilder + crate:
         Self::append_attributes(self, super::attributes::ElementWithSizesAttribute::attributes::sizes(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithSizesAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithSizesAttribute for super::props::ElementWithSizesAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithSizesAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithSizesAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizesAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -918,7 +973,9 @@ pub trait ElementWithUseMapAttribute: crate::props_builder::PropsBuilder + crate
         Self::append_attributes(self, super::attributes::ElementWithUseMapAttribute::attributes::use_map(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithUseMapAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithUseMapAttribute for super::props::ElementWithUseMapAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithUseMapAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithUseMapAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithUseMapAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -942,7 +999,9 @@ pub trait ElementWithLabelAttribute: crate::props_builder::PropsBuilder + crate:
         Self::append_attributes(self, super::attributes::ElementWithLabelAttribute::attributes::label(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithLabelAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithLabelAttribute for super::props::ElementWithLabelAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithLabelAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithLabelAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLabelAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -969,7 +1028,9 @@ pub trait ElementWithForAttribute: crate::props_builder::PropsBuilder + crate::p
         Self::append_attributes(self, super::attributes::ElementWithForAttribute::attributes::r#for(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithForAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithForAttribute for super::props::ElementWithForAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithForAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithForAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithForAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -993,7 +1054,9 @@ pub trait ElementWithIntegrityAttribute: crate::props_builder::PropsBuilder + cr
         Self::append_attributes(self, super::attributes::ElementWithIntegrityAttribute::attributes::integrity(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithIntegrityAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithIntegrityAttribute for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithIntegrityAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1017,7 +1080,9 @@ pub trait ElementWithBlockingAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithBlockingAttribute::attributes::blocking(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithBlockingAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithBlockingAttribute for super::props::ElementWithBlockingAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithBlockingAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithBlockingAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBlockingAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1041,7 +1106,9 @@ pub trait ElementWithMultipleAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithMultipleAttribute::attributes::multiple(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithMultipleAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithMultipleAttribute for super::props::ElementWithMultipleAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithMultipleAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithMultipleAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMultipleAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1065,7 +1132,9 @@ pub trait ElementWithRequiredAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithRequiredAttribute::attributes::required(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithRequiredAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithRequiredAttribute for super::props::ElementWithRequiredAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithRequiredAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithRequiredAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRequiredAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1089,7 +1158,9 @@ pub trait ElementWithSizeU32Attribute: crate::props_builder::PropsBuilder + crat
         Self::append_attributes(self, super::attributes::ElementWithSizeU32Attribute::attributes::size(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithSizeU32Attribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithSizeU32Attribute for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizeU32Attribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1113,7 +1184,9 @@ pub trait ElementWithSrcAttribute: crate::props_builder::PropsBuilder + crate::p
         Self::append_attributes(self, super::attributes::ElementWithSrcAttribute::attributes::src(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithSrcAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithSrcAttribute for super::props::ElementWithSrcAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithSrcAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithSrcAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1137,7 +1210,10 @@ pub trait ElementWithSrcsetAttribute: crate::props_builder::PropsBuilder + crate
         Self::append_attributes(self, super::attributes::ElementWithSrcsetAttribute::attributes::srcset(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithSrcsetAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithSrcsetAttribute for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcsetAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1161,7 +1237,9 @@ pub trait ElementWithBgColorAttribute: crate::props_builder::PropsBuilder + crat
         Self::append_attributes(self, super::attributes::ElementWithBgColorAttribute::attributes::bg_color(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithBgColorAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithBgColorAttribute for super::props::ElementWithBgColorAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithBgColorAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithBgColorAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBgColorAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1185,7 +1263,9 @@ pub trait ElementWithAlignAttribute: crate::props_builder::PropsBuilder + crate:
         Self::append_attributes(self, super::attributes::ElementWithAlignAttribute::attributes::align(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithAlignAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithAlignAttribute for super::props::ElementWithAlignAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithAlignAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithAlignAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAlignAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1209,7 +1289,9 @@ pub trait ElementWithMediaAttribute: crate::props_builder::PropsBuilder + crate:
         Self::append_attributes(self, super::attributes::ElementWithMediaAttribute::attributes::media(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithMediaAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithMediaAttribute for super::props::ElementWithMediaAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithMediaAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithMediaAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMediaAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1233,7 +1315,9 @@ pub trait ElementWithReadOnlyAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithReadOnlyAttribute::attributes::read_only(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithReadOnlyAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithReadOnlyAttribute for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithReadOnlyAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1257,7 +1341,9 @@ pub trait ElementWithDateTimeAttribute: crate::props_builder::PropsBuilder + cra
         Self::append_attributes(self, super::attributes::ElementWithDateTimeAttribute::attributes::date_time(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> ElementWithDateTimeAttribute for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> ElementWithDateTimeAttribute for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
+impl<C, A> Element for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
+impl<C, A> Node for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDateTimeAttribute::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1561,7 +1647,9 @@ pub trait HtmlElement: crate::props_builder::PropsBuilder + crate::props_builder
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drop(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlElement for super::props::HtmlElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1581,7 +1669,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDataListElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDataListElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDataListElement for super::props::HtmlDataListElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDataListElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDataListElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDataListElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataListElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1601,7 +1692,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDivElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDivElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDivElement for super::props::HtmlDivElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDivElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDivElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDivElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDivElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1621,7 +1715,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDListElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDListElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDListElement for super::props::HtmlDListElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDListElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDListElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDListElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDListElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1641,7 +1738,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlHeadingElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlHeadingElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlHeadingElement for super::props::HtmlHeadingElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlHeadingElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlHeadingElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlHeadingElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadingElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1661,7 +1761,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlHeadElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlHeadElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlHeadElement for super::props::HtmlHeadElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlHeadElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlHeadElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlHeadElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1681,7 +1784,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlHrElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlHrElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlHrElement for super::props::HtmlHrElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlHrElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlHrElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlHrElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHrElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1701,7 +1807,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlLegendElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlLegendElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlLegendElement for super::props::HtmlLegendElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlLegendElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlLegendElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlLegendElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLegendElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1721,7 +1830,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlMenuElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlMenuElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlMenuElement for super::props::HtmlMenuElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlMenuElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlMenuElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlMenuElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMenuElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1741,7 +1853,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlParagraphElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlParagraphElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlParagraphElement for super::props::HtmlParagraphElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlParagraphElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlParagraphElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlParagraphElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlParagraphElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1761,7 +1876,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlPictureElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlPictureElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlPictureElement for super::props::HtmlPictureElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlPictureElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlPictureElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlPictureElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPictureElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1781,7 +1899,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlPreElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlPreElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlPreElement for super::props::HtmlPreElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlPreElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlPreElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlPreElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPreElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1801,7 +1922,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlSpanElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlSpanElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlSpanElement for super::props::HtmlSpanElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlSpanElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlSpanElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlSpanElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSpanElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1821,7 +1945,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTemplateElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTemplateElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTemplateElement for super::props::HtmlTemplateElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTemplateElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTemplateElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTemplateElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTemplateElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1841,7 +1968,10 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTitleElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTitleElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTitleElement for super::props::HtmlTitleElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTitleElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTitleElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTitleElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTitleElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1868,7 +1998,14 @@ pub trait HtmlElementWithHref: crate::props_builder::PropsBuilder + crate::props
         Self::append_attributes(self, super::attributes::HtmlElementWithHref::attributes::ping(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlElementWithHref for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlElementWithHref for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> ElementWithTargetAttribute for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlElementWithHref::Building<C, A> {}
+impl<C, A> ElementWithRelAttribute for super::props::HtmlElementWithHref::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElementWithHref::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1888,7 +2025,17 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlAnchorElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlAnchorElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlAnchorElement for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> HtmlElementWithHref for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithHrefLangAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithTargetAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
+impl<C, A> ElementWithRelAttribute for super::props::HtmlAnchorElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAnchorElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -1915,7 +2062,16 @@ pub trait HtmlAreaElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlAreaElement::attributes::shape(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlAreaElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlAreaElement for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> HtmlElementWithHref for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> ElementWithAltAttribute for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> ElementWithTargetAttribute for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlAreaElement::Building<C, A> {}
+impl<C, A> ElementWithRelAttribute for super::props::HtmlAreaElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAreaElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2089,7 +2245,12 @@ pub trait HtmlMediaElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_waiting(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlMediaElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlMediaElement for super::props::HtmlMediaElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlMediaElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlMediaElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlMediaElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlMediaElement::Building<C, A> {}
+impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlMediaElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMediaElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2109,7 +2270,12 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlBaseElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlBaseElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlBaseElement for super::props::HtmlBaseElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlBaseElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlBaseElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlBaseElement::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::HtmlBaseElement::Building<C, A> {}
+impl<C, A> ElementWithTargetAttribute for super::props::HtmlBaseElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBaseElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2129,7 +2295,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlQuoteElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlQuoteElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlQuoteElement for super::props::HtmlQuoteElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlQuoteElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlQuoteElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlQuoteElement::Building<C, A> {}
+impl<C, A> ElementWithCiteAttribute for super::props::HtmlQuoteElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlQuoteElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2154,7 +2324,10 @@ pub trait HtmlBodyElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlBodyElement::attributes::alink(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlBodyElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlBodyElement for super::props::HtmlBodyElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlBodyElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlBodyElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlBodyElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBodyElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2179,7 +2352,10 @@ pub trait HtmlBrElement: crate::props_builder::PropsBuilder + crate::props_build
         Self::append_attributes(self, super::attributes::HtmlBrElement::attributes::clear(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlBrElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlBrElement for super::props::HtmlBrElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlBrElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlBrElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlBrElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBrElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2199,7 +2375,16 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlButtonElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlButtonElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlButtonElement for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttributes for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithValueStrAttribute for super::props::HtmlButtonElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlButtonElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlButtonElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2219,7 +2404,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlCanvasElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlCanvasElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlCanvasElement for super::props::HtmlCanvasElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlCanvasElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlCanvasElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlCanvasElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlCanvasElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlCanvasElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2239,7 +2428,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTableCaptionElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableCaptionElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableCaptionElement for super::props::HtmlTableCaptionElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableCaptionElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableCaptionElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableCaptionElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableCaptionElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCaptionElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2259,7 +2452,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDataElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDataElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDataElement for super::props::HtmlDataElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDataElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDataElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDataElement::Building<C, A> {}
+impl<C, A> ElementWithValueStrAttribute for super::props::HtmlDataElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2279,7 +2476,12 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlModElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlModElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlModElement for super::props::HtmlModElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlModElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlModElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlModElement::Building<C, A> {}
+impl<C, A> ElementWithCiteAttribute for super::props::HtmlModElement::Building<C, A> {}
+impl<C, A> ElementWithDateTimeAttribute for super::props::HtmlModElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlModElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2299,7 +2501,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDetailsElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDetailsElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDetailsElement for super::props::HtmlDetailsElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDetailsElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDetailsElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDetailsElement::Building<C, A> {}
+impl<C, A> ElementWithOpenAttribute for super::props::HtmlDetailsElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDetailsElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2319,7 +2525,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlDialogElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlDialogElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlDialogElement for super::props::HtmlDialogElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlDialogElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlDialogElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlDialogElement::Building<C, A> {}
+impl<C, A> ElementWithOpenAttribute for super::props::HtmlDialogElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDialogElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2339,7 +2549,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlEmbedElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlEmbedElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlEmbedElement for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlEmbedElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlEmbedElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlEmbedElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2359,7 +2575,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlFieldSetElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlFieldSetElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlFieldSetElement for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlFieldSetElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlFieldSetElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFieldSetElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2413,7 +2635,15 @@ pub trait HtmlFormElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::on_submit(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlFormElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlFormElement for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> ElementWithTargetAttribute for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> ElementWithAutoCompleteAttribute for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> ElementWithAcceptAttribute for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> ElementWithRelAttribute for super::props::HtmlFormElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlFormElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFormElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2437,7 +2667,10 @@ pub trait HtmlHtmlElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlHtmlElement::attributes::xmlns(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlHtmlElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlHtmlElement for super::props::HtmlHtmlElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlHtmlElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlHtmlElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlHtmlElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHtmlElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2476,7 +2709,16 @@ pub trait HtmlIFrameElement: crate::props_builder::PropsBuilder + crate::props_b
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::src_doc(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlIFrameElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlIFrameElement for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithFetchPriorityAttribute for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithLoadingAttribute for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlIFrameElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlIFrameElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlIFrameElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2506,7 +2748,19 @@ pub trait HtmlImageElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlImageElement::attributes::is_map(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlImageElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlImageElement for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithSrcsetAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithUseMapAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithSizesAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithLoadingAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithAltAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlImageElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlImageElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlImageElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2551,7 +2805,27 @@ pub trait HtmlInputElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::step(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlInputElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlInputElement for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithReadOnlyAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithPlaceHolderAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithMaxMinLengthAttributes for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithSizeU32Attribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithRequiredAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithMultipleAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttributes for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithAutoCompleteAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithAcceptAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithAltAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithValueStrAttribute for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlInputElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlInputElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlInputElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2571,7 +2845,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlLabelElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlLabelElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlLabelElement for super::props::HtmlLabelElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlLabelElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlLabelElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlLabelElement::Building<C, A> {}
+impl<C, A> ElementWithForAttribute for super::props::HtmlLabelElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLabelElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2595,7 +2873,10 @@ pub trait HtmlLiElement: crate::props_builder::PropsBuilder + crate::props_build
         Self::append_attributes(self, super::attributes::HtmlLiElement::attributes::value(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlLiElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlLiElement for super::props::HtmlLiElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlLiElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlLiElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlLiElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLiElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2631,7 +2912,21 @@ pub trait HtmlLinkElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::prefetch(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlLinkElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlLinkElement for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithHrefAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithMediaAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithBlockingAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithIntegrityAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithSizesAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithHrefLangAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithFetchPriorityAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithRelAttribute for super::props::HtmlLinkElement::Building<C, A> {}
+impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlLinkElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLinkElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2651,7 +2946,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlMapElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlMapElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlMapElement for super::props::HtmlMapElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlMapElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlMapElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlMapElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlMapElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMapElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2681,7 +2980,11 @@ pub trait HtmlMetaElement: crate::props_builder::PropsBuilder + crate::props_bui
         Self::append_attributes(self, super::attributes::HtmlMetaElement::attributes::http_equiv(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlMetaElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlMetaElement for super::props::HtmlMetaElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlMetaElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlMetaElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlMetaElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlMetaElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMetaElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2714,7 +3017,12 @@ pub trait HtmlMeterElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlMeterElement::attributes::optimum(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlMeterElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlMeterElement for super::props::HtmlMeterElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlMeterElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlMeterElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlMeterElement::Building<C, A> {}
+impl<C, A> ElementWithMaxF64Attribute for super::props::HtmlMeterElement::Building<C, A> {}
+impl<C, A> ElementWithValueF64Attribute for super::props::HtmlMeterElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMeterElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2738,7 +3046,15 @@ pub trait HtmlObjectElement: crate::props_builder::PropsBuilder + crate::props_b
         Self::append_attributes(self, super::attributes::HtmlObjectElement::attributes::data(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlObjectElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlObjectElement for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> ElementWithUseMapAttribute for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlObjectElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlObjectElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlObjectElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2765,7 +3081,11 @@ pub trait HtmlOListElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlOListElement::attributes::start(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlOListElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlOListElement for super::props::HtmlOListElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlOListElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlOListElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlOListElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlOListElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOListElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2785,7 +3105,12 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlOptGroupElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlOptGroupElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlOptGroupElement for super::props::HtmlOptGroupElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlOptGroupElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlOptGroupElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlOptGroupElement::Building<C, A> {}
+impl<C, A> ElementWithLabelAttribute for super::props::HtmlOptGroupElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlOptGroupElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptGroupElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2809,7 +3134,13 @@ pub trait HtmlOptionElement: crate::props_builder::PropsBuilder + crate::props_b
         Self::append_attributes(self, super::attributes::HtmlOptionElement::attributes::selected(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlOptionElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlOptionElement for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> ElementWithLabelAttribute for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlOptionElement::Building<C, A> {}
+impl<C, A> ElementWithValueStrAttribute for super::props::HtmlOptionElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptionElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2829,7 +3160,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlOutputElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlOutputElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlOutputElement for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> ElementWithForAttribute for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlOutputElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlOutputElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOutputElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2849,7 +3186,12 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlProgressElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlProgressElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlProgressElement for super::props::HtmlProgressElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlProgressElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlProgressElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlProgressElement::Building<C, A> {}
+impl<C, A> ElementWithMaxF64Attribute for super::props::HtmlProgressElement::Building<C, A> {}
+impl<C, A> ElementWithValueF64Attribute for super::props::HtmlProgressElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlProgressElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2879,7 +3221,17 @@ pub trait HtmlScriptElement: crate::props_builder::PropsBuilder + crate::props_b
         Self::append_attributes(self, super::attributes::HtmlScriptElement::attributes::no_module(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlScriptElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlScriptElement for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithBlockingAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithIntegrityAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithFetchPriorityAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithReferrerPolicyAttribute for super::props::HtmlScriptElement::Building<C, A> {}
+impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlScriptElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlScriptElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2899,7 +3251,17 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlSelectElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlSelectElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlSelectElement for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithSizeU32Attribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithRequiredAttribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithMultipleAttribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithAutoCompleteAttribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlSelectElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlSelectElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSelectElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2919,7 +3281,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlSlotElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlSlotElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlSlotElement for super::props::HtmlSlotElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlSlotElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlSlotElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlSlotElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlSlotElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSlotElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2939,7 +3305,16 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlSourceElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlSourceElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlSourceElement for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithMediaAttribute for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithSrcsetAttribute for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithSizesAttribute for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlSourceElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlSourceElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSourceElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -2959,7 +3334,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlStyleElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlStyleElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlStyleElement for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> ElementWithMediaAttribute for super::props::HtmlStyleElement::Building<C, A> {}
+impl<C, A> ElementWithBlockingAttribute for super::props::HtmlStyleElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlStyleElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3008,7 +3389,12 @@ pub trait HtmlTableElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::width(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableElement for super::props::HtmlTableElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3041,7 +3427,12 @@ pub trait HtmlTableChildElement: crate::props_builder::PropsBuilder + crate::pro
         Self::append_attributes(self, super::attributes::HtmlTableChildElement::attributes::v_align(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableChildElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableChildElement for super::props::HtmlTableChildElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableChildElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableChildElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableChildElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableChildElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableChildElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableChildElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3061,7 +3452,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTableSectionElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableSectionElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableSectionElement for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> HtmlTableChildElement for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableSectionElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableSectionElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableSectionElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3081,7 +3478,13 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTableRowElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableRowElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableRowElement for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> HtmlTableChildElement for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableRowElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableRowElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableRowElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3109,7 +3512,13 @@ pub trait HtmlTableColElement: crate::props_builder::PropsBuilder + crate::props
         Self::append_attributes(self, super::attributes::HtmlTableColElement::attributes::width(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableColElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableColElement for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> HtmlTableChildElement for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableColElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableColElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableColElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3151,7 +3560,14 @@ pub trait HtmlTableCellElement: crate::props_builder::PropsBuilder + crate::prop
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::scope(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTableCellElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTableCellElement for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> HtmlTableChildElement for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableCellElement::Building<C, A> {}
+impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableCellElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCellElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3184,7 +3600,18 @@ pub trait HtmlTextAreaElement: crate::props_builder::PropsBuilder + crate::props
         Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::wrap(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTextAreaElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTextAreaElement for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithReadOnlyAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithPlaceHolderAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithMaxMinLengthAttributes for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithRequiredAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithFormAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithAutoCompleteAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithDisabledAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
+impl<C, A> ElementWithNameAttribute for super::props::HtmlTextAreaElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTextAreaElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3206,7 +3633,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlTimeElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlTimeElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTimeElement for super::props::HtmlTimeElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTimeElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTimeElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTimeElement::Building<C, A> {}
+impl<C, A> ElementWithDateTimeAttribute for super::props::HtmlTimeElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTimeElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3236,7 +3667,12 @@ pub trait HtmlTrackElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlTrackElement::attributes::src_lang(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlTrackElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlTrackElement for super::props::HtmlTrackElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlTrackElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlTrackElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlTrackElement::Building<C, A> {}
+impl<C, A> ElementWithSrcAttribute for super::props::HtmlTrackElement::Building<C, A> {}
+impl<C, A> ElementWithLabelAttribute for super::props::HtmlTrackElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTrackElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3261,7 +3697,11 @@ pub trait HtmlUListElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlUListElement::attributes::compact(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlUListElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlUListElement for super::props::HtmlUListElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlUListElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlUListElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlUListElement::Building<C, A> {}
+impl<C, A> ElementWithTypeAttribute for super::props::HtmlUListElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlUListElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3281,7 +3721,11 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlAudioElement: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
-impl<PB: crate::props_builder::PropsBuilder> HtmlAudioElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlAudioElement for super::props::HtmlAudioElement::Building<C, A> {}
+impl<C, A> HtmlMediaElement for super::props::HtmlAudioElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlAudioElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlAudioElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlAudioElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAudioElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
@@ -3308,7 +3752,12 @@ pub trait HtmlVideoElement: crate::props_builder::PropsBuilder + crate::props_bu
         Self::append_attributes(self, super::attributes::HtmlVideoElement::attributes::poster(value))
     }
 }
-impl<PB: crate::props_builder::PropsBuilder> HtmlVideoElement for PB where PB: crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+impl<C, A> HtmlVideoElement for super::props::HtmlVideoElement::Building<C, A> {}
+impl<C, A> HtmlMediaElement for super::props::HtmlVideoElement::Building<C, A> {}
+impl<C, A> HtmlElement for super::props::HtmlVideoElement::Building<C, A> {}
+impl<C, A> Element for super::props::HtmlVideoElement::Building<C, A> {}
+impl<C, A> Node for super::props::HtmlVideoElement::Building<C, A> {}
+impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlVideoElement::Building<C, A> {}
 impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlVideoElement::Building<C, A> {
     type Attributes = A;
     type Children = C;
