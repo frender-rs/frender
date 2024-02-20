@@ -9,7 +9,7 @@ edition = "2021"
 frender-ssr = { path = "../frender-ssr", version = "0.1.0" }
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
-hooks-core = { version = "2.2.0-alpha", default-features = false }
+hooks-core = { version = "3.0.0-alpha", default-features = false }
 syn-lite = "0.1.0"
 frender-html = { version = "0.1.0", path = "../frender-html" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }

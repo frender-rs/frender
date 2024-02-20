@@ -1647,9 +1647,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hooks"
-version = "3.0.0-alpha.2"
+version = "3.0.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12892aeb03dc84b9e41c717d8ba2d6f8298f48dab587633ab06219b88dbecdc4"
+checksum = "dfeee31408bcea1bc04df604c5b5231ad73f0423e83ff4c2fa672741e24c2b6d"
 dependencies = [
  "hooks-core",
  "pin-project-lite",
@@ -1658,9 +1658,9 @@ dependencies = [
 
 [[package]]
 name = "hooks-core"
-version = "2.2.0-alpha"
+version = "3.0.0-alpha.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "233d8aa70bb8526f5c9a6d0ba2fd56b2334a0f72af18d0ed8187ba65497e7ce2"
+checksum = "5058bef43f3530887898e8e5475313e3be764533ff5e07d937c43e41e904f688"
 dependencies = [
  "futures-core",
  "pin-project-lite",
