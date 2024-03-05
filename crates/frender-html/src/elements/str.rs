@@ -25,86 +25,26 @@ pub trait RenderingStr: Deref<Target = str> {
     fn update_cache(cache: &mut Self::Cache, value: Self);
 }
 
-#[cfg(feature = "StaticText")]
-impl<S: StaticStr> RenderingStr for StaticText<S> {
-    type Cache = S;
+frender_common::impl_many!(
+    impl<__> RenderingStr for each_of![&'static str, String, Cow<'static, str>,] {
+        type Cache = Self;
 
-    #[inline]
-    fn create_cache(value: Self) -> Self::Cache {
-        value.0
-    }
+        #[inline]
+        fn create_cache(value: Self) -> Self::Cache {
+            value
+        }
 
-    #[inline]
-    fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
-        **cache != **this
-    }
+        #[inline]
+        fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
+            cache != this
+        }
 
-    #[inline]
-    fn update_cache(cache: &mut Self::Cache, value: Self) {
-        *cache = value.0
-    }
-}
-
-impl RenderingStr for String {
-    type Cache = String;
-
-    #[inline]
-    fn create_cache(value: Self) -> Self::Cache {
-        value
-    }
-
-    #[inline]
-    fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
-        cache != this
-    }
-
-    #[inline]
-    fn update_cache(cache: &mut Self::Cache, value: Self) {
-        *cache = value
-    }
-}
-
-/// No cache
-impl RenderingStr for &str {
-    type Cache = ();
-
-    #[inline]
-    fn create_cache(_: Self) -> Self::Cache {}
-
-    #[inline]
-    fn not_match_cache(_: &Self, _: &Self::Cache) -> bool {
-        true
-    }
-
-    #[inline]
-    fn update_cache(_: &mut Self::Cache, _: Self) {}
-}
-
-/// Only cache when self is [`Cow::Owned`].
-impl RenderingStr for Cow<'_, str> {
-    type Cache = Option<String>;
-
-    #[inline]
-    fn create_cache(value: Self) -> Self::Cache {
-        match value {
-            Cow::Borrowed(_) => None,
-            Cow::Owned(s) => Some(s),
+        #[inline]
+        fn update_cache(cache: &mut Self::Cache, value: Self) {
+            *cache = value
         }
     }
-
-    #[inline]
-    fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
-        cache.as_deref() != Some(this)
-    }
-
-    #[inline]
-    fn update_cache(cache: &mut Self::Cache, value: Self) {
-        *cache = match value {
-            Cow::Borrowed(_) => None,
-            Cow::Owned(s) => Some(s),
-        }
-    }
-}
+);
 
 #[cfg(remove)]
 mod js {
@@ -238,8 +178,8 @@ frender_common::impl_many!(
     impl<__> Element
         for each_of![
             //
-            Cow<'_, str>,
-            &str,
+            Cow<'static, str>,
+            &'static str,
             String,
         ]
     {
