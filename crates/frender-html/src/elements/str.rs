@@ -17,7 +17,7 @@ pub struct State<Cache, Text> {
     unmounted: bool,
 }
 
-pub trait RenderingStr: Deref<Target = str> {
+trait RenderingStr: Deref<Target = str> {
     type Cache;
 
     fn create_cache(value: Self) -> Self::Cache;
@@ -183,7 +183,7 @@ frender_common::impl_many!(
             String,
         ]
     {
-        type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<<Self as RenderingStr>::Cache, Renderer::Text>>;
+        type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;
 
         #[cfg(feature = "render_into")]
         fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
