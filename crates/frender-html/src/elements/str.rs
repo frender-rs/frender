@@ -207,9 +207,23 @@ frender_common::impl_many!(
     }
 );
 
-#[cfg(feature = "StaticText")]
-impl_render_str! {
-    @[S: StaticStr] StaticText<S>,
+impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
+    type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<<S as frender_common::IntoStaticStr>::IntoStaticStr, Renderer::Text>>;
+
+    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>, force_reposition: bool) {
+        match render_state.get_mut() {
+            Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(
+                self.0,
+                renderer,
+                force_reposition,
+                |s, cache| *s.borrow() == *cache.borrow(),
+                |cache, s| frender_common::IntoStaticStr::update_into_static_str(s, cache),
+            ),
+            render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self.0, renderer, frender_common::IntoStaticStr::into_static_str)),
+        }
+    }
+
+    crate::impl_unpinned_render_for_unpin! {}
 }
 
 pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V> + ?Sized>(

@@ -1,3 +1,6 @@
+mod temp_str;
+pub use temp_str::{IntoStaticStr, TempStr};
+
 mod keyed;
 pub use keyed::*;
 

@@ -22,3 +22,20 @@ frender_common::impl_many!(
         }
     }
 );
+
+impl<S> SsrElement for frender_common::TempStr<S>
+where
+    S: std::borrow::Borrow<str>,
+{
+    type HtmlChildren = frender_ssr_html::encode::Encode<
+        frender_ssr_html::escape_safe::Safe,
+        async_str_iter::borrow_str::IterBorrowStr<S>,
+    >;
+
+    fn into_html_children(self) -> Self::HtmlChildren {
+        Self::HtmlChildren::new(
+            frender_ssr_html::escape_safe::Safe,
+            async_str_iter::borrow_str::IterBorrowStr::new(self.0),
+        )
+    }
+}
