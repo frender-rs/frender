@@ -264,7 +264,7 @@ pub mod form_control {
                     inner: this.0.clone(),
                 },
                 non_reactive: element
-                    .on_value_change(renderer, move |value| this.0.set(Val::from(value))),
+                    .on_value_change(renderer, move |value| this.0.set(Val::of_value(value))),
             });
         }
     }

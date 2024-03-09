@@ -18,8 +18,11 @@ pub trait Value {
         Self: 'a;
 }
 
-pub trait OfValue: PrimarilyBorrow<Borrowed = Self::Value> + for<'a> From<<Self::Value as Value>::Passed<'a>> {
+pub trait OfValue: PrimarilyBorrow<Borrowed = Self::Value> {
     type Value: ?Sized + Value;
+
+    /// `passed_value` might be cloned in this method.
+    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self;
 }
 
 impl Value for str {
@@ -32,14 +35,34 @@ impl<T: Copy> Value for T {
 
 impl OfValue for String {
     type Value = str;
+
+    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
+        passed_value.into()
+    }
+}
+
+impl OfValue for Cow<'_, str> {
+    type Value = str;
+
+    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
+        passed_value.into_owned().into()
+    }
 }
 
 impl OfValue for std::rc::Rc<str> {
     type Value = str;
+
+    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
+        passed_value.into()
+    }
 }
 
 impl OfValue for bool {
     type Value = bool;
+
+    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
+        passed_value
+    }
 }
 
 pub trait FormControlValue<V: ?Sized + Value> {
@@ -225,7 +248,7 @@ impl<
 
             if state.callback != cbk {
                 state.callback = cbk.clone();
-                state.on_value_change_event_listener = element.on_value_change(renderer, move |v| cbk.call_fn((From::from(v),)));
+                state.on_value_change_event_listener = element.on_value_change(renderer, move |v| cbk.call_fn((Val::of_value(v),)));
             }
         } else {
             let Self(value, cbk) = this;
@@ -238,7 +261,7 @@ impl<
 
             *state = Some(ControlledState {
                 callback: Cbk::clone(&cbk),
-                on_value_change_event_listener: element.on_value_change(renderer, move |v| cbk.call_fn((From::from(v),))),
+                on_value_change_event_listener: element.on_value_change(renderer, move |v| cbk.call_fn((Val::of_value(v),))),
                 value,
             })
         }
