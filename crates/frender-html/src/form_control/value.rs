@@ -4,6 +4,7 @@ use std::{
     rc::Rc,
 };
 
+use frender_common::PrimarilyBorrow;
 use frender_dom::{render_state::non_reactive::NonReactiveRenderState, RenderState};
 use frender_events::callable::Callable;
 use frender_html_common::maybe_str::{IntoOneStringOrEmpty, MaybeStr};
@@ -17,8 +18,8 @@ pub trait Value {
         Self: 'a;
 }
 
-pub trait OfValue: Borrow<Self::Value> + for<'a> From<<Self::Value as Value>::Passed<'a>> {
-    type Value: ?Sized + ToOwned + Value;
+pub trait OfValue: PrimarilyBorrow<Borrowed = Self::Value> + for<'a> From<<Self::Value as Value>::Passed<'a>> {
+    type Value: ?Sized + Value;
 }
 
 impl Value for str {
