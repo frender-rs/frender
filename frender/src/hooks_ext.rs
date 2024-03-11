@@ -115,9 +115,76 @@ pub mod setter {
     }
 }
 
-pub mod form_control {
-    use std::borrow::Borrow;
+pub mod state {
+    use frender_html::RenderState;
+    use hooks::{Hook, HookValue, ShareValue};
 
+    /// See [`RenderState`] for meaning of `PEH`.
+    pub trait UpdateElementWithSharedValue<PEH: ?Sized, R: ?Sized, V: ?Sized> {
+        fn unmount_element_with_shared_value(&mut self, peh: &mut PEH, renderer: &mut R);
+        fn update_element_with_shared_value(
+            &mut self,
+            peh: &mut PEH,
+            renderer: &mut R,
+            shared_value: &V,
+        );
+    }
+
+    pin_project_lite::pin_project!(
+        #[project = StateProj]
+        pub struct State<S, U> {
+            #[pin]
+            pub(crate) inner: S,
+            pub(crate) update: U,
+        }
+    );
+
+    impl<
+            U: UpdateElementWithSharedValue<PEH, R, <S as ShareValue>::Value>,
+            PEH: ?Sized,
+            R: ?Sized,
+            S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S>,
+        > RenderState<PEH, R> for State<S, U>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            let StateProj { inner, update } = self.project();
+
+            update.unmount_element_with_shared_value(peh, renderer);
+
+            S::unmount(inner);
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            S::unmount(self.project().inner)
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            peh: &mut PEH,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let StateProj { mut inner, update } = self.project();
+
+            match inner.as_mut().poll_next_update(cx) {
+                std::task::Poll::Ready(active) => {
+                    if active {
+                        let state = inner.use_hook(); // mark as seen
+
+                        state.map(|shared_value| {
+                            update.update_element_with_shared_value(peh, renderer, shared_value)
+                        });
+                    }
+
+                    std::task::Poll::Ready(())
+                }
+                std::task::Poll::Pending => std::task::Poll::Pending,
+            }
+        }
+    }
+}
+
+pub mod form_control {
     use async_str_iter::IntoAsyncStrIterator;
     use frender_html::{
         form_control::{
@@ -173,59 +240,31 @@ pub mod form_control {
         }
     }
 
-    pin_project_lite::pin_project!(
-        pub struct ReactiveState<S> {
-            #[pin]
-            inner: S,
-        }
-    );
+    pub struct UpdateFormControlElement;
 
     impl<
-            E: FormControlElement<V, R> + ?Sized,
+            PEH: FormControlElement<V, R> + ?Sized,
             R: ?Sized,
             V: ?Sized + Value,
-            S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S>,
-        > RenderState<E, R> for ReactiveState<S>
-    where
-        <S as ShareValue>::Value: OfValue<Value = V>,
+            SV: OfValue<Value = V>,
+        > super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateFormControlElement
     {
-        fn unmount(self: std::pin::Pin<&mut Self>, element: &mut E, renderer: &mut R) {
-            let inner = self.project().inner;
-
+        fn unmount_element_with_shared_value(&mut self, element: &mut PEH, renderer: &mut R) {
             element.remove_value(renderer);
-
-            S::unmount(inner);
         }
 
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
-            S::unmount(self.project().inner)
-        }
-
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            element: &mut E,
+        fn update_element_with_shared_value(
+            &mut self,
+            element: &mut PEH,
             renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            let mut inner = self.project().inner;
-
-            match inner.as_mut().poll_next_update(cx) {
-                std::task::Poll::Ready(active) => {
-                    if active {
-                        let state = inner.use_hook(); // mark as seen
-
-                        state.map(|value| {
-                            element.set_default_value(renderer, value.borrow());
-                            element.set_value(renderer, value.borrow());
-                        });
-                    }
-
-                    std::task::Poll::Ready(())
-                }
-                std::task::Poll::Pending => std::task::Poll::Pending,
-            }
+            value: &SV,
+        ) {
+            element.set_default_value(renderer, value.borrow());
+            element.set_value(renderer, value.borrow());
         }
     }
+
+    pub type ReactiveState<S> = super::state::State<S, UpdateFormControlElement>;
 
     impl<S, Val> FormControlValue<Val::Value> for ControlledSharedValue<S>
     where
@@ -253,15 +292,19 @@ pub mod form_control {
                 }
             }
 
-            this.0.map(|value| {
-                let value = value.borrow();
-                element.set_default_value(renderer, value);
-                element.set_value(renderer, value);
+            this.0.map(|shared_value| {
+                super::state::UpdateElementWithSharedValue::update_element_with_shared_value(
+                    &mut UpdateFormControlElement,
+                    element,
+                    renderer,
+                    shared_value,
+                );
             });
 
             *state = Some(CompoundState {
                 reactive: ReactiveState {
                     inner: this.0.clone(),
+                    update: UpdateFormControlElement,
                 },
                 non_reactive: element
                     .on_value_change(renderer, move |value| this.0.set(Val::of_value(value))),
@@ -288,6 +331,114 @@ pub mod eq {
         fn deref(&self) -> &Self::Target {
             &self.0
         }
+    }
+}
+
+pub mod element {
+    use std::borrow::Borrow;
+
+    use frender_common::PrimarilyBorrow;
+    use frender_html::{dom::render::RenderAsText, elements::str::TextNode, RenderHtml};
+    use hooks::{Hook, HookValue, ShareValue};
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct SharedStateToElement<S: ShareValue>(pub S);
+
+    impl<S: ShareValue, V: ?Sized> frender_ssr::SsrElement for SharedStateToElement<S>
+    where
+        S::Value: PrimarilyBorrow<Borrowed = V>,
+        V: frender_ssr::ToSsrElement,
+    {
+        type HtmlChildren = <V::ToSsrElement as frender_ssr::SsrElement>::HtmlChildren;
+
+        fn into_html_children(self) -> Self::HtmlChildren {
+            self.0
+                .map(|s| s.borrow().to_ssr_element())
+                .into_html_children()
+        }
+    }
+
+    pub struct UpdateTextNode<TN> {
+        text_node: TextNode<TN>,
+    }
+
+    impl<PEH: ?Sized, R: ?Sized, SV: ?Sized + PrimarilyBorrow<Borrowed = V>, V: ?Sized>
+        super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateTextNode<R::Text>
+    where
+        R: RenderHtml,
+        V: RenderAsText,
+    {
+        fn unmount_element_with_shared_value(&mut self, _: &mut PEH, renderer: &mut R) {
+            self.text_node.unmount(renderer)
+        }
+
+        fn update_element_with_shared_value(
+            &mut self,
+            _: &mut PEH,
+            renderer: &mut R,
+            shared_value: &SV,
+        ) {
+            V::render_as_text_update(shared_value.borrow(), renderer, &mut self.text_node.node)
+        }
+    }
+
+    pub type State<S, TextNode> = super::state::State<S, UpdateTextNode<TextNode>>;
+
+    impl<S: ShareValue, V: ?Sized> frender_html::Element for SharedStateToElement<S>
+    where
+        S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
+        <S as ShareValue>::Value: PrimarilyBorrow<Borrowed = V> + Borrow<V>,
+        V: frender_ssr::ToSsrElement,
+        V: RenderAsText,
+    {
+        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            Option<State<S, R::Text>>;
+
+        fn render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            _: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
+            let render_state = render_state.get_mut();
+
+            match render_state {
+                Some(render_state) => {
+                    if !render_state.inner.equivalent_to(&self.0) {
+                        self.0.map(|value| {
+                            value.borrow().render_as_text_update(
+                                renderer,
+                                &mut render_state.update.text_node.node,
+                            )
+                        })
+                    }
+
+                    render_state
+                        .update
+                        .text_node
+                        .readd_self(renderer, force_reposition)
+                }
+                render_state => {
+                    *render_state = Some(State {
+                        update: UpdateTextNode {
+                            text_node: {
+                                let node =
+                                    self.0.map(|value| value.borrow().render_as_text(renderer));
+                                TextNode::mount(renderer, node)
+                            },
+                        },
+                        inner: self.0,
+                    });
+                }
+            }
+        }
+
+        frender_html::impl_unpinned_render_for_unpin! {}
     }
 }
 
@@ -396,6 +547,13 @@ pub trait ShareValueExt: ShareValue {
             setter::EventTargetFormControlValue,
             setter::SetterConditional(self),
         )
+    }
+
+    fn to_element(&self) -> element::SharedStateToElement<Self>
+    where
+        Self: Sized + Clone,
+    {
+        element::SharedStateToElement(self.clone())
     }
 }
 
