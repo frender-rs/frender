@@ -1,4 +1,4 @@
-use frender_dom::render::RenderTextFrom;
+use frender_dom::render::RenderTextFromKnown;
 
 use crate::impl_bounds::{DomTokens, MaybeContentEditable};
 
@@ -47,24 +47,7 @@ crate::def_intrinsic_component_props!(
 
         #[RenderHtml]
         pub trait RenderHtml {
-            additional_bounds!(
-                dyn RenderTextFrom<Self::Text, str>
-                    + RenderTextFrom<Self::Text, i8>
-                    + RenderTextFrom<Self::Text, u8>
-                    + RenderTextFrom<Self::Text, i16>
-                    + RenderTextFrom<Self::Text, u16>
-                    + RenderTextFrom<Self::Text, i32>
-                    + RenderTextFrom<Self::Text, u32>
-                    + RenderTextFrom<Self::Text, i64>
-                    + RenderTextFrom<Self::Text, u64>
-                    + RenderTextFrom<Self::Text, i128>
-                    + RenderTextFrom<Self::Text, u128>
-                    + RenderTextFrom<Self::Text, isize>
-                    + RenderTextFrom<Self::Text, usize>
-                    + RenderTextFrom<Self::Text, f32>
-                    + RenderTextFrom<Self::Text, f64>
-                    + RenderTextFrom<Self::Text, char>
-            );
+            additional_bounds!(dyn RenderTextFromKnown<Self::Text>);
 
             type Text: behaviors::Node<Self>;
         }
