@@ -11,10 +11,49 @@ use crate::{dom::behaviors::Node, RenderHtml};
 
 use crate::{Element, RenderState};
 
+/// `Text` node with a field recording whether it is unmounted.
+pub struct TextNode<Text> {
+    pub node: Text,
+    pub unmounted: bool,
+}
+
+impl<Text> TextNode<Text> {
+    pub fn readd_self<R: ?Sized>(&mut self, renderer: &mut R, force_reposition: bool)
+    where
+        Text: Node<R>,
+    {
+        self.node.readd_self(renderer, force_reposition || self.unmounted);
+    }
+
+    pub fn unmount<R: ?Sized>(&mut self, renderer: &mut R)
+    where
+        Text: Node<R>,
+    {
+        self.unmounted = true;
+        self.node.remove_self(renderer);
+    }
+
+    pub fn mount<R: ?Sized>(renderer: &mut R, mut node: Text) -> Self
+    where
+        Text: Node<R>,
+    {
+        node.readd_self(renderer, true);
+        Self { node, unmounted: false }
+    }
+
+    fn mount_from<R: ?Sized, V: ?Sized>(renderer: &mut R, v: &V) -> Self
+    where
+        R: RenderTextFrom<Text, V>,
+        Text: Node<R>,
+    {
+        let node = renderer.render_text_from(v);
+        Self::mount(renderer, node)
+    }
+}
+
 pub struct State<Cache, Text> {
-    node: Text,
+    text_node: TextNode<Text>,
     cache: Cache,
-    unmounted: bool,
 }
 
 trait RenderingStr: Deref<Target = str> {
@@ -71,13 +110,6 @@ mod js {
 }
 
 impl<Cache, Text> State<Cache, Text> {
-    fn add_self_to_dom<R: ?Sized>(&mut self, renderer: &mut R, force_reposition: bool)
-    where
-        Text: Node<R>,
-    {
-        self.node.readd_self(renderer, force_reposition || self.unmounted);
-    }
-
     fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(
         &mut self,
         data: S,
@@ -89,24 +121,21 @@ impl<Cache, Text> State<Cache, Text> {
         Text: Node<R>,
     {
         if not_match_cache(&data, &self.cache) {
-            renderer.update_text_from(&mut self.node, data.borrow());
+            renderer.update_text_from(&mut self.text_node.node, data.borrow());
 
             update_cache(&mut self.cache, data);
         }
 
-        self.add_self_to_dom(renderer, force_reposition)
+        self.text_node.readd_self(renderer, force_reposition)
     }
 
     pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(data: S, renderer: &mut R, create_cache: impl FnOnce(S) -> Cache) -> Self
     where
         Text: Node<R>,
     {
-        let mut text = renderer.render_text_from(data.borrow());
-        text.readd_self(renderer, true);
         State {
-            node: text,
+            text_node: TextNode::mount_from(renderer, data.borrow()),
             cache: create_cache(data),
-            unmounted: false,
         }
     }
 
@@ -163,8 +192,7 @@ impl<Cache, Text> Unpin for State<Cache, Text> {}
 impl<Cache, Text: Node<R>, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for State<Cache, Text> {
     fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R) {
         let this = self.get_mut();
-        this.unmounted = true;
-        this.node.remove_self(renderer);
+        this.text_node.unmount(renderer);
     }
 
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
