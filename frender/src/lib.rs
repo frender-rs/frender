@@ -1,11 +1,6 @@
 mod debug;
 pub use debug::*;
 
-#[cfg(all(feature = "csr", feature = "ssr"))]
-mod element;
-#[cfg(all(feature = "csr", feature = "ssr"))]
-pub use element::*;
-
 #[cfg(feature = "hooks")]
 pub mod hooks_ext;
 
