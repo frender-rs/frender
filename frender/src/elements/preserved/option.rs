@@ -1,109 +1,202 @@
-#[cfg(feature = "csr")]
-pub mod csr {
-    use std::pin::Pin;
+#[cfg(feature = "ssr")]
+mod ssr {
+    use frender_ssr::SsrElement;
 
-    use frender_csr::{Element, RenderState};
+    /// In ssr, `Preserved<Option<_>>` acts exactly as `Option<_>`.
+    impl<E: SsrElement> SsrElement for super::super::Preserved<Option<E>> {
+        type HtmlChildren = <Option<E> as SsrElement>::HtmlChildren;
 
-    use super::super::Preserved;
-
-    pin_project_lite::pin_project!(
-        pub struct State<S> {
-            #[pin]
-            inner: Option<S>,
-        }
-    );
-
-    pub(crate) fn update_with_or_into_state<E: frender_csr::Element>(
-        element: E,
-        mut state: Pin<&mut Option<E::CsrState>>,
-        ctx: &mut frender_csr::CsrContext,
-        update_with: impl FnOnce(E, &mut frender_csr::CsrContext, Pin<&mut E::CsrState>),
-    ) {
-        match state.as_mut().as_pin_mut() {
-            Some(state) => update_with(element, ctx, state),
-            None => state.set(Some(element.into_csr_state(ctx))),
-        }
-    }
-
-    impl<S: RenderState> RenderState for State<S> {
-        fn unmount(self: Pin<&mut Self>) {
-            self.project().inner.as_pin_mut().map(S::unmount);
-        }
-
-        fn state_unmount(self: Pin<&mut Self>) {
-            self.project().inner.as_pin_mut().map(S::state_unmount);
-        }
-
-        fn poll_csr(
-            self: Pin<&mut Self>,
-            ctx: &mut crate::CsrContext,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            self.project()
-                .inner
-                .as_pin_mut()
-                .map_or(std::task::Poll::Ready(()), |s| S::poll_csr(s, ctx, cx))
-        }
-    }
-
-    impl<E: Element> Element for Preserved<Option<E>> {
-        type CsrState = State<E::CsrState>;
-
-        fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
-            State {
-                inner: self.0.map(|this| E::into_csr_state(this, ctx)),
-            }
-        }
-
-        fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
-            self.update_with(ctx, state, E::update_csr_state)
-        }
-
-        fn update_csr_state_force_reposition(
-            self,
-            ctx: &mut frender_csr::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-        ) {
-            self.update_with(ctx, state, E::update_csr_state_force_reposition)
-        }
-
-        fn update_csr_state_maybe_reposition(
-            self,
-            ctx: &mut frender_csr::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-            force_reposition: bool,
-        ) {
-            self.update_with(ctx, state, |element, ctx, state| {
-                element.update_csr_state_maybe_reposition(ctx, state, force_reposition)
-            })
-        }
-    }
-
-    impl<E: Element> Preserved<Option<E>> {
-        fn update_with(
-            self,
-            ctx: &mut frender_csr::CsrContext,
-            mut state: Pin<&mut State<E::CsrState>>,
-            with: impl FnOnce(E, &mut frender_csr::CsrContext, Pin<&mut E::CsrState>),
-        ) {
-            if let Some(element) = self.0 {
-                update_with_or_into_state(element, state.as_mut().project().inner, ctx, with)
-            } else {
-                state.project().inner.as_pin_mut().map(E::CsrState::unmount);
-            }
+        fn into_html_children(self) -> Self::HtmlChildren {
+            self.0.into_html_children()
         }
     }
 }
 
-#[cfg(feature = "ssr")]
-mod ssr {
-    use frender_ssr::Element;
+#[cfg(feature = "csr")]
+pin_project_lite::pin_project!(
+    #[derive(Debug, Default)]
+    pub struct State<S> {
+        #[pin]
+        inner: S,
+    }
+);
 
-    impl<E: Element> Element for super::super::Preserved<Option<E>> {
-        type SsrState = Option<E::SsrState>;
+#[cfg(feature = "csr")]
+mod csr {
+    use std::pin::Pin;
 
-        fn into_ssr_state(self) -> Self::SsrState {
-            self.0.into_ssr_state()
+    use frender_csr::RenderState;
+
+    use super::State;
+
+    impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>> RenderState<PEH, R> for State<S> {
+        fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            S::unmount(self.project().inner, peh, renderer)
+        }
+
+        fn state_unmount(self: Pin<&mut Self>) {
+            S::state_unmount(self.project().inner)
+        }
+
+        fn poll_render(
+            self: Pin<&mut Self>,
+            peh: &mut PEH,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            S::poll_render(self.project().inner, peh, renderer, cx)
+        }
+    }
+}
+
+#[cfg(feature = "html")]
+mod html {
+    use std::pin::Pin;
+
+    use frender_html::{Element, RenderState};
+
+    use super::super::Preserved;
+    use super::State;
+
+    impl<E: Element> Element for Preserved<Option<E>> {
+        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            State<E::RenderState<PEH, R>>;
+
+        fn render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        ) where
+            Self: Sized,
+        {
+            let render_state = render_state.project().inner;
+            if let Some(this) = self.0 {
+                E::render_update(this, parent_elements_handle, renderer, render_state)
+            } else {
+                render_state.unmount(parent_elements_handle, renderer)
+            }
+        }
+
+        fn render_update_force_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        ) where
+            Self: Sized,
+        {
+            let render_state = render_state.project().inner;
+            if let Some(this) = self.0 {
+                E::render_update_force_reposition(
+                    this,
+                    parent_elements_handle,
+                    renderer,
+                    render_state,
+                )
+            } else {
+                render_state.unmount(parent_elements_handle, renderer)
+            }
+        }
+
+        fn render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
+            let render_state = render_state.project().inner;
+            if let Some(this) = self.0 {
+                E::render_update_maybe_reposition(
+                    this,
+                    parent_elements_handle,
+                    renderer,
+                    render_state,
+                    force_reposition,
+                )
+            } else {
+                render_state.unmount(parent_elements_handle, renderer)
+            }
+        }
+
+        type UnpinnedRenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            State<E::UnpinnedRenderState<PEH, R>>;
+
+        fn unpinned_render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
+            Self: Sized,
+        {
+            let render_state = &mut render_state.inner;
+            if let Some(this) = self.0 {
+                E::unpinned_render_update(this, parent_elements_handle, renderer, render_state)
+            } else {
+                Pin::new(render_state).unmount(parent_elements_handle, renderer)
+            }
+        }
+
+        fn unpinned_render_update_force_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
+            Self: Sized,
+        {
+            let render_state = &mut render_state.inner;
+            if let Some(this) = self.0 {
+                E::unpinned_render_update_force_reposition(
+                    this,
+                    parent_elements_handle,
+                    renderer,
+                    render_state,
+                )
+            } else {
+                Pin::new(render_state).unmount(parent_elements_handle, renderer)
+            }
+        }
+
+        fn unpinned_render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            force_reposition: bool,
+        ) {
+            let render_state = &mut render_state.inner;
+            if let Some(this) = self.0 {
+                E::unpinned_render_update_maybe_reposition(
+                    this,
+                    parent_elements_handle,
+                    renderer,
+                    render_state,
+                    force_reposition,
+                )
+            } else {
+                Pin::new(render_state).unmount(parent_elements_handle, renderer)
+            }
         }
     }
 }

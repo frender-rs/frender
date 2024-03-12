@@ -1,28 +1,52 @@
-#[cfg(feature = "csr")]
-pub mod csr {
-    use std::pin::Pin;
-
+#[cfg(feature = "ssr")]
+mod ssr {
     use either::Either;
-    use frender_csr::{Element, RenderState};
+    use frender_ssr::SsrElement;
 
     use super::super::Preserved;
 
-    pin_project_lite::pin_project!(
-        pub struct State<L, R> {
-            left_is_mounted: Option<bool>,
-            #[pin]
-            left: Option<L>,
-            #[pin]
-            right: Option<R>,
-        }
-    );
+    /// In ssr, `Preserved<Either<_, _>>` acts exactly as `Either<_, _>`.
+    impl<L: SsrElement, R: SsrElement> SsrElement for Preserved<Either<L, R>> {
+        type HtmlChildren = <Either<L, R> as SsrElement>::HtmlChildren;
 
-    impl<L: RenderState, R: RenderState> RenderState for State<L, R> {
-        fn unmount(self: Pin<&mut Self>) {
+        fn into_html_children(self) -> Self::HtmlChildren {
+            self.0.into_html_children()
+        }
+    }
+}
+
+#[cfg(feature = "csr")]
+pin_project_lite::pin_project!(
+    #[derive(Debug, Default)]
+    pub struct State<L, R> {
+        left_is_mounted: Option<bool>,
+        #[pin]
+        left: L,
+        #[pin]
+        right: R,
+    }
+);
+
+#[cfg(feature = "csr")]
+mod csr {
+    use std::pin::Pin;
+
+    use frender_csr::RenderState;
+
+    use super::State;
+
+    impl<
+            PEH: ?Sized,
+            Renderer: ?Sized,
+            L: RenderState<PEH, Renderer>,
+            R: RenderState<PEH, Renderer>,
+        > RenderState<PEH, Renderer> for State<L, R>
+    {
+        fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut Renderer) {
             let this = self.project();
             match this.left_is_mounted {
-                Some(true) => this.left.as_pin_mut().map(L::unmount),
-                Some(false) => this.right.as_pin_mut().map(R::unmount),
+                Some(true) => L::unmount(this.left, peh, renderer),
+                Some(false) => R::unmount(this.right, peh, renderer),
                 None => return,
             };
             *this.left_is_mounted = None;
@@ -31,135 +55,240 @@ pub mod csr {
         fn state_unmount(self: Pin<&mut Self>) {
             let this = self.project();
             match this.left_is_mounted {
-                Some(true) => this.left.as_pin_mut().map(L::state_unmount),
-                Some(false) => this.right.as_pin_mut().map(R::state_unmount),
+                Some(true) => L::state_unmount(this.left),
+                Some(false) => R::state_unmount(this.right),
                 None => return,
             };
         }
 
-        fn poll_csr(
+        fn poll_render(
             self: Pin<&mut Self>,
-            ctx: &mut crate::CsrContext,
+            peh: &mut PEH,
+            renderer: &mut Renderer,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
             let this = self.project();
             match this.left_is_mounted {
-                Some(true) => this.left.as_pin_mut().unwrap().poll_csr(ctx, cx),
-                Some(false) => this.right.as_pin_mut().unwrap().poll_csr(ctx, cx),
+                Some(true) => L::poll_render(this.left, peh, renderer, cx),
+                Some(false) => R::poll_render(this.right, peh, renderer, cx),
                 None => std::task::Poll::Ready(()),
             }
         }
     }
+}
+
+#[cfg(feature = "html")]
+mod html {
+    use either::Either;
+    use frender_html::{Element, RenderState};
+
+    use super::super::Preserved;
+    use super::State;
 
     macro_rules! update {
-        (element = $either:expr, ctx = $ctx:expr, state = $state:expr, with = $update_with:expr $(,)?) => {
-            match ($ctx, $state.project()) {
-                (ctx, state) => match $either {
-                    Either::Left(e) => {
-                        if let Some(false) = state.left_is_mounted {
-                            state.right.as_pin_mut().unwrap().unmount();
-                        }
-                        super::super::option::csr::update_with_or_into_state(
-                            e,
-                            state.left,
-                            ctx,
-                            $update_with,
-                        );
-                        *state.left_is_mounted = Some(true);
+        ($element:expr, $method:ident, $arg1:expr, $arg2:expr, $render_state:expr $(, $($arg4:expr $(,)?)?)?) => {{
+            let render_state = $render_state.project();
+            match *render_state.left_is_mounted {
+                Some(true) => match $element {
+                    Either::Left(this) => {
+                        LE::$method(this, $arg1, $arg2, render_state.left, $($($arg4)?)?)
                     }
-                    Either::Right(e) => {
-                        if let Some(true) = state.left_is_mounted {
-                            state.left.as_pin_mut().unwrap().unmount();
-                        }
-                        super::super::option::csr::update_with_or_into_state(
-                            e,
-                            state.right,
-                            ctx,
-                            $update_with,
-                        );
-                        *state.left_is_mounted = Some(false);
+                    Either::Right(this) => {
+                        render_state.left.unmount($arg1, $arg2);
+                        *render_state.left_is_mounted = Some(false);
+                        RE::$method(this, $arg1, $arg2, render_state.right, $($($arg4)?)?)
+                    }
+                },
+                Some(false) => match $element {
+                    Either::Left(this) => {
+                        render_state.right.unmount($arg1, $arg2);
+                        *render_state.left_is_mounted = Some(true);
+                        LE::$method(this, $arg1, $arg2, render_state.left, $($($arg4)?)?)
+                    }
+                    Either::Right(this) => {
+                        RE::$method(this, $arg1, $arg2, render_state.right, $($($arg4)?)?)
+                    }
+                },
+                None => match $element {
+                    Either::Left(this) => {
+                        *render_state.left_is_mounted = Some(true);
+                        LE::$method(this, $arg1, $arg2, render_state.left, $($($arg4)?)?)
+                    }
+                    Either::Right(this) => {
+                        *render_state.left_is_mounted = Some(false);
+                        RE::$method(this, $arg1, $arg2, render_state.right, $($($arg4)?)?)
+                    }
+                },
+            }
+        }};
+    }
+
+    macro_rules! update_unpinned {
+        ($element:expr, $method:ident, $arg1:expr, $arg2:expr, $render_state:ident $(, $($arg4:expr $(,)?)?)?) => {
+            match $render_state.left_is_mounted {
+                Some(true) => match $element {
+                    Either::Left(this) => {
+                        LE::$method(this, $arg1, $arg2, &mut $render_state.left, $($($arg4)?)?)
+                    }
+                    Either::Right(this) => {
+                        std::pin::Pin::new(&mut $render_state.left).unmount($arg1, $arg2);
+                        $render_state.left_is_mounted = Some(false);
+                        RE::$method(this, $arg1, $arg2, &mut $render_state.right, $($($arg4)?)?)
+                    }
+                },
+                Some(false) => match $element {
+                    Either::Left(this) => {
+                        std::pin::Pin::new(&mut $render_state.right).unmount($arg1, $arg2);
+                        $render_state.left_is_mounted = Some(true);
+                        LE::$method(this, $arg1, $arg2, &mut $render_state.left, $($($arg4)?)?)
+                    }
+                    Either::Right(this) => {
+                        RE::$method(this, $arg1, $arg2, &mut $render_state.right, $($($arg4)?)?)
+                    }
+                },
+                None => match $element {
+                    Either::Left(this) => {
+                        $render_state.left_is_mounted = Some(true);
+                        LE::$method(this, $arg1, $arg2, &mut $render_state.left, $($($arg4)?)?)
+                    }
+                    Either::Right(this) => {
+                        $render_state.left_is_mounted = Some(false);
+                        RE::$method(this, $arg1, $arg2, &mut $render_state.right, $($($arg4)?)?)
                     }
                 },
             }
         };
     }
 
-    impl<L, R> Element for Preserved<Either<L, R>>
+    impl<LE, RE> Element for Preserved<Either<LE, RE>>
     where
-        L: Element,
-        R: Element,
+        LE: Element,
+        RE: Element,
     {
-        type CsrState = State<L::CsrState, R::CsrState>;
+        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            State<LE::RenderState<PEH, R>, RE::RenderState<PEH, R>>;
 
-        fn into_csr_state(self, ctx: &mut crate::CsrContext) -> Self::CsrState {
-            match self.0 {
-                Either::Left(e) => State {
-                    left_is_mounted: Some(true),
-                    left: Some(e.into_csr_state(ctx)),
-                    right: None,
-                },
-                Either::Right(e) => State {
-                    left_is_mounted: Some(true),
-                    left: None,
-                    right: Some(e.into_csr_state(ctx)),
-                },
-            }
-        }
-
-        fn update_csr_state(self, ctx: &mut crate::CsrContext, state: Pin<&mut Self::CsrState>) {
+        fn render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+        ) where
+            Self: Sized,
+        {
             update!(
-                element = self.0,
-                ctx = ctx,
-                state = state,
-                with = Element::update_csr_state,
+                self.0,
+                render_update,
+                parent_elements_handle,
+                renderer,
+                render_state,
             )
         }
 
-        fn update_csr_state_force_reposition(
+        fn render_update_force_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
             self,
-            ctx: &mut frender_csr::CsrContext,
-            state: Pin<&mut Self::CsrState>,
-        ) {
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+        ) where
+            Self: Sized,
+        {
             update!(
-                element = self.0,
-                ctx = ctx,
-                state = state,
-                with = Element::update_csr_state_force_reposition,
+                self.0,
+                render_update_force_reposition,
+                parent_elements_handle,
+                renderer,
+                render_state,
             )
         }
 
-        fn update_csr_state_maybe_reposition(
+        fn render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
             self,
-            ctx: &mut frender_csr::CsrContext,
-            state: Pin<&mut Self::CsrState>,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
             force_reposition: bool,
         ) {
             update!(
-                element = self.0,
-                ctx = ctx,
-                state = state,
-                with = |element, ctx, state| element.update_csr_state_maybe_reposition(
-                    ctx,
-                    state,
-                    force_reposition
-                ),
+                self.0,
+                render_update_maybe_reposition,
+                parent_elements_handle,
+                renderer,
+                render_state,
+                force_reposition,
             )
         }
-    }
-}
 
-#[cfg(feature = "ssr")]
-mod ssr {
-    use either::Either;
-    use frender_ssr::Element;
+        type UnpinnedRenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            State<LE::UnpinnedRenderState<PEH, R>, RE::UnpinnedRenderState<PEH, R>>;
 
-    use super::super::Preserved;
+        fn unpinned_render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            force_reposition: bool,
+        ) {
+            update_unpinned!(
+                self.0,
+                unpinned_render_update_maybe_reposition,
+                parent_elements_handle,
+                renderer,
+                render_state,
+                force_reposition,
+            )
+        }
 
-    impl<L: Element, R: Element> Element for Preserved<Either<L, R>> {
-        type SsrState = <Either<L, R> as Element>::SsrState;
+        fn unpinned_render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
+            Self: Sized,
+        {
+            update_unpinned!(
+                self.0,
+                unpinned_render_update,
+                parent_elements_handle,
+                renderer,
+                render_state,
+            )
+        }
 
-        fn into_ssr_state(self) -> Self::SsrState {
-            self.0.into_ssr_state()
+        fn unpinned_render_update_force_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        ) where
+            Self: Sized,
+        {
+            update_unpinned!(
+                self.0,
+                unpinned_render_update_force_reposition,
+                parent_elements_handle,
+                renderer,
+                render_state,
+            )
         }
     }
 }
