@@ -858,6 +858,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-csr",
  "frender-events",
  "frender-hook-element",
  "frender-html",

@@ -22,6 +22,7 @@ hooks = { version = "3.0.0-alpha", default-features = false, features = [
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../crates/frender-events" }
 async-str-iter = { version = "0.1.0", path = "../crates/async-str-iter" }
+frender-csr = { version = "0.1.0", path = "../crates/frender-csr", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../crates/frender-hook-element"
@@ -42,9 +43,15 @@ wasm-bindgen-test = "0.3.13"
 
 [features]
 default = ["html-components", "either", "hooks"]
-html = ["frender-html"]
+html = ["frender-html", "csr"]
 html-components = ["html"]
-either = ["dep:either", "frender-ssr/either", "frender-html?/either"]
+either = [
+    "dep:either",
+    "frender-ssr/either",
+    "frender-html?/either",
+    "frender-csr?/either",
+]
 web = ["frender-hook-element/web"]
 spawn = ["frender-hook-element/spawn"]
-ssr = []
+ssr = [] # TODO: remove ssr feature
+csr = ["frender-csr"]
