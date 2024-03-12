@@ -14,8 +14,6 @@ mod element_macros;
 pub mod elements;
 pub mod omitted;
 
-pub use elements::static_text::StaticText;
-
 pub use frender_common::{Elements, Keyed};
 pub use frender_html as html;
 pub use frender_html::dom;
@@ -57,7 +55,7 @@ pub mod prelude {
     // #[cfg(all(feature = "csr", feature = "ssr"))]
     // pub use crate::Element;
 
-    pub use crate::{rsx, StaticText};
+    pub use crate::rsx;
 
     pub use frender_hook_element::component_fn;
 

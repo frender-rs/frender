@@ -3,9 +3,6 @@ use std::ops::Deref;
 
 // use wasm_bindgen::{JsCast, JsValue};
 
-#[cfg(feature = "StaticText")]
-use frender_core::{StaticStr, StaticText};
-
 use crate::dom::render::RenderTextFrom;
 use crate::{dom::behaviors::Node, RenderHtml};
 

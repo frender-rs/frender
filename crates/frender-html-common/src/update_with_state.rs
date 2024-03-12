@@ -284,43 +284,6 @@ impl MaybeUpdateValueWithState<str> for std::borrow::Cow<'_, str> {
     }
 }
 
-#[cfg(feature = "StaticText")]
-impl<S: frender_core::StaticStr> MaybeUpdateValueWithState<str> for frender_core::StaticText<S> {
-    type State = S;
-
-    fn maybe_as(this: &Self) -> Option<&str> {
-        Some(&this)
-    }
-
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Option<std::borrow::Cow<'static, str>>> {
-        Some(Some(this.0.into()))
-    }
-
-    fn initialize_state_and_update(
-        this: Self,
-        update: impl FnOnce(&str),
-        _: impl FnOnce(),
-    ) -> Self::State {
-        update(&this);
-        this.0
-    }
-
-    fn maybe_update_value_with_state(
-        this: Self,
-        state: &mut Self::State,
-        update: impl FnOnce(&str),
-        _: impl FnOnce(),
-    ) {
-        if **state == *this.0 {
-            return;
-        }
-        update(&this);
-        *state = this.0;
-    }
-}
-
 impl MaybeUpdateValueWithState<str> for String {
     type State = String;
 
