@@ -14,6 +14,8 @@ pub trait Element<Renderer: ?Sized>: Node<Renderer> {
 
     fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str);
     fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
+
+    fn set_inner_html(&mut self, renderer: &mut Renderer, value: &str);
 }
 
 pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
@@ -72,6 +74,10 @@ impl<
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .remove_attribute(name)
             .unwrap_with_behavior(&mut renderer.try_behavior())
+    }
+
+    fn set_inner_html(&mut self, _: &mut Renderer, value: &str) {
+        AsRef::<web_sys::Element>::as_ref(&self.0).set_inner_html(value)
     }
 }
 
