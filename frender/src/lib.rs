@@ -42,6 +42,7 @@ pub use frender_events::{event, MaybeHandleEvent};
 pub use bg;
 
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
+pub use frender_html::dom::special::DangerousInnerHtml;
 
 pub mod prelude {
     #[cfg(feature = "bg")]
