@@ -62,7 +62,16 @@ trait RenderingStr: Deref<Target = str> {
 }
 
 frender_common::impl_many!(
-    impl<__> RenderingStr for each_of![&'static str, String, Cow<'static, str>,] {
+    impl<__> RenderingStr
+        for each_of![
+            //
+            &'static str,
+            String,
+            Cow<'static, str>,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
+        ]
+    {
         type Cache = Self;
 
         #[inline]
@@ -206,6 +215,8 @@ frender_common::impl_many!(
             Cow<'static, str>,
             &'static str,
             String,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
         ]
     {
         type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;

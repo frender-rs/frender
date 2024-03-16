@@ -7,6 +7,8 @@ frender_common::impl_many!(
             &str,
             String,
             std::borrow::Cow<'_, str>,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
         ]
     {
         type HtmlChildren = frender_ssr_html::encode::Encode<
