@@ -12,30 +12,30 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 wasm-bindgen = "0.2.63"
 js-sys = "0.3"
-frender-common = { version = "0.1.0", path = "../crates/frender-common" }
-frender-ssr = { version = "0.1.0", path = "../crates/frender-ssr", default-features = false }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false }
 pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
 hooks = { version = "3.0.0-alpha", default-features = false, features = [
     "ShareValue",
 ], optional = true }
-frender-events = { version = "0.1.0", path = "../crates/frender-events" }
-async-str-iter = { version = "0.1.0", path = "../crates/async-str-iter" }
-frender-csr = { version = "0.1.0", path = "../crates/frender-csr", optional = true }
+frender-events = { version = "0.1.0", path = "../frender-events" }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
+frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 
 [dependencies.frender-hook-element]
-path = "../crates/frender-hook-element"
+path = "../frender-hook-element"
 version = "0.1.0"
 
 [dependencies.frender-html]
-path = "../crates/frender-html"
+path = "../frender-html"
 version = "0.1.0"
 optional = true
 
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
-path = "../crates/frender-macros"
+path = "../frender-macros"
 
 [dev-dependencies]
 futures-lite = "2.0.1"
