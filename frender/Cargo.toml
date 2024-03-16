@@ -54,4 +54,4 @@ either = [
 web = ["frender-hook-element/web"]
 spawn = ["frender-hook-element/spawn"]
 ssr = [] # TODO: remove ssr feature
-csr = ["frender-csr"]
+csr = ["ssr", "frender-csr"]
