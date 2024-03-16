@@ -207,6 +207,15 @@ mod html_children {
     {
     }
 
+    impl<S: async_str_iter::AsyncStrIterator> Sealed
+        for crate::verbatim_html::DangerousVerbatimHtml<S>
+    {
+    }
+    impl<S: async_str_iter::AsyncStrIterator> HtmlChildren
+        for crate::verbatim_html::DangerousVerbatimHtml<S>
+    {
+    }
+
     macro_rules! impl_for_tuple {
         ($($iter:ident ($($field:ident),+) ,)+) => {$(
                 impl<$($field: Sealed + AsyncStrIterator),+> Sealed for async_str_iter::concat::$iter<$($field),+> {}

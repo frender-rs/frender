@@ -7,6 +7,7 @@ pub mod escape_safe;
 pub mod scalar;
 pub mod script;
 pub mod tag;
+pub mod verbatim_html;
 
 mod sealed {
     pub trait Sealed {}
