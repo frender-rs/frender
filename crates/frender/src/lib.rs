@@ -9,7 +9,7 @@ mod element_macros;
 pub mod elements;
 pub mod omitted;
 
-pub use frender_common::{Elements, Keyed};
+pub use frender_common::{Elements, Keyed, TempStr};
 pub use frender_html as html;
 pub use frender_html::dom;
 pub use frender_macros::component;
