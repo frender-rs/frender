@@ -5,6 +5,16 @@ macro_rules! __expand_or {
 }
 
 #[macro_export]
+macro_rules! __expand_expr_or {
+    ([] $or:expr) => {
+        $or
+    };
+    ([$expand:expr] $or:expr) => {
+        $expand
+    };
+}
+
+#[macro_export]
 macro_rules! __expand_base_expr {
     ([] $($p:tt)*) => {
         $($p)* ()
@@ -34,7 +44,7 @@ macro_rules! __impl_element_one {
             $crate::__expand_base_expr!([$($($base)*)?] $($component_path_start)? $(:: $component_path)* )
                 $(
                     . $method(
-                        $crate::__expand_or!([$($($method_arg)*)?] $crate::omitted::Omitted)
+                        $crate::__expand_expr_or!([$($($method_arg)*)?] $crate::omitted::Omitted)
                     )
                 )*
         )
