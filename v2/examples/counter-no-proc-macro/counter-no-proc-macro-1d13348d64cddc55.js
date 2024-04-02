@@ -72,7 +72,7 @@ function makeMutClosure(arg0, arg1, dtor, f) {
     return real;
 }
 function __wbg_adapter_16(arg0, arg1) {
-    wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__hf92bcf0ec691a30c(arg0, arg1);
+    wasm._dyn_core__ops__function__FnMut_____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h22fa010e7894a228(arg0, arg1);
 }
 
 let stack_pointer = 128;
@@ -84,14 +84,14 @@ function addBorrowedObject(obj) {
 }
 function __wbg_adapter_19(arg0, arg1, arg2) {
     try {
-        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__h5e6e0b741baad725(arg0, arg1, addBorrowedObject(arg2));
+        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__hee96c6ed0c46c170(arg0, arg1, addBorrowedObject(arg2));
     } finally {
         heap[stack_pointer++] = undefined;
     }
 }
 
 function __wbg_adapter_22(arg0, arg1, arg2) {
-    wasm.wasm_bindgen__convert__closures__invoke1_mut__haa6a6c22c5c1a2b9(arg0, arg1, addHeapObject(arg2));
+    wasm.wasm_bindgen__convert__closures__invoke1_mut__h1a5c630b79bd5f86(arg0, arg1, addHeapObject(arg2));
 }
 
 function handleError(f, args) {
@@ -147,10 +147,6 @@ function __wbg_get_imports() {
         const ret = getObject(arg0);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
-        const ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
-    };
     imports.wbg.__wbindgen_cb_drop = function(arg0) {
         const obj = takeObject(arg0).original;
         if (obj.cnt-- == 1) {
@@ -174,6 +170,10 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbindgen_number_new = function(arg0) {
         const ret = arg0;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
+        const ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
     };
     imports.wbg.__wbg_setdata_d95cd9f1c0c717fa = function(arg0, arg1) {
@@ -240,12 +240,6 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_setdisabled_7090b1a01994f309 = function(arg0, arg1) {
         getObject(arg0).disabled = arg1 !== 0;
     };
-    imports.wbg.__wbg_log_00cf3417193182f2 = function(arg0, arg1) {
-        console.log(getObject(arg0), getObject(arg1));
-    };
-    imports.wbg.__wbg_log_e8fcec845be3779d = function(arg0, arg1, arg2) {
-        console.log(getObject(arg0), getObject(arg1), getObject(arg2));
-    };
     imports.wbg.__wbg_parentNode_92a7017b3a4fad43 = function(arg0) {
         const ret = getObject(arg0).parentNode;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
@@ -302,15 +296,15 @@ function __wbg_get_imports() {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
     imports.wbg.__wbindgen_closure_wrapper182 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 30, __wbg_adapter_16);
+        const ret = makeMutClosure(arg0, arg1, 28, __wbg_adapter_16);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper193 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 33, __wbg_adapter_19);
+    imports.wbg.__wbindgen_closure_wrapper188 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 32, __wbg_adapter_19);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper221 = function(arg0, arg1, arg2) {
-        const ret = makeMutClosure(arg0, arg1, 36, __wbg_adapter_22);
+    imports.wbg.__wbindgen_closure_wrapper217 = function(arg0, arg1, arg2) {
+        const ret = makeMutClosure(arg0, arg1, 35, __wbg_adapter_22);
         return addHeapObject(ret);
     };
 
@@ -350,7 +344,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('counter-no-proc-macro-3c71e3774a765306_bg.wasm', import.meta.url);
+        input = new URL('counter-no-proc-macro-1d13348d64cddc55_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
