@@ -862,6 +862,7 @@ dependencies = [
  "frender-events",
  "frender-hook-element",
  "frender-html",
+ "frender-html-common",
  "frender-macros",
  "frender-ssr",
  "futures-lite 2.2.0",

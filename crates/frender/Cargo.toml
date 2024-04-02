@@ -23,6 +23,7 @@ hooks = { version = "3.0.0-alpha", default-features = false, features = [
 frender-events = { version = "0.1.0", path = "../frender-events" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
+frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
