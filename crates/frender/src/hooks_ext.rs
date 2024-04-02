@@ -442,6 +442,34 @@ pub mod element {
     }
 }
 
+pub mod callback {
+    use frender_events::callable::{Callable, CallableWithFixedArguments, IsCallable};
+    use hooks::ShareValue;
+
+    #[derive(Debug, Clone)]
+    pub struct Toggle<S: ShareValue<Value = bool>>(pub S);
+
+    impl<S: ShareValue<Value = bool>> IsCallable for Toggle<S> {}
+
+    impl<S: ShareValue<Value = bool>> PartialEq for Toggle<S> {
+        fn eq(&self, other: &Self) -> bool {
+            self.0.equivalent_to(&other.0)
+        }
+    }
+
+    impl<S: ShareValue<Value = bool>> Callable<()> for Toggle<S> {
+        type Output = ();
+
+        fn call_fn(&self, (): ()) -> Self::Output {
+            self.0.map_mut(|v| *v = !*v)
+        }
+    }
+
+    impl<S: ShareValue<Value = bool>> CallableWithFixedArguments for Toggle<S> {
+        type FixedArgumentTypes = ();
+    }
+}
+
 pub trait ShareValueExt: ShareValue {
     fn into_controlled(self) -> form_control::ControlledSharedValue<Self>
     where
@@ -554,6 +582,20 @@ pub trait ShareValueExt: ShareValue {
         Self: Sized + Clone,
     {
         element::SharedStateToElement(self.clone())
+    }
+
+    fn into_callback_toggle(self) -> callback::Toggle<Self>
+    where
+        Self: Sized + ShareValue<Value = bool>,
+    {
+        callback::Toggle(self)
+    }
+
+    fn to_callback_toggle(&self) -> callback::Toggle<Self>
+    where
+        Self: Sized + ShareValue<Value = bool> + Clone,
+    {
+        self.clone().into_callback_toggle()
     }
 }
 
