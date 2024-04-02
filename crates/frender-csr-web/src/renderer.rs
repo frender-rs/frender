@@ -189,18 +189,18 @@ impl<'r, TB: TryBehavior> frender_html::dom::csr::web::Renderer for Renderer<'r,
     }
 
     fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
-        web_sys::console::log_3(&"readd_node".into(), node, &force_reposition.into());
+        // web_sys::console::log_3(&"readd_node".into(), node, &force_reposition.into());
         if force_reposition {
             match &self.next_node_position {
                 NextNodePosition::FirstChildOf(parent) => {
-                    web_sys::console::log_2(&"FirstChildOf".into(), parent);
+                    // web_sys::console::log_2(&"FirstChildOf".into(), parent);
 
                     parent
                         .prepend_with_node_1(node)
                         .unwrap_with_behavior(&mut self.try_behavior)
                 }
                 NextNodePosition::InsertAfter(pre) => {
-                    web_sys::console::log_2(&"InsertAfter".into(), pre);
+                    // web_sys::console::log_2(&"InsertAfter".into(), pre);
 
                     pre.parent_node()
                         .unwrap()
