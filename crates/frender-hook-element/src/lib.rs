@@ -328,6 +328,17 @@ macro_rules! __impl_component_fn_item_fn_parsed {
 #[macro_export]
 macro_rules! component_fn {
     (
+        move || $stmts:tt
+    ) => {{
+        #[allow(unused_imports)]
+        use $crate::__private::hooks_core::prelude_h::*;
+
+        $crate::new_fn_hook_element($crate::__private::transform_hook_fn_body_as_closure! {
+            []
+            $stmts
+        })
+    }};
+    (
         $($item_fn:tt)*
     ) => {
         $crate::__private::parse_item_fn! {
