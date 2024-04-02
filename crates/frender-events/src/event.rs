@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use crate::touch::Touch;
+use crate::touch::{Touch, TouchListWeb};
 
 pub trait Event {
     fn type_(&self) -> Cow<str>;
@@ -122,6 +122,7 @@ pub trait KeyboardEvent: UiEvent {
 
 /// [`web_sys::TouchEvent`]
 pub trait TouchEvent: UiEvent {
+    fn touches_as_web(&self) -> Option<TouchListWeb>;
     fn touches_to_vec(&self) -> Vec<Touch>;
     fn target_touches_to_vec(&self) -> Vec<Touch>;
     fn changed_touches_to_vec(&self) -> Vec<Touch>;
@@ -172,7 +173,7 @@ pub trait TransitionEvent: Event {
 mod web {
     use std::borrow::Cow;
 
-    use crate::touch::{Touch, TouchList};
+    use crate::touch::{Touch, TouchList, TouchListWeb};
 
     mod shims {
         use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
@@ -524,6 +525,11 @@ mod web {
     impl<E: AsRef<web_sys::TouchEvent> + AsRef<web_sys::UiEvent> + AsRef<web_sys::Event>>
         super::TouchEvent for crate::web::Event<E>
     {
+        fn touches_as_web(&self) -> Option<TouchListWeb> {
+            let touches = AsRef::<web_sys::TouchEvent>::as_ref(&self.0).touches();
+            Some(touches.into())
+        }
+
         fn touches_to_vec(&self) -> Vec<Touch> {
             AsRef::<web_sys::TouchEvent>::as_ref(&self.0)
                 .touches()

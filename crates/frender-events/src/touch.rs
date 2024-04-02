@@ -1,5 +1,35 @@
 use std::borrow::Cow;
 
+pub struct TouchListWeb {
+    #[cfg(not(feature = "web"))]
+    inner: core::convert::Infallible,
+    #[cfg(feature = "web")]
+    inner: web_sys::TouchList,
+}
+
+#[cfg(feature = "web")]
+impl From<web_sys::TouchList> for TouchListWeb {
+    fn from(value: web_sys::TouchList) -> Self {
+        Self { inner: value }
+    }
+}
+
+#[cfg(feature = "web")]
+impl Into<web_sys::TouchList> for TouchListWeb {
+    fn into(self) -> web_sys::TouchList {
+        self.inner
+    }
+}
+
+#[cfg(feature = "web")]
+impl std::ops::Deref for TouchListWeb {
+    type Target = web_sys::TouchList;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
 /// [`web_sys::Touch`]
 #[derive(Debug, Clone)]
 #[non_exhaustive]
