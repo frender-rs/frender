@@ -14,6 +14,9 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait Element: Node {
+    fn ref_element<V: SetRef::Bounds<frender_dom::node_ref::Element>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::ref_element<V>> {
+        Self::append_attributes(self, super::attributes::Element::attributes::ref_element(value))
+    }
     fn class<V: DomTokens::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::class<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::class(value))
     }
@@ -1363,6 +1366,9 @@ impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedA
     }
 }
 pub trait HtmlElement: Element {
+    fn ref_html_element<V: SetRef::Bounds<frender_dom::node_ref::HtmlElement>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::ref_html_element<V>> {
+        Self::append_attributes(self, super::attributes::HtmlElement::attributes::ref_html_element(value))
+    }
     fn access_key<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::access_key<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::access_key(value))
     }

@@ -14,3 +14,5 @@ pub mod script;
 pub mod attr;
 
 pub mod special;
+
+pub mod node_ref;

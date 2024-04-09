@@ -553,3 +553,80 @@ pub mod MaybeContentEditable {
         }
     }
 }
+
+#[allow(non_snake_case)]
+pub mod SetRef {
+    pub use FnOnceSetRef as Bounds;
+
+    /// A trait alias for `FnOnce(&dyn frender_dom::node_ref::traits::_)`
+    pub trait FnOnceSetRef<N: ?Sized + frender_dom::node_ref::traits::Node>: FnOnce(&N) {}
+
+    impl<N: ?Sized + frender_dom::node_ref::traits::Node, F: FnOnce(&N)> FnOnceSetRef<N> for F {}
+
+    #[macro_export]
+    macro_rules! __Ref_csr {
+        (
+            meta! {
+                wrapper! {$($wrapper:tt)*}
+                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                bounds!  {$($bounds:tt)*}
+                bounds_tps!  {$($bounds_tps:ty),* $(,)?}
+                csr_element_ty! { $csr_element_ty:ident }
+                $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
+            }
+            $csr:ident !{ $($csr_fields:tt)* }
+        ) => {
+            impl<
+                V: FnOnce($(&$bounds_tps),*),
+                ET: $crate::html::behavior_type_traits::$csr_element_ty,
+            >
+                $crate::UpdateNodeNonReactive<
+                    ET
+                >
+            for $($wrapper)*::<V> {
+                type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> = ();
+
+                fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+                    Self(this): Self,
+                    _: &mut Renderer,
+                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    (): &mut Self::State<Renderer>,
+                ) {
+                    let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
+
+                    this(frender_dom::behaviors::$csr_element_ty::as_node_ref(element))
+                }
+            }
+        };
+    }
+
+    #[macro_export]
+    macro_rules! __Ref_ssr {
+        (
+            meta! {
+                wrapper! {$($wrapper:tt)*}
+                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                bounds!  {$($bounds:tt)*}
+                bounds_tps!  {$($bounds_tps:ty),* $(,)?}
+                csr_element_ty! { $csr_element_ty:ident }
+                $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
+            }
+            $ssr:ident !{ $($ssr_fields:tt)* }
+        ) => {
+            impl<
+                V: FnOnce($(&$bounds_tps),*),
+            > $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+                for $($wrapper)*::<V>
+            {
+                type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;
+
+                fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
+                    ::async_str_iter::empty::Empty
+                }
+            }
+        };
+    }
+
+    pub use __Ref_csr as csr;
+    pub use __Ref_ssr as ssr;
+}

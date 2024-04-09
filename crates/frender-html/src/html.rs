@@ -1,6 +1,6 @@
 use frender_dom::render::RenderTextFromKnown;
 
-use crate::impl_bounds::{DomTokens, MaybeContentEditable};
+use crate::impl_bounds::{DomTokens, MaybeContentEditable, SetRef};
 
 #[cfg(not(feature = "props_builders_not_expanded"))]
 pub mod props_builders;
@@ -84,6 +84,9 @@ crate::def_intrinsic_component_props!(
                 );
 
                 fn children(value: children![impl frender_ssr::SsrElement]);
+
+                fn ref_element(value: bounds![SetRef<frender_dom::node_ref::Element>]);
+
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
                         get_mut_dom_token_list: behaviors::Element::class_list,
@@ -738,6 +741,8 @@ crate::def_intrinsic_component_props!(
                                 AsRef::<::web_sys::HtmlElement>::as_ref(&self.0).set_content_editable(value)
                             }
                         ););
+
+                        fn ref_html_element(value: bounds![SetRef<frender_dom::node_ref::HtmlElement>]);
 
                         fn access_key(value: maybe![&str]) {
                             attr_name!("accesskey");

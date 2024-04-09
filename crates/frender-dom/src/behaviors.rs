@@ -16,6 +16,10 @@ pub trait Element<Renderer: ?Sized>: Node<Renderer> {
     fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
 
     fn set_inner_html(&mut self, renderer: &mut Renderer, value: &str);
+
+    /// This kind of method of behavior traits have the same name `as_node_ref`
+    /// so that callers can call it with `$TraitName::as_node_ref` in macros.
+    fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::Element);
 }
 
 pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
@@ -27,6 +31,8 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
         &mut self,
         renderer: &mut Renderer,
     ) -> Self::OnBeforeInputPreventDefault;
+
+    fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement);
 }
 
 #[cfg(feature = "web")]
@@ -79,6 +85,10 @@ impl<
     fn set_inner_html(&mut self, _: &mut Renderer, value: &str) {
         AsRef::<web_sys::Element>::as_ref(&self.0).set_inner_html(value)
     }
+
+    fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::Element) {
+        AsRef::<web_sys::Element>::as_ref(&self.0)
+    }
 }
 
 #[cfg(feature = "web")]
@@ -102,5 +112,9 @@ impl<
         let node: &web_sys::EventTarget = node.as_ref();
 
         Self::OnBeforeInputPreventDefault::new(node.clone(), "beforeinput")
+    }
+
+    fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement) {
+        AsRef::<web_sys::HtmlElement>::as_ref(&self.0)
     }
 }
