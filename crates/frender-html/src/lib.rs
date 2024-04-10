@@ -4,7 +4,7 @@ pub use frender_html_common::{dom_token::DomTokenList, maybe_str, DomTokens};
 
 pub use create_node::CreateNode;
 pub use html::RenderHtml;
-pub use update_element::{BehaviorType, UpdateNodeNonReactive};
+pub use update_element::{BehaviorType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
 pub use element::Element;
 pub use element_types::{CsrComponent, CsrComponentNormalElement};

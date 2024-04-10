@@ -7,7 +7,7 @@ pub struct ElementAndMounted<E> {
 mod imp {
     use crate::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
 
-    use crate::{CreateNode, RenderHtml, UpdateNodeNonReactive};
+    use crate::{CreateNode, RenderHtml, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
     use crate::{Element, RenderState};
 
@@ -78,10 +78,12 @@ mod imp {
 
     pin_project_lite::pin_project! {
         #[derive(Default)]
-        pub struct ElementPropsState<C, A> {
+        pub struct ElementPropsState<C, A, EL> {
             #[pin]
             children_render_state: C,
             attrs_state: A,
+            #[pin]
+            event_listeners: EL,
         }
     }
 
@@ -91,7 +93,8 @@ mod imp {
             R: ?Sized,
             C: RenderState<PEH, R>,
             A,
-        > RenderState<PEH, R> for ElementPropsState<C, A>
+            EL,
+        > RenderState<PEH, R> for ElementPropsState<C, A, EL>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
             self.project().children_render_state.unmount(peh, renderer)
@@ -110,12 +113,20 @@ mod imp {
     where
         C: crate::CsrComponent<P::Children>,
         P::Attrs: UpdateNodeNonReactive<C>,
+        P::EventListeners: UpdateNodeNonReactivePinned<C> + UpdateNodeNonReactive<C>,
         // ssr bounds
         P::Attrs: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
         C: crate::dom::component::SsrComponent<P::Attrs, P::Children>,
     {
-        type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
-            IntrinsicElementRenderState<C::Element<R>, ElementPropsState<<C as crate::CsrComponent<P::Children>>::ChildrenRenderState<R>, <P::Attrs as UpdateNodeNonReactive<C>>::State<R>>>;
+        type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
+            C::Element<R>,
+            ElementPropsState<
+                //
+                <C as crate::CsrComponent<P::Children>>::ChildrenRenderState<R>,
+                <P::Attrs as UpdateNodeNonReactive<C>>::State<R>,
+                <P::EventListeners as UpdateNodeNonReactivePinned<C>>::StatePinned<R>,
+            >,
+        >;
 
         fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
             self,
@@ -128,7 +139,12 @@ mod imp {
 
             let props_state = render_state.props_state.project();
 
-            let crate::dom::component::ElementProps { children, attributes } = P::into_element_props(self.1);
+            let crate::dom::component::ElementProps {
+                //
+                children,
+                attributes,
+                event_listeners,
+            } = P::into_element_props(self.1);
 
             let element_and_mounted = render_state.element_and_mounted.get_or_insert_with(|| ElementAndMounted {
                 element: <C::Element<Renderer>>::from(<C as CreateNode>::create_node(renderer)),
@@ -139,15 +155,24 @@ mod imp {
                 element_and_mounted,
                 renderer,
                 |element, renderer| {
-                    <P::Attrs>::update_node_non_reactive(attributes, renderer, frender_common::convert::IntoMut::into_mut(element), props_state.attrs_state);
+                    let node = frender_common::convert::IntoMut::into_mut(element);
+                    <P::Attrs>::update_node_non_reactive(attributes, renderer, node, props_state.attrs_state);
+                    <P::EventListeners>::update_node_non_reactive_pinned(event_listeners, renderer, node, props_state.event_listeners);
                     <C as crate::CsrComponent<P::Children>>::children_render_update(children, element, renderer, props_state.children_render_state)
                 },
                 force_reposition,
             )
         }
 
-        type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
-            IntrinsicElementRenderState<C::Element<R>, ElementPropsState<<C as crate::CsrComponent<P::Children>>::ChildrenUnpinnedRenderState<R>, <P::Attrs as UpdateNodeNonReactive<C>>::State<R>>>;
+        type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
+            C::Element<R>,
+            ElementPropsState<
+                //
+                <C as crate::CsrComponent<P::Children>>::ChildrenUnpinnedRenderState<R>,
+                (<P::Attrs as UpdateNodeNonReactive<C>>::State<R>, <P::EventListeners as UpdateNodeNonReactive<C>>::State<R>),
+                (),
+            >,
+        >;
 
         fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
             self,
@@ -158,7 +183,7 @@ mod imp {
         ) {
             let props_state = &mut render_state.props_state;
 
-            let crate::dom::component::ElementProps { children, attributes } = P::into_element_props(self.1);
+            let crate::dom::component::ElementProps { children, attributes, event_listeners } = P::into_element_props(self.1);
 
             let element_and_mounted = render_state.element_and_mounted.get_or_insert_with(|| ElementAndMounted {
                 element: <C as CreateNode>::create_node(renderer).into(),
@@ -169,7 +194,10 @@ mod imp {
                 element_and_mounted,
                 renderer,
                 |element, renderer| {
-                    <P::Attrs>::update_node_non_reactive(attributes, renderer, frender_common::convert::IntoMut::into_mut(element), &mut props_state.attrs_state);
+                    let (attrs_state, event_listeners_state) = &mut props_state.attrs_state;
+                    let node = frender_common::convert::IntoMut::into_mut(element);
+                    <P::Attrs>::update_node_non_reactive(attributes, renderer, node, attrs_state);
+                    <P::EventListeners>::update_node_non_reactive(event_listeners, renderer, node, event_listeners_state);
                     <C as crate::CsrComponent<P::Children>>::children_unpinned_render_update(children, element, renderer, &mut props_state.children_render_state)
                 },
                 force_reposition,

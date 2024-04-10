@@ -87,6 +87,7 @@ mod ssr {
             let ElementProps {
                 children,
                 attributes,
+                event_listeners: _,
             } = P::into_element_props(self.1);
 
             C::ssr_component(attributes, children)

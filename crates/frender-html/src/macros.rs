@@ -1017,15 +1017,16 @@ macro_rules! define_props {
                 // use super::super::*;
 
                 #[derive(Debug, Clone, Copy, Default)]
-                pub struct $trait_name<Children = (), Attrs = ()> {
-                    pub props: $crate::dom::component::ElementProps<Children, Attrs>,
+                pub struct $trait_name<Children = (), Attrs = (), EL = ()> {
+                    pub props: $crate::dom::component::ElementProps<Children, Attrs, EL>,
                 }
 
-                impl<Children, Attrs> $crate::dom::component::IntoElementProps for $trait_name<Children, Attrs> {
+                impl<Children, Attrs, EL> $crate::dom::component::IntoElementProps for $trait_name<Children, Attrs, EL> {
                     type Children = Children;
                     type Attrs = Attrs;
+                    type EventListeners = EL;
 
-                    fn into_element_props(this: Self) -> $crate::dom::component::ElementProps<Children, Attrs> {
+                    fn into_element_props(this: Self) -> $crate::dom::component::ElementProps<Children, Attrs, EL> {
                         this.props
                     }
                 }
