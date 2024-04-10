@@ -1,15 +1,24 @@
 use super::*;
-pub trait Node: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes {}
+pub trait Node: crate::props_builder::PropsBuilder + crate::props_builder::PropsBuilderAppendAnySupportedAttributes + crate::props_builder::PropsBuilderAppendEventListeners {}
 impl<C, A> Node for super::props::Node::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::Node::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::Node::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::Node::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::Node::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::Node::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::Node::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::Node::Building(super::props::Node::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::Node::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::Node::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::Node::Building(super::props::Node::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -29,20 +38,20 @@ pub trait Element: Node {
     /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)
     ///
     /// Fires on a [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) when the user instructs the browser that they wish to dismiss the currently open modal dialog. The browser fires this event when the user presses the <kbd>Esc</kbd> key to close the modal dialog.
-    fn on_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_cancel<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_cancel(value))
+    fn on_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_cancel<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_cancel(value))
     }
     /// Event [`error`](https://developer.mozilla.org/en-US/docs/Web/API/Element/error_event)
     ///
     /// Fired when a resource failed to load, or can't be used. For example, if a script has an execution error or an image can't be found or is invalid.
-    fn on_error<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_error<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_error(value))
+    fn on_error<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_error<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_error(value))
     }
     /// Event [`scroll`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event)
     ///
     /// Fired when the document view or an element has been scrolled.
-    fn on_scroll<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_scroll<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_scroll(value))
+    fn on_scroll<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_scroll<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_scroll(value))
     }
     /// Event [`securitypolicyviolation`](https://developer.mozilla.org/en-US/docs/Web/API/Element/securitypolicyviolation_event)
     ///
@@ -50,38 +59,38 @@ pub trait Element: Node {
     fn on_security_policy_violation<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::SecurityPolicyViolationEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::Element::attributes::on_security_policy_violation<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_security_policy_violation(value))
+    ) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_security_policy_violation<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_security_policy_violation(value))
     }
     /// Event [`select`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/select_event)
     ///
     /// Fired when some text has been selected.
-    fn on_select<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_select<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_select(value))
+    fn on_select<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_select<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_select(value))
     }
     /// Event [`wheel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/wheel_event)
     ///
     /// Fired when the user rotates a wheel button on a pointing device (typically a mouse).
-    fn on_wheel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::WheelEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_wheel<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_wheel(value))
+    fn on_wheel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::WheelEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_wheel<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_wheel(value))
     }
     /// Event [`copy`](https://developer.mozilla.org/en-US/docs/Web/API/Element/copy_event)
     ///
     /// Fired when the user initiates a copy action through the browser's user interface.
-    fn on_copy<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_copy<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_copy(value))
+    fn on_copy<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_copy<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_copy(value))
     }
     /// Event [`cut`](https://developer.mozilla.org/en-US/docs/Web/API/Element/cut_event)
     ///
     /// Fired when the user initiates a cut action through the browser's user interface.
-    fn on_cut<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_cut<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_cut(value))
+    fn on_cut<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_cut<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_cut(value))
     }
     /// Event [`paste`](https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event)
     ///
     /// Fired when the user initiates a paste action through the browser's user interface.
-    fn on_paste<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_paste<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_paste(value))
+    fn on_paste<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_paste<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_paste(value))
     }
     /// Event [`compositionend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event)
     ///
@@ -89,8 +98,8 @@ pub trait Element: Node {
     fn on_composition_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::CompositionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::Element::attributes::on_composition_end<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_composition_end(value))
+    ) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_composition_end<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_composition_end(value))
     }
     /// Event [`compositionstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event)
     ///
@@ -98,8 +107,8 @@ pub trait Element: Node {
     fn on_composition_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::CompositionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::Element::attributes::on_composition_start<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_composition_start(value))
+    ) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_composition_start<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_composition_start(value))
     }
     /// Event [`compositionupdate`](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event)
     ///
@@ -107,165 +116,174 @@ pub trait Element: Node {
     fn on_composition_update<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::CompositionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::Element::attributes::on_composition_update<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_composition_update(value))
+    ) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_composition_update<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_composition_update(value))
     }
     /// Event [`blur`](https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event)
     ///
     /// Fired when an element has lost focus.
-    fn on_blur<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_blur<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_blur(value))
+    fn on_blur<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_blur<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_blur(value))
     }
     /// Event [`focus`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event)
     ///
     /// Fired when an element has gained focus.
-    fn on_focus<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_focus<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_focus(value))
+    fn on_focus<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_focus<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_focus(value))
     }
     /// Event [`focusin`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focusin_event)
     ///
     /// Fired when an element has gained focus, after [`focus`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focus_event).
-    fn on_focus_in<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_focus_in<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_focus_in(value))
+    fn on_focus_in<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_focus_in<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_focus_in(value))
     }
     /// Event [`focusout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/focusout_event)
     ///
     /// Fired when an element has lost focus, after [`blur`](https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event).
-    fn on_focus_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_focus_out<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_focus_out(value))
+    fn on_focus_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::FocusEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_focus_out<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_focus_out(value))
     }
     /// Event [`fullscreenchange`](https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenchange_event)
     ///
     /// Sent to an [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element) when it transitions into or out of [fullscreen](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide) mode.
-    fn on_fullscreen_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_fullscreen_change<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_fullscreen_change(value))
+    fn on_fullscreen_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_fullscreen_change<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_fullscreen_change(value))
     }
     /// Event [`fullscreenerror`](https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenerror_event)
     ///
     /// Sent to an `Element` if an error occurs while attempting to switch it into or out of [fullscreen](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide) mode.
-    fn on_fullscreen_error<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_fullscreen_error<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_fullscreen_error(value))
+    fn on_fullscreen_error<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_fullscreen_error<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_fullscreen_error(value))
     }
     /// Event [`keydown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event)
     ///
     /// Fired when a key is pressed.
-    fn on_key_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::KeyboardEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_key_down<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_key_down(value))
+    fn on_key_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::KeyboardEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_key_down<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_key_down(value))
     }
     /// Event [`keyup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/keyup_event)
     ///
     /// Fired when a key is released.
-    fn on_key_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::KeyboardEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_key_up<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_key_up(value))
+    fn on_key_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::KeyboardEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_key_up<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_key_up(value))
     }
     /// Event [`auxclick`](https://developer.mozilla.org/en-US/docs/Web/API/Element/auxclick_event)
     ///
     /// Fired when a non-primary pointing device button (e.g., any mouse button other than the left button) has been pressed and released on an element.
-    fn on_aux_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_aux_click<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_aux_click(value))
+    fn on_aux_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_aux_click<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_aux_click(value))
     }
     /// Event [`click`](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event)
     ///
     /// Fired when a pointing device button (e.g., a mouse's primary button) is pressed and released on a single element.
-    fn on_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_click<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_click(value))
+    fn on_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_click<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_click(value))
     }
     /// Event [`contextmenu`](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event)
     ///
     /// Fired when the user attempts to open a context menu.
-    fn on_context_menu<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_context_menu<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_context_menu(value))
+    fn on_context_menu<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_context_menu<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_context_menu(value))
     }
     /// Event [`dblclick`](https://developer.mozilla.org/en-US/docs/Web/API/Element/dblclick_event)
     ///
     /// Fired when a pointing device button (e.g., a mouse's primary button) is clicked twice on a single element.
-    fn on_double_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_double_click<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_double_click(value))
+    fn on_double_click<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_double_click<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_double_click(value))
     }
     /// Event [`mousedown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mousedown_event)
     ///
     /// Fired when a pointing device button is pressed on an element.
-    fn on_mouse_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_down<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_down(value))
+    fn on_mouse_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_down<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_down(value))
     }
     /// Event [`mouseenter`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseenter_event)
     ///
     /// Fired when a pointing device (usually a mouse) is moved over the element that has the listener attached.
-    fn on_mouse_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_enter<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_enter(value))
+    fn on_mouse_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_enter<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_enter(value))
     }
     /// Event [`mouseleave`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseleave_event)
     ///
     /// Fired when the pointer of a pointing device (usually a mouse) is moved out of an element that has the listener attached to it.
-    fn on_mouse_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_leave<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_leave(value))
+    fn on_mouse_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_leave<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_leave(value))
     }
     /// Event [`mousemove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mousemove_event)
     ///
     /// Fired when a pointing device (usually a mouse) is moved while over an element.
-    fn on_mouse_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_move<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_move(value))
+    fn on_mouse_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_move<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_move(value))
     }
     /// Event [`mouseout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseout_event)
     ///
     /// Fired when a pointing device (usually a mouse) is moved off the element to which the listener is attached or off one of its children.
-    fn on_mouse_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_out<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_out(value))
+    fn on_mouse_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_out<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_out(value))
     }
     /// Event [`mouseover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event)
     ///
     /// Fired when a pointing device is moved onto the element to which the listener is attached or onto one of its children.
-    fn on_mouse_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_over<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_over(value))
+    fn on_mouse_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_over<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_over(value))
     }
     /// Event [`mouseup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseup_event)
     ///
     /// Fired when a pointing device button is released on an element.
-    fn on_mouse_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_mouse_up<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_mouse_up(value))
+    fn on_mouse_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::MouseEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_mouse_up<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_mouse_up(value))
     }
     /// Event [`touchcancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchcancel_event)
     ///
     /// Fired when one or more touch points have been disrupted in an implementation-specific manner (for example, too many touch points are created).
-    fn on_touch_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_touch_cancel<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_touch_cancel(value))
+    fn on_touch_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_touch_cancel<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_touch_cancel(value))
     }
     /// Event [`touchend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchend_event)
     ///
     /// Fired when one or more touch points are removed from the touch surface.
-    fn on_touch_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_touch_end<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_touch_end(value))
+    fn on_touch_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_touch_end<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_touch_end(value))
     }
     /// Event [`touchmove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchmove_event)
     ///
     /// Fired when one or more touch points are moved along the touch surface.
-    fn on_touch_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_touch_move<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_touch_move(value))
+    fn on_touch_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_touch_move<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_touch_move(value))
     }
     /// Event [`touchstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/touchstart_event)
     ///
     /// Fired when one or more touch points are placed on the touch surface.
-    fn on_touch_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::on_touch_start<V>> {
-        Self::append_attributes(self, super::attributes::Element::attributes::on_touch_start(value))
+    fn on_touch_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TouchEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::Element::attributes::on_touch_start<V>> {
+        Self::append_event_listeners(self, super::attributes::Element::attributes::on_touch_start(value))
     }
 }
 impl<C, A> Element for super::props::Element::Building<C, A> {}
 impl<C, A> Node for super::props::Element::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::Element::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::Element::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element::Building<(), A> {
-    type WithChildren = super::props::Element::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element::Building<(), A, ELS> {
+    type WithChildren = super::props::Element::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::Element::Building(super::props::Element::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::Element::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::Element::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::Element::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::Element::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::Element::Building(super::props::Element::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::Element::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::Element::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::Element::Building(super::props::Element::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -277,21 +295,30 @@ pub trait ElementWithHrefAttribute: Element {
 impl<C, A> ElementWithHrefAttribute for super::props::ElementWithHrefAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithHrefAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithHrefAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithHrefAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithHrefAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithHrefAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefAttribute::Building(super::props::ElementWithHrefAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHrefAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithHrefAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHrefAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithHrefAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithHrefAttribute::Building(super::props::ElementWithHrefAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithHrefAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithHrefAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithHrefAttribute::Building(super::props::ElementWithHrefAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -303,21 +330,30 @@ pub trait ElementWithTargetAttribute: Element {
 impl<C, A> ElementWithTargetAttribute for super::props::ElementWithTargetAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithTargetAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithTargetAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTargetAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithTargetAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithTargetAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithTargetAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTargetAttribute::Building(super::props::ElementWithTargetAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithTargetAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithTargetAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithTargetAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithTargetAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithTargetAttribute::Building(super::props::ElementWithTargetAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithTargetAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithTargetAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithTargetAttribute::Building(super::props::ElementWithTargetAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -332,21 +368,30 @@ pub trait ElementWithTypeAttribute: Element {
 impl<C, A> ElementWithTypeAttribute for super::props::ElementWithTypeAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithTypeAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithTypeAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithTypeAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithTypeAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithTypeAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithTypeAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTypeAttribute::Building(super::props::ElementWithTypeAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithTypeAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithTypeAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithTypeAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithTypeAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithTypeAttribute::Building(super::props::ElementWithTypeAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithTypeAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithTypeAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithTypeAttribute::Building(super::props::ElementWithTypeAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -358,21 +403,30 @@ pub trait ElementWithCiteAttribute: Element {
 impl<C, A> ElementWithCiteAttribute for super::props::ElementWithCiteAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithCiteAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithCiteAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCiteAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithCiteAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithCiteAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithCiteAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCiteAttribute::Building(super::props::ElementWithCiteAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithCiteAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithCiteAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithCiteAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithCiteAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithCiteAttribute::Building(super::props::ElementWithCiteAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithCiteAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithCiteAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithCiteAttribute::Building(super::props::ElementWithCiteAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -384,21 +438,30 @@ pub trait ElementWithPlaceHolderAttribute: Element {
 impl<C, A> ElementWithPlaceHolderAttribute for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithPlaceHolderAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithPlaceHolderAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithPlaceHolderAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithPlaceHolderAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithPlaceHolderAttribute::Building(super::props::ElementWithPlaceHolderAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithPlaceHolderAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithPlaceHolderAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithPlaceHolderAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithPlaceHolderAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithPlaceHolderAttribute::Building(super::props::ElementWithPlaceHolderAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithPlaceHolderAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithPlaceHolderAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithPlaceHolderAttribute::Building(super::props::ElementWithPlaceHolderAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -413,21 +476,30 @@ pub trait ElementWithMaxMinLengthAttributes: Element {
 impl<C, A> ElementWithMaxMinLengthAttributes for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxMinLengthAttributes::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithMaxMinLengthAttributes::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes::Building<(), A> {
-    type WithChildren = super::props::ElementWithMaxMinLengthAttributes::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithMaxMinLengthAttributes::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxMinLengthAttributes::Building(super::props::ElementWithMaxMinLengthAttributes::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMaxMinLengthAttributes::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithMaxMinLengthAttributes::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMaxMinLengthAttributes::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithMaxMinLengthAttributes::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithMaxMinLengthAttributes::Building(super::props::ElementWithMaxMinLengthAttributes::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithMaxMinLengthAttributes::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithMaxMinLengthAttributes::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithMaxMinLengthAttributes::Building(super::props::ElementWithMaxMinLengthAttributes::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -442,21 +514,30 @@ pub trait ElementWithHeightWidthStrAttributes: Element {
 impl<C, A> ElementWithHeightWidthStrAttributes for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthStrAttributes::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthStrAttributes::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes::Building<(), A> {
-    type WithChildren = super::props::ElementWithHeightWidthStrAttributes::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithHeightWidthStrAttributes::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthStrAttributes::Building(super::props::ElementWithHeightWidthStrAttributes::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHeightWidthStrAttributes::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithHeightWidthStrAttributes::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHeightWidthStrAttributes::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithHeightWidthStrAttributes::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithHeightWidthStrAttributes::Building(super::props::ElementWithHeightWidthStrAttributes::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithHeightWidthStrAttributes::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithHeightWidthStrAttributes::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithHeightWidthStrAttributes::Building(super::props::ElementWithHeightWidthStrAttributes::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -471,21 +552,30 @@ pub trait ElementWithHeightWidthU32Attributes: Element {
 impl<C, A> ElementWithHeightWidthU32Attributes for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthU32Attributes::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithHeightWidthU32Attributes::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes::Building<(), A> {
-    type WithChildren = super::props::ElementWithHeightWidthU32Attributes::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithHeightWidthU32Attributes::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthU32Attributes::Building(super::props::ElementWithHeightWidthU32Attributes::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHeightWidthU32Attributes::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithHeightWidthU32Attributes::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHeightWidthU32Attributes::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithHeightWidthU32Attributes::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithHeightWidthU32Attributes::Building(super::props::ElementWithHeightWidthU32Attributes::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithHeightWidthU32Attributes::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithHeightWidthU32Attributes::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithHeightWidthU32Attributes::Building(super::props::ElementWithHeightWidthU32Attributes::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -497,21 +587,30 @@ pub trait ElementWithMaxF64Attribute: Element {
 impl<C, A> ElementWithMaxF64Attribute for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithMaxF64Attribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMaxF64Attribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithMaxF64Attribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithMaxF64Attribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithMaxF64Attribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxF64Attribute::Building(super::props::ElementWithMaxF64Attribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMaxF64Attribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithMaxF64Attribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMaxF64Attribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithMaxF64Attribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithMaxF64Attribute::Building(super::props::ElementWithMaxF64Attribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithMaxF64Attribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithMaxF64Attribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithMaxF64Attribute::Building(super::props::ElementWithMaxF64Attribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -523,21 +622,30 @@ pub trait ElementWithValueF64Attribute: Element {
 impl<C, A> ElementWithValueF64Attribute for super::props::ElementWithValueF64Attribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithValueF64Attribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithValueF64Attribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValueF64Attribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithValueF64Attribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithValueF64Attribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithValueF64Attribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueF64Attribute::Building(super::props::ElementWithValueF64Attribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithValueF64Attribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithValueF64Attribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithValueF64Attribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithValueF64Attribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithValueF64Attribute::Building(super::props::ElementWithValueF64Attribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithValueF64Attribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithValueF64Attribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithValueF64Attribute::Building(super::props::ElementWithValueF64Attribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -549,21 +657,30 @@ pub trait ElementWithValueStrAttribute: Element {
 impl<C, A> ElementWithValueStrAttribute for super::props::ElementWithValueStrAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithValueStrAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithValueStrAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithValueStrAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithValueStrAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithValueStrAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithValueStrAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueStrAttribute::Building(super::props::ElementWithValueStrAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithValueStrAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithValueStrAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithValueStrAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithValueStrAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithValueStrAttribute::Building(super::props::ElementWithValueStrAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithValueStrAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithValueStrAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithValueStrAttribute::Building(super::props::ElementWithValueStrAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -575,21 +692,30 @@ pub trait ElementWithOpenAttribute: Element {
 impl<C, A> ElementWithOpenAttribute for super::props::ElementWithOpenAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithOpenAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithOpenAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithOpenAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithOpenAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithOpenAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithOpenAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithOpenAttribute::Building(super::props::ElementWithOpenAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithOpenAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithOpenAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithOpenAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithOpenAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithOpenAttribute::Building(super::props::ElementWithOpenAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithOpenAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithOpenAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithOpenAttribute::Building(super::props::ElementWithOpenAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -601,21 +727,30 @@ pub trait ElementWithNameAttribute: Element {
 impl<C, A> ElementWithNameAttribute for super::props::ElementWithNameAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithNameAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithNameAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithNameAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithNameAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithNameAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithNameAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithNameAttribute::Building(super::props::ElementWithNameAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithNameAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithNameAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithNameAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithNameAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithNameAttribute::Building(super::props::ElementWithNameAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithNameAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithNameAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithNameAttribute::Building(super::props::ElementWithNameAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -627,21 +762,30 @@ pub trait ElementWithDisabledAttribute: Element {
 impl<C, A> ElementWithDisabledAttribute for super::props::ElementWithDisabledAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithDisabledAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithDisabledAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDisabledAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithDisabledAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithDisabledAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithDisabledAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDisabledAttribute::Building(super::props::ElementWithDisabledAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithDisabledAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithDisabledAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithDisabledAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithDisabledAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithDisabledAttribute::Building(super::props::ElementWithDisabledAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithDisabledAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithDisabledAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithDisabledAttribute::Building(super::props::ElementWithDisabledAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -653,21 +797,30 @@ pub trait ElementWithCrossOriginAttribute: Element {
 impl<C, A> ElementWithCrossOriginAttribute for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithCrossOriginAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithCrossOriginAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithCrossOriginAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithCrossOriginAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithCrossOriginAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCrossOriginAttribute::Building(super::props::ElementWithCrossOriginAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithCrossOriginAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithCrossOriginAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithCrossOriginAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithCrossOriginAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithCrossOriginAttribute::Building(super::props::ElementWithCrossOriginAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithCrossOriginAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithCrossOriginAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithCrossOriginAttribute::Building(super::props::ElementWithCrossOriginAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -679,21 +832,30 @@ pub trait ElementWithRelAttribute: Element {
 impl<C, A> ElementWithRelAttribute for super::props::ElementWithRelAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithRelAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithRelAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRelAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithRelAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithRelAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithRelAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRelAttribute::Building(super::props::ElementWithRelAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithRelAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithRelAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithRelAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithRelAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithRelAttribute::Building(super::props::ElementWithRelAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithRelAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithRelAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithRelAttribute::Building(super::props::ElementWithRelAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -705,21 +867,30 @@ pub trait ElementWithReferrerPolicyAttribute: Element {
 impl<C, A> ElementWithReferrerPolicyAttribute for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithReferrerPolicyAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithReferrerPolicyAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithReferrerPolicyAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithReferrerPolicyAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReferrerPolicyAttribute::Building(super::props::ElementWithReferrerPolicyAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithReferrerPolicyAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithReferrerPolicyAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithReferrerPolicyAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithReferrerPolicyAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithReferrerPolicyAttribute::Building(super::props::ElementWithReferrerPolicyAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithReferrerPolicyAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithReferrerPolicyAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithReferrerPolicyAttribute::Building(super::props::ElementWithReferrerPolicyAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -731,21 +902,30 @@ pub trait ElementWithAltAttribute: Element {
 impl<C, A> ElementWithAltAttribute for super::props::ElementWithAltAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithAltAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithAltAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAltAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithAltAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithAltAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithAltAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAltAttribute::Building(super::props::ElementWithAltAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAltAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithAltAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAltAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithAltAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithAltAttribute::Building(super::props::ElementWithAltAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithAltAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithAltAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithAltAttribute::Building(super::props::ElementWithAltAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -757,21 +937,30 @@ pub trait ElementWithLoadingAttribute: Element {
 impl<C, A> ElementWithLoadingAttribute for super::props::ElementWithLoadingAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithLoadingAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithLoadingAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLoadingAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithLoadingAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithLoadingAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithLoadingAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLoadingAttribute::Building(super::props::ElementWithLoadingAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithLoadingAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithLoadingAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithLoadingAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithLoadingAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithLoadingAttribute::Building(super::props::ElementWithLoadingAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithLoadingAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithLoadingAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithLoadingAttribute::Building(super::props::ElementWithLoadingAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -783,21 +972,30 @@ pub trait ElementWithAcceptAttribute: Element {
 impl<C, A> ElementWithAcceptAttribute for super::props::ElementWithAcceptAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithAcceptAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithAcceptAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAcceptAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithAcceptAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithAcceptAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithAcceptAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAcceptAttribute::Building(super::props::ElementWithAcceptAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAcceptAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithAcceptAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAcceptAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithAcceptAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithAcceptAttribute::Building(super::props::ElementWithAcceptAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithAcceptAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithAcceptAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithAcceptAttribute::Building(super::props::ElementWithAcceptAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -809,21 +1007,30 @@ pub trait ElementWithAutoCompleteAttribute: Element {
 impl<C, A> ElementWithAutoCompleteAttribute for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAutoCompleteAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithAutoCompleteAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithAutoCompleteAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithAutoCompleteAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAutoCompleteAttribute::Building(super::props::ElementWithAutoCompleteAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAutoCompleteAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithAutoCompleteAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAutoCompleteAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithAutoCompleteAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithAutoCompleteAttribute::Building(super::props::ElementWithAutoCompleteAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithAutoCompleteAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithAutoCompleteAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithAutoCompleteAttribute::Building(super::props::ElementWithAutoCompleteAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -835,21 +1042,30 @@ pub trait ElementWithFormAttribute: Element {
 impl<C, A> ElementWithFormAttribute for super::props::ElementWithFormAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithFormAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithFormAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithFormAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithFormAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttribute::Building(super::props::ElementWithFormAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFormAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithFormAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFormAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithFormAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithFormAttribute::Building(super::props::ElementWithFormAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithFormAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithFormAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithFormAttribute::Building(super::props::ElementWithFormAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -874,21 +1090,30 @@ impl<C, A> ElementWithFormAttributes for super::props::ElementWithFormAttributes
 impl<C, A> ElementWithFormAttribute for super::props::ElementWithFormAttributes::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithFormAttributes::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithFormAttributes::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttributes::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithFormAttributes::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes::Building<(), A> {
-    type WithChildren = super::props::ElementWithFormAttributes::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithFormAttributes::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttributes::Building(super::props::ElementWithFormAttributes::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFormAttributes::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithFormAttributes::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFormAttributes::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithFormAttributes::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithFormAttributes::Building(super::props::ElementWithFormAttributes::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithFormAttributes::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithFormAttributes::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithFormAttributes::Building(super::props::ElementWithFormAttributes::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -900,21 +1125,30 @@ pub trait ElementWithFetchPriorityAttribute: Element {
 impl<C, A> ElementWithFetchPriorityAttribute for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithFetchPriorityAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithFetchPriorityAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithFetchPriorityAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithFetchPriorityAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFetchPriorityAttribute::Building(super::props::ElementWithFetchPriorityAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFetchPriorityAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithFetchPriorityAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithFetchPriorityAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithFetchPriorityAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithFetchPriorityAttribute::Building(super::props::ElementWithFetchPriorityAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithFetchPriorityAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithFetchPriorityAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithFetchPriorityAttribute::Building(super::props::ElementWithFetchPriorityAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -927,21 +1161,30 @@ impl<C, A> ElementWithHrefLangAttribute for super::props::ElementWithHrefLangAtt
 impl<C, A> ElementWithHrefAttribute for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithHrefLangAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithHrefLangAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithHrefLangAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithHrefLangAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithHrefLangAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefLangAttribute::Building(super::props::ElementWithHrefLangAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHrefLangAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithHrefLangAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithHrefLangAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithHrefLangAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithHrefLangAttribute::Building(super::props::ElementWithHrefLangAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithHrefLangAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithHrefLangAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithHrefLangAttribute::Building(super::props::ElementWithHrefLangAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -953,21 +1196,30 @@ pub trait ElementWithSizesAttribute: Element {
 impl<C, A> ElementWithSizesAttribute for super::props::ElementWithSizesAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithSizesAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithSizesAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizesAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithSizesAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithSizesAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithSizesAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizesAttribute::Building(super::props::ElementWithSizesAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSizesAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithSizesAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSizesAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithSizesAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithSizesAttribute::Building(super::props::ElementWithSizesAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithSizesAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithSizesAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithSizesAttribute::Building(super::props::ElementWithSizesAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -979,21 +1231,30 @@ pub trait ElementWithUseMapAttribute: Element {
 impl<C, A> ElementWithUseMapAttribute for super::props::ElementWithUseMapAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithUseMapAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithUseMapAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithUseMapAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithUseMapAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithUseMapAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithUseMapAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithUseMapAttribute::Building(super::props::ElementWithUseMapAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithUseMapAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithUseMapAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithUseMapAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithUseMapAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithUseMapAttribute::Building(super::props::ElementWithUseMapAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithUseMapAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithUseMapAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithUseMapAttribute::Building(super::props::ElementWithUseMapAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1005,21 +1266,30 @@ pub trait ElementWithLabelAttribute: Element {
 impl<C, A> ElementWithLabelAttribute for super::props::ElementWithLabelAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithLabelAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithLabelAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithLabelAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithLabelAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithLabelAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithLabelAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLabelAttribute::Building(super::props::ElementWithLabelAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithLabelAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithLabelAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithLabelAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithLabelAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithLabelAttribute::Building(super::props::ElementWithLabelAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithLabelAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithLabelAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithLabelAttribute::Building(super::props::ElementWithLabelAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1034,21 +1304,30 @@ pub trait ElementWithForAttribute: Element {
 impl<C, A> ElementWithForAttribute for super::props::ElementWithForAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithForAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithForAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithForAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithForAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithForAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithForAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithForAttribute::Building(super::props::ElementWithForAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithForAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithForAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithForAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithForAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithForAttribute::Building(super::props::ElementWithForAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithForAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithForAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithForAttribute::Building(super::props::ElementWithForAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1060,21 +1339,30 @@ pub trait ElementWithIntegrityAttribute: Element {
 impl<C, A> ElementWithIntegrityAttribute for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithIntegrityAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithIntegrityAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithIntegrityAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithIntegrityAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithIntegrityAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithIntegrityAttribute::Building(super::props::ElementWithIntegrityAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithIntegrityAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithIntegrityAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithIntegrityAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithIntegrityAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithIntegrityAttribute::Building(super::props::ElementWithIntegrityAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithIntegrityAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithIntegrityAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithIntegrityAttribute::Building(super::props::ElementWithIntegrityAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1086,21 +1374,30 @@ pub trait ElementWithBlockingAttribute: Element {
 impl<C, A> ElementWithBlockingAttribute for super::props::ElementWithBlockingAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithBlockingAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithBlockingAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBlockingAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithBlockingAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithBlockingAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithBlockingAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBlockingAttribute::Building(super::props::ElementWithBlockingAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithBlockingAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithBlockingAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithBlockingAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithBlockingAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithBlockingAttribute::Building(super::props::ElementWithBlockingAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithBlockingAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithBlockingAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithBlockingAttribute::Building(super::props::ElementWithBlockingAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1112,21 +1409,30 @@ pub trait ElementWithMultipleAttribute: Element {
 impl<C, A> ElementWithMultipleAttribute for super::props::ElementWithMultipleAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithMultipleAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithMultipleAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMultipleAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithMultipleAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithMultipleAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithMultipleAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMultipleAttribute::Building(super::props::ElementWithMultipleAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMultipleAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithMultipleAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMultipleAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithMultipleAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithMultipleAttribute::Building(super::props::ElementWithMultipleAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithMultipleAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithMultipleAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithMultipleAttribute::Building(super::props::ElementWithMultipleAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1138,21 +1444,30 @@ pub trait ElementWithRequiredAttribute: Element {
 impl<C, A> ElementWithRequiredAttribute for super::props::ElementWithRequiredAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithRequiredAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithRequiredAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithRequiredAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithRequiredAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithRequiredAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithRequiredAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRequiredAttribute::Building(super::props::ElementWithRequiredAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithRequiredAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithRequiredAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithRequiredAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithRequiredAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithRequiredAttribute::Building(super::props::ElementWithRequiredAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithRequiredAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithRequiredAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithRequiredAttribute::Building(super::props::ElementWithRequiredAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1164,21 +1479,30 @@ pub trait ElementWithSizeU32Attribute: Element {
 impl<C, A> ElementWithSizeU32Attribute for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithSizeU32Attribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSizeU32Attribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithSizeU32Attribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithSizeU32Attribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithSizeU32Attribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizeU32Attribute::Building(super::props::ElementWithSizeU32Attribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSizeU32Attribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithSizeU32Attribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSizeU32Attribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithSizeU32Attribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithSizeU32Attribute::Building(super::props::ElementWithSizeU32Attribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithSizeU32Attribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithSizeU32Attribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithSizeU32Attribute::Building(super::props::ElementWithSizeU32Attribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1190,21 +1514,30 @@ pub trait ElementWithSrcAttribute: Element {
 impl<C, A> ElementWithSrcAttribute for super::props::ElementWithSrcAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithSrcAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithSrcAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithSrcAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithSrcAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithSrcAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcAttribute::Building(super::props::ElementWithSrcAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSrcAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithSrcAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSrcAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithSrcAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithSrcAttribute::Building(super::props::ElementWithSrcAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithSrcAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithSrcAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithSrcAttribute::Building(super::props::ElementWithSrcAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1217,21 +1550,30 @@ impl<C, A> ElementWithSrcsetAttribute for super::props::ElementWithSrcsetAttribu
 impl<C, A> ElementWithSrcAttribute for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithSrcsetAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithSrcsetAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithSrcsetAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithSrcsetAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithSrcsetAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcsetAttribute::Building(super::props::ElementWithSrcsetAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSrcsetAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithSrcsetAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithSrcsetAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithSrcsetAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithSrcsetAttribute::Building(super::props::ElementWithSrcsetAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithSrcsetAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithSrcsetAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithSrcsetAttribute::Building(super::props::ElementWithSrcsetAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1243,21 +1585,30 @@ pub trait ElementWithBgColorAttribute: Element {
 impl<C, A> ElementWithBgColorAttribute for super::props::ElementWithBgColorAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithBgColorAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithBgColorAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithBgColorAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithBgColorAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithBgColorAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithBgColorAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBgColorAttribute::Building(super::props::ElementWithBgColorAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithBgColorAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithBgColorAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithBgColorAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithBgColorAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithBgColorAttribute::Building(super::props::ElementWithBgColorAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithBgColorAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithBgColorAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithBgColorAttribute::Building(super::props::ElementWithBgColorAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1269,21 +1620,30 @@ pub trait ElementWithAlignAttribute: Element {
 impl<C, A> ElementWithAlignAttribute for super::props::ElementWithAlignAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithAlignAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithAlignAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithAlignAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithAlignAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithAlignAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithAlignAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAlignAttribute::Building(super::props::ElementWithAlignAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAlignAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithAlignAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithAlignAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithAlignAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithAlignAttribute::Building(super::props::ElementWithAlignAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithAlignAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithAlignAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithAlignAttribute::Building(super::props::ElementWithAlignAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1295,21 +1655,30 @@ pub trait ElementWithMediaAttribute: Element {
 impl<C, A> ElementWithMediaAttribute for super::props::ElementWithMediaAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithMediaAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithMediaAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithMediaAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithMediaAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithMediaAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithMediaAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMediaAttribute::Building(super::props::ElementWithMediaAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMediaAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithMediaAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithMediaAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithMediaAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithMediaAttribute::Building(super::props::ElementWithMediaAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithMediaAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithMediaAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithMediaAttribute::Building(super::props::ElementWithMediaAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1321,21 +1690,30 @@ pub trait ElementWithReadOnlyAttribute: Element {
 impl<C, A> ElementWithReadOnlyAttribute for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithReadOnlyAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithReadOnlyAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithReadOnlyAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithReadOnlyAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithReadOnlyAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReadOnlyAttribute::Building(super::props::ElementWithReadOnlyAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithReadOnlyAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithReadOnlyAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithReadOnlyAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithReadOnlyAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithReadOnlyAttribute::Building(super::props::ElementWithReadOnlyAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithReadOnlyAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithReadOnlyAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithReadOnlyAttribute::Building(super::props::ElementWithReadOnlyAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1347,21 +1725,30 @@ pub trait ElementWithDateTimeAttribute: Element {
 impl<C, A> ElementWithDateTimeAttribute for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
 impl<C, A> Element for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
 impl<C, A> Node for super::props::ElementWithDateTimeAttribute::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::ElementWithDateTimeAttribute::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::ElementWithDateTimeAttribute::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute::Building<(), A> {
-    type WithChildren = super::props::ElementWithDateTimeAttribute::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute::Building<(), A, ELS> {
+    type WithChildren = super::props::ElementWithDateTimeAttribute::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDateTimeAttribute::Building(super::props::ElementWithDateTimeAttribute::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithDateTimeAttribute::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::ElementWithDateTimeAttribute::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::ElementWithDateTimeAttribute::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::ElementWithDateTimeAttribute::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::ElementWithDateTimeAttribute::Building(super::props::ElementWithDateTimeAttribute::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::ElementWithDateTimeAttribute::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::ElementWithDateTimeAttribute::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::ElementWithDateTimeAttribute::Building(super::props::ElementWithDateTimeAttribute::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1454,8 +1841,8 @@ pub trait HtmlElement: Element {
     /// Event [`invalid`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
     ///
     /// Fired when an element does not satisfy its constraints during constraint validation.
-    fn on_invalid<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_invalid<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_invalid(value))
+    fn on_invalid<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_invalid<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_invalid(value))
     }
     /// Event [`animationcancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationcancel_event)
     ///
@@ -1463,14 +1850,17 @@ pub trait HtmlElement: Element {
     fn on_animation_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::AnimationEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_animation_cancel<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_animation_cancel(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_animation_cancel<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_animation_cancel(value))
     }
     /// Event [`animationend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationend_event)
     ///
     /// Fired when an animation has completed normally.
-    fn on_animation_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::AnimationEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_animation_end<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_animation_end(value))
+    fn on_animation_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::AnimationEvent>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_animation_end<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_animation_end(value))
     }
     /// Event [`animationiteration`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationiteration_event)
     ///
@@ -1478,8 +1868,8 @@ pub trait HtmlElement: Element {
     fn on_animation_iteration<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::AnimationEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_animation_iteration<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_animation_iteration(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_animation_iteration<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_animation_iteration(value))
     }
     /// Event [`animationstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)
     ///
@@ -1487,26 +1877,26 @@ pub trait HtmlElement: Element {
     fn on_animation_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::AnimationEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_animation_start<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_animation_start(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_animation_start<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_animation_start(value))
     }
     /// Event [`beforeinput`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event)
     ///
     /// Fired when the value of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element is about to be modified.
-    fn on_before_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::InputEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_before_input<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_before_input(value))
+    fn on_before_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::InputEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_before_input<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_before_input(value))
     }
     /// Event [`input`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event)
     ///
     /// Fired when the `value` of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element has been changed.
-    fn on_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::InputEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_input<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_input(value))
+    fn on_input<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::InputEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_input<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_input(value))
     }
     /// Event [`change`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event)
     ///
     /// Fired when the `value` of an [`<input>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input), [`<select>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select), or [`<textarea>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) element has been changed and committed by the user. Unlike the [`input`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event) event, the `change` event is not necessarily fired for each alteration to an element's `value`.
-    fn on_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_change<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_change(value))
+    fn on_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_change<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_change(value))
     }
     /// Event [`gotpointercapture`](https://developer.mozilla.org/en-US/docs/Web/API/Element/gotpointercapture_event)
     ///
@@ -1514,8 +1904,8 @@ pub trait HtmlElement: Element {
     fn on_got_pointer_capture<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_got_pointer_capture<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_got_pointer_capture(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_got_pointer_capture<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_got_pointer_capture(value))
     }
     /// Event [`lostpointercapture`](https://developer.mozilla.org/en-US/docs/Web/API/Element/lostpointercapture_event)
     ///
@@ -1523,56 +1913,65 @@ pub trait HtmlElement: Element {
     fn on_lost_pointer_capture<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_lost_pointer_capture<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_lost_pointer_capture(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_lost_pointer_capture<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_lost_pointer_capture(value))
     }
     /// Event [`pointercancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointercancel_event)
     ///
     /// Fired when a pointer event is canceled.
-    fn on_pointer_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_cancel<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_cancel(value))
+    fn on_pointer_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_cancel<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_cancel(value))
     }
     /// Event [`pointerdown`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerdown_event)
     ///
     /// Fired when a pointer becomes active.
-    fn on_pointer_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_down<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_down(value))
+    fn on_pointer_down<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_down<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_down(value))
     }
     /// Event [`pointerenter`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerenter_event)
     ///
     /// Fired when a pointer is moved into the hit test boundaries of an element or one of its descendants.
-    fn on_pointer_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_enter<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_enter(value))
+    fn on_pointer_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_enter<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_enter(value))
     }
     /// Event [`pointerleave`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerleave_event)
     ///
     /// Fired when a pointer is moved out of the hit test boundaries of an element.
-    fn on_pointer_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_leave<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_leave(value))
+    fn on_pointer_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_leave<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_leave(value))
     }
     /// Event [`pointermove`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointermove_event)
     ///
     /// Fired when a pointer changes coordinates.
-    fn on_pointer_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_move<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_move(value))
+    fn on_pointer_move<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_move<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_move(value))
     }
     /// Event [`pointerout`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerout_event)
     ///
     /// Fired when a pointer is moved out of the *hit test* boundaries of an element (among other reasons).
-    fn on_pointer_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_out<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_out(value))
+    fn on_pointer_out<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_out<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_out(value))
     }
     /// Event [`pointerover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerover_event)
     ///
     /// Fired when a pointer is moved into an element's hit test boundaries.
-    fn on_pointer_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_over<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_over(value))
+    fn on_pointer_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_over<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_over(value))
     }
     /// Event [`pointerup`](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointerup_event)
     ///
     /// Fired when a pointer is no longer active.
-    fn on_pointer_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_pointer_up<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_pointer_up(value))
+    fn on_pointer_up<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::PointerEvent>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_pointer_up<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_pointer_up(value))
     }
     /// Event [`transitioncancel`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitioncancel_event)
     ///
@@ -1580,8 +1979,8 @@ pub trait HtmlElement: Element {
     fn on_transition_cancel<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TransitionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_transition_cancel<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_transition_cancel(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_transition_cancel<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_transition_cancel(value))
     }
     /// Event [`transitionend`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionend_event)
     ///
@@ -1589,8 +1988,8 @@ pub trait HtmlElement: Element {
     fn on_transition_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TransitionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_transition_end<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_transition_end(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_transition_end<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_transition_end(value))
     }
     /// Event [`transitionrun`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionrun_event)
     ///
@@ -1598,8 +1997,8 @@ pub trait HtmlElement: Element {
     fn on_transition_run<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TransitionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_transition_run<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_transition_run(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_transition_run<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_transition_run(value))
     }
     /// Event [`transitionstart`](https://developer.mozilla.org/en-US/docs/Web/API/Element/transitionstart_event)
     ///
@@ -1607,70 +2006,79 @@ pub trait HtmlElement: Element {
     fn on_transition_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::TransitionEvent>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_transition_start<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_transition_start(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_transition_start<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_transition_start(value))
     }
     /// Event [`drag`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drag_event)
     ///
     /// This event is fired when an element or text selection is being dragged.
-    fn on_drag<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag(value))
+    fn on_drag<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag(value))
     }
     /// Event [`dragend`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragend_event)
     ///
     /// This event is fired when a drag operation is being ended (by releasing a mouse button or hitting the escape key).
-    fn on_drag_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag_end<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag_end(value))
+    fn on_drag_end<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag_end<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag_end(value))
     }
     /// Event [`dragenter`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragenter_event)
     ///
     /// This event is fired when a dragged element or text selection enters a valid drop target.
-    fn on_drag_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag_enter<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag_enter(value))
+    fn on_drag_enter<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag_enter<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag_enter(value))
     }
     /// Event [`dragleave`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event)
     ///
     /// This event is fired when a dragged element or text selection leaves a valid drop target.
-    fn on_drag_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag_leave<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag_leave(value))
+    fn on_drag_leave<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag_leave<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag_leave(value))
     }
     /// Event [`dragover`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event)
     ///
     /// This event is fired continuously when an element or text selection is being dragged and the mouse pointer is over a valid drop target (every 50 ms WHEN mouse is not moving ELSE much faster between 5 ms (slow movement) and 1ms (fast movement) approximately. This firing pattern is different than [`mouseover`](https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event) ).
-    fn on_drag_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag_over<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag_over(value))
+    fn on_drag_over<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag_over<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag_over(value))
     }
     /// Event [`dragstart`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragstart_event)
     ///
     /// This event is fired when the user starts dragging an element or text selection.
-    fn on_drag_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drag_start<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drag_start(value))
+    fn on_drag_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drag_start<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drag_start(value))
     }
     /// Event [`drop`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event)
     ///
     /// This event is fired when an element or text selection is dropped on a valid drop target.
-    fn on_drop<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::on_drop<V>> {
-        Self::append_attributes(self, super::attributes::HtmlElement::attributes::on_drop(value))
+    fn on_drop<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlElement::attributes::on_drop<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlElement::attributes::on_drop(value))
     }
 }
 impl<C, A> HtmlElement for super::props::HtmlElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement::Building<(), A> {
-    type WithChildren = super::props::HtmlElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElement::Building(super::props::HtmlElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlElement::Building(super::props::HtmlElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlElement::Building(super::props::HtmlElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1679,21 +2087,30 @@ impl<C, A> HtmlDataListElement for super::props::HtmlDataListElement::Building<C
 impl<C, A> HtmlElement for super::props::HtmlDataListElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDataListElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDataListElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataListElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDataListElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDataListElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDataListElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataListElement::Building(super::props::HtmlDataListElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDataListElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDataListElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDataListElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDataListElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDataListElement::Building(super::props::HtmlDataListElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDataListElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDataListElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDataListElement::Building(super::props::HtmlDataListElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1702,21 +2119,30 @@ impl<C, A> HtmlDivElement for super::props::HtmlDivElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlDivElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDivElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDivElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDivElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDivElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDivElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDivElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDivElement::Building(super::props::HtmlDivElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDivElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDivElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDivElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDivElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDivElement::Building(super::props::HtmlDivElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDivElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDivElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDivElement::Building(super::props::HtmlDivElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1725,21 +2151,30 @@ impl<C, A> HtmlDListElement for super::props::HtmlDListElement::Building<C, A> {
 impl<C, A> HtmlElement for super::props::HtmlDListElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDListElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDListElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDListElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDListElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDListElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDListElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDListElement::Building(super::props::HtmlDListElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDListElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDListElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDListElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDListElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDListElement::Building(super::props::HtmlDListElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDListElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDListElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDListElement::Building(super::props::HtmlDListElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1748,21 +2183,30 @@ impl<C, A> HtmlHeadingElement for super::props::HtmlHeadingElement::Building<C, 
 impl<C, A> HtmlElement for super::props::HtmlHeadingElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlHeadingElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlHeadingElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadingElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlHeadingElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement::Building<(), A> {
-    type WithChildren = super::props::HtmlHeadingElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlHeadingElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadingElement::Building(super::props::HtmlHeadingElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHeadingElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlHeadingElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHeadingElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlHeadingElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlHeadingElement::Building(super::props::HtmlHeadingElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlHeadingElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlHeadingElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlHeadingElement::Building(super::props::HtmlHeadingElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1771,21 +2215,30 @@ impl<C, A> HtmlHeadElement for super::props::HtmlHeadElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlHeadElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlHeadElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlHeadElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHeadElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlHeadElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement::Building<(), A> {
-    type WithChildren = super::props::HtmlHeadElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlHeadElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadElement::Building(super::props::HtmlHeadElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHeadElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlHeadElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHeadElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlHeadElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlHeadElement::Building(super::props::HtmlHeadElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlHeadElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlHeadElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlHeadElement::Building(super::props::HtmlHeadElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1794,21 +2247,30 @@ impl<C, A> HtmlHrElement for super::props::HtmlHrElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlHrElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlHrElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlHrElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHrElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlHrElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement::Building<(), A> {
-    type WithChildren = super::props::HtmlHrElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlHrElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHrElement::Building(super::props::HtmlHrElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHrElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlHrElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHrElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlHrElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlHrElement::Building(super::props::HtmlHrElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlHrElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlHrElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlHrElement::Building(super::props::HtmlHrElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1817,21 +2279,30 @@ impl<C, A> HtmlLegendElement for super::props::HtmlLegendElement::Building<C, A>
 impl<C, A> HtmlElement for super::props::HtmlLegendElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlLegendElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlLegendElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLegendElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlLegendElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement::Building<(), A> {
-    type WithChildren = super::props::HtmlLegendElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlLegendElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLegendElement::Building(super::props::HtmlLegendElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLegendElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlLegendElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLegendElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlLegendElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlLegendElement::Building(super::props::HtmlLegendElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlLegendElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlLegendElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlLegendElement::Building(super::props::HtmlLegendElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1840,21 +2311,30 @@ impl<C, A> HtmlMenuElement for super::props::HtmlMenuElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlMenuElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlMenuElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlMenuElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMenuElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlMenuElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement::Building<(), A> {
-    type WithChildren = super::props::HtmlMenuElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlMenuElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMenuElement::Building(super::props::HtmlMenuElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMenuElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlMenuElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMenuElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlMenuElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlMenuElement::Building(super::props::HtmlMenuElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlMenuElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlMenuElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlMenuElement::Building(super::props::HtmlMenuElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1863,21 +2343,30 @@ impl<C, A> HtmlParagraphElement for super::props::HtmlParagraphElement::Building
 impl<C, A> HtmlElement for super::props::HtmlParagraphElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlParagraphElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlParagraphElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlParagraphElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlParagraphElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement::Building<(), A> {
-    type WithChildren = super::props::HtmlParagraphElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlParagraphElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlParagraphElement::Building(super::props::HtmlParagraphElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlParagraphElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlParagraphElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlParagraphElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlParagraphElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlParagraphElement::Building(super::props::HtmlParagraphElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlParagraphElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlParagraphElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlParagraphElement::Building(super::props::HtmlParagraphElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1886,21 +2375,30 @@ impl<C, A> HtmlPictureElement for super::props::HtmlPictureElement::Building<C, 
 impl<C, A> HtmlElement for super::props::HtmlPictureElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlPictureElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlPictureElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPictureElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlPictureElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement::Building<(), A> {
-    type WithChildren = super::props::HtmlPictureElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlPictureElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPictureElement::Building(super::props::HtmlPictureElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlPictureElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlPictureElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlPictureElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlPictureElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlPictureElement::Building(super::props::HtmlPictureElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlPictureElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlPictureElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlPictureElement::Building(super::props::HtmlPictureElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1909,21 +2407,30 @@ impl<C, A> HtmlPreElement for super::props::HtmlPreElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlPreElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlPreElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlPreElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlPreElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlPreElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement::Building<(), A> {
-    type WithChildren = super::props::HtmlPreElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlPreElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPreElement::Building(super::props::HtmlPreElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlPreElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlPreElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlPreElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlPreElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlPreElement::Building(super::props::HtmlPreElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlPreElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlPreElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlPreElement::Building(super::props::HtmlPreElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1932,21 +2439,30 @@ impl<C, A> HtmlSpanElement for super::props::HtmlSpanElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlSpanElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlSpanElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlSpanElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSpanElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlSpanElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement::Building<(), A> {
-    type WithChildren = super::props::HtmlSpanElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlSpanElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSpanElement::Building(super::props::HtmlSpanElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSpanElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlSpanElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSpanElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlSpanElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlSpanElement::Building(super::props::HtmlSpanElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlSpanElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlSpanElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlSpanElement::Building(super::props::HtmlSpanElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1955,21 +2471,30 @@ impl<C, A> HtmlTemplateElement for super::props::HtmlTemplateElement::Building<C
 impl<C, A> HtmlElement for super::props::HtmlTemplateElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTemplateElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTemplateElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTemplateElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTemplateElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTemplateElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTemplateElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTemplateElement::Building(super::props::HtmlTemplateElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTemplateElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTemplateElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTemplateElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTemplateElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTemplateElement::Building(super::props::HtmlTemplateElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTemplateElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTemplateElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTemplateElement::Building(super::props::HtmlTemplateElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -1978,21 +2503,30 @@ impl<C, A> HtmlTitleElement for super::props::HtmlTitleElement::Building<C, A> {
 impl<C, A> HtmlElement for super::props::HtmlTitleElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTitleElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTitleElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTitleElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTitleElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTitleElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTitleElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTitleElement::Building(super::props::HtmlTitleElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTitleElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTitleElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTitleElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTitleElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTitleElement::Building(super::props::HtmlTitleElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTitleElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTitleElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTitleElement::Building(super::props::HtmlTitleElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2012,21 +2546,30 @@ impl<C, A> ElementWithRelAttribute for super::props::HtmlElementWithHref::Buildi
 impl<C, A> HtmlElement for super::props::HtmlElementWithHref::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlElementWithHref::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlElementWithHref::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlElementWithHref::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlElementWithHref::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref::Building<(), A> {
-    type WithChildren = super::props::HtmlElementWithHref::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlElementWithHref::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElementWithHref::Building(super::props::HtmlElementWithHref::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlElementWithHref::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlElementWithHref::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlElementWithHref::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlElementWithHref::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlElementWithHref::Building(super::props::HtmlElementWithHref::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlElementWithHref::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlElementWithHref::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlElementWithHref::Building(super::props::HtmlElementWithHref::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2045,21 +2588,30 @@ impl<C, A> ElementWithRelAttribute for super::props::HtmlAnchorElement::Building
 impl<C, A> HtmlElement for super::props::HtmlAnchorElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlAnchorElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlAnchorElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAnchorElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlAnchorElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement::Building<(), A> {
-    type WithChildren = super::props::HtmlAnchorElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlAnchorElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAnchorElement::Building(super::props::HtmlAnchorElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAnchorElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlAnchorElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAnchorElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlAnchorElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlAnchorElement::Building(super::props::HtmlAnchorElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlAnchorElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlAnchorElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlAnchorElement::Building(super::props::HtmlAnchorElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2081,21 +2633,30 @@ impl<C, A> ElementWithRelAttribute for super::props::HtmlAreaElement::Building<C
 impl<C, A> HtmlElement for super::props::HtmlAreaElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlAreaElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlAreaElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAreaElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlAreaElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement::Building<(), A> {
-    type WithChildren = super::props::HtmlAreaElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlAreaElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAreaElement::Building(super::props::HtmlAreaElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAreaElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlAreaElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAreaElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlAreaElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlAreaElement::Building(super::props::HtmlAreaElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlAreaElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlAreaElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlAreaElement::Building(super::props::HtmlAreaElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2121,14 +2682,14 @@ pub trait HtmlMediaElement: HtmlElement + ElementWithSrcAttribute + ElementWithC
     /// Event [`abort`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/abort_event)
     ///
     /// Fired when the resource was not fully loaded, but not as the result of an error.
-    fn on_abort<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_abort<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_abort(value))
+    fn on_abort<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_abort<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_abort(value))
     }
     /// Event [`canplay`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/canplay_event)
     ///
     /// Fired when the user agent can play the media, but estimates that **not** enough data has been loaded to play the media up to its end without having to stop for further buffering of content.
-    fn on_can_play<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_can_play<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_can_play(value))
+    fn on_can_play<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_can_play<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_can_play(value))
     }
     /// Event [`canplaythrough`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/canplaythrough_event)
     ///
@@ -2136,122 +2697,128 @@ pub trait HtmlMediaElement: HtmlElement + ElementWithSrcAttribute + ElementWithC
     fn on_can_play_through<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(
         self,
         value: V,
-    ) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_can_play_through<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_can_play_through(value))
+    ) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_can_play_through<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_can_play_through(value))
     }
     /// Event [`durationchange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/durationchange_event)
     ///
     /// Fired when the duration property has been updated.
-    fn on_duration_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_duration_change<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_duration_change(value))
+    fn on_duration_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_duration_change<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_duration_change(value))
     }
     /// Event [`emptied`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/emptied_event)
     ///
     /// Fired when the media has become empty; for example, when the media has already been loaded (or partially loaded), and the [`HTMLMediaElement.load()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/load) method is called to reload it.
-    fn on_emptied<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_emptied<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_emptied(value))
+    fn on_emptied<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_emptied<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_emptied(value))
     }
     /// Event [`ended`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/ended_event)
     ///
     /// Fired when playback stops when end of the media (<audio> or <video>) is reached or because no further data is available.
-    fn on_ended<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_ended<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_ended(value))
+    fn on_ended<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_ended<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_ended(value))
     }
     /// Event [`loadeddata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadeddata_event)
     ///
     /// Fired when the first frame of the media has finished loading.
-    fn on_loaded_data<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_loaded_data<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_loaded_data(value))
+    fn on_loaded_data<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_loaded_data<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_loaded_data(value))
     }
     /// Event [`loadedmetadata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadedmetadata_event)
     ///
     /// Fired when the metadata has been loaded.
-    fn on_loaded_metadata<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_loaded_metadata<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_loaded_metadata(value))
+    fn on_loaded_metadata<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(
+        self,
+        value: V,
+    ) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_loaded_metadata<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_loaded_metadata(value))
     }
     /// Event [`loadstart`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loadstart_event)
     ///
     /// Fired when the browser has started to load a resource.
-    fn on_load_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_load_start<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_load_start(value))
+    fn on_load_start<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_load_start<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_load_start(value))
     }
     /// Event [`pause`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/pause_event)
     ///
     /// Fired when a request to pause play is handled and the activity has entered its paused state, most commonly occurring when the media's [`HTMLMediaElement.pause()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/pause) method is called.
-    fn on_pause<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_pause<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_pause(value))
+    fn on_pause<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_pause<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_pause(value))
     }
     /// Event [`play`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play_event)
     ///
     /// Fired when the `paused` property is changed from `true` to `false`, as a result of the [`HTMLMediaElement.play()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play) method, or the `autoplay` attribute.
-    fn on_play<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_play<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_play(value))
+    fn on_play<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_play<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_play(value))
     }
     /// Event [`playing`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/playing_event)
     ///
     /// Fired when playback is ready to start after having been paused or delayed due to lack of data.
-    fn on_playing<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_playing<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_playing(value))
+    fn on_playing<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_playing<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_playing(value))
     }
     /// Event [`progress`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/progress_event)
     ///
     /// Fired periodically as the browser loads a resource.
-    fn on_progress<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_progress<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_progress(value))
+    fn on_progress<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_progress<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_progress(value))
     }
     /// Event [`ratechange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/ratechange_event)
     ///
     /// Fired when the playback rate has changed.
-    fn on_rate_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_rate_change<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_rate_change(value))
+    fn on_rate_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_rate_change<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_rate_change(value))
     }
     /// Event [`resize`]()
     ///
     /// Fired when one or both of the `videoWidth` and `videoHeight` properties have just been updated.
-    fn on_resize<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_resize<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_resize(value))
+    fn on_resize<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_resize<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_resize(value))
     }
     /// Event [`seeked`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/seeked_event)
     ///
     /// Fired when a seek operation completes.
-    fn on_seeked<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_seeked<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_seeked(value))
+    fn on_seeked<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_seeked<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_seeked(value))
     }
     /// Event [`seeking`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/seeking_event)
     ///
     /// Fired when a seek operation begins.
-    fn on_seeking<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_seeking<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_seeking(value))
+    fn on_seeking<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_seeking<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_seeking(value))
     }
     /// Event [`stalled`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/stalled_event)
     ///
     /// Fired when the user agent is trying to fetch media data, but data is unexpectedly not forthcoming.
-    fn on_stalled<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_stalled<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_stalled(value))
+    fn on_stalled<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_stalled<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_stalled(value))
     }
     /// Event [`suspend`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/suspend_event)
     ///
     /// Fired when the media data loading has been suspended.
-    fn on_suspend<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_suspend<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_suspend(value))
+    fn on_suspend<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_suspend<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_suspend(value))
     }
     /// Event [`timeupdate`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event)
     ///
     /// Fired when the time indicated by the [`currentTime`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/currentTime) property has been updated.
-    fn on_time_update<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_time_update<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_time_update(value))
+    fn on_time_update<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_time_update<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_time_update(value))
     }
     /// Event [`volumechange`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/volumechange_event)
     ///
     /// Fired when the volume has changed.
-    fn on_volume_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_volume_change<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_volume_change(value))
+    fn on_volume_change<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_volume_change<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_volume_change(value))
     }
     /// Event [`waiting`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/waiting_event)
     ///
     /// Fired when playback has stopped because of a temporary lack of data.
-    fn on_waiting<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::on_waiting<V>> {
-        Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::on_waiting(value))
+    fn on_waiting<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlMediaElement::attributes::on_waiting<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlMediaElement::attributes::on_waiting(value))
     }
 }
 impl<C, A> HtmlMediaElement for super::props::HtmlMediaElement::Building<C, A> {}
@@ -2260,21 +2827,30 @@ impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlMediaElement::B
 impl<C, A> HtmlElement for super::props::HtmlMediaElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlMediaElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlMediaElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMediaElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlMediaElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement::Building<(), A> {
-    type WithChildren = super::props::HtmlMediaElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlMediaElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMediaElement::Building(super::props::HtmlMediaElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMediaElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlMediaElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMediaElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlMediaElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlMediaElement::Building(super::props::HtmlMediaElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlMediaElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlMediaElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlMediaElement::Building(super::props::HtmlMediaElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2285,21 +2861,30 @@ impl<C, A> ElementWithTargetAttribute for super::props::HtmlBaseElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlBaseElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlBaseElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlBaseElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBaseElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlBaseElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement::Building<(), A> {
-    type WithChildren = super::props::HtmlBaseElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlBaseElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBaseElement::Building(super::props::HtmlBaseElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBaseElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlBaseElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBaseElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlBaseElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlBaseElement::Building(super::props::HtmlBaseElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlBaseElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlBaseElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlBaseElement::Building(super::props::HtmlBaseElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2309,21 +2894,30 @@ impl<C, A> ElementWithCiteAttribute for super::props::HtmlQuoteElement::Building
 impl<C, A> HtmlElement for super::props::HtmlQuoteElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlQuoteElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlQuoteElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlQuoteElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlQuoteElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement::Building<(), A> {
-    type WithChildren = super::props::HtmlQuoteElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlQuoteElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlQuoteElement::Building(super::props::HtmlQuoteElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlQuoteElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlQuoteElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlQuoteElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlQuoteElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlQuoteElement::Building(super::props::HtmlQuoteElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlQuoteElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlQuoteElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlQuoteElement::Building(super::props::HtmlQuoteElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2337,21 +2931,30 @@ impl<C, A> HtmlBodyElement for super::props::HtmlBodyElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlBodyElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlBodyElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlBodyElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBodyElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlBodyElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement::Building<(), A> {
-    type WithChildren = super::props::HtmlBodyElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlBodyElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBodyElement::Building(super::props::HtmlBodyElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBodyElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlBodyElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBodyElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlBodyElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlBodyElement::Building(super::props::HtmlBodyElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlBodyElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlBodyElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlBodyElement::Building(super::props::HtmlBodyElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2365,21 +2968,30 @@ impl<C, A> HtmlBrElement for super::props::HtmlBrElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlBrElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlBrElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlBrElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlBrElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlBrElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement::Building<(), A> {
-    type WithChildren = super::props::HtmlBrElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlBrElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBrElement::Building(super::props::HtmlBrElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBrElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlBrElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlBrElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlBrElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlBrElement::Building(super::props::HtmlBrElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlBrElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlBrElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlBrElement::Building(super::props::HtmlBrElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2397,21 +3009,30 @@ impl<C, A> ElementWithFormAttribute for super::props::HtmlButtonElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlButtonElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlButtonElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlButtonElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlButtonElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlButtonElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement::Building<(), A> {
-    type WithChildren = super::props::HtmlButtonElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlButtonElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlButtonElement::Building(super::props::HtmlButtonElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlButtonElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlButtonElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlButtonElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlButtonElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlButtonElement::Building(super::props::HtmlButtonElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlButtonElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlButtonElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlButtonElement::Building(super::props::HtmlButtonElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2421,21 +3042,30 @@ impl<C, A> ElementWithHeightWidthU32Attributes for super::props::HtmlCanvasEleme
 impl<C, A> HtmlElement for super::props::HtmlCanvasElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlCanvasElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlCanvasElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlCanvasElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlCanvasElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement::Building<(), A> {
-    type WithChildren = super::props::HtmlCanvasElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlCanvasElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlCanvasElement::Building(super::props::HtmlCanvasElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlCanvasElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlCanvasElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlCanvasElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlCanvasElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlCanvasElement::Building(super::props::HtmlCanvasElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlCanvasElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlCanvasElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlCanvasElement::Building(super::props::HtmlCanvasElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2445,21 +3075,30 @@ impl<C, A> ElementWithAlignAttribute for super::props::HtmlTableCaptionElement::
 impl<C, A> HtmlElement for super::props::HtmlTableCaptionElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableCaptionElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableCaptionElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCaptionElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableCaptionElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableCaptionElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableCaptionElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCaptionElement::Building(super::props::HtmlTableCaptionElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableCaptionElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableCaptionElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableCaptionElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableCaptionElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableCaptionElement::Building(super::props::HtmlTableCaptionElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableCaptionElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableCaptionElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableCaptionElement::Building(super::props::HtmlTableCaptionElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2469,21 +3108,30 @@ impl<C, A> ElementWithValueStrAttribute for super::props::HtmlDataElement::Build
 impl<C, A> HtmlElement for super::props::HtmlDataElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDataElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDataElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDataElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDataElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDataElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDataElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataElement::Building(super::props::HtmlDataElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDataElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDataElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDataElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDataElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDataElement::Building(super::props::HtmlDataElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDataElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDataElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDataElement::Building(super::props::HtmlDataElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2494,21 +3142,30 @@ impl<C, A> ElementWithDateTimeAttribute for super::props::HtmlModElement::Buildi
 impl<C, A> HtmlElement for super::props::HtmlModElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlModElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlModElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlModElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlModElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement::Building<(), A> {
-    type WithChildren = super::props::HtmlModElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlModElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlModElement::Building(super::props::HtmlModElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlModElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlModElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlModElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlModElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlModElement::Building(super::props::HtmlModElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlModElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlModElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlModElement::Building(super::props::HtmlModElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2518,21 +3175,30 @@ impl<C, A> ElementWithOpenAttribute for super::props::HtmlDetailsElement::Buildi
 impl<C, A> HtmlElement for super::props::HtmlDetailsElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDetailsElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDetailsElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDetailsElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDetailsElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDetailsElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDetailsElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDetailsElement::Building(super::props::HtmlDetailsElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDetailsElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDetailsElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDetailsElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDetailsElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDetailsElement::Building(super::props::HtmlDetailsElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDetailsElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDetailsElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDetailsElement::Building(super::props::HtmlDetailsElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2542,21 +3208,30 @@ impl<C, A> ElementWithOpenAttribute for super::props::HtmlDialogElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlDialogElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlDialogElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlDialogElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlDialogElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlDialogElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement::Building<(), A> {
-    type WithChildren = super::props::HtmlDialogElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlDialogElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDialogElement::Building(super::props::HtmlDialogElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDialogElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlDialogElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlDialogElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlDialogElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlDialogElement::Building(super::props::HtmlDialogElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlDialogElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlDialogElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlDialogElement::Building(super::props::HtmlDialogElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2568,21 +3243,30 @@ impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlEmbedElemen
 impl<C, A> HtmlElement for super::props::HtmlEmbedElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlEmbedElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlEmbedElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlEmbedElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlEmbedElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement::Building<(), A> {
-    type WithChildren = super::props::HtmlEmbedElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlEmbedElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlEmbedElement::Building(super::props::HtmlEmbedElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlEmbedElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlEmbedElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlEmbedElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlEmbedElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlEmbedElement::Building(super::props::HtmlEmbedElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlEmbedElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlEmbedElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlEmbedElement::Building(super::props::HtmlEmbedElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2594,21 +3278,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlFieldSetElement::Build
 impl<C, A> HtmlElement for super::props::HtmlFieldSetElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlFieldSetElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlFieldSetElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFieldSetElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlFieldSetElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement::Building<(), A> {
-    type WithChildren = super::props::HtmlFieldSetElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlFieldSetElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFieldSetElement::Building(super::props::HtmlFieldSetElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlFieldSetElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlFieldSetElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlFieldSetElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlFieldSetElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlFieldSetElement::Building(super::props::HtmlFieldSetElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlFieldSetElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlFieldSetElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlFieldSetElement::Building(super::props::HtmlFieldSetElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2631,20 +3324,20 @@ pub trait HtmlFormElement: HtmlElement + ElementWithTargetAttribute + ElementWit
     /// Event [`formdata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/formdata_event)
     ///
     /// The `formdata` event fires after the entry list representing the form's data is constructed.
-    fn on_form_data<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::on_form_data<V>> {
-        Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::on_form_data(value))
+    fn on_form_data<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlFormElement::attributes::on_form_data<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlFormElement::attributes::on_form_data(value))
     }
     /// Event [`reset`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/reset_event)
     ///
     /// The `reset` event fires when a form is reset.
-    fn on_reset<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::on_reset<V>> {
-        Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::on_reset(value))
+    fn on_reset<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlFormElement::attributes::on_reset<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlFormElement::attributes::on_reset(value))
     }
     /// Event [`submit`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit_event)
     ///
     /// The `submit` event fires when a form is submitted.
-    fn on_submit<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::on_submit<V>> {
-        Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::on_submit(value))
+    fn on_submit<V: crate::impl_bounds::MaybeHandleEvent::Bounds<dyn crate::dom::event::Event>>(self, value: V) -> Self::AppendEventListeners<super::attributes::HtmlFormElement::attributes::on_submit<V>> {
+        Self::append_event_listeners(self, super::attributes::HtmlFormElement::attributes::on_submit(value))
     }
 }
 impl<C, A> HtmlFormElement for super::props::HtmlFormElement::Building<C, A> {}
@@ -2656,21 +3349,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlFormElement::Building<
 impl<C, A> HtmlElement for super::props::HtmlFormElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlFormElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlFormElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlFormElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlFormElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement::Building<(), A> {
-    type WithChildren = super::props::HtmlFormElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlFormElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFormElement::Building(super::props::HtmlFormElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlFormElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlFormElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlFormElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlFormElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlFormElement::Building(super::props::HtmlFormElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlFormElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlFormElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlFormElement::Building(super::props::HtmlFormElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2683,21 +3385,30 @@ impl<C, A> HtmlHtmlElement for super::props::HtmlHtmlElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlHtmlElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlHtmlElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlHtmlElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlHtmlElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlHtmlElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement::Building<(), A> {
-    type WithChildren = super::props::HtmlHtmlElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlHtmlElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHtmlElement::Building(super::props::HtmlHtmlElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHtmlElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlHtmlElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlHtmlElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlHtmlElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlHtmlElement::Building(super::props::HtmlHtmlElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlHtmlElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlHtmlElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlHtmlElement::Building(super::props::HtmlHtmlElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2733,21 +3444,30 @@ impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlIFrameEleme
 impl<C, A> HtmlElement for super::props::HtmlIFrameElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlIFrameElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlIFrameElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlIFrameElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlIFrameElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement::Building<(), A> {
-    type WithChildren = super::props::HtmlIFrameElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlIFrameElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlIFrameElement::Building(super::props::HtmlIFrameElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlIFrameElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlIFrameElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlIFrameElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlIFrameElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlIFrameElement::Building(super::props::HtmlIFrameElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlIFrameElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlIFrameElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlIFrameElement::Building(super::props::HtmlIFrameElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2786,21 +3506,30 @@ impl<C, A> ElementWithSrcAttribute for super::props::HtmlImageElement::Building<
 impl<C, A> HtmlElement for super::props::HtmlImageElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlImageElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlImageElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlImageElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlImageElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement::Building<(), A> {
-    type WithChildren = super::props::HtmlImageElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlImageElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlImageElement::Building(super::props::HtmlImageElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlImageElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlImageElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlImageElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlImageElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlImageElement::Building(super::props::HtmlImageElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlImageElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlImageElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlImageElement::Building(super::props::HtmlImageElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2870,21 +3599,30 @@ impl<C, A> ElementWithFormAttribute for super::props::HtmlInputElement::Building
 impl<C, A> HtmlElement for super::props::HtmlInputElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlInputElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlInputElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlInputElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlInputElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement::Building<(), A> {
-    type WithChildren = super::props::HtmlInputElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlInputElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlInputElement::Building(super::props::HtmlInputElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlInputElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlInputElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlInputElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlInputElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlInputElement::Building(super::props::HtmlInputElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlInputElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlInputElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlInputElement::Building(super::props::HtmlInputElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2894,21 +3632,30 @@ impl<C, A> ElementWithForAttribute for super::props::HtmlLabelElement::Building<
 impl<C, A> HtmlElement for super::props::HtmlLabelElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlLabelElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlLabelElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLabelElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlLabelElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement::Building<(), A> {
-    type WithChildren = super::props::HtmlLabelElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlLabelElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLabelElement::Building(super::props::HtmlLabelElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLabelElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlLabelElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLabelElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlLabelElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlLabelElement::Building(super::props::HtmlLabelElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlLabelElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlLabelElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlLabelElement::Building(super::props::HtmlLabelElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2921,21 +3668,30 @@ impl<C, A> HtmlLiElement for super::props::HtmlLiElement::Building<C, A> {}
 impl<C, A> HtmlElement for super::props::HtmlLiElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlLiElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlLiElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLiElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlLiElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement::Building<(), A> {
-    type WithChildren = super::props::HtmlLiElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlLiElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLiElement::Building(super::props::HtmlLiElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLiElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlLiElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLiElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlLiElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlLiElement::Building(super::props::HtmlLiElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlLiElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlLiElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlLiElement::Building(super::props::HtmlLiElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -2984,21 +3740,30 @@ impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlLinkElement::Bu
 impl<C, A> HtmlElement for super::props::HtmlLinkElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlLinkElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlLinkElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlLinkElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlLinkElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement::Building<(), A> {
-    type WithChildren = super::props::HtmlLinkElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlLinkElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLinkElement::Building(super::props::HtmlLinkElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLinkElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlLinkElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlLinkElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlLinkElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlLinkElement::Building(super::props::HtmlLinkElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlLinkElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlLinkElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlLinkElement::Building(super::props::HtmlLinkElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3008,21 +3773,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlMapElement::Building<C
 impl<C, A> HtmlElement for super::props::HtmlMapElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlMapElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlMapElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMapElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlMapElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement::Building<(), A> {
-    type WithChildren = super::props::HtmlMapElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlMapElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMapElement::Building(super::props::HtmlMapElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMapElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlMapElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMapElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlMapElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlMapElement::Building(super::props::HtmlMapElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlMapElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlMapElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlMapElement::Building(super::props::HtmlMapElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3042,21 +3816,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlMetaElement::Building<
 impl<C, A> HtmlElement for super::props::HtmlMetaElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlMetaElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlMetaElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMetaElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlMetaElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement::Building<(), A> {
-    type WithChildren = super::props::HtmlMetaElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlMetaElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMetaElement::Building(super::props::HtmlMetaElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMetaElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlMetaElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMetaElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlMetaElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlMetaElement::Building(super::props::HtmlMetaElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlMetaElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlMetaElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlMetaElement::Building(super::props::HtmlMetaElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3080,21 +3863,30 @@ impl<C, A> ElementWithValueF64Attribute for super::props::HtmlMeterElement::Buil
 impl<C, A> HtmlElement for super::props::HtmlMeterElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlMeterElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlMeterElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlMeterElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlMeterElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement::Building<(), A> {
-    type WithChildren = super::props::HtmlMeterElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlMeterElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMeterElement::Building(super::props::HtmlMeterElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMeterElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlMeterElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlMeterElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlMeterElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlMeterElement::Building(super::props::HtmlMeterElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlMeterElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlMeterElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlMeterElement::Building(super::props::HtmlMeterElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3112,21 +3904,30 @@ impl<C, A> ElementWithHeightWidthStrAttributes for super::props::HtmlObjectEleme
 impl<C, A> HtmlElement for super::props::HtmlObjectElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlObjectElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlObjectElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlObjectElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlObjectElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement::Building<(), A> {
-    type WithChildren = super::props::HtmlObjectElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlObjectElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlObjectElement::Building(super::props::HtmlObjectElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlObjectElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlObjectElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlObjectElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlObjectElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlObjectElement::Building(super::props::HtmlObjectElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlObjectElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlObjectElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlObjectElement::Building(super::props::HtmlObjectElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3143,21 +3944,30 @@ impl<C, A> ElementWithTypeAttribute for super::props::HtmlOListElement::Building
 impl<C, A> HtmlElement for super::props::HtmlOListElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlOListElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlOListElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOListElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlOListElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement::Building<(), A> {
-    type WithChildren = super::props::HtmlOListElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlOListElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOListElement::Building(super::props::HtmlOListElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOListElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlOListElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOListElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlOListElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlOListElement::Building(super::props::HtmlOListElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlOListElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlOListElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlOListElement::Building(super::props::HtmlOListElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3168,21 +3978,30 @@ impl<C, A> ElementWithDisabledAttribute for super::props::HtmlOptGroupElement::B
 impl<C, A> HtmlElement for super::props::HtmlOptGroupElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlOptGroupElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlOptGroupElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptGroupElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlOptGroupElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement::Building<(), A> {
-    type WithChildren = super::props::HtmlOptGroupElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlOptGroupElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptGroupElement::Building(super::props::HtmlOptGroupElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOptGroupElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlOptGroupElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOptGroupElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlOptGroupElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlOptGroupElement::Building(super::props::HtmlOptGroupElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlOptGroupElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlOptGroupElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlOptGroupElement::Building(super::props::HtmlOptGroupElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3198,21 +4017,30 @@ impl<C, A> ElementWithValueStrAttribute for super::props::HtmlOptionElement::Bui
 impl<C, A> HtmlElement for super::props::HtmlOptionElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlOptionElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlOptionElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOptionElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlOptionElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement::Building<(), A> {
-    type WithChildren = super::props::HtmlOptionElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlOptionElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptionElement::Building(super::props::HtmlOptionElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOptionElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlOptionElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOptionElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlOptionElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlOptionElement::Building(super::props::HtmlOptionElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlOptionElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlOptionElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlOptionElement::Building(super::props::HtmlOptionElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3224,21 +4052,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlOutputElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlOutputElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlOutputElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlOutputElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlOutputElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlOutputElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement::Building<(), A> {
-    type WithChildren = super::props::HtmlOutputElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlOutputElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOutputElement::Building(super::props::HtmlOutputElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOutputElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlOutputElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlOutputElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlOutputElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlOutputElement::Building(super::props::HtmlOutputElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlOutputElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlOutputElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlOutputElement::Building(super::props::HtmlOutputElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3249,21 +4086,30 @@ impl<C, A> ElementWithValueF64Attribute for super::props::HtmlProgressElement::B
 impl<C, A> HtmlElement for super::props::HtmlProgressElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlProgressElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlProgressElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlProgressElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlProgressElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement::Building<(), A> {
-    type WithChildren = super::props::HtmlProgressElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlProgressElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlProgressElement::Building(super::props::HtmlProgressElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlProgressElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlProgressElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlProgressElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlProgressElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlProgressElement::Building(super::props::HtmlProgressElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlProgressElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlProgressElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlProgressElement::Building(super::props::HtmlProgressElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3298,21 +4144,30 @@ impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlScriptElement::
 impl<C, A> HtmlElement for super::props::HtmlScriptElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlScriptElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlScriptElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlScriptElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlScriptElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_dom::script::SsrElementScriptContent> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement::Building<(), A> {
-    type WithChildren = super::props::HtmlScriptElement::Building<C, A>;
+impl<A, ELS, C: frender_dom::script::SsrElementScriptContent> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlScriptElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlScriptElement::Building(super::props::HtmlScriptElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlScriptElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlScriptElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlScriptElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlScriptElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlScriptElement::Building(super::props::HtmlScriptElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlScriptElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlScriptElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlScriptElement::Building(super::props::HtmlScriptElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3338,21 +4193,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlSelectElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlSelectElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlSelectElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlSelectElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSelectElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlSelectElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement::Building<(), A> {
-    type WithChildren = super::props::HtmlSelectElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlSelectElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSelectElement::Building(super::props::HtmlSelectElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSelectElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlSelectElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSelectElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlSelectElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlSelectElement::Building(super::props::HtmlSelectElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlSelectElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlSelectElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlSelectElement::Building(super::props::HtmlSelectElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3362,21 +4226,30 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlSlotElement::Building<
 impl<C, A> HtmlElement for super::props::HtmlSlotElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlSlotElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlSlotElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSlotElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlSlotElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement::Building<(), A> {
-    type WithChildren = super::props::HtmlSlotElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlSlotElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSlotElement::Building(super::props::HtmlSlotElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSlotElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlSlotElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSlotElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlSlotElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlSlotElement::Building(super::props::HtmlSlotElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlSlotElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlSlotElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlSlotElement::Building(super::props::HtmlSlotElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3394,21 +4267,30 @@ impl<C, A> ElementWithSrcAttribute for super::props::HtmlSourceElement::Building
 impl<C, A> HtmlElement for super::props::HtmlSourceElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlSourceElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlSourceElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlSourceElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlSourceElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement::Building<(), A> {
-    type WithChildren = super::props::HtmlSourceElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlSourceElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSourceElement::Building(super::props::HtmlSourceElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSourceElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlSourceElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlSourceElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlSourceElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlSourceElement::Building(super::props::HtmlSourceElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlSourceElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlSourceElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlSourceElement::Building(super::props::HtmlSourceElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3420,21 +4302,30 @@ impl<C, A> ElementWithBlockingAttribute for super::props::HtmlStyleElement::Buil
 impl<C, A> HtmlElement for super::props::HtmlStyleElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlStyleElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlStyleElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlStyleElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlStyleElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement::Building<(), A> {
-    type WithChildren = super::props::HtmlStyleElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlStyleElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlStyleElement::Building(super::props::HtmlStyleElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlStyleElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlStyleElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlStyleElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlStyleElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlStyleElement::Building(super::props::HtmlStyleElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlStyleElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlStyleElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlStyleElement::Building(super::props::HtmlStyleElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3474,21 +4365,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableElement::Build
 impl<C, A> HtmlElement for super::props::HtmlTableElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableElement::Building(super::props::HtmlTableElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableElement::Building(super::props::HtmlTableElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableElement::Building(super::props::HtmlTableElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3512,21 +4412,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableChildElement::
 impl<C, A> HtmlElement for super::props::HtmlTableChildElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableChildElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableChildElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableChildElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableChildElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableChildElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableChildElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableChildElement::Building(super::props::HtmlTableChildElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableChildElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableChildElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableChildElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableChildElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableChildElement::Building(super::props::HtmlTableChildElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableChildElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableChildElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableChildElement::Building(super::props::HtmlTableChildElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3538,21 +4447,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableSectionElement
 impl<C, A> HtmlElement for super::props::HtmlTableSectionElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableSectionElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableSectionElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableSectionElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableSectionElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableSectionElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableSectionElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableSectionElement::Building(super::props::HtmlTableSectionElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableSectionElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableSectionElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableSectionElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableSectionElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableSectionElement::Building(super::props::HtmlTableSectionElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableSectionElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableSectionElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableSectionElement::Building(super::props::HtmlTableSectionElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3564,21 +4482,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableRowElement::Bu
 impl<C, A> HtmlElement for super::props::HtmlTableRowElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableRowElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableRowElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableRowElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableRowElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableRowElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableRowElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableRowElement::Building(super::props::HtmlTableRowElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableRowElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableRowElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableRowElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableRowElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableRowElement::Building(super::props::HtmlTableRowElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableRowElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableRowElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableRowElement::Building(super::props::HtmlTableRowElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3598,21 +4525,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableColElement::Bu
 impl<C, A> HtmlElement for super::props::HtmlTableColElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableColElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableColElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableColElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableColElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableColElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableColElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableColElement::Building(super::props::HtmlTableColElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableColElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableColElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableColElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableColElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableColElement::Building(super::props::HtmlTableColElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableColElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableColElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableColElement::Building(super::props::HtmlTableColElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3647,21 +4583,30 @@ impl<C, A> ElementWithBgColorAttribute for super::props::HtmlTableCellElement::B
 impl<C, A> HtmlElement for super::props::HtmlTableCellElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTableCellElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTableCellElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTableCellElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTableCellElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTableCellElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTableCellElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCellElement::Building(super::props::HtmlTableCellElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableCellElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTableCellElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTableCellElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTableCellElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTableCellElement::Building(super::props::HtmlTableCellElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTableCellElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTableCellElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTableCellElement::Building(super::props::HtmlTableCellElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3701,23 +4646,32 @@ impl<C, A> ElementWithNameAttribute for super::props::HtmlTextAreaElement::Build
 impl<C, A> HtmlElement for super::props::HtmlTextAreaElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTextAreaElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTextAreaElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTextAreaElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTextAreaElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C>
-    for super::props::HtmlTextAreaElement::Building<(), A>
+impl<A, ELS, C: crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C>
+    for super::props::HtmlTextAreaElement::Building<(), A, ELS>
 {
-    type WithChildren = super::props::HtmlTextAreaElement::Building<C, A>;
+    type WithChildren = super::props::HtmlTextAreaElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTextAreaElement::Building(super::props::HtmlTextAreaElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTextAreaElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTextAreaElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTextAreaElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTextAreaElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTextAreaElement::Building(super::props::HtmlTextAreaElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTextAreaElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTextAreaElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTextAreaElement::Building(super::props::HtmlTextAreaElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3727,21 +4681,30 @@ impl<C, A> ElementWithDateTimeAttribute for super::props::HtmlTimeElement::Build
 impl<C, A> HtmlElement for super::props::HtmlTimeElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTimeElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTimeElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTimeElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTimeElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTimeElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTimeElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTimeElement::Building(super::props::HtmlTimeElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTimeElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTimeElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTimeElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTimeElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTimeElement::Building(super::props::HtmlTimeElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTimeElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTimeElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTimeElement::Building(super::props::HtmlTimeElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3762,21 +4725,30 @@ impl<C, A> ElementWithLabelAttribute for super::props::HtmlTrackElement::Buildin
 impl<C, A> HtmlElement for super::props::HtmlTrackElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlTrackElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlTrackElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlTrackElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlTrackElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement::Building<(), A> {
-    type WithChildren = super::props::HtmlTrackElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlTrackElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTrackElement::Building(super::props::HtmlTrackElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTrackElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlTrackElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlTrackElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlTrackElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlTrackElement::Building(super::props::HtmlTrackElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlTrackElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlTrackElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlTrackElement::Building(super::props::HtmlTrackElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3791,21 +4763,30 @@ impl<C, A> ElementWithTypeAttribute for super::props::HtmlUListElement::Building
 impl<C, A> HtmlElement for super::props::HtmlUListElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlUListElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlUListElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlUListElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlUListElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement::Building<(), A> {
-    type WithChildren = super::props::HtmlUListElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlUListElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlUListElement::Building(super::props::HtmlUListElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlUListElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlUListElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlUListElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlUListElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlUListElement::Building(super::props::HtmlUListElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlUListElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlUListElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlUListElement::Building(super::props::HtmlUListElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3817,21 +4798,30 @@ impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlAudioElement::B
 impl<C, A> HtmlElement for super::props::HtmlAudioElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlAudioElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlAudioElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlAudioElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlAudioElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement::Building<(), A> {
-    type WithChildren = super::props::HtmlAudioElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlAudioElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAudioElement::Building(super::props::HtmlAudioElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAudioElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlAudioElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlAudioElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlAudioElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlAudioElement::Building(super::props::HtmlAudioElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlAudioElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlAudioElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlAudioElement::Building(super::props::HtmlAudioElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }
@@ -3851,21 +4841,30 @@ impl<C, A> ElementWithCrossOriginAttribute for super::props::HtmlVideoElement::B
 impl<C, A> HtmlElement for super::props::HtmlVideoElement::Building<C, A> {}
 impl<C, A> Element for super::props::HtmlVideoElement::Building<C, A> {}
 impl<C, A> Node for super::props::HtmlVideoElement::Building<C, A> {}
-impl<C, A> crate::props_builder::PropsBuilder for super::props::HtmlVideoElement::Building<C, A> {
+impl<C, A, EL> crate::props_builder::PropsBuilder for super::props::HtmlVideoElement::Building<C, A, EL> {
     type Attributes = A;
     type Children = C;
+    type EventListeners = EL;
 }
-impl<A, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement::Building<(), A> {
-    type WithChildren = super::props::HtmlVideoElement::Building<C, A>;
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement::Building<(), A, ELS> {
+    type WithChildren = super::props::HtmlVideoElement::Building<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlVideoElement::Building(super::props::HtmlVideoElement::Data { props: self.0.props.children(children) })
     }
 }
-impl<Children, Attributes> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlVideoElement::Building<Children, Attributes> {
-    type AppendAttributes<A> = super::props::HtmlVideoElement::Building<Children, (Attributes, A)>;
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendAnySupportedAttributes for super::props::HtmlVideoElement::Building<Children, Attributes, ELS> {
+    type AppendAttributes<A> = super::props::HtmlVideoElement::Building<Children, (Attributes, A), ELS>;
     fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
         super::props::HtmlVideoElement::Building(super::props::HtmlVideoElement::Data {
             props: this.0.props.chain_prop(attributes),
+        })
+    }
+}
+impl<Children, Attributes, ELS> crate::props_builder::PropsBuilderAppendEventListeners for super::props::HtmlVideoElement::Building<Children, Attributes, ELS> {
+    type AppendEventListeners<EL> = super::props::HtmlVideoElement::Building<Children, Attributes, (ELS, EL)>;
+    fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+        super::props::HtmlVideoElement::Building(super::props::HtmlVideoElement::Data {
+            props: this.0.props.chain_event_listener(el),
         })
     }
 }

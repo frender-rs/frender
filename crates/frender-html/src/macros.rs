@@ -1033,7 +1033,7 @@ macro_rules! define_props {
             }
 
             pub mod building_struct {
-                pub struct $trait_name<Children = (), Attrs = ()>(pub super::Data<Children, Attrs>);
+                pub struct $trait_name<Children = (), Attrs = (), EL = ()>(pub super::Data<Children, Attrs, EL>);
             }
 
             pub use building_struct::$trait_name as Building;
@@ -1046,9 +1046,9 @@ macro_rules! define_props {
             }
 
             #[inline(always)]
-            pub fn build<Children, Attrs>(
-                building: Building<Children, Attrs>,
-            ) -> Data<Children, Attrs> {
+            pub fn build<Children, Attrs, ELS>(
+                building: Building<Children, Attrs, ELS>,
+            ) -> Data<Children, Attrs, ELS> {
                 building.0
             }
             pub use build as valid;
@@ -1189,6 +1189,7 @@ macro_rules! define_props_builders {
             or(
                 crate::props_builder::PropsBuilder +
                 crate::props_builder::PropsBuilderAppendAnySupportedAttributes +
+                crate::props_builder::PropsBuilderAppendEventListeners +
             )
             prepend {
                 $vis trait $trait_name:
@@ -1208,8 +1209,12 @@ macro_rules! define_props_builders {
                         do {
                             prepend( <V: )
                             append(
-                                >(self, value: V) -> Self::AppendAttributes<super::attributes::$trait_name::attributes::$fn_name<V>> {
-                                    Self::append_attributes(self, super::attributes::$trait_name::attributes::$fn_name(value))
+                                >(self, value: V) -> $crate::parse_fn_args_as_appended_type![$fn_args super::attributes::$trait_name::attributes::$fn_name<V>] {
+                                    $crate::parse_fn_args_as_appended_value![
+                                        $fn_args
+                                        self,
+                                        super::attributes::$trait_name::attributes::$fn_name(value)
+                                    ]
                                 }
                             )
                             wrap()
@@ -1245,10 +1250,11 @@ macro_rules! define_props_builders {
             }
         }}
 
-        impl<C, A> crate::props_builder::PropsBuilder
-            for super::props::$trait_name::Building<C, A> {
+        impl<C, A, EL> crate::props_builder::PropsBuilder
+            for super::props::$trait_name::Building<C, A, EL> {
             type Attributes = A;
             type Children = C;
+            type EventListeners = EL;
         }
 
         $trait_name! {{
@@ -1260,13 +1266,29 @@ macro_rules! define_props_builders {
         impl<
             Children,
             Attributes,
+            ELS,
         > crate::props_builder::PropsBuilderAppendAnySupportedAttributes
-            for super::props::$trait_name::Building<Children, Attributes>
+            for super::props::$trait_name::Building<Children, Attributes, ELS>
         {
-            type AppendAttributes<A> = super::props::$trait_name::Building<Children, (Attributes, A)>;
+            type AppendAttributes<A> = super::props::$trait_name::Building<Children, (Attributes, A), ELS>;
             fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
                 super::props::$trait_name::Building(super::props::$trait_name::Data {
                     props: this.0.props.chain_prop(attributes),
+                })
+            }
+        }
+
+        impl<
+            Children,
+            Attributes,
+            ELS,
+        > crate::props_builder::PropsBuilderAppendEventListeners
+            for super::props::$trait_name::Building<Children, Attributes, ELS>
+        {
+            type AppendEventListeners<EL> = super::props::$trait_name::Building<Children, Attributes, (ELS, EL)>;
+            fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+                super::props::$trait_name::Building(super::props::$trait_name::Data {
+                    props: this.0.props.chain_event_listener(el),
                 })
             }
         }
@@ -1378,6 +1400,36 @@ macro_rules! parse_fn_args_as_bounds {
 }
 
 #[macro_export]
+macro_rules! parse_fn_args_as_appended_type {
+    (($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]) $ty:ty) => {
+        Self::AppendEventListeners::<$ty>
+    };
+    ($fn_args:tt $ty:ty) => {
+        Self::AppendAttributes::<$ty>
+    };
+}
+
+#[macro_export]
+macro_rules! parse_fn_args_as_appended_value {
+    (($value:ident : event![
+        $event_trait_name:ident,
+        $event_type_name:literal,
+        $event_type_ident:ident,
+        $event_type_listener_ident:ident $(,)?
+    ]) $($args:tt)*) => {
+        Self::append_event_listeners($($args)*)
+    };
+    ($fn_args:tt $($args:tt)*) => {
+        Self::append_attributes($($args)*)
+    };
+}
+
+#[macro_export]
 macro_rules! extract_only_children_or {
     ($t:tt $do:tt $or:tt) => {
         $crate::extract_only_children_or! {
@@ -1447,9 +1499,9 @@ macro_rules! impl_children {
         $(#$fn_attr:tt)*
         fn $fn_name:ident($v:ident : children![impl $($bounds:tt)+] $(,)?);
     ) => {
-        impl<A, C: $($bounds)+> crate::props_builder::PropsBuilderWithChildren<C>
-            for $($props_path)+::Building<(), A> {
-            type WithChildren = $($props_path)+::Building<C, A>;
+        impl<A, ELS, C: $($bounds)+> crate::props_builder::PropsBuilderWithChildren<C>
+            for $($props_path)+::Building<(), A, ELS> {
+            type WithChildren = $($props_path)+::Building<C, A, ELS>;
             fn children(self, children: C) -> Self::WithChildren {
                 $($props_path)+::Building($($props_path)+::Data {
                     props: self.0.props.children(children),
@@ -1470,9 +1522,9 @@ macro_rules! define_component {
         $vis mod $component_name {
             pub use super::super::props::$props_name as Props;
 
-            pub type Data<Children, Props> = $crate::dom::component::IntrinsicElement<
+            pub type Data<Children, Props, EventListeners> = $crate::dom::component::IntrinsicElement<
                 ComponentType,
-                super::super::props::$props_name::Data<Children, Props>,
+                super::super::props::$props_name::Data<Children, Props, EventListeners>,
             >;
 
             pub use Props::{
@@ -1481,9 +1533,9 @@ macro_rules! define_component {
 
             pub use super::super::tags::$component_name as ComponentType;
 
-            pub fn build<Children, Props>(
-                building: Building<Children, Props>,
-            ) -> Data<Children, Props> {
+            pub fn build<Children, Props, EventListeners>(
+                building: Building<Children, Props, EventListeners>,
+            ) -> Data<Children, Props, EventListeners> {
                 $crate::dom::component::IntrinsicElement(
                     self::ComponentType,
                     self::Props::build(building),
