@@ -1242,10 +1242,10 @@ macro_rules! define_props_builders {
 
         $trait_name! { for_each_trait {
             prepend {
-                impl<C, A>
+                impl<C, A, ELS>
             }
             append {
-                for super::props::$trait_name::Building<C, A> {
+                for super::props::$trait_name::Building<C, A, ELS> {
                 }
             }
         }}
