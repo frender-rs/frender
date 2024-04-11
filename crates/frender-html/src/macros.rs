@@ -102,8 +102,7 @@ macro_rules! define_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]);) => {
-        type $event_type_ident: ::frender_dom::event::$event_trait_name + 'static;
-        type $event_type_listener_ident<F: frender_dom::HandleEvent<Self::$event_type_ident> + 'static>: Default + frender_dom::EventListenerState<Self, Renderer, F>;
+        type $event_type_listener_ident<F: frender_dom::HandleEvent<dyn ::frender_dom::event::$event_trait_name> + 'static>: Default + frender_dom::EventListenerState<Self, Renderer, F>;
     };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
@@ -129,12 +128,11 @@ macro_rules! impl_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
-        type $event_type_ident = ::frender_dom::csr::web::Event<::web_sys::$event_trait_name>;
-        type $event_type_listener_ident<F: frender_dom::HandleEvent<Self::$event_type_ident> + 'static> =
+        type $event_type_listener_ident<F: frender_dom::HandleEvent<dyn ::frender_dom::event::$event_trait_name> + 'static> =
             frender_dom::csr::web::event_listener::MaybeEventListener<
                 frender_dom::csr::web::event_listener::HandleJsCastEvent<
                     ::web_sys::$event_trait_name,
-                    F,
+                    frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent<F>,
                 >
             >;
     };
@@ -929,9 +927,8 @@ macro_rules! event_type_helper {
             pub use ::frender_dom::event::$event_trait_name as Event;
             pub use ::frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent;
 
-            pub type EventOf        <E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_ident;
-            pub type EventListenerOf<E, R, F> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident<HandleDynEvent<F>>;
-            pub type UnpinnedEventListenerOf<E, R, F> = <EventListenerOf<E, R, F> as frender_dom::EventListenerState<E, R, HandleDynEvent<F>>>::EventListenerStateUnpinned;
+            pub type EventListenerOf<E, R, F> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident<F>;
+            pub type UnpinnedEventListenerOf<E, R, F> = <EventListenerOf<E, R, F> as frender_dom::EventListenerState<E, R, F>>::EventListenerStateUnpinned;
 
             pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
         }

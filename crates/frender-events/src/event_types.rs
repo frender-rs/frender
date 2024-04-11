@@ -127,6 +127,15 @@ macro_rules! helpers {
                     self.0.handle_event(event)
                 }
             }
+
+            #[cfg(feature = "web")]
+            impl<F: frender_common::HandleEvent<dyn crate::event::$type_event>> From<F>
+                for crate::web::HandleJsCastEvent<::web_sys::$type_event, HandleDynEvent<F>>
+            {
+                fn from(f: F) -> Self {
+                    Self::from(HandleDynEvent(f))
+                }
+            }
         }
 
         crate::expand! {

@@ -445,9 +445,7 @@ pub mod MaybeHandleEvent {
                             element,
                             renderer,
                             $($bounds_tp)*::EVENT_TYPE_NAME,
-                            $($bounds_tp)*::HandleDynEvent(
-                                this
-                            ),
+                            this,
                         )
                     } else {
                         *state = Default::default()
@@ -488,9 +486,7 @@ pub mod MaybeHandleEvent {
                             element,
                             renderer,
                             $($bounds_tp)*::EVENT_TYPE_NAME,
-                            $($bounds_tp)*::HandleDynEvent(
-                                this
-                            ),
+                            this,
                         )
                     } else {
                         state.set(Default::default())
