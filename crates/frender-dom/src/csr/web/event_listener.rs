@@ -1,3 +1,5 @@
+pub use frender_events::web::HandleJsCastEvent;
+
 use std::{borrow::Cow, marker::PhantomPinned, pin::Pin};
 
 use frender_csr::event_listener::{EventListenerState, HandleEvent, RegisterOrUpdate};
@@ -110,38 +112,6 @@ impl<
     > EventListenerState<super::Node<N>, R, H> for MaybeEventListener<F>
 {
     type EventListenerStateUnpinned = unpinned::MaybeEventListener<F>;
-}
-
-pub struct HandleJsCastEvent<E: ?Sized, F: ?Sized> {
-    _e: std::marker::PhantomData<E>,
-    f: F,
-}
-
-impl<E: ?Sized, F> From<F> for HandleJsCastEvent<E, F> {
-    fn from(f: F) -> Self {
-        Self::new(f)
-    }
-}
-
-impl<E: ?Sized, F> HandleJsCastEvent<E, F> {
-    pub fn new(f: F) -> Self {
-        Self {
-            _e: std::marker::PhantomData,
-            f,
-        }
-    }
-}
-
-impl<E: ?Sized + wasm_bindgen::JsCast, F: ?Sized + HandleEvent<crate::csr::web::Event<E>>>
-    HandleEvent<web_sys::Event> for HandleJsCastEvent<E, F>
-{
-    fn handle_event(&mut self, event: &web_sys::Event) {
-        use wasm_bindgen::JsCast;
-        // TODO: check event type
-        let event: &E = event.unchecked_ref();
-        let event = crate::csr::web::Event::new_from_ref(event);
-        self.f.handle_event(event)
-    }
 }
 
 impl<
