@@ -53,6 +53,8 @@ pub mod prelude {
 
     pub use crate::rsx;
 
+    pub use frender_html::dom::{HandleEvent, MaybeHandleEvent};
+
     pub use frender_hook_element::component_fn;
 
     pub use frender_html::Element;

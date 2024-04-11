@@ -58,20 +58,13 @@ fn textarea() {
         "Uncontrolled with default value",
         textarea.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
         "Uncontrolled, but update state on input",
-        textarea.on_input(state_text.clone().into_setter_form_control_value()),
+        textarea.on_input(state_text.to_set_form_control_value()),
         "Uncontrolled, but update state on change",
-        textarea.on_change(state_text.clone().into_setter_form_control_value()),
-        button.on_click(callable![
-            |&_| { state.set(js_sys::Date::new_0().to_string().into()) },
-            state = state_text.to_eq(),
-        ])[["Set state to current date string"]],
-        button.on_click(
-            state_text
-                .clone()
-                .into_setter()
-                .provide_first_argument_with(current_date_string as callable![fn() -> _])
-                .accept_anything()
-        )[["Set state to current date string"]],
+        textarea.on_change(state_text.to_set_form_control_value()),
+        button.on_click({
+            let state_text = state_text.clone();
+            move |_: &_| state_text.set(current_date_string().into())
+        })[["Set state to current date string"]],
     )
 }
 

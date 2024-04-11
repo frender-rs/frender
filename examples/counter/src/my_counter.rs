@@ -31,19 +31,15 @@ pub fn MyCounterImpl(props: MyCounterProps) {
     let initial_value: u32 = props.initial_value.unwrap_or(0);
     let shared_state = hooks::use_shared_state(initial_value);
 
-    let on_increment = shared_state
-        .clone()
-        .into_callback(callable!(|shared_state: &SharedState<_>| {
-            shared_state.replace_with(|v| *v + 1);
-        }))
-        .accept_anything();
+    let on_increment = {
+        let shared_state = shared_state.clone();
+        move |_: &_| _ = shared_state.replace_with(|v| *v + 1)
+    };
 
-    let on_decrement = shared_state
-        .clone()
-        .into_callback(callable!(|shared_state: &SharedState<_>| {
-            shared_state.replace_with(|v| *v - 1);
-        }))
-        .accept_anything();
+    let on_decrement = {
+        let shared_state = shared_state.clone();
+        move |_: &_| _ = shared_state.replace_with(|v| *v - 1)
+    };
 
     let state = shared_state.get();
 

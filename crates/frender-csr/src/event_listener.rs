@@ -24,13 +24,14 @@ pub trait RegisterOrUpdate<N: ?Sized, R: ?Sized, F> {
 }
 
 pub trait MaybeHandleEvent<E: ?Sized>: Into<Option<Self::HandleEvent>> {
-    type HandleEvent: FnMut(&E);
+    type HandleEvent: HandleEvent<E>;
 }
 
+// TODO: the compiler doesn't allow relaxing the bound to `F: HandleEvent<E>`
 impl<F: FnMut(&E), E: ?Sized> MaybeHandleEvent<E> for F {
     type HandleEvent = F;
 }
 
-impl<F: FnMut(&E), E: ?Sized> MaybeHandleEvent<E> for Option<F> {
+impl<F: HandleEvent<E>, E: ?Sized> MaybeHandleEvent<E> for Option<F> {
     type HandleEvent = F;
 }

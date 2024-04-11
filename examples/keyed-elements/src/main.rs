@@ -75,26 +75,22 @@ fn Main() {
 
     intrinsic!(
         div[[
-            button.on_click(
-                data.clone()
-                    .into_callback_map_mut(callable![fn(&mut _)](Data::prepend))
-                    .accept_anything()
-            )[["Prepend"]],
-            button.on_click(
-                data.clone()
-                    .into_callback_map_mut(callable![fn(&mut _)](Data::append))
-                    .accept_anything()
-            )[["Append"]],
-            button.on_click(
-                data.clone()
-                    .into_callback_map_mut(callable![fn(&mut _)](Data::clear))
-                    .accept_anything()
-            )[["Clear"]],
-            button.on_click(
-                data.clone()
-                    .into_callback_map_mut(callable![fn(&mut _)](Data::swap))
-                    .accept_anything()
-            )[["Swap"]],
+            button.on_click({
+                let data = data.clone();
+                move |_: &_| data.map_mut(Data::prepend)
+            })[["Prepend"]],
+            button.on_click({
+                let data = data.clone();
+                move |_: &_| data.map_mut(Data::append)
+            })[["Append"]],
+            button.on_click({
+                let data = data.clone();
+                move |_: &_| data.map_mut(Data::clear)
+            })[["Clear"]],
+            button.on_click({
+                let data = data.clone();
+                move |_: &_| data.map_mut(Data::swap)
+            })[["Swap"]],
         ]],
         pre[[
             code[["Item count = ", { data.map(|data| data.items.len()) }]],
@@ -144,35 +140,32 @@ fn Main() {
                                             td[[{ value }]],
                                             td[[
                                                 //
-                                                button.on_click(
-                                                    data.clone()
-                                                        .into_callback_map_mut(callable!(
-                                                            |data: &mut Data, idx| {
-                                                                if data.selected_index == Some(idx)
-                                                                {
-                                                                    data.selected_index = None
-                                                                } else {
-                                                                    data.selected_index = Some(idx)
-                                                                }
+                                                button.on_click({
+                                                    let data = data.clone();
+                                                    move |_: &_| {
+                                                        data.map_mut(|data| {
+                                                            if data.selected_index == Some(idx) {
+                                                                data.selected_index = None
+                                                            } else {
+                                                                data.selected_index = Some(idx)
                                                             }
-                                                        ))
-                                                        .provide_last_argument_copied(idx)
-                                                        .accept_anything()
-                                                )[[{
+                                                        })
+                                                    }
+                                                })[[{
                                                     if selected {
                                                         "Unselect"
                                                     } else {
                                                         "Select"
                                                     }
                                                 }]],
-                                                button.on_click(
-                                                    data.clone()
-                                                        .into_callback_map_mut(callable!(
-                                                            |data: &mut Data, idx| data.remove(idx)
-                                                        ))
-                                                        .provide_last_argument_copied(idx)
-                                                        .accept_anything()
-                                                )[["Remove"]],
+                                                button.on_click({
+                                                    let data = data.clone();
+                                                    move |_: &_| {
+                                                        data.map_mut(|data: &mut Data| {
+                                                            data.remove(idx)
+                                                        })
+                                                    }
+                                                })[["Remove"]],
                                             ]],
                                         ]]
                                     ),
