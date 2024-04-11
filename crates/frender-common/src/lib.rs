@@ -7,6 +7,9 @@ pub use temp_str::{IntoStaticStr, TempStr};
 mod keyed;
 pub use keyed::*;
 
+mod event;
+pub use event::*;
+
 pub mod convert;
 pub mod try_behavior;
 
