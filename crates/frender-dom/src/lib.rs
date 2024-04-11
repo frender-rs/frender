@@ -1,4 +1,7 @@
-pub use frender_csr::{render_state, RenderState};
+pub use frender_csr::{
+    event_listener::{EventListenerState, HandleEvent, MaybeHandleEvent, RegisterOrUpdate},
+    render_state, RenderState,
+};
 pub use frender_events::{event, event_types, HasEventTypeName};
 
 pub mod render;

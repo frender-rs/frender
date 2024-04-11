@@ -46,10 +46,10 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
         frender_dom::behaviors::HtmlElement::on_before_input_prevent_default(self, renderer)
     }
 
-    type OnValueChangeEventListener = <Self as crate::html::behaviors::HtmlElement<Renderer>>::OnInputEventListener;
+    type OnValueChangeEventListener = <Self as frender_dom::behaviors::HtmlElement<Renderer>>::OnInputEventListenerNeverUpdated;
 
     fn on_value_change(&mut self, renderer: &mut Renderer, mut f: impl FnMut(std::borrow::Cow<'_, str>) + 'static) -> Self::OnValueChangeEventListener {
-        crate::html::behaviors::HtmlElement::on_input(self, renderer, move |e| {
+        frender_dom::behaviors::HtmlElement::on_input_never_updated(self, renderer, move |e| {
             if let Some(v) = e.target_form_control_value() {
                 f(v)
             } else {

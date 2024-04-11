@@ -398,8 +398,6 @@ pub mod MaybeValue {
 
 #[allow(non_snake_case)]
 pub mod MaybeHandleEvent {
-    pub use frender_events::MaybeHandleEvent as Bounds;
-
     #[macro_export]
     macro_rules! __impl_csr_MaybeHandleEvent {
         (
@@ -415,7 +413,8 @@ pub mod MaybeHandleEvent {
             $csr:ident !{ $($csr_fields:tt)* }
         ) => {
             impl<
-                V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>,
+                H: frender_dom::HandleEvent<dyn $($bounds_tp)* ::Event> + 'static,
+                V: frender_dom::MaybeHandleEvent<dyn $($bounds_tp)* ::Event, HandleEvent = H> + 'static,
                 ET: $crate::html::behavior_type_traits::$csr_element_ty,
             >
                 $crate::UpdateNodeNonReactive<
@@ -423,11 +422,11 @@ pub mod MaybeHandleEvent {
                 >
             for $($wrapper)*::<V> {
                 type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
-                    $($csr_state_wrapper)*::<$($bounds)*::$csr::State<
-                        dyn $($bounds_tp)* ::Event,
-                        V,
-                        $($bounds_tp)*::EventListenerOf<ET::$csr_element_ty<Renderer>, Renderer>
-                    >>;
+                    $($bounds_tp)*::UnpinnedEventListenerOf<
+                        ET::$csr_element_ty<Renderer>,
+                        Renderer,
+                        H,
+                    >;
 
                 fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
@@ -439,47 +438,69 @@ pub mod MaybeHandleEvent {
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
 
                     let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
-                    $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
-                        this,
-                        element,
-                        renderer,
-                        // $($attr_name_ident: $attr_name,)?
-                        new_event_state: $($bounds_tp)* ::on,
-                        $($csr_fields)*
-                    }, &mut state.0)
+
+                    if let Some(this) = this.into() {
+                        frender_dom::RegisterOrUpdate::register_or_update(
+                            std::pin::Pin::new(state),
+                            element,
+                            renderer,
+                            $($bounds_tp)*::EVENT_TYPE_NAME,
+                            $($bounds_tp)*::HandleDynEvent(
+                                this
+                            ),
+                        )
+                    } else {
+                        *state = Default::default()
+                    }
+                }
+            }
+
+            impl<
+                H: frender_dom::HandleEvent<dyn $($bounds_tp)* ::Event> + 'static,
+                V: frender_dom::MaybeHandleEvent<dyn $($bounds_tp)* ::Event, HandleEvent = H> + 'static,
+                ET: $crate::html::behavior_type_traits::$csr_element_ty,
+            >
+                $crate::UpdateNodeNonReactivePinned<
+                    ET
+                >
+            for $($wrapper)*::<V> {
+                type StatePinned<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
+                    $($bounds_tp)*::UnpinnedEventListenerOf<
+                        ET::$csr_element_ty<Renderer>,
+                        Renderer,
+                        H,
+                    >;
+
+                fn update_node_non_reactive_pinned<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+                    Self(this): Self,
+                    renderer: &mut Renderer,
+                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    mut state: std::pin::Pin<&mut Self::StatePinned<Renderer>>,
+                ) {
+                    #[allow(unused_imports)]
+                    use $crate::html::behaviors_prelude::$csr_element_ty::*;
+
+                    let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
+
+                    if let Some(this) = this.into() {
+                        frender_dom::RegisterOrUpdate::register_or_update(
+                            state,
+                            element,
+                            renderer,
+                            $($bounds_tp)*::EVENT_TYPE_NAME,
+                            $($bounds_tp)*::HandleDynEvent(
+                                this
+                            ),
+                        )
+                    } else {
+                        state.set(Default::default())
+                    }
                 }
             }
         };
     }
 
     pub use __impl_csr_MaybeHandleEvent as csr;
-
-    pub mod csr {
-        use frender_events::MaybeHandleEvent;
-
-        pub struct Input<'a, V, E: ?Sized, R: ?Sized, F> {
-            pub this: V,
-            pub element: &'a mut E,
-            pub renderer: &'a mut R,
-            pub new_event_state: F,
-        }
-
-        pub type State<Ev, V, S> = <V as frender_events::callable::gat::MaybeHandleEvent<Ev>>::UpdateWithState<S>;
-
-        pub fn update_with_state<
-            Ev: ?Sized,
-            V: MaybeHandleEvent<Ev>,
-            S,
-            E: ?Sized + crate::html::behaviors::Element<RR>,
-            RR: ?Sized,
-            F: FnOnce(&mut E, &mut RR, &<V as MaybeHandleEvent<Ev>>::StaticCloneCallable) -> S,
-        >(
-            Input { this, element, renderer, new_event_state }: Input<V, E, RR, F>,
-            state: &mut State<Ev, V, S>,
-        ) {
-            V::update_with_state(this, state, |callable| new_event_state(element, renderer, callable))
-        }
-    }
 
     #[macro_export]
     macro_rules! __impl_ssr_MaybeHandleEvent {
@@ -495,7 +516,9 @@ pub mod MaybeHandleEvent {
             }
             $ssr:ident !{ $($ssr_fields:tt)* }
         ) => {
-            impl<V: $($bounds)*::Bounds::<dyn $($bounds_tp)* ::Event>> $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+            impl<
+                V: frender_dom::MaybeHandleEvent<dyn $($bounds_tp)* ::Event> + 'static,
+            > $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
                 for $($wrapper)*::<V>
             {
                 type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;

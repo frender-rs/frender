@@ -7,6 +7,7 @@ use frender_common::try_behavior::TryBehavior;
 pub use dom_token_list::DomTokenList;
 
 pub mod event;
+pub mod event_listener;
 
 mod dom_token_list;
 

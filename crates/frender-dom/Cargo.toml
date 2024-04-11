@@ -99,7 +99,12 @@ features = [
 
 [features]
 default = ["web"]
-web = ["dep:web-sys", "dep:wasm-bindgen", "frender-events/web"]
+web = [
+    "dep:web-sys",
+    "dep:wasm-bindgen",
+    "frender-events/web",
+    "dep:gloo-events",
+]
 either = [
     "dep:either",
     "frender-html-common/either",
