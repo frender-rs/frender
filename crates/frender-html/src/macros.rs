@@ -927,20 +927,13 @@ macro_rules! event_type_helper {
     ]); $trait_name:ident {$($path_to_mod_behaviors:tt)+}) => {
         pub mod $fn_name {
             pub use ::frender_dom::event::$event_trait_name as Event;
+            pub use ::frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent;
 
             pub type EventOf        <E, R> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_ident;
             pub type EventListenerOf<E, R, F> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident<HandleDynEvent<F>>;
             pub type UnpinnedEventListenerOf<E, R, F> = <EventListenerOf<E, R, F> as frender_dom::EventListenerState<E, R, HandleDynEvent<F>>>::EventListenerStateUnpinned;
 
             pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
-
-            pub struct HandleDynEvent<F>(pub F);
-
-            impl<E: Event + 'static, F: frender_dom::HandleEvent<dyn Event>> frender_dom::HandleEvent<E> for HandleDynEvent<F> {
-                fn handle_event(&mut self, event: &E) {
-                    self.0.handle_event(event)
-                }
-            }
         }
     };
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};

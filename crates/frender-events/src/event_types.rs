@@ -102,6 +102,46 @@ macro_rules! define_trait_event_types {
     };
 }
 
+macro_rules! helpers {
+    (
+        $(#[super_traits($super_trait:ident $(, $super_traits:ident)* $(,)?)])?
+        $vis:vis trait $trait_event_type:ident {
+            type $type_event:ident;
+            $(type $type_event_listener:ident;)?
+            $(fn sub_traits() {$(
+                $vis_sub_trait:vis trait $sub_trait_event_type:ident
+                $sub_trait_details:tt
+            )*})?
+        }
+    ) => {
+        #[allow(non_snake_case)]
+        pub mod $type_event {
+            pub struct HandleDynEvent<F>(pub F);
+
+            impl<
+                    E: crate::event::$type_event + 'static,
+                    F: frender_common::HandleEvent<dyn crate::event::$type_event>,
+                > frender_common::HandleEvent<E> for HandleDynEvent<F>
+            {
+                fn handle_event(&mut self, event: &E) {
+                    self.0.handle_event(event)
+                }
+            }
+        }
+
+        crate::expand! {
+            while ($($({
+                $vis_sub_trait trait $sub_trait_event_type
+                $sub_trait_details
+            })*)?) {
+                prepend(#[super_traits($type_event $(, super_trait $(, $super_traits)*)?)])
+                wrap {}
+                prepend(helpers!)
+            }
+        }
+    };
+}
+
 macro_rules! define_event_types {
     ($($defs:tt)*) => {
         define_trait_event_types! { $($defs)* }
@@ -111,6 +151,10 @@ macro_rules! define_event_types {
         }
         pub mod type_traits_impl {
             type_traits_impl! { $($defs)* }
+        }
+
+        pub mod helpers {
+            helpers! { $($defs)* }
         }
     };
 }
