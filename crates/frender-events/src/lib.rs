@@ -1,9 +1,3 @@
-// TODO: move
-mod event_trait;
-pub use event_trait::*;
-
-// TODO: move
-pub use callable;
 use frender_common::expand;
 
 pub mod event;

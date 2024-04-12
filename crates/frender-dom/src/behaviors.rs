@@ -32,14 +32,6 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
         renderer: &mut Renderer,
     ) -> Self::OnBeforeInputPreventDefault;
 
-    /// On drop, the event listener should be removed.
-    type OnInputEventListenerNeverUpdated;
-    fn on_input_never_updated(
-        &mut self,
-        renderer: &mut Renderer,
-        f: impl FnMut(&dyn frender_events::event::InputEvent) + 'static,
-    ) -> Self::OnInputEventListenerNeverUpdated;
-
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement);
 }
 
@@ -120,24 +112,6 @@ impl<
         let node: &web_sys::EventTarget = node.as_ref();
 
         Self::OnBeforeInputPreventDefault::new(node.clone(), "beforeinput")
-    }
-
-    type OnInputEventListenerNeverUpdated = gloo_events::EventListener;
-
-    fn on_input_never_updated(
-        &mut self,
-        renderer: &mut Renderer,
-        mut f: impl FnMut(&dyn frender_events::event::InputEvent) + 'static,
-    ) -> Self::OnInputEventListenerNeverUpdated {
-        let node: &web_sys::Node = self.0.as_ref();
-
-        gloo_events::EventListener::new(node, "input", move |event| {
-            use frender_csr::event_listener::HandleEvent;
-            let mut f = crate::csr::web::event_listener::HandleJsCastEvent::new(
-                |event: &crate::csr::web::Event<web_sys::InputEvent>| f(event),
-            );
-            f.handle_event(event)
-        })
     }
 
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement) {

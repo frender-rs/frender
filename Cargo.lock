@@ -330,12 +330,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "callable"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb304508d6d6fabb65fe884a4158fdaca562d5c8f6c7f4b1a0a76cbce08a75e1"
-
-[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -945,7 +939,6 @@ dependencies = [
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
- "callable",
  "frender-common",
  "gloo",
  "wasm-bindgen",

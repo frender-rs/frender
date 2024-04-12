@@ -47,10 +47,10 @@ fn textarea() {
         "One way binding (thus readonly)",
         textarea.value(OneWayBinding(state_text.get_cloned())),
         "Controlled with a callback",
-        textarea.value(Controlled(
-            state_text.get_cloned(),
-            state_text.clone().into_setter(),
-        )),
+        textarea.value(Controlled(state_text.get_cloned(), {
+            let state_text = state_text.clone();
+            move |v| state_text.set(v)
+        },)),
         "Controlled with a shared state",
         textarea.value(state_text.clone().into_controlled()),
         "Uncontrolled",

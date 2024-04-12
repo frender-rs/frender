@@ -1,6 +1,6 @@
 use frender_events::event::Event;
 
-use super::value::{TempAsRef, Value};
+use super::value::{HandleValue, TempAsRef, Value};
 
 pub trait FormControlElement<V: ?Sized + Value, Renderer: ?Sized>: crate::html::behaviors::HtmlElement<Renderer> {
     fn set_default_value(&mut self, renderer: &mut Renderer, value: &V);
@@ -13,9 +13,22 @@ pub trait FormControlElement<V: ?Sized + Value, Renderer: ?Sized>: crate::html::
 
     fn force_value<Val: TempAsRef<V> + 'static>(&mut self, renderer: &mut Renderer, value: Val) -> Self::ForceValue;
 
-    type OnValueChangeEventListener;
+    type OnValueChangeEventListener<F: HandleValue<V> + 'static>: Default;
 
-    fn on_value_change(&mut self, renderer: &mut Renderer, f: impl for<'v> FnMut(V::Passed<'v>) + 'static) -> Self::OnValueChangeEventListener;
+    fn on_value_change<F: HandleValue<V> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, f: F);
+}
+
+#[derive(Debug)]
+pub struct HandleEventTargetFormControlValue<F: HandleValue<str>>(pub F);
+
+impl<F: HandleValue<str>, E: ?Sized + Event> frender_dom::HandleEvent<E> for HandleEventTargetFormControlValue<F> {
+    fn handle_event(&mut self, e: &E) {
+        if let Some(v) = e.target_form_control_value() {
+            self.0.handle_value(v)
+        } else {
+            // TODO: warn about unexpected event target
+        }
+    }
 }
 
 #[cfg(feature = "web")]
@@ -46,15 +59,10 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
         frender_dom::behaviors::HtmlElement::on_before_input_prevent_default(self, renderer)
     }
 
-    type OnValueChangeEventListener = <Self as frender_dom::behaviors::HtmlElement<Renderer>>::OnInputEventListenerNeverUpdated;
+    type OnValueChangeEventListener<F: HandleValue<str> + 'static> =
+        <<Self as crate::html::behaviors::HtmlElement<Renderer>>::OnInputEventListener<HandleEventTargetFormControlValue<F>> as frender_dom::EventListenerState<Self, Renderer, HandleEventTargetFormControlValue<F>>>::EventListenerStateUnpinned;
 
-    fn on_value_change(&mut self, renderer: &mut Renderer, mut f: impl FnMut(std::borrow::Cow<'_, str>) + 'static) -> Self::OnValueChangeEventListener {
-        frender_dom::behaviors::HtmlElement::on_input_never_updated(self, renderer, move |e| {
-            if let Some(v) = e.target_form_control_value() {
-                f(v)
-            } else {
-                // TODO: warn about unexpected event target
-            }
-        })
+    fn on_value_change<F: HandleValue<str> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, mut f: F) {
+        frender_dom::RegisterOrUpdate::register_or_update(std::pin::Pin::new(state), self, renderer, "input", HandleEventTargetFormControlValue(f))
     }
 }

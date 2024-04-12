@@ -6,7 +6,6 @@ use std::{
 
 use frender_common::PrimarilyBorrow;
 use frender_dom::{render_state::non_reactive::NonReactiveRenderState, RenderState};
-use frender_events::callable::Callable;
 use frender_html_common::maybe_str::{IntoOneStringOrEmpty, MaybeStr};
 
 use super::element::FormControlElement;
@@ -23,6 +22,16 @@ pub trait OfValue: PrimarilyBorrow<Borrowed = Self::Value> {
 
     /// `passed_value` might be cloned in this method.
     fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self;
+}
+
+pub trait HandleValue<V: ?Sized + Value> {
+    fn handle_value(&mut self, v: V::Passed<'_>);
+}
+
+impl<V: ?Sized + Value, F: for<'v> FnMut(V::Passed<'v>)> HandleValue<V> for F {
+    fn handle_value(&mut self, v: <V as Value>::Passed<'_>) {
+        self(v)
+    }
 }
 
 impl Value for str {
@@ -203,13 +212,13 @@ impl<Val: OfValue<Value = V> + 'static, V: ?Sized + Value + PartialEq> FormContr
 pub struct Controlled<
     //
     V: OfValue,
-    C: for<'a> Callable<(V,), Output = ()> + 'static + PartialEq + Clone,
+    C: FnMut(V) + 'static,
 >(pub V, pub C);
 
 impl<
         //
         V: OfValue<Value = str>,
-        C: for<'a> Callable<(V,), Output = ()> + 'static + PartialEq + Clone,
+        C: FnMut(V) + 'static,
     > IntoOneStringOrEmpty for Controlled<V, C>
 {
     type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<V>;
@@ -219,52 +228,49 @@ impl<
     }
 }
 
-pub struct ControlledState<V, Cbk, EL> {
-    value: V,
-    callback: Cbk,
-    on_value_change_event_listener: EL,
+pub struct HandleOfValue<Val, F: FnMut(Val)> {
+    f: F,
+    _v: std::marker::PhantomData<Val>,
+}
+
+impl<Val, F: FnMut(Val)> HandleOfValue<Val, F> {
+    fn new(f: F) -> Self {
+        Self { f, _v: std::marker::PhantomData }
+    }
+}
+
+impl<V: ?Sized + Value, Val: OfValue<Value = V>, F: FnMut(Val)> HandleValue<V> for HandleOfValue<Val, F> {
+    fn handle_value(&mut self, v: <V as Value>::Passed<'_>) {
+        (self.f)(Val::of_value(v))
+    }
 }
 
 impl<
         //
         V: ?Sized + Value + PartialEq,
-        Val: OfValue<Value = V>,
-        Cbk: for<'a> Callable<(Val,), Output = ()> + 'static + PartialEq + Clone,
+        Val: OfValue<Value = V> + 'static,
+        Cbk: FnMut(Val) + 'static,
     > FormControlValue<V> for Controlled<Val, Cbk>
 {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<ControlledState<Val, Cbk, E::OnValueChangeEventListener>>>;
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<(Option<Val>, E::OnValueChangeEventListener<HandleOfValue<Val, Cbk>>)>;
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
-        let state = &mut state.0;
+        let (state, event_listener) = &mut state.0;
+        let Self(value, f) = this;
+
+        element.on_value_change(renderer, event_listener, HandleOfValue::new(f));
+
+        let v = value.borrow();
         if let Some(state) = state {
-            let Self(value, cbk) = this;
-            let v = value.borrow();
-            if state.value.borrow() != v {
-                element.set_default_value(renderer, v);
-                element.set_value(renderer, v);
-
-                state.value = value;
+            if Borrow::<V>::borrow(state) == v {
+                return;
             }
-
-            if state.callback != cbk {
-                state.callback = cbk.clone();
-                state.on_value_change_event_listener = element.on_value_change(renderer, move |v| cbk.call_fn((Val::of_value(v),)));
-            }
-        } else {
-            let Self(value, cbk) = this;
-
-            {
-                let v = value.borrow();
-                element.set_default_value(renderer, v);
-                element.set_value(renderer, v);
-            }
-
-            *state = Some(ControlledState {
-                callback: Cbk::clone(&cbk),
-                on_value_change_event_listener: element.on_value_change(renderer, move |v| cbk.call_fn((Val::of_value(v),))),
-                value,
-            })
         }
+
+        element.set_default_value(renderer, v);
+        element.set_value(renderer, v);
+
+        *state = Some(value);
     }
 }
 

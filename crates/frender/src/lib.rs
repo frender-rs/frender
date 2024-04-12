@@ -36,7 +36,7 @@ pub use frender_hook_element as hook_element;
 pub use frender_hook_element::component_fn;
 
 pub use event::*;
-pub use frender_events::{event, MaybeHandleEvent};
+pub use frender_events::event;
 
 #[cfg(feature = "bg")]
 pub use bg;
@@ -64,8 +64,6 @@ pub mod prelude {
     pub use crate::{elements, intrinsic};
 
     pub use frender_macros::component;
-
-    pub use frender_events::callable::prelude::*;
 
     #[cfg(feature = "html-components")]
     pub use frender_html::html::components as intrinsic_components;
