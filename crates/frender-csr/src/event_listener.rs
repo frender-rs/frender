@@ -5,11 +5,5 @@ pub trait EventListenerState<N: ?Sized, R: ?Sized, F>: Default + RegisterOrUpdat
 }
 
 pub trait RegisterOrUpdate<N: ?Sized, R: ?Sized, F> {
-    fn register_or_update(
-        self: std::pin::Pin<&mut Self>,
-        node: &mut N,
-        renderer: &mut R,
-        event_type: impl Into<std::borrow::Cow<'static, str>>,
-        f: F,
-    );
+    fn register_or_update(self: std::pin::Pin<&mut Self>, node: &mut N, renderer: &mut R, f: F);
 }

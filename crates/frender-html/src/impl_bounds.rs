@@ -444,7 +444,6 @@ pub mod MaybeHandleEvent {
                             std::pin::Pin::new(state),
                             element,
                             renderer,
-                            $($bounds_tp)*::EVENT_TYPE_NAME,
                             this,
                         )
                     } else {
@@ -485,7 +484,6 @@ pub mod MaybeHandleEvent {
                             state,
                             element,
                             renderer,
-                            $($bounds_tp)*::EVENT_TYPE_NAME,
                             this,
                         )
                     } else {

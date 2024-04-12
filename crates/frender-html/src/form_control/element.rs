@@ -63,6 +63,6 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
         <<Self as crate::html::behaviors::HtmlElement<Renderer>>::OnInputEventListener<HandleEventTargetFormControlValue<F>> as frender_dom::EventListenerState<Self, Renderer, HandleEventTargetFormControlValue<F>>>::EventListenerStateUnpinned;
 
     fn on_value_change<F: HandleValue<str> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, mut f: F) {
-        frender_dom::RegisterOrUpdate::register_or_update(std::pin::Pin::new(state), self, renderer, "input", HandleEventTargetFormControlValue(f))
+        frender_dom::RegisterOrUpdate::register_or_update(std::pin::Pin::new(state), self, renderer, HandleEventTargetFormControlValue(f))
     }
 }

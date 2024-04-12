@@ -129,11 +129,12 @@ macro_rules! impl_behavior_fn {
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
         type $event_type_listener_ident<F: frender_dom::HandleEvent<dyn ::frender_dom::event::$event_trait_name> + 'static> =
-            frender_dom::csr::web::event_listener::MaybeEventListener<
+            frender_dom::csr::web::event_listener::MaybeEventListenerOfType<
                 frender_dom::csr::web::event_listener::HandleJsCastEvent<
                     ::web_sys::$event_trait_name,
                     frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent<F>,
-                >
+                >,
+                super::event_types::$fn_name,
             >;
     };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {

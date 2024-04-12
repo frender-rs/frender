@@ -1,4 +1,5 @@
 pub use frender_events::web::HandleJsCastEvent;
+use frender_events::HasEventTypeName;
 
 use std::{borrow::Cow, marker::PhantomPinned, pin::Pin};
 
@@ -68,6 +69,23 @@ pub mod unpinned {
             }
         }
     }
+
+    #[derive(Debug)]
+    pub struct MaybeEventListenerOfType<F, ET: ?Sized + frender_events::HasEventTypeName> {
+        pub(super) inner: MaybeEventListener<F>,
+        et: std::marker::PhantomData<ET>,
+    }
+
+    impl<F, ET: ?Sized + frender_events::HasEventTypeName> Unpin for MaybeEventListenerOfType<F, ET> {}
+
+    impl<F, ET: ?Sized + frender_events::HasEventTypeName> Default for MaybeEventListenerOfType<F, ET> {
+        fn default() -> Self {
+            Self {
+                inner: Default::default(),
+                et: Default::default(),
+            }
+        }
+    }
 }
 
 pin_project_lite::pin_project!(
@@ -104,33 +122,21 @@ impl<F: HandleEvent<web_sys::Event> + 'static> MaybeEventListener<F> {
     }
 }
 
-impl<
-        N: AsRef<web_sys::EventTarget>,
-        R: ?Sized,
-        F: HandleEvent<web_sys::Event> + 'static + From<H>,
-        H,
-    > EventListenerState<super::Node<N>, R, H> for MaybeEventListener<F>
-{
-    type EventListenerStateUnpinned = unpinned::MaybeEventListener<F>;
-}
+pin_project_lite::pin_project!(
+    #[derive(Debug)]
+    pub struct MaybeEventListenerOfType<F, ET: ?Sized> {
+        #[pin]
+        inner: MaybeEventListener<F>,
+        et: std::marker::PhantomData<ET>,
+    }
+);
 
-impl<
-        N: AsRef<web_sys::EventTarget>,
-        R: ?Sized,
-        F: HandleEvent<web_sys::Event> + 'static + From<H>,
-        H,
-    > RegisterOrUpdate<super::Node<N>, R, H> for unpinned::MaybeEventListener<F>
-{
-    fn register_or_update(
-        self: std::pin::Pin<&mut Self>,
-        element: &mut super::Node<N>,
-        _: &mut R,
-        event_type: impl Into<std::borrow::Cow<'static, str>>,
-        f: H,
-    ) {
-        let target: &web_sys::EventTarget = element.0.as_ref();
-        self.get_mut()
-            .register_or_update(target, event_type, f.into())
+impl<F, ET: ?Sized> Default for MaybeEventListenerOfType<F, ET> {
+    fn default() -> Self {
+        Self {
+            inner: Default::default(),
+            et: Default::default(),
+        }
     }
 }
 
@@ -139,16 +145,53 @@ impl<
         R: ?Sized,
         F: HandleEvent<web_sys::Event> + 'static + From<H>,
         H,
-    > RegisterOrUpdate<super::Node<N>, R, H> for MaybeEventListener<F>
+        ET: ?Sized + HasEventTypeName,
+    > EventListenerState<super::Node<N>, R, H> for MaybeEventListenerOfType<F, ET>
+{
+    type EventListenerStateUnpinned = unpinned::MaybeEventListenerOfType<F, ET>;
+}
+
+impl<
+        N: AsRef<web_sys::EventTarget>,
+        R: ?Sized,
+        F: HandleEvent<web_sys::Event> + 'static + From<H>,
+        H,
+        ET: ?Sized + HasEventTypeName,
+    > RegisterOrUpdate<super::Node<N>, R, H> for unpinned::MaybeEventListenerOfType<F, ET>
 {
     fn register_or_update(
         self: std::pin::Pin<&mut Self>,
         element: &mut super::Node<N>,
         _: &mut R,
-        event_type: impl Into<std::borrow::Cow<'static, str>>,
         f: H,
     ) {
         let target: &web_sys::EventTarget = element.0.as_ref();
-        MaybeEventListener::register_or_update(self, target, event_type, f.into())
+        self.get_mut()
+            .inner
+            .register_or_update(target, ET::EVENT_TYPE_NAME, f.into())
+    }
+}
+
+impl<
+        N: AsRef<web_sys::EventTarget>,
+        R: ?Sized,
+        F: HandleEvent<web_sys::Event> + 'static + From<H>,
+        H,
+        ET: ?Sized + HasEventTypeName,
+    > RegisterOrUpdate<super::Node<N>, R, H> for MaybeEventListenerOfType<F, ET>
+{
+    fn register_or_update(
+        self: std::pin::Pin<&mut Self>,
+        element: &mut super::Node<N>,
+        _: &mut R,
+        f: H,
+    ) {
+        let target: &web_sys::EventTarget = element.0.as_ref();
+        MaybeEventListener::register_or_update(
+            self.project().inner,
+            target,
+            ET::EVENT_TYPE_NAME,
+            f.into(),
+        )
     }
 }
