@@ -1,14 +1,47 @@
-pub use frender_events::web::HandleJsCastEvent;
-use frender_events::HasEventTypeName;
+use frender_events::web::JsCastEventType;
 
 use std::{borrow::Cow, marker::PhantomPinned, pin::Pin};
 
 use frender_csr::event_listener::{EventListenerState, HandleEvent, RegisterOrUpdate};
 
+mod handle_js_cast_event {
+    use frender_common::HandleEvent;
+    use frender_events::web::JsCastEventType;
+
+    use crate::event_types::EventType;
+
+    #[derive(Debug)]
+    pub(super) struct HandleJsCastEvent<ET: ?Sized, F: ?Sized> {
+        _e: std::marker::PhantomData<ET>,
+        f: F,
+    }
+
+    impl<ET: ?Sized, F> HandleJsCastEvent<ET, F> {
+        pub(super) fn new(f: F) -> Self {
+            Self {
+                _e: std::marker::PhantomData,
+                f,
+            }
+        }
+    }
+
+    impl<E: ?Sized + JsCastEventType + EventType, F: ?Sized + HandleEvent<E::Event>>
+        HandleEvent<web_sys::Event> for HandleJsCastEvent<E, F>
+    {
+        fn handle_event(&mut self, event: &web_sys::Event) {
+            use wasm_bindgen::JsCast;
+            // TODO: check event type
+            let event: &E::JsCastEvent = event.unchecked_ref();
+            self.f.handle_event(E::js_event_as_event(event))
+        }
+    }
+}
+
 pub mod unpinned {
     use std::{borrow::Cow, cell::RefCell, rc::Rc};
 
     use frender_csr::event_listener::HandleEvent;
+    use frender_events::web::JsCastEventType;
 
     /// An updatable EventListener.
     #[derive(Debug)]
@@ -71,18 +104,16 @@ pub mod unpinned {
     }
 
     #[derive(Debug)]
-    pub struct MaybeEventListenerOfType<F, ET: ?Sized + frender_events::HasEventTypeName> {
-        pub(super) inner: MaybeEventListener<F>,
-        et: std::marker::PhantomData<ET>,
+    pub struct MaybeEventListenerOfType<F, ET: ?Sized + JsCastEventType> {
+        pub(super) inner: MaybeEventListener<super::handle_js_cast_event::HandleJsCastEvent<ET, F>>,
     }
 
-    impl<F, ET: ?Sized + frender_events::HasEventTypeName> Unpin for MaybeEventListenerOfType<F, ET> {}
+    impl<F, ET: ?Sized + JsCastEventType> Unpin for MaybeEventListenerOfType<F, ET> {}
 
-    impl<F, ET: ?Sized + frender_events::HasEventTypeName> Default for MaybeEventListenerOfType<F, ET> {
+    impl<F, ET: ?Sized + JsCastEventType> Default for MaybeEventListenerOfType<F, ET> {
         fn default() -> Self {
             Self {
                 inner: Default::default(),
-                et: Default::default(),
             }
         }
     }
@@ -126,8 +157,7 @@ pin_project_lite::pin_project!(
     #[derive(Debug)]
     pub struct MaybeEventListenerOfType<F, ET: ?Sized> {
         #[pin]
-        inner: MaybeEventListener<F>,
-        et: std::marker::PhantomData<ET>,
+        inner: MaybeEventListener<handle_js_cast_event::HandleJsCastEvent<ET, F>>,
     }
 );
 
@@ -135,7 +165,6 @@ impl<F, ET: ?Sized> Default for MaybeEventListenerOfType<F, ET> {
     fn default() -> Self {
         Self {
             inner: Default::default(),
-            et: Default::default(),
         }
     }
 }
@@ -143,10 +172,9 @@ impl<F, ET: ?Sized> Default for MaybeEventListenerOfType<F, ET> {
 impl<
         N: AsRef<web_sys::EventTarget>,
         R: ?Sized,
-        F: HandleEvent<web_sys::Event> + 'static + From<H>,
-        H,
-        ET: ?Sized + HasEventTypeName,
-    > EventListenerState<super::Node<N>, R, H> for MaybeEventListenerOfType<F, ET>
+        F: HandleEvent<ET::Event> + 'static,
+        ET: ?Sized + JsCastEventType + 'static,
+    > EventListenerState<super::Node<N>, R, F> for MaybeEventListenerOfType<F, ET>
 {
     type EventListenerStateUnpinned = unpinned::MaybeEventListenerOfType<F, ET>;
 }
@@ -154,44 +182,44 @@ impl<
 impl<
         N: AsRef<web_sys::EventTarget>,
         R: ?Sized,
-        F: HandleEvent<web_sys::Event> + 'static + From<H>,
-        H,
-        ET: ?Sized + HasEventTypeName,
-    > RegisterOrUpdate<super::Node<N>, R, H> for unpinned::MaybeEventListenerOfType<F, ET>
+        F: HandleEvent<ET::Event> + 'static,
+        ET: ?Sized + JsCastEventType + 'static,
+    > RegisterOrUpdate<super::Node<N>, R, F> for unpinned::MaybeEventListenerOfType<F, ET>
 {
     fn register_or_update(
         self: std::pin::Pin<&mut Self>,
         element: &mut super::Node<N>,
         _: &mut R,
-        f: H,
+        f: F,
     ) {
         let target: &web_sys::EventTarget = element.0.as_ref();
-        self.get_mut()
-            .inner
-            .register_or_update(target, ET::EVENT_TYPE_NAME, f.into())
+        self.get_mut().inner.register_or_update(
+            target,
+            ET::EVENT_TYPE_NAME,
+            handle_js_cast_event::HandleJsCastEvent::new(f),
+        )
     }
 }
 
 impl<
         N: AsRef<web_sys::EventTarget>,
         R: ?Sized,
-        F: HandleEvent<web_sys::Event> + 'static + From<H>,
-        H,
-        ET: ?Sized + HasEventTypeName,
-    > RegisterOrUpdate<super::Node<N>, R, H> for MaybeEventListenerOfType<F, ET>
+        F: HandleEvent<ET::Event> + 'static,
+        ET: ?Sized + JsCastEventType + 'static,
+    > RegisterOrUpdate<super::Node<N>, R, F> for MaybeEventListenerOfType<F, ET>
 {
     fn register_or_update(
         self: std::pin::Pin<&mut Self>,
         element: &mut super::Node<N>,
         _: &mut R,
-        f: H,
+        f: F,
     ) {
         let target: &web_sys::EventTarget = element.0.as_ref();
         MaybeEventListener::register_or_update(
             self.project().inner,
             target,
             ET::EVENT_TYPE_NAME,
-            f.into(),
+            handle_js_cast_event::HandleJsCastEvent::new(f),
         )
     }
 }

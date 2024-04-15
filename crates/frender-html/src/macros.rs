@@ -102,7 +102,6 @@ macro_rules! define_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]);) => {
-        type $event_type_listener_ident<F: frender_dom::HandleEvent<dyn ::frender_dom::event::$event_trait_name> + 'static>: Default + frender_dom::EventListenerState<Self, Renderer, F>;
     };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
@@ -128,14 +127,6 @@ macro_rules! impl_behavior_fn {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
-        type $event_type_listener_ident<F: frender_dom::HandleEvent<dyn ::frender_dom::event::$event_trait_name> + 'static> =
-            frender_dom::csr::web::event_listener::MaybeEventListenerOfType<
-                frender_dom::csr::web::event_listener::HandleJsCastEvent<
-                    ::web_sys::$event_trait_name,
-                    frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent<F>,
-                >,
-                super::event_types::$fn_name,
-            >;
     };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
@@ -872,12 +863,21 @@ macro_rules! event_type {
             const EVENT_TYPE_NAME: &'static str = $event_type_name;
         }
 
-        // ::frender_dom::event_types::type_traits_impl::$event_trait_name! {
-        //     $fn_name,
-        //     $trait_name,
-        //     $event_type_ident,
-        //     $event_type_listener_ident
-        // }
+        #[cfg(feature = "web")]
+        impl ::frender_dom::csr::web::JsCastEventType for $fn_name {
+            type JsEventTarget = web_sys::$trait_name;
+            type JsCastEvent = web_sys::$event_trait_name;
+
+            fn js_event_as_event(event: &Self::JsCastEvent) -> &Self::Event {
+                frender_dom::csr::web::Event::new_from_ref(event)
+            }
+        }
+
+        ::frender_dom::event_types::type_traits_impl::$event_trait_name! {
+            $fn_name,
+            $trait_name,
+            $event_trait_name
+        }
     };
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
@@ -926,10 +926,9 @@ macro_rules! event_type_helper {
     ]); $trait_name:ident {$($path_to_mod_behaviors:tt)+}) => {
         pub mod $fn_name {
             pub use ::frender_dom::event::$event_trait_name as Event;
-            pub use ::frender_dom::event_types::helpers::$event_trait_name::HandleDynEvent;
 
-            pub type EventListenerOf<E, R, F> = <E as $($path_to_mod_behaviors)+::$trait_name<R>>::$event_type_listener_ident<F>;
-            pub type UnpinnedEventListenerOf<E, R, F> = <EventListenerOf<E, R, F> as frender_dom::EventListenerState<E, R, F>>::EventListenerStateUnpinned;
+            pub type EventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListener<F>;
+            pub type UnpinnedEventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListenerUnpinned<F>;
 
             pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
         }

@@ -1,3 +1,4 @@
+pub use event_listener::OnEvent;
 pub use frender_csr::{
     event_listener::{EventListenerState, HandleEvent, MaybeHandleEvent, RegisterOrUpdate},
     render_state, RenderState,
@@ -19,3 +20,5 @@ pub mod attr;
 pub mod special;
 
 pub mod node_ref;
+
+pub mod event_listener;

@@ -39,18 +39,13 @@ macro_rules! type_traits_impl {
     ) => {
         #[macro_export]
         macro_rules! $type_event {
-            ($for_ty:ty, $element_trait_name:ident, $_type_event:ident, $_type_event_listener:ident) => {
+            ($for_ty:ty, $element_trait_name:ident, $_type_event:ident) => {
                 $(
-                    $crate::event_types::type_traits_impl::$super_trait! { $for_ty, $element_trait_name, $_type_event, $_type_event_listener }
+                    $crate::event_types::type_traits_impl::$super_trait! { $for_ty, $element_trait_name, $_type_event }
                 )?
 
-                impl<E: ?Sized, R: ?Sized + crate::RenderHtml> $crate::event_types::type_traits::$type_event<E, R>
-                    for $for_ty
-                where
-                    E: crate::html::behaviors::$element_trait_name<R>,
-                {
-                    type $type_event = E::$_type_event;
-                    $(type $type_event_listener = E::$_type_event_listener;)?
+                impl $crate::event_types::type_traits::$type_event for $for_ty {
+                    type $type_event = dyn $crate::event::$_type_event;
                 }
             };
         }
@@ -82,11 +77,10 @@ macro_rules! define_trait_event_types {
             )*})?
         }
     ) => {
-        $vis trait $trait_event_type<E: ?Sized, R: ?Sized>
-            $(: crate::event_types::type_traits::$super_trait<E, R, $super_trait = Self::$type_event> )?
+        $vis trait $trait_event_type
+            $(: crate::event_types::type_traits::$super_trait<$super_trait = Self::$type_event> )?
         {
-            type $type_event: crate::event::$type_event;
-            $(type $type_event_listener;)?
+            type $type_event: ?Sized + crate::event::$type_event;
         }
 
         crate::expand! {
@@ -102,55 +96,6 @@ macro_rules! define_trait_event_types {
     };
 }
 
-macro_rules! helpers {
-    (
-        $(#[super_traits($super_trait:ident $(, $super_traits:ident)* $(,)?)])?
-        $vis:vis trait $trait_event_type:ident {
-            type $type_event:ident;
-            $(type $type_event_listener:ident;)?
-            $(fn sub_traits() {$(
-                $vis_sub_trait:vis trait $sub_trait_event_type:ident
-                $sub_trait_details:tt
-            )*})?
-        }
-    ) => {
-        #[allow(non_snake_case)]
-        pub mod $type_event {
-            pub struct HandleDynEvent<F>(pub F);
-
-            impl<
-                    E: crate::event::$type_event + 'static,
-                    F: frender_common::HandleEvent<dyn crate::event::$type_event>,
-                > frender_common::HandleEvent<E> for HandleDynEvent<F>
-            {
-                fn handle_event(&mut self, event: &E) {
-                    self.0.handle_event(event)
-                }
-            }
-
-            #[cfg(feature = "web")]
-            impl<F: frender_common::HandleEvent<dyn crate::event::$type_event>> From<F>
-                for crate::web::HandleJsCastEvent<::web_sys::$type_event, HandleDynEvent<F>>
-            {
-                fn from(f: F) -> Self {
-                    Self::from(HandleDynEvent(f))
-                }
-            }
-        }
-
-        crate::expand! {
-            while ($($({
-                $vis_sub_trait trait $sub_trait_event_type
-                $sub_trait_details
-            })*)?) {
-                prepend(#[super_traits($type_event $(, super_trait $(, $super_traits)*)?)])
-                wrap {}
-                prepend(helpers!)
-            }
-        }
-    };
-}
-
 macro_rules! define_event_types {
     ($($defs:tt)*) => {
         define_trait_event_types! { $($defs)* }
@@ -160,10 +105,6 @@ macro_rules! define_event_types {
         }
         pub mod type_traits_impl {
             type_traits_impl! { $($defs)* }
-        }
-
-        pub mod helpers {
-            helpers! { $($defs)* }
         }
     };
 }

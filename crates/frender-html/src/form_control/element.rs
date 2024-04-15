@@ -59,10 +59,9 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
         frender_dom::behaviors::HtmlElement::on_before_input_prevent_default(self, renderer)
     }
 
-    type OnValueChangeEventListener<F: HandleValue<str> + 'static> =
-        <<Self as crate::html::behaviors::HtmlElement<Renderer>>::OnInputEventListener<HandleEventTargetFormControlValue<F>> as frender_dom::EventListenerState<Self, Renderer, HandleEventTargetFormControlValue<F>>>::EventListenerStateUnpinned;
+    type OnValueChangeEventListener<F: HandleValue<str> + 'static> = crate::html::event_type_helpers::on_input::UnpinnedEventListenerOf<Self, Renderer, HandleEventTargetFormControlValue<F>>;
 
-    fn on_value_change<F: HandleValue<str> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, mut f: F) {
+    fn on_value_change<F: HandleValue<str> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, f: F) {
         frender_dom::RegisterOrUpdate::register_or_update(std::pin::Pin::new(state), self, renderer, HandleEventTargetFormControlValue(f))
     }
 }

@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-pub use frender_events::web::Event;
+pub use frender_events::web::{Event, JsCastEventType};
 
 use frender_common::try_behavior::TryBehavior;
 
@@ -45,6 +45,19 @@ impl TryBehavior for UnwrapThrow {
         use wasm_bindgen::UnwrapThrowExt;
         option.unwrap_throw()
     }
+}
+
+impl<
+        N: AsRef<ET::JsEventTarget> + AsRef<web_sys::EventTarget>,
+        Renderer: ?Sized,
+        ET: JsCastEventType + 'static,
+    > crate::OnEvent<Renderer, ET> for Node<N>
+{
+    type EventListener<F: frender_common::HandleEvent<ET::Event> + 'static> =
+        event_listener::MaybeEventListenerOfType<F, ET>;
+
+    type EventListenerUnpinned<F: frender_common::HandleEvent<ET::Event> + 'static> =
+        event_listener::unpinned::MaybeEventListenerOfType<F, ET>;
 }
 
 #[cfg(aaa)]
