@@ -391,7 +391,7 @@ pub mod element {
 }
 
 pub mod callback {
-    use frender_common::HandleEvent;
+    use frender_common::{HandleEvent, MaybeHandleEvent};
     use hooks::ShareValue;
 
     #[derive(Debug, Clone)]
@@ -404,9 +404,13 @@ pub mod callback {
     }
 
     impl<E: ?Sized, S: ShareValue<Value = bool>> HandleEvent<E> for Toggle<S> {
-        fn handle_event(&mut self, event: &E) {
+        fn handle_event(&mut self, _: &E) {
             self.0.map_mut(|v| *v = !*v)
         }
+    }
+
+    impl<E: ?Sized, S: ShareValue<Value = bool>> MaybeHandleEvent<E> for Toggle<S> {
+        type HandleEvent = Self;
     }
 }
 
