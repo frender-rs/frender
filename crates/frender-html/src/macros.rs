@@ -454,7 +454,10 @@ macro_rules! attributes {
                         $($($({$special_super_traits})+)?)?
                         $($({$special_inter_traits})*)?
                     ) {
-                        prepend( $vis use super::super:: )
+                        prepend(
+                            #[allow(unused_imports)]
+                            $vis use super::super::
+                        )
                         append( ::attributes::*; )
                     }
                 }
@@ -956,6 +959,7 @@ macro_rules! props_without_builders {
                         $($({$special_inter_traits})*)?
                     ) {
                         prepend(
+                            #[allow(unused_imports)]
                             pub use super::super::
                         )
                         append(
