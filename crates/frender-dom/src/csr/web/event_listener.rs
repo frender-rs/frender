@@ -34,6 +34,10 @@ mod handle_js_cast_event {
             let event: &E::JsCastEvent = event.unchecked_ref();
             self.f.handle_event(E::js_event_as_event(event))
         }
+
+        fn event_listener_options(&self) -> frender_common::EventListenerOptions {
+            self.f.event_listener_options()
+        }
     }
 }
 
@@ -59,15 +63,33 @@ pub mod unpinned {
             event_type: S,
             f: F,
         ) -> Self {
+            let options = f.event_listener_options();
             let f = Rc::new(RefCell::new(f));
+            let callback = {
+                let f = Rc::clone(&f);
+                move |event: &_| {
+                    let mut f = f.borrow_mut();
+                    f.handle_event(event)
+                }
+            };
             Self {
-                _event_listener: gloo_events::EventListener::new(target, event_type, {
-                    let f = Rc::clone(&f);
-                    move |event| {
-                        let mut f = f.borrow_mut();
-                        f.handle_event(event)
-                    }
-                }),
+                _event_listener: if options.is_default() {
+                    gloo_events::EventListener::new(target, event_type, callback)
+                } else {
+                    gloo_events::EventListener::new_with_options(
+                        target,
+                        event_type,
+                        gloo_events::EventListenerOptions {
+                            phase: if options.capture {
+                                gloo_events::EventListenerPhase::Capture
+                            } else {
+                                gloo_events::EventListenerPhase::Bubble
+                            },
+                            passive: options.passive,
+                        },
+                        callback,
+                    )
+                },
                 f,
             }
         }
