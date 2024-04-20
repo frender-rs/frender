@@ -103,5 +103,5 @@ web = [
     "dep:web-sys",
     "dep:wasm-bindgen",
 ]
-props_builders_not_expanded = []
+macros_not_expanded = []
 either = ["dep:either", "frender-ssr/either", "frender-dom/either"]

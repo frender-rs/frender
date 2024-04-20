@@ -8,21 +8,25 @@ use quote::ToTokens;
 
 mod utils;
 
+fn expand_and_write(src_root: &Path, mod_name: &str) -> io::Result<()> {
+    let items = utils::cargo_expand_html("frender-html", &format!("html::{mod_name}"))?;
+
+    write_mod_content_into_dir(
+        //
+        &src_root.join("html"),
+        mod_name,
+        vec![],
+        items,
+        0,
+    )
+}
+
 fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
     let src_root = workspace_root.join("crates/frender-html/src");
 
-    let code = utils::cargo_expand_html("frender-html", "html::props_builders")?;
-
-    assert!(code.shebang.is_none());
-
-    write_mod_content_into_dir(
-        &src_root.join("html"),
-        "props_builders",
-        code.attrs,
-        code.items,
-        1,
-    )?;
+    expand_and_write(&src_root, "props_builders")?;
+    expand_and_write(&src_root, "prelude_props_builders")?;
 
     // Ok(())
     // run twice

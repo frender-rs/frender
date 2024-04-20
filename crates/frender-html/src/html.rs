@@ -2,8 +2,11 @@ use frender_dom::{render::RenderTextFromKnown, OnEvent};
 
 use crate::impl_bounds::{DomTokens, MaybeContentEditable, SetRef};
 
-#[cfg(not(feature = "props_builders_not_expanded"))]
+#[cfg(not(feature = "macros_not_expanded"))]
 pub mod props_builders;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+pub mod prelude_props_builders;
 
 crate::def_intrinsic_component_props!(
     #[expand_html_traits]
@@ -44,10 +47,11 @@ crate::def_intrinsic_component_props!(
         pub mod components;
 
         #[props_builders]
-        #[cfg(feature = "props_builders_not_expanded")]
+        #[cfg(feature = "macros_not_expanded")]
         pub mod props_builders;
 
         #[prelude_props_builders]
+        #[cfg(feature = "macros_not_expanded")]
         pub mod prelude_props_builders {
             pub use crate::props_builder::prelude::*;
         }

@@ -11,14 +11,14 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<syn::File> {
+pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::Item>> {
     let output = std::process::Command::new("cargo")
         .arg("expand")
         .arg("-p")
         .arg(pkg_name)
         .arg(mod_path)
         .arg("--features")
-        .arg("props_builders_not_expanded")
+        .arg("macros_not_expanded")
         .output()?;
 
     if !output.status.success() {
@@ -32,7 +32,6 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<syn::File
 
     let output = output.stdout;
     let code = string_from_utf8(output)?;
-    let code = code.replace("pub(crate) use impl_props_builder_fns;", "");
     let syn::ItemMod {
         attrs: _,
         vis: _,
@@ -45,11 +44,7 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<syn::File
     assert!(semi.is_none());
     let (_, items) = content.unwrap();
 
-    Ok(syn::File {
-        shebang: None,
-        attrs: vec![],
-        items,
-    })
+    Ok(items)
 }
 
 pub fn locate_cargo_workspace_root() -> io::Result<PathBuf> {
