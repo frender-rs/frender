@@ -18,15 +18,19 @@ component_fn!(
 
         let state = state.get();
 
-        intrinsic!(
-            div[[
-                button.on_click(decrement).disabled(state == 0)[["-"]],
-                " ",
-                { state },
-                " ",
-                button.on_click(increment).disabled(state == u32::MAX)[["+"]]
-            ]]
-        )
+        cs::div.children((
+            cs::button
+                .on_click(decrement)
+                .disabled(state == 0)
+                .children("-"),
+            " ",
+            state,
+            " ",
+            cs::button
+                .on_click(increment)
+                .disabled(state == u32::MAX)
+                .children("+"),
+        ))
     }
 );
 
@@ -74,51 +78,57 @@ component_fn!(
             move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v)
         };
 
-        intrinsic!(
-            div[[
-                "Timer(initial_interval=",
-                { initial_interval },
-                "): ",
-                { state },
-                " ",
-                button.on_click(toggle_stopped).children(if stopped {
-                    " RESUME "
-                } else {
-                    "  STOP  "
-                }),
-            ]]
-        )
+        cs::div.children((
+            "Timer(initial_interval=",
+            initial_interval,
+            "): ",
+            state,
+            " ",
+            cs::button.on_click(toggle_stopped).children(if stopped {
+                " RESUME "
+            } else {
+                "  STOP  "
+            }),
+        ))
     }
 );
 
 #[allow(non_snake_case)]
 fn DivCode(code: impl Element, children: impl Element) -> impl Element {
-    intrinsic!(div[[code.children(code), { children }]])
+    cs::div.children((cs::code.children(code), { children }))
 }
 
 component_fn!(
     #[component(main)]
     fn Main() {
-        intrinsic!(
-            div.id("a").style(
+        cs::div
+            .id("a")
+            .style(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;
-"#
-            )[[
-                h1[[
+"#,
+            )
+            .children((
+                cs::h1.children((
                     "Counter & Timer (without proc-macro) - ",
-                    div[[a
-                        .href("https://github.com/frender-rs/frender")
-                        .target("_blank")[[b.children("f"), "render"]]]]
-                ]],
-                main.children((
+                    cs::div.children(
+                        cs::a
+                            .href("https://github.com/frender-rs/frender")
+                            .target("_blank")
+                            .children((
+                                //
+                                cs::b.children("f"),
+                                "render",
+                            )),
+                    ),
+                )),
+                cs::main.children((
                     DivCode("Counter(0)", Counter(0)),
                     DivCode("Counter(3)", Counter(3)),
                     DivCode("MyTimer(1000)", MyTimer(1000)),
                     DivCode("MyTimer(500)", MyTimer(500)),
-                ))
-            ]]
-        )
+                )),
+            ))
     }
 );

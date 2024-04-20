@@ -1,11 +1,11 @@
 pub trait IntoElementProps {
     type Children;
-    type Attrs;
+    type Attributes;
     type EventListeners;
 
     fn into_element_props(
         this: Self,
-    ) -> ElementProps<Self::Children, Self::Attrs, Self::EventListeners>;
+    ) -> ElementProps<Self::Children, Self::Attributes, Self::EventListeners>;
 }
 
 #[derive(Debug, Clone, Copy, Default)]

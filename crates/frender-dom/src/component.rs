@@ -40,7 +40,7 @@ where
     }
 }
 
-pub struct IntrinsicElement<C, P: IntoElementProps>(pub C, pub P);
+pub struct IntrinsicElement<C, P>(pub C, pub P);
 
 pub trait IntoSpaceAndHtmlAttributesOrEmpty {
     type SpaceAndHtmlAttributesOrEmpty: SpaceAndHtmlAttributesOrEmpty;
@@ -78,8 +78,8 @@ mod ssr {
 
     impl<C, P: IntoElementProps> SsrElement for super::IntrinsicElement<C, P>
     where
-        P::Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
-        C: SsrComponent<P::Attrs, P::Children>,
+        P::Attributes: IntoSpaceAndHtmlAttributesOrEmpty,
+        C: SsrComponent<P::Attributes, P::Children>,
     {
         type HtmlChildren = C::OneElement;
 

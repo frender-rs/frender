@@ -112,18 +112,18 @@ mod imp {
     impl<C: HasIntrinsicComponentTag + crate::html::behavior_type_traits::Element + CreateNode, P: IntoElementProps> Element for crate::dom::component::IntrinsicElement<C, P>
     where
         C: crate::CsrComponent<P::Children>,
-        P::Attrs: UpdateNodeNonReactive<C>,
+        P::Attributes: UpdateNodeNonReactive<C>,
         P::EventListeners: UpdateNodeNonReactivePinned<C> + UpdateNodeNonReactive<C>,
         // ssr bounds
-        P::Attrs: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
-        C: crate::dom::component::SsrComponent<P::Attrs, P::Children>,
+        P::Attributes: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
+        C: crate::dom::component::SsrComponent<P::Attributes, P::Children>,
     {
         type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
             C::Element<R>,
             ElementPropsState<
                 //
                 <C as crate::CsrComponent<P::Children>>::ChildrenRenderState<R>,
-                <P::Attrs as UpdateNodeNonReactive<C>>::State<R>,
+                <P::Attributes as UpdateNodeNonReactive<C>>::State<R>,
                 <P::EventListeners as UpdateNodeNonReactivePinned<C>>::StatePinned<R>,
             >,
         >;
@@ -156,7 +156,7 @@ mod imp {
                 renderer,
                 |element, renderer| {
                     let node = frender_common::convert::IntoMut::into_mut(element);
-                    <P::Attrs>::update_node_non_reactive(attributes, renderer, node, props_state.attrs_state);
+                    <P::Attributes>::update_node_non_reactive(attributes, renderer, node, props_state.attrs_state);
                     <P::EventListeners>::update_node_non_reactive_pinned(event_listeners, renderer, node, props_state.event_listeners);
                     <C as crate::CsrComponent<P::Children>>::children_render_update(children, element, renderer, props_state.children_render_state)
                 },
@@ -169,7 +169,7 @@ mod imp {
             ElementPropsState<
                 //
                 <C as crate::CsrComponent<P::Children>>::ChildrenUnpinnedRenderState<R>,
-                (<P::Attrs as UpdateNodeNonReactive<C>>::State<R>, <P::EventListeners as UpdateNodeNonReactive<C>>::State<R>),
+                (<P::Attributes as UpdateNodeNonReactive<C>>::State<R>, <P::EventListeners as UpdateNodeNonReactive<C>>::State<R>),
                 (),
             >,
         >;
@@ -196,7 +196,7 @@ mod imp {
                 |element, renderer| {
                     let (attrs_state, event_listeners_state) = &mut props_state.attrs_state;
                     let node = frender_common::convert::IntoMut::into_mut(element);
-                    <P::Attrs>::update_node_non_reactive(attributes, renderer, node, attrs_state);
+                    <P::Attributes>::update_node_non_reactive(attributes, renderer, node, attrs_state);
                     <P::EventListeners>::update_node_non_reactive(event_listeners, renderer, node, event_listeners_state);
                     <C as crate::CsrComponent<P::Children>>::children_unpinned_render_update(children, element, renderer, &mut props_state.children_render_state)
                 },

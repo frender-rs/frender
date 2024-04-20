@@ -3,18 +3,26 @@ use frender::prelude::*;
 component_fn!(
     #[component(ssr_only)]
     fn Main(main_id: &str) -> impl Element + '_ {
-        intrinsic!(
-            div.class("main").id(main_id).style(
+        cs::div
+            .class("main")
+            .id(main_id)
+            .style(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;
-"#
-            )[[h1[[
-                "Ssr to String - ",
-                i[[a.href("https://github.com/frender-rs/frender")
-                    .target("_blank")[[b.children("f"), "render"]]]],
-            ]]]]
-        )
+"#,
+            )
+            .children(
+                cs::h1.children((
+                    "Ssr to String - ",
+                    cs::i.children(
+                        cs::a
+                            .href("https://github.com/frender-rs/frender")
+                            .target("_blank")
+                            .children((cs::b.children("f"), "render")),
+                    ),
+                )),
+            )
     }
 );
 

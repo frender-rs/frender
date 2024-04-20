@@ -4,8 +4,6 @@ pub use debug::*;
 #[cfg(feature = "hooks")]
 pub mod hooks_ext;
 
-mod element_macros;
-
 pub mod elements;
 pub mod omitted;
 
@@ -61,12 +59,14 @@ pub mod prelude {
 
     pub use frender_common::{Elements, Keyed};
 
-    pub use crate::{elements, intrinsic};
+    pub use crate::elements;
 
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components")]
-    pub use frender_html::html::components as intrinsic_components;
+    pub use frender_html::html::{components as intrinsic_components, prelude_props_builders::*};
+    #[cfg(feature = "html-components")]
+    pub use intrinsic_components as cs;
 
     #[cfg(feature = "hooks")]
     pub use crate::hooks_ext::ShareValueExt;
@@ -96,4 +96,19 @@ pub mod __private {
     pub use frender_hook_element;
 
     pub use frender_macros::rsx as impl_rsx;
+}
+
+#[macro_export]
+macro_rules! elements {
+    ($t0:expr, $t1:expr, $t2:expr, $t3:expr, $t4:expr, $t5:expr, $t6:expr, $t7:expr, $t8:expr, $t9:expr, $t10:expr, $t11:expr, $($t:tt)+) => {
+        (
+            (
+                $t0, $t1, $t2, $t3, $t4, $t5, $t6, $t7, $t8, $t9, $t10, $t11,
+            ),
+            $crate::elements! { $($t)+ },
+        )
+    };
+    ($($t0:expr),+ $(,)?)=>{
+        ($($t0,)+)
+    };
 }

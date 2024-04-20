@@ -41,7 +41,8 @@ fn script_danger() {
     // TODO(encode_script): THIS IS WRONG!
     assert_eq!(
         block_on(
-            intrinsic!(script[[{ Some(ScriptInnerTextWronglyEncoded("1</script/")) }]])
+            cs::script
+                .children(Some(ScriptInnerTextWronglyEncoded("1</script/")))
                 .render_to_string()
         ),
         "<script>1</script/</script>"

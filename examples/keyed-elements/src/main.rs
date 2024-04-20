@@ -73,31 +73,39 @@ impl Data {
 fn Main() {
     let data = hooks::use_shared_state_with(Data::new);
 
-    intrinsic!(
-        div[[
-            button.on_click({
-                let data = data.clone();
-                move |_: &_| data.map_mut(Data::prepend)
-            })[["Prepend"]],
-            button.on_click({
-                let data = data.clone();
-                move |_: &_| data.map_mut(Data::append)
-            })[["Append"]],
-            button.on_click({
-                let data = data.clone();
-                move |_: &_| data.map_mut(Data::clear)
-            })[["Clear"]],
-            button.on_click({
-                let data = data.clone();
-                move |_: &_| data.map_mut(Data::swap)
-            })[["Swap"]],
-        ]],
-        pre[[
-            code[["Item count = ", { data.map(|data| data.items.len()) }]],
+    (
+        cs::div.children((
+            cs::button
+                .on_click({
+                    let data = data.clone();
+                    move |_: &_| data.map_mut(Data::prepend)
+                })
+                .children("Prepend"),
+            cs::button
+                .on_click({
+                    let data = data.clone();
+                    move |_: &_| data.map_mut(Data::append)
+                })
+                .children("Append"),
+            cs::button
+                .on_click({
+                    let data = data.clone();
+                    move |_: &_| data.map_mut(Data::clear)
+                })
+                .children("Clear"),
+            cs::button
+                .on_click({
+                    let data = data.clone();
+                    move |_: &_| data.map_mut(Data::swap)
+                })
+                .children("Swap"),
+        )),
+        cs::pre.children((
+            cs::code.children(("Item count = ", { data.map(|data| data.items.len()) })),
             "\n",
-            code[["Next Index = ", { data.map(|data| data.cur) }]],
+            cs::code.children(("Next Index = ", { data.map(|data| data.cur) })),
             "\n",
-            code[[{
+            cs::code.children({
                 data.map(|data| {
                     data.selected_index
                         .map_or(Either::Left("No Selection"), |idx| {
@@ -110,11 +118,14 @@ fn Main() {
                             ))
                         })
                 })
-            }]],
-        ]],
-        table[[tbody[[
-            //
-            tr[[th[["Index"]], th[["Value"]], th[["Actions"]]]],
+            }),
+        )),
+        cs::table.children(cs::tbody.children((
+            cs::tr.children((
+                cs::th.children("Index"),
+                cs::th.children("Value"),
+                cs::th.children("Actions"),
+            )),
             {
                 data.map(
                     |Data {
@@ -130,51 +141,53 @@ fn Main() {
 
                                 Keyed(
                                     value,
-                                    intrinsic!(
-                                        tr.style(if selected {
+                                    cs::tr
+                                        .style(if selected {
                                             Some("outline: outset 1px orange")
                                         } else {
                                             None
-                                        })[[
-                                            td[[{ idx }]],
-                                            td[[{ value }]],
-                                            td[[
-                                                //
-                                                button.on_click({
-                                                    let data = data.clone();
-                                                    move |_: &_| {
-                                                        data.map_mut(|data| {
-                                                            if data.selected_index == Some(idx) {
-                                                                data.selected_index = None
-                                                            } else {
-                                                                data.selected_index = Some(idx)
-                                                            }
-                                                        })
-                                                    }
-                                                })[[{
-                                                    if selected {
+                                        })
+                                        .children((
+                                            cs::td.children(idx),
+                                            cs::td.children(value),
+                                            cs::td.children((
+                                                cs::button
+                                                    .on_click({
+                                                        let data = data.clone();
+                                                        move |_: &_| {
+                                                            data.map_mut(|data| {
+                                                                if data.selected_index == Some(idx)
+                                                                {
+                                                                    data.selected_index = None
+                                                                } else {
+                                                                    data.selected_index = Some(idx)
+                                                                }
+                                                            })
+                                                        }
+                                                    })
+                                                    .children(if selected {
                                                         "Unselect"
                                                     } else {
                                                         "Select"
-                                                    }
-                                                }]],
-                                                button.on_click({
-                                                    let data = data.clone();
-                                                    move |_: &_| {
-                                                        data.map_mut(|data: &mut Data| {
-                                                            data.remove(idx)
-                                                        })
-                                                    }
-                                                })[["Remove"]],
-                                            ]],
-                                        ]]
-                                    ),
+                                                    }),
+                                                cs::button
+                                                    .on_click({
+                                                        let data = data.clone();
+                                                        move |_: &_| {
+                                                            data.map_mut(|data: &mut Data| {
+                                                                data.remove(idx)
+                                                            })
+                                                        }
+                                                    })
+                                                    .children("Remove"),
+                                            )),
+                                        )),
                                 )
                             })
                             .collect::<Vec<_>>()
                     },
                 )
             },
-        ]]]],
+        ))),
     )
 }

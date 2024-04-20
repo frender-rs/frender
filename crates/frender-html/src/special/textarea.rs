@@ -4,12 +4,14 @@ mod props_builder {
     use crate::form_control::value::FormControlValue;
 
     use crate::html::props::HtmlTextAreaElement;
+    use crate::props_builder::PropsBuilderWithValue;
 
-    impl<Attrs> HtmlTextAreaElement::Building<(), Attrs> {
+    impl<V: FormControlValue<str> + IntoOneStringOrEmpty, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<(), Attrs, EL> {
+        type WithValue = HtmlTextAreaElement<V, Attrs, EL>;
+
         /// Alias for [`Self::children`]
-        pub fn value<Children: FormControlValue<str> + IntoOneStringOrEmpty>(self, value: Children) -> HtmlTextAreaElement::Building<Children, Attrs> {
-            use HtmlTextAreaElement::prelude::*;
-
+        fn value(self, value: V) -> HtmlTextAreaElement<V, Attrs, EL> {
+            use crate::props_builder::PropsBuilderWithChildren;
             self.children(value)
         }
     }

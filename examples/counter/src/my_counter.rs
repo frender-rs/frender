@@ -1,59 +1,52 @@
 use frender::prelude::*;
-use hooks::{shared_state::SharedState, ShareValue};
+use hooks::ShareValue;
 
-pub struct MyCounterProps {
+pub struct MyCounter {
     pub initial_value: Option<u32>,
 }
 
-impl MyCounterProps {
+impl MyCounter {
     pub fn initial_value(mut self, v: impl Into<Option<u32>>) -> Self {
         self.initial_value = v.into();
         self
     }
 }
 
-#[allow(non_snake_case)]
-pub mod MyCounter {
-    pub mod prelude {}
+#[allow(non_upper_case_globals)]
+pub const MyCounter: MyCounter = MyCounter {
+    initial_value: None,
+};
 
-    pub use super::MyCounterImpl as build_element;
-}
+impl MyCounter {
+    #[component]
+    pub fn into_element(self) {
+        let initial_value: u32 = self.initial_value.unwrap_or(0);
+        let shared_state = hooks::use_shared_state(initial_value);
 
-#[allow(non_snake_case)]
-pub fn MyCounter() -> MyCounterProps {
-    MyCounterProps {
-        initial_value: None,
+        let on_increment = {
+            let shared_state = shared_state.clone();
+            move |_: &_| _ = shared_state.replace_with(|v| *v + 1)
+        };
+
+        let on_decrement = {
+            let shared_state = shared_state.clone();
+            move |_: &_| _ = shared_state.replace_with(|v| *v - 1)
+        };
+
+        let state = shared_state.get();
+
+        rsx!(
+            <div>
+                <button on_click={on_decrement} disabled={state == 0}>
+                    " - "
+                </button>
+                " "
+                {state}
+                " "
+                <button on_click={on_increment} disabled={state == u32::MAX}>
+                    " + "
+                </button>
+            </div>
+        )
     }
-}
-
-#[component]
-pub fn MyCounterImpl(props: MyCounterProps) {
-    let initial_value: u32 = props.initial_value.unwrap_or(0);
-    let shared_state = hooks::use_shared_state(initial_value);
-
-    let on_increment = {
-        let shared_state = shared_state.clone();
-        move |_: &_| _ = shared_state.replace_with(|v| *v + 1)
-    };
-
-    let on_decrement = {
-        let shared_state = shared_state.clone();
-        move |_: &_| _ = shared_state.replace_with(|v| *v - 1)
-    };
-
-    let state = shared_state.get();
-
-    rsx!(
-        <div>
-            <button on_click={on_decrement} disabled={state == 0}>
-                " - "
-            </button>
-            " "
-            {state}
-            " "
-            <button on_click={on_increment} disabled={state == u32::MAX}>
-                " + "
-            </button>
-        </div>
-    )
 }

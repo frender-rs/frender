@@ -1,82 +1,76 @@
 use frender::prelude::*;
 
-pub struct MyTimerProps {
+pub struct MyTimer {
     pub initial_interval: u32,
 }
 
-impl MyTimerProps {
+impl MyTimer {
     pub fn initial_interval(mut self, v: u32) -> Self {
         self.initial_interval = v;
         self
     }
 }
 
-#[allow(non_snake_case)]
-pub mod MyTimer {
-    pub mod prelude {}
+#[allow(non_upper_case_globals)]
+pub const MyTimer: MyTimer = MyTimer {
+    initial_interval: 0,
+};
 
-    pub use super::MyTimerImpl as build_element;
-}
+impl MyTimer {
+    #[component]
+    pub fn into_element(self) {
+        // store the initial_interval value,
+        // so that the value never changes in the component life.
+        let ref_initial_interval = hooks::use_mut_default::<Option<u32>>();
+        let mut initial_interval = *ref_initial_interval.get_or_insert(self.initial_interval);
+        if initial_interval == 0 {
+            initial_interval = 1000;
+        }
 
-#[allow(non_snake_case)]
-pub fn MyTimer() -> MyTimerProps {
-    MyTimerProps {
-        initial_interval: 0,
-    }
-}
+        let (state, state_updater) = hooks::use_state(0usize);
+        let (stopped, stopped_setter) = hooks::use_state(false);
 
-#[component]
-pub fn MyTimerImpl(props: MyTimerProps) {
-    // store the initial_interval value,
-    // so that the value never changes in the component life.
-    let ref_initial_interval = hooks::use_mut_default::<Option<u32>>();
-    let mut initial_interval = *ref_initial_interval.get_or_insert(props.initial_interval);
-    if initial_interval == 0 {
-        initial_interval = 1000;
-    }
+        let stopped = *stopped;
 
-    let (state, state_updater) = hooks::use_state(0usize);
-    let (stopped, stopped_setter) = hooks::use_state(false);
+        let state_updater = state_updater.clone();
 
-    let stopped = *stopped;
+        hooks::use_effect(
+            move |stopped: &_| {
+                let stopped = *stopped;
+                gloo::console::log!(format!(
+                    "Timer(initial_interval={initial_interval}) stopped changed to {stopped}"
+                ));
+                if stopped {
+                    None
+                } else {
+                    let interval =
+                        gloo::timers::callback::Interval::new(initial_interval, move || {
+                            state_updater.replace_with_fn_pointer(|v| v.overflowing_add(1).0)
+                        });
 
-    let state_updater = state_updater.clone();
+                    // return a cleanup function which will clear the interval
+                    Some(move || drop(interval))
+                }
+            },
+            stopped,
+        );
 
-    hooks::use_effect(
-        move |stopped: &_| {
-            let stopped = *stopped;
-            gloo::console::log!(format!(
-                "Timer(initial_interval={initial_interval}) stopped changed to {stopped}"
-            ));
-            if stopped {
-                None
-            } else {
-                let interval = gloo::timers::callback::Interval::new(initial_interval, move || {
-                    state_updater.replace_with_fn_pointer(|v| v.overflowing_add(1).0)
-                });
-
-                // return a cleanup function which will clear the interval
-                Some(move || drop(interval))
-            }
-        },
-        stopped,
-    );
-
-    let state = *state;
-    let stopped_setter = stopped_setter.clone();
-    let toggle_stopped = {
+        let state = *state;
         let stopped_setter = stopped_setter.clone();
-        move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v)
-    };
+        let toggle_stopped = {
+            let stopped_setter = stopped_setter.clone();
+            move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v)
+        };
 
-    rsx!(
-        <div>
-            "Timer(initial_interval="{initial_interval}"): "
-            {state}
-            " "
-            <button on_click={toggle_stopped}>
-                {if stopped { " RESUME " } else { "  STOP  " }}
-            </button>
-        </div>
-    )
+        rsx!(
+            <div>
+                "Timer(initial_interval="{initial_interval}"): "
+                {state}
+                " "
+                <button on_click={toggle_stopped}>
+                    {if stopped { " RESUME " } else { "  STOP  " }}
+                </button>
+            </div>
+        )
+    }
 }

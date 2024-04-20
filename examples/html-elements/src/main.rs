@@ -6,36 +6,33 @@ use frender::{
 use hooks::ShareValue;
 
 fn input() -> impl Element {
-    intrinsic!(
-        div[[
-            //
-            code[[r##"input.type_("text")"##]],
-            input.type_("text"),
-        ]],
-    )
+    cs::div.children((
+        cs::code.children(r##"input.type_("text")"##),
+        cs::input.type_("text"),
+    ))
 }
 
 fn script() -> impl Element {
-    intrinsic!(
-        div[[
-            code[["1</script/"]],
+    (
+        cs::div.children((
+            cs::code.children("1</script/"),
             " is ",
-            span.id("my_script_result")[["running..."]]
-        ]],
-        script[[{
-            ScriptInnerTextWronglyEncoded(
-                "document.getElementById('my_script_result').innerText = String(1</script/)",
-            )
-        }]],
+            cs::span.id("my_script_result").children("running..."),
+        )),
+        cs::script.children(ScriptInnerTextWronglyEncoded(
+            "document.getElementById('my_script_result').innerText = String(1</script/)",
+        )),
     )
 }
 
 fn style() -> impl Element {
-    intrinsic!(
-        div[[div.id("my_styled_div")[["Style"]]]],
-        style[[r#"#my_styled_div {
+    (
+        cs::div.children(cs::div.id("my_styled_div").children("Style")),
+        cs::style.children(
+            r#"#my_styled_div {
 color: blue;
-}"#]],
+}"#,
+        ),
     )
 }
 
@@ -43,28 +40,30 @@ color: blue;
 fn textarea() {
     let state_text = hooks::use_shared_state_eq_with(|| "default value".to_string());
 
-    intrinsic!(
+    elements!(
         "One way binding (thus readonly)",
-        textarea.value(OneWayBinding(state_text.get_cloned())),
+        cs::textarea.value(OneWayBinding(state_text.get_cloned())),
         "Controlled with a callback",
-        textarea.value(Controlled(state_text.get_cloned(), {
+        cs::textarea.value(Controlled(state_text.get_cloned(), {
             let state_text = state_text.clone();
             move |v| state_text.set(v)
-        },)),
+        })),
         "Controlled with a shared state",
-        textarea.value(state_text.clone().into_controlled()),
+        cs::textarea.value(state_text.clone().into_controlled()),
         "Uncontrolled",
-        textarea,
+        cs::textarea,
         "Uncontrolled with default value",
-        textarea.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
+        cs::textarea.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
         "Uncontrolled, but update state on input",
-        textarea.on_input(state_text.to_set_form_control_value()),
+        cs::textarea.on_input(state_text.to_set_form_control_value()),
         "Uncontrolled, but update state on change",
-        textarea.on_change(state_text.to_set_form_control_value()),
-        button.on_click({
-            let state_text = state_text.clone();
-            move |_: &_| state_text.set(current_date_string().into())
-        })[["Set state to current date string"]],
+        cs::textarea.on_change(state_text.to_set_form_control_value()),
+        cs::button
+            .on_click({
+                let state_text = state_text.clone();
+                move |_: &_| state_text.set(current_date_string().into())
+            })
+            .children("Set state to current date string"),
     )
 }
 

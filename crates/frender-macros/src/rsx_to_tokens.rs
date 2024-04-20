@@ -2,7 +2,8 @@ use crate::err::RecordError;
 
 use super::rsx_data::*;
 
-use quote::{quote_spanned, ToTokens};
+use quote::{quote_spanned, ToTokens, TokenStreamExt};
+use syn::spanned::Spanned;
 
 impl ToTokens for LitOrBraced {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
@@ -58,11 +59,14 @@ impl RsxElement {
                     .unwrap_or_else(|| quote_spanned!(start_gt_span=> ()))
             }
             RsxComponentType::Path(mut component_path) => {
+                let mut is_custom_component = true;
+
                 if component_path
                     .get_ident()
                     .map_or(false, ident_is_intrinsic_component)
                 {
                     assert!(component_path.leading_colon.is_none());
+                    is_custom_component = false;
                     component_path.segments.insert(
                         0,
                         syn::PathSegment::from(syn::Ident::new(
@@ -72,13 +76,26 @@ impl RsxElement {
                     );
                 }
 
-                PureRsxElement {
+                let into_element = is_custom_component.then(|| {
+                    let span = component_path
+                        .segments
+                        .last()
+                        .map_or(start_lt.span, |path| path.span());
+
+                    quote_spanned!(span => .into_element())
+                });
+
+                let mut ts = PureRsxElement {
                     start_lt,
                     component_path,
                     props,
                     children,
                 }
-                .into_ts(crate_path, errors)
+                .into_ts(crate_path, errors);
+
+                ts.append_all(into_element);
+
+                ts
             }
         };
 
@@ -135,16 +152,12 @@ impl PureRsxElement {
             }
         });
 
-        quote_spanned! { start_lt.span => {
-            #[allow(unused_imports)]
-            use #component_path::prelude::*;
-            #component_path::build_element(
-                // base expr
-                #component_path()
+        quote_spanned! { start_lt.span =>
+            // TODO: prelude props builders?
+            #component_path
                 #props_chain
                 #props_children
-            )
-        }}
+        }
     }
 }
 

@@ -47,6 +47,11 @@ crate::def_intrinsic_component_props!(
         #[cfg(feature = "props_builders_not_expanded")]
         pub mod props_builders;
 
+        #[prelude_props_builders]
+        pub mod prelude_props_builders {
+            pub use crate::props_builder::prelude::*;
+        }
+
         #[RenderHtml]
         pub trait RenderHtml {
             additional_bounds!(dyn RenderTextFromKnown<Self::Text>);
