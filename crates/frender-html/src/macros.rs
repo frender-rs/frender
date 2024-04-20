@@ -786,10 +786,6 @@ macro_rules! define_item_and_traverse_traits {
 #[macro_export]
 macro_rules! def_intrinsic_component_props {
     (
-        #[expand_html_traits]
-        $(#$expand_html_traits_attrs:tt)*
-        $vis_expand_html_traits:vis use $expand_html_traits:ident;
-
         mod items {$(
             #[$item_macro:ident]
             $(# $item_attrs:tt)*

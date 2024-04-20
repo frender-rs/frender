@@ -9,10 +9,6 @@ pub mod props_builders;
 pub mod prelude_props_builders;
 
 crate::def_intrinsic_component_props!(
-    #[expand_html_traits]
-    // #[macro_export]
-    pub(crate) use __impl_expand_html_traits;
-
     mod items {
         #[behaviors]
         pub mod behaviors {
