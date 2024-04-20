@@ -979,6 +979,15 @@ macro_rules! define_props {
             pub props: $crate::dom::component::ElementProps<Children, Attrs, EL>,
         }
 
+        #[allow(non_upper_case_globals)]
+        $vis const $trait_name: $trait_name<(), (), ()> = $trait_name {
+            props: $crate::dom::component::ElementProps {
+                children: (),
+                attributes: (),
+                event_listeners: (),
+            }
+        };
+
         impl<Children, Attrs, EL> $crate::dom::component::IntoElementProps for $trait_name<Children, Attrs, EL> {
             type Children = Children;
             type Attributes = Attrs;
@@ -995,14 +1004,35 @@ macro_rules! define_props {
             type EventListeners = EL;
         }
 
-        #[allow(non_upper_case_globals)]
-        $vis const $trait_name: $trait_name<(), (), ()> = $trait_name {
-            props: $crate::dom::component::ElementProps {
-                children: (),
-                attributes: (),
-                event_listeners: (),
+        impl<
+            Children,
+            Attributes,
+            ELS,
+        > crate::props_builder::PropsBuilderAppendAnySupportedAttributes
+            for $trait_name<Children, Attributes, ELS>
+        {
+            type AppendAttributes<A> = $trait_name<Children, (Attributes, A), ELS>;
+            fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
+                $trait_name {
+                    props: this.props.chain_prop(attributes),
+                }
             }
-        };
+        }
+
+        impl<
+            Children,
+            Attributes,
+            ELS,
+        > crate::props_builder::PropsBuilderAppendEventListeners
+            for $trait_name<Children, Attributes, ELS>
+        {
+            type AppendEventListeners<EL> = $trait_name<Children, Attributes, (ELS, EL)>;
+            fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
+                $trait_name {
+                    props: this.props.chain_event_listener(el),
+                }
+            }
+        }
     };
     ($($vis:vis mod $trait_name:ident $body_or_semi:tt)+) => {
         $($crate::define_props! { $vis mod $trait_name $body_or_semi })+
@@ -1204,36 +1234,6 @@ macro_rules! define_props_builders {
             wrap {}
             prepend( $crate::impl_children! )
         }}
-
-        impl<
-            Children,
-            Attributes,
-            ELS,
-        > crate::props_builder::PropsBuilderAppendAnySupportedAttributes
-            for super::props::$trait_name<Children, Attributes, ELS>
-        {
-            type AppendAttributes<A> = super::props::$trait_name<Children, (Attributes, A), ELS>;
-            fn append_attributes<A>(this: Self, attributes: A) -> Self::AppendAttributes<A> {
-                super::props::$trait_name {
-                    props: this.props.chain_prop(attributes),
-                }
-            }
-        }
-
-        impl<
-            Children,
-            Attributes,
-            ELS,
-        > crate::props_builder::PropsBuilderAppendEventListeners
-            for super::props::$trait_name<Children, Attributes, ELS>
-        {
-            type AppendEventListeners<EL> = super::props::$trait_name<Children, Attributes, (ELS, EL)>;
-            fn append_event_listeners<EL>(this: Self, el: EL) -> Self::AppendEventListeners<EL> {
-                super::props::$trait_name {
-                    props: this.props.chain_event_listener(el),
-                }
-            }
-        }
     };
 }
 
