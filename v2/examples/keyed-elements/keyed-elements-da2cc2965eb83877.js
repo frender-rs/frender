@@ -81,7 +81,7 @@ function addBorrowedObject(obj) {
 }
 function __wbg_adapter_16(arg0, arg1, arg2) {
     try {
-        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__h8febd55d8e6418dc(arg0, arg1, addBorrowedObject(arg2));
+        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__h0e49c821269e7bc1(arg0, arg1, addBorrowedObject(arg2));
     } finally {
         heap[stack_pointer++] = undefined;
     }
@@ -606,7 +606,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('keyed-elements-88b28c09db8aa38b_bg.wasm', import.meta.url);
+        input = new URL('keyed-elements-da2cc2965eb83877_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
