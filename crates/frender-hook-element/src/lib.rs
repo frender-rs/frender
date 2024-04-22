@@ -98,6 +98,8 @@ macro_rules! __impl_component_fn_options_parsed {
                 impl $crate ::component_fn_options $(::$ctxs)* ::Element
             ]
         {
+            $($inner_attrs)*
+
             {
                 #[allow(unused_imports)]
                 use $crate ::component_fn_options $(::$ctxs)*::Element as _;
@@ -105,8 +107,6 @@ macro_rules! __impl_component_fn_options_parsed {
 
             #[allow(unused_imports)]
             use $crate::__private::hooks_core::prelude_h::*;
-
-            $($inner_attrs)*
 
             $crate::new_fn_hook_element(
                 $crate::__private::transform_hook_fn_body_as_closure! {
