@@ -15,6 +15,6 @@ pub use event::*;
 pub mod convert;
 pub mod try_behavior;
 
-#[doc(hidden)]
-/// This is only for inner usage of frender
-pub mod utils;
+pub mod utils {
+    pub use frender_pin_utils::*;
+}

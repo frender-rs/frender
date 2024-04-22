@@ -12,7 +12,7 @@ pub mod never;
 pub mod option;
 
 pub mod __private {
-    pub use frender_common::{expand, ready_none};
+    pub use frender_macro_rules::{expand, ready_none};
     pub use pin_project_lite::pin_project;
 }
 
@@ -45,11 +45,11 @@ where
     P::Target: AsyncStrIterator,
 {
     fn poll_next_str(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Option<&str>> {
-        P::Target::poll_next_str(frender_common::utils::pin_as_deref_mut(self), cx)
+        P::Target::poll_next_str(frender_pin_utils::pin_as_deref_mut(self), cx)
     }
 }
 
-frender_common::impl_many!(
+frender_macro_rules::impl_many!(
     impl<__> IntoAsyncStrIterator
         for each_of![
             String,

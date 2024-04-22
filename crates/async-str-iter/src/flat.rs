@@ -42,7 +42,7 @@ where
                 *this.current_is_over = false;
                 this.current.set(Some(v.into_async_str_iterator()));
 
-                let () = frender_common::ready_none!(this
+                let () = frender_macro_rules::ready_none!(this
                     .current
                     .as_pin_mut()
                     .unwrap()
@@ -56,8 +56,11 @@ where
                 Poll::Ready(None)
             }
         } else {
-            let () =
-                frender_common::ready_none!(this.current.as_pin_mut().unwrap().poll_next_str(cx));
+            let () = frender_macro_rules::ready_none!(this
+                .current
+                .as_pin_mut()
+                .unwrap()
+                .poll_next_str(cx));
             // this.current.set(None);
             *this.current_is_over = true;
             Poll::Ready(Some(""))

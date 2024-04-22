@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
+frender-pin-utils = { version = "0.1.0", path = "../frender-pin-utils" }

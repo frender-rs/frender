@@ -165,7 +165,8 @@ name = "async-str-iter"
 version = "0.1.0"
 dependencies = [
  "either",
- "frender-common",
+ "frender-macro-rules",
+ "frender-pin-utils",
  "futures-lite 2.2.0",
  "pin-project-lite",
 ]
@@ -874,6 +875,7 @@ name = "frender-common"
 version = "0.1.0"
 dependencies = [
  "frender-macro-rules",
+ "frender-pin-utils",
 ]
 
 [[package]]
@@ -1025,6 +1027,10 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
+
+[[package]]
+name = "frender-pin-utils"
+version = "0.1.0"
 
 [[package]]
 name = "frender-ssr"
