@@ -33,14 +33,13 @@ pub fn transform_item_fn(
     errors: &mut Vec<darling::Error>,
     frender_path: &syn::Path,
     ssr_only: darling::util::Flag,
-    use_fn_once: darling::util::Flag,
 ) {
     transform_item_fn_with(
+        //
         item_fn,
         errors,
         frender_path,
         ssr_only,
-        use_fn_once,
         |_, _| None,
     )
 }
@@ -50,7 +49,6 @@ pub fn transform_item_fn_with(
     errors: &mut Vec<darling::Error>,
     frender_path: &syn::Path,
     ssr_only: darling::util::Flag,
-    use_fn_once: darling::util::Flag,
     before_stmts: impl FnOnce(
         &mut syn::ItemFn,
         &mut Vec<darling::Error>,
@@ -108,15 +106,8 @@ pub fn transform_item_fn_with(
     } = hooks_macro_core::detected_hooks_to_tokens(detected_hooks.hooks, hooks_core_path, span);
     // TODO: link #[not_hook]
 
-    let method_name;
-    let method_span;
-    if use_fn_once.is_present() {
-        method_span = use_fn_once.span();
-        method_name = "FnOnceOutputElement";
-    } else {
-        method_span = span;
-        method_name = "new_fn_hook_element";
-    };
+    let method_span = span;
+    let method_name = "new_fn_hook_element";
 
     let method_name = proc_macro2::Ident::new(method_name, method_span);
 

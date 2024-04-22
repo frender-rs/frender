@@ -19,7 +19,6 @@ impl ComponentDefinition {
                     main,
                     ssr_only,
                     frender_path,
-                    use_fn_once,
                 },
             mut item_fn,
         } = self;
@@ -49,11 +48,11 @@ impl ComponentDefinition {
 
         let mut tokens = {
             transform_item_fn(
+                //
                 &mut item_fn,
                 &mut errors,
                 &frender_path,
                 ssr_only,
-                use_fn_once,
             );
 
             quote!(
