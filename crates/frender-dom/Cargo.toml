@@ -6,15 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gloo = { version = "0.8.0", optional = true }
-html-escape = { version = "0.2.13", optional = true }
 pin-project-lite = "0.2.9"
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 # stack_dst = "0.8.1"
 gloo-events = { version = "0.2.0", optional = true }
-js-sys = { version = "0.3.64", optional = true }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 wasm-bindgen = { version = "0.2.83", optional = true }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
@@ -27,78 +24,18 @@ optional = true
 features = [
     #
     "console",
-    "Document",
     "DomTokenList",
-    "DataTransfer",
-    "Element",
-    "HtmlAnchorElement",
-    "HtmlAreaElement",
-    "HtmlAudioElement",
-    "HtmlBaseElement",
-    "HtmlBodyElement",
-    "HtmlBrElement",
-    "HtmlButtonElement",
-    "HtmlCanvasElement",
-    "HtmlDListElement",
-    "HtmlDataElement",
-    "HtmlDataListElement",
-    "HtmlDetailsElement",
-    "HtmlDialogElement",
-    "HtmlDivElement",
-    "HtmlElement",
-    "HtmlEmbedElement",
-    "HtmlFieldSetElement",
-    "HtmlFormElement",
-    "HtmlHeadElement",
-    "HtmlHeadingElement",
-    "HtmlHrElement",
-    "HtmlHtmlElement",
-    "HtmlIFrameElement",
-    "HtmlImageElement",
-    "HtmlInputElement",
-    "HtmlLabelElement",
-    "HtmlLegendElement",
-    "HtmlLiElement",
-    "HtmlLinkElement",
-    "HtmlMapElement",
-    "HtmlMetaElement",
-    "HtmlMeterElement",
-    "HtmlModElement",
-    "HtmlOListElement",
-    "HtmlObjectElement",
-    "HtmlOptGroupElement",
-    "HtmlOptionElement",
-    "HtmlOutputElement",
-    "HtmlParagraphElement",
-    "HtmlParamElement",
-    "HtmlPreElement",
-    "HtmlProgressElement",
-    "HtmlQuoteElement",
-    "HtmlScriptElement",
-    "HtmlSelectElement",
-    "HtmlSlotElement",
-    "HtmlSourceElement",
-    "HtmlSpanElement",
-    "HtmlStyleElement",
-    "HtmlTableCaptionElement",
-    "HtmlTableCellElement",
-    "HtmlTableColElement",
-    "HtmlTableElement",
-    "HtmlTableRowElement",
-    "HtmlTableSectionElement",
-    "HtmlTemplateElement",
-    "HtmlTextAreaElement",
-    "HtmlTimeElement",
-    "HtmlTitleElement",
-    "HtmlTrackElement",
-    "HtmlUListElement",
-    "HtmlVideoElement",
+    "Event",
+    "EventTarget",
+    "Document",
     "Node",
-    "Text",
+    "Element",
+    "HtmlElement",
+    "HtmlInputElement",
+    "HtmlTextAreaElement",
 ]
 
 [features]
-default = ["web"]
 web = [
     "dep:web-sys",
     "dep:wasm-bindgen",
