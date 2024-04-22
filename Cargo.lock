@@ -872,6 +872,9 @@ dependencies = [
 [[package]]
 name = "frender-common"
 version = "0.1.0"
+dependencies = [
+ "frender-macro-rules",
+]
 
 [[package]]
 name = "frender-csr"
@@ -995,6 +998,10 @@ dependencies = [
  "quote",
  "syn 1.0.109",
 ]
+
+[[package]]
+name = "frender-macro-rules"
+version = "0.1.0"
 
 [[package]]
 name = "frender-macro-utils"
