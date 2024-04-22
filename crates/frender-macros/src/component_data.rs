@@ -2,7 +2,6 @@ use darling::{util::WithOriginal, FromMeta};
 use syn::{punctuated::Pair, spanned::Spanned};
 
 use crate::{
-    bg::BgOptions,
     err::{
         maybe_with_error, OptionCombineExt, OutputError, RecordError, ResultUnwrapValueAndErrorExt,
         ResultUnwrapValueExt,
@@ -27,7 +26,6 @@ pub struct ComponentOptions {
     /// use `FnOnce` instead of `FnMut`
     #[darling(rename = "FnOnce")]
     pub use_fn_once: darling::util::Flag,
-    pub bg: Option<BgOptions>,
 }
 
 pub struct ComponentDefinition {

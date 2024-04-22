@@ -3,7 +3,7 @@ use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
 
 use crate::{
-    component_macro::{transform_item_fn, ItemFnToBg, MainItem},
+    component_macro::{transform_item_fn, MainItem},
     err::OutputError,
 };
 
@@ -20,7 +20,6 @@ impl ComponentDefinition {
                     ssr_only,
                     frender_path,
                     use_fn_once,
-                    bg,
                 },
             mut item_fn,
         } = self;
@@ -31,15 +30,11 @@ impl ComponentDefinition {
 
         let main_block = main.map(|main| {
             let span = main.original.path().span();
-            let expr_element;
-
-            if bg.is_some() {
-                todo!("bg")
-            } else {
+            let expr_element = {
                 let name = &item_fn.sig.ident;
                 let span = Span::call_site().located_at(name.span());
-                expr_element = quote_spanned!(span => #name() )
-            }
+                quote_spanned!(span => #name() )
+            };
 
             MainItem {
                 span_default: span,
@@ -52,19 +47,7 @@ impl ComponentDefinition {
             .into_ts()
         });
 
-        let mut tokens = if let Some(bg) = bg {
-            ItemFnToBg {
-                span_default: item_fn.sig.fn_token.span,
-                span_bg: bg.span,
-                errors: &mut errors,
-                hook_element_path: &frender_path,
-                bg_path: &bg.path_to_ts(),
-                item_fn,
-                ssr_only,
-                use_fn_once,
-            }
-            .into_ts()
-        } else {
+        let mut tokens = {
             transform_item_fn(
                 &mut item_fn,
                 &mut errors,

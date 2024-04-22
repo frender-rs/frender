@@ -1,4 +1,3 @@
-mod bg;
 mod component_data;
 mod component_macro;
 mod component_to_tokens;
