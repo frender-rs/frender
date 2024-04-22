@@ -942,8 +942,7 @@ dependencies = [
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
- "frender-common",
- "gloo",
+ "frender-macro-rules",
  "wasm-bindgen",
  "web-sys",
 ]

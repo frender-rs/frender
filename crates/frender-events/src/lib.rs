@@ -1,4 +1,4 @@
-use frender_common::expand;
+use frender_macro_rules::expand;
 
 pub mod event;
 pub mod event_types;
