@@ -1,62 +1,21 @@
 use async_str_iter::AsyncStrIterator;
 
-use crate::sealed::Sealed;
-
-pub trait SpaceAndHtmlAttributeName: Sealed + AsyncStrIterator {}
-
-pin_project_lite::pin_project! {
-    pub struct AssertSpaceAndHtmlAttributeName<V: AsyncStrIterator> {
-        #[pin]
-        v: V,
-    }
+pub trait SpaceAndHtmlAttributeName:
+    space_and_html_attribute_name::Sealed + AsyncStrIterator
+{
 }
 
-impl<V: AsyncStrIterator> AsyncStrIterator for AssertSpaceAndHtmlAttributeName<V> {
-    fn poll_next_str(
-        self: std::pin::Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<Option<&str>> {
-        self.project().v.poll_next_str(cx)
-    }
-}
-impl<V: AsyncStrIterator> Sealed for AssertSpaceAndHtmlAttributeName<V> {}
-impl<V: AsyncStrIterator> SpaceAndHtmlAttributeName for AssertSpaceAndHtmlAttributeName<V> {}
+mod space_and_html_attribute_name {
+    use async_str_iter::AsyncStrIterator;
 
-impl<'a> AssertSpaceAndHtmlAttributeName<&'a str> {
-    /// This method is actually stricter than `SpaceAndHtmlAttributeName`.
-    /// It only allows ` [\-a-zA-Z]+`.
-    pub const fn try_from_str(v: &'a str) -> Option<Self> {
-        let bytes = v.as_bytes();
+    use super::SpaceAndHtmlAttributeName;
 
-        if bytes.len() <= 1 {
-            return None;
-        }
+    pub trait Sealed {}
 
-        if bytes[0] != b' ' {
-            return None;
-        }
-
-        let mut i = 1;
-
-        while i < bytes.len() {
-            match bytes[i] {
-                b'a'..=b'z' | b'A'..=b'Z' | b'-' => i += 1,
-                _ => {
-                    return None;
-                }
-            }
-        }
-
-        Some(Self { v })
-    }
-
-    pub const fn new_from_str(v: &'a str) -> Self {
-        if let Some(this) = Self::try_from_str(v) {
-            this
-        } else {
-            panic!("{}", v);
-            // panic!("invalid AssertSpaceAndHtmlAttributeName")
-        }
+    impl<V: AsyncStrIterator> Sealed for crate::attr::AssertSpaceAndHtmlAttributeName<V> {}
+    impl<V: AsyncStrIterator> SpaceAndHtmlAttributeName
+        for crate::attr::AssertSpaceAndHtmlAttributeName<V>
+    {
     }
 }
 
@@ -104,38 +63,55 @@ mod html_attribute_eq_value_or_empty {
 }
 
 // Empty or ` a=b c=d`
-pub trait SpaceAndHtmlAttributesOrEmpty: Sealed + AsyncStrIterator {}
-
-impl Sealed for async_str_iter::empty::Empty {}
-impl SpaceAndHtmlAttributesOrEmpty for async_str_iter::empty::Empty {}
-
-impl<V: AsyncStrIterator> SpaceAndHtmlAttributesOrEmpty for AssertSpaceAndHtmlAttributeName<V> {}
-
-impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty> Sealed
-    for async_str_iter::chain::Chain<A, B>
-{
-}
-impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty>
-    SpaceAndHtmlAttributesOrEmpty for async_str_iter::chain::Chain<A, B>
+pub trait SpaceAndHtmlAttributesOrEmpty:
+    space_and_html_attributes_or_empty::Sealed + AsyncStrIterator
 {
 }
 
-impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> Sealed
-    for crate::attr::SpaceAndHtmlAttribute<N, V>
-{
-}
-impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> SpaceAndHtmlAttributesOrEmpty
-    for crate::attr::SpaceAndHtmlAttribute<N, V>
-{
-}
+mod space_and_html_attributes_or_empty {
+    use async_str_iter::AsyncStrIterator;
 
-impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> Sealed
-    for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
-{
-}
-impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> SpaceAndHtmlAttributesOrEmpty
-    for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
-{
+    use super::{
+        HtmlAttributeEqValueOrEmpty, SpaceAndHtmlAttributeName, SpaceAndHtmlAttributesOrEmpty,
+    };
+
+    pub trait Sealed {}
+
+    impl Sealed for async_str_iter::empty::Empty {}
+    impl SpaceAndHtmlAttributesOrEmpty for async_str_iter::empty::Empty {}
+
+    impl<V: AsyncStrIterator> Sealed for crate::attr::AssertSpaceAndHtmlAttributeName<V> {}
+    impl<V: AsyncStrIterator> SpaceAndHtmlAttributesOrEmpty
+        for crate::attr::AssertSpaceAndHtmlAttributeName<V>
+    {
+    }
+
+    impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty> Sealed
+        for async_str_iter::chain::Chain<A, B>
+    {
+    }
+    impl<A: SpaceAndHtmlAttributesOrEmpty, B: SpaceAndHtmlAttributesOrEmpty>
+        SpaceAndHtmlAttributesOrEmpty for async_str_iter::chain::Chain<A, B>
+    {
+    }
+
+    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> Sealed
+        for crate::attr::SpaceAndHtmlAttribute<N, V>
+    {
+    }
+    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> SpaceAndHtmlAttributesOrEmpty
+        for crate::attr::SpaceAndHtmlAttribute<N, V>
+    {
+    }
+
+    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> Sealed
+        for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
+    {
+    }
+    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> SpaceAndHtmlAttributesOrEmpty
+        for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
+    {
+    }
 }
 
 /// Any numbers of `<div>...</div>` or `<br>` or `abc` (text).

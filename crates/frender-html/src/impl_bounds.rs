@@ -192,13 +192,13 @@ macro_rules! default_impl_ssr {
             for $($wrapper)*::<V>
         {
             type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::option::IterOption<::frender_ssr::html::attr::SpaceAndHtmlAttribute<
-                ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName<&'static str>,
+                ::frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName<&'static str>,
                 $($bounds)*::$ssr::Haevoe![{$($bounds)*}[$($bounds_tp),*][V]],
             >>;
 
             fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-                const SPACE_AND_ATTR_NAME: ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName<&'static str> =
-                    ::frender_ssr::html::assert::AssertSpaceAndHtmlAttributeName::new_from_str(
+                const SPACE_AND_ATTR_NAME: ::frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName<&'static str> =
+                    ::frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName::new_from_str(
                         ::core::concat!(" ", $attr_name)
                     );
 
