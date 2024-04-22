@@ -1,4 +1,3 @@
-use frender_common::try_behavior::TryBehavior;
 use frender_html::{dom::csr::web::Node, dom::render::RenderTextFrom};
 
 use super::Renderer;
@@ -69,23 +68,13 @@ mod to_text_node {
     use super::Renderer;
 
     pub(super) trait ToTextNode {
-        fn to_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            renderer: &mut Renderer<TB>,
-        ) -> web_sys::Text;
+        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text;
 
-        fn update_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            renderer: &mut Renderer<TB>,
-            text: &web_sys::Text,
-        );
+        fn update_text_node(&self, renderer: &mut Renderer, text: &web_sys::Text);
     }
 
     impl<V: ?Sized + super::to_js_string::ToJsString> ToTextNode for V {
-        fn to_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            renderer: &mut Renderer<TB>,
-        ) -> web_sys::Text {
+        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
             use wasm_bindgen::JsCast;
             super::js_shims::Document::create_text_node(
                 renderer.document.unchecked_ref(),
@@ -93,37 +82,24 @@ mod to_text_node {
             )
         }
 
-        fn update_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            _: &mut Renderer<TB>,
-            text: &web_sys::Text,
-        ) {
+        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
             use wasm_bindgen::JsCast;
             super::js_shims::Text::set_data(text.unchecked_ref(), self.to_js_string())
         }
     }
 
     impl ToTextNode for str {
-        fn to_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            renderer: &mut Renderer<TB>,
-        ) -> web_sys::Text {
+        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
             renderer.document.create_text_node(self)
         }
 
-        fn update_text_node<TB: crate::try_behavior::TryBehavior>(
-            &self,
-            _: &mut Renderer<TB>,
-            text: &web_sys::Text,
-        ) {
+        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
             text.set_data(self)
         }
     }
 }
 
-impl<V: ?Sized + to_text_node::ToTextNode, TB: TryBehavior> RenderTextFrom<Node<web_sys::Text>, V>
-    for Renderer<'_, TB>
-{
+impl<V: ?Sized + to_text_node::ToTextNode> RenderTextFrom<Node<web_sys::Text>, V> for Renderer<'_> {
     fn render_text_from(&mut self, v: &V) -> Node<web_sys::Text> {
         Node(v.to_text_node(self))
     }

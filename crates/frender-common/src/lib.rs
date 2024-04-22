@@ -13,7 +13,6 @@ mod event;
 pub use event::*;
 
 pub mod convert;
-pub mod try_behavior;
 
 pub mod utils {
     pub use frender_pin_utils::*;

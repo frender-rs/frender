@@ -1,4 +1,5 @@
 use frender_events::event::Event;
+use wasm_bindgen::UnwrapThrowExt;
 
 use super::value::{HandleValue, TempAsRef, Value};
 
@@ -42,10 +43,8 @@ impl<Renderer: ?Sized + frender_dom::csr::web::Renderer> FormControlElement<str,
         AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0).set_value(value)
     }
 
-    fn set_default_value(&mut self, renderer: &mut Renderer, value: &str) {
-        use frender_common::try_behavior::TryWithTryBehavior;
-
-        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0).set_default_value(value).unwrap_with_behavior(&mut renderer.try_behavior())
+    fn set_default_value(&mut self, _: &mut Renderer, value: &str) {
+        AsRef::<web_sys::HtmlTextAreaElement>::as_ref(&self.0).set_default_value(value).unwrap_throw()
     }
 
     fn remove_value(&mut self, renderer: &mut Renderer) {

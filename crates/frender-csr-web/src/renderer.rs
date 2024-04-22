@@ -1,8 +1,7 @@
 use std::borrow::Cow;
 
 use frender_html::{dom::csr::web::Node, RenderHtml};
-
-use crate::try_behavior::{TryBehavior, TryWithTryBehavior};
+use wasm_bindgen::UnwrapThrowExt;
 
 mod text;
 
@@ -12,18 +11,16 @@ enum NextNodePosition<'a> {
     InsertAfter(Cow<'a, web_sys::Node>),
 }
 
-pub struct Renderer<'a, TB: TryBehavior> {
+pub struct Renderer<'a> {
     document: &'a web_sys::Document,
     next_node_position: NextNodePosition<'a>,
-    try_behavior: TB,
 }
 
-impl<'a> Renderer<'a, frender_html::dom::csr::web::UnwrapThrow> {
+impl<'a> Renderer<'a> {
     pub fn new(document: &'a web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {
             document,
             next_node_position: NextNodePosition::FirstChildOf(Cow::Owned(root_parent)),
-            try_behavior: frender_html::dom::csr::web::UnwrapThrow,
         }
     }
 }
@@ -33,18 +30,18 @@ macro_rules! html_elements {
         type $tag = Node<web_sys::$ty>;
 
         fn $tag(&mut self) -> Self::$tag {
-            use wasm_bindgen::JsCast;
+            use wasm_bindgen::{JsCast, UnwrapThrowExt};
 
             let element = self
                 .document
                 .create_element(<frender_html::html::tags::$tag as frender_html::dom::component::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG)
-                .unwrap_with_behavior(&mut self.try_behavior);
+                .unwrap_throw();
             Node(element.unchecked_into())
         }
     )*};
 }
 
-impl<TB: TryBehavior> RenderHtml for Renderer<'_, TB> {
+impl RenderHtml for Renderer<'_> {
     type Text = Node<web_sys::Text>;
 
     html_elements!(
@@ -162,17 +159,9 @@ impl<TB: TryBehavior> RenderHtml for Renderer<'_, TB> {
     );
 }
 
-impl<'r, TB: TryBehavior> frender_html::dom::csr::web::Renderer for Renderer<'r, TB> {
+impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
     fn document(&self) -> Cow<web_sys::Document> {
         Cow::Borrowed(&self.document)
-    }
-
-    type TryBehavior<'a> = &'a mut TB
-    where
-        Self: 'a;
-
-    fn try_behavior(&mut self) -> Self::TryBehavior<'_> {
-        &mut self.try_behavior
     }
 
     fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool {
@@ -195,9 +184,7 @@ impl<'r, TB: TryBehavior> frender_html::dom::csr::web::Renderer for Renderer<'r,
                 NextNodePosition::FirstChildOf(parent) => {
                     // web_sys::console::log_2(&"FirstChildOf".into(), parent);
 
-                    parent
-                        .prepend_with_node_1(node)
-                        .unwrap_with_behavior(&mut self.try_behavior)
+                    parent.prepend_with_node_1(node).unwrap_throw()
                 }
                 NextNodePosition::InsertAfter(pre) => {
                     // web_sys::console::log_2(&"InsertAfter".into(), pre);
@@ -205,7 +192,7 @@ impl<'r, TB: TryBehavior> frender_html::dom::csr::web::Renderer for Renderer<'r,
                     pre.parent_node()
                         .unwrap()
                         .insert_before(node, pre.next_sibling().as_ref())
-                        .unwrap_with_behavior(&mut self.try_behavior);
+                        .unwrap_throw();
                 }
             }
         }

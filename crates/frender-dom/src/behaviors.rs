@@ -1,3 +1,5 @@
+use wasm_bindgen::UnwrapThrowExt;
+
 pub trait Node<Renderer: ?Sized> {
     fn cursor_is_at_self(&self, renderer: &Renderer) -> bool;
 
@@ -66,20 +68,16 @@ impl<
         renderer.move_cursor_at_the_first_child_of_element(self.0.as_ref())
     }
 
-    fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str) {
-        use frender_common::try_behavior::TryWithTryBehavior;
-
+    fn set_attribute(&mut self, _: &mut Renderer, name: &str, value: &str) {
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .set_attribute(name, value)
-            .unwrap_with_behavior(&mut renderer.try_behavior())
+            .unwrap_throw()
     }
 
-    fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str) {
-        use frender_common::try_behavior::TryWithTryBehavior;
-
+    fn remove_attribute(&mut self, _: &mut Renderer, name: &str) {
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .remove_attribute(name)
-            .unwrap_with_behavior(&mut renderer.try_behavior())
+            .unwrap_throw()
     }
 
     fn set_inner_html(&mut self, _: &mut Renderer, value: &str) {

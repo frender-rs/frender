@@ -115,14 +115,14 @@ crate::def_intrinsic_component_props!(
 
                 impl_for_web!(
                     verbatim_trait_items!(
-                        type ClassList<'a> = ::frender_dom::csr::web::DomTokenList<Renderer::TryBehavior<'a>>
+                        type ClassList<'a> = ::frender_dom::csr::web::DomTokenList
                         where
                             Self: 'a,
                             Renderer: 'a;
 
-                        fn class_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::ClassList<'a> {
+                        fn class_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::ClassList<'a> {
                             let element: &web_sys::Element = self.0.as_ref();
-                            ::frender_dom::csr::web::DomTokenList(element.class_list(), renderer.try_behavior())
+                            ::frender_dom::csr::web::DomTokenList(element.class_list())
                         }
                     );
                 );
@@ -479,12 +479,12 @@ crate::def_intrinsic_component_props!(
                         impl_for_web!(
                             only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,);
                             verbatim_trait_items!(
-                                type RelList<'a> = ::frender_dom::csr::web::DomTokenList<Renderer::TryBehavior<'a>>
+                                type RelList<'a> = ::frender_dom::csr::web::DomTokenList
                                 where
                                     Self: 'a,
                                     Renderer: 'a;
-                                fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a> {
-                                    ::frender_dom::csr::web::DomTokenList(self.0.rel_list(), renderer.try_behavior())
+                                fn rel_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::RelList<'a> {
+                                    ::frender_dom::csr::web::DomTokenList(self.0.rel_list())
                                 }
                             );
                         );

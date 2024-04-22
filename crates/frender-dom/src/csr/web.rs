@@ -2,8 +2,6 @@ use std::borrow::Cow;
 
 pub use frender_events::web::{Event, JsCastEventType};
 
-use frender_common::try_behavior::TryBehavior;
-
 pub use dom_token_list::DomTokenList;
 
 pub mod event;
@@ -17,34 +15,12 @@ pub struct Node<N>(pub N);
 pub trait Renderer {
     fn document(&self) -> Cow<web_sys::Document>;
 
-    type TryBehavior<'a>: TryBehavior
-    where
-        Self: 'a;
-    fn try_behavior(&mut self) -> Self::TryBehavior<'_>;
-
     fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool;
     fn move_cursor_after_node(&mut self, node: &web_sys::Node);
     fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool);
     fn remove_node(&mut self, node: &web_sys::Node);
 
     fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element);
-}
-
-pub struct UnwrapThrow;
-
-impl TryBehavior for UnwrapThrow {
-    fn unwrap_result<T, E>(&mut self, result: Result<T, E>) -> T
-    where
-        E: std::fmt::Debug,
-    {
-        use wasm_bindgen::UnwrapThrowExt;
-        result.unwrap_throw()
-    }
-
-    fn unwrap_option<T>(&mut self, option: Option<T>) -> T {
-        use wasm_bindgen::UnwrapThrowExt;
-        option.unwrap_throw()
-    }
 }
 
 impl<
