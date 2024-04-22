@@ -8,6 +8,7 @@ pub mod elements;
 pub mod omitted;
 
 pub use frender_common::{Elements, EventListenerOptions, HandleEventWithOptions, Keyed, TempStr};
+pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
 pub use frender_html::dom;
 pub use frender_macros::component;
@@ -41,6 +42,17 @@ pub use bg;
 
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
+
+#[cfg(all(feature = "web"))]
+pub use frender_csr_web::mount::GetDomElement;
+
+pub mod main {
+    #[cfg(feature = "web")]
+    pub use frender_csr_web::mount::mount_to_dom_element;
+
+    #[cfg(all(feature = "web", feature = "spawn"))]
+    pub use frender_csr_web::mount::spawn_mount_to_dom_element;
+}
 
 pub mod prelude {
     #[cfg(feature = "bg")]
@@ -93,7 +105,7 @@ macro_rules! rsx {
 
 #[doc(hidden)]
 pub mod __private {
-    pub use frender_hook_element;
+    pub use frender_hook_element::__private::hooks_core;
 
     pub use frender_macros::rsx as impl_rsx;
 }

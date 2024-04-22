@@ -24,6 +24,7 @@ frender-events = { version = "0.1.0", path = "../frender-events" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
+frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -52,7 +53,7 @@ either = [
     "frender-html?/either",
     "frender-csr?/either",
 ]
-web = ["frender-hook-element/web"]
-spawn = ["frender-hook-element/spawn"]
+web = ["frender-csr-web"]
+spawn = ["frender-csr-web?/spawn"]
 ssr = [] # TODO: remove ssr feature
 csr = ["ssr", "frender-csr"]

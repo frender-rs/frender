@@ -16,11 +16,6 @@ pub mod __private {
     pub use hooks_core;
     pub use hooks_core::transform_hook_fn_body_as_closure;
     pub use syn_lite::{expand_or, parse_item_fn};
-
-    pub mod main {
-        #[cfg(all(feature = "web", feature = "spawn"))]
-        pub use frender_csr_web::mount::spawn_mount_to_dom_element;
-    }
 }
 
 #[doc(hidden)]
@@ -47,7 +42,8 @@ macro_rules! __impl_main_fn {
         }
     ) => {
         $vis fn $main () {
-            $crate::__private::main::spawn_mount_to_dom_element(
+            // TODO: customize
+            frender::main::spawn_mount_to_dom_element(
                 $name(),
                 $crate::__private::expand_or!(
                     [

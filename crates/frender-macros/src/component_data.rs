@@ -22,7 +22,7 @@ pub struct ComponentOptions {
     #[darling(default)]
     pub main: Option<MainOptionsWithOriginal>,
     /// Defaults to `::frender::hook_element`
-    pub hook_element_path: Option<syn::Path>,
+    pub frender_path: Option<syn::Path>,
     pub ssr_only: darling::util::Flag,
     /// use `FnOnce` instead of `FnMut`
     #[darling(rename = "FnOnce")]

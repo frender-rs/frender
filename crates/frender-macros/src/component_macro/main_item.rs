@@ -7,7 +7,7 @@ use crate::component_data::ComponentMainOptions;
 pub struct MainItem<'a> {
     pub span_default: Span,
     pub span_fn_ident: Span,
-    pub hook_element_path: &'a syn::Path,
+    pub frender_path: &'a syn::Path,
     pub options: &'a ComponentMainOptions,
     pub vis: &'a syn::Visibility,
     pub expr_element: TokenStream,
@@ -18,7 +18,7 @@ impl<'a> MainItem<'a> {
         let Self {
             span_default,
             span_fn_ident,
-            hook_element_path,
+            frender_path,
             options:
                 ComponentMainOptions {
                     //
@@ -31,13 +31,13 @@ impl<'a> MainItem<'a> {
         let ident = proc_macro2::Ident::new("main", span_fn_ident);
 
         let path_dom = quote_spanned! {get_dom_element.original.path().span()=>
-            ::__private::main::spawn_mount_to_dom_element
+            ::main::spawn_mount_to_dom_element
         };
         let get_dom_element = &get_dom_element.parsed;
 
         quote_spanned! {span_default=>
             #vis fn #ident() {
-                #hook_element_path #path_dom(
+                #frender_path #path_dom(
                     #expr_element,
                     #get_dom_element
                 )

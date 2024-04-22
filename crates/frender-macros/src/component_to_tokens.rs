@@ -18,7 +18,7 @@ impl ComponentDefinition {
                     //
                     main,
                     ssr_only,
-                    hook_element_path,
+                    frender_path,
                     use_fn_once,
                     bg,
                 },
@@ -27,7 +27,7 @@ impl ComponentDefinition {
 
         // let span = item_fn.sig.fn_token.span;
 
-        let hook_element_path = hook_element_path.unwrap_or_else(default_hook_element_path);
+        let frender_path = frender_path.unwrap_or_else(default_frender_path);
 
         let main_block = main.map(|main| {
             let span = main.original.path().span();
@@ -44,7 +44,7 @@ impl ComponentDefinition {
             MainItem {
                 span_default: span,
                 span_fn_ident: span,
-                hook_element_path: &hook_element_path,
+                frender_path: &frender_path,
                 options: &main.parsed,
                 vis: &item_fn.vis,
                 expr_element,
@@ -57,7 +57,7 @@ impl ComponentDefinition {
                 span_default: item_fn.sig.fn_token.span,
                 span_bg: bg.span,
                 errors: &mut errors,
-                hook_element_path: &hook_element_path,
+                hook_element_path: &frender_path,
                 bg_path: &bg.path_to_ts(),
                 item_fn,
                 ssr_only,
@@ -68,7 +68,7 @@ impl ComponentDefinition {
             transform_item_fn(
                 &mut item_fn,
                 &mut errors,
-                &hook_element_path,
+                &frender_path,
                 ssr_only,
                 use_fn_once,
             );
@@ -88,14 +88,14 @@ impl ComponentDefinition {
     }
 }
 
-/// `::frender::hook_element`
-fn default_hook_element_path() -> syn::Path {
+/// `::frender`
+fn default_frender_path() -> syn::Path {
     let span = proc_macro2::Span::call_site();
     syn::Path {
         leading_colon: Some(Default::default()),
         segments: FromIterator::from_iter([
+            //
             syn::PathSegment::from(syn::Ident::new("frender", span)),
-            syn::Ident::new("hook_element", span).into(),
         ]),
     }
 }

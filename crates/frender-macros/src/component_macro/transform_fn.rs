@@ -7,7 +7,7 @@ use crate::err::RecordError;
 
 fn element_return_ty(
     span: proc_macro2::Span,
-    hook_element_path: &syn::Path,
+    frender_path: &syn::Path,
     ssr_only: darling::util::Flag,
 ) -> proc_macro2::TokenStream {
     let ssr_only_path;
@@ -21,7 +21,7 @@ fn element_return_ty(
     }
     quote_spanned!(span =>
         impl
-        #hook_element_path
+        #frender_path
         #ssr_only_path
         #element_path
     )
@@ -31,14 +31,14 @@ fn element_return_ty(
 pub fn transform_item_fn(
     item_fn: &mut syn::ItemFn,
     errors: &mut Vec<darling::Error>,
-    hook_element_path: &syn::Path,
+    frender_path: &syn::Path,
     ssr_only: darling::util::Flag,
     use_fn_once: darling::util::Flag,
 ) {
     transform_item_fn_with(
         item_fn,
         errors,
-        hook_element_path,
+        frender_path,
         ssr_only,
         use_fn_once,
         |_, _| None,
@@ -48,7 +48,7 @@ pub fn transform_item_fn(
 pub fn transform_item_fn_with(
     item_fn: &mut syn::ItemFn,
     errors: &mut Vec<darling::Error>,
-    hook_element_path: &syn::Path,
+    frender_path: &syn::Path,
     ssr_only: darling::util::Flag,
     use_fn_once: darling::util::Flag,
     before_stmts: impl FnOnce(
@@ -64,7 +64,7 @@ pub fn transform_item_fn_with(
                 syn::Token![->](span),
                 Box::new(syn::Type::Verbatim(element_return_ty(
                     span,
-                    hook_element_path,
+                    frender_path,
                     ssr_only,
                 ))),
             );
@@ -84,14 +84,14 @@ pub fn transform_item_fn_with(
                 }
             }
 
-            **ty = syn::Type::Verbatim(element_return_ty(span, hook_element_path, ssr_only));
+            **ty = syn::Type::Verbatim(element_return_ty(span, frender_path, ssr_only));
         }
     };
 
-    // #hook_element_path::__private::hooks_core
+    // #frender_path::__private::hooks_core
     let hooks_core_path = {
-        let span = proc_macro2::Span::mixed_site().located_at(hook_element_path.span());
-        let mut p = hook_element_path.clone();
+        let span = proc_macro2::Span::mixed_site().located_at(frender_path.span());
+        let mut p = frender_path.clone();
         p.segments.extend(
             ["__private", "hooks_core"]
                 .map(|ident| syn::PathSegment::from(syn::Ident::new(ident, span))),
@@ -126,7 +126,7 @@ pub fn transform_item_fn_with(
         .block
         .stmts
         .push(syn::Stmt::Expr(syn::Expr::Verbatim(quote_spanned! {span=>
-            #hook_element_path::#method_name (
+            #frender_path::#method_name (
                 move |#fn_arg_data_pat| {
 
                     #fn_stmts_extract_data
