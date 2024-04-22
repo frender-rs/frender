@@ -307,3 +307,28 @@ mod impl_for_unit_tuple {
         }
     }
 }
+
+#[cfg(feature = "web")]
+mod web {
+    use web_sys::wasm_bindgen::UnwrapThrowExt;
+
+    use super::DomTokenList;
+
+    impl DomTokenList for web_sys::DomTokenList {
+        fn set_value(&mut self, value: &str) {
+            Self::set_value(self, value)
+        }
+
+        fn add_1(&mut self, token: &str) {
+            Self::add_1(self, token).unwrap_throw()
+        }
+
+        fn remove_1(&mut self, token: &str) {
+            Self::remove_1(self, token).unwrap_throw()
+        }
+
+        fn replace(&mut self, old_token: &str, new_token: &str) {
+            _ = Self::replace(self, old_token, new_token).unwrap_throw()
+        }
+    }
+}

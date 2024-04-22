@@ -122,7 +122,7 @@ crate::def_intrinsic_component_props!(
 
                         fn class_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::ClassList<'a> {
                             let element: &web_sys::Element = self.0.as_ref();
-                            ::frender_dom::csr::web::DomTokenList(element.class_list())
+                            element.class_list()
                         }
                     );
                 );
@@ -484,7 +484,7 @@ crate::def_intrinsic_component_props!(
                                     Self: 'a,
                                     Renderer: 'a;
                                 fn rel_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::RelList<'a> {
-                                    ::frender_dom::csr::web::DomTokenList(self.0.rel_list())
+                                    self.0.rel_list()
                                 }
                             );
                         );

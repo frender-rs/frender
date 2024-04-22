@@ -41,6 +41,7 @@ web = [
     "dep:wasm-bindgen",
     "frender-events/web",
     "dep:gloo-events",
+    "frender-html-common/web",
 ]
 either = [
     "dep:either",

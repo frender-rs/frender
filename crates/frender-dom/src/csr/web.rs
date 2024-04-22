@@ -2,12 +2,10 @@ use std::borrow::Cow;
 
 pub use frender_events::web::{Event, JsCastEventType};
 
-pub use dom_token_list::DomTokenList;
+pub use web_sys::DomTokenList;
 
 pub mod event;
 pub mod event_listener;
-
-mod dom_token_list;
 
 #[derive(Debug)]
 pub struct Node<N>(pub N);
