@@ -1,5 +1,3 @@
-// mod use_render;
-
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_html::{Element, RenderHtml, RenderState};
