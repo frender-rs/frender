@@ -1,3 +1,4 @@
+use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::js_sys::Function;
 use web_sys::EventTarget;
 
@@ -6,13 +7,23 @@ pub struct EventListenerPreventDefault<E: AsRef<str>> {
     event_type: E,
 }
 
-thread_local!(
-    static PREVENT_DEFAULT: Function = Function::new_with_args("e", "e.preventDefault()");
-);
+#[wasm_bindgen(inline_js = "export function preventDefault(e) { e.preventDefault() }")]
+extern "C" {
+    #[wasm_bindgen(js_name = preventDefault)]
+    static PREVENT_DEFAULT: Function;
+}
+
+// thread_local!(
+//     static PREVENT_DEFAULT: Function = Function::new_with_args("e", "e.preventDefault()");
+// );
+
+fn with_prevent_default<R>(f: impl FnOnce(&Function) -> R) -> R {
+    f(&PREVENT_DEFAULT)
+}
 
 impl<E: AsRef<str>> EventListenerPreventDefault<E> {
     pub(crate) fn new(target: EventTarget, event_type: E) -> Self {
-        PREVENT_DEFAULT.with(|callback| {
+        with_prevent_default(|callback| {
             if let Err(error) =
                 target.add_event_listener_with_callback(event_type.as_ref(), callback)
             {
@@ -32,7 +43,7 @@ impl<E: AsRef<str>> EventListenerPreventDefault<E> {
 
 impl<E: AsRef<str>> Drop for EventListenerPreventDefault<E> {
     fn drop(&mut self) {
-        PREVENT_DEFAULT.with(|callback| {
+        with_prevent_default(|callback| {
             if let Err(error) = self
                 .target
                 .remove_event_listener_with_callback(self.event_type.as_ref(), callback)
