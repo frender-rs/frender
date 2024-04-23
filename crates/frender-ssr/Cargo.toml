@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 pin-project-lite = "0.2.9"
 either = { version = "1.8.1", default-features = false, optional = true }
 frender-common = { version = "0.1.0", path = "../frender-common" }
