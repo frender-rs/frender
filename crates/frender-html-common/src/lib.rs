@@ -10,4 +10,7 @@ pub mod content_editable;
 pub use content_editable::MaybeContentEditable;
 pub mod maybe_str;
 
+mod string_value;
+pub use string_value::StringValue;
+
 use frender_common::impl_many;

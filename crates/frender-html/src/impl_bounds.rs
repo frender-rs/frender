@@ -359,7 +359,7 @@ pub mod MaybeValue {
     pub use crate::default_impl_ssr as ssr;
 
     pub mod csr {
-        use frender_html_common::{MaybeUpdateValueWithState, ValueType};
+        use frender_html_common::MaybeUpdateValueWithState;
 
         pub use super::super::CsrInputWithUpdater as Input;
         pub use crate::DefaultCsrState as State;
@@ -368,7 +368,7 @@ pub mod MaybeValue {
 
         pub fn update_with_state<
             //
-            VT: ?Sized + ValueType,
+            VT: ?Sized,
             V: MaybeUpdateValueWithState<VT>,
             E,
             RR: ?Sized,
@@ -384,13 +384,13 @@ pub mod MaybeValue {
     }
 
     pub mod ssr {
-        use frender_html_common::{MaybeUpdateValueWithState, ValueType};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeUpdateValueWithState};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<VT, V> = <V as MaybeUpdateValueWithState<VT>>::HtmlAttributeEqValueOrEmpty;
+        pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeEqValueOrEmpty<VT>>::HtmlAttributeEqValueOrEmpty;
 
-        pub fn maybe_into_haevoe<VT: ?Sized + ValueType, V: MaybeUpdateValueWithState<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub fn maybe_into_haevoe<VT: ?Sized, V: MaybeUpdateValueWithState<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_eq_value_or_empty(this)
         }
     }
@@ -559,14 +559,14 @@ pub mod MaybeContentEditable {
     }
 
     pub mod ssr {
-        use frender_html_common::MaybeContentEditable;
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, content_editable::ContentEditable, MaybeContentEditable};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeContentEditable>::ContentEditableIntoAsyncStrIter>;
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable>>::HtmlAttributeEqValueOrEmpty>;
 
         pub fn maybe_into_haevoe<V: MaybeContentEditable>(this: V) -> Option<Haevoe<V>> {
-            V::content_editable_maybe_into_async_str_iter(this).map(Haevoe::<V>::new)
+            V::maybe_into_html_attribute_eq_value_or_empty(this).map(Haevoe::<V>::new)
         }
     }
 }

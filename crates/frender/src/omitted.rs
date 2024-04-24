@@ -1,39 +1,34 @@
-use frender_html_common::MaybeUpdateValueWithState;
+use frender_html_common::{
+    attr::MaybeIntoHtmlAttributeEqValueOrEmpty, content_editable::ContentEditable,
+    MaybeUpdateValueWithState,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Omitted;
 
-impl MaybeUpdateValueWithState<bool> for Omitted {
-    type State = ();
-
-    fn maybe_as(_: &Self) -> Option<&bool> {
-        Some(&true)
-    }
-
-    fn initialize_state_and_update(
-        _: Self,
-        update: impl FnOnce(&bool),
-        _: impl FnOnce(),
-    ) -> Self::State {
-        update(&true)
-    }
-
-    fn maybe_update_value_with_state(
-        _: Self,
-        _: &mut Self::State,
-        _: impl FnOnce(&bool),
-        _: impl FnOnce(),
-    ) {
-    }
-
+impl MaybeIntoHtmlAttributeEqValueOrEmpty<bool> for Omitted {
     type HtmlAttributeEqValueOrEmpty = async_str_iter::empty::Empty;
 
     fn maybe_into_html_attribute_eq_value_or_empty(
-        _: Self,
+        Self: Self,
     ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
         Some(async_str_iter::empty::Empty)
     }
+}
 
+/// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
+/// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string.
+impl MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable> for Omitted {
+    type HtmlAttributeEqValueOrEmpty = async_str_iter::empty::Empty;
+
+    fn maybe_into_html_attribute_eq_value_or_empty(
+        Self: Self,
+    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+        Some(async_str_iter::empty::Empty)
+    }
+}
+
+impl MaybeUpdateValueWithState<bool> for Omitted {
     // whether initialized
     type UpdateWithState = bool;
 
@@ -44,6 +39,24 @@ impl MaybeUpdateValueWithState<bool> for Omitted {
     ) {
         if !*state {
             updater.update(&true)
+        }
+    }
+}
+
+/// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
+/// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string,
+/// which is the same as `"true"`.
+impl MaybeUpdateValueWithState<ContentEditable> for Omitted {
+    // whether initialized
+    type UpdateWithState = bool;
+
+    fn update_with_state(
+        _: Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl frender_html_common::ValueUpdater<ContentEditable>,
+    ) {
+        if !*state {
+            updater.update(&ContentEditable::True)
         }
     }
 }
