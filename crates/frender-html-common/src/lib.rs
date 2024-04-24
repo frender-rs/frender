@@ -1,7 +1,8 @@
 mod intrinsic_component;
-mod update_with_state;
 pub use intrinsic_component::*;
-pub use update_with_state::*;
+
+pub mod maybe_value;
+pub use maybe_value::{MaybeValue, ValueUpdater};
 
 pub mod attr;
 pub mod dom_token;

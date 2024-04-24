@@ -1,6 +1,6 @@
 use frender_html_common::{
     attr::MaybeIntoHtmlAttributeEqValueOrEmpty, content_editable::ContentEditable,
-    MaybeUpdateValueWithState,
+    MaybeValue,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -28,7 +28,7 @@ impl MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable> for Omitted {
     }
 }
 
-impl MaybeUpdateValueWithState<bool> for Omitted {
+impl MaybeValue<bool> for Omitted {
     // whether initialized
     type UpdateWithState = bool;
 
@@ -46,7 +46,7 @@ impl MaybeUpdateValueWithState<bool> for Omitted {
 /// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
 /// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string,
 /// which is the same as `"true"`.
-impl MaybeUpdateValueWithState<ContentEditable> for Omitted {
+impl MaybeValue<ContentEditable> for Omitted {
     // whether initialized
     type UpdateWithState = bool;
 

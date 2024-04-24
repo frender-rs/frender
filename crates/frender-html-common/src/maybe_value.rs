@@ -15,7 +15,7 @@ impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
     }
 }
 
-pub trait MaybeUpdateValueWithState<V: ?Sized>: MaybeIntoHtmlAttributeEqValueOrEmpty<V> {
+pub trait MaybeValue<V: ?Sized>: MaybeIntoHtmlAttributeEqValueOrEmpty<V> {
     type UpdateWithState: Default;
 
     fn update_with_state(
@@ -25,7 +25,7 @@ pub trait MaybeUpdateValueWithState<V: ?Sized>: MaybeIntoHtmlAttributeEqValueOrE
     );
 }
 
-impl<S: StringValue> MaybeUpdateValueWithState<str> for S {
+impl<S: StringValue> MaybeValue<str> for S {
     type UpdateWithState = Option<S>;
 
     fn update_with_state(
@@ -45,7 +45,7 @@ impl<S: StringValue> MaybeUpdateValueWithState<str> for S {
 }
 
 /// Temporary strings are cloned to cache
-impl<S: std::borrow::Borrow<str>> MaybeUpdateValueWithState<str> for frender_common::TempStr<S> {
+impl<S: std::borrow::Borrow<str>> MaybeValue<str> for frender_common::TempStr<S> {
     type UpdateWithState = Option<String>;
 
     fn update_with_state(
@@ -64,13 +64,13 @@ impl<S: std::borrow::Borrow<str>> MaybeUpdateValueWithState<str> for frender_com
     }
 }
 
-impl<V: ?Sized> MaybeUpdateValueWithState<V> for () {
+impl<V: ?Sized> MaybeValue<V> for () {
     type UpdateWithState = ();
 
     fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
 }
 
-impl<T: MaybeUpdateValueWithState<V>, V: ?Sized> MaybeUpdateValueWithState<V> for Option<T> {
+impl<T: MaybeValue<V>, V: ?Sized> MaybeValue<V> for Option<T> {
     type UpdateWithState = T::UpdateWithState;
 
     fn update_with_state(
@@ -88,7 +88,7 @@ impl<T: MaybeUpdateValueWithState<V>, V: ?Sized> MaybeUpdateValueWithState<V> fo
 }
 
 impl_many!(
-    impl<__> MaybeUpdateValueWithState<Self>
+    impl<__> MaybeValue<Self>
         for each_of![i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64]
     {
         type UpdateWithState = Option<Self>;
@@ -110,7 +110,7 @@ impl_many!(
     }
 );
 
-impl MaybeUpdateValueWithState<bool> for bool {
+impl MaybeValue<bool> for bool {
     type UpdateWithState = Option<Self>;
 
     fn update_with_state(
@@ -182,9 +182,7 @@ pub mod either {
         }
     }
 
-    impl<V: ?Sized, L: MaybeUpdateValueWithState<V>, R: MaybeUpdateValueWithState<V>>
-        MaybeUpdateValueWithState<V> for Either<L, R>
-    {
+    impl<V: ?Sized, L: MaybeValue<V>, R: MaybeValue<V>> MaybeValue<V> for Either<L, R> {
         type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
 
         fn update_with_state(

@@ -353,23 +353,23 @@ mod updater {
 
 #[allow(non_snake_case)]
 pub mod MaybeValue {
-    pub use frender_html_common::MaybeUpdateValueWithState as Bounds;
+    pub use frender_html_common::MaybeValue as Bounds;
 
     pub use crate::default_impl_csr as csr;
     pub use crate::default_impl_ssr as ssr;
 
     pub mod csr {
-        use frender_html_common::MaybeUpdateValueWithState;
+        use frender_html_common::MaybeValue;
 
         pub use super::super::CsrInputWithUpdater as Input;
         pub use crate::DefaultCsrState as State;
 
-        pub type State<VT, V> = <V as MaybeUpdateValueWithState<VT>>::UpdateWithState;
+        pub type State<VT, V> = <V as MaybeValue<VT>>::UpdateWithState;
 
         pub fn update_with_state<
             //
             VT: ?Sized,
-            V: MaybeUpdateValueWithState<VT>,
+            V: MaybeValue<VT>,
             E,
             RR: ?Sized,
             U: FnOnce(&mut E, &mut RR, &'static str, &VT),
@@ -384,13 +384,13 @@ pub mod MaybeValue {
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeUpdateValueWithState};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeValue};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeEqValueOrEmpty<VT>>::HtmlAttributeEqValueOrEmpty;
 
-        pub fn maybe_into_haevoe<VT: ?Sized, V: MaybeUpdateValueWithState<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub fn maybe_into_haevoe<VT: ?Sized, V: MaybeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_eq_value_or_empty(this)
         }
     }

@@ -1,4 +1,4 @@
-use crate::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeUpdateValueWithState, StringValue};
+use crate::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeValue, StringValue};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ContentEditable {
@@ -43,14 +43,14 @@ impl MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable> for bool {
 }
 
 impl<V: StringValue> MaybeContentEditable for V {
-    type UpdateWithState = <V as MaybeUpdateValueWithState<str>>::UpdateWithState;
+    type UpdateWithState = <V as MaybeValue<str>>::UpdateWithState;
 
     fn update_with_state(
         this: Self,
         updater: impl crate::ValueUpdater<str>,
         state: &mut Self::UpdateWithState,
     ) {
-        <V as MaybeUpdateValueWithState<str>>::update_with_state(this, state, updater)
+        <V as MaybeValue<str>>::update_with_state(this, state, updater)
     }
 }
 

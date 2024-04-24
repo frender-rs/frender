@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use async_str_iter::IntoAsyncStrIterator;
 use frender_ssr_html::assert::OneStringOrEmpty;
 
-use crate::MaybeUpdateValueWithState;
+use crate::MaybeValue;
 
 pub trait IntoOneStringOrEmpty {
     type OneStringOrEmpty: OneStringOrEmpty;
@@ -12,9 +12,9 @@ pub trait IntoOneStringOrEmpty {
 }
 
 /// This is a trait alias.
-pub trait MaybeStr: MaybeUpdateValueWithState<str> + IntoOneStringOrEmpty {}
+pub trait MaybeStr: MaybeValue<str> + IntoOneStringOrEmpty {}
 
-impl<T: ?Sized + MaybeUpdateValueWithState<str> + IntoOneStringOrEmpty> MaybeStr for T {}
+impl<T: ?Sized + MaybeValue<str> + IntoOneStringOrEmpty> MaybeStr for T {}
 
 impl IntoOneStringOrEmpty for () {
     type OneStringOrEmpty = async_str_iter::empty::Empty;
