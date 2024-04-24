@@ -1,8 +1,7 @@
 use frender::prelude::*;
 
 component_fn!(
-    #[component(ssr_only)]
-    fn Main(main_id: &str) -> impl Element + '_ {
+    fn Main(main_id: &str) -> impl SsrElement + '_ {
         cs::div
             .class("main")
             .id(main_id)
