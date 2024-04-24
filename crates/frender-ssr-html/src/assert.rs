@@ -30,7 +30,7 @@ mod space_and_html_attribute_name {
 // {
 // }
 
-/// `=value` or ` ` (empty)
+/// `=value`, `="value"`, `='value'` or ` ` (empty)
 pub trait HtmlAttributeEqValueOrEmpty:
     html_attribute_eq_value_or_empty::Sealed + AsyncStrIterator
 {

@@ -384,14 +384,14 @@ pub mod MaybeValue {
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, MaybeValue};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, MaybeValue};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeEqValueOrEmpty<VT>>::HtmlAttributeEqValueOrEmpty;
+        pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeValue<VT>>::HtmlAttributeValue;
 
         pub fn maybe_into_haevoe<VT: ?Sized, V: MaybeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
-            V::maybe_into_html_attribute_eq_value_or_empty(this)
+            V::maybe_into_html_attribute_value(this)
         }
     }
 }
@@ -559,14 +559,14 @@ pub mod MaybeContentEditable {
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, content_editable::ContentEditable, MaybeContentEditable};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, content_editable::ContentEditable, MaybeContentEditable};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable>>::HtmlAttributeEqValueOrEmpty>;
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeValue<ContentEditable>>::HtmlAttributeValue>;
 
         pub fn maybe_into_haevoe<V: MaybeContentEditable>(this: V) -> Option<Haevoe<V>> {
-            V::maybe_into_html_attribute_eq_value_or_empty(this).map(Haevoe::<V>::new)
+            V::maybe_into_html_attribute_value(this).map(Haevoe::<V>::new)
         }
     }
 }

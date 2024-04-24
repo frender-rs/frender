@@ -1,4 +1,4 @@
-use crate::{attr::MaybeIntoHtmlAttributeEqValueOrEmpty, impl_many, StringValue};
+use crate::{attr::MaybeIntoHtmlAttributeValue, impl_many, StringValue};
 
 pub trait ValueUpdater<V: ?Sized> {
     fn update(self, value: &V);
@@ -15,7 +15,7 @@ impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
     }
 }
 
-pub trait MaybeValue<V: ?Sized>: MaybeIntoHtmlAttributeEqValueOrEmpty<V> {
+pub trait MaybeValue<V: ?Sized>: MaybeIntoHtmlAttributeValue<V> {
     type UpdateWithState: Default;
 
     fn update_with_state(

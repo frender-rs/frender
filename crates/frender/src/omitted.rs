@@ -1,29 +1,29 @@
 use frender_html_common::{
-    attr::MaybeIntoHtmlAttributeEqValueOrEmpty, content_editable::ContentEditable,
+    attr::MaybeIntoHtmlAttributeValue, content_editable::ContentEditable,
     MaybeValue,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Omitted;
 
-impl MaybeIntoHtmlAttributeEqValueOrEmpty<bool> for Omitted {
-    type HtmlAttributeEqValueOrEmpty = async_str_iter::empty::Empty;
+impl MaybeIntoHtmlAttributeValue<bool> for Omitted {
+    type HtmlAttributeValue = async_str_iter::empty::Empty;
 
-    fn maybe_into_html_attribute_eq_value_or_empty(
+    fn maybe_into_html_attribute_value(
         Self: Self,
-    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+    ) -> Option<Self::HtmlAttributeValue> {
         Some(async_str_iter::empty::Empty)
     }
 }
 
 /// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
 /// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string.
-impl MaybeIntoHtmlAttributeEqValueOrEmpty<ContentEditable> for Omitted {
-    type HtmlAttributeEqValueOrEmpty = async_str_iter::empty::Empty;
+impl MaybeIntoHtmlAttributeValue<ContentEditable> for Omitted {
+    type HtmlAttributeValue = async_str_iter::empty::Empty;
 
-    fn maybe_into_html_attribute_eq_value_or_empty(
+    fn maybe_into_html_attribute_value(
         Self: Self,
-    ) -> Option<Self::HtmlAttributeEqValueOrEmpty> {
+    ) -> Option<Self::HtmlAttributeValue> {
         Some(async_str_iter::empty::Empty)
     }
 }
