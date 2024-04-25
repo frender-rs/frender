@@ -22,6 +22,8 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::
         .output()?;
 
     if !output.status.success() {
+        io::stdout().write_all(&output.stdout)?;
+        io::stderr().write_all(&output.stderr)?;
         return Err(io::Error::new(
             io::ErrorKind::Other,
             "Failed to run cargo expand".to_string(),
