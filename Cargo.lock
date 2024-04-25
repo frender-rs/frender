@@ -1683,9 +1683,9 @@ dependencies = [
 
 [[package]]
 name = "hooks-macro-core"
-version = "0.1.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1f7b5e3ed55f22e16075389450fb04f491cbbaf635a104227705b908e8016df"
+checksum = "f2258c977c64d001009f00b1a278ec1f3603e7e60de407b274743fcef4c4bbb0"
 dependencies = [
  "darling",
  "proc-macro2",
