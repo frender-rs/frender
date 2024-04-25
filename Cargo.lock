@@ -1046,7 +1046,6 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "either",
- "frender-common",
  "html-escape",
  "pin-project-lite",
 ]

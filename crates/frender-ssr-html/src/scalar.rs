@@ -15,24 +15,28 @@ impl AsyncStrIterator for Scalar {
     }
 }
 
-impl Scalar {
-    pub fn new<V: IntoScalar>(value: V) -> Self {
-        V::into_scalar(value)
-    }
+macro_rules! impl_from {
+    (
+        impl $(<__>)? $From:ident<$($from_ty:ty),+ $(,)?> for $for_ty:ty {
+            fn $from:ident($value:ident : _) -> $Self:ident
+            $body:tt
+        }
+    ) => {
+        $(
+            impl $From<$from_ty> for $for_ty {
+                fn $from($value: $from_ty) -> $Self
+                $body
+            }
+        )+
+    };
 }
 
-pub trait IntoScalar {
-    fn into_scalar(this: Self) -> Scalar;
-}
-
-frender_common::impl_many!(
-    impl<__> IntoScalar
-        for each_of![
-            i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64, char,
-        ]
+impl_from!(
+    impl<__> From<i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64, char>
+        for Scalar
     {
-        fn into_scalar(this: Self) -> Scalar {
-            Scalar(AnyStr(this.to_string()).into_async_str_iterator())
+        fn from(value: _) -> Self {
+            Scalar(AnyStr(value.to_string()).into_async_str_iterator())
         }
     }
 );

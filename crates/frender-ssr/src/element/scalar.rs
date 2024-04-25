@@ -9,7 +9,7 @@ frender_common::impl_many!(
         type HtmlChildren = frender_ssr_html::scalar::Scalar;
 
         fn into_html_children(self) -> Self::HtmlChildren {
-            Self::HtmlChildren::new(self)
+            From::from(self)
         }
     }
 );
