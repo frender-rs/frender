@@ -1,20 +1,11 @@
-mod component_data;
-mod component_macro;
-mod component_to_tokens;
-mod err;
-mod rsx_data;
-mod rsx_to_tokens;
-
 use proc_macro::TokenStream;
 use syn::parse_macro_input;
-
-use frender_macro_utils as utils;
 
 #[proc_macro_attribute]
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
     use darling::ast::NestedMeta;
 
-    use component_data::*;
+    use frender_macro_core::component::*;
 
     let attr_args = match NestedMeta::parse_meta_list(args.into()) {
         Ok(v) => v,
@@ -32,7 +23,9 @@ pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn rsx(input: TokenStream) -> TokenStream {
-    let value = match syn::parse::<rsx_data::OptionalCratePathAndRsxChild>(input) {
+    use frender_macro_core::rsx;
+
+    let value = match syn::parse::<rsx::OptionalCratePathAndRsxChild>(input) {
         Ok(v) => v,
         Err(err) => {
             return proc_macro::TokenTree::Group(proc_macro::Group::new(
@@ -43,5 +36,5 @@ pub fn rsx(input: TokenStream) -> TokenStream {
         }
     };
 
-    value.map(rsx_data::RsxChild::into_ts).into()
+    value.map(rsx::RsxChild::into_ts).into()
 }

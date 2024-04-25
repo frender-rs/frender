@@ -37,6 +37,7 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::
     let syn::ItemMod {
         attrs: _,
         vis: _,
+        unsafety: _,
         mod_token: _,
         ident: _,
         content,

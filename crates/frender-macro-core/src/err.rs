@@ -48,15 +48,6 @@ impl Combine<Self> for syn::Error {
     }
 }
 
-#[inline]
-pub fn maybe_with_error<T, E>(v: T, error: Option<E>) -> Result<T, (T, E)> {
-    if let Some(err) = error {
-        Err((v, err))
-    } else {
-        Ok(v)
-    }
-}
-
 pub trait RecordError<E> {
     fn record_error(&mut self, error: E) -> &mut Self;
 }
@@ -70,7 +61,12 @@ pub trait OutputError {
     where
         Self: Sized,
     {
-        maybe_with_error(v, self.output_error())
+        let error = self.output_error();
+        if let Some(err) = error {
+            Err((v, err))
+        } else {
+            Ok(v)
+        }
     }
 
     #[inline]

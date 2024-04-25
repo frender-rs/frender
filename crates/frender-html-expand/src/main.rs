@@ -67,6 +67,7 @@ pub fn write_mod_content_into_dir(
             syn::Item::Mod(syn::ItemMod {
                 attrs,
                 vis,
+                unsafety: _,
                 mod_token: _,
                 ident,
                 content: Some((_, items)),

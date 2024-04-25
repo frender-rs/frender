@@ -1,13 +1,36 @@
+use darling::{ast::NestedMeta, FromMeta};
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
 
-use crate::{
-    component_macro::{transform_item_fn, MainItem},
-    err::OutputError,
-};
+use crate::err::OutputError;
 
-use super::component_data::*;
+use super::{transform_item_fn, ComponentOptions, MainItem};
+
+pub struct ComponentDefinition {
+    pub errors: Vec<darling::Error>,
+    pub options: ComponentOptions,
+    pub item_fn: syn::ItemFn,
+}
+
+impl ComponentDefinition {
+    pub fn from_attrs_and_fn(attr_args: &[NestedMeta], item_fn: syn::ItemFn) -> Self {
+        let mut errors = vec![];
+        let options = match ComponentOptions::from_list(attr_args) {
+            Ok(v) => v,
+            Err(err) => {
+                errors.push(err);
+                ComponentOptions::default()
+            }
+        };
+
+        Self {
+            options,
+            item_fn,
+            errors,
+        }
+    }
+}
 
 impl ComponentDefinition {
     pub fn into_ts(self) -> TokenStream {

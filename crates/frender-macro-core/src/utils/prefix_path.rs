@@ -1,6 +1,6 @@
 use syn::parse::Parse;
 
-use super::grouped::Bracketed;
+use crate::utils::grouped::Bracketed;
 
 pub struct ExplicitPath {
     pub at_token: syn::Token![@],

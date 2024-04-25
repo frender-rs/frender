@@ -2,7 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote_spanned;
 use syn::spanned::Spanned;
 
-use crate::component_data::ComponentMainOptions;
+use super::ComponentMainOptions;
 
 pub struct MainItem<'a> {
     pub span_default: Span,

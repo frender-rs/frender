@@ -1,6 +1,6 @@
 use crate::err::RecordError;
 
-use super::rsx_data::*;
+use super::*;
 
 use quote::{quote_spanned, ToTokens, TokenStreamExt};
 use syn::spanned::Spanned;

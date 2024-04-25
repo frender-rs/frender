@@ -570,36 +570,12 @@ dependencies = [
 
 [[package]]
 name = "darling"
-version = "0.14.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b750cb3417fd1b327431a470f388520309479ab0bf5e323505daf0290cd3850"
-dependencies = [
- "darling_core 0.14.4",
- "darling_macro 0.14.4",
-]
-
-[[package]]
-name = "darling"
 version = "0.20.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "54e36fcd13ed84ffdfda6f5be89b31287cbb80c439841fe69e04841435464391"
 dependencies = [
- "darling_core 0.20.8",
- "darling_macro 0.20.8",
-]
-
-[[package]]
-name = "darling_core"
-version = "0.14.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "109c1ca6e6b7f82cc233a97004ea8ed7ca123a9af07a8230878fcfda9b158bf0"
-dependencies = [
- "fnv",
- "ident_case",
- "proc-macro2",
- "quote",
- "strsim",
- "syn 1.0.109",
+ "darling_core",
+ "darling_macro",
 ]
 
 [[package]]
@@ -618,22 +594,11 @@ dependencies = [
 
 [[package]]
 name = "darling_macro"
-version = "0.14.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4aab4dbc9f7611d8b55048a3a16d2d010c2c8334e46304b40ac1cc14bf3b48e"
-dependencies = [
- "darling_core 0.14.4",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "darling_macro"
 version = "0.20.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a668eda54683121533a393014d8692171709ff57a7d61f187b6e782719f8933f"
 dependencies = [
- "darling_core 0.20.8",
+ "darling_core",
  "quote",
  "syn 2.0.60",
 ]
@@ -1030,7 +995,18 @@ dependencies = [
  "prettyplease",
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.60",
+]
+
+[[package]]
+name = "frender-macro-core"
+version = "0.1.0"
+dependencies = [
+ "darling",
+ "hooks-macro-core",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.60",
 ]
 
 [[package]]
@@ -1038,22 +1014,11 @@ name = "frender-macro-rules"
 version = "0.1.0"
 
 [[package]]
-name = "frender-macro-utils"
-version = "0.1.0"
-dependencies = [
- "darling 0.20.8",
- "hooks-derive-core",
- "proc-macro2",
- "quote",
- "syn 2.0.60",
-]
-
-[[package]]
 name = "frender-macros"
 version = "1.0.0-alpha.8"
 dependencies = [
- "darling 0.20.8",
- "frender-macro-utils",
+ "darling",
+ "frender-macro-core",
  "hooks-macro-core",
  "proc-macro2",
  "quote",
@@ -1705,24 +1670,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "hooks-derive-core"
-version = "1.1.0-alpha.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2af60c08fb7648bbbfa460312c83d55d0102aa86cc6eba3357b1cc839c50d9f2"
-dependencies = [
- "darling 0.14.4",
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "hooks-macro-core"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "44fcff62420159968bfc0bb36f32de4a485bda3260c99094b67dd012747c467f"
 dependencies = [
- "darling 0.20.8",
+ "darling",
  "proc-macro2",
  "quote",
  "syn 2.0.60",
@@ -2431,12 +2384,12 @@ checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
 
 [[package]]
 name = "prettyplease"
-version = "0.1.25"
+version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c8646e95016a7a6c4adea95bafa8a16baab64b583356217f2c85db4a39d9a86"
+checksum = "5ac2cf0f2e4f42b49f5ffd07dae8d746508ef7526c13940e5f524012ae6c6550"
 dependencies = [
  "proc-macro2",
- "syn 1.0.109",
+ "syn 2.0.60",
 ]
 
 [[package]]
