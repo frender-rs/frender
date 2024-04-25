@@ -20,7 +20,7 @@ pub type MainOptionsWithOriginal = darling::util::WithOriginal<ComponentMainOpti
 pub struct ComponentOptions {
     #[darling(default)]
     pub main: Option<MainOptionsWithOriginal>,
-    /// Defaults to `::frender::hook_element`
+    /// Defaults to `::frender`
     pub frender_path: Option<syn::Path>,
     pub ssr_only: darling::util::Flag,
 }
