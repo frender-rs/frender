@@ -36,5 +36,5 @@ pub fn rsx(input: TokenStream) -> TokenStream {
         }
     };
 
-    value.map(rsx::RsxChild::into_ts).into()
+    value.into_ts().into()
 }

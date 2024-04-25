@@ -166,4 +166,4 @@ pub enum RsxChild {
     Element(RsxElement),
 }
 
-pub type OptionalCratePathAndRsxChild = crate::utils::prefix_path::PrefixPath<RsxChild>;
+pub struct OptionalCratePathAndRsxChild(pub(super) crate::utils::prefix_path::PrefixPath<RsxChild>);

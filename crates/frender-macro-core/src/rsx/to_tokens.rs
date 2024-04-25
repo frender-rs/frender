@@ -269,3 +269,9 @@ impl RsxChild {
         }
     }
 }
+
+impl OptionalCratePathAndRsxChild {
+    pub fn into_ts(self) -> proc_macro2::TokenStream {
+        self.0.map(RsxChild::into_ts)
+    }
+}

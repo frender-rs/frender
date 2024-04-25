@@ -269,3 +269,9 @@ impl Parse for RsxChild {
         }
     }
 }
+
+impl Parse for OptionalCratePathAndRsxChild {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Parse::parse(input).map(Self)
+    }
+}
