@@ -1,16 +1,13 @@
 use crate::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, StringValue};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ContentEditable {
-    /// true or an empty string, which indicates that the element is editable.
-    True,
-    /// false, which indicates that the element is not editable.
-    False,
-    /// plaintext-only, which indicates that the element's raw text is editable, but rich text formatting is disabled.
-    PlaintextOnly,
+pub struct ContentEditable<'a>(pub &'a str);
+
+impl ContentEditable<'static> {
+    pub const EMPTY: Self = Self("");
 }
 
-pub trait MaybeContentEditable: MaybeIntoHtmlAttributeValue<ContentEditable> {
+pub trait MaybeContentEditable: MaybeIntoHtmlAttributeValue<ContentEditable<'static>> {
     type UpdateWithState: Default;
 
     fn update_with_state(
@@ -20,25 +17,22 @@ pub trait MaybeContentEditable: MaybeIntoHtmlAttributeValue<ContentEditable> {
     );
 }
 
-impl<V: StringValue> MaybeIntoHtmlAttributeValue<ContentEditable> for V {
-    type HtmlAttributeValue =
-        <V as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
+impl<V: StringValue> MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for V {
+    type HtmlAttributeValue = <V as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
 
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Self::HtmlAttributeValue> {
-        <V as  MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(this)
+    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
+        <V as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(this)
     }
 }
 
-impl MaybeIntoHtmlAttributeValue<ContentEditable> for bool {
+impl MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for bool {
     type HtmlAttributeValue =
         <&'static str as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
 
-    fn maybe_into_html_attribute_value(
-        this: Self,
-    ) -> Option<Self::HtmlAttributeValue> {
-        <&'static str as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(bool_to_str(this))
+    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
+        <&'static str as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(
+            bool_to_str(this),
+        )
     }
 }
 

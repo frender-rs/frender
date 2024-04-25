@@ -1,12 +1,14 @@
-use crate::{attr::MaybeIntoHtmlAttributeValue, impl_many, StringValue};
+use crate::{attr::MaybeIntoHtmlAttributeValue, impl_many, StringValue, ValueKind};
 
-pub trait ValueUpdater<V: ?Sized> {
-    fn update(self, value: &V);
+pub trait ValueUpdater<VK: ?Sized + ValueKind> {
+    fn update(self, value: VK::Value<'_>);
     fn remove(self);
 }
 
-impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
-    fn update(self, value: &V) {
+impl<VK: ?Sized + ValueKind, U: for<'a> FnOnce(VK::Value<'_>), R: FnOnce()> ValueUpdater<VK>
+    for (U, R)
+{
+    fn update(self, value: VK::Value<'_>) {
         self.0(value)
     }
 
@@ -15,7 +17,7 @@ impl<V: ?Sized, U: FnOnce(&V), R: FnOnce()> ValueUpdater<V> for (U, R) {
     }
 }
 
-pub trait MaybeValue<V: ?Sized>: MaybeIntoHtmlAttributeValue<V> {
+pub trait MaybeValue<V: ?Sized + ValueKind>: MaybeIntoHtmlAttributeValue<V> {
     type UpdateWithState: Default;
 
     fn update_with_state(
@@ -64,13 +66,13 @@ impl<S: std::borrow::Borrow<str>> MaybeValue<str> for frender_common::TempStr<S>
     }
 }
 
-impl<V: ?Sized> MaybeValue<V> for () {
+impl<V: ?Sized + ValueKind> MaybeValue<V> for () {
     type UpdateWithState = ();
 
     fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
 }
 
-impl<T: MaybeValue<V>, V: ?Sized> MaybeValue<V> for Option<T> {
+impl<T: MaybeValue<V>, V: ?Sized + ValueKind> MaybeValue<V> for Option<T> {
     type UpdateWithState = T::UpdateWithState;
 
     fn update_with_state(
@@ -104,7 +106,7 @@ impl_many!(
                 }
             }
 
-            updater.update(&this);
+            updater.update(this);
             *state = Some(this);
         }
     }
@@ -124,7 +126,7 @@ impl MaybeValue<bool> for bool {
             }
         }
 
-        updater.update(&this);
+        updater.update(this);
         *state = Some(this);
     }
 }
@@ -182,7 +184,7 @@ pub mod either {
         }
     }
 
-    impl<V: ?Sized, L: MaybeValue<V>, R: MaybeValue<V>> MaybeValue<V> for Either<L, R> {
+    impl<V: ?Sized + ValueKind, L: MaybeValue<V>, R: MaybeValue<V>> MaybeValue<V> for Either<L, R> {
         type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
 
         fn update_with_state(

@@ -1,3 +1,6 @@
+mod value_kind;
+pub use value_kind::ValueKind;
+
 mod intrinsic_component;
 pub use intrinsic_component::*;
 

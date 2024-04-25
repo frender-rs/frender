@@ -1,11 +1,13 @@
+use frender_html_common::ValueKind;
+
 use crate::behaviors;
 
-pub trait SetAsAttributeValue {
+pub trait SetAsAttributeValue: ValueKind {
     fn set_as_attribute_value<E: ?Sized + behaviors::Element<RR>, RR: ?Sized>(
         element: &mut E,
         renderer: &mut RR,
         attr_name: &str,
-        value: &Self,
+        value: Self::Value<'_>,
     );
 }
 
@@ -25,8 +27,9 @@ impl SetAsAttributeValue for u32 {
         element: &mut E,
         renderer: &mut RR,
         attr_name: &str,
-        value: &Self,
+        value: Self,
     ) {
+        // TODO: toString in js side
         element.set_attribute(renderer, attr_name, &value.to_string())
     }
 }
@@ -36,9 +39,9 @@ impl SetAsAttributeValue for bool {
         element: &mut E,
         renderer: &mut RR,
         attr_name: &str,
-        value: &Self,
+        value: Self,
     ) {
-        if *value {
+        if value {
             element.set_attribute(renderer, attr_name, "")
         } else {
             element.remove_attribute(renderer, attr_name)

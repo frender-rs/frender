@@ -323,6 +323,8 @@ pub mod DomTokens {
 }
 
 mod updater {
+    use frender_html_common::ValueKind;
+
     pub(super) struct Updater<'a, E: ?Sized, RR: ?Sized, U, R> {
         pub(super) element: &'a mut E,
         pub(super) renderer: &'a mut RR,
@@ -334,14 +336,14 @@ mod updater {
     impl<
             //
             'a,
-            VT: ?Sized,
+            VT: ?Sized + ValueKind,
             E: ?Sized,
             RR: ?Sized,
-            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+            U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
             R: FnOnce(&mut E, &mut RR, &'static str),
         > frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R>
     {
-        fn update(mut self, value: &VT) {
+        fn update(mut self, value: VT::Value<'_>) {
             (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
         }
 
@@ -359,7 +361,7 @@ pub mod MaybeValue {
     pub use crate::default_impl_ssr as ssr;
 
     pub mod csr {
-        use frender_html_common::MaybeValue;
+        use frender_html_common::{MaybeValue, ValueKind};
 
         pub use super::super::CsrInputWithUpdater as Input;
         pub use crate::DefaultCsrState as State;
@@ -368,11 +370,11 @@ pub mod MaybeValue {
 
         pub fn update_with_state<
             //
-            VT: ?Sized,
+            VT: ?Sized + ValueKind,
             V: MaybeValue<VT>,
             E,
             RR: ?Sized,
-            U: FnOnce(&mut E, &mut RR, &'static str, &VT),
+            U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
             R: FnOnce(&mut E, &mut RR, &'static str),
         >(
             input: Input<V, E, RR, U, R>,
@@ -384,13 +386,13 @@ pub mod MaybeValue {
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, MaybeValue};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, ValueKind};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeValue<VT>>::HtmlAttributeValue;
 
-        pub fn maybe_into_haevoe<VT: ?Sized, V: MaybeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub fn maybe_into_haevoe<VT: ?Sized + ValueKind, V: MaybeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_value(this)
         }
     }
@@ -563,7 +565,7 @@ pub mod MaybeContentEditable {
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeValue<ContentEditable>>::HtmlAttributeValue>;
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeValue<ContentEditable<'static>>>::HtmlAttributeValue>;
 
         pub fn maybe_into_haevoe<V: MaybeContentEditable>(this: V) -> Option<Haevoe<V>> {
             V::maybe_into_html_attribute_value(this).map(Haevoe::<V>::new)

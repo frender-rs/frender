@@ -38,10 +38,11 @@ macro_rules! parse_impl_with {
         update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr,
         remove = $($t:tt)*
     ) as update(
+        ValueType($ValueType:ty)
         value($value:pat_param)
         element_type($element_type:ty)
     )) => {
-        |$element: &mut $element_type, $renderer: &mut _, _, $value: &_| $update
+        |$element: &mut $element_type, $renderer: &mut _, _, $value: $ValueType| $update
     };
     ($set_attribute_ident:ident (
         update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr,
@@ -510,55 +511,9 @@ macro_rules! impl_attribute {
     ($fn_name:ident ($value:ident : maybe![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
         crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
     };
-    ($fn_name:ident ($value:ident : maybe![&$maybe_ty:ty]) {
-        $(alias! $alias:tt;)?
-        $(attr_name!($attr_name:expr);)?
-        $(update_with! $update_with:tt;)?
-    } $trait_name:ident) => {
-        crate::impl_bounds! {
-            super::attributes::$fn_name(
-                csr_state_wrapper(super::states::$fn_name),
-                bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
-                element as $trait_name,
-                attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
-                csr {
-                    update: ::frender_common::expand! {
-                        if ($($update_with)?) {
-                                crate::parse_update_with!(match $($update_with)? {
-                                    simple => {
-                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
-                                        append( (renderer, v) )
-                                    }
-                                    impl_with => {
-                                        append( as update(value($value) element_type(ET::$trait_name<Renderer>)))
-                                        wrap {}
-                                        prepend( crate::parse_impl_with! )
-                                    }
-                                })
-                        } else {
-                            crate::dom::attr::SetAsAttributeValue::set_as_attribute_value
-                        }
-                    },
-                    remove: ::frender_common::expand! {
-                        if ($($update_with)?) {
-                            crate::parse_update_with!(match $($update_with)? {
-                                simple => {
-                                    reset {}
-                                    {crate::dom::behaviors::Element::remove_attribute}
-                                }
-                                impl_with => {
-                                    append( as remove(element_type(ET::$trait_name<Renderer>)))
-                                    wrap {}
-                                    prepend( crate::parse_impl_with! )
-                                }
-                            })
-                        } else {
-                            crate::dom::behaviors::Element::remove_attribute
-                        }
-                    },
-                },
-            )
-        }
+    // TODO: remove
+    ($fn_name:ident ($value:ident : maybe![&$($maybe_ty:tt)*]) $maybe:tt $trait_name:ident) => {
+        crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) $maybe $trait_name }
     };
     ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
@@ -576,17 +531,21 @@ macro_rules! impl_attribute {
                         if ($($update_with)?) {
                                 crate::parse_update_with!(match $($update_with)? {
                                     simple => {
-                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: &_| el.)
-                                        append( (renderer, *v) )
+                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: <$maybe_ty as frender_html_common::ValueKind>::Value<'_>| el.)
+                                        append( (renderer, v) )
                                     }
                                     impl_with => {
-                                        append( as update(value(&$value) element_type(ET::$trait_name<Renderer>)))
+                                        append( as update(
+                                            ValueType(<$maybe_ty as frender_html_common::ValueKind>::Value<'_>)
+                                            value($value)
+                                            element_type(ET::$trait_name<Renderer>)
+                                        ))
                                         wrap {}
                                         prepend( crate::parse_impl_with! )
                                     }
                                 })
                         } else {
-                            crate::dom::attr::SetAsAttributeValue::set_as_attribute_value
+                            <$maybe_ty as crate::dom::attr::SetAsAttributeValue>::set_as_attribute_value
                         }
                     },
                     remove: ::frender_common::expand! {
