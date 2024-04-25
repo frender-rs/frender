@@ -32,9 +32,7 @@ macro_rules! impl_from {
 }
 
 impl_from!(
-    impl<__> From<i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64, char>
-        for Scalar
-    {
+    impl<__> From<i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64> for Scalar {
         fn from(value: _) -> Self {
             Scalar(AnyStr(value.to_string()).into_async_str_iterator())
         }

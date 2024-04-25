@@ -192,6 +192,9 @@ mod html_children {
     {
     }
 
+    impl Sealed for crate::char::IterCharStringEncodeSafe {}
+    impl HtmlChildren for crate::char::IterCharStringEncodeSafe {}
+
     macro_rules! impl_for_tuple {
         ($($iter:ident ($($field:ident),+) ,)+) => {$(
                 impl<$($field: Sealed + AsyncStrIterator),+> Sealed for async_str_iter::concat::$iter<$($field),+> {}
@@ -314,6 +317,9 @@ mod one_string_or_empty {
         for async_str_iter::either::IterEither<L, R>
     {
     }
+
+    impl Sealed for crate::char::IterCharStringEncodeSafe {}
+    impl OneStringOrEmpty for crate::char::IterCharStringEncodeSafe {}
 }
 
 pub trait OneString: OneStringOrEmpty {}
@@ -324,4 +330,6 @@ mod one_string {
     impl OneString for &str {}
     impl<S: AsRef<str>> OneString for async_str_iter::any_str::IterAnyStr<S> {}
     impl<L: OneString, R: OneString> OneString for async_str_iter::either::IterEither<L, R> {}
+
+    impl OneString for crate::char::IterCharStringEncodeSafe {}
 }

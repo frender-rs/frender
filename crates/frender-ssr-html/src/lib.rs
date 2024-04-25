@@ -1,6 +1,7 @@
 pub mod assert;
 pub mod attr;
 pub mod attr_value;
+pub mod char;
 pub mod element;
 pub mod encode;
 pub mod escape_safe;

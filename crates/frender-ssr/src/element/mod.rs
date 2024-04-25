@@ -7,4 +7,5 @@ pub mod option;
 pub mod str;
 pub mod tuple;
 
+mod char;
 mod scalar;
