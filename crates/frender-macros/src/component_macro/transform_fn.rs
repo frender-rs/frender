@@ -74,7 +74,7 @@ pub fn transform_item_fn_with(
                 syn::Type::ImplTrait(it) => {
                     span = it.impl_token.span;
                 }
-                ty => {
+                _ => {
                     span = r_arrow.span();
                 }
             }

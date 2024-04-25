@@ -1,5 +1,5 @@
 use frender::prelude::*;
-use hooks::{prelude::*, shared_state::SharedState};
+use hooks::prelude::*;
 
 component_fn!(
     #[inline]

@@ -17,6 +17,7 @@ macro_rules! impl_grouped {
     ) => {$(
         pub type $name<S> = Grouped<$ty, S>;
 
+        #[allow(non_snake_case)]
         pub fn $name<S>(content: S) -> $name<S> {
             $name {
                 group_token: Default::default(),

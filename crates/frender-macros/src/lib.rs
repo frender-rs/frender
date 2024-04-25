@@ -2,8 +2,6 @@ mod component_data;
 mod component_macro;
 mod component_to_tokens;
 mod err;
-mod props_data;
-mod props_to_tokens;
 mod rsx_data;
 mod rsx_to_tokens;
 
