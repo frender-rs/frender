@@ -5,7 +5,9 @@ pub use debug::*;
 pub mod hooks_ext;
 
 pub mod elements;
-pub mod omitted;
+
+mod empty;
+pub use empty::Empty;
 
 pub use frender_common::{Elements, EventListenerOptions, HandleEventWithOptions, Keyed, TempStr};
 pub use frender_hook_element::new_fn_hook_element;

@@ -1,9 +1,10 @@
 use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, ContentEditable, MaybeValue};
 
+/// Indicates an attribute is present but has an empty value.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-pub struct Omitted;
+pub struct Empty;
 
-impl MaybeIntoHtmlAttributeValue<bool> for Omitted {
+impl MaybeIntoHtmlAttributeValue<bool> for Empty {
     type HtmlAttributeValue = async_str_iter::empty::Empty;
 
     fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {
@@ -13,7 +14,7 @@ impl MaybeIntoHtmlAttributeValue<bool> for Omitted {
 
 /// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
 /// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string.
-impl MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for Omitted {
+impl MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for Empty {
     type HtmlAttributeValue = async_str_iter::empty::Empty;
 
     fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {
@@ -21,7 +22,7 @@ impl MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for Omitted {
     }
 }
 
-impl MaybeValue<bool> for Omitted {
+impl MaybeValue<bool> for Empty {
     // whether initialized
     type UpdateWithState = bool;
 
@@ -39,7 +40,7 @@ impl MaybeValue<bool> for Omitted {
 /// As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
 /// if the attribute is given without a value, like <label contenteditable>Example Label</label>, its value is treated as an empty string,
 /// which is the same as `"true"`.
-impl MaybeValue<ContentEditable<'static>> for Omitted {
+impl MaybeValue<ContentEditable<'static>> for Empty {
     // whether initialized
     type UpdateWithState = bool;
 
