@@ -6,6 +6,9 @@ pub mod elements;
 mod empty;
 pub use empty::Empty;
 
+mod missing;
+pub use missing::Missing;
+
 pub use frender_common::{Elements, EventListenerOptions, HandleEventWithOptions, Keyed, TempStr};
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
