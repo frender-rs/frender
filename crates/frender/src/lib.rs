@@ -1,6 +1,3 @@
-mod debug;
-pub use debug::*;
-
 #[cfg(feature = "hooks")]
 pub mod hooks_ext;
 
