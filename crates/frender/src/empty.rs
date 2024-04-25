@@ -32,6 +32,7 @@ impl MaybeValue<bool> for Empty {
         updater: impl frender_html_common::ValueUpdater<bool>,
     ) {
         if !*state {
+            *state = true;
             updater.update(true)
         }
     }
@@ -50,6 +51,7 @@ impl MaybeValue<ContentEditable<'static>> for Empty {
         updater: impl frender_html_common::ValueUpdater<ContentEditable<'static>>,
     ) {
         if !*state {
+            *state = true;
             updater.update(ContentEditable::EMPTY)
         }
     }
