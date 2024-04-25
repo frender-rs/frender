@@ -38,7 +38,7 @@ impl PropsOptions {
         match syn::Attribute::parse_inner(input) {
             Ok(attrs) => {
                 for attr in &attrs {
-                    let ident = attr.path.get_ident().map(syn::Ident::to_string);
+                    let ident = attr.path().get_ident().map(syn::Ident::to_string);
                     let ident = ident.as_ref().map_or("", |s| s.as_str());
                     if ident != "props" {
                         recorder.record_error(
@@ -111,7 +111,7 @@ pub fn parse_braced(
     let content;
     let brace_token = syn::braced!(content in input);
     attrs.extend(syn::Attribute::parse_inner(&content)?);
-    let named = content.parse_terminated(PropsField::parse_named)?;
+    let named = content.parse_terminated(PropsField::parse_named, syn::Token![,])?;
     Ok(PropsFields { brace_token, named })
 }
 
@@ -204,22 +204,25 @@ impl PropsFieldBuilder {
             ty: Box::new(arg_ty),
         };
         let fn_arg: Pair<syn::PatType, syn::Token![,]> = Pair::End(fn_arg);
-        let paren = syn::token::Paren { span };
+        let paren = syn::token::Paren(span);
         Self {
             generics: syn::Generics::default(),
             paren,
             fn_arg,
             arrow: syn::Token![->](span),
             fn_block: syn::Block {
-                brace_token: syn::token::Brace { span },
-                stmts: vec![syn::Stmt::Expr(syn::Expr::Path(syn::ExprPath {
-                    attrs: vec![],
-                    path: syn::Path {
-                        leading_colon: None,
-                        segments: Punctuated::from_iter([syn::PathSegment::from(id)]),
-                    },
-                    qself: None,
-                }))],
+                brace_token: syn::token::Brace(span),
+                stmts: vec![syn::Stmt::Expr(
+                    syn::Expr::Path(syn::ExprPath {
+                        attrs: vec![],
+                        path: syn::Path {
+                            leading_colon: None,
+                            segments: Punctuated::from_iter([syn::PathSegment::from(id)]),
+                        },
+                        qself: None,
+                    }),
+                    None,
+                )],
             },
         }
     }
@@ -245,11 +248,12 @@ impl Parse for PropsFieldTypeAndBuilderExplicit {
         let args;
         let paren = syn::parenthesized!(args in input);
 
-        let mut args: Punctuated<_, syn::Token![,]> = args.parse_terminated(syn::FnArg::parse)?;
+        let mut args: Punctuated<_, syn::Token![,]> =
+            args.parse_terminated(syn::FnArg::parse, syn::Token![,])?;
 
         if args.len() != 1 {
             return Err(syn::Error::new(
-                paren.span,
+                paren.span.join(),
                 "Props field's custom builder fn need exactly one argument",
             ));
         }

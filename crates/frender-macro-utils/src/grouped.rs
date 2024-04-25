@@ -47,7 +47,8 @@ macro_rules! impl_grouped {
             }
         }
 
-        impl<S> ::syn::token::CustomToken for $name<S> {
+        // TODO: rename
+        impl<S> ::syn::__private::CustomToken for $name<S> {
             fn peek(cursor: syn::buffer::Cursor) -> bool {
                 <$ty as syn::token::Token>::peek(cursor)
             }

@@ -1,4 +1,4 @@
-use darling::{util::WithOriginal, FromMeta};
+use darling::{ast::NestedMeta, util::WithOriginal, FromMeta};
 use syn::{punctuated::Pair, spanned::Spanned};
 
 use crate::{
@@ -32,9 +32,9 @@ pub struct ComponentDefinition {
 }
 
 impl ComponentDefinition {
-    pub fn from_attrs_and_fn(attr_args: syn::AttributeArgs, item_fn: syn::ItemFn) -> Self {
+    pub fn from_attrs_and_fn(attr_args: &[NestedMeta], item_fn: syn::ItemFn) -> Self {
         let mut errors = vec![];
-        let options = match ComponentOptions::from_list(&attr_args) {
+        let options = match ComponentOptions::from_list(attr_args) {
             Ok(v) => v,
             Err(err) => {
                 errors.push(err);

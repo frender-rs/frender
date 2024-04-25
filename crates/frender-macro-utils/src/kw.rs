@@ -15,7 +15,8 @@ impl<K: Parse, C: Parse> Parse for PrefixKeyword<K, C> {
     }
 }
 
-impl<K: syn::token::Token, C> syn::token::CustomToken for PrefixKeyword<K, C> {
+// TODO: remove
+impl<K: syn::token::Token, C> syn::__private::CustomToken for PrefixKeyword<K, C> {
     fn peek(cursor: syn::buffer::Cursor) -> bool {
         K::peek(cursor)
     }

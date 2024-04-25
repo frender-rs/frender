@@ -14,11 +14,20 @@ use frender_macro_utils as utils;
 
 #[proc_macro_attribute]
 pub fn component(args: TokenStream, input: TokenStream) -> TokenStream {
+    use darling::ast::NestedMeta;
+
     use component_data::*;
-    let attr_args = parse_macro_input!(args as syn::AttributeArgs);
+
+    let attr_args = match NestedMeta::parse_meta_list(args.into()) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(darling::Error::from(e).write_errors());
+        }
+    };
+
     let item_fn = parse_macro_input!(input as syn::ItemFn);
 
-    let comp = ComponentDefinition::from_attrs_and_fn(attr_args, item_fn);
+    let comp = ComponentDefinition::from_attrs_and_fn(&attr_args, item_fn);
 
     comp.into_ts().into()
 }

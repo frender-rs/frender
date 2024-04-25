@@ -1,4 +1,4 @@
-use darling::{FromMeta, ToTokens};
+use darling::{ast::NestedMeta, FromMeta, ToTokens};
 
 #[derive(Debug, Clone, Copy)]
 pub enum ValueOrPath<V, P: From<syn::Path> = syn::Path> {
@@ -35,17 +35,17 @@ impl<V: ToTokens, P: From<syn::Path> + ToTokens> ToTokens for ValueOrPath<V, P> 
 }
 
 impl<V: FromMeta, P: From<syn::Path>> FromMeta for ValueOrPath<V, P> {
-    fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
+    fn from_list(items: &[NestedMeta]) -> darling::Result<Self> {
         let len = items.len();
         if len == 1 {
             let item = &items[0];
             match item {
-                syn::NestedMeta::Meta(m) => match m {
+                NestedMeta::Meta(m) => match m {
                     syn::Meta::Path(p) => Ok(Self::Path(P::from(p.clone()))),
                     syn::Meta::List(_) => Err(darling::Error::unexpected_type("list")),
                     syn::Meta::NameValue(_) => Err(darling::Error::unexpected_type("value")),
                 },
-                syn::NestedMeta::Lit(value) => Err(darling::Error::unexpected_lit_type(value)),
+                NestedMeta::Lit(value) => Err(darling::Error::unexpected_lit_type(value)),
             }
         } else if len > 1 {
             Err(darling::Error::too_many_items(1))

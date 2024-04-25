@@ -1,9 +1,6 @@
-use darling::ToTokens;
 use hooks_macro_core::DetectedHooksTokens;
-use quote::{quote, quote_spanned};
+use quote::quote_spanned;
 use syn::spanned::Spanned;
-
-use crate::err::RecordError;
 
 fn element_return_ty(
     span: proc_macro2::Span,
@@ -113,10 +110,8 @@ pub fn transform_item_fn_with(
 
     let prepend_stmt = before_stmts(item_fn, errors);
 
-    item_fn
-        .block
-        .stmts
-        .push(syn::Stmt::Expr(syn::Expr::Verbatim(quote_spanned! {span=>
+    item_fn.block.stmts.push(syn::Stmt::Expr(
+        syn::Expr::Verbatim(quote_spanned! {span=>
             #frender_path::#method_name (
                 move |#fn_arg_data_pat| {
 
@@ -128,5 +123,7 @@ pub fn transform_item_fn_with(
 
                 }
             )
-        })));
+        }),
+        None,
+    ));
 }
