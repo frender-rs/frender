@@ -1,5 +1,3 @@
-use wasm_bindgen::UnwrapThrowExt;
-
 pub trait Node<Renderer: ?Sized> {
     fn cursor_is_at_self(&self, renderer: &Renderer) -> bool;
 
@@ -69,12 +67,16 @@ impl<
     }
 
     fn set_attribute(&mut self, _: &mut Renderer, name: &str, value: &str) {
+        use wasm_bindgen::UnwrapThrowExt;
+
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .set_attribute(name, value)
             .unwrap_throw()
     }
 
     fn remove_attribute(&mut self, _: &mut Renderer, name: &str) {
+        use wasm_bindgen::UnwrapThrowExt;
+
         AsRef::<web_sys::Element>::as_ref(&self.0)
             .remove_attribute(name)
             .unwrap_throw()
