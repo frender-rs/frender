@@ -1,6 +1,20 @@
 use syn::parse::Parse;
 
-use crate::utils::grouped::Bracketed;
+/// `[$content]`
+pub struct Bracketed<T> {
+    pub group_token: syn::token::Bracket,
+    pub content: T,
+}
+
+impl<S: Parse> Parse for Bracketed<S> {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let content;
+        Ok(Self {
+            group_token: syn::bracketed!(content in input),
+            content: content.parse()?,
+        })
+    }
+}
 
 pub struct ExplicitPath {
     pub at_token: syn::Token![@],
