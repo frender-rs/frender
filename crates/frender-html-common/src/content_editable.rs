@@ -1,4 +1,4 @@
-use crate::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, StringValue};
+use crate::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, StringValue, ValueUpdater};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ContentEditable<'a>(pub &'a str);
@@ -7,14 +7,12 @@ impl ContentEditable<'static> {
     pub const EMPTY: Self = Self("");
 }
 
-pub trait MaybeContentEditable: MaybeIntoHtmlAttributeValue<ContentEditable<'static>> {
-    type UpdateWithState: Default;
+impl<'a> MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for ContentEditable<'a> {
+    type HtmlAttributeValue = <&'a str as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
 
-    fn update_with_state(
-        this: Self,
-        updater: impl crate::ValueUpdater<str>,
-        state: &mut Self::UpdateWithState,
-    );
+    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
+        <&'a str as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(this.0)
+    }
 }
 
 impl<V: StringValue> MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for V {
@@ -36,15 +34,27 @@ impl MaybeIntoHtmlAttributeValue<ContentEditable<'static>> for bool {
     }
 }
 
-impl<V: StringValue> MaybeContentEditable for V {
+impl<V: StringValue> MaybeValue<ContentEditable<'static>> for V {
     type UpdateWithState = <V as MaybeValue<str>>::UpdateWithState;
 
     fn update_with_state(
         this: Self,
-        updater: impl crate::ValueUpdater<str>,
         state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<ContentEditable<'static>>,
     ) {
-        <V as MaybeValue<str>>::update_with_state(this, state, updater)
+        struct UpdateStr<U: ValueUpdater<ContentEditable<'static>>>(U);
+
+        impl<U: ValueUpdater<ContentEditable<'static>>> ValueUpdater<str> for UpdateStr<U> {
+            fn update(self, value: <str as crate::ValueKind>::Value<'_>) {
+                self.0.update(ContentEditable(value))
+            }
+
+            fn remove(self) {
+                self.0.remove()
+            }
+        }
+
+        <V as MaybeValue<str>>::update_with_state(this, state, UpdateStr(updater))
     }
 }
 
@@ -56,46 +66,19 @@ fn bool_to_str(this: bool) -> &'static str {
     }
 }
 
-impl MaybeContentEditable for bool {
+/// `true` is mapped to `"true". `false` is mapped to "false"`.
+impl MaybeValue<ContentEditable<'static>> for bool {
     type UpdateWithState = Option<Self>;
 
     fn update_with_state(
         this: Self,
-        updater: impl crate::ValueUpdater<str>,
         state: &mut Self::UpdateWithState,
+        updater: impl ValueUpdater<ContentEditable<'static>>,
     ) {
         if *state == Some(this) {
             return;
         }
         *state = Some(this);
-        updater.update(bool_to_str(this));
-    }
-}
-
-impl<V: MaybeContentEditable> MaybeContentEditable for Option<V> {
-    type UpdateWithState = V::UpdateWithState;
-
-    fn update_with_state(
-        this: Self,
-        updater: impl crate::ValueUpdater<str>,
-        state: &mut Self::UpdateWithState,
-    ) {
-        if let Some(this) = this {
-            V::update_with_state(this, updater, state);
-        } else {
-            *state = Default::default();
-            updater.remove();
-        }
-    }
-}
-
-impl MaybeContentEditable for () {
-    type UpdateWithState = ();
-
-    fn update_with_state(
-        (): Self,
-        _: impl crate::ValueUpdater<str>,
-        (): &mut Self::UpdateWithState,
-    ) {
+        updater.update(ContentEditable(bool_to_str(this)));
     }
 }

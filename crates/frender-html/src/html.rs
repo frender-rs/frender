@@ -1,6 +1,7 @@
 use frender_dom::{render::RenderTextFromKnown, OnEvent};
+use frender_html_common::ContentEditable;
 
-use crate::impl_bounds::{DomTokens, MaybeContentEditable, SetRef};
+use crate::impl_bounds::{DomTokens, SetRef};
 
 #[cfg(not(feature = "macros_not_expanded"))]
 pub mod props_builders;
@@ -808,14 +809,7 @@ crate::def_intrinsic_component_props!(
                             ),
                         );
 
-                        verbatim_trait_items!(
-                            fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str);
-                        );
-                        impl_for_web!(verbatim_trait_items!(
-                            fn set_content_editable(&mut self, _: &mut Renderer, value: &str) {
-                                AsRef::<::web_sys::HtmlElement>::as_ref(&self.0).set_content_editable(value)
-                            }
-                        ););
+                        impl_for_web!();
 
                         fn ref_html_element(value: bounds![SetRef<frender_dom::node_ref::HtmlElement>]);
 
@@ -829,12 +823,14 @@ crate::def_intrinsic_component_props!(
                         fn auto_focus(value: maybe![bool]) {
                             attr_name!("autofocus");
                         }
-                        fn content_editable(value: bounds![MaybeContentEditable]) {
+                        fn content_editable(value: maybe![ContentEditable<'static>]) {
                             attr_name!("contenteditable");
-                            impl_with!(csr {
-                                update: |el: &mut _, renderer: &mut _, _, v: &_| { behaviors::HtmlElement::set_content_editable(el, renderer, v,) },
-                                remove: frender_dom::behaviors::Element::remove_attribute,
-                            });
+                            update_with!(
+                                //
+                                set_content_editable,
+                                custom_type!(&str),
+                                impl_with!(update = |element, renderer| element.set_content_editable(renderer, value.0)),
+                            );
                         }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
                         fn context_menu(value: maybe![&str]) {

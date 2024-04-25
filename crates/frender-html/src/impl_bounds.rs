@@ -530,50 +530,6 @@ pub mod MaybeHandleEvent {
 }
 
 #[allow(non_snake_case)]
-pub mod MaybeContentEditable {
-    pub use crate::default_impl_csr as csr;
-    pub use crate::default_impl_ssr as ssr;
-    pub use frender_html_common::MaybeContentEditable as Bounds;
-
-    pub mod csr {
-        use frender_html_common::MaybeContentEditable;
-
-        pub use super::super::CsrInputWithUpdater as Input;
-        pub use crate::DefaultCsrState as State;
-
-        pub type State<V> = <V as MaybeContentEditable>::UpdateWithState;
-
-        pub fn update_with_state<
-            //
-            V: MaybeContentEditable,
-            E: ?Sized,
-            RR: ?Sized,
-            U: FnOnce(&mut E, &mut RR, &'static str, &str),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        >(
-            input: Input<V, E, RR, U, R>,
-            state: &mut State<V>,
-        ) {
-            let (this, updater) = input.into_value_and_updater();
-
-            V::update_with_state(this, updater, state)
-        }
-    }
-
-    pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, content_editable::ContentEditable, MaybeContentEditable};
-
-        pub use crate::DefaultSsrHaevoe as Haevoe;
-
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as MaybeIntoHtmlAttributeValue<ContentEditable<'static>>>::HtmlAttributeValue>;
-
-        pub fn maybe_into_haevoe<V: MaybeContentEditable>(this: V) -> Option<Haevoe<V>> {
-            V::maybe_into_html_attribute_value(this).map(Haevoe::<V>::new)
-        }
-    }
-}
-
-#[allow(non_snake_case)]
 pub mod SetRef {
     pub use FnOnceSetRef as Bounds;
 

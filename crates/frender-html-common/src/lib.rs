@@ -10,8 +10,10 @@ pub use maybe_value::{MaybeValue, ValueUpdater};
 pub mod attr;
 pub mod dom_token;
 pub use dom_token::DomTokens;
-pub mod content_editable;
-pub use content_editable::MaybeContentEditable;
+
+mod content_editable;
+pub use content_editable::ContentEditable;
+
 pub mod maybe_str;
 
 mod string_value;

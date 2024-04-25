@@ -1,6 +1,4 @@
-use frender_html_common::{
-    attr::MaybeIntoHtmlAttributeValue, content_editable::ContentEditable, MaybeValue,
-};
+use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, ContentEditable, MaybeValue};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub struct Omitted;

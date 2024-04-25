@@ -905,7 +905,7 @@ pub trait HtmlElement: Element {
     fn auto_focus<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::auto_focus<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::auto_focus(value))
     }
-    fn content_editable<V: MaybeContentEditable::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::content_editable<V>> {
+    fn content_editable<V: crate::impl_bounds::MaybeValue::Bounds<ContentEditable<'static>>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::content_editable<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::content_editable(value))
     }
     #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]

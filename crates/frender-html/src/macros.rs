@@ -35,14 +35,22 @@ macro_rules! parse_update_with {
 #[macro_export]
 macro_rules! parse_impl_with {
     ($set_attribute_ident:ident (
-        update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr,
-        remove = $($t:tt)*
+        update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr
+        $(, remove = $($t:tt)*)?
     ) as update(
         ValueType($ValueType:ty)
         value($value:pat_param)
         element_type($element_type:ty)
     )) => {
         |$element: &mut $element_type, $renderer: &mut _, _, $value: $ValueType| $update
+    };
+    ($set_attribute_ident:ident (
+        update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr
+        $(,)?
+    ) as remove(
+        element_type($element_type:ty)
+    )) => {
+        crate::dom::behaviors::Element::remove_attribute
     };
     ($set_attribute_ident:ident (
         update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr,
