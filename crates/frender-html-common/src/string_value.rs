@@ -1,4 +1,6 @@
-pub trait StringValue: AsRef<str> {}
+use async_str_iter::IntoAsyncStrIterator;
+
+pub trait StringValue: AsRef<str> + IntoAsyncStrIterator {}
 
 frender_common::impl_many!(
     impl<__> StringValue

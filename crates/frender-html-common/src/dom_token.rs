@@ -1,6 +1,8 @@
 // mod advanced; // TODO: impl advanced dom tokens
 
-use async_str_iter::AsyncStrIterator;
+use async_str_iter::{AsyncStrIterator, IntoAsyncStrIterator};
+
+use crate::attr::MaybeIntoHtmlAttributeValue;
 
 #[doc(hidden)]
 pub mod custom_const_dom_tokens {
@@ -177,19 +179,6 @@ pub trait DomTokenList {
 }
 
 pub trait DomTokens {
-    type UpdateState;
-
-    fn update_dom_token_list_and_initialize_state(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-    ) -> Self::UpdateState;
-
-    fn update_dom_token_list(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::UpdateState,
-    );
-
     type UpdateWithState: Default;
 
     fn update_with_state(
@@ -203,70 +192,39 @@ pub trait DomTokens {
     fn dom_tokens_maybe_into_async_str_iter(this: Self) -> Option<Self::DomTokensIntoAsyncStrIter>;
 }
 
-mod impl_for_static_string {
-    use std::borrow::Cow;
-
+mod impl_for_str {
     use async_str_iter::IntoAsyncStrIterator;
+
+    use crate::StringValue;
 
     use super::DomTokens;
 
-    crate::impl_many!(
-        impl<__> DomTokens
-            for each_of![
-                &'static str,
-                String,
-                Cow<'static, str>,
-                std::rc::Rc<str>,
-                std::sync::Arc<str>,
-            ]
-        {
-            type UpdateState = Self;
+    impl<S: StringValue> DomTokens for S {
+        type UpdateWithState = Option<Self>;
 
-            fn update_dom_token_list_and_initialize_state(
-                this: Self,
-                dom_token_list: &mut impl super::DomTokenList,
-            ) -> Self::UpdateState {
-                dom_token_list.set_value(&this);
-                this
-            }
-
-            fn update_dom_token_list(
-                this: Self,
-                dom_token_list: &mut impl super::DomTokenList,
-                state: &mut Self::UpdateState,
-            ) {
-                if *state != this {
-                    dom_token_list.set_value(&this);
-                    *state = this
+        fn update_with_state(
+            this: Self,
+            dom_token_list: &mut impl super::DomTokenList,
+            state: &mut Self::UpdateWithState,
+        ) {
+            if let Some(state) = state {
+                if state.as_ref() == this.as_ref() {
+                    return;
                 }
             }
 
-            type UpdateWithState = Option<Self>;
-
-            fn update_with_state(
-                this: Self,
-                dom_token_list: &mut impl super::DomTokenList,
-                state: &mut Self::UpdateWithState,
-            ) {
-                if let Some(state) = state {
-                    if *state == this {
-                        return;
-                    }
-                }
-
-                dom_token_list.set_value(&this);
-                *state = Some(this)
-            }
-
-            type DomTokensIntoAsyncStrIter = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
-
-            fn dom_tokens_maybe_into_async_str_iter(
-                this: Self,
-            ) -> Option<Self::DomTokensIntoAsyncStrIter> {
-                Some(this.into_async_str_iterator())
-            }
+            dom_token_list.set_value(this.as_ref());
+            *state = Some(this)
         }
-    );
+
+        type DomTokensIntoAsyncStrIter = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
+
+        fn dom_tokens_maybe_into_async_str_iter(
+            this: Self,
+        ) -> Option<Self::DomTokensIntoAsyncStrIter> {
+            Some(this.into_async_str_iterator())
+        }
+    }
 }
 
 mod impl_for_unit_tuple {
@@ -274,21 +232,6 @@ mod impl_for_unit_tuple {
     use super::DomTokens;
 
     impl DomTokens for () {
-        type UpdateState = ();
-
-        fn update_dom_token_list_and_initialize_state(
-            _: Self,
-            _: &mut impl super::DomTokenList,
-        ) -> Self::UpdateState {
-        }
-
-        fn update_dom_token_list(
-            _: Self,
-            _: &mut impl super::DomTokenList,
-            _: &mut Self::UpdateState,
-        ) {
-        }
-
         type UpdateWithState = ();
 
         fn update_with_state(
