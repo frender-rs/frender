@@ -941,6 +941,9 @@ dependencies = [
 [[package]]
 name = "frender-dom-tokens"
 version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+]
 
 [[package]]
 name = "frender-events"

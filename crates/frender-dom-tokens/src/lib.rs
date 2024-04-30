@@ -1,194 +1,90 @@
-use std::str;
+pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
 
-#[derive(Debug, Clone, Copy)]
-pub struct DomToken<'a>(&'a str);
+use async_str_iter::AsyncStrIterator;
 
-impl<'a> std::ops::Deref for DomToken<'a> {
-    type Target = str;
+mod dom_token;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+mod strings_with_predicates;
+
+/// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
+pub trait DomTokenList {
+    fn set_value(&mut self, value: &str);
+    fn add_1(&mut self, token: DomToken);
+    fn remove_1(&mut self, token: DomToken);
+    fn replace(&mut self, old_token: DomToken, new_token: DomToken);
 }
 
-impl<'a> DomToken<'a> {
-    pub const fn new_const(s: &'a str) -> Self {
-        assert_valid_dom_token(s);
-        Self(s)
-    }
+pub trait DomTokens {
+    type UpdateWithState: Default;
 
-    pub const fn as_str(self) -> &'a str {
-        self.0
-    }
-}
+    fn update_with_state(
+        this: Self,
+        dom_token_list: &mut impl DomTokenList,
+        state: &mut Self::UpdateWithState,
+    );
 
-const fn assert_ascii(s: &str) {
-    if !s.is_ascii() {
-        panic!("currently only ascii dom tokens are supported")
-    }
-}
+    type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
-// See https://www.w3.org/TR/2011/WD-html5-20110525/common-microsyntaxes.html#space-character
-const fn is_space_char(v: u8) -> bool {
-    match v {
-        b'\x20' | b'\x09' | b'\x0A' | b'\x0C' | b'\x0D' => true,
-        _ => false,
-    }
-}
-
-pub const fn assert_valid_dom_token(s: &str) {
-    assert_ascii(s);
-    let s = s.as_bytes();
-
-    let mut i = 0;
-
-    while i < s.len() {
-        if is_space_char(s[i]) {
-            panic!("dom token can't contain space characters")
-        }
-        i += 1;
-    }
-}
-
-pub const fn assert_valid_dom_tokens(tokens: &[&str]) {
-    let mut i = 0;
-    while i < tokens.len() {
-        assert_valid_dom_token(tokens[i]);
-        i += 1;
-    }
-}
-
-const fn bytes_eq(a: &[u8], b: &[u8]) -> bool {
-    a.len() == b.len() && {
-        let mut i = 0;
-        while i < a.len() {
-            if a[i] != b[i] {
-                return false;
-            }
-
-            i += 1;
-        }
-
-        true
-    }
-}
-
-pub const fn assert_each_unique(tokens: &[&str]) {
-    if tokens.len() <= 1 {
-        return;
-    }
-    let mut i = 0;
-    while i < tokens.len() - 1 {
-        let mut j = i + 1;
-        while j < tokens.len() {
-            if bytes_eq(tokens[i].as_bytes(), tokens[j].as_bytes()) {
-                panic!("each item of dom tokens must be unique")
-            }
-            j += 1;
-        }
-        i += 1;
-    }
+    fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter;
 }
 
 pub trait ConstPossibleDomTokens {
-    const POSSIBLE_DOM_TOKENS: &'static [&'static str];
+    const POSSIBLE_DOM_TOKENS: UniqueDomTokens<'static, 'static>;
 }
 
 pub mod __private {
-    pub const fn put_tokens_at<'a, const N: usize>(
-        mut res: [&'a str; N],
-        mut at: usize,
-        tokens: &[&'a str],
-    ) -> ([&'a str; N], usize) {
-        let mut j = 0;
-        while j < tokens.len() {
-            res[at] = tokens[j];
-            at += 1;
-            j += 1;
-        }
-
-        (res, at)
-    }
-
     pub use bool;
+    pub use str;
     pub use Option;
 
-    pub const fn join_dedup_count(a: &[&str], b: &[&str]) -> usize {
-        use super::{assert_each_unique, assert_valid_dom_tokens, contains};
+    pub use async_str_iter::either::IterEither;
 
-        assert_valid_dom_tokens(a);
-        assert_valid_dom_tokens(b);
+    use async_str_iter::IntoAsyncStrIterator;
 
-        assert_each_unique(a);
-        assert_each_unique(b);
+    pub type IterConcat<T> =
+        <async_str_iter::concat::Concat<T> as IntoAsyncStrIterator>::IntoAsyncStrIterator;
 
-        let mut count = a.len();
-        let mut i = 0;
-        while i < b.len() {
-            if !contains(a, b[i]) {
-                count += 1;
-            }
-            i += 1;
-        }
-
-        count
+    pub fn iter_concat<T>(t: T) -> IterConcat<T>
+    where
+        async_str_iter::concat::Concat<T>: IntoAsyncStrIterator,
+    {
+        IntoAsyncStrIterator::into_async_str_iterator(async_str_iter::concat::Concat(t))
     }
 
-    pub const fn join_dedup<'a, const N: usize>(a: &[&'a str], b: &[&'a str]) -> [&'a str; N] {
-        use super::{assert_each_unique, assert_valid_dom_tokens, contains};
-
-        assert_valid_dom_tokens(a);
-        assert_valid_dom_tokens(b);
-
-        assert_each_unique(a);
-        assert_each_unique(b);
-
-        let mut res = [""; N];
-        let mut at = 0;
-        (res, at) = put_tokens_at(res, at, &a);
-
-        let mut i = 0;
-        while i < b.len() {
-            let b = b[i];
-            if !contains(&a, b) {
-                res[at] = b;
-                at += 1;
-            }
-            i += 1;
-        }
-
-        assert!(at == N);
-
-        res
+    pub type IterStrSlice<'a, 'b> = std::slice::Iter<'a, &'b str>;
+    pub fn iter_str_slice<'a, 'b>(s: &'a [&'b str]) -> IterStrSlice<'a, 'b> {
+        s.iter()
     }
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __dom_tokens_array_or_slice {
+macro_rules! __unique_dom_tokens {
     () => {
-        []
+        $crate::UniqueDomTokens::EMPTY
     };
     ($dom_token:literal) => {
-        [$dom_token]
+        $crate::UniqueDomTokens::new_const(&[$crate::DomToken::new_const($dom_token)])
     };
     ([$($dom_token:literal),+ $(,)?]) => {
-        [$($dom_token),+]
+        $crate::UniqueDomTokens::new_const(&[$( $crate::DomToken::new_const($dom_token) ),+])
     };
     (( $e:expr ) as $as_ty:ty) => {
         <$as_ty as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS
     };
     (if ( $e:expr ) $if_block:tt) => {
-        $crate::__dom_tokens_array_or_slice! $if_block
+        $crate::__unique_dom_tokens! $if_block
     };
-    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {{
-        const A: &[&'static str] = &$crate::__dom_tokens_array_or_slice! $if_block;
-        const B: &[&'static str] = &$crate::__dom_tokens_array_or_slice! $else_block;
+    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
+        $crate::UniqueDomTokenArray::as_unique_dom_tokens(&{
+            const A: $crate::UniqueDomTokens<'static, 'static> = $crate::__unique_dom_tokens! $if_block  ;
+            const B: $crate::UniqueDomTokens<'static, 'static> = $crate::__unique_dom_tokens! $else_block;
 
-        const N: usize = $crate::__private::join_dedup_count(A, B);
+            const N: usize = $crate::UniqueDomTokens::join_count(A, B);
 
-        $crate::__private::join_dedup::<N>(A, B)
-    }};
+            $crate::UniqueDomTokens::join::<N>(A, B)
+        })
+    };
 }
 
 #[doc(hidden)]
@@ -210,9 +106,9 @@ macro_rules! __dom_tokens_count {
         $crate::__dom_tokens_count! $if_block
     };
     (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
-        $crate::__private::join_dedup_count(
-            &$crate::__dom_tokens_array_or_slice! $if_block,
-            &$crate::__dom_tokens_array_or_slice! $else_block,
+        $crate::UniqueDomTokens::join_count(
+            $crate::__unique_dom_tokens! $if_block,
+            $crate::__unique_dom_tokens! $else_block,
         )
     };
 }
@@ -230,53 +126,17 @@ const fn non_empty_count<const N: usize>(tokens: [&'static str; N]) -> usize {
     count
 }
 
-// duplicated tokens in `a` will be replaced with `""`.
-const fn dedup_from<'a, const A: usize>(mut a: [&'a str; A], b: &[&str]) -> ([&'a str; A], usize) {
-    assert_valid_dom_tokens(&b);
-    assert_valid_dom_tokens(&a);
-
-    assert_each_unique(&b);
-    assert_each_unique(&a);
-
-    let mut i = 0;
-    let mut removed = 0;
-    while i < b.len() {
-        let b = b[i].as_bytes();
-        let mut j = 0;
-        while j < a.len() {
-            if bytes_eq(b, a[j].as_bytes()) {
-                a[j] = "";
-                removed += 1;
-            }
-            j += 1;
-        }
-
-        i += 1;
-    }
-
-    (a, removed)
-}
-
-const fn contains(c: &[&str], s: &str) -> bool {
-    let mut i = 0;
-    while i < c.len() {
-        if bytes_eq(c[i].as_bytes(), s.as_bytes()) {
-            return true;
-        }
-    }
-    false
-}
-
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __put_dom_tokens_at {
+    ({} $res:ident, $at:ident) => {};
     ({$dom_token:literal} $res:ident, $at:ident) => {{
-        $res[$at] = $dom_token;
+        $res[$at] = $crate::DomToken::new_const($dom_token);
         $at += 1;
     }};
-    ($dom_tokens:tt $res:ident, $at:ident) => {{
-        ($res, $at) = $crate::__private::put_tokens_at($res, $at, &$crate::__dom_tokens_array_or_slice! $dom_tokens)
-    }};
+    ($dom_tokens:tt $res:ident, $at:ident) => {
+        ($res, $at) = $crate::put_tokens_at($res, $at, $crate::UniqueDomTokens::as_slice($crate::__unique_dom_tokens! $dom_tokens))
+    };
 }
 
 #[doc(hidden)]
@@ -328,18 +188,44 @@ macro_rules! __anonymous_custom_dom_tokens {
                 $(+ $crate::__dom_tokens_count! $dom_token)+
             };
 
+            const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = $crate::UniqueDomTokenArray::new_const({
+                let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
+                let mut i = 0;
+                $($crate::__put_dom_tokens_at!($dom_token res, i);)+
+                assert!(i == POSSIBLE_DOM_TOKENS_COUNT);
+
+                res
+            });
+
+
             impl $crate::ConstPossibleDomTokens for AnonymousCustomDomTokens {
-                const POSSIBLE_DOM_TOKENS: &'static [&'static str] = &{
-                    let mut res = [""; POSSIBLE_DOM_TOKENS_COUNT];
-                    let mut i = 0;
-                    $($crate::__put_dom_tokens_at!($dom_token res, i);)+
-                    assert!(i == POSSIBLE_DOM_TOKENS_COUNT);
+                const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> = POSSIBLE_DOM_TOKEN_ARRAY.as_unique_dom_tokens();
+            }
 
-                    $crate::assert_valid_dom_tokens(&res);
-                    $crate::assert_each_unique(&res);
+            impl $crate::DomTokens for AnonymousCustomDomTokens {
+                type UpdateWithState = $crate::__private::Option<Self>;
 
-                    res
-                };
+                fn update_with_state(
+                    this: Self,
+                    dom_token_list: &mut impl $crate::DomTokenList,
+                    state: &mut Self::UpdateWithState,
+                ) {
+                    if let $crate::__private::Option::Some(state) = state {
+
+                    } else {
+
+                    }
+                }
+
+                type DomTokensIntoAsyncStrIter = $crate::__private::IterConcat<(
+                    $($crate::DomTokensIntoAsyncStrIter! $dom_token,)+
+                )>;
+
+                fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter {
+                    $crate::__private::iter_concat((
+                        $($crate::dom_tokens_into_async_str_iter! $dom_token,)+
+                    ))
+                }
             }
         };
 
@@ -465,6 +351,55 @@ macro_rules! __parse_dom_tokens {
     };
 }
 
+#[macro_export]
+macro_rules! DomTokensIntoAsyncStrIter {
+    ($dom_token:literal) => {
+        &'static $crate::__private::str
+    };
+    ([$($dom_token:literal),+ $(,)?]) => {
+        $crate::__private::IterStrSlice<'static, 'static>
+    };
+    (( $e:expr ) as $as_ty:ty) => {
+        <$as_ty as $crate::DomTokens>::DomTokensIntoAsyncStrIter
+    };
+    (if ( $e:expr ) $if_block:tt) => {
+        $crate::__private::Option<$crate::DomTokensIntoAsyncStrIter! $if_block>
+    };
+    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
+        $crate::__private::IterEither<
+            $crate::DomTokensIntoAsyncStrIter! $if_block,
+            $crate::DomTokensIntoAsyncStrIter! $else_block,
+        >
+    };
+}
+
+#[macro_export]
+macro_rules! dom_tokens_into_async_str_iter {
+    ($dom_token:literal) => {
+        $dom_token
+    };
+    ([$($dom_token:literal),+ $(,)?]) => {
+        $crate::__private::iter_str_slice(&[$($dom_token),+])
+    };
+    (( $e:expr ) as $as_ty:ty) => {
+        <$as_ty as $crate::DomTokens>::DomTokensIntoAsyncStrIter::dom_tokens_into_async_str_iter($e)
+    };
+    (if ( $e:expr ) $if_block:tt) => {
+        $crate::__private::bool::then($e, || $crate::dom_tokens_into_async_str_iter! $if_block)
+    };
+    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
+        if $e {
+            $crate::__private::IterEither::Left(
+                $crate::dom_tokens_into_async_str_iter! $if_block
+            )
+        } else {
+            $crate::__private::IterEither::Right(
+                $crate::dom_tokens_into_async_str_iter! $else_block
+            )
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     mod anonymous {
@@ -476,73 +411,18 @@ mod tests {
             {
                 let circle = true;
                 let array = false;
+                let dark = false;
                 let tokens = dom_tokens!(
                     "my-btn",
                     if circle {
                         "circle"
                     },
-                    if primary {
-                    } else {
-                    },
                     if array {
                         ["a", "b"]
-                    }
+                    },
+                    if dark { "dark" } else { "light" }
                 );
             }
         };
-    }
-
-    use crate::{ConstPossibleDomTokens, __private::put_tokens_at};
-
-    struct CustomDomTokens;
-
-    impl ConstPossibleDomTokens for CustomDomTokens {
-        // const DOM_TOKEN_COUNT: usize = 3;
-        // const DOM_TOKENS: [&'static str; Self::DOM_TOKEN_COUNT] = ["a", "b", "c"];
-        const POSSIBLE_DOM_TOKENS: &'static [&'static str] = &["a", "b", "c"];
-    }
-
-    struct CustomDomTokens2;
-
-    impl ConstPossibleDomTokens for CustomDomTokens2 {
-        // const DOM_TOKEN_COUNT: usize = 2;
-        // const DOM_TOKENS: [&'static str; Self::DOM_TOKEN_COUNT] = ["d", "e"];
-        const POSSIBLE_DOM_TOKENS: &'static [&'static str] = &["d", "e"];
-    }
-
-    struct CustomDomTokens3;
-
-    impl ConstPossibleDomTokens for CustomDomTokens3 {
-        // const DOM_TOKEN_COUNT: usize =
-        //     CustomDomTokens::DOM_TOKENS.len() + CustomDomTokens2::DOM_TOKENS.len();
-        // const DOM_TOKENS: [&'static str; Self::DOM_TOKEN_COUNT] = {
-        //     let mut res = [""; Self::DOM_TOKEN_COUNT];
-        //
-        //     let mut i = 0;
-        //     // while i<
-        //     res
-        // };
-        const POSSIBLE_DOM_TOKENS: &'static [&'static str] = &{
-            let mut res = [""; {
-                CustomDomTokens::POSSIBLE_DOM_TOKENS.len()
-                    + CustomDomTokens2::POSSIBLE_DOM_TOKENS.len()
-            }];
-
-            let mut i = 0;
-            (res, i) = put_tokens_at(res, i, CustomDomTokens::POSSIBLE_DOM_TOKENS);
-            (res, i) = put_tokens_at(res, i, CustomDomTokens2::POSSIBLE_DOM_TOKENS);
-
-            assert!(i == res.len());
-
-            res
-        };
-    }
-
-    #[test]
-    fn custom() {
-        assert_eq!(
-            CustomDomTokens3::POSSIBLE_DOM_TOKENS,
-            ["a", "b", "c", "d", "e"]
-        );
     }
 }

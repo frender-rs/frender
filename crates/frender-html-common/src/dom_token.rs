@@ -170,28 +170,6 @@ macro_rules! __predicate_or_true {
     };
 }
 
-/// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
-pub trait DomTokenList {
-    fn set_value(&mut self, value: &str);
-    fn add_1(&mut self, token: &str);
-    fn remove_1(&mut self, token: &str);
-    fn replace(&mut self, old_token: &str, new_token: &str);
-}
-
-pub trait DomTokens {
-    type UpdateWithState: Default;
-
-    fn update_with_state(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::UpdateWithState,
-    );
-
-    type DomTokensIntoAsyncStrIter: AsyncStrIterator;
-
-    fn dom_tokens_maybe_into_async_str_iter(this: Self) -> Option<Self::DomTokensIntoAsyncStrIter>;
-}
-
 mod impl_for_str {
     use async_str_iter::IntoAsyncStrIterator;
 

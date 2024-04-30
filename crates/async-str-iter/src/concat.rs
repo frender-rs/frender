@@ -12,6 +12,14 @@ impl IntoAsyncStrIterator for Concat<()> {
     }
 }
 
+impl<T: IntoAsyncStrIterator> IntoAsyncStrIterator for Concat<(T,)> {
+    type IntoAsyncStrIterator = T::IntoAsyncStrIterator;
+
+    fn into_async_str_iterator(self) -> Self::IntoAsyncStrIterator {
+        self.0 .0.into_async_str_iterator()
+    }
+}
+
 macro_rules! impl_for_tuple {
     ($($iter:ident = $state:ident ($($field:ident),+) ,)+) => {
         $(
