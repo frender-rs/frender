@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+
+[dev-dependencies]
+futures-lite = "2.3.0"
