@@ -14,6 +14,8 @@ pub use event::*;
 
 pub mod convert;
 
+pub mod either;
+
 pub mod utils {
     pub use frender_pin_utils::*;
 }

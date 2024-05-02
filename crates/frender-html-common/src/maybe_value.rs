@@ -134,55 +134,9 @@ impl MaybeValue<bool> for bool {
 #[cfg(feature = "either")]
 pub mod either {
     use ::either::Either;
+    use frender_common::either::EitherState;
 
     use super::*;
-
-    pub enum EitherState<L, R> {
-        Left(L),
-        Right(R),
-    }
-
-    impl<L, R> EitherState<L, R> {
-        fn get_left_or_insert_default(&mut self) -> &mut L
-        where
-            L: Default,
-        {
-            match self {
-                EitherState::Left(this) => this,
-                this @ EitherState::Right(_) => {
-                    *this = Self::Left(Default::default());
-                    if let Self::Left(this) = this {
-                        this
-                    } else {
-                        unreachable!()
-                    }
-                }
-            }
-        }
-
-        fn get_right_or_insert_default(&mut self) -> &mut R
-        where
-            R: Default,
-        {
-            match self {
-                EitherState::Right(this) => this,
-                this @ EitherState::Left(_) => {
-                    *this = Self::Right(Default::default());
-                    if let Self::Right(this) = this {
-                        this
-                    } else {
-                        unreachable!()
-                    }
-                }
-            }
-        }
-    }
-
-    impl<L: Default, R: Default> Default for EitherState<L, R> {
-        fn default() -> Self {
-            Self::Left(Default::default())
-        }
-    }
 
     impl<V: ?Sized + ValueKind, L: MaybeValue<V>, R: MaybeValue<V>> MaybeValue<V> for Either<L, R> {
         type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
