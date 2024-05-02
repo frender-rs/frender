@@ -1,8 +1,10 @@
 pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
+pub use empty::Empty;
 
 use async_str_iter::AsyncStrIterator;
 
 mod dom_token;
+mod empty;
 
 mod strings_with_predicates;
 
@@ -22,6 +24,8 @@ pub trait DomTokens {
         dom_token_list: &mut impl DomTokenList,
         state: &mut Self::UpdateWithState,
     );
+
+    fn remove_with_state(dom_token_list: &mut impl DomTokenList, state: &mut Self::UpdateWithState);
 
     type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
@@ -46,6 +50,7 @@ pub mod __private {
     pub use core::concat;
 
     pub use async_str_iter::{either::IterEither, option::IterOption};
+    pub use frender_common::either::EitherState;
 
     use async_str_iter::IntoAsyncStrIterator;
 
@@ -366,6 +371,44 @@ macro_rules! NestedDomTokensPrefixSpaceIntoAsyncStrIter {
     };
 }
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __update_with_state {
+    ({$dom_token:literal} $dom_token_list:ident $state:ident) => {
+        // whether initialized
+        if !*$state {
+            $dom_token_list.add_1($dom_token);
+            *$state = true;
+        }
+    };
+    ({[$($dom_token:literal),+ $(,)?]} $dom_token_list:ident $state:ident) => {
+        // whether initialized
+        if !*$state {
+            $($dom_token_list.add_1($dom_token);)+
+            *$state = true;
+        }
+    };
+    ({( $e:expr ) as $as_ty:ty} $dom_token_list:ident $state:ident) => {
+        <$as_ty as $crate::DomTokens>::update_with_state($e, $dom_token_list, $state)
+    };
+    ({if ( $($e:tt)+ ) $if_block:tt} $dom_token_list:ident $state:ident) => {
+        if $($e)+ {
+            $crate::__update_with_state!($if_block $dom_token_list $state);
+        } else {
+            $crate::__remove_with_state!($if_block $dom_token_list $state);
+        }
+    };
+    ({if ( $($e:tt)+ ) $if_block:tt $(else $else_block:tt)?} $dom_token_list:ident $state:ident) => {
+        if $($e)+ {
+            $crate::__remove_with_state!($else_block $dom_token_list $state);
+            $crate::__update_with_state!($if_block   $dom_token_list $state);
+        } else {
+            $crate::__remove_with_state!($if_block   $dom_token_list $state);
+            $crate::__update_with_state!($else_block $dom_token_list $state);
+        }
+    };
+}
+
 #[macro_export]
 macro_rules! __anonymous_custom_dom_tokens {
     (
@@ -397,7 +440,7 @@ macro_rules! __anonymous_custom_dom_tokens {
             }
 
             impl $crate::DomTokens for AnonymousCustomDomTokens {
-                type UpdateWithState = $crate::__private::Option<Self>;
+                type UpdateWithState = $crate::__NestedUpdateWithState![$($dom_token)+];
 
                 fn update_with_state(
                     this: Self,
@@ -405,10 +448,24 @@ macro_rules! __anonymous_custom_dom_tokens {
                     state: &mut Self::UpdateWithState,
                 ) {
                     if let $crate::__private::Option::Some(state) = state {
-
+                        state
                     } else {
+                        let Self { _inner: __dom_tokens_rest } = this;
 
+                        $(
+                            $crate::__update_with_state_init!{ $dom_token $dom_token __dom_tokens_value __dom_tokens_rest }
+                        )+
+
+
+                        *state = Some(this);
                     }
+                }
+
+                fn remove_with_state(
+                    dom_token_list: &mut impl $crate::DomTokenList,
+                    __dom_tokens_state: &mut Self::UpdateWithState,
+                ) {
+                    $crate::__nested_remove_with_state!{ [$($dom_token)+] dom_token_list __dom_tokens_state }
                 }
 
                 type DomTokensIntoAsyncStrIter = $crate::NestedDomTokensIntoAsyncStrIter![$($dom_token)+];
@@ -428,7 +485,7 @@ macro_rules! __anonymous_custom_dom_tokens {
                 fn dom_tokens_prefix_space_into_async_str_iter(Self {
                     _inner: __dom_tokens_rest
                 }: Self) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-                    $crate::__nested_dom_tokens_into_async_str_iter_override_expr!(
+                    $crate::__nested_dom_tokens_prefix_space_into_async_str_iter_override_expr!(
                         [$($dom_token)+]
                         { let (__dom_tokens_value, __dom_tokens_rest) = __dom_tokens_rest; }
                         (__dom_tokens_value)
@@ -446,7 +503,7 @@ macro_rules! __anonymous_custom_dom_tokens {
 #[macro_export]
 macro_rules! dom_tokens {
     () => {
-        ()
+        $crate::Empty
     };
     ($($t:tt)*) => {
         $crate::__parse_dom_tokens!([]{$($t)*}{$($t)*})
@@ -669,6 +726,86 @@ macro_rules! dom_tokens_prefix_space_into_async_str_iter {
     };
 }
 
+#[macro_export]
+macro_rules! UpdateWithState {
+    ($dom_token:literal) => {
+        $crate::__private::bool
+    };
+    ([$($dom_token:literal),+ $(,)?]) => {
+        $crate::__private::bool
+    };
+    (( $e:expr ) as $as_ty:ty) => {
+        <$as_ty as $crate::DomTokens>::UpdateWithState
+    };
+    (if ( $($e:tt)+ ) $if_block:tt) => {
+        $crate::UpdateWithState! $if_block
+    };
+    (if ( $($e:tt)+ ) $if_block:tt else $else_block:tt) => {
+        $crate::__private::EitherState<
+            $crate::UpdateWithState! $if_block,
+            $crate::UpdateWithState! $else_block,
+        >
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __NestedUpdateWithState {
+    ($dom_token:tt) => {
+        $crate::UpdateWithState! $dom_token
+    };
+    ($dom_token:tt $($dom_tokens:tt)+) => {
+        (
+            $crate::UpdateWithState! $dom_token,
+            $crate::__NestedUpdateWithState![$($dom_tokens)+]
+        )
+    };
+}
+
+#[macro_export]
+macro_rules! remove_with_state {
+    ({$dom_token:literal} $dom_token_list:ident $dom_token_state:ident) => {
+        if *$dom_token_state {
+            *$dom_token_state = false;
+            $crate::DomTokenList::remove_1($dom_token);
+        }
+    };
+    ({[$($dom_token:literal),+ $(,)?]} $dom_token_list:ident $dom_token_state:ident) => {
+        if *$dom_token_state {
+            *$dom_token_state = false;
+            $(
+                $crate::DomTokenList::remove_1($dom_token);
+            )+
+        }
+    };
+    ({( $e:expr ) as $as_ty:ty} $dom_token_list:ident $dom_token_state:ident) => {
+        <$as_ty as $crate::DomTokens>::remove_with_state($dom_token_list, $dom_token_state)
+    };
+    ({if ( $($e:tt)+ ) $if_block:tt} $dom_token_list:ident $dom_token_state:ident) => {
+        $crate::remove_with_state! { $if_block $dom_token_list $dom_token_state }
+    };
+    ({if ( $($e:tt)+ ) $if_block:tt else $else_block:tt} $dom_token_list:ident $dom_token_state:ident) => {
+        $crate::remove_with_state! { $if_block $dom_token_list $dom_token_state }
+
+        $crate::__private::EitherState<
+            $crate::UpdateWithState! $if_block,
+            $crate::UpdateWithState! $else_block,
+        >
+    };
+}
+
+#[macro_export]
+macro_rules! __nested_remove_with_state {
+    ([$dom_token:tt] $dom_token_list:ident $dom_tokens_state:ident) => {
+        $crate::remove_with_state! { $dom_token $dom_token_list $dom_tokens_state }
+    };
+    ([$dom_token:tt $($dom_tokens:tt)+] $dom_token_list:ident $dom_tokens_state:ident) => {
+        let (__dom_tokens_state, __dom_tokens_state_rest) = $dom_tokens_state;
+        $crate::remove_with_state! { $dom_token $dom_token_list __dom_tokens_state }
+        $crate::__nested_remove_with_state! { [$($dom_tokens)+] $dom_token_list __dom_tokens_state_rest }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     mod anonymous {
@@ -677,7 +814,6 @@ mod tests {
         use crate::DomTokens;
 
         const _: () = {
-            let _: () = dom_tokens!();
             {
                 let tokens = dom_tokens!("a");
             }
