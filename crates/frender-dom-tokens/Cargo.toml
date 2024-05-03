@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+either = { version = "1.11.0", default-features = false }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 
 [dev-dependencies]

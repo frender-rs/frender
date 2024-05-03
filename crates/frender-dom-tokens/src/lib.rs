@@ -1,10 +1,14 @@
+pub use chain::Chain;
 pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
 pub use empty::Empty;
 
 use async_str_iter::AsyncStrIterator;
 
+mod chain;
 mod dom_token;
+mod either;
 mod empty;
+mod option;
 
 mod strings_with_predicates;
 
@@ -38,6 +42,56 @@ pub trait DomTokens {
     ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter;
 }
 
+#[macro_export]
+macro_rules! proxy_dom_tokens {
+    (|$this:ident| -> $ty:ty { $e:expr }) => {
+        type UpdateWithState = <$ty as $crate::DomTokens>::UpdateWithState;
+
+        fn update_with_state(
+            $this: Self,
+            dom_token_list: &mut impl $crate::DomTokenList,
+            state: &mut Self::UpdateWithState,
+        ) {
+            <$ty as $crate::DomTokens>::update_with_state($e, dom_token_list, state)
+        }
+
+        fn remove_with_state(
+            dom_token_list: &mut impl $crate::DomTokenList,
+            state: &mut Self::UpdateWithState,
+        ) {
+            <$ty as $crate::DomTokens>::remove_with_state(dom_token_list, state)
+        }
+
+        type DomTokensIntoAsyncStrIter = <$ty as $crate::DomTokens>::DomTokensIntoAsyncStrIter;
+
+        fn dom_tokens_into_async_str_iter($this: Self) -> Self::DomTokensIntoAsyncStrIter {
+            <$ty as $crate::DomTokens>::dom_tokens_into_async_str_iter($e)
+        }
+
+        type DomTokensPrefixSpaceIntoAsyncStrIter =
+            <$ty as $crate::DomTokens>::DomTokensPrefixSpaceIntoAsyncStrIter;
+
+        fn dom_tokens_prefix_space_into_async_str_iter(
+            $this: Self,
+        ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
+            <$ty as $crate::DomTokens>::dom_tokens_prefix_space_into_async_str_iter($e)
+        }
+    };
+}
+
+// pub trait IntoDomTokens {
+//     type IntoDomTokens: DomTokens;
+//     fn into_dom_tokens(self) -> Self::IntoDomTokens;
+// }
+
+// impl<T: DomTokens> IntoDomTokens for T {
+//     type IntoDomTokens = T;
+
+//     fn into_dom_tokens(self) -> Self::IntoDomTokens {
+//         self
+//     }
+// }
+
 pub trait ConstPossibleDomTokens {
     const POSSIBLE_DOM_TOKENS: UniqueDomTokens<'static, 'static>;
 }
@@ -47,10 +101,17 @@ pub mod __private {
     pub use str;
     pub use Option;
 
-    pub use core::concat;
+    pub use core::{
+        concat,
+        default::Default,
+        pin::Pin,
+        task::{Context, Poll},
+    };
 
-    pub use async_str_iter::{either::IterEither, option::IterOption};
+    pub use async_str_iter::{either::IterEither, option::IterOption, AsyncStrIterator};
     pub use frender_common::either::EitherState;
+
+    pub use either::Either;
 
     use async_str_iter::IntoAsyncStrIterator;
 
@@ -62,6 +123,17 @@ pub mod __private {
         async_str_iter::concat::Concat<T>: IntoAsyncStrIterator,
     {
         IntoAsyncStrIterator::into_async_str_iterator(async_str_iter::concat::Concat(t))
+    }
+
+    pub const fn str_slice_from_first(s: &str) -> &str {
+        if let Some((_, s)) = s.as_bytes().split_first() {
+            match std::str::from_utf8(s) {
+                Ok(s) => s,
+                Err(_) => panic!("str_slice_from_first is not utf8"),
+            }
+        } else {
+            panic!("str_slice_from_first invalid")
+        }
     }
 }
 
@@ -151,55 +223,56 @@ macro_rules! __put_dom_tokens_at {
 #[macro_export]
 macro_rules! __dom_token_predicate {
     ($dom_token:literal) => {
-        ()
+        __dom_tokens_types::DomTokens
     };
     ([$($dom_token:literal),+ $(,)?]) => {
-        ()
+        __dom_tokens_types::DomTokens
     };
     (( $e:expr ) as $as_ty:ty) => {
         $e
     };
-    (if ( $($e:tt)+ ) $if_block:tt $(else $else_block:tt)?) => {
-        $($e)+
+    (if ( $($e:tt)+ ) $if_block:tt) => {
+        if $($e)+ {
+            $crate::__private::Option::Some({
+                use __dom_tokens_types::__dom_tokens_inner_mod as __dom_tokens_types;
+                $crate::__dom_token_predicate! $if_block
+            })
+        } else {
+            $crate::__private::Option::None
+        }
+    };
+    (if ( $($e:tt)+ ) $if_block:tt else $else_block:tt) => {
+        if $($e)+ {
+            $crate::__private::Either::Left({
+                use __dom_tokens_types::__dom_tokens_inner_mod_a as __dom_tokens_types;
+                $crate::__dom_token_predicate! $if_block
+            })
+        } else {
+            $crate::__private::Either::Right({
+                use __dom_tokens_types::__dom_tokens_inner_mod_b as __dom_tokens_types;
+                $crate::__dom_token_predicate! $else_block
+            })
+        }
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __dom_token_predicate_ty {
-    ($dom_token:literal) => {
-        ()
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        ()
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        $crate::__private::bool
-    };
-    (if ( $e:expr ) $if_block:tt $(else $else_block:tt)?) => {
-        $crate::__private::bool
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __concat_dom_token_predicate_ty {
+macro_rules! __nested_dom_token_predicate {
     ($dom_token:tt) => {
-        ($crate::__dom_token_predicate_ty! $dom_token, ())
+        $crate::__dom_token_predicate! $dom_token
     };
     ($dom_token:tt $($dom_tokens:tt)+) => {
-        ($crate::__dom_token_predicate_ty! $dom_token, $crate::__concat_dom_token_predicate_ty![$($dom_tokens)+])
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __concat_dom_token_predicate {
-    ($dom_token:tt) => {
-        ($crate::__dom_token_predicate! $dom_token, ())
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        ($crate::__dom_token_predicate! $dom_token, $crate::__concat_dom_token_predicate![$($dom_tokens)+])
+        __dom_tokens_types::DomTokens::new(
+            {
+                use __dom_tokens_types::__dom_tokens_types_first as __dom_tokens_types;
+                $crate::__dom_token_predicate! $dom_token
+            },
+            {
+                use __dom_tokens_types::__dom_tokens_types_rest as __dom_tokens_types;
+                $crate::__nested_dom_token_predicate![$($dom_tokens)+]
+            }
+        )
     };
 }
 
@@ -216,18 +289,150 @@ macro_rules! __with_unique_ident {
 }
 
 #[macro_export]
-macro_rules! __define_dom_tokens_type {
-    ({$dom_token:literal} $vis:vis type $name:ident) => {
-        $vis struct $name;
+macro_rules! __define_one_str {
+    ($vis:vis struct $name:ident; $e:expr) => {
+        $vis struct $name($crate::__private::bool);
+
+        impl $crate::__private::AsyncStrIterator for $name {
+            fn poll_next_str(
+                self: $crate::__private::Pin<&mut Self>,
+                _: &mut $crate::__private::Context
+            ) -> $crate::__private::Poll<$crate::__private::Option<&$crate::__private::str>> {
+                let this = self.get_mut();
+
+                $crate::__private::Poll::Ready(if this.0 {
+                    $crate::__private::Option::None
+                } else {
+                    this.0 = true;
+                    $crate::__private::Option::Some($e)
+                })
+            }
+        }
+
     };
-    ({[$($dom_token:literal),+ $(,)?]}) => {
-        ()
+}
+
+// TODO: remove
+#[macro_export]
+macro_rules! concat_with_space {
+    ($dom_token:expr $(,)?) => {
+        $dom_token
     };
-    ({( $e:expr ) as $as_ty:ty}) => {
-        $crate::__private::bool
+    ($dom_token:expr $(, $dom_tokens:expr)* $(,)?) => {
+        $crate::__private::concat!(
+            $dom_token
+            $(, " ", $dom_tokens)*
+        )
     };
-    ({if ( $e:expr ) $if_block:tt $(else $else_block:tt)?}) => {
-        $crate::__private::bool
+}
+
+#[macro_export]
+macro_rules! __define_dom_tokens_types {
+    ({$dom_token:literal} $vis:vis) => {
+        $crate::__define_dom_tokens_types! {{[$dom_token]} $vis}
+    };
+    ({[$($dom_token:literal),+ $(,)?]} $vis:vis) => {
+        #[derive(Debug, Clone, Copy)]
+        $vis struct DomTokens;
+
+        const DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::concat!($(" ", $dom_token),+);
+        const DOM_TOKENS_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::str_slice_from_first(DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER);
+
+        $crate::__define_one_str! {
+            $vis struct DomTokensIntoAsyncStrIter;
+            DOM_TOKENS_INTO_ASYNC_STR_ITER
+        }
+
+        $crate::__define_one_str! {
+            $vis struct DomTokensPrefixSpaceIntoAsyncStrIter;
+            DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER
+        }
+
+        impl $crate::DomTokens for DomTokens {
+            type UpdateWithState = $crate::__private::bool;
+
+            fn update_with_state(
+                Self: Self,
+                dom_token_list: &mut impl $crate::DomTokenList,
+                state: &mut Self::UpdateWithState,
+            ) {
+                if !*state {
+                    *state = true;
+                    $({
+                        const DOM_TOKEN: $crate::DomToken<'static> = $crate::DomToken::new_const($dom_token);
+                        $crate::DomTokenList::add_1(dom_token_list, DOM_TOKEN);
+                    })+
+                }
+            }
+
+            fn remove_with_state(dom_token_list: &mut impl $crate::DomTokenList, state: &mut Self::UpdateWithState) {
+                if *state {
+                    *state = false;
+                    $({
+                        const DOM_TOKEN: $crate::DomToken<'static> = $crate::DomToken::new_const($dom_token);
+                        $crate::DomTokenList::remove_1(dom_token_list, DOM_TOKEN);
+                    })+
+                }
+            }
+
+            type DomTokensIntoAsyncStrIter = DomTokensIntoAsyncStrIter;
+
+            fn dom_tokens_into_async_str_iter(Self: Self) -> Self::DomTokensIntoAsyncStrIter {
+                DomTokensIntoAsyncStrIter(false)
+            }
+
+            type DomTokensPrefixSpaceIntoAsyncStrIter = DomTokensPrefixSpaceIntoAsyncStrIter;
+
+            fn dom_tokens_prefix_space_into_async_str_iter(
+                Self: Self,
+            ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
+                DomTokensPrefixSpaceIntoAsyncStrIter(false)
+            }
+        }
+    };
+    ({( $e:expr ) as $as_ty:ty} $vis:vis) => {
+        $vis type DomTokens = $as_ty;
+    };
+    ({if $if:tt $if_block:tt} pub(in $($vis:tt)+)) => {
+        pub(in $($vis)+) mod __dom_tokens_inner_mod {
+            #[allow(unused_imports)] use $($vis)+::super::*;
+            $crate::__define_dom_tokens_types! { $if_block pub(in $($vis)+::super) }
+        }
+        pub(in $($vis)+) type DomTokens = $crate::__private::Option<__dom_tokens_inner_mod::DomTokens>;
+    };
+    ({if $if:tt $if_block:tt else $else_block:tt} pub(in $($vis:tt)+)) => {
+        pub(in $($vis)+) mod __dom_tokens_inner_mod_a {
+            #[allow(unused_imports)] use $($vis)+::super::*;
+            $crate::__define_dom_tokens_types! { $if_block pub(in $($vis)+::super) }
+        }
+        pub(in $($vis)+) mod __dom_tokens_inner_mod_b {
+            #[allow(unused_imports)] use $($vis)+::super::*;
+            $crate::__define_dom_tokens_types! { $else_block pub(in $($vis)+::super) }
+        }
+        pub(in $($vis)+) type DomTokens = $crate::__private::Either<
+            __dom_tokens_inner_mod_a::DomTokens,
+            __dom_tokens_inner_mod_b::DomTokens
+        >;
+    };
+}
+
+#[macro_export]
+macro_rules! __nested_dom_tokens_types {
+    ([$dom_token:tt] ($($root_path:tt)+)) => {
+        $crate::__define_dom_tokens_types! { $dom_token pub(in $($root_path)+) }
+    };
+    ([$dom_token:tt $($dom_tokens:tt)+] ($($root_path:tt)+)) => {
+        pub(in $($root_path)+) mod __dom_tokens_types_first {
+            $crate::__define_dom_tokens_types! { $dom_token pub(in $($root_path)+::super) }
+        }
+        pub(in $($root_path)+) mod __dom_tokens_types_rest {
+            $crate::__nested_dom_tokens_types! { [$($dom_tokens)+] ($($root_path)+::super) }
+        }
+
+        pub(in $($root_path)+) type DomTokens = $crate::Chain<
+            __dom_tokens_types_first::DomTokens,
+            __dom_tokens_types_rest::DomTokens,
+        >;
     };
 }
 
@@ -414,9 +619,16 @@ macro_rules! __anonymous_custom_dom_tokens {
     (
         $($dom_token:tt)+
     ) => {{
+        mod __dom_tokens_types {
+            #[allow(unused_imports)]
+            use super::*;
+
+            $crate::__nested_dom_tokens_types! { [$($dom_token)+] (super) }
+        }
+
         #[derive(Debug, Clone, Copy)] // TODO: import from $crate
         struct AnonymousCustomDomTokens {
-            _inner: $crate::__concat_dom_token_predicate_ty![$($dom_token)+]
+            _inner: __dom_tokens_types::DomTokens
         }
 
         const _: () = {
@@ -440,62 +652,12 @@ macro_rules! __anonymous_custom_dom_tokens {
             }
 
             impl $crate::DomTokens for AnonymousCustomDomTokens {
-                type UpdateWithState = $crate::__NestedUpdateWithState![$($dom_token)+];
-
-                fn update_with_state(
-                    this: Self,
-                    dom_token_list: &mut impl $crate::DomTokenList,
-                    state: &mut Self::UpdateWithState,
-                ) {
-                    if let $crate::__private::Option::Some(state) = state {
-                        state
-                    } else {
-                        let Self { _inner: __dom_tokens_rest } = this;
-
-                        $(
-                            $crate::__update_with_state_init!{ $dom_token $dom_token __dom_tokens_value __dom_tokens_rest }
-                        )+
-
-
-                        *state = Some(this);
-                    }
-                }
-
-                fn remove_with_state(
-                    dom_token_list: &mut impl $crate::DomTokenList,
-                    __dom_tokens_state: &mut Self::UpdateWithState,
-                ) {
-                    $crate::__nested_remove_with_state!{ [$($dom_token)+] dom_token_list __dom_tokens_state }
-                }
-
-                type DomTokensIntoAsyncStrIter = $crate::NestedDomTokensIntoAsyncStrIter![$($dom_token)+];
-
-                fn dom_tokens_into_async_str_iter(Self {
-                    _inner: __dom_tokens_rest
-                }: Self) -> Self::DomTokensIntoAsyncStrIter {
-                    $crate::__nested_dom_tokens_into_async_str_iter_override_expr!(
-                        [$($dom_token)+]
-                        { let (__dom_tokens_value, __dom_tokens_rest) = __dom_tokens_rest; }
-                        (__dom_tokens_value)
-                    )
-                }
-
-                type DomTokensPrefixSpaceIntoAsyncStrIter = $crate::NestedDomTokensPrefixSpaceIntoAsyncStrIter![$($dom_token)+];
-
-                fn dom_tokens_prefix_space_into_async_str_iter(Self {
-                    _inner: __dom_tokens_rest
-                }: Self) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-                    $crate::__nested_dom_tokens_prefix_space_into_async_str_iter_override_expr!(
-                        [$($dom_token)+]
-                        { let (__dom_tokens_value, __dom_tokens_rest) = __dom_tokens_rest; }
-                        (__dom_tokens_value)
-                    )
-                }
+                $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens { this._inner });
             }
         };
 
         AnonymousCustomDomTokens {
-            _inner: $crate::__concat_dom_token_predicate!($($dom_token)+)
+            _inner: $crate::__nested_dom_token_predicate!($($dom_token)+)
         }
     }};
 }

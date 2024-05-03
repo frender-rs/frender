@@ -26,4 +26,6 @@ impl DomTokens for Empty {
     ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
         async_str_iter::empty::Empty
     }
+
+    fn remove_with_state(_: &mut impl crate::DomTokenList, (): &mut Self::UpdateWithState) {}
 }
