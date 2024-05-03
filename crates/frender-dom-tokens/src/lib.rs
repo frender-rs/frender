@@ -99,10 +99,11 @@ pub trait ConstPossibleDomTokens {
 pub mod __private {
     pub use bool;
     pub use str;
+    pub use usize;
     pub use Option;
 
     pub use core::{
-        concat,
+        assert, concat,
         default::Default,
         pin::Pin,
         task::{Context, Poll},
@@ -190,32 +191,6 @@ macro_rules! __dom_tokens_count {
             $crate::__unique_dom_tokens! $if_block,
             $crate::__unique_dom_tokens! $else_block,
         )
-    };
-}
-
-const fn non_empty_count<const N: usize>(tokens: [&'static str; N]) -> usize {
-    let mut count = 0;
-    let mut i = 0;
-    while i < N {
-        if !tokens[i].is_empty() {
-            count += 1;
-        }
-        i += 1;
-    }
-
-    count
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __put_dom_tokens_at {
-    ({} $res:ident, $at:ident) => {};
-    ({$dom_token:literal} $res:ident, $at:ident) => {{
-        $res[$at] = $crate::DomToken::new_const($dom_token);
-        $at += 1;
-    }};
-    ($dom_tokens:tt $res:ident, $at:ident) => {
-        ($res, $at) = $crate::put_tokens_at($res, $at, $crate::UniqueDomTokens::as_slice($crate::__unique_dom_tokens! $dom_tokens))
     };
 }
 
@@ -389,9 +364,29 @@ macro_rules! __define_dom_tokens_types {
                 DomTokensPrefixSpaceIntoAsyncStrIter(false)
             }
         }
+
+        $vis const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize =
+            [$($dom_token),+].len()
+        ;
+
+        $vis const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = {
+            $crate::UniqueDomTokenArray::new_const([$($crate::DomToken::new_const($dom_token)),+])
+        };
     };
-    ({( $e:expr ) as $as_ty:ty} $vis:vis) => {
-        $vis type DomTokens = $as_ty;
+    ({( $e:expr ) as $as_ty:ty} pub(in $($vis:tt)+)) => {
+        #[allow(unused_imports)] use $($vis)+::super::*;
+        pub(in $($vis)+) type DomTokens = $as_ty;
+
+        const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static> = <self::DomTokens as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS;
+        pub(in $($vis)+) const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize = POSSIBLE_DOM_TOKENS.len();
+        pub(in $($vis)+) const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = $crate::UniqueDomTokenArray::new_const({
+            let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
+            let mut at = 0;
+            (res, at) = $crate::put_tokens_at(res, at, $crate::UniqueDomTokens::as_slice(POSSIBLE_DOM_TOKENS));
+            $crate::__private::assert!(at == POSSIBLE_DOM_TOKENS_COUNT);
+
+            res
+        });
     };
     ({if $if:tt $if_block:tt} pub(in $($vis:tt)+)) => {
         pub(in $($vis)+) mod __dom_tokens_inner_mod {
@@ -399,6 +394,7 @@ macro_rules! __define_dom_tokens_types {
             $crate::__define_dom_tokens_types! { $if_block pub(in $($vis)+::super) }
         }
         pub(in $($vis)+) type DomTokens = $crate::__private::Option<__dom_tokens_inner_mod::DomTokens>;
+        pub(in $($vis)+) use __dom_tokens_inner_mod::{POSSIBLE_DOM_TOKENS_COUNT, POSSIBLE_DOM_TOKEN_ARRAY};
     };
     ({if $if:tt $if_block:tt else $else_block:tt} pub(in $($vis:tt)+)) => {
         pub(in $($vis)+) mod __dom_tokens_inner_mod_a {
@@ -413,6 +409,21 @@ macro_rules! __define_dom_tokens_types {
             __dom_tokens_inner_mod_a::DomTokens,
             __dom_tokens_inner_mod_b::DomTokens
         >;
+
+        pub(in $($vis)+) const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize = {
+            __dom_tokens_inner_mod_a::POSSIBLE_DOM_TOKENS_COUNT + __dom_tokens_inner_mod_b::POSSIBLE_DOM_TOKENS_COUNT
+        };
+        pub(in $($vis)+) const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = {
+            $crate::UniqueDomTokenArray::new_const({
+                let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
+                let mut at = 0;
+                (res, at) = $crate::put_tokens_at(res, at, $crate::UniqueDomTokenArray::as_slice(&__dom_tokens_inner_mod_a::POSSIBLE_DOM_TOKEN_ARRAY));
+                (res, at) = $crate::put_tokens_at(res, at, $crate::UniqueDomTokenArray::as_slice(&__dom_tokens_inner_mod_b::POSSIBLE_DOM_TOKEN_ARRAY));
+                $crate::__private::assert!(at == POSSIBLE_DOM_TOKENS_COUNT);
+
+                res
+            })
+        };
     };
 }
 
@@ -433,6 +444,21 @@ macro_rules! __nested_dom_tokens_types {
             __dom_tokens_types_first::DomTokens,
             __dom_tokens_types_rest::DomTokens,
         >;
+
+        pub(in $($root_path)+) const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize = {
+            __dom_tokens_types_first::POSSIBLE_DOM_TOKENS_COUNT + __dom_tokens_types_rest::POSSIBLE_DOM_TOKENS_COUNT
+        };
+        pub(in $($root_path)+) const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = {
+            $crate::UniqueDomTokenArray::new_const({
+                let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
+                let mut at = 0;
+                (res, at) = $crate::put_tokens_at(res, at, $crate::UniqueDomTokenArray::as_slice(&__dom_tokens_types_first::POSSIBLE_DOM_TOKEN_ARRAY));
+                (res, at) = $crate::put_tokens_at(res, at, $crate::UniqueDomTokenArray::as_slice(&__dom_tokens_types_rest::POSSIBLE_DOM_TOKEN_ARRAY));
+                $crate::__private::assert!(at == POSSIBLE_DOM_TOKENS_COUNT);
+
+                res
+            })
+        };
     };
 }
 
@@ -620,9 +646,6 @@ macro_rules! __anonymous_custom_dom_tokens {
         $($dom_token:tt)+
     ) => {{
         mod __dom_tokens_types {
-            #[allow(unused_imports)]
-            use super::*;
-
             $crate::__nested_dom_tokens_types! { [$($dom_token)+] (super) }
         }
 
@@ -631,30 +654,12 @@ macro_rules! __anonymous_custom_dom_tokens {
             _inner: __dom_tokens_types::DomTokens
         }
 
-        const _: () = {
-            const POSSIBLE_DOM_TOKENS_COUNT: usize = {
-                0
-                $(+ $crate::__dom_tokens_count! $dom_token)+
-            };
-
-            const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = $crate::UniqueDomTokenArray::new_const({
-                let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
-                let mut i = 0;
-                $($crate::__put_dom_tokens_at!($dom_token res, i);)+
-                assert!(i == POSSIBLE_DOM_TOKENS_COUNT);
-
-                res
-            });
-
-
-            impl $crate::ConstPossibleDomTokens for AnonymousCustomDomTokens {
-                const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> = POSSIBLE_DOM_TOKEN_ARRAY.as_unique_dom_tokens();
-            }
-
-            impl $crate::DomTokens for AnonymousCustomDomTokens {
-                $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens { this._inner });
-            }
-        };
+        impl $crate::ConstPossibleDomTokens for AnonymousCustomDomTokens {
+            const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> = __dom_tokens_types::POSSIBLE_DOM_TOKEN_ARRAY.as_unique_dom_tokens();
+        }
+        impl $crate::DomTokens for AnonymousCustomDomTokens {
+            $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens { this._inner });
+        }
 
         AnonymousCustomDomTokens {
             _inner: $crate::__nested_dom_token_predicate!($($dom_token)+)

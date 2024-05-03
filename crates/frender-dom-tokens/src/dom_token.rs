@@ -205,6 +205,10 @@ impl<'a, const N: usize> UniqueDomTokenArray<'a, N> {
     pub const fn as_unique_dom_tokens(&self) -> UniqueDomTokens<'_, 'a> {
         UniqueDomTokens(&self.0)
     }
+
+    pub const fn as_slice(&self) -> &'_ [DomToken<'a>] {
+        &self.0
+    }
 }
 
 impl<'a, const N: usize> Deref for UniqueDomTokenArray<'a, N> {
