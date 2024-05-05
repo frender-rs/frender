@@ -138,62 +138,6 @@ pub mod __private {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __unique_dom_tokens {
-    () => {
-        $crate::UniqueDomTokens::EMPTY
-    };
-    ($dom_token:literal) => {
-        $crate::UniqueDomTokens::new_const(&[$crate::DomToken::new_const($dom_token)])
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        $crate::UniqueDomTokens::new_const(&[$( $crate::DomToken::new_const($dom_token) ),+])
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS
-    };
-    (if ( $e:expr ) $if_block:tt) => {
-        $crate::__unique_dom_tokens! $if_block
-    };
-    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
-        $crate::UniqueDomTokenArray::as_unique_dom_tokens(&{
-            const A: $crate::UniqueDomTokens<'static, 'static> = $crate::__unique_dom_tokens! $if_block  ;
-            const B: $crate::UniqueDomTokens<'static, 'static> = $crate::__unique_dom_tokens! $else_block;
-
-            const N: usize = $crate::UniqueDomTokens::join_count(A, B);
-
-            $crate::UniqueDomTokens::join::<N>(A, B)
-        })
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __dom_tokens_count {
-    () => {
-        0
-    };
-    ($dom_token:literal) => {
-        1
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        [$($dom_token),+].len()
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS.len()
-    };
-    (if ( $e:expr ) $if_block:tt) => {
-        $crate::__dom_tokens_count! $if_block
-    };
-    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
-        $crate::UniqueDomTokens::join_count(
-            $crate::__unique_dom_tokens! $if_block,
-            $crate::__unique_dom_tokens! $else_block,
-        )
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
 macro_rules! __dom_token_predicate {
     ($dom_token:literal) => {
         __dom_tokens_types::DomTokens
@@ -249,18 +193,7 @@ macro_rules! __nested_dom_token_predicate {
     };
 }
 
-// TODO: remove
 #[doc(hidden)]
-#[macro_export]
-macro_rules! __with_unique_ident {
-    ($m:ident $bang:tt ( $t0:tt )) => {
-        $crate::$m $bang { Field0 $t0 }
-    };
-    ($m:ident $bang:tt ( $t0:tt $t1:tt )) => {
-        $crate::$m $bang { Field1 $t1 }
-    };
-}
-
 #[macro_export]
 macro_rules! __define_one_str {
     ($vis:vis struct $name:ident; $e:expr) => {
@@ -285,20 +218,7 @@ macro_rules! __define_one_str {
     };
 }
 
-// TODO: remove
-#[macro_export]
-macro_rules! concat_with_space {
-    ($dom_token:expr $(,)?) => {
-        $dom_token
-    };
-    ($dom_token:expr $(, $dom_tokens:expr)* $(,)?) => {
-        $crate::__private::concat!(
-            $dom_token
-            $(, " ", $dom_tokens)*
-        )
-    };
-}
-
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __define_dom_tokens_types {
     ({$dom_token:literal} $vis:vis) => {
@@ -425,6 +345,7 @@ macro_rules! __define_dom_tokens_types {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __nested_dom_tokens_types {
     ([$dom_token:tt] ($($root_path:tt)+)) => {
@@ -460,184 +381,7 @@ macro_rules! __nested_dom_tokens_types {
     };
 }
 
-#[macro_export]
-macro_rules! ConcatDomTokensIntoAsyncStrIter {
-    ($dom_token:tt) => {
-        $crate::DomTokensIntoAsyncStrIter! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        $crate::__private::IterConcat<(
-            $crate::DomTokensIntoAsyncStrIter! $dom_token,
-            $(
-                $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_tokens,
-            )+
-        )>
-    };
-}
-
-#[macro_export]
-macro_rules! NestedDomTokensIntoAsyncStrIter {
-    ($dom_token:tt) => {
-        $crate::DomTokensIntoAsyncStrIter! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        $crate::__private::IterConcat<(
-            $crate::DomTokensIntoAsyncStrIter! $dom_token,
-            $crate::NestedDomTokensIntoAsyncStrIter![ $($dom_tokens)+ ]
-        )>
-    };
-}
-
-#[macro_export]
-macro_rules! concat_dom_tokens_into_async_str_iter {
-    ($dom_token:tt) => {
-        $crate::dom_tokens_into_async_str_iter! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        $crate::__private::iter_concat((
-            $crate::dom_tokens_into_async_str_iter! $dom_token,
-            $(
-                $crate::dom_tokens_prefix_space_into_async_str_iter! $dom_tokens,
-            )+
-        ))
-    };
-}
-
-#[macro_export]
-macro_rules! __nested_dom_tokens_into_async_str_iter_override_expr {
-    ([$dom_token:tt] {$($prefix_stmts:tt)*} $override:tt) => {{
-        $($prefix_stmts)*
-        $crate::__dom_tokens_override_expr!($dom_token $dom_token dom_tokens_into_async_str_iter! $override)
-    }};
-    ([$dom_token:tt $($dom_tokens:tt)+] {$($prefix_stmts:tt)*} $override:tt) => {
-        $crate::__private::iter_concat({
-            $($prefix_stmts)*
-            (
-                $crate::__nested_dom_tokens_into_async_str_iter_override_expr!([$dom_token] {} $override),
-                $crate::__nested_dom_tokens_prefix_space_into_async_str_iter_override_expr!([$($dom_tokens)+] {$($prefix_stmts)*} $override ),
-            )
-        })
-    };
-}
-
-#[macro_export]
-macro_rules! __nested_dom_tokens_prefix_space_into_async_str_iter_override_expr {
-    ([$dom_token:tt] {$($prefix_stmts:tt)*} $override:tt) => {{
-        $($prefix_stmts)*
-        $crate::__dom_tokens_override_expr!($dom_token $dom_token dom_tokens_prefix_space_into_async_str_iter! $override)
-    }};
-    ([$dom_token:tt $($dom_tokens:tt)+] {$($prefix_stmts:tt)*} $override:tt ) => {
-        $crate::__private::iter_concat({
-            $($prefix_stmts)*
-            (
-                $crate::__dom_tokens_override_expr!($dom_token $dom_token dom_tokens_prefix_space_into_async_str_iter! $override),
-                $crate::__nested_dom_tokens_prefix_space_into_async_str_iter_override_expr!([$($dom_tokens)+] {$($prefix_stmts)*} $override),
-            )
-        })
-    };
-}
-
-#[macro_export]
-macro_rules! __dom_tokens_override_expr {
-    (
-        {( $($_e:tt)* ) as     $_as_ty:ty}
-        {$e:tt          $as:tt $as_ty:ty }
-        $m:ident $bang:tt $override:tt
-    ) => {
-        $crate::$m $bang { $override $as $as_ty }
-    };
-    (
-        { if        ( $($_e:tt)* ) $($_rest:tt)*}
-        { $if:ident $e:tt          $($rest:tt )*}
-        $m:ident $bang:tt $override:tt
-    ) => {
-        $crate::$m $bang { $if $override $($rest )* }
-    };
-    ($dom_token:tt $tee:tt $m:ident $bang:tt $override:tt) => {
-        $crate::$m $bang $dom_token
-    };
-}
-
-#[macro_export]
-macro_rules! concat_dom_tokens_prefix_space_into_async_str_iter {
-    ($dom_token:tt) => {
-        $crate::dom_tokens_prefix_space_into_async_str_iter! $dom_token
-    };
-    ($($dom_tokens:tt)+) => {
-        $crate::__private::iter_concat((
-            $(
-                $crate::dom_tokens_prefix_space_into_async_str_iter! $dom_tokens,
-            )+
-        ))
-    };
-}
-
-#[macro_export]
-macro_rules! ConcatDomTokensPrefixSpaceIntoAsyncStrIter {
-    ($dom_token:tt) => {
-        $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        $crate::__private::IterConcat<(
-            $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_token,
-            $(
-                $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_tokens,
-            )+
-        )>
-    };
-}
-
-#[macro_export]
-macro_rules! NestedDomTokensPrefixSpaceIntoAsyncStrIter {
-    ($dom_token:tt) => {
-        $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        $crate::__private::IterConcat<(
-            $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $dom_token,
-            $crate::NestedDomTokensPrefixSpaceIntoAsyncStrIter![$($dom_tokens)+]
-        )>
-    };
-}
-
 #[doc(hidden)]
-#[macro_export]
-macro_rules! __update_with_state {
-    ({$dom_token:literal} $dom_token_list:ident $state:ident) => {
-        // whether initialized
-        if !*$state {
-            $dom_token_list.add_1($dom_token);
-            *$state = true;
-        }
-    };
-    ({[$($dom_token:literal),+ $(,)?]} $dom_token_list:ident $state:ident) => {
-        // whether initialized
-        if !*$state {
-            $($dom_token_list.add_1($dom_token);)+
-            *$state = true;
-        }
-    };
-    ({( $e:expr ) as $as_ty:ty} $dom_token_list:ident $state:ident) => {
-        <$as_ty as $crate::DomTokens>::update_with_state($e, $dom_token_list, $state)
-    };
-    ({if ( $($e:tt)+ ) $if_block:tt} $dom_token_list:ident $state:ident) => {
-        if $($e)+ {
-            $crate::__update_with_state!($if_block $dom_token_list $state);
-        } else {
-            $crate::__remove_with_state!($if_block $dom_token_list $state);
-        }
-    };
-    ({if ( $($e:tt)+ ) $if_block:tt $(else $else_block:tt)?} $dom_token_list:ident $state:ident) => {
-        if $($e)+ {
-            $crate::__remove_with_state!($else_block $dom_token_list $state);
-            $crate::__update_with_state!($if_block   $dom_token_list $state);
-        } else {
-            $crate::__remove_with_state!($if_block   $dom_token_list $state);
-            $crate::__update_with_state!($else_block $dom_token_list $state);
-        }
-    };
-}
-
 #[macro_export]
 macro_rules! __anonymous_custom_dom_tokens {
     (
@@ -834,196 +578,6 @@ macro_rules! __parse_dom_tokens {
 }
 
 #[macro_export]
-macro_rules! DomTokensIntoAsyncStrIter {
-    ($dom_token:literal) => {
-        &'static $crate::__private::str
-    };
-    ([$dom_token:literal $(,)?]) => {
-        &'static $crate::__private::str
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        &'static [&'static $crate::__private::str]
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::DomTokens>::DomTokensIntoAsyncStrIter
-    };
-    (if ( $e:expr ) $if_block:tt) => {
-        $crate::__private::IterOption<$crate::DomTokensIntoAsyncStrIter! $if_block>
-    };
-    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
-        $crate::__private::IterEither<
-            $crate::DomTokensIntoAsyncStrIter! $if_block,
-            $crate::DomTokensIntoAsyncStrIter! $else_block,
-        >
-    };
-}
-
-#[macro_export]
-macro_rules! DomTokensPrefixSpaceIntoAsyncStrIter {
-    ($dom_token:literal) => {
-        &'static $crate::__private::str
-    };
-    ([$dom_token:literal $(,)?]) => {
-        &'static $crate::__private::str
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        &'static [&'static str]
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::DomTokens>::DomTokensPrefixSpaceIntoAsyncStrIter
-    };
-    (if ( $e:expr ) $if_block:tt) => {
-        $crate::__private::IterOption<$crate::DomTokensPrefixSpaceIntoAsyncStrIter! $if_block>
-    };
-    (if ( $e:expr ) $if_block:tt else $else_block:tt) => {
-        $crate::__private::IterEither<
-            $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $if_block,
-            $crate::DomTokensPrefixSpaceIntoAsyncStrIter! $else_block,
-        >
-    };
-}
-
-#[macro_export]
-macro_rules! dom_tokens_into_async_str_iter {
-    ($dom_token:literal) => {
-        $dom_token
-    };
-    ([$dom_token:literal $(,)?]) => {
-        $dom_token
-    };
-    ([$dom_token:literal $(, $dom_tokens:literal)+ $(,)?]) => {
-        <[_; _]>::as_slice(&[$dom_token $(, $crate::__private::concat!(" ", $dom_tokens))+])
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::DomTokens>::dom_tokens_into_async_str_iter($e)
-    };
-    (if ( $($e:tt)+ ) $if_block:tt) => {
-        $crate::__private::bool::then($($e)+, || $crate::dom_tokens_into_async_str_iter! $if_block)
-    };
-    (if ( $($e:tt)+ ) $if_block:tt else $else_block:tt) => {
-        if $($e)+ {
-            $crate::__private::IterEither::Left(
-                $crate::dom_tokens_into_async_str_iter! $if_block
-            )
-        } else {
-            $crate::__private::IterEither::Right(
-                $crate::dom_tokens_into_async_str_iter! $else_block
-            )
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! dom_tokens_prefix_space_into_async_str_iter {
-    ($dom_token:literal) => {
-        $crate::__private::concat!(" ", $dom_token)
-    };
-    ([$dom_token:literal $(,)?]) => {
-        $crate::__private::concat!(" ", $dom_token)
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        [$($crate::__private::concat!(" ", $dom_token)),+].as_slice()
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::DomTokens>::dom_tokens_prefix_space_into_async_str_iter($e)
-    };
-    (if ( $($e:tt)+ ) $if_block:tt) => {
-        $crate::__private::bool::then($($e)+, || $crate::dom_tokens_prefix_space_into_async_str_iter! $if_block)
-    };
-    (if ( $($e:tt)+ ) $if_block:tt else $else_block:tt) => {
-        if $($e)+ {
-            $crate::__private::IterEither::Left(
-                $crate::dom_tokens_prefix_space_into_async_str_iter! $if_block
-            )
-        } else {
-            $crate::__private::IterEither::Right(
-                $crate::dom_tokens_prefix_space_into_async_str_iter! $else_block
-            )
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! UpdateWithState {
-    ($dom_token:literal) => {
-        $crate::__private::bool
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
-        $crate::__private::bool
-    };
-    (( $e:expr ) as $as_ty:ty) => {
-        <$as_ty as $crate::DomTokens>::UpdateWithState
-    };
-    (if ( $($e:tt)+ ) $if_block:tt) => {
-        $crate::UpdateWithState! $if_block
-    };
-    (if ( $($e:tt)+ ) $if_block:tt else $else_block:tt) => {
-        $crate::__private::EitherState<
-            $crate::UpdateWithState! $if_block,
-            $crate::UpdateWithState! $else_block,
-        >
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __NestedUpdateWithState {
-    ($dom_token:tt) => {
-        $crate::UpdateWithState! $dom_token
-    };
-    ($dom_token:tt $($dom_tokens:tt)+) => {
-        (
-            $crate::UpdateWithState! $dom_token,
-            $crate::__NestedUpdateWithState![$($dom_tokens)+]
-        )
-    };
-}
-
-#[macro_export]
-macro_rules! remove_with_state {
-    ({$dom_token:literal} $dom_token_list:ident $dom_token_state:ident) => {
-        if *$dom_token_state {
-            *$dom_token_state = false;
-            $crate::DomTokenList::remove_1($dom_token);
-        }
-    };
-    ({[$($dom_token:literal),+ $(,)?]} $dom_token_list:ident $dom_token_state:ident) => {
-        if *$dom_token_state {
-            *$dom_token_state = false;
-            $(
-                $crate::DomTokenList::remove_1($dom_token);
-            )+
-        }
-    };
-    ({( $e:expr ) as $as_ty:ty} $dom_token_list:ident $dom_token_state:ident) => {
-        <$as_ty as $crate::DomTokens>::remove_with_state($dom_token_list, $dom_token_state)
-    };
-    ({if ( $($e:tt)+ ) $if_block:tt} $dom_token_list:ident $dom_token_state:ident) => {
-        $crate::remove_with_state! { $if_block $dom_token_list $dom_token_state }
-    };
-    ({if ( $($e:tt)+ ) $if_block:tt else $else_block:tt} $dom_token_list:ident $dom_token_state:ident) => {
-        $crate::remove_with_state! { $if_block $dom_token_list $dom_token_state }
-
-        $crate::__private::EitherState<
-            $crate::UpdateWithState! $if_block,
-            $crate::UpdateWithState! $else_block,
-        >
-    };
-}
-
-#[macro_export]
-macro_rules! __nested_remove_with_state {
-    ([$dom_token:tt] $dom_token_list:ident $dom_tokens_state:ident) => {
-        $crate::remove_with_state! { $dom_token $dom_token_list $dom_tokens_state }
-    };
-    ([$dom_token:tt $($dom_tokens:tt)+] $dom_token_list:ident $dom_tokens_state:ident) => {
-        let (__dom_tokens_state, __dom_tokens_state_rest) = $dom_tokens_state;
-        $crate::remove_with_state! { $dom_token $dom_token_list __dom_tokens_state }
-        $crate::__nested_remove_with_state! { [$($dom_tokens)+] $dom_token_list __dom_tokens_state_rest }
-    };
-}
-
-#[macro_export]
 macro_rules! impl_dom_tokens_for {
     (
         |$this:tt: $for_ty:ty| -> $proxy_ty:ty { $e:expr }
@@ -1051,6 +605,7 @@ macro_rules! impl_dom_tokens_for {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_dom_tokens_for_imp {
     ($m:tt ($($t:tt)*)) => {
@@ -1067,6 +622,7 @@ macro_rules! __impl_dom_tokens_for_imp {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_dom_tokens_for_imp_finish {
     ($dom_tokens:tt $this:tt $for_ty:ty) => {
