@@ -44,7 +44,7 @@ pub trait DomTokens {
 
 #[macro_export]
 macro_rules! proxy_dom_tokens {
-    (|$this:ident| -> $ty:ty { $e:expr }) => {
+    (|$this:tt| -> $ty:ty { $e:expr }) => {
         type UpdateWithState = <$ty as $crate::DomTokens>::UpdateWithState;
 
         fn update_with_state(
@@ -669,55 +669,97 @@ macro_rules! __anonymous_custom_dom_tokens {
 
 #[macro_export]
 macro_rules! dom_tokens {
+    (@$on_finish:tt $t:tt) => {
+        $crate::__parse_dom_tokens! { [] $t $t $on_finish }
+    };
     () => {
         $crate::Empty
     };
     ($($t:tt)*) => {
-        $crate::__parse_dom_tokens!([]{$($t)*}{$($t)*})
+        $crate::__parse_dom_tokens!([]{$($t)*}{$($t)*}{})
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __parse_dom_tokens {
-    ($t:tt {}{}) => {
+    ($t:tt {}{} {}) => {
         $crate::__anonymous_custom_dom_tokens! $t
+    };
+    ($t:tt {}{} { $crate_macro_name:ident $bang:tt }) => {
+        $crate::$crate_macro_name $bang $t
+    };
+    ($t:tt {}{} { $crate_macro_name:ident $bang:tt { $($macro_rest:tt)* } }) => {
+        $crate::$crate_macro_name $bang { $t $($macro_rest)* }
     };
     (
         [$($t:tt)*]
         {$dom_token:literal $(, $($rest:tt)*)?}
         $tee:tt
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             [$($t)* { $dom_token }]
             {$($($rest)*)?}
             {$($($rest)*)?}
+            $on_finish
         )
     };
-    ($t:tt { if $_pred:tt $($_rest:tt)* } { $if:ident $pred:tt $($rest:tt)* }) => {
-        $crate::__parse_dom_tokens!($t if { $if } ($pred) {$($_rest)*} {$($rest)*})
+    (
+        $t:tt
+        { if        $_pred:tt $($_rest:tt)* }
+        { $if:ident $pred:tt  $($rest:tt )* }
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            $t
+            if { $if } ($pred)
+            {$($_rest)*}
+            {$($rest )*}
+            $on_finish
+        )
     };
-    ($t:tt if {$($if:tt)*} $pred:tt {{$($_block:tt)*} $($_rest:tt)*} {$block:tt $($rest:tt)*}) => {
-        $crate::__parse_dom_tokens!($t if_end { $($if)* $pred $block } {$($_rest)*} {$($rest)*})
+    (
+        $t:tt
+        if {$($if:tt)*} $pred:tt
+        {{$($_block:tt)*} $($_rest:tt)*}
+        {$block:tt        $($rest:tt )*}
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            $t
+            if_end { $($if)* $pred $block }
+            {$($_rest)*}
+            {$($rest )*}
+            $on_finish
+        )
     };
     (
         [$($t:tt)*]
         if_end $if:tt
         {$(, $($_rest:tt)*)?}
         {$(, $($rest:tt )*)?}
+        $on_finish:tt
     ) => {
-        $crate::__parse_dom_tokens!([$($t)* $if] { $($($_rest)*)? } { $($($rest)*)? })
+        $crate::__parse_dom_tokens!(
+            [$($t)* $if]
+            { $($($_rest)*)? }
+            { $($($rest )*)? }
+            $on_finish
+        )
     };
     (
         [$($t:tt)*]
         if_end {$($if:tt)*}
         { else        {$($_else_block:tt)*} $(, $($_rest:tt)*)? }
         { $else:tt $else_block:tt        $(, $($rest:tt )*)? }
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             [$($t)* { $($if)* $else  $else_block }]
             { $($($_rest)*)? }
             { $($($rest)*)? }
+            $on_finish
         )
     };
     (
@@ -725,35 +767,41 @@ macro_rules! __parse_dom_tokens {
         if_end {$($if:tt)*}
         { else     if          $_pred:tt $($_rest:tt)* }
         { $else:tt $else_if:tt $pred:tt  $($rest:tt)*  }
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             $t
             if {$($if:tt)* $else $else_if} ($pred)
             { $($($_rest)*)? }
             { $($($rest)*)? }
+            $on_finish
         )
     };
     (
         [$($t:tt)*]
         { [$($_array:tt)*] $(, $($_rest:tt)*)? }
         { $array:tt        $(, $($rest:tt )*)? }
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             [$($t)* { $array }]
             {$($($_rest)*)?}
             {$($($rest )*)?}
+            $on_finish
         )
     };
     (
         $t:tt
         { $e:tt $($rest:tt)* }
         $tee:tt
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             $t
             expr_as ($e)
             {$($rest)*}
             {$($rest)*}
+            $on_finish
         )
     };
     (
@@ -761,11 +809,13 @@ macro_rules! __parse_dom_tokens {
         expr_as $e:tt
         { as     $_as_ty:ty $(, $($_rest:tt)*)? }
         { $as:tt $as_ty:ty  $(, $($rest:tt )*)? }
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             [$($t)* { $e $as $as_ty }]
             {$($($_rest)*)?}
             {$($($rest )*)?}
+            $on_finish
         )
     };
     (
@@ -773,12 +823,14 @@ macro_rules! __parse_dom_tokens {
         expr_as ($($pre:tt)*)
         { $e:tt $($rest:tt)* }
         $tee:tt
+        $on_finish:tt
     ) => {
         $crate::__parse_dom_tokens!(
             $t
             expr_as ($($pre)* $e)
             {$($rest)*}
             {$($rest)*}
+            $on_finish
         )
     };
 }
@@ -973,22 +1025,70 @@ macro_rules! __nested_remove_with_state {
     };
 }
 
-#[cfg(test)]
-mod tests {
-    mod anonymous {
-        use async_str_iter::ext::AsyncStrIteratorExt as _;
-
-        use crate::DomTokens;
-
-        const _: () = {
-            {
-                let tokens = dom_tokens!("a");
+#[macro_export]
+macro_rules! impl_dom_tokens_for {
+    (
+        |$this:tt: $for_ty:ty| -> $proxy_ty:ty { $e:expr }
+    ) => {
+        impl $crate::DomTokens for $for_ty {
+            $crate::proxy_dom_tokens! {
+                |$this| -> $proxy_ty { $e }
             }
-            {
-                let circle = true;
-                let array = false;
-                let dark = false;
+        }
+
+        impl $crate::ConstPossibleDomTokens for $for_ty {
+            const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> =
+                <$proxy_ty as ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS;
+        }
+    };
+    (
+        |$this:tt: $for_ty:ty| $dom_tokens_macro:ident $bang:tt $dom_tokens_macro_content:tt
+    ) => {
+        const _: () = {
+            $crate::__impl_dom_tokens_for_imp! {
+                { $dom_tokens_macro $dom_tokens_macro $bang { $this $for_ty }}
+                $dom_tokens_macro_content
             }
         };
-    }
+    };
+}
+
+#[macro_export]
+macro_rules! __impl_dom_tokens_for_imp {
+    ($m:tt ($($t:tt)*)) => {
+        $crate::__impl_dom_tokens_for_imp! {$m {$($t)*}}
+    };
+    ($m:tt [$($t:tt)*]) => {
+        $crate::__impl_dom_tokens_for_imp! {$m {$($t)*}}
+    };
+    ({ dom_tokens $dom_tokens_macro:ident $bang:tt $data:tt } $dom_tokens_macro_content:tt) => {
+        $crate::$dom_tokens_macro $bang {
+            @{ __impl_dom_tokens_for_imp_finish ! $data }
+            $dom_tokens_macro_content
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! __impl_dom_tokens_for_imp_finish {
+    ($dom_tokens:tt $this:tt $for_ty:ty) => {
+        mod __dom_tokens_types {
+            $crate::__nested_dom_tokens_types! { $dom_tokens (super) }
+        }
+
+        impl $crate::ConstPossibleDomTokens for $for_ty {
+            const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> =
+                __dom_tokens_types::POSSIBLE_DOM_TOKEN_ARRAY.as_unique_dom_tokens();
+        }
+
+        fn __dom_tokens_get_value($this: $for_ty) -> __dom_tokens_types::DomTokens {
+            $crate::__nested_dom_token_predicate! $dom_tokens
+        }
+
+        impl $crate::DomTokens for $for_ty {
+            $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens {
+                __dom_tokens_get_value(this)
+            });
+        }
+    };
 }

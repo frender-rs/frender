@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DomToken<'a>(&'a str);
 
 impl<'a> Deref for DomToken<'a> {
