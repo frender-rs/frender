@@ -61,29 +61,8 @@ impl<'a> DomToken<'a> {
         Self(s)
     }
 
-    pub const fn new_array_const<const N: usize>(arr: [&'a str; N]) -> [Self; N] {
-        let mut res = [Self(""); N];
-
-        let mut i = 0;
-        while i < N {
-            assert_valid_dom_token(arr[i]);
-            i += 1;
-        }
-
-        res
-    }
-
     pub const fn as_str(self) -> &'a str {
         self.0
-    }
-}
-
-// TODO: remove
-pub const fn assert_valid_dom_tokens(tokens: &[&str]) {
-    let mut i = 0;
-    while i < tokens.len() {
-        assert_valid_dom_token(tokens[i]);
-        i += 1;
     }
 }
 
