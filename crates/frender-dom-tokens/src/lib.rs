@@ -1,5 +1,5 @@
 pub use chain::Chain;
-pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
+pub use dom_token::{put_tokens_at, separate, DomToken, UniqueDomTokenArray, UniqueDomTokens};
 pub use empty::Empty;
 
 use async_str_iter::AsyncStrIterator;
@@ -9,8 +9,6 @@ mod dom_token;
 mod either;
 mod empty;
 mod option;
-
-mod strings_with_predicates;
 
 /// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
 pub trait DomTokenList {

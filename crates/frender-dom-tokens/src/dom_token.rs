@@ -11,6 +11,18 @@ impl<'a> Deref for DomToken<'a> {
     }
 }
 
+impl<'a> PartialEq<str> for DomToken<'a> {
+    fn eq(&self, other: &str) -> bool {
+        self.0 == other
+    }
+}
+
+impl<'a> PartialEq<&str> for DomToken<'a> {
+    fn eq(&self, other: &&str) -> bool {
+        self.0 == *other
+    }
+}
+
 // See https://www.w3.org/TR/2011/WD-html5-20110525/common-microsyntaxes.html#space-character
 const fn is_space_char(v: u8) -> bool {
     match v {
@@ -228,4 +240,139 @@ pub const fn dom_tokens_contain(this: &[DomToken], s: &str) -> bool {
         i += 1;
     }
     false
+}
+
+// TODO: auto separate string literal as dom tokens
+pub mod separate {
+    use super::*;
+
+    pub const fn separate_dom_tokens_count(s: &str) -> usize {
+        assert_ascii(s);
+
+        let s = s.as_bytes();
+
+        let mut count = 0;
+
+        let mut i = 0;
+        let mut current_is_token = false;
+
+        while i < s.len() {
+            if is_space_char(s[i]) {
+                current_is_token = false;
+            } else {
+                if !current_is_token {
+                    count += 1;
+                    current_is_token = true;
+                }
+            }
+            i += 1;
+        }
+
+        count
+    }
+
+    const fn slice_range<T>(
+        s: &[T],
+        std::ops::Range { start, end }: std::ops::Range<usize>,
+    ) -> &[T] {
+        s.split_at(end).0.split_at(start).1
+    }
+
+    pub const fn separate_dom_tokens<const N: usize>(s: &str) -> [DomToken<'_>; N] {
+        assert_ascii(s);
+
+        let bytes = s.as_bytes();
+
+        let mut res = [DomToken::new_const("_"); N];
+
+        let mut i = 0;
+        let mut cur_token_start = None::<usize>;
+        let mut i_of_res = 0;
+
+        while i < bytes.len() {
+            if is_space_char(bytes[i]) {
+                if let Some(cur_token_start) = cur_token_start {
+                    let token = slice_range(bytes, cur_token_start..i);
+                    let token = match std::str::from_utf8(token) {
+                        Ok(v) => v,
+                        Err(_) => panic!("bytes are not valid utf8"),
+                    };
+                    res[i_of_res] = DomToken::new_const(token);
+                    i_of_res += 1;
+                }
+                cur_token_start = None;
+            } else {
+                if cur_token_start.is_none() {
+                    cur_token_start = Some(i);
+                }
+            }
+
+            i += 1;
+        }
+
+        assert!(i == bytes.len());
+
+        {
+            if let Some(cur_token_start) = cur_token_start {
+                let token = slice_range(bytes, cur_token_start..i);
+                let token = match std::str::from_utf8(token) {
+                    Ok(v) => v,
+                    Err(_) => panic!("bytes are not valid utf8"),
+                };
+                res[i_of_res] = DomToken::new_const(token);
+                i_of_res += 1;
+            }
+            cur_token_start = None;
+        }
+
+        assert!(i_of_res == N);
+        assert!(cur_token_start.is_none());
+
+        res
+    }
+
+    #[cfg(test)]
+    mod tests {
+
+        #[test]
+        fn count() {
+            assert_eq!(super::separate_dom_tokens_count(""), 0);
+            assert_eq!(super::separate_dom_tokens_count(" "), 0);
+            assert_eq!(super::separate_dom_tokens_count("\r"), 0);
+            assert_eq!(super::separate_dom_tokens_count("  "), 0);
+            assert_eq!(super::separate_dom_tokens_count(" \r"), 0);
+
+            assert_eq!(super::separate_dom_tokens_count("a"), 1);
+            assert_eq!(super::separate_dom_tokens_count("a "), 1);
+            assert_eq!(super::separate_dom_tokens_count(" a"), 1);
+            assert_eq!(super::separate_dom_tokens_count(" a "), 1);
+
+            assert_eq!(super::separate_dom_tokens_count("a b"), 2);
+            assert_eq!(super::separate_dom_tokens_count("a  b"), 2);
+            assert_eq!(super::separate_dom_tokens_count(" a b"), 2);
+            assert_eq!(super::separate_dom_tokens_count("a b "), 2);
+            assert_eq!(super::separate_dom_tokens_count(" a b "), 2);
+        }
+
+        #[test]
+        fn array() {
+            const EMPTY: [&str; 0] = [];
+            assert_eq!(super::separate_dom_tokens::<0>(""), EMPTY);
+            assert_eq!(super::separate_dom_tokens::<0>(" "), EMPTY);
+            assert_eq!(super::separate_dom_tokens::<0>("\r"), EMPTY);
+            assert_eq!(super::separate_dom_tokens::<0>("  "), EMPTY);
+            assert_eq!(super::separate_dom_tokens::<0>(" \r"), EMPTY);
+
+            assert_eq!(super::separate_dom_tokens::<1>("a"), ["a"]);
+            assert_eq!(super::separate_dom_tokens::<1>("a "), ["a"]);
+            assert_eq!(super::separate_dom_tokens::<1>(" a"), ["a"]);
+            assert_eq!(super::separate_dom_tokens::<1>(" a "), ["a"]);
+
+            assert_eq!(super::separate_dom_tokens::<2>("a b"), ["a", "b"]);
+            assert_eq!(super::separate_dom_tokens::<2>("a  b"), ["a", "b"]);
+            assert_eq!(super::separate_dom_tokens::<2>(" a b"), ["a", "b"]);
+            assert_eq!(super::separate_dom_tokens::<2>("a b "), ["a", "b"]);
+            assert_eq!(super::separate_dom_tokens::<2>(" a b "), ["a", "b"]);
+        }
+    }
 }
