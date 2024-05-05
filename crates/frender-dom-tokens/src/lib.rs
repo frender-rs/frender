@@ -94,6 +94,7 @@ pub trait ConstPossibleDomTokens {
     const POSSIBLE_DOM_TOKENS: UniqueDomTokens<'static, 'static>;
 }
 
+#[doc(hidden)]
 pub mod __private {
     pub use bool;
     pub use str;
