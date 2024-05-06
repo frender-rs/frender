@@ -158,7 +158,7 @@ function addBorrowedObject(obj) {
 }
 function __wbg_adapter_16(arg0, arg1, arg2) {
     try {
-        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__hf6a81ac8365ba063(arg0, arg1, addBorrowedObject(arg2));
+        wasm.wasm_bindgen__convert__closures__invoke1_mut_ref__h83f8f6658cb2175a(arg0, arg1, addBorrowedObject(arg2));
     } finally {
         heap[stack_pointer++] = undefined;
     }
@@ -647,7 +647,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('html-elements-85c4f9ebf5b21a8a_bg.wasm', import.meta.url);
+        input = new URL('html-elements-c5bebbb7a166b355_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
