@@ -180,6 +180,98 @@ macro_rules! __dom_token_predicate {
             })
         }
     };
+    (
+        match $e:tt $match_body:tt
+    ) => {
+        $crate::__dom_token_predicate_match! {
+            [__dom_tokens_types]
+            {}
+            ()
+            match $e $match_body
+        }
+    };
+    (
+        dom_tokens! $dom_tokens:tt
+    ) => {
+        $crate::__nested_dom_token_predicate! $dom_tokens
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __wrap_nested_either {
+    (() $e:expr) => {
+        $e
+    };
+    (($var:ident $rest:tt) $e:expr) => {
+        $crate::__wrap_nested_either!(
+            $rest
+            $crate::__private::Either::$var($e)
+        )
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __dom_token_predicate_match {
+    (
+        $types_path:tt
+        $match_body:tt
+        $either_variants:tt
+        match ( $($e:tt)+ ) {}
+    ) => {
+        match $($e)+ $match_body
+    };
+    (
+        [$($types_path:tt)*]
+        {$($match_body:tt)*}
+        $either_variants:tt
+        match ( $($e:tt)+ ) {
+            $p0:pat => $braced_one_expr_of_dom_token_0:tt
+        }
+    ) => {
+        match $($e)+ {
+            $($match_body)*
+            $p0 => {
+                $crate::__wrap_nested_either!(
+                    $either_variants
+                    {
+                        use $($types_path)* as __dom_tokens_types;
+                        $crate::__dom_token_predicate! $braced_one_expr_of_dom_token_0
+                    }
+                )
+            }
+        }
+    };
+    (
+        [$($types_path:tt)*]
+        {$($match_body:tt)*}
+        $either_variants:tt
+        match $e:tt {
+            $p0:pat => $braced_one_expr_of_dom_token_0:tt
+            $($rest:tt)+
+        }
+    ) => {
+        $crate::__dom_token_predicate_match! {
+            [$($types_path)*::__dom_tokens_inner_mod_b]
+            {
+                $($match_body)*
+                $p0 => {
+                    $crate::__wrap_nested_either!(
+                        (Left $either_variants)
+                        {
+                            use $($types_path)*::__dom_tokens_inner_mod_a as __dom_tokens_types;
+                            $crate::__dom_token_predicate! $braced_one_expr_of_dom_token_0
+                        }
+                    )
+                }
+            }
+            (Right $either_variants)
+            match $e {
+                $($rest)+
+            }
+        }
+    };
 }
 
 #[doc(hidden)]
@@ -224,6 +316,99 @@ macro_rules! __define_one_str {
             }
         }
 
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_pats {
+    (
+        $t:tt
+        {}
+        { $on_finish:tt $bang:tt { $($on_finish_rest:tt)* } }
+    ) => {
+        $crate::$on_finish $bang {
+            $t
+            $($on_finish_rest)*
+        }
+    };
+    (
+        {$($t:tt)*}
+        { $p:pat => {$($braced:tt)*} $(,)? $($rest:tt)* }
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens! {
+            []
+            {$($braced)*}
+            {$($braced)*}
+            {
+                #[parse_one_expr_of_dom_tokens]
+                __parse_pats_braced_finish! {
+                    {
+                        $($t)*
+                        $p =>
+                    }
+                    {$($rest)*}
+                    $on_finish
+                }
+            }
+        }
+    };
+    (
+        {$($t:tt)*}
+        { $p:pat => $($dom_tokens_and_rest:tt)+ }
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens! {
+            []
+            {$($dom_tokens_and_rest)+}
+            {$($dom_tokens_and_rest)+}
+            {
+                #[parse_one_expr_of_dom_tokens]
+                __parse_pats_one_finish! {
+                    {
+                        $($t)*
+                        $p =>
+                    }
+                    $on_finish
+                }
+            }
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_pats_braced_finish {
+    (
+        $braced_one_expr_of_dom_token:tt
+        {} // rest after one_expr_of_dom_tokens
+        {$($t:tt)*}
+        $rest:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_pats! {
+            { $($t)* $braced_one_expr_of_dom_token }
+            $rest
+            $on_finish
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_pats_one_finish {
+    (
+        $braced_one_expr_of_dom_token:tt
+        $rest:tt
+        {$($t:tt)*}
+        $on_finish:tt
+    ) => {
+        $crate::__parse_pats! {
+            { $($t)* $braced_one_expr_of_dom_token }
+            $rest
+            $on_finish
+        }
     };
 }
 
@@ -354,6 +539,51 @@ macro_rules! __define_dom_tokens_types {
             })
         };
     };
+    (
+        {
+            match $match:tt {
+                $p:pat => $braced_one_expr_of_dom_token:tt
+            }
+        }
+        pub(in $($vis:tt)+)
+    ) => {
+        $crate::__define_dom_tokens_types! {
+            $braced_one_expr_of_dom_token
+            pub(in $($vis)+)
+        }
+    };
+    (
+        {
+            match $match:tt {
+                $p0:pat => $braced_one_expr_of_dom_token:tt
+                $($rest:tt)+
+            }
+        }
+        pub(in $($vis:tt)+)
+    ) => {
+        $crate::__define_dom_tokens_types! {
+            {
+                if () $braced_one_expr_of_dom_token
+                else {
+                    match () {
+                        $($rest)+
+                    }
+                }
+            }
+            pub(in $($vis)+)
+        }
+    };
+    (
+        {
+            dom_tokens ! $dom_tokens:tt
+        }
+        pub(in $($vis:tt)+)
+    ) => {
+        $crate::__nested_dom_tokens_types! {
+            $dom_tokens
+            ($($vis)+)
+        }
+    };
 }
 
 #[doc(hidden)]
@@ -425,6 +655,12 @@ macro_rules! __anonymous_custom_dom_tokens {
 
 #[macro_export]
 macro_rules! dom_tokens {
+    (@$on_finish:tt ($($t:tt)*)) => {
+        $crate::dom_tokens! { @$on_finish {$($t)*} }
+    };
+    (@$on_finish:tt [$($t:tt)*]) => {
+        $crate::dom_tokens! { @$on_finish {$($t)*} }
+    };
     (@$on_finish:tt $t:tt) => {
         $crate::__parse_dom_tokens! { [] $t $t $on_finish }
     };
@@ -433,6 +669,66 @@ macro_rules! dom_tokens {
     };
     ($($t:tt)*) => {
         $crate::__parse_dom_tokens!([]{$($t)*}{$($t)*}{})
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_dom_tokens_on_finish_braced {
+    (
+        $dom_token:tt
+        {} // rest of one_expr_of_dom_token
+        [$($t:tt)*]
+        $rest:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens! {
+            [$($t)* $dom_token]
+            $rest
+            $rest
+            $on_finish
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_dom_tokens_on_finish_macro {
+    (
+        $bracketed_dom_tokens:tt
+        { $dom_tokens:tt $bang:tt }
+        [$($t:tt)*]
+        $rest:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens! {
+            [$($t)* { $dom_tokens $bang $bracketed_dom_tokens }]
+            $rest
+            $rest
+            $on_finish
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_dom_tokens_on_finish_pats {
+    (
+        $pats:tt
+        [$($t:tt)*]
+        { $match:tt $pred:tt }
+        $rest:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            [
+                $($t)*
+                { $match $pred $pats }
+            ]
+            $rest
+            $rest
+            $on_finish
+        )
     };
 }
 
@@ -449,6 +745,35 @@ macro_rules! __parse_dom_tokens {
         $crate::$crate_macro_name $bang { $t $($macro_rest)* }
     };
     (
+        [$one_expr_of_dom_tokens:tt]
+        $rest:tt $tee:tt
+        { #[parse_one_expr_of_dom_tokens] $crate_macro_name:ident $bang:tt { $($macro_rest:tt)* } }
+    ) => {
+        $crate::$crate_macro_name $bang { $one_expr_of_dom_tokens $rest $($macro_rest)* }
+    };
+    // { one_expr_of_dom_tokens }
+    (
+        $t:tt
+        { {$($_one_expr_of_dom_tokens:tt)*} $(, $($_rest:tt)*)?}
+        { $one_expr_of_dom_tokens:tt        $(, $($rest:tt )*)?}
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            []
+            $one_expr_of_dom_tokens
+            $one_expr_of_dom_tokens
+            {
+                #[parse_one_expr_of_dom_tokens]
+                __parse_dom_tokens_on_finish_braced! {
+                    $t
+                    {$($($rest)*)?}
+                    $on_finish
+                }
+            }
+        )
+    };
+    // "literal"
+    (
         [$($t:tt)*]
         {$dom_token:literal $(, $($rest:tt)*)?}
         $tee:tt
@@ -461,6 +786,26 @@ macro_rules! __parse_dom_tokens {
             $on_finish
         )
     };
+    // dom_tokens! ..
+    (
+        $t:tt
+        { dom_tokens     !        $_dom_tokens_content:tt $(, $($_rest:tt)*)? }
+        { $dom_tokens:tt $bang:tt $dom_tokens_content:tt  $(, $($rest:tt )*)? }
+        $on_finish:tt
+    ) => {
+        $crate::$dom_tokens $bang {
+            @{
+                __parse_dom_tokens_on_finish_macro! {
+                    { $dom_tokens $bang }
+                    $t
+                    {$($($rest)*)?}
+                    $on_finish
+                }
+            }
+            $dom_tokens_content
+        }
+    };
+    // if
     (
         $t:tt
         { if        $_pred:tt $($_rest:tt)* }
@@ -561,6 +906,57 @@ macro_rules! __parse_dom_tokens {
             $on_finish
         )
     };
+    // match
+    (
+        $t:tt
+        { match     $_pred:tt $($_rest:tt)* }
+        { $match:tt $pred:tt  $($rest:tt )* }
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            $t
+            match $match ($pred)
+            {$($_rest)*}
+            {$($rest )*}
+            $on_finish
+        )
+    };
+    (
+        $t:tt
+        match $match:tt $pred:tt
+        {{$($_block:tt)*} $($_rest:tt)*}
+        {$block:tt        $($rest:tt )*}
+        $on_finish:tt
+    ) => {
+        $crate::__parse_pats!(
+            {}
+            $block
+            {
+                __parse_dom_tokens_on_finish_pats! {
+                    $t
+                    { $match $pred }
+                    {$($rest )*}
+                    $on_finish
+                }
+            }
+        )
+    };
+    (
+        $t:tt
+        match $match:tt ($($pred:tt)*)
+        {$non_block:tt $($rest:tt)*}
+        $tee:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            $t
+            match $match ($($pred)* $non_block)
+            {$($rest)*}
+            {$($rest)*}
+            $on_finish
+        )
+    };
+    // as
     (
         $t:tt
         { $e:tt $($rest:tt)* }

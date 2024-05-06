@@ -1,34 +1,14 @@
-use frender_dom_tokens::DomTokenList;
+pub mod utils;
 
-#[derive(Default)]
-struct DomTokenListAddOnly {
-    tokens: Vec<String>,
-}
-
-impl DomTokenList for DomTokenListAddOnly {
-    fn set_value(&mut self, _: &str) {
-        unreachable!()
-    }
-
-    fn add_1(&mut self, token: frender_dom_tokens::DomToken) {
-        assert!(self.tokens.is_empty());
-        self.tokens.push(token.as_str().to_owned())
-    }
-
-    fn remove_1(&mut self, _: frender_dom_tokens::DomToken) {
-        unreachable!()
-    }
-
-    fn replace(&mut self, _: frender_dom_tokens::DomToken, _: frender_dom_tokens::DomToken) {
-        unreachable!()
-    }
-}
+use utils::{
+    dom_token_list::{DomTokenListAddRemove, DomTokenListNever},
+    ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space},
+};
 
 mod literal {
-    use async_str_iter::ext::AsyncStrIteratorExt as _;
     use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
 
-    use super::DomTokenListAddOnly;
+    use super::*;
 
     const fn value() -> impl ChainableDomTokens + Copy {
         dom_tokens!("literal")
@@ -37,33 +17,237 @@ mod literal {
     #[test]
     fn ssr() {
         futures_lite::future::block_on(async {
-            {
-                let out: String = DomTokens::dom_tokens_into_async_str_iter(value())
-                    .collect()
-                    .await;
-
-                assert_eq!(out, "literal");
-            }
-
-            {
-                let out: String =
-                    ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(value())
-                        .collect()
-                        .await;
-
-                assert_eq!(out, " literal");
-            }
+            assert_eq!(collect_dom_tokens(value()).await, "literal");
+            assert_eq!(collect_dom_tokens_prefix_space(value()).await, " literal");
         })
     }
 
     #[test]
     fn csr() {
-        let dom_token_list = &mut DomTokenListAddOnly::default();
+        let dom_token_list = &mut DomTokenListAddRemove::default();
         let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
         DomTokens::update_with_state(value(), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["literal"]);
         DomTokens::update_with_state(value(), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["literal"]);
+    }
+}
+
+mod array_of_literals {
+    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+
+    use super::*;
+
+    const fn value() -> impl ChainableDomTokens + Copy {
+        dom_tokens!(["literal-0", "literal-1", "literal-2"])
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(
+                collect_dom_tokens(value()).await,
+                "literal-0 literal-1 literal-2"
+            );
+
+            assert_eq!(
+                collect_dom_tokens_prefix_space(value()).await,
+                " literal-0 literal-1 literal-2"
+            );
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListAddRemove::default();
+        let state = &mut Default::default();
+        assert!(dom_token_list.tokens.is_empty());
+        DomTokens::update_with_state(value(), dom_token_list, state);
+        assert_eq!(
+            dom_token_list.tokens,
+            ["literal-0", "literal-1", "literal-2"]
+        );
+        DomTokens::update_with_state(value(), dom_token_list, state);
+        assert_eq!(
+            dom_token_list.tokens,
+            ["literal-0", "literal-1", "literal-2"]
+        );
+    }
+}
+
+mod r#if {
+    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+
+    use crate::{
+        utils::ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space},
+        DomTokenListNever,
+    };
+
+    use super::DomTokenListAddRemove;
+
+    const fn value(predicate: bool) -> impl ChainableDomTokens + Copy {
+        dom_tokens!(if predicate {
+            "a"
+        })
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(collect_dom_tokens(value(false)).await, "");
+            assert_eq!(collect_dom_tokens(value(true)).await, "a");
+
+            assert_eq!(collect_dom_tokens_prefix_space(value(false)).await, "");
+            assert_eq!(collect_dom_tokens_prefix_space(value(true)).await, " a");
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListAddRemove::default();
+        let state = &mut Default::default();
+        assert!(dom_token_list.tokens.is_empty());
+        DomTokens::update_with_state(value(true), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["a"]);
+        DomTokens::update_with_state(value(true), &mut DomTokenListNever, state);
+        DomTokens::update_with_state(value(true), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["a"]);
+
+        DomTokens::update_with_state(value(false), dom_token_list, state);
+        assert!(dom_token_list.tokens.is_empty());
+
+        DomTokens::update_with_state(value(false), &mut DomTokenListNever, state);
+    }
+}
+
+mod if_else {
+    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+
+    use super::*;
+
+    const fn value(predicate: bool) -> impl ChainableDomTokens + Copy {
+        dom_tokens!(if !!predicate { "a" } else { ["b", "c"] })
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(collect_dom_tokens(value(false)).await, "b c");
+            assert_eq!(collect_dom_tokens(value(true)).await, "a");
+
+            assert_eq!(collect_dom_tokens_prefix_space(value(false)).await, " b c");
+            assert_eq!(collect_dom_tokens_prefix_space(value(true)).await, " a");
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListAddRemove::default();
+        let state = &mut Default::default();
+        assert!(dom_token_list.tokens.is_empty());
+        DomTokens::update_with_state(value(true), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["a"]);
+        DomTokens::update_with_state(value(true), &mut DomTokenListNever, state);
+        DomTokens::update_with_state(value(true), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["a"]);
+
+        DomTokens::update_with_state(value(false), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["b", "c"]);
+
+        DomTokens::update_with_state(value(false), &mut DomTokenListNever, state);
+    }
+}
+
+mod r#match {
+    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+
+    use super::*;
+
+    enum Theme {
+        Dark,
+        Light,
+        Contrast { colorful: bool },
+    }
+
+    const fn value(theme: Theme) -> impl ChainableDomTokens + Copy {
+        dom_tokens!(match theme {
+            Theme::Dark => "dark",
+            Theme::Light => "light",
+            Theme::Contrast { colorful } => dom_tokens!(
+                "contrast",
+                if colorful {
+                    "colorful"
+                }
+            ),
+        })
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(collect_dom_tokens(value(Theme::Dark)).await, "dark");
+            assert_eq!(collect_dom_tokens(value(Theme::Light)).await, "light");
+            assert_eq!(
+                collect_dom_tokens(value(Theme::Contrast { colorful: false })).await,
+                "contrast"
+            );
+            assert_eq!(
+                collect_dom_tokens(value(Theme::Contrast { colorful: true })).await,
+                "contrast colorful"
+            );
+
+            assert_eq!(
+                collect_dom_tokens_prefix_space(value(Theme::Dark)).await,
+                " dark"
+            );
+            assert_eq!(
+                collect_dom_tokens_prefix_space(value(Theme::Light)).await,
+                " light"
+            );
+            assert_eq!(
+                collect_dom_tokens_prefix_space(value(Theme::Contrast { colorful: false })).await,
+                " contrast"
+            );
+            assert_eq!(
+                collect_dom_tokens_prefix_space(value(Theme::Contrast { colorful: true })).await,
+                " contrast colorful"
+            );
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListAddRemove::default();
+        let state = &mut Default::default();
+        assert!(dom_token_list.tokens.is_empty());
+        DomTokens::update_with_state(value(Theme::Dark), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["dark"]);
+        DomTokens::update_with_state(value(Theme::Dark), &mut DomTokenListNever, state);
+        DomTokens::update_with_state(value(Theme::Dark), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["dark"]);
+
+        DomTokens::update_with_state(value(Theme::Light), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["light"]);
+
+        DomTokens::update_with_state(
+            value(Theme::Contrast { colorful: true }),
+            dom_token_list,
+            state,
+        );
+        assert_eq!(dom_token_list.tokens, ["contrast", "colorful"]);
+
+        DomTokens::update_with_state(
+            value(Theme::Contrast { colorful: true }),
+            &mut DomTokenListNever,
+            state,
+        );
+
+        DomTokens::update_with_state(
+            value(Theme::Contrast { colorful: false }),
+            dom_token_list,
+            state,
+        );
+        assert_eq!(dom_token_list.tokens, ["contrast"]);
     }
 }
