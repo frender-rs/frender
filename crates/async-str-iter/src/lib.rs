@@ -1,7 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
 pub mod any_str;
-pub mod array;
 pub mod borrow_str;
 pub mod chain;
 pub mod concat;
@@ -11,6 +10,8 @@ pub mod ext;
 pub mod flat;
 pub mod never;
 pub mod option;
+
+mod slice;
 
 pub mod __private {
     pub use frender_macro_rules::{expand, ready_none};
