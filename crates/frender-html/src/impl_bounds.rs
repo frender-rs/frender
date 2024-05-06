@@ -317,7 +317,7 @@ pub mod DomTokens {
         pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
 
         pub fn maybe_into_haevoe<V: DomTokens>(this: V) -> Option<Haevoe<V>> {
-            V::dom_tokens_maybe_into_async_str_iter(this).map(Haevoe::<V>::new)
+            Some(Haevoe::<V>::new(V::dom_tokens_into_async_str_iter(this)))
         }
     }
 }

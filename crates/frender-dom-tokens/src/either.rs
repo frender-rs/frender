@@ -2,7 +2,7 @@ use async_str_iter::either::IterEither;
 use either::Either;
 use frender_common::either::EitherState;
 
-use crate::DomTokens;
+use crate::{ChainableDomTokens, DomTokens};
 
 impl<L: DomTokens, R: DomTokens> DomTokens for Either<L, R> {
     type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
@@ -57,7 +57,9 @@ impl<L: DomTokens, R: DomTokens> DomTokens for Either<L, R> {
             Either::Right(this) => IterEither::Right(R::dom_tokens_into_async_str_iter(this)),
         }
     }
+}
 
+impl<L: ChainableDomTokens, R: ChainableDomTokens> ChainableDomTokens for Either<L, R> {
     type DomTokensPrefixSpaceIntoAsyncStrIter = IterEither<
         L::DomTokensPrefixSpaceIntoAsyncStrIter,
         R::DomTokensPrefixSpaceIntoAsyncStrIter,

@@ -1,6 +1,6 @@
 use async_str_iter::{option::IterOption, IntoAsyncStrIterator};
 
-use crate::DomTokens;
+use crate::{ChainableDomTokens, DomTokens};
 
 impl<T: DomTokens> DomTokens for Option<T> {
     type UpdateWithState = T::UpdateWithState;
@@ -30,7 +30,9 @@ impl<T: DomTokens> DomTokens for Option<T> {
         this.map(T::dom_tokens_into_async_str_iter)
             .into_async_str_iterator()
     }
+}
 
+impl<T: ChainableDomTokens> ChainableDomTokens for Option<T> {
     type DomTokensPrefixSpaceIntoAsyncStrIter = IterOption<T::DomTokensPrefixSpaceIntoAsyncStrIter>;
 
     fn dom_tokens_prefix_space_into_async_str_iter(

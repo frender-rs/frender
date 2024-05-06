@@ -9,6 +9,7 @@ mod dom_token;
 mod either;
 mod empty;
 mod option;
+mod string;
 
 /// See [DOMTokenList](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList).
 pub trait DomTokenList {
@@ -32,7 +33,9 @@ pub trait DomTokens {
     type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
     fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter;
+}
 
+pub trait ChainableDomTokens: DomTokens {
     type DomTokensPrefixSpaceIntoAsyncStrIter: AsyncStrIterator;
 
     fn dom_tokens_prefix_space_into_async_str_iter(
@@ -65,14 +68,19 @@ macro_rules! proxy_dom_tokens {
         fn dom_tokens_into_async_str_iter($this: Self) -> Self::DomTokensIntoAsyncStrIter {
             <$ty as $crate::DomTokens>::dom_tokens_into_async_str_iter($e)
         }
+    };
+}
 
+#[macro_export]
+macro_rules! proxy_chainable_dom_tokens {
+    (|$this:tt| -> $ty:ty { $e:expr }) => {
         type DomTokensPrefixSpaceIntoAsyncStrIter =
-            <$ty as $crate::DomTokens>::DomTokensPrefixSpaceIntoAsyncStrIter;
+            <$ty as $crate::ChainableDomTokens>::DomTokensPrefixSpaceIntoAsyncStrIter;
 
         fn dom_tokens_prefix_space_into_async_str_iter(
             $this: Self,
         ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
-            <$ty as $crate::DomTokens>::dom_tokens_prefix_space_into_async_str_iter($e)
+            <$ty as $crate::ChainableDomTokens>::dom_tokens_prefix_space_into_async_str_iter($e)
         }
     };
 }
@@ -274,7 +282,9 @@ macro_rules! __define_dom_tokens_types {
             fn dom_tokens_into_async_str_iter(Self: Self) -> Self::DomTokensIntoAsyncStrIter {
                 DomTokensIntoAsyncStrIter(false)
             }
+        }
 
+        impl $crate::ChainableDomTokens for DomTokens {
             type DomTokensPrefixSpaceIntoAsyncStrIter = DomTokensPrefixSpaceIntoAsyncStrIter;
 
             fn dom_tokens_prefix_space_into_async_str_iter(
@@ -402,6 +412,9 @@ macro_rules! __anonymous_custom_dom_tokens {
         }
         impl $crate::DomTokens for AnonymousCustomDomTokens {
             $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens { this._inner });
+        }
+        impl $crate::ChainableDomTokens for AnonymousCustomDomTokens {
+            $crate::proxy_chainable_dom_tokens!(|this| -> __dom_tokens_types::DomTokens { this._inner });
         }
 
         AnonymousCustomDomTokens {
@@ -589,6 +602,12 @@ macro_rules! impl_dom_tokens_for {
             }
         }
 
+        impl $crate::ChainableDomTokens for $for_ty {
+            $crate::proxy_chainable_dom_tokens! {
+                |$this| -> $proxy_ty { $e }
+            }
+        }
+
         impl $crate::ConstPossibleDomTokens for $for_ty {
             const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> =
                 <$proxy_ty as ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS;
@@ -642,6 +661,12 @@ macro_rules! __impl_dom_tokens_for_imp_finish {
 
         impl $crate::DomTokens for $for_ty {
             $crate::proxy_dom_tokens!(|this| -> __dom_tokens_types::DomTokens {
+                __dom_tokens_get_value(this)
+            });
+        }
+
+        impl $crate::ChainableDomTokens for $for_ty {
+            $crate::proxy_chainable_dom_tokens!(|this| -> __dom_tokens_types::DomTokens {
                 __dom_tokens_get_value(this)
             });
         }

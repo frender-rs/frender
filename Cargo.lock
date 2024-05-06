@@ -994,6 +994,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-dom-tokens",
  "frender-ssr-html",
  "web-sys",
 ]

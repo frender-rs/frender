@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 pub use frender_events::web::{Event, JsCastEventType};
 
-pub use web_sys::DomTokenList;
+pub use frender_html_common::web::DomTokenList;
 
 pub mod event;
 pub mod event_listener;

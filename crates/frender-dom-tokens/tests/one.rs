@@ -26,11 +26,11 @@ impl DomTokenList for DomTokenListAddOnly {
 
 mod literal {
     use async_str_iter::ext::AsyncStrIteratorExt as _;
-    use frender_dom_tokens::{dom_tokens, DomTokens};
+    use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
 
     use super::DomTokenListAddOnly;
 
-    const fn value() -> impl DomTokens + Copy {
+    const fn value() -> impl ChainableDomTokens + Copy {
         dom_tokens!("literal")
     }
 
@@ -46,9 +46,10 @@ mod literal {
             }
 
             {
-                let out: String = DomTokens::dom_tokens_prefix_space_into_async_str_iter(value())
-                    .collect()
-                    .await;
+                let out: String =
+                    ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(value())
+                        .collect()
+                        .await;
 
                 assert_eq!(out, " literal");
             }

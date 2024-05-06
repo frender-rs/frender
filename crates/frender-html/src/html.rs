@@ -107,7 +107,7 @@ crate::def_intrinsic_component_props!(
                 );
 
                 verbatim_trait_items!(
-                    type ClassList<'a>: frender_html_common::dom_token::DomTokenList
+                    type ClassList<'a>: frender_html_common::DomTokenList
                     where
                         Self: 'a,
                         Renderer: 'a;
@@ -123,7 +123,7 @@ crate::def_intrinsic_component_props!(
 
                         fn class_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::ClassList<'a> {
                             let element: &web_sys::Element = self.0.as_ref();
-                            element.class_list()
+                            element.class_list().into()
                         }
                     );
                 );
@@ -471,7 +471,7 @@ crate::def_intrinsic_component_props!(
                     }
                     pub trait ElementWithRelAttribute {
                         verbatim_trait_items!(
-                            type RelList<'a>: ::frender_html_common::dom_token::DomTokenList
+                            type RelList<'a>: ::frender_html_common::DomTokenList
                             where
                                 Self: 'a,
                                 Renderer: 'a;
@@ -485,7 +485,7 @@ crate::def_intrinsic_component_props!(
                                     Self: 'a,
                                     Renderer: 'a;
                                 fn rel_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::RelList<'a> {
-                                    self.0.rel_list()
+                                    self.0.rel_list().into()
                                 }
                             );
                         );

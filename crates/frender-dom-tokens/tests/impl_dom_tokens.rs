@@ -1,5 +1,7 @@
 use async_str_iter::ext::AsyncStrIteratorExt;
-use frender_dom_tokens::{impl_dom_tokens_for, ConstPossibleDomTokens, DomToken, DomTokens};
+use frender_dom_tokens::{
+    impl_dom_tokens_for, ChainableDomTokens, ConstPossibleDomTokens, DomToken, DomTokens,
+};
 
 struct ConstDomTokens;
 
@@ -21,7 +23,7 @@ fn const_dom_tokens() {
         );
 
         assert_eq!(
-            DomTokens::dom_tokens_prefix_space_into_async_str_iter(ConstDomTokens)
+            ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(ConstDomTokens)
                 .collect::<String>()
                 .await,
             " a b c"

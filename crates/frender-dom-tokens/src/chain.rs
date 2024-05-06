@@ -1,4 +1,4 @@
-use crate::DomTokens;
+use crate::{ChainableDomTokens, DomTokens};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Chain<A, B>(pub A, pub B);
@@ -9,7 +9,7 @@ impl<A, B> Chain<A, B> {
     }
 }
 
-impl<A: DomTokens, B: DomTokens> DomTokens for Chain<A, B> {
+impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
     type UpdateWithState = (A::UpdateWithState, B::UpdateWithState);
 
     fn update_with_state(
@@ -40,7 +40,9 @@ impl<A: DomTokens, B: DomTokens> DomTokens for Chain<A, B> {
             B::dom_tokens_prefix_space_into_async_str_iter(b),
         )
     }
+}
 
+impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B> {
     type DomTokensPrefixSpaceIntoAsyncStrIter = async_str_iter::chain::Chain<
         A::DomTokensPrefixSpaceIntoAsyncStrIter,
         B::DomTokensPrefixSpaceIntoAsyncStrIter,

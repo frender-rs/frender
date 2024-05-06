@@ -8,8 +8,11 @@ pub mod maybe_value;
 pub use maybe_value::{MaybeValue, ValueUpdater};
 
 pub mod attr;
-pub mod dom_token;
-pub use dom_token::DomTokens;
+
+pub use frender_dom_tokens::{DomTokenList, DomTokens};
+
+#[cfg(feature = "web")]
+pub mod web;
 
 mod content_editable;
 pub use content_editable::ContentEditable;

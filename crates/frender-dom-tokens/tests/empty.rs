@@ -1,7 +1,7 @@
 use async_str_iter::ext::AsyncStrIteratorExt as _;
-use frender_dom_tokens::{dom_tokens, DomTokenList, DomTokens};
+use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokenList, DomTokens};
 
-const fn empty() -> impl DomTokens + Copy {
+const fn empty() -> impl ChainableDomTokens + Copy {
     dom_tokens!()
 }
 
@@ -17,9 +17,10 @@ fn ssr() {
         }
 
         {
-            let out: String = DomTokens::dom_tokens_prefix_space_into_async_str_iter(empty())
-                .collect()
-                .await;
+            let out: String =
+                ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(empty())
+                    .collect()
+                    .await;
 
             assert_eq!(out, "");
         }
