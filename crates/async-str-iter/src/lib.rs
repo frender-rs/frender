@@ -13,6 +13,7 @@ pub mod option;
 
 mod slice;
 
+#[doc(hidden)]
 pub mod __private {
     pub use frender_macro_rules::{expand, ready_none};
     pub use pin_project_lite::pin_project;
@@ -140,6 +141,7 @@ macro_rules! Strings {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __field_ty {
     ($lit:literal) => {
@@ -150,6 +152,7 @@ macro_rules! __field_ty {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __field_value {
     (($lit:literal), $v:expr, {$($mut_state:tt)*}) => {
@@ -162,6 +165,7 @@ macro_rules! __field_value {
     };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! __fields_macros {
     ($field0:ident $field1:ident $($fields:ident)*) => {
