@@ -491,6 +491,21 @@ macro_rules! __parse_dom_tokens {
         )
     };
     (
+        $t:tt
+        if $if:tt ($($pred:tt)*)
+        {$non_block:tt $($rest:tt)*}
+        $tee:tt
+        $on_finish:tt
+    ) => {
+        $crate::__parse_dom_tokens!(
+            $t
+            if $if ($($pred)* $non_block)
+            {$($rest)*}
+            {$($rest)*}
+            $on_finish
+        )
+    };
+    (
         [$($t:tt)*]
         if_end $if:tt
         {$(, $($_rest:tt)*)?}
