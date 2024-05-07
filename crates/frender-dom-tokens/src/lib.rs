@@ -1025,12 +1025,15 @@ macro_rules! impl_dom_tokens_for {
         }
     };
     (
-        |$this:tt: $for_ty:ty| $dom_tokens_macro:ident $bang:tt $dom_tokens_macro_content:tt
+        |$this:tt: $for_ty:ty| $($one_expr_of_dom_tokens:tt)*
     ) => {
         const _: () = {
-            $crate::__impl_dom_tokens_for_imp! {
-                { $dom_tokens_macro $dom_tokens_macro $bang { $this $for_ty }}
-                $dom_tokens_macro_content
+            $crate::dom_tokens! {
+                @{
+                    #[parse_one_expr_of_dom_tokens]
+                    __impl_dom_tokens_for_imp_finish! { $this $for_ty }
+                }
+                {$($one_expr_of_dom_tokens)*}
             }
         };
     };
@@ -1038,27 +1041,15 @@ macro_rules! impl_dom_tokens_for {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_dom_tokens_for_imp {
-    ($m:tt ($($t:tt)*)) => {
-        $crate::__impl_dom_tokens_for_imp! {$m {$($t)*}}
-    };
-    ($m:tt [$($t:tt)*]) => {
-        $crate::__impl_dom_tokens_for_imp! {$m {$($t)*}}
-    };
-    ({ dom_tokens $dom_tokens_macro:ident $bang:tt $data:tt } $dom_tokens_macro_content:tt) => {
-        $crate::$dom_tokens_macro $bang {
-            @{ __impl_dom_tokens_for_imp_finish ! $data }
-            $dom_tokens_macro_content
-        }
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
 macro_rules! __impl_dom_tokens_for_imp_finish {
-    ($dom_tokens:tt $this:tt $for_ty:ty) => {
+    (
+        $braced_one_expr_of_dom_token:tt
+        {} // rest
+        $this:tt
+        $for_ty:ty
+    ) => {
         mod __dom_tokens_types {
-            $crate::__nested_dom_tokens_types! { $dom_tokens (super) }
+            $crate::__define_dom_tokens_types! { $braced_one_expr_of_dom_token pub(in super) }
         }
 
         impl $crate::ConstPossibleDomTokens for $for_ty {
@@ -1067,7 +1058,7 @@ macro_rules! __impl_dom_tokens_for_imp_finish {
         }
 
         fn __dom_tokens_get_value($this: $for_ty) -> __dom_tokens_types::DomTokens {
-            $crate::__nested_dom_token_predicate! $dom_tokens
+            $crate::__dom_token_predicate! $braced_one_expr_of_dom_token
         }
 
         impl $crate::DomTokens for $for_ty {
