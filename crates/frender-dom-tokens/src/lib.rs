@@ -488,11 +488,11 @@ macro_rules! __define_dom_tokens_types {
         };
     };
     ({( $e:expr ) as $as_ty:ty} pub(in $($vis:tt)+)) => {
-        #[allow(unused_imports)] use $($vis)+::super::*;
+        #[allow(unused_imports)] use $($vis)+::*;
         pub(in $($vis)+) type DomTokens = $as_ty;
 
-        const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static> = <self::DomTokens as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS;
-        pub(in $($vis)+) const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize = POSSIBLE_DOM_TOKENS.len();
+        const POSSIBLE_DOM_TOKENS: $crate::UniqueDomTokens<'static, 'static> = <self::DomTokens as $crate::ConstPossibleDomTokens>::POSSIBLE_DOM_TOKENS;
+        pub(in $($vis)+) const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize = $crate::UniqueDomTokens::as_slice(POSSIBLE_DOM_TOKENS).len();
         pub(in $($vis)+) const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = $crate::UniqueDomTokenArray::new_const({
             let mut res = [$crate::DomToken::new_const("_"); POSSIBLE_DOM_TOKENS_COUNT];
             let mut at = 0;

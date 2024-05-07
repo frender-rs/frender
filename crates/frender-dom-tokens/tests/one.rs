@@ -164,7 +164,7 @@ mod r#match {
 
     use super::*;
 
-    enum Theme {
+    pub enum Theme {
         Dark,
         Light,
         Contrast { colorful: bool },
@@ -249,5 +249,40 @@ mod r#match {
             state,
         );
         assert_eq!(dom_token_list.tokens, ["contrast"]);
+    }
+}
+
+mod r#as {
+    use frender_dom_tokens::{dom_tokens, impl_dom_tokens_for, ChainableDomTokens, DomTokens};
+
+    use super::*;
+
+    #[derive(Debug, Clone, Copy)]
+    struct MyDomTokens;
+    impl_dom_tokens_for!(|_: MyDomTokens| "light");
+
+    const fn value() -> impl ChainableDomTokens + Copy {
+        dom_tokens!(MyDomTokens as MyDomTokens)
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(collect_dom_tokens(value()).await, "light");
+
+            assert_eq!(collect_dom_tokens_prefix_space(value()).await, " light");
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListAddRemove::default();
+        let state = &mut Default::default();
+        assert!(dom_token_list.tokens.is_empty());
+        DomTokens::update_with_state(value(), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["light"]);
+        DomTokens::update_with_state(value(), &mut DomTokenListNever, state);
+        DomTokens::update_with_state(value(), dom_token_list, state);
+        assert_eq!(dom_token_list.tokens, ["light"]);
     }
 }
