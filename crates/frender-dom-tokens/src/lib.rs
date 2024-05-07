@@ -420,18 +420,18 @@ macro_rules! __define_dom_tokens_types {
     };
     ({[$($dom_token:literal),+ $(,)?]} $vis:vis) => {
         #[derive(Debug, Clone, Copy)]
-        $vis struct DomTokens;
+        pub struct DomTokens;
 
         const DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::concat!($(" ", $dom_token),+);
         const DOM_TOKENS_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::str_slice_from_first(DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER);
 
         $crate::__define_one_str! {
-            $vis struct DomTokensIntoAsyncStrIter;
+            pub struct DomTokensIntoAsyncStrIter;
             DOM_TOKENS_INTO_ASYNC_STR_ITER
         }
 
         $crate::__define_one_str! {
-            $vis struct DomTokensPrefixSpaceIntoAsyncStrIter;
+            pub struct DomTokensPrefixSpaceIntoAsyncStrIter;
             DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER
         }
 
@@ -924,8 +924,8 @@ macro_rules! __parse_dom_tokens {
     (
         $t:tt
         match $match:tt $pred:tt
-        {{$($_block:tt)*} $($_rest:tt)*}
-        {$block:tt        $($rest:tt )*}
+        {{$($_block:tt)*} $(, $($_rest:tt)*)?}
+        {$block:tt        $(, $($rest:tt )*)?}
         $on_finish:tt
     ) => {
         $crate::__parse_pats!(
@@ -935,7 +935,7 @@ macro_rules! __parse_dom_tokens {
                 __parse_dom_tokens_on_finish_pats! {
                     $t
                     { $match $pred }
-                    {$($rest )*}
+                    {$($($rest)*)?}
                     $on_finish
                 }
             }
