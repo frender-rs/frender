@@ -45,6 +45,12 @@ pub use bg;
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
 
+pub use frender_html_common::dom_tokens;
+pub use frender_html_common::dom_tokens::{
+    dom_tokens, impl_dom_tokens_for, proxy_chainable_dom_tokens, proxy_dom_tokens,
+    ChainableDomTokens, DomTokenList, DomTokens,
+};
+
 #[cfg(all(feature = "web"))]
 pub use frender_csr_web::mount::GetDomElement;
 
@@ -72,6 +78,8 @@ pub mod prelude {
     pub use frender_html::Element;
 
     pub use frender_common::{Elements, Keyed};
+
+    pub use frender_html_common::dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
 
     pub use crate::elements;
 

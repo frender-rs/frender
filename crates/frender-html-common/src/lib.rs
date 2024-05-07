@@ -9,7 +9,7 @@ pub use maybe_value::{MaybeValue, ValueUpdater};
 
 pub mod attr;
 
-pub use frender_dom_tokens::{DomTokenList, DomTokens};
+pub use frender_dom_tokens::{self as dom_tokens, ChainableDomTokens, DomTokenList, DomTokens};
 
 #[cfg(feature = "web")]
 pub mod web;
