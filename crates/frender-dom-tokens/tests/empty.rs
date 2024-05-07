@@ -1,5 +1,9 @@
-use async_str_iter::ext::AsyncStrIteratorExt as _;
-use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokenList, DomTokens};
+use frender_dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+use utils::dom_token_list::DomTokenListNever;
+
+use crate::utils::ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space};
+
+pub mod utils;
 
 const fn empty() -> impl ChainableDomTokens + Copy {
     dom_tokens!()
@@ -8,50 +12,50 @@ const fn empty() -> impl ChainableDomTokens + Copy {
 #[test]
 fn ssr() {
     futures_lite::future::block_on(async {
-        {
-            let out: String = DomTokens::dom_tokens_into_async_str_iter(empty())
-                .collect()
-                .await;
-
-            assert_eq!(out, "");
-        }
-
-        {
-            let out: String =
-                ChainableDomTokens::dom_tokens_prefix_space_into_async_str_iter(empty())
-                    .collect()
-                    .await;
-
-            assert_eq!(out, "");
-        }
+        assert_eq!(collect_dom_tokens(empty()).await, "");
+        assert_eq!(collect_dom_tokens_prefix_space(empty()).await, "");
     })
 }
 
 #[test]
 fn csr() {
-    struct DomTokenListUntouched;
-
-    impl DomTokenList for DomTokenListUntouched {
-        fn set_value(&mut self, _: &str) {
-            unreachable!()
-        }
-
-        fn add_1(&mut self, _: frender_dom_tokens::DomToken) {
-            unreachable!()
-        }
-
-        fn remove_1(&mut self, _: frender_dom_tokens::DomToken) {
-            unreachable!()
-        }
-
-        fn replace(&mut self, _: frender_dom_tokens::DomToken, _: frender_dom_tokens::DomToken) {
-            unreachable!()
-        }
-    }
-
-    let dom_token_list = &mut DomTokenListUntouched;
+    let dom_token_list = &mut DomTokenListNever;
     let state = &mut Default::default();
 
     DomTokens::update_with_state(empty(), dom_token_list, state);
     DomTokens::update_with_state(empty(), dom_token_list, state);
+}
+
+mod impl_dom_tokens {
+    use frender_dom_tokens::{impl_dom_tokens_for, ChainableDomTokens, DomTokens};
+
+    use crate::utils::{
+        dom_token_list::DomTokenListNever,
+        ssr::{collect_dom_tokens, collect_dom_tokens_prefix_space},
+    };
+
+    #[derive(Debug, Clone, Copy)]
+    struct MyEmpty;
+    impl_dom_tokens_for!(|_: MyEmpty| dom_tokens!());
+
+    const fn empty() -> impl ChainableDomTokens + Copy {
+        MyEmpty
+    }
+
+    #[test]
+    fn ssr() {
+        futures_lite::future::block_on(async {
+            assert_eq!(collect_dom_tokens(empty()).await, "");
+            assert_eq!(collect_dom_tokens_prefix_space(empty()).await, "");
+        })
+    }
+
+    #[test]
+    fn csr() {
+        let dom_token_list = &mut DomTokenListNever;
+        let state = &mut Default::default();
+
+        DomTokens::update_with_state(empty(), dom_token_list, state);
+        DomTokens::update_with_state(empty(), dom_token_list, state);
+    }
 }

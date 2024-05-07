@@ -143,6 +143,17 @@ pub mod __private {
             panic!("str_slice_from_first invalid")
         }
     }
+
+    pub mod empty_dom_tokens_types_mod {
+        pub use crate::Empty as DomTokens;
+
+        pub const POSSIBLE_DOM_TOKENS_COUNT: usize = 0;
+
+        pub const POSSIBLE_DOM_TOKEN_ARRAY: crate::UniqueDomTokenArray<
+            'static,
+            POSSIBLE_DOM_TOKENS_COUNT,
+        > = crate::UniqueDomTokenArray::new_const([]);
+    }
 }
 
 #[doc(hidden)]
@@ -277,6 +288,9 @@ macro_rules! __dom_token_predicate_match {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __nested_dom_token_predicate {
+    () => {
+        $crate::Empty
+    };
     ($dom_token:tt) => {
         $crate::__dom_token_predicate! $dom_token
     };
@@ -589,6 +603,9 @@ macro_rules! __define_dom_tokens_types {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __nested_dom_tokens_types {
+    ([] ($($root_path:tt)+)) => {
+        pub(in $($root_path)+) use $crate::__private::empty_dom_tokens_types_mod::*;
+    };
     ([$dom_token:tt] ($($root_path:tt)+)) => {
         $crate::__define_dom_tokens_types! { $dom_token pub(in $($root_path)+) }
     };
