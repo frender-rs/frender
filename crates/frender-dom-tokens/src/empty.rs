@@ -1,4 +1,4 @@
-use crate::{ChainableDomTokens, DomTokens};
+use crate::{ChainableDomTokens, ConstPossibleDomTokens, DomTokens};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Empty;
@@ -30,4 +30,9 @@ impl ChainableDomTokens for Empty {
     ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
         async_str_iter::empty::Empty
     }
+}
+
+impl ConstPossibleDomTokens for Empty {
+    const POSSIBLE_DOM_TOKENS: crate::UniqueDomTokens<'static, 'static> =
+        crate::UniqueDomTokens::EMPTY;
 }
