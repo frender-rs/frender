@@ -4,7 +4,7 @@ pub struct PubTokens;
 
 impl_dom_tokens_for!(|_: PubTokens| dom_tokens!(
     "a",
-    ["a0", "a1", "a2"],
+    "a0 a1 a2",
     if false {
         "b"
     },
@@ -23,7 +23,7 @@ mod private {
 
     impl_dom_tokens_for!(|_: PrivateTokens| dom_tokens!(
         "a",
-        ["a0", "a1", "a2"],
+        "a0 a1 a2",
         if false {
             "b"
         },
@@ -39,7 +39,7 @@ mod private {
 
     impl_dom_tokens_for!(|_: CrateTokens| dom_tokens!(
         "a",
-        ["a0", "a1", "a2"],
+        "a0 a1 a2",
         if false {
             "b"
         },

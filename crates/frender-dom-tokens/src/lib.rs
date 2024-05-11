@@ -1,5 +1,5 @@
 pub use chain::Chain;
-pub use dom_token::{put_tokens_at, separate, DomToken, UniqueDomTokenArray, UniqueDomTokens};
+pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
 pub use empty::Empty;
 
 use async_str_iter::AsyncStrIterator;
@@ -121,6 +121,11 @@ pub mod __private {
 
     pub use either::Either;
 
+    pub use crate::dom_token::{
+        make_dom_tokens_strings,
+        separate::{separate_dom_tokens, separate_dom_tokens_count},
+    };
+
     use async_str_iter::IntoAsyncStrIterator;
 
     pub type IterConcat<T> =
@@ -131,17 +136,6 @@ pub mod __private {
         async_str_iter::concat::Concat<T>: IntoAsyncStrIterator,
     {
         IntoAsyncStrIterator::into_async_str_iterator(async_str_iter::concat::Concat(t))
-    }
-
-    pub const fn str_slice_from_first(s: &str) -> &str {
-        if let Some((_, s)) = s.as_bytes().split_first() {
-            match std::str::from_utf8(s) {
-                Ok(s) => s,
-                Err(_) => panic!("str_slice_from_first is not utf8"),
-            }
-        } else {
-            panic!("str_slice_from_first invalid")
-        }
     }
 
     pub mod empty_dom_tokens_types_mod {
@@ -160,9 +154,6 @@ pub mod __private {
 #[macro_export]
 macro_rules! __dom_token_predicate {
     ($dom_token:literal) => {
-        __dom_tokens_types::DomTokens
-    };
-    ([$($dom_token:literal),+ $(,)?]) => {
         __dom_tokens_types::DomTokens
     };
     (( $e:expr ) as $as_ty:ty) => {
@@ -430,14 +421,14 @@ macro_rules! __parse_pats_one_finish {
 #[macro_export]
 macro_rules! __define_dom_tokens_types {
     ({$dom_token:literal} $vis:vis) => {
-        $crate::__define_dom_tokens_types! {{[$dom_token]} $vis}
-    };
-    ({[$($dom_token:literal),+ $(,)?]} $vis:vis) => {
         #[derive(Debug, Clone, Copy)]
         pub struct DomTokens;
 
-        const DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::concat!($(" ", $dom_token),+);
-        const DOM_TOKENS_INTO_ASYNC_STR_ITER: &$crate::__private::str = $crate::__private::str_slice_from_first(DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER);
+        const DOM_TOKENS_STRINGS: (&$crate::__private::str, &$crate::__private::str) = $crate::__private::make_dom_tokens_strings(
+            $crate::__private::concat!(" ", $dom_token)
+        );
+        const DOM_TOKENS_PREFIX_SPACE_INTO_ASYNC_STR_ITER: &$crate::__private::str = DOM_TOKENS_STRINGS.0;
+        const DOM_TOKENS_INTO_ASYNC_STR_ITER: &$crate::__private::str = DOM_TOKENS_STRINGS.1;
 
         $crate::__define_one_str! {
             pub struct DomTokensIntoAsyncStrIter;
@@ -459,20 +450,14 @@ macro_rules! __define_dom_tokens_types {
             ) {
                 if !*state {
                     *state = true;
-                    $({
-                        const DOM_TOKEN: $crate::DomToken<'static> = $crate::DomToken::new_const($dom_token);
-                        $crate::DomTokenList::add_1(dom_token_list, DOM_TOKEN);
-                    })+
+                    POSSIBLE_DOM_TOKEN_ARRAY.for_each(|dom_token| $crate::DomTokenList::add_1(dom_token_list, dom_token));
                 }
             }
 
             fn remove_with_state(dom_token_list: &mut impl $crate::DomTokenList, state: &mut Self::UpdateWithState) {
                 if *state {
                     *state = false;
-                    $({
-                        const DOM_TOKEN: $crate::DomToken<'static> = $crate::DomToken::new_const($dom_token);
-                        $crate::DomTokenList::remove_1(dom_token_list, DOM_TOKEN);
-                    })+
+                    POSSIBLE_DOM_TOKEN_ARRAY.for_each(|dom_token| $crate::DomTokenList::remove_1(dom_token_list, dom_token));
                 }
             }
 
@@ -494,11 +479,13 @@ macro_rules! __define_dom_tokens_types {
         }
 
         $vis const POSSIBLE_DOM_TOKENS_COUNT: $crate::__private::usize =
-            [$($dom_token),+].len()
+            $crate::__private::separate_dom_tokens_count($dom_token)
         ;
 
         $vis const POSSIBLE_DOM_TOKEN_ARRAY: $crate::UniqueDomTokenArray<'static, POSSIBLE_DOM_TOKENS_COUNT> = {
-            $crate::UniqueDomTokenArray::new_const([$($crate::DomToken::new_const($dom_token)),+])
+            $crate::UniqueDomTokenArray::new_const(
+                $crate::__private::separate_dom_tokens::<POSSIBLE_DOM_TOKENS_COUNT>($dom_token)
+            )
         };
     };
     ({( $e:expr ) as $as_ty:ty} pub(in $($vis:tt)+)) => {

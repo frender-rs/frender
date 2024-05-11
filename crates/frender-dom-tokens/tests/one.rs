@@ -40,7 +40,7 @@ mod array_of_literals {
     use super::*;
 
     const fn value() -> impl ChainableDomTokens + Copy {
-        dom_tokens!(["literal-0", "literal-1", "literal-2"])
+        dom_tokens!("literal-0 literal-1 literal-2")
     }
 
     #[test]
@@ -127,7 +127,7 @@ mod if_else {
     use super::*;
 
     const fn value(predicate: bool) -> impl ChainableDomTokens + Copy {
-        dom_tokens!(if !!predicate { "a" } else { ["b", "c"] })
+        dom_tokens!(if !!predicate { "a" } else { "b c" })
     }
 
     #[test]

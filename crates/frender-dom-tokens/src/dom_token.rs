@@ -200,6 +200,10 @@ impl<'a, const N: usize> UniqueDomTokenArray<'a, N> {
     pub const fn as_slice(&self) -> &'_ [DomToken<'a>] {
         &self.0
     }
+
+    pub fn for_each(self, f: impl FnMut(DomToken<'a>)) {
+        self.0.into_iter().for_each(f)
+    }
 }
 
 impl<'a, const N: usize> Deref for UniqueDomTokenArray<'a, N> {
@@ -221,7 +225,10 @@ pub const fn dom_tokens_contain(this: &[DomToken], s: &str) -> bool {
     false
 }
 
-// TODO: auto separate string literal as dom tokens
+const fn slice_range<T>(s: &[T], std::ops::Range { start, end }: std::ops::Range<usize>) -> &[T] {
+    s.split_at(end).0.split_at(start).1
+}
+
 pub mod separate {
     use super::*;
 
@@ -248,13 +255,6 @@ pub mod separate {
         }
 
         count
-    }
-
-    const fn slice_range<T>(
-        s: &[T],
-        std::ops::Range { start, end }: std::ops::Range<usize>,
-    ) -> &[T] {
-        s.split_at(end).0.split_at(start).1
     }
 
     pub const fn separate_dom_tokens<const N: usize>(s: &str) -> [DomToken<'_>; N] {
@@ -353,5 +353,98 @@ pub mod separate {
             assert_eq!(super::separate_dom_tokens::<2>("a b "), ["a", "b"]);
             assert_eq!(super::separate_dom_tokens::<2>(" a b "), ["a", "b"]);
         }
+    }
+}
+
+const fn str_from_utf8(s: &[u8]) -> &str {
+    if let Ok(s) = std::str::from_utf8(s) {
+        s
+    } else {
+        panic!("invalid utf8")
+    }
+}
+
+// `(space_and_dom_tokens, dom_tokens)` is returned.
+pub const fn make_dom_tokens_strings(spaces_and_dom_tokens: &str) -> (&str, &str) {
+    assert_ascii(spaces_and_dom_tokens);
+
+    let bytes = spaces_and_dom_tokens.as_bytes();
+
+    let mut index_of_last_space_char_before_dom_tokens = None;
+    let mut index_of_last_char_of_dom_tokens = None;
+
+    let mut i = 0;
+
+    while i < bytes.len() {
+        if index_of_last_char_of_dom_tokens.is_none() {
+            if is_space_char(bytes[i]) {
+                index_of_last_space_char_before_dom_tokens = Some(i)
+            } else {
+                if index_of_last_space_char_before_dom_tokens.is_none() {
+                    panic!("expect space char before dom tokens")
+                } else {
+                    index_of_last_char_of_dom_tokens = Some(i)
+                }
+            }
+        } else {
+            if !is_space_char(bytes[i]) {
+                index_of_last_char_of_dom_tokens = Some(i)
+            }
+        }
+
+        i += 1;
+    }
+
+    if let Some(index_of_last_char_of_dom_tokens) = index_of_last_char_of_dom_tokens {
+        let index_of_last_space_char_before_dom_tokens =
+            match index_of_last_space_char_before_dom_tokens {
+                Some(v) => v,
+                None => unreachable!(),
+            };
+
+        let space_and_dom_tokens = slice_range(
+            bytes,
+            index_of_last_space_char_before_dom_tokens..(index_of_last_char_of_dom_tokens + 1),
+        );
+
+        let dom_tokens = match space_and_dom_tokens.split_first() {
+            Some(val) => val,
+            None => unreachable!(),
+        }
+        .1;
+
+        let space_and_dom_tokens = str_from_utf8(space_and_dom_tokens);
+        let dom_tokens = str_from_utf8(dom_tokens);
+
+        (space_and_dom_tokens, dom_tokens)
+    } else {
+        // no dom tokens
+        ("", "")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn dom_tokens_strings() {
+        use super::make_dom_tokens_strings;
+
+        assert_eq!(("", ""), make_dom_tokens_strings(""));
+        assert_eq!(("", ""), make_dom_tokens_strings(" "));
+        assert_eq!(("", ""), make_dom_tokens_strings("  "));
+
+        assert_eq!((" a", "a"), make_dom_tokens_strings(" a"));
+        assert_eq!((" a", "a"), make_dom_tokens_strings("  a"));
+        assert_eq!((" a", "a"), make_dom_tokens_strings(" a "));
+        assert_eq!((" a", "a"), make_dom_tokens_strings(" a  "));
+        assert_eq!((" a", "a"), make_dom_tokens_strings("  a "));
+        assert_eq!((" a", "a"), make_dom_tokens_strings("  a  "));
+
+        assert_eq!((" a  b", "a  b"), make_dom_tokens_strings(" a  b"));
+        assert_eq!((" a  b", "a  b"), make_dom_tokens_strings("  a  b"));
+        assert_eq!((" a  b", "a  b"), make_dom_tokens_strings(" a  b "));
+        assert_eq!((" a  b", "a  b"), make_dom_tokens_strings(" a  b  "));
+        assert_eq!((" a  b", "a  b"), make_dom_tokens_strings("  a  b  "));
     }
 }

@@ -22,7 +22,7 @@ const fn tokens(
             "circle"
         },
         if array {
-            ["a", "b"]
+            "a b"
         },
         if dark { "dark" } else { "light" }
     )
