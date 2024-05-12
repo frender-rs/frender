@@ -63,3 +63,7 @@ impl<H: HandleEvent<E>, E: ?Sized> HandleEvent<E> for HandleEventWithOptions<H> 
         self.1
     }
 }
+
+impl<H: HandleEvent<E>, E: ?Sized> MaybeHandleEvent<E> for HandleEventWithOptions<H> {
+    type HandleEvent = Self;
+}
