@@ -1,4 +1,6 @@
-use crate::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, StringValue, ValueUpdater};
+use crate::{
+    attr::MaybeIntoHtmlAttributeValue, bool_to_str, MaybeValue, StringValue, ValueUpdater,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ContentEditable<'a>(pub &'a str);
@@ -55,14 +57,6 @@ impl<V: StringValue> MaybeValue<ContentEditable<'static>> for V {
         }
 
         <V as MaybeValue<str>>::update_with_state(this, state, UpdateStr(updater))
-    }
-}
-
-fn bool_to_str(this: bool) -> &'static str {
-    if this {
-        "true"
-    } else {
-        "false"
     }
 }
 

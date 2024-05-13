@@ -960,7 +960,7 @@ pub trait HtmlElement: Element {
     fn slot<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::slot<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::slot(value))
     }
-    fn spellcheck<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::spellcheck<V>> {
+    fn spellcheck<V: crate::impl_bounds::MaybeValue::Bounds<Spellcheck>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::spellcheck<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::spellcheck(value))
     }
     fn style<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::style<V>> {

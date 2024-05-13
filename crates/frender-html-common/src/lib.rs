@@ -17,9 +17,20 @@ pub mod web;
 mod content_editable;
 pub use content_editable::ContentEditable;
 
+mod spellcheck;
+pub use spellcheck::Spellcheck;
+
 pub mod maybe_str;
 
 mod string_value;
 pub use string_value::StringValue;
 
 use frender_common::impl_many;
+
+fn bool_to_str(this: bool) -> &'static str {
+    if this {
+        "true"
+    } else {
+        "false"
+    }
+}

@@ -1,5 +1,5 @@
 use frender_dom::{render::RenderTextFromKnown, OnEvent};
-use frender_html_common::ContentEditable;
+use frender_html_common::{ContentEditable, Spellcheck};
 
 use crate::impl_bounds::{DomTokens, SetRef};
 
@@ -877,8 +877,13 @@ crate::def_intrinsic_component_props!(
                         fn nonce(value: maybe![&str]);
                         fn role(value: maybe![&str]);
                         fn slot(value: maybe![&str]);
-                        fn spellcheck(value: maybe![bool]) {
-                            update_with!(set_spellcheck);
+                        fn spellcheck(value: maybe![Spellcheck]) {
+                            update_with!(
+                                //
+                                set_spellcheck,
+                                custom_type!(bool),
+                                impl_with!(update = |element, renderer| element.set_spellcheck(renderer, value.0)),
+                            );
                         }
                         fn style(value: maybe![&str]); // TODO: UpdateStyle
                         fn tab_index(value: maybe![i32]) {
