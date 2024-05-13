@@ -3,6 +3,7 @@ pub use super::props_builders::ElementWithAcceptAttribute as _;
 pub use super::props_builders::ElementWithAlignAttribute as _;
 pub use super::props_builders::ElementWithAltAttribute as _;
 pub use super::props_builders::ElementWithAutoCompleteAttribute as _;
+pub use super::props_builders::ElementWithAutoCorrectAttribute as _;
 pub use super::props_builders::ElementWithBgColorAttribute as _;
 pub use super::props_builders::ElementWithBlockingAttribute as _;
 pub use super::props_builders::ElementWithCiteAttribute as _;

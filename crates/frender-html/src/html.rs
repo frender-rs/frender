@@ -535,6 +535,15 @@ crate::def_intrinsic_component_props!(
                             update_with!(set_auto_complete, web_sys_name = set_autocomplete);
                         }
                     }
+
+                    pub trait ElementWithAutoCorrectAttribute {
+                        impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement););
+
+                        fn auto_correct(value: maybe![&str]) {
+                            attr_name!("autocorrect");
+                        }
+                    }
+
                     pub trait ElementWithFormAttribute {
                         impl_for_web!(only_for_types!(
                             web_sys::HtmlButtonElement,
@@ -1506,6 +1515,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithMultipleAttribute,
                                     ElementWithFormAttributes,
                                     ElementWithAutoCompleteAttribute,
+                                    ElementWithAutoCorrectAttribute,
                                     ElementWithAcceptAttribute,
                                     ElementWithAltAttribute,
                                     ElementWithDisabledAttribute,
@@ -1887,6 +1897,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithRequiredAttribute,
                                     ElementWithFormAttribute,
                                     ElementWithAutoCompleteAttribute,
+                                    ElementWithAutoCorrectAttribute,
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
@@ -1897,9 +1908,6 @@ crate::def_intrinsic_component_props!(
 
                                 fn children(value: children![impl crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty]);
 
-                                fn auto_correct(value: maybe![&str]) {
-                                    attr_name!("autocorrect");
-                                }
                                 fn cols(value: maybe![u32]) {
                                     update_with!(set_cols);
                                 }

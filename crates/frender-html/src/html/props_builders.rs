@@ -574,6 +574,21 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
         super::props::ElementWithAutoCompleteAttribute { props: self.props.children(children) }
     }
 }
+pub trait ElementWithAutoCorrectAttribute: Element {
+    fn auto_correct<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAutoCorrectAttribute::attributes::auto_correct<V>> {
+        Self::append_attributes(self, super::attributes::ElementWithAutoCorrectAttribute::attributes::auto_correct(value))
+    }
+}
+impl<C, A, ELS> ElementWithAutoCorrectAttribute for super::props::ElementWithAutoCorrectAttribute<C, A, ELS> {}
+impl<C, A, ELS> Element for super::props::ElementWithAutoCorrectAttribute<C, A, ELS> {}
+impl<C, A, ELS> Node for super::props::ElementWithAutoCorrectAttribute<C, A, ELS> {}
+impl<Tag: super::behavior_type_traits::ElementWithAutoCorrectAttribute, Props: ElementWithAutoCorrectAttribute> ElementWithAutoCorrectAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCorrectAttribute<(), A, ELS> {
+    type WithChildren = super::props::ElementWithAutoCorrectAttribute<C, A, ELS>;
+    fn children(self, children: C) -> Self::WithChildren {
+        super::props::ElementWithAutoCorrectAttribute { props: self.props.children(children) }
+    }
+}
 pub trait ElementWithFormAttribute: Element {
     fn form<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttribute::attributes::form<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttribute::attributes::form(value))
@@ -1947,6 +1962,7 @@ pub trait HtmlInputElement:
     + ElementWithMultipleAttribute
     + ElementWithFormAttributes
     + ElementWithAutoCompleteAttribute
+    + ElementWithAutoCorrectAttribute
     + ElementWithAcceptAttribute
     + ElementWithAltAttribute
     + ElementWithDisabledAttribute
@@ -1991,6 +2007,7 @@ impl<C, A, ELS> ElementWithRequiredAttribute for super::props::HtmlInputElement<
 impl<C, A, ELS> ElementWithMultipleAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithFormAttributes for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithAutoCompleteAttribute for super::props::HtmlInputElement<C, A, ELS> {}
+impl<C, A, ELS> ElementWithAutoCorrectAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithAcceptAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithAltAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithDisabledAttribute for super::props::HtmlInputElement<C, A, ELS> {}
@@ -2540,12 +2557,10 @@ pub trait HtmlTextAreaElement:
     + ElementWithRequiredAttribute
     + ElementWithFormAttribute
     + ElementWithAutoCompleteAttribute
+    + ElementWithAutoCorrectAttribute
     + ElementWithDisabledAttribute
     + ElementWithNameAttribute
 {
-    fn auto_correct<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::auto_correct<V>> {
-        Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::auto_correct(value))
-    }
     fn cols<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::cols<V>> {
         Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::cols(value))
     }
@@ -2563,6 +2578,7 @@ impl<C, A, ELS> ElementWithMaxMinLengthAttributes for super::props::HtmlTextArea
 impl<C, A, ELS> ElementWithRequiredAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithFormAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithAutoCompleteAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
+impl<C, A, ELS> ElementWithAutoCorrectAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithDisabledAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithNameAttribute for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> HtmlElement for super::props::HtmlTextAreaElement<C, A, ELS> {}
