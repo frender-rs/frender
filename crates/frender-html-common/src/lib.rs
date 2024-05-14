@@ -1,9 +1,6 @@
 mod value_kind;
 pub use value_kind::ValueKind;
 
-mod intrinsic_component;
-pub use intrinsic_component::*;
-
 pub mod maybe_value;
 pub use maybe_value::{MaybeValue, ValueUpdater};
 
