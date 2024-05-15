@@ -17,10 +17,11 @@ pub use content_editable::ContentEditable;
 mod spellcheck;
 pub use spellcheck::Spellcheck;
 
-pub mod maybe_str;
-
 mod string_value;
 pub use string_value::StringValue;
+
+mod into_one_string_or_empty;
+pub use into_one_string_or_empty::IntoOneStringOrEmpty;
 
 use frender_common::impl_many;
 

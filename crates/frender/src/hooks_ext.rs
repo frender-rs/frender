@@ -143,7 +143,7 @@ pub mod form_control {
         }
     }
 
-    impl<S, Val: Clone> frender_html::maybe_str::IntoOneStringOrEmpty for ControlledSharedValue<S>
+    impl<S, Val: Clone> frender_html::IntoOneStringOrEmpty for ControlledSharedValue<S>
     where
         S: ShareValue<Value = Val>,
         Val: OfValue<Value = str>,

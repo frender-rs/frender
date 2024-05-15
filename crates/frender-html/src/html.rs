@@ -1906,7 +1906,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
 
-                                fn children(value: children![impl crate::form_control::value::FormControlValue<str> + frender_html_common::maybe_str::IntoOneStringOrEmpty]);
+                                fn children(value: children![impl crate::form_control::value::FormControlValue<str> + frender_html_common::IntoOneStringOrEmpty]);
 
                                 fn cols(value: maybe![u32]) {
                                     update_with!(set_cols);

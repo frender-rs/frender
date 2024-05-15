@@ -1,5 +1,5 @@
 mod props_builder {
-    use frender_html_common::maybe_str::IntoOneStringOrEmpty;
+    use frender_html_common::IntoOneStringOrEmpty;
 
     use crate::form_control::value::FormControlValue;
 
@@ -19,7 +19,7 @@ mod props_builder {
 
 pub mod ssr {
     use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
-    use frender_html_common::maybe_str::IntoOneStringOrEmpty;
+    use frender_html_common::IntoOneStringOrEmpty;
     use frender_ssr::html::{encode::Encode, escape_safe, tag::AssertTagName};
 
     use crate::form_control::value::FormControlValue;
@@ -54,7 +54,7 @@ pub mod ssr {
 }
 
 pub mod csr {
-    use frender_html_common::maybe_str::IntoOneStringOrEmpty;
+    use frender_html_common::IntoOneStringOrEmpty;
 
     use crate::form_control::value::FormControlValue;
     use crate::{html::tags, CsrComponent, RenderHtml};

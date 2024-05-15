@@ -6,7 +6,7 @@ use std::{
 
 use frender_common::PrimarilyBorrow;
 use frender_dom::{render_state::non_reactive::NonReactiveRenderState, RenderState};
-use frender_html_common::maybe_str::{IntoOneStringOrEmpty, MaybeStr};
+use frender_html_common::{IntoOneStringOrEmpty, MaybeValue};
 
 use super::element::FormControlElement;
 
@@ -281,9 +281,9 @@ impl<V: ?Sized + Value> FormControlValue<V> for () {
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>((): Self, (): &mut Self::State<E, R>, _: &mut E, _: &mut R) {}
 }
 
-pub struct UncontrolledWithDefaultValue<V: MaybeStr>(pub V);
+pub struct UncontrolledWithDefaultValue<V: MaybeValue<str> + IntoOneStringOrEmpty>(pub V);
 
-impl<V: MaybeStr> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
+impl<V: MaybeValue<str> + IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
     type OneStringOrEmpty = V::OneStringOrEmpty;
 
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
@@ -291,7 +291,7 @@ impl<V: MaybeStr> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
     }
 }
 
-impl<V: MaybeStr> FormControlValue<str> for UncontrolledWithDefaultValue<V> {
+impl<V: MaybeValue<str> + IntoOneStringOrEmpty> FormControlValue<str> for UncontrolledWithDefaultValue<V> {
     type State<E: FormControlElement<str, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<V::UpdateWithState>;
 
     fn update_with_state<E: FormControlElement<str, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {

@@ -1,6 +1,10 @@
 use async_str_iter::IntoAsyncStrIterator;
 
-pub trait StringValue: AsRef<str> + IntoAsyncStrIterator {}
+pub trait StringValue:
+    AsRef<str> + IntoAsyncStrIterator<IntoAsyncStrIterator = Self::OneString>
+{
+    type OneString: frender_ssr_html::assert::OneString;
+}
 
 frender_common::impl_many!(
     impl<__> StringValue
@@ -12,5 +16,6 @@ frender_common::impl_many!(
             std::sync::Arc<str>,
         ]
     {
+        type OneString = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
     }
 );

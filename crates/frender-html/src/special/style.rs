@@ -1,9 +1,9 @@
 use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
-use frender_html_common::{maybe_str::MaybeStr, MaybeValue};
+use frender_html_common::{IntoOneStringOrEmpty, MaybeValue};
 
 use crate::{elements::non_reactive::NonReactiveRenderState, CsrComponent};
 
-impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: MaybeStr> SsrComponent<Attrs, Children> for crate::html::tags::style {
+impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: MaybeValue<str> + IntoOneStringOrEmpty> SsrComponent<Attrs, Children> for crate::html::tags::style {
     type OneElement = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::OneStringOrEmpty>;
 
     fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
@@ -11,7 +11,7 @@ impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: MaybeStr> SsrComponent<
     }
 }
 
-impl<Children: MaybeStr> CsrComponent<Children> for crate::html::tags::style {
+impl<Children: MaybeValue<str> + IntoOneStringOrEmpty> CsrComponent<Children> for crate::html::tags::style {
     type ChildrenRenderState<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<<Children as MaybeValue<str>>::UpdateWithState>;
 
     fn children_render_update<R: crate::RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {

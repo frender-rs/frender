@@ -1,6 +1,7 @@
 mod csr {
+    use async_str_iter::IntoAsyncStrIterator;
     use frender_dom::{render_state::non_reactive::NonReactiveRenderState, special::DangerousInnerHtml};
-    use frender_html_common::{maybe_str::MaybeStr, ValueUpdater};
+    use frender_html_common::{MaybeValue, ValueUpdater};
 
     use crate::{CsrComponent, CsrComponentNormalElement};
 
@@ -19,7 +20,7 @@ mod csr {
         }
     }
 
-    impl<C: CsrComponentNormalElement, S: MaybeStr> CsrComponent<DangerousInnerHtml<S>> for C {
+    impl<C: CsrComponentNormalElement, S: MaybeValue<str> + IntoAsyncStrIterator> CsrComponent<DangerousInnerHtml<S>> for C {
         type ChildrenRenderState<R: crate::RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
 
         fn children_render_update<R: crate::RenderHtml + ?Sized>(children: DangerousInnerHtml<S>, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
