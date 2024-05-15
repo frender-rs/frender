@@ -1,14 +1,10 @@
 use async_str_iter::IntoAsyncStrIterator;
-use frender_html_common::maybe_str::MaybeStr;
-use frender_ssr::html::assert;
+use frender_html_common::MaybeValue;
+use frender_ssr::html::assert::{self, OneStringOrEmpty};
 
-pub trait SsrElementScriptContent {
+pub trait SsrElementScriptContent: MaybeValue<str> {
     type ScriptContent: assert::ScriptContent;
     fn into_script_content(this: Self) -> Self::ScriptContent;
-
-    type MaybeStr: MaybeStr;
-
-    fn into_maybe_str(this: Self) -> Self::MaybeStr;
 }
 
 impl SsrElementScriptContent for () {
@@ -17,12 +13,6 @@ impl SsrElementScriptContent for () {
     fn into_script_content((): Self) -> Self::ScriptContent {
         async_str_iter::empty::Empty
     }
-
-    type MaybeStr = Self;
-
-    fn into_maybe_str(this: Self) -> Self::MaybeStr {
-        this
-    }
 }
 
 impl<T: SsrElementScriptContent> SsrElementScriptContent for Option<T> {
@@ -30,12 +20,6 @@ impl<T: SsrElementScriptContent> SsrElementScriptContent for Option<T> {
 
     fn into_script_content(this: Self) -> Self::ScriptContent {
         this.map(T::into_script_content).into_async_str_iterator()
-    }
-
-    type MaybeStr = Option<T::MaybeStr>;
-
-    fn into_maybe_str(this: Self) -> Self::MaybeStr {
-        this.map(T::into_maybe_str)
     }
 }
 
@@ -52,27 +36,32 @@ impl<L: SsrElementScriptContent, R: SsrElementScriptContent> SsrElementScriptCon
             either::Either::Right(this) => IterEither::Right(R::into_script_content(this)),
         }
     }
+}
 
-    type MaybeStr = either::Either<L::MaybeStr, R::MaybeStr>;
+pub struct ScriptInnerTextWronglyEncoded<S: MaybeValue<str>>(pub S);
 
-    fn into_maybe_str(this: Self) -> Self::MaybeStr {
-        this.map_either(L::into_maybe_str, R::into_maybe_str)
+impl<S: MaybeValue<str>> MaybeValue<str> for ScriptInnerTextWronglyEncoded<S> {
+    type UpdateWithState = <S as MaybeValue<str>>::UpdateWithState;
+
+    fn update_with_state(
+        Self(this): Self,
+        state: &mut Self::UpdateWithState,
+        updater: impl frender_html_common::ValueUpdater<str>,
+    ) {
+        S::update_with_state(this, state, updater)
     }
 }
 
-pub struct ScriptInnerTextWronglyEncoded<S: MaybeStr>(pub S);
-
-impl<S: MaybeStr> SsrElementScriptContent for ScriptInnerTextWronglyEncoded<S> {
+impl<S: MaybeValue<str> + IntoAsyncStrIterator> SsrElementScriptContent
+    for ScriptInnerTextWronglyEncoded<S>
+where
+    // multiple string chunks might be dangerous, so only one string is allowed
+    S::IntoAsyncStrIterator: OneStringOrEmpty,
+{
     type ScriptContent =
-        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<S::OneStringOrEmpty>;
+        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<S::IntoAsyncStrIterator>;
 
     fn into_script_content(this: Self) -> Self::ScriptContent {
-        Self::ScriptContent::new(S::into_one_string_or_empty(this.0))
-    }
-
-    type MaybeStr = S;
-
-    fn into_maybe_str(this: Self) -> Self::MaybeStr {
-        this.0
+        Self::ScriptContent::new(S::into_async_str_iterator(this.0))
     }
 }

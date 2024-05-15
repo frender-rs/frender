@@ -102,3 +102,16 @@ mod either {
         }
     }
 }
+
+/// A trait alias.
+pub trait MaybeAttrValue<VK: ?Sized + crate::ValueKind>:
+    MaybeIntoHtmlAttributeValue<VK> + crate::MaybeValue<VK>
+{
+}
+
+impl<
+        T: ?Sized + MaybeIntoHtmlAttributeValue<VK> + crate::MaybeValue<VK>,
+        VK: ?Sized + crate::ValueKind,
+    > MaybeAttrValue<VK> for T
+{
+}

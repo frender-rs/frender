@@ -355,7 +355,7 @@ mod updater {
 
 #[allow(non_snake_case)]
 pub mod MaybeValue {
-    pub use frender_html_common::MaybeValue as Bounds;
+    pub use frender_html_common::attr::MaybeAttrValue as Bounds;
 
     pub use crate::default_impl_csr as csr;
     pub use crate::default_impl_ssr as ssr;
@@ -386,13 +386,13 @@ pub mod MaybeValue {
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, MaybeValue, ValueKind};
+        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, ValueKind};
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
         pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeValue<VT>>::HtmlAttributeValue;
 
-        pub fn maybe_into_haevoe<VT: ?Sized + ValueKind, V: MaybeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub fn maybe_into_haevoe<VT: ?Sized + ValueKind, V: MaybeIntoHtmlAttributeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_value(this)
         }
     }

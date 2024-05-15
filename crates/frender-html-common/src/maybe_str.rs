@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use async_str_iter::IntoAsyncStrIterator;
 use frender_ssr_html::assert::OneStringOrEmpty;
 
@@ -49,20 +47,14 @@ impl<L: IntoOneStringOrEmpty, R: IntoOneStringOrEmpty> IntoOneStringOrEmpty
     }
 }
 
-frender_common::impl_many!(
-    impl<__> IntoOneStringOrEmpty
-        for each_of![
-            &str,
-            String,
-            Cow<'_, str>,
-            //
-            std::rc::Rc<str>,
-        ]
-    {
-        type OneStringOrEmpty = <Self as IntoAsyncStrIterator>::IntoAsyncStrIterator;
+// TODO: refactor
+impl<S: crate::StringValue> IntoOneStringOrEmpty for S
+where
+    S::IntoAsyncStrIterator: OneStringOrEmpty,
+{
+    type OneStringOrEmpty = <S as IntoAsyncStrIterator>::IntoAsyncStrIterator;
 
-        fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-            this.into_async_str_iterator()
-        }
+    fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
+        this.into_async_str_iterator()
     }
-);
+}
