@@ -10,3 +10,9 @@ impl AsyncStrIterator for Never {
         match *self {}
     }
 }
+
+impl AsRef<str> for Never {
+    fn as_ref(&self) -> &str {
+        match *self {}
+    }
+}
