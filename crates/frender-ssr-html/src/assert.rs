@@ -294,6 +294,9 @@ mod one_string_or_empty {
 
     pub trait Sealed {}
 
+    impl Sealed for async_str_iter::never::Never {}
+    impl OneStringOrEmpty for async_str_iter::never::Never {}
+
     impl Sealed for async_str_iter::empty::Empty {}
     impl OneStringOrEmpty for async_str_iter::empty::Empty {}
 
@@ -327,6 +330,7 @@ pub trait OneString: OneStringOrEmpty {}
 mod one_string {
     use super::OneString;
 
+    impl OneString for async_str_iter::never::Never {}
     impl OneString for &str {}
     impl<S: AsRef<str>> OneString for async_str_iter::any_str::IterAnyStr<S> {}
     impl<L: OneString, R: OneString> OneString for async_str_iter::either::IterEither<L, R> {}
