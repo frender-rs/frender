@@ -1,21 +1,46 @@
 pub use value_kind::InputValueKind;
 
-use std::borrow::Borrow;
-
 use async_str_iter::IntoAsyncStrIterator;
 use frender_common::PrimarilyBorrow;
 use frender_html_common::MaybeStringValue;
 
 use crate::form_control::value::{FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue};
 
-use super::value::{BorrowToProvideFormControlValue, MaybeProvideFormControlValue, ProvideFormControlValue};
+use super::{
+    element::FormControlElement,
+    value::{MaybeProvideFormControlValue, ProvideFormControlValue},
+};
+
+/// A trait alias
+pub trait InputElement<Renderer: ?Sized>: FormControlElement<str, Renderer> + FormControlElement<bool, Renderer> + FormControlElement<f64, Renderer> {}
+
+impl<E, Renderer: ?Sized> InputElement<Renderer> for E where E: FormControlElement<str, Renderer> + FormControlElement<bool, Renderer> + FormControlElement<f64, Renderer> {}
 
 mod value_kind {
-    use crate::form_control::value::{FormControlValueKind, ProvideFormControlValue};
+    use frender_common::convert::{FromMut, IntoMut};
+
+    use crate::form_control::{
+        element::FormControlElement,
+        value::{FormControlValueKind, ProvideFormControlValue},
+    };
+
+    use super::InputElement;
 
     pub trait InputValueKind: FormControlValueKind {
         type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>>: frender_ssr::html::assert::HtmlAttributeEqValueOrEmpty;
         fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(v: V, input_type: &str) -> Self::IntoInputValueAttrValue<V>;
+
+        type AsMutFormControlElement<E: ?Sized + InputElement<R>, R: ?Sized>: ?Sized + FormControlElement<Self, R> + FromMut<E> + IntoMut<E>;
+        fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(el: &mut E) -> &mut Self::AsMutFormControlElement<E, R>;
+    }
+
+    macro_rules! as_mut_form_control_element {
+        () => {
+            type AsMutFormControlElement<E: ?Sized + InputElement<R>, R: ?Sized> = E;
+            fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(el: &mut E) -> &mut Self::AsMutFormControlElement<E, R> {
+                el
+            }
+        };
     }
 
     impl InputValueKind for str {
@@ -26,6 +51,8 @@ mod value_kind {
             let v = v.provide_form_control_value(str::to_owned);
             frender_ssr::html::attr_value::AttrEqValue(async_str_iter::borrow_str::IterBorrowStr::new(v))
         }
+
+        as_mut_form_control_element! {}
     }
 
     impl InputValueKind for f64 {
@@ -36,6 +63,8 @@ mod value_kind {
             let value = super::convert_number_to_string(input_type, value);
             frender_ssr::html::attr_value::AttrEqValue::new(async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(value))
         }
+
+        as_mut_form_control_element! {}
     }
 }
 

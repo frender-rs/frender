@@ -4,7 +4,7 @@ mod props_builder {
     use crate::form_control::InputChecked;
     use crate::html::props::HtmlInputElement;
     use crate::{
-        form_control::{value::FormControlValue, InputDataModel, InputValue, IntoInputDataModel},
+        form_control::{InputDataModel, InputValue, IntoInputDataModel},
         props_builder::{PropsBuilderWithChecked, PropsBuilderWithType, PropsBuilderWithValue},
     };
 
@@ -40,7 +40,7 @@ mod props_builder {
 }
 
 mod ssr {
-    use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent, SsrComponentNormalElement};
+    use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
     use frender_ssr::html::tag::AssertTagName;
 
     use crate::{
@@ -67,6 +67,113 @@ mod ssr {
         fn ssr_component(attrs: Attrs, data_model: DataModel) -> Self::OneElement {
             let data_model = data_model.into_input_data_model();
             Self::OneElement::new(Self::ASSERT_TAG_NAME, (attrs, data_model).into_space_and_html_attributes_or_empty())
+        }
+    }
+}
+
+mod csr {
+    use frender_common::convert::IntoMut;
+    use frender_dom::render_state::compound::CompoundState;
+    use frender_html_common::MaybeStringValue;
+
+    use crate::{
+        form_control::{value::FormControlValue, InputDataModel, InputValue, InputValueKind, IntoInputDataModel},
+        html::tags,
+        CsrComponent, RenderHtml,
+    };
+
+    pin_project_lite::pin_project!(
+        #[derive(Debug)]
+        pub struct StateWithElementIntoMut<S, E: ?Sized> {
+            #[pin]
+            inner: S,
+            _phantom: std::marker::PhantomData<E>,
+        }
+    );
+
+    impl<S: Default, E: ?Sized> Default for StateWithElementIntoMut<S, E> {
+        fn default() -> Self {
+            Self {
+                inner: Default::default(),
+                _phantom: Default::default(),
+            }
+        }
+    }
+
+    impl<PEH: ?Sized + IntoMut<E>, R: ?Sized, S: frender_dom::RenderState<E, R>, E: ?Sized> frender_dom::RenderState<PEH, R> for StateWithElementIntoMut<S, E> {
+        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            self.project().inner.unmount(peh.into_mut(), renderer)
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            self.project().inner.state_unmount()
+        }
+
+        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            self.project().inner.poll_render(peh.into_mut(), renderer, cx)
+        }
+    }
+
+    impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for tags::input {
+        type ChildrenRenderState<R: RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
+
+        fn children_render_update<R: RenderHtml + ?Sized>(children: DataModel, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+            Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
+        }
+
+        type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = CompoundState<
+            //
+            (
+                StateWithElementIntoMut<
+                    <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::State<
+                        <<DataModel::Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<R::input, R>,
+                        //
+                        R,
+                    >,
+                    <<DataModel::Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<R::input, R>,
+                >,
+                <DataModel::Checked as FormControlValue<bool>>::State<R::input, R>,
+            ),
+            Option<<DataModel::Type as MaybeStringValue>::StringValue>,
+        >;
+
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: DataModel, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+            let InputDataModel { r#type, value, checked } = children.into_input_data_model();
+
+            let CompoundState {
+                reactive: (state_value, state_checked),
+                non_reactive: state_type,
+            } = children_state;
+
+            // type should be updated before value is updated
+            {
+                let input_type = <DataModel::Type as MaybeStringValue>::maybe_string_value(r#type);
+
+                let input_type_str = input_type.as_ref().map(AsRef::as_ref);
+                if state_type.as_ref().map(AsRef::as_ref) != input_type_str {
+                    use frender_dom::behaviors::Element;
+
+                    use crate::html::behaviors::ElementWithTypeAttribute;
+
+                    if let Some(input_type_str) = input_type_str {
+                        element.set_type(renderer, input_type_str);
+                    } else {
+                        element.remove_attribute(renderer, "type");
+                    }
+
+                    *state_type = input_type;
+                }
+            }
+
+            // value should be updated after type is updated
+            {
+                let state = &mut state_value.inner;
+                <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::update_with_state(value, state, element.into_mut(), renderer)
+            }
+
+            {
+                <DataModel::Checked as FormControlValue<bool>>::update_with_state(checked, state_checked, element, renderer)
+            }
         }
     }
 }

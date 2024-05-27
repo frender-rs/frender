@@ -44,15 +44,23 @@ impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK> for NeverPro
     }
 }
 
-impl MaybeProvideFormControlValue<f64> for f64 {
-    impl_maybe_provide_with_some! {}
+macro_rules! provide_self {
+    ($($ty:ty),* $(,)?) => {
+        $(
+            impl MaybeProvideFormControlValue<$ty> for $ty {
+                impl_maybe_provide_with_some! {}
+            }
+
+            impl ProvideFormControlValue<$ty> for $ty {
+                fn provide_form_control_value<R>(&self, receive: impl FnOnce(&$ty) -> R) -> R {
+                    receive(self)
+                }
+            }
+        )*
+    };
 }
 
-impl ProvideFormControlValue<f64> for f64 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&f64) -> R) -> R {
-        receive(self)
-    }
-}
+provide_self!(f64, bool);
 
 frender_common::impl_many!(
     impl<__> MaybeProvideFormControlValue<str>
@@ -90,7 +98,7 @@ frender_common::impl_many!(
 impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for () {
     type ProvideFormControlValue = NeverProvideFormControlValue;
 
-    fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
+    fn maybe_into_provide_form_control_value((): Self) -> Option<Self::ProvideFormControlValue> {
         None
     }
 }

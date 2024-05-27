@@ -1522,6 +1522,7 @@ crate::def_intrinsic_component_props!(
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
+                                trait_bounds!(crate::form_control::InputElement<Renderer> + ElementWithTypeAttribute<Renderer>);
                                 define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
 

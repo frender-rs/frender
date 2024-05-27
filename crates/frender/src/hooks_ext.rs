@@ -124,16 +124,14 @@ pub mod form_control {
 
     use async_str_iter::IntoAsyncStrIterator;
     use frender_common::PrimarilyBorrow;
-    use frender_html::{
-        form_control::{
-            element::FormControlElement,
-            value::{
-                FormControlValue, FormControlValueKind, FromFormControlValue,
-                HandleFormControlValue,
-            },
-            InputValue, InputValueKind,
+    use frender_csr::render_state::compound::CompoundState;
+    use frender_html::form_control::{
+        element::FormControlElement,
+        value::{
+            FormControlValue, FormControlValueKind, FromFormControlValue, HandleFormControlValue,
+            MaybeProvideFormControlValue, ProvideFormControlValue,
         },
-        RenderState,
+        InputValue, InputValueKind,
     };
     use hooks::{Hook, HookValue, ShareValue};
 
@@ -166,6 +164,32 @@ pub mod form_control {
         }
     }
 
+    impl<S, Val, VK> ProvideFormControlValue<VK> for ControlledSharedValue<S>
+    where
+        S: ShareValue<Value = Val>,
+        Val: Borrow<VK>,
+        VK: ?Sized + FormControlValueKind,
+    {
+        fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R {
+            self.0.map(|value| receive(value.borrow()))
+        }
+    }
+
+    impl<S, Val, VK> MaybeProvideFormControlValue<VK> for ControlledSharedValue<S>
+    where
+        S: ShareValue<Value = Val>,
+        Val: Borrow<VK>,
+        VK: ?Sized + FormControlValueKind,
+    {
+        type ProvideFormControlValue = Self;
+
+        fn maybe_into_provide_form_control_value(
+            this: Self,
+        ) -> Option<Self::ProvideFormControlValue> {
+            Some(this)
+        }
+    }
+
     impl<S, Val, VK> InputValue for ControlledSharedValue<S>
     where
         S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
@@ -176,36 +200,6 @@ pub mod form_control {
         VK: InputValueKind,
     {
         type ValueKind = VK;
-    }
-
-    pin_project_lite::pin_project!(
-        #[derive(Debug, Default)]
-        pub struct CompoundState<S, T> {
-            #[pin]
-            reactive: S,
-            non_reactive: T,
-        }
-    );
-
-    impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, T> RenderState<PEH, R>
-        for CompoundState<S, T>
-    {
-        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-            self.project().reactive.unmount(peh, renderer)
-        }
-
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
-            self.project().reactive.state_unmount()
-        }
-
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            peh: &mut PEH,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            self.project().reactive.poll_render(peh, renderer, cx)
-        }
     }
 
     pub struct UpdateFormControlElement<VK: ?Sized + FormControlValueKind>(PhantomData<VK>);
