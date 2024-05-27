@@ -33,12 +33,28 @@ pub trait PropsBuilderAppendEventListeners: PropsBuilder {
 
 pub trait PropsBuilderWithValue<V>: PropsBuilder {
     type WithValue;
-    /// Alias for [`Self::children`]
     fn value(self, value: V) -> Self::WithValue;
 }
 
+pub trait PropsBuilderWithType<V>: PropsBuilder {
+    type WithType;
+
+    fn r#type(self, t: V) -> Self::WithType;
+
+    /// Alias for [`r#type`](PropsBuilderWithType::r#type).
+    fn type_(self, t: V) -> Self::WithType {
+        self.r#type(t)
+    }
+}
+
+pub trait PropsBuilderWithChecked<V>: PropsBuilder {
+    type WithChecked;
+
+    fn checked(self, t: V) -> Self::WithChecked;
+}
+
 pub mod prelude {
-    pub use super::{PropsBuilderWithChildren as _, PropsBuilderWithValue as _};
+    pub use super::{PropsBuilderWithChecked as _, PropsBuilderWithChildren as _, PropsBuilderWithType as _, PropsBuilderWithValue as _};
 }
 
 mod intrinsic {
@@ -81,6 +97,26 @@ mod intrinsic {
 
         fn value(self, value: V) -> Self::WithValue {
             IntrinsicElement(self.0, self.1.value(value))
+        }
+    }
+
+    impl<Tag, Props: PropsBuilderWithType<V>, V> PropsBuilderWithType<V> for IntrinsicElement<Tag, Props> {
+        type WithType = IntrinsicElement<Tag, Props::WithType>;
+
+        fn r#type(self, t: V) -> Self::WithType {
+            IntrinsicElement(self.0, self.1.r#type(t))
+        }
+
+        fn type_(self, t: V) -> Self::WithType {
+            IntrinsicElement(self.0, self.1.type_(t))
+        }
+    }
+
+    impl<Tag, Props: PropsBuilderWithChecked<V>, V> PropsBuilderWithChecked<V> for IntrinsicElement<Tag, Props> {
+        type WithChecked = IntrinsicElement<Tag, Props::WithChecked>;
+
+        fn checked(self, t: V) -> Self::WithChecked {
+            IntrinsicElement(self.0, self.1.checked(t))
         }
     }
 }

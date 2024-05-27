@@ -104,12 +104,9 @@ mod space_and_html_attributes_or_empty {
     {
     }
 
-    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> Sealed
-        for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
-    {
-    }
-    impl<N: SpaceAndHtmlAttributeName, V: HtmlAttributeEqValueOrEmpty> SpaceAndHtmlAttributesOrEmpty
-        for async_str_iter::option::IterOption<crate::attr::SpaceAndHtmlAttribute<N, V>>
+    impl<V: SpaceAndHtmlAttributesOrEmpty> Sealed for async_str_iter::option::IterOption<V> {}
+    impl<V: SpaceAndHtmlAttributesOrEmpty> SpaceAndHtmlAttributesOrEmpty
+        for async_str_iter::option::IterOption<V>
     {
     }
 }

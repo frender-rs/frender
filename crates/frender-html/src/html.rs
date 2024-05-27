@@ -1505,7 +1505,6 @@ crate::def_intrinsic_component_props!(
 
                             pub trait HtmlInputElement {
                                 special_super_traits!(
-                                    ElementWithTypeAttribute,
                                     ElementWithReadOnlyAttribute,
                                     ElementWithPlaceHolderAttribute,
                                     ElementWithMaxMinLengthAttributes,
@@ -1520,7 +1519,6 @@ crate::def_intrinsic_component_props!(
                                     ElementWithAltAttribute,
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
-                                    ElementWithValueStrAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
                                 special_inter_traits!(ElementWithFormAttribute);
@@ -1528,9 +1526,6 @@ crate::def_intrinsic_component_props!(
                                 impl_for_web!();
 
                                 fn capture(value: maybe![&str]);
-                                fn checked(value: maybe![bool]) {
-                                    update_with!(set_checked);
-                                }
                                 fn dirname(value: maybe![&str]);
                                 fn list(value: maybe![&str]);
                                 fn max(value: maybe![&str]) {

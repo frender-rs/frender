@@ -120,11 +120,18 @@ pub mod state {
 }
 
 pub mod form_control {
+    use std::{borrow::Borrow, marker::PhantomData};
+
     use async_str_iter::IntoAsyncStrIterator;
+    use frender_common::PrimarilyBorrow;
     use frender_html::{
         form_control::{
             element::FormControlElement,
-            value::{FormControlValue, HandleValue, OfValue, Value},
+            value::{
+                FormControlValue, FormControlValueKind, FromFormControlValue,
+                HandleFormControlValue,
+            },
+            InputValue, InputValueKind,
         },
         RenderState,
     };
@@ -133,27 +140,42 @@ pub mod form_control {
     #[derive(Debug, Clone, Copy)]
     pub struct ControlledSharedValue<S>(pub S);
 
-    impl<S, Val, V: ?Sized + Value> HandleValue<V> for ControlledSharedValue<S>
+    impl<S, Val, VK: ?Sized + FormControlValueKind> HandleFormControlValue<VK>
+        for ControlledSharedValue<S>
     where
         S: ShareValue<Value = Val>,
-        Val: OfValue<Value = V>,
+        Val: FromFormControlValue<VK>,
     {
-        fn handle_value(&mut self, v: <V as Value>::Passed<'_>) {
-            self.0.set(Val::of_value(v))
+        fn handle_form_control_value(
+            &mut self,
+            v: <VK as FormControlValueKind>::FormControlValue<'_>,
+        ) {
+            self.0.set(Val::from_form_control_value(v))
         }
     }
 
-    impl<S, Val: Clone> frender_html::IntoOneStringOrEmpty for ControlledSharedValue<S>
+    impl<S: ShareValue> frender_html::IntoOneStringOrEmpty for ControlledSharedValue<S>
     where
-        S: ShareValue<Value = Val>,
-        Val: OfValue<Value = str>,
+        S::Value: Clone + Borrow<str>,
     {
-        type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<Val>;
+        type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<S::Value>;
 
         fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
             let val = this.0.unwrap_or_get_cloned();
             async_str_iter::borrow_str::BorrowStr(val).into_async_str_iterator()
         }
+    }
+
+    impl<S, Val, VK> InputValue for ControlledSharedValue<S>
+    where
+        S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
+        S: ShareValue<Value = Val>,
+        Val: FromFormControlValue<VK> + Borrow<VK>,
+        Val: PrimarilyBorrow<Borrowed = VK>,
+        VK: ?Sized + FormControlValueKind,
+        VK: InputValueKind,
+    {
+        type ValueKind = VK;
     }
 
     pin_project_lite::pin_project!(
@@ -186,17 +208,23 @@ pub mod form_control {
         }
     }
 
-    pub struct UpdateFormControlElement;
+    pub struct UpdateFormControlElement<VK: ?Sized + FormControlValueKind>(PhantomData<VK>);
+
+    impl<VK: ?Sized + FormControlValueKind> UpdateFormControlElement<VK> {
+        pub const fn new() -> Self {
+            Self(PhantomData)
+        }
+    }
 
     impl<
-            PEH: FormControlElement<V, R> + ?Sized,
+            VK: ?Sized + FormControlValueKind,
+            PEH: FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
-            V: ?Sized + Value,
-            SV: OfValue<Value = V>,
-        > super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateFormControlElement
+            SV: Borrow<VK>,
+        > super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateFormControlElement<VK>
     {
         fn unmount_element_with_shared_value(&mut self, element: &mut PEH, renderer: &mut R) {
-            element.remove_value(renderer);
+            element.remove_value(renderer); // TODO: is this needed?
         }
 
         fn update_element_with_shared_value(
@@ -210,21 +238,22 @@ pub mod form_control {
         }
     }
 
-    pub type ReactiveState<S> = super::state::State<S, UpdateFormControlElement>;
+    pub type ReactiveState<S, VK> = super::state::State<S, UpdateFormControlElement<VK>>;
 
-    impl<S, Val> FormControlValue<Val::Value> for ControlledSharedValue<S>
+    impl<S, Val, VK> FormControlValue<VK> for ControlledSharedValue<S>
     where
+        VK: ?Sized + FormControlValueKind,
         S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
         S: ShareValue<Value = Val>,
-        Val: OfValue,
+        Val: FromFormControlValue<VK> + Borrow<VK>,
     {
         type State<
-            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + ?Sized,
+            E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
-        > = CompoundState<Option<ReactiveState<S>>, E::OnValueChangeEventListener<Self>>;
+        > = CompoundState<Option<ReactiveState<S, VK>>, E::OnValueChangeEventListener<Self>>;
 
         fn update_with_state<
-            E: frender_html::form_control::element::FormControlElement<Val::Value, R> + ?Sized,
+            E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
         >(
             this: Self,
@@ -244,7 +273,7 @@ pub mod form_control {
 
             this.0.map(|shared_value| {
                 super::state::UpdateElementWithSharedValue::update_element_with_shared_value(
-                    &mut UpdateFormControlElement,
+                    &mut UpdateFormControlElement::new(),
                     element,
                     renderer,
                     shared_value,
@@ -253,7 +282,7 @@ pub mod form_control {
 
             *state = Some(ReactiveState {
                 inner: this.0.clone(),
-                update: UpdateFormControlElement,
+                update: UpdateFormControlElement::new(),
             });
 
             element.on_value_change(renderer, event_listener, this)

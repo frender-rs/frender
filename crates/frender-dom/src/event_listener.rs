@@ -82,6 +82,10 @@ impl frender_events::event::Event for NoEvent {
     fn target_input_value_as_number(&self) -> Option<f64> {
         match *self {}
     }
+
+    fn target_input_checked(&self) -> Option<bool> {
+        match *self {}
+    }
 }
 
 pub enum NoEventType {}

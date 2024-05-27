@@ -1,4 +1,6 @@
 mod inner_html;
+mod input;
+
 mod script;
 mod style;
 mod textarea;

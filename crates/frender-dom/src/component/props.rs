@@ -28,6 +28,20 @@ impl<Attrs, EL> ElementProps<(), Attrs, EL> {
 
 impl<Children, Attrs, EL> ElementProps<Children, Attrs, EL> {
     #[inline(always)]
+    pub fn map_children<C>(self, f: impl FnOnce(Children) -> C) -> ElementProps<C, Attrs, EL> {
+        let Self {
+            children,
+            attributes,
+            event_listeners,
+        } = self;
+        ElementProps {
+            children: f(children),
+            attributes,
+            event_listeners,
+        }
+    }
+
+    #[inline(always)]
     pub fn chain_prop<P>(self, prop: P) -> ElementProps<Children, (Attrs, P), EL> {
         ElementProps {
             children: self.children,

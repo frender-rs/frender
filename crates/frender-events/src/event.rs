@@ -34,6 +34,9 @@ pub trait Event {
     ///
     /// See [`the valueAsNumber IDL attribute`](https://html.spec.whatwg.org/multipage/input.html#dom-input-valueasnumber).
     fn target_input_value_as_number(&self) -> Option<f64>;
+
+    /// Returns `Some(checked)` when `event.target` is `HtmlInputElement`.
+    fn target_input_checked(&self) -> Option<bool>;
 }
 
 pub trait SecurityPolicyViolationEvent: Event {
@@ -322,6 +325,15 @@ mod web {
                 target
                     .dyn_ref::<web_sys::HtmlInputElement>()
                     .map(web_sys::HtmlInputElement::value_as_number)
+            })
+        }
+
+        fn target_input_checked(&self) -> Option<bool> {
+            use wasm_bindgen::JsCast;
+            self.0.as_ref().target().and_then(|target| {
+                target
+                    .dyn_ref::<web_sys::HtmlInputElement>()
+                    .map(web_sys::HtmlInputElement::checked)
             })
         }
     }

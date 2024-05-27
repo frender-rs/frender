@@ -1,289 +1,87 @@
-use std::{
-    borrow::{Borrow, Cow},
-    cell::{Cell, RefCell},
-    rc::Rc,
-};
+pub use provide::{BorrowToProvideFormControlValue, MaybeProvideFormControlValue, NeverProvideFormControlValue, ProvideFormControlValue};
 
-use frender_common::PrimarilyBorrow;
+use std::borrow::{Borrow, Cow};
+
 use frender_dom::{render_state::non_reactive::NonReactiveRenderState, RenderState};
-use frender_html_common::{IntoOneStringOrEmpty, MaybeValue};
+use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, IntoOneStringOrEmpty};
 
 use super::element::FormControlElement;
 
-pub trait Value {
-    /// The value, reference, or `Cow` passed between functions.
-    type Passed<'a>
+mod provide;
+
+pub trait FormControlValueKind {
+    /// The value, reference, or `Cow` passed on change.
+    type FormControlValue<'a>
     where
         Self: 'a;
 }
 
-pub trait OfValue: PrimarilyBorrow<Borrowed = Self::Value> {
-    type Value: ?Sized + Value;
-
-    /// `passed_value` might be cloned in this method.
-    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self;
+impl FormControlValueKind for str {
+    type FormControlValue<'a> = Cow<'a, str>;
 }
 
-pub trait HandleValue<V: ?Sized + Value> {
-    fn handle_value(&mut self, v: V::Passed<'_>);
+impl<T: Copy> FormControlValueKind for T {
+    type FormControlValue<'a> = T where T: 'a;
 }
 
-impl<V: ?Sized + Value, F: for<'v> FnMut(V::Passed<'v>)> HandleValue<V> for F {
-    fn handle_value(&mut self, v: <V as Value>::Passed<'_>) {
+pub trait FromFormControlValue<VK: ?Sized + FormControlValueKind> {
+    fn from_form_control_value(v: VK::FormControlValue<'_>) -> Self;
+}
+
+pub trait HandleFormControlValue<V: ?Sized + FormControlValueKind> {
+    fn handle_form_control_value(&mut self, v: V::FormControlValue<'_>);
+}
+
+impl<V: ?Sized + FormControlValueKind, F: for<'v> FnMut(V::FormControlValue<'v>)> HandleFormControlValue<V> for F {
+    fn handle_form_control_value(&mut self, v: <V as FormControlValueKind>::FormControlValue<'_>) {
         self(v)
     }
 }
 
-impl Value for str {
-    type Passed<'a> = Cow<'a, str>;
-}
-
-impl<T: Copy> Value for T {
-    type Passed<'a> = T where T: 'a;
-}
-
-impl OfValue for String {
-    type Value = str;
-
-    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
-        passed_value.into()
+impl FromFormControlValue<str> for String {
+    fn from_form_control_value(v: Cow<'_, str>) -> Self {
+        v.into_owned()
     }
 }
 
-impl OfValue for Cow<'_, str> {
-    type Value = str;
-
-    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
-        passed_value.into_owned().into()
+impl FromFormControlValue<str> for Cow<'_, str> {
+    fn from_form_control_value(v: Cow<'_, str>) -> Self {
+        v.into_owned().into()
     }
 }
 
-impl OfValue for std::rc::Rc<str> {
-    type Value = str;
+frender_common::impl_many!(
+    impl<__> FromFormControlValue<str> for each_of![std::rc::Rc<str>, std::sync::Arc<str>] {
+        fn from_form_control_value(v: Cow<'_, str>) -> Self {
+            v.into()
+        }
+    }
+);
 
-    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
-        passed_value.into()
+impl<VK: Copy> FromFormControlValue<VK> for VK {
+    fn from_form_control_value(v: VK) -> Self {
+        v
     }
 }
 
-impl OfValue for bool {
-    type Value = bool;
-
-    fn of_value(passed_value: <Self::Value as Value>::Passed<'_>) -> Self {
-        passed_value
-    }
-}
-
-pub trait FormControlValue<V: ?Sized + Value> {
+pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default + RenderState<E, R> + Unpin;
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
 }
 
-pub trait TempAsRef<T: ?Sized> {
-    fn temp_as_ref<U: FnOnce(&T) -> R, R>(&self, use_value: U) -> R;
-}
-
-impl<V: TempAsRef<T>, T: ?Sized> TempAsRef<T> for Rc<V> {
-    fn temp_as_ref<U: FnOnce(&T) -> R, R>(&self, use_value: U) -> R {
-        V::temp_as_ref(&*self, use_value)
-    }
-}
-
-/// Currently the implementation is
-///
-/// For `input` and `textarea`,
-///
-/// ```js
-/// e.target.defaultValue = value;
-/// e.target.value = value;
-///
-/// // only register once for the same `value`
-/// element.addEventListener("beforeinput", (e) => {
-///     e.preventDefault()
-/// })
-/// ```
-///
-/// For `select`,
-///
-/// ```js
-/// e.target.defaultValue = value;
-/// e.target.value = value;
-///
-/// // only register once for the same `value`
-/// element.addEventListener("input", (e) => {
-///     e.target.defaultValue = value;
-///     e.target.value = value;
-/// })
-/// ```
-pub struct OneWayBinding<V: OfValue>(pub V);
-
-impl<V: OfValue<Value = str>> IntoOneStringOrEmpty for OneWayBinding<V> {
-    type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<V>;
-
-    fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-        Self::OneStringOrEmpty::new(this.0)
-    }
-}
-
-pub trait InteriorMutableValue<T: ?Sized>: TempAsRef<T> {
-    type OwnedRef: Borrow<T>;
-    /// return true if replaced.
-    fn replace_if_and_then<R>(&self, new_value: Self::OwnedRef, predicate: impl FnOnce(&T, &T) -> bool, and_then: impl FnOnce(&T) -> R) -> Option<R>;
-}
-
-impl<V: Copy + Borrow<T>, T: ?Sized> TempAsRef<T> for Cell<V> {
-    fn temp_as_ref<U: FnOnce(&T) -> R, R>(&self, use_value: U) -> R {
-        use_value(self.get().borrow())
-    }
-}
-impl<V: Copy + Borrow<T>, T: ?Sized> InteriorMutableValue<T> for Cell<V> {
-    type OwnedRef = V;
-
-    fn replace_if_and_then<R>(&self, new_value: Self::OwnedRef, predicate: impl FnOnce(&T, &T) -> bool, and_then: impl FnOnce(&T) -> R) -> Option<R> {
-        let old_value = self.get();
-        let old_value = old_value.borrow();
-        let v = new_value.borrow();
-        if predicate(old_value, v) {
-            let res = and_then(v);
-            self.set(new_value);
-            Some(res)
-        } else {
-            None
-        }
-    }
-}
-
-impl<V: Borrow<T>, T: ?Sized> TempAsRef<T> for RefCell<V> {
-    fn temp_as_ref<U: FnOnce(&T) -> R, R>(&self, use_value: U) -> R {
-        let v = self.borrow();
-        let v = V::borrow(&v);
-        use_value(v)
-    }
-}
-
-impl<V: Borrow<T>, T: ?Sized> InteriorMutableValue<T> for RefCell<V> {
-    type OwnedRef = V;
-
-    fn replace_if_and_then<R>(&self, new_value: Self::OwnedRef, predicate: impl FnOnce(&T, &T) -> bool, and_then: impl FnOnce(&T) -> R) -> Option<R> {
-        let old_value = &mut *self.borrow_mut();
-        let v = new_value.borrow();
-        if predicate((*old_value).borrow(), v) {
-            let res = and_then(v);
-            *old_value = new_value;
-            Some(res)
-        } else {
-            None
-        }
-    }
-}
-
-pub struct OneWayBindingState<V, F> {
-    value: Rc<V>,
-    #[allow(dead_code)]
-    force_value: F,
-}
-
-impl<Val: OfValue<Value = V> + 'static, V: ?Sized + Value + PartialEq> FormControlValue<V> for OneWayBinding<Val> {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<OneWayBindingState<RefCell<Val>, E::ForceValue>>>;
-
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
-        let state = &mut state.0;
-        let owned_value = this.0;
-        let value = owned_value.borrow();
-        if let Some(state) = state {
-            _ = state.value.replace_if_and_then(owned_value, V::ne, |value| {
-                element.set_default_value(renderer, value);
-                element.set_value(renderer, value);
-            });
-        } else {
-            element.set_default_value(renderer, &value);
-            element.set_value(renderer, &value);
-
-            let v = Rc::new(RefCell::new(owned_value));
-            *state = Some(OneWayBindingState {
-                value: Rc::clone(&v),
-                force_value: element.force_value(renderer, v),
-            })
-        }
-    }
-}
-
-pub struct Controlled<
-    //
-    V: OfValue,
-    C: FnMut(V) + 'static,
->(pub V, pub C);
-
-impl<
-        //
-        V: OfValue<Value = str>,
-        C: FnMut(V) + 'static,
-    > IntoOneStringOrEmpty for Controlled<V, C>
-{
-    type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<V>;
-
-    fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-        Self::OneStringOrEmpty::new(this.0)
-    }
-}
-
-pub struct HandleOfValue<Val, F: FnMut(Val)> {
-    f: F,
-    _v: std::marker::PhantomData<Val>,
-}
-
-impl<Val, F: FnMut(Val)> HandleOfValue<Val, F> {
-    fn new(f: F) -> Self {
-        Self { f, _v: std::marker::PhantomData }
-    }
-}
-
-impl<V: ?Sized + Value, Val: OfValue<Value = V>, F: FnMut(Val)> HandleValue<V> for HandleOfValue<Val, F> {
-    fn handle_value(&mut self, v: <V as Value>::Passed<'_>) {
-        (self.f)(Val::of_value(v))
-    }
-}
-
-impl<
-        //
-        V: ?Sized + Value + PartialEq,
-        Val: OfValue<Value = V> + 'static,
-        Cbk: FnMut(Val) + 'static,
-    > FormControlValue<V> for Controlled<Val, Cbk>
-{
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<(Option<Val>, E::OnValueChangeEventListener<HandleOfValue<Val, Cbk>>)>;
-
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
-        let (state, event_listener) = &mut state.0;
-        let Self(value, f) = this;
-
-        element.on_value_change(renderer, event_listener, HandleOfValue::new(f));
-
-        let v = value.borrow();
-        if let Some(state) = state {
-            if Borrow::<V>::borrow(state) == v {
-                return;
-            }
-        }
-
-        element.set_default_value(renderer, v);
-        element.set_value(renderer, v);
-
-        *state = Some(value);
-    }
-}
-
 /// Uncontrolled form control value (no default value).
-impl<V: ?Sized + Value> FormControlValue<V> for () {
+impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for () {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>((): Self, (): &mut Self::State<E, R>, _: &mut E, _: &mut R) {}
 }
 
-pub struct UncontrolledWithDefaultValue<V: MaybeValue<str> + IntoOneStringOrEmpty>(pub V);
+/// This wrapper proxies [`IntoOneStringOrEmpty`] and [`MaybeIntoHtmlAttributeValue`].
+#[derive(Debug)]
+pub struct UncontrolledWithDefaultValue<V>(pub V);
 
-impl<V: MaybeValue<str> + IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
+impl<V: IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
     type OneStringOrEmpty = V::OneStringOrEmpty;
 
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
@@ -291,28 +89,110 @@ impl<V: MaybeValue<str> + IntoOneStringOrEmpty> IntoOneStringOrEmpty for Uncontr
     }
 }
 
-impl<V: MaybeValue<str> + IntoOneStringOrEmpty> FormControlValue<str> for UncontrolledWithDefaultValue<V> {
-    type State<E: FormControlElement<str, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<V::UpdateWithState>;
+impl<V: MaybeIntoHtmlAttributeValue<AT>, AT: ?Sized> MaybeIntoHtmlAttributeValue<AT> for UncontrolledWithDefaultValue<V> {
+    type HtmlAttributeValue = V::HtmlAttributeValue;
 
-    fn update_with_state<E: FormControlElement<str, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
+        V::maybe_into_html_attribute_value(this.0)
+    }
+}
+
+impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlValue<VK> for UncontrolledWithDefaultValue<V> {
+    type State<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<V>>;
+
+    fn update_with_state<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(Self(this): Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
         let state = &mut state.0;
 
-        // TODO: refactor
-        struct UpdateDefaultValue<'a, E: ?Sized + FormControlElement<str, R>, R: ?Sized> {
-            element: &'a mut E,
-            renderer: &'a mut R,
-        }
-
-        impl<'a, E: ?Sized + FormControlElement<str, R>, R: ?Sized> frender_html_common::ValueUpdater<str> for UpdateDefaultValue<'a, E, R> {
-            fn update(self, value: &str) {
-                self.element.set_default_value(self.renderer, value)
-            }
-
-            fn remove(self) {
-                self.element.set_default_value(self.renderer, "")
+        if let Some(state) = state {
+            if *state == this {
+                return;
             }
         }
 
-        V::update_with_state(this.0, state, UpdateDefaultValue { element, renderer })
+        let value = this.borrow();
+        element.set_default_value(renderer, value);
+        *state = Some(this);
+    }
+}
+
+impl<V: Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for UncontrolledWithDefaultValue<V> {
+    type ProvideFormControlValue = BorrowToProvideFormControlValue<V>;
+
+    fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
+        Some(BorrowToProvideFormControlValue(this.0))
+    }
+}
+
+macro_rules! impl_uncontrolled_with_default_value {
+    ($VK:ty) => {
+        type State<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized> = <UncontrolledWithDefaultValue<Self> as FormControlValue<$VK>>::State<E, R>;
+
+        fn update_with_state<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+            UncontrolledWithDefaultValue::update_with_state(UncontrolledWithDefaultValue(this), state, element, renderer)
+        }
+    };
+}
+
+frender_common::impl_many!(
+    impl<__> FormControlValue<Self> for each_of![bool, f64] {
+        impl_uncontrolled_with_default_value! {Self}
+    }
+);
+
+frender_common::impl_many!(
+    impl<__> FormControlValue<str>
+        for each_of![
+            //
+            &str,
+            String,
+            Cow<'_, str>,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
+        ]
+    {
+        impl_uncontrolled_with_default_value! {str}
+    }
+);
+
+#[cfg(feature = "either")]
+impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlValue<V>> FormControlValue<V> for either::Either<A, B> {
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = frender_dom::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
+
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+        use either::Either::{Left, Right};
+        let state = state.inner_mut();
+
+        match this {
+            Left(this) => {
+                let state = match state {
+                    Left(state) => state,
+                    Right(old_state) => {
+                        std::pin::Pin::new(old_state).unmount(element, renderer);
+                        *state = Left(Default::default());
+                        match state {
+                            Left(state) => state,
+                            Right(_) => unreachable!(),
+                        }
+                    }
+                };
+
+                A::update_with_state(this, state, element, renderer)
+            }
+            Right(this) => {
+                let state = match state {
+                    Right(state) => state,
+                    Left(old_state) => {
+                        std::pin::Pin::new(old_state).unmount(element, renderer);
+                        *state = Right(Default::default());
+                        match state {
+                            Right(state) => state,
+                            Left(_) => unreachable!(),
+                        }
+                    }
+                };
+
+                B::update_with_state(this, state, element, renderer)
+            }
+        }
     }
 }

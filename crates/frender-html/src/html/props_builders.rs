@@ -1952,7 +1952,6 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlInputElement:
     HtmlElement
-    + ElementWithTypeAttribute
     + ElementWithReadOnlyAttribute
     + ElementWithPlaceHolderAttribute
     + ElementWithMaxMinLengthAttributes
@@ -1967,15 +1966,11 @@ pub trait HtmlInputElement:
     + ElementWithAltAttribute
     + ElementWithDisabledAttribute
     + ElementWithNameAttribute
-    + ElementWithValueStrAttribute
     + ElementWithHeightWidthU32Attributes
     + ElementWithFormAttribute
 {
     fn capture<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::capture<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::capture(value))
-    }
-    fn checked<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::checked<V>> {
-        Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::checked(value))
     }
     fn dirname<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::dirname<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::dirname(value))
@@ -1997,7 +1992,6 @@ pub trait HtmlInputElement:
     }
 }
 impl<C, A, ELS> HtmlInputElement for super::props::HtmlInputElement<C, A, ELS> {}
-impl<C, A, ELS> ElementWithTypeAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithReadOnlyAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithPlaceHolderAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithMaxMinLengthAttributes for super::props::HtmlInputElement<C, A, ELS> {}
@@ -2012,7 +2006,6 @@ impl<C, A, ELS> ElementWithAcceptAttribute for super::props::HtmlInputElement<C,
 impl<C, A, ELS> ElementWithAltAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithDisabledAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithNameAttribute for super::props::HtmlInputElement<C, A, ELS> {}
-impl<C, A, ELS> ElementWithValueStrAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithHeightWidthU32Attributes for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> ElementWithFormAttribute for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> HtmlElement for super::props::HtmlInputElement<C, A, ELS> {}

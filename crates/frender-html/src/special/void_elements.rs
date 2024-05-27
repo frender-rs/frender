@@ -16,7 +16,7 @@ frender_common::impl_many!(
                 tags::embed,
                 tags::hr,
                 tags::img,
-                tags::input,
+                // tags::input, // input is special
                 tags::link,
                 tags::meta,
                 tags::source,
@@ -45,7 +45,7 @@ frender_common::impl_many!(
                 tags::embed,
                 tags::hr,
                 tags::img,
-                tags::input,
+                // tags::input, // input is special
                 tags::link,
                 tags::meta,
                 tags::source,
