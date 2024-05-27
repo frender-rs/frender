@@ -97,7 +97,6 @@ features = [
 ]
 
 [features]
-default = ["chrono"]
 web = [
     "frender-dom/web",
     "dep:gloo-events",
