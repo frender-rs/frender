@@ -176,7 +176,7 @@ fn convert_number_to_string(input_type: &str, value: f64) -> String {
     }
 
     #[cfg(all(feature = "web", target_arch = "wasm32"))]
-    return super::web::number_as_input_value(input_type, value);
+    return self::web::number_as_input_value(input_type, value);
 
     #[cfg(not(all(feature = "web", target_arch = "wasm32")))]
     #[cfg(feature = "chrono")]

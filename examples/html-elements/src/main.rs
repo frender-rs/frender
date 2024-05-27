@@ -14,27 +14,32 @@ fn input() -> impl Element {
 
         elements!(
             cs::code.children(r##"input.type_("text")"##),
-            // uncontrolled, value and checked are absent
+            "uncontrolled, value and checked are absent",
+            cs::input,
             cs::input.type_("text"),
-            // uncontrolled, value and checked are ()
+            "uncontrolled, value and checked are ()",
             cs::input.type_("text").value(()).checked(()),
-            // uncontrolled, with defaultValue and defaultChecked
+            "uncontrolled, with defaultValue and defaultChecked",
             cs::input.value(state_text.get_cloned()),
-            // uncontrolled, with defaultChecked and value
+            "Uncontrolled, with defaultChecked and value",
             cs::input
+                .type_("checkbox")
                 .value(state_text.get_cloned())
                 .checked(checked.get()),
+            "Uncontrolled explicitly",
+            cs::input.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
             cs::br,
             "Controlled with a shared state",
             cs::input.value(state_text.clone().into_controlled()),
-            "Uncontrolled",
-            cs::textarea,
-            "Uncontrolled with default value",
-            cs::textarea.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
+            "Controlled checkbox with a shared state",
+            cs::input
+                .r#type("checkbox")
+                .value(state_text.get_cloned())
+                .checked(checked.clone().into_controlled()),
             "Uncontrolled, but update state on input",
-            cs::textarea.on_input(state_text.to_set_form_control_value()),
+            cs::input.on_input(state_text.to_set_form_control_value()),
             "Uncontrolled, but update state on change",
-            cs::textarea.on_change(state_text.to_set_form_control_value()),
+            cs::input.on_change(state_text.to_set_form_control_value()),
             cs::button
                 .on_click({
                     let state_text = state_text.clone();
