@@ -1,9 +1,13 @@
-pub use provide::{BorrowToProvideFormControlValue, MaybeProvideFormControlValue, NeverProvideFormControlValue, ProvideFormControlValue};
+pub use provide::{
+    BorrowToProvideFormControlValue, MaybeProvideFormControlValue, NeverProvideFormControlValue,
+    ProvideFormControlValue,
+};
 
 use std::borrow::{Borrow, Cow};
 
-use frender_dom::{render_state::non_reactive::NonReactiveRenderState, RenderState};
 use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, IntoOneStringOrEmpty};
+
+use crate::{render_state::non_reactive::NonReactiveRenderState, RenderState};
 
 use super::element::FormControlElement;
 
@@ -32,7 +36,9 @@ pub trait HandleFormControlValue<V: ?Sized + FormControlValueKind> {
     fn handle_form_control_value(&mut self, v: V::FormControlValue<'_>);
 }
 
-impl<V: ?Sized + FormControlValueKind, F: for<'v> FnMut(V::FormControlValue<'v>)> HandleFormControlValue<V> for F {
+impl<V: ?Sized + FormControlValueKind, F: for<'v> FnMut(V::FormControlValue<'v>)>
+    HandleFormControlValue<V> for F
+{
     fn handle_form_control_value(&mut self, v: <V as FormControlValueKind>::FormControlValue<'_>) {
         self(v)
     }
@@ -67,14 +73,25 @@ impl<VK: Copy> FromFormControlValue<VK> for VK {
 pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default + RenderState<E, R> + Unpin;
 
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R);
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
+        this: Self,
+        state: &mut Self::State<E, R>,
+        element: &mut E,
+        renderer: &mut R,
+    );
 }
 
 /// Uncontrolled form control value (no default value).
 impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for () {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
 
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>((): Self, (): &mut Self::State<E, R>, _: &mut E, _: &mut R) {}
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
+        (): Self,
+        (): &mut Self::State<E, R>,
+        _: &mut E,
+        _: &mut R,
+    ) {
+    }
 }
 
 /// This wrapper proxies [`IntoOneStringOrEmpty`] and [`MaybeIntoHtmlAttributeValue`].
@@ -89,7 +106,9 @@ impl<V: IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultVa
     }
 }
 
-impl<V: MaybeIntoHtmlAttributeValue<AT>, AT: ?Sized> MaybeIntoHtmlAttributeValue<AT> for UncontrolledWithDefaultValue<V> {
+impl<V: MaybeIntoHtmlAttributeValue<AT>, AT: ?Sized> MaybeIntoHtmlAttributeValue<AT>
+    for UncontrolledWithDefaultValue<V>
+{
     type HtmlAttributeValue = V::HtmlAttributeValue;
 
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
@@ -97,10 +116,18 @@ impl<V: MaybeIntoHtmlAttributeValue<AT>, AT: ?Sized> MaybeIntoHtmlAttributeValue
     }
 }
 
-impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlValue<VK> for UncontrolledWithDefaultValue<V> {
-    type State<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> = NonReactiveRenderState<Option<V>>;
+impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlValue<VK>
+    for UncontrolledWithDefaultValue<V>
+{
+    type State<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
+        NonReactiveRenderState<Option<V>>;
 
-    fn update_with_state<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(Self(this): Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn update_with_state<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        Self(this): Self,
+        state: &mut Self::State<E, R>,
+        element: &mut E,
+        renderer: &mut R,
+    ) {
         let state = &mut state.0;
 
         if let Some(state) = state {
@@ -115,7 +142,9 @@ impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlVa
     }
 }
 
-impl<V: Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for UncontrolledWithDefaultValue<V> {
+impl<V: Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
+    for UncontrolledWithDefaultValue<V>
+{
     type ProvideFormControlValue = BorrowToProvideFormControlValue<V>;
 
     fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
@@ -125,10 +154,21 @@ impl<V: Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlVa
 
 macro_rules! impl_uncontrolled_with_default_value {
     ($VK:ty) => {
-        type State<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized> = <UncontrolledWithDefaultValue<Self> as FormControlValue<$VK>>::State<E, R>;
+        type State<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized> =
+            <UncontrolledWithDefaultValue<Self> as FormControlValue<$VK>>::State<E, R>;
 
-        fn update_with_state<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
-            UncontrolledWithDefaultValue::update_with_state(UncontrolledWithDefaultValue(this), state, element, renderer)
+        fn update_with_state<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(
+            this: Self,
+            state: &mut Self::State<E, R>,
+            element: &mut E,
+            renderer: &mut R,
+        ) {
+            UncontrolledWithDefaultValue::update_with_state(
+                UncontrolledWithDefaultValue(this),
+                state,
+                element,
+                renderer,
+            )
         }
     };
 }
@@ -155,10 +195,18 @@ frender_common::impl_many!(
 );
 
 #[cfg(feature = "either")]
-impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlValue<V>> FormControlValue<V> for either::Either<A, B> {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = frender_dom::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
+impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlValue<V>>
+    FormControlValue<V> for either::Either<A, B>
+{
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> =
+        crate::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
 
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(this: Self, state: &mut Self::State<E, R>, element: &mut E, renderer: &mut R) {
+    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
+        this: Self,
+        state: &mut Self::State<E, R>,
+        element: &mut E,
+        renderer: &mut R,
+    ) {
         use either::Either::{Left, Right};
         let state = state.inner_mut();
 

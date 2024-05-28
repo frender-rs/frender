@@ -4,7 +4,9 @@ use async_str_iter::IntoAsyncStrIterator;
 use frender_common::PrimarilyBorrow;
 use frender_html_common::MaybeStringValue;
 
-use crate::form_control::value::{FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue};
+use crate::form_control::value::{
+    FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue,
+};
 
 use super::{
     element::FormControlElement,
@@ -12,9 +14,19 @@ use super::{
 };
 
 /// A trait alias
-pub trait InputElement<Renderer: ?Sized>: FormControlElement<str, Renderer> + FormControlElement<bool, Renderer> + FormControlElement<f64, Renderer> {}
+pub trait InputElement<Renderer: ?Sized>:
+    FormControlElement<str, Renderer>
+    + FormControlElement<bool, Renderer>
+    + FormControlElement<f64, Renderer>
+{
+}
 
-impl<E, Renderer: ?Sized> InputElement<Renderer> for E where E: FormControlElement<str, Renderer> + FormControlElement<bool, Renderer> + FormControlElement<f64, Renderer> {}
+impl<E, Renderer: ?Sized> InputElement<Renderer> for E where
+    E: FormControlElement<str, Renderer>
+        + FormControlElement<bool, Renderer>
+        + FormControlElement<f64, Renderer>
+{
+}
 
 mod value_kind {
     use frender_common::convert::{FromMut, IntoMut};
@@ -26,18 +38,29 @@ mod value_kind {
 
     use super::InputElement;
 
+    /// Types that can be used as `input.value`.
     pub trait InputValueKind: FormControlValueKind {
         type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>>: frender_ssr::html::assert::HtmlAttributeEqValueOrEmpty;
-        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(v: V, input_type: &str) -> Self::IntoInputValueAttrValue<V>;
+        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(
+            v: V,
+            input_type: &str,
+        ) -> Self::IntoInputValueAttrValue<V>;
 
-        type AsMutFormControlElement<E: ?Sized + InputElement<R>, R: ?Sized>: ?Sized + FormControlElement<Self, R> + FromMut<E> + IntoMut<E>;
-        fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(el: &mut E) -> &mut Self::AsMutFormControlElement<E, R>;
+        type AsMutFormControlElement<E: ?Sized + InputElement<R>, R: ?Sized>: ?Sized
+            + FormControlElement<Self, R>
+            + FromMut<E>
+            + IntoMut<E>;
+        fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(
+            el: &mut E,
+        ) -> &mut Self::AsMutFormControlElement<E, R>;
     }
 
     macro_rules! as_mut_form_control_element {
         () => {
             type AsMutFormControlElement<E: ?Sized + InputElement<R>, R: ?Sized> = E;
-            fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(el: &mut E) -> &mut Self::AsMutFormControlElement<E, R> {
+            fn as_mut_form_control_element<E: ?Sized + InputElement<R>, R: ?Sized>(
+                el: &mut E,
+            ) -> &mut Self::AsMutFormControlElement<E, R> {
                 el
             }
         };
@@ -45,23 +68,39 @@ mod value_kind {
 
     impl InputValueKind for str {
         // TODO: optimize
-        type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>> = frender_ssr::html::attr_value::AttrEqValue<async_str_iter::borrow_str::IterBorrowStr<String>>;
+        type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>> =
+            frender_ssr::html::attr_value::AttrEqValue<
+                async_str_iter::borrow_str::IterBorrowStr<String>,
+            >;
 
-        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(v: V, _: &str) -> Self::IntoInputValueAttrValue<V> {
+        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(
+            v: V,
+            _: &str,
+        ) -> Self::IntoInputValueAttrValue<V> {
             let v = v.provide_form_control_value(str::to_owned);
-            frender_ssr::html::attr_value::AttrEqValue(async_str_iter::borrow_str::IterBorrowStr::new(v))
+            frender_ssr::html::attr_value::AttrEqValue(
+                async_str_iter::borrow_str::IterBorrowStr::new(v),
+            )
         }
 
         as_mut_form_control_element! {}
     }
 
     impl InputValueKind for f64 {
-        type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>> = frender_ssr::html::attr_value::AttrEqValue<<String as async_str_iter::IntoAsyncStrIterator>::IntoAsyncStrIterator>;
+        type IntoInputValueAttrValue<V: ProvideFormControlValue<Self>> =
+            frender_ssr::html::attr_value::AttrEqValue<
+                <String as async_str_iter::IntoAsyncStrIterator>::IntoAsyncStrIterator,
+            >;
 
-        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(v: V, input_type: &str) -> Self::IntoInputValueAttrValue<V> {
+        fn into_input_value_attr_value<V: ProvideFormControlValue<Self>>(
+            v: V,
+            input_type: &str,
+        ) -> Self::IntoInputValueAttrValue<V> {
             let value = v.provide_form_control_value(|v| *v);
             let value = super::convert_number_to_string(input_type, value);
-            frender_ssr::html::attr_value::AttrEqValue::new(async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(value))
+            frender_ssr::html::attr_value::AttrEqValue::new(
+                async_str_iter::IntoAsyncStrIterator::into_async_str_iterator(value),
+            )
         }
 
         as_mut_form_control_element! {}
@@ -180,7 +219,9 @@ fn convert_number_to_string(input_type: &str, value: f64) -> String {
 
     #[cfg(not(all(feature = "web", target_arch = "wasm32")))]
     #[cfg(feature = "chrono")]
-    return convert_number_to_string_with_chrono::convert_non_nan_number_to_string(input_type, value);
+    return convert_number_to_string_with_chrono::convert_non_nan_number_to_string(
+        input_type, value,
+    );
 
     #[cfg(not(all(feature = "web", target_arch = "wasm32")))]
     #[cfg(not(feature = "chrono"))]
@@ -190,7 +231,9 @@ fn convert_number_to_string(input_type: &str, value: f64) -> String {
     };
 }
 
-pub trait InputValue: FormControlValue<Self::ValueKind> + MaybeProvideFormControlValue<Self::ValueKind> {
+pub trait InputValue:
+    FormControlValue<Self::ValueKind> + MaybeProvideFormControlValue<Self::ValueKind>
+{
     type ValueKind: ?Sized + FormControlValueKind + InputValueKind;
 }
 
@@ -225,7 +268,11 @@ frender_common::impl_many!(
     }
 );
 
-impl<V: PrimarilyBorrow<Borrowed = VK> + PartialEq, VK: ?Sized + FormControlValueKind + InputValueKind> InputValue for UncontrolledWithDefaultValue<V> {
+impl<
+        V: PrimarilyBorrow<Borrowed = VK> + PartialEq,
+        VK: ?Sized + FormControlValueKind + InputValueKind,
+    > InputValue for UncontrolledWithDefaultValue<V>
+{
     type ValueKind = VK;
 }
 
@@ -240,20 +287,55 @@ pub struct InputDataModel<Type: MaybeStringValue, Value: InputValue, Checked: In
     pub checked: Checked,
 }
 
-impl<Type: MaybeStringValue, Value: InputValue, Checked: InputChecked> InputDataModel<Type, Value, Checked> {
-    pub fn map_type<V: MaybeStringValue>(self, f: impl FnOnce(Type) -> V) -> InputDataModel<V, Value, Checked> {
-        let Self { r#type, value, checked } = self;
-        InputDataModel { r#type: f(r#type), value, checked }
+impl<Type: MaybeStringValue, Value: InputValue, Checked: InputChecked>
+    InputDataModel<Type, Value, Checked>
+{
+    pub fn map_type<V: MaybeStringValue>(
+        self,
+        f: impl FnOnce(Type) -> V,
+    ) -> InputDataModel<V, Value, Checked> {
+        let Self {
+            r#type,
+            value,
+            checked,
+        } = self;
+        InputDataModel {
+            r#type: f(r#type),
+            value,
+            checked,
+        }
     }
 
-    pub fn map_value<V: InputValue>(self, f: impl FnOnce(Value) -> V) -> InputDataModel<Type, V, Checked> {
-        let Self { r#type, value, checked } = self;
-        InputDataModel { r#type, value: f(value), checked }
+    pub fn map_value<V: InputValue>(
+        self,
+        f: impl FnOnce(Value) -> V,
+    ) -> InputDataModel<Type, V, Checked> {
+        let Self {
+            r#type,
+            value,
+            checked,
+        } = self;
+        InputDataModel {
+            r#type,
+            value: f(value),
+            checked,
+        }
     }
 
-    pub fn map_checked<V: InputChecked>(self, f: impl FnOnce(Checked) -> V) -> InputDataModel<Type, Value, V> {
-        let Self { r#type, value, checked } = self;
-        InputDataModel { r#type, value, checked: f(checked) }
+    pub fn map_checked<V: InputChecked>(
+        self,
+        f: impl FnOnce(Checked) -> V,
+    ) -> InputDataModel<Type, Value, V> {
+        let Self {
+            r#type,
+            value,
+            checked,
+        } = self;
+        InputDataModel {
+            r#type,
+            value,
+            checked: f(checked),
+        }
     }
 }
 
@@ -271,7 +353,11 @@ impl IntoInputDataModel for () {
     type Checked = ();
 
     fn into_input_data_model(self) -> InputDataModel<Self::Type, Self::Value, Self::Checked> {
-        InputDataModel { r#type: (), value: (), checked: () }
+        InputDataModel {
+            r#type: (),
+            value: (),
+            checked: (),
+        }
     }
 }
 
@@ -293,12 +379,13 @@ impl<
 
 mod ssr {
     use async_str_iter::{chain::Chain, option::IterOption};
-    use frender_dom::component::IntoSpaceAndHtmlAttributesOrEmpty;
     use frender_html_common::StringValue;
     use frender_ssr::html::{
         attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute},
         attr_value::AttrEqValue,
     };
+
+    use crate::component::IntoSpaceAndHtmlAttributesOrEmpty;
 
     use super::*;
 
@@ -336,11 +423,18 @@ mod ssr {
         >;
 
         fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-            const TYPE: AssertSpaceAndHtmlAttributeName<&'static str> = AssertSpaceAndHtmlAttributeName::new_from_str(" type");
-            const VALUE: AssertSpaceAndHtmlAttributeName<&'static str> = AssertSpaceAndHtmlAttributeName::new_from_str(" value");
-            const CHECKED: AssertSpaceAndHtmlAttributeName<&'static str> = AssertSpaceAndHtmlAttributeName::new_from_str(" checked");
+            const TYPE: AssertSpaceAndHtmlAttributeName<&'static str> =
+                AssertSpaceAndHtmlAttributeName::new_from_str(" type");
+            const VALUE: AssertSpaceAndHtmlAttributeName<&'static str> =
+                AssertSpaceAndHtmlAttributeName::new_from_str(" value");
+            const CHECKED: AssertSpaceAndHtmlAttributeName<&'static str> =
+                AssertSpaceAndHtmlAttributeName::new_from_str(" checked");
 
-            let Self { r#type: input_type, value, checked } = self;
+            let Self {
+                r#type: input_type,
+                value,
+                checked,
+            } = self;
 
             let input_type = Type::maybe_string_value(input_type);
 
@@ -352,7 +446,8 @@ mod ssr {
                 .map(|eq_value| SpaceAndHtmlAttribute(VALUE, eq_value));
 
             let checked_attr = {
-                let checked = Checked::maybe_into_provide_form_control_value(checked).map_or(false, |checked| checked.provide_form_control_value(|v| *v));
+                let checked = Checked::maybe_into_provide_form_control_value(checked)
+                    .map_or(false, |checked| checked.provide_form_control_value(|v| *v));
                 checked.then_some(CHECKED)
             };
 
@@ -364,7 +459,10 @@ mod ssr {
                         SpaceAndHtmlAttribute(TYPE, value)
                     })
                     .into_async_str_iterator(),
-                Chain::new(value_attr.into_async_str_iterator(), checked_attr.into_async_str_iterator()),
+                Chain::new(
+                    value_attr.into_async_str_iterator(),
+                    checked_attr.into_async_str_iterator(),
+                ),
             )
         }
     }

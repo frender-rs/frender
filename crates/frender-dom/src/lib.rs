@@ -22,3 +22,5 @@ pub mod special;
 pub mod node_ref;
 
 pub mod event_listener;
+
+pub mod form_control;

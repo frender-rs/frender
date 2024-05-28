@@ -6,7 +6,9 @@ pub trait MaybeProvideFormControlValue<VK: ?Sized + FormControlValueKind> {
     fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue>;
 }
 
-pub trait ProvideFormControlValue<VK: ?Sized + FormControlValueKind>: MaybeProvideFormControlValue<VK, ProvideFormControlValue = Self> {
+pub trait ProvideFormControlValue<VK: ?Sized + FormControlValueKind>:
+    MaybeProvideFormControlValue<VK, ProvideFormControlValue = Self>
+{
     fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R;
 }
 
@@ -14,7 +16,9 @@ macro_rules! impl_maybe_provide_with_some {
     () => {
         type ProvideFormControlValue = Self;
 
-        fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
+        fn maybe_into_provide_form_control_value(
+            this: Self,
+        ) -> Option<Self::ProvideFormControlValue> {
             Some(this)
         }
     };
@@ -22,11 +26,15 @@ macro_rules! impl_maybe_provide_with_some {
 
 pub struct BorrowToProvideFormControlValue<V>(pub V);
 
-impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for BorrowToProvideFormControlValue<T> {
+impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
+    for BorrowToProvideFormControlValue<T>
+{
     impl_maybe_provide_with_some! {}
 }
 
-impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK> for BorrowToProvideFormControlValue<T> {
+impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
+    for BorrowToProvideFormControlValue<T>
+{
     fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R {
         receive(self.0.borrow())
     }
@@ -34,11 +42,15 @@ impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> ProvideFormC
 
 pub enum NeverProvideFormControlValue {}
 
-impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for NeverProvideFormControlValue {
+impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
+    for NeverProvideFormControlValue
+{
     impl_maybe_provide_with_some! {}
 }
 
-impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK> for NeverProvideFormControlValue {
+impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
+    for NeverProvideFormControlValue
+{
     fn provide_form_control_value<R>(&self, _: impl FnOnce(&VK) -> R) -> R {
         match *self {}
     }
@@ -104,7 +116,9 @@ impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for () 
 }
 
 // option
-impl<T: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for Option<T> {
+impl<T: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind>
+    MaybeProvideFormControlValue<VK> for Option<T>
+{
     type ProvideFormControlValue = T::ProvideFormControlValue;
 
     fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
@@ -127,13 +141,23 @@ impl<
 }
 
 #[cfg(feature = "either")]
-impl<L: MaybeProvideFormControlValue<VK>, R: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for either::Either<L, R> {
-    type ProvideFormControlValue = either::Either<L::ProvideFormControlValue, R::ProvideFormControlValue>;
+impl<
+        L: MaybeProvideFormControlValue<VK>,
+        R: MaybeProvideFormControlValue<VK>,
+        VK: ?Sized + FormControlValueKind,
+    > MaybeProvideFormControlValue<VK> for either::Either<L, R>
+{
+    type ProvideFormControlValue =
+        either::Either<L::ProvideFormControlValue, R::ProvideFormControlValue>;
 
     fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
         match this {
-            either::Either::Left(this) => L::maybe_into_provide_form_control_value(this).map(either::Either::Left),
-            either::Either::Right(this) => R::maybe_into_provide_form_control_value(this).map(either::Either::Right),
+            either::Either::Left(this) => {
+                L::maybe_into_provide_form_control_value(this).map(either::Either::Left)
+            }
+            either::Either::Right(this) => {
+                R::maybe_into_provide_form_control_value(this).map(either::Either::Right)
+            }
         }
     }
 }
