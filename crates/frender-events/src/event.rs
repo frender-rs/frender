@@ -21,6 +21,9 @@ pub trait Event {
     /// Returns `Some(value)` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
     fn target_form_control_value(&self) -> Option<Cow<str>>;
 
+    /// Returns `Some(value === "")` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
+    fn target_form_control_value_is_empty(&self) -> Option<bool>;
+
     /// Returns `true` when `event.target` is `HtmlInputElement` or `HtmlTextareaElement`.
     fn set_target_form_control_default_value(&self, value: &str) -> bool;
 
@@ -266,6 +269,29 @@ mod web {
                             .dyn_ref::<web_sys::HtmlTextAreaElement>()
                             .map(|input| Cow::Owned(input.value()))
                     })
+            })
+        }
+
+        fn target_form_control_value_is_empty(&self) -> Option<bool> {
+            use wasm_bindgen::prelude::*;
+
+            #[wasm_bindgen]
+            extern "C" {
+                type WithValue;
+                #[wasm_bindgen(structural, method, getter)]
+                pub fn value(this: &WithValue) -> web_sys::js_sys::JsString;
+            }
+
+            self.0.as_ref().target().and_then(|target| {
+                target
+                    .dyn_ref::<web_sys::HtmlInputElement>()
+                    .map(JsCast::unchecked_ref::<WithValue>)
+                    .or_else(|| {
+                        target
+                            .dyn_ref::<web_sys::HtmlTextAreaElement>()
+                            .map(JsCast::unchecked_ref::<WithValue>)
+                    })
+                    .map(|el| el.value().length() == 0)
             })
         }
 

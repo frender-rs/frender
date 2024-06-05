@@ -71,6 +71,10 @@ impl frender_events::event::Event for NoEvent {
         match *self {}
     }
 
+    fn target_form_control_value_is_empty(&self) -> Option<bool> {
+        match *self {}
+    }
+
     fn set_target_form_control_default_value(&self, _: &str) -> bool {
         match *self {}
     }
