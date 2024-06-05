@@ -221,11 +221,6 @@ frender_common::impl_many!(
     {
         type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;
 
-        #[cfg(feature = "render_into")]
-        fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
-            render_state.write(Self::RenderState::<Renderer>::initialize_with_str(self, renderer))
-        }
-
         fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
             self,
             _: &mut PEH,

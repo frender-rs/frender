@@ -29,20 +29,6 @@ macro_rules! unpinned_update_option {
 impl<E: Element> Element for Option<E> {
     type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E::RenderState<PEH, R>;
 
-    #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(
-        //
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>,
-    ) -> Pin<&'s mut Self::RenderState<PEH, Renderer>> {
-        match self {
-            Some(this) => Some(this.render_into(renderer)),
-            None => render_state.write(None),
-        }
-    }
-
     fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
         //
         self,

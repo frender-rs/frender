@@ -216,9 +216,6 @@ macro_rules! doc_elements_all {
 pub trait Element: frender_ssr::SsrElement {
     type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized>: RenderState<PEH, R> + Default;
 
-    #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(self, renderer: &mut Renderer, render_state: PinMutMaybeUninit<'s, Self::RenderState<Renderer>>) -> Pin<&'s mut Self::RenderState<Renderer>>;
-
     fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
         //
         self,

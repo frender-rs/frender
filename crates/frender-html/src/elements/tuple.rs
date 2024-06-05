@@ -5,16 +5,6 @@ use crate::{Element, RenderHtml};
 impl Element for () {
     type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = ();
 
-    #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>,
-    ) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
-        render_state.write(())
-    }
-
     fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>, _: bool) {}
 
     fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
@@ -34,16 +24,6 @@ impl Element for () {
 
 impl<E0: Element> Element for (E0,) {
     type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E0::RenderState<PEH, R>;
-
-    #[cfg(feature = "render_into")]
-    fn render_into<'s, Renderer: RenderHtml>(
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>,
-    ) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
-        self.0.render_into(peh, renderer, render_state)
-    }
 
     fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
         self,
@@ -95,23 +75,6 @@ macro_rules! impl_render_for_tuple {
         $(
             impl<$($field: Element),+> Element for ($($field,)+) {
                 type RenderState<PEH: ?Sized, R: RenderHtml+?Sized> = ($($field::RenderState<PEH, R>,)+);
-
-                #[cfg(feature = "render_into")]
-                fn render_into<'s, Renderer: RenderHtml>(
-                    self,
-                    peh: &mut PEH,
-                    renderer: &mut Renderer,
-                    render_state: PinMutMaybeUninit<'s, Self::RenderState<PEH, Renderer>>,
-                ) -> std::pin::Pin<&'s mut Self::RenderState<PEH, Renderer>> {
-                    let ($($field,)+) = self;
-
-                    crate::pin_mut_maybe_uninit::PinMutInitializeWith::pin_mut_initialize_with(
-                        render_state,
-                        ($(
-                            |render_state| $field::render_into($field, peh, renderer, render_state)
-                        ,)+)
-                    )
-                }
 
                 fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
                     self,
