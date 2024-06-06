@@ -114,7 +114,9 @@ fn current_date_string() -> String {
     js_sys::Date::new_0().to_string().into()
 }
 
+mod option;
+
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
-    (input(), script(), style(), textarea())
+    (input(), script(), style(), textarea(), option::main())
 }
