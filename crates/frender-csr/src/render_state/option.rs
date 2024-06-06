@@ -14,8 +14,8 @@ impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>> RenderState<PEH, R> for Opt
         self.set(None)
     }
 
-    fn state_unmount(mut self: std::pin::Pin<&mut Self>) {
-        let _ = self.as_mut().as_pin_mut().map(S::state_unmount);
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        let _ = self.as_pin_mut().map(S::state_unmount);
     }
 
     fn poll_render(
