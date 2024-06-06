@@ -213,13 +213,13 @@ mod imp {
     ) {
         let ElementAndMounted { element, mounted } = element_and_mounted;
 
-        web_sys::console::log_5(
-            &"intrinsic::update_element_maybe_reposition".into(),
-            &"mounted=".into(),
-            &(*mounted).into(),
-            &"force_reposition=".into(),
-            &force_reposition.into(),
-        );
+        // web_sys::console::log_5(
+        //     &"intrinsic::update_element_maybe_reposition".into(),
+        //     &"mounted=".into(),
+        //     &(*mounted).into(),
+        //     &"force_reposition=".into(),
+        //     &force_reposition.into(),
+        // );
 
         if *mounted && !force_reposition {
             // element.move_cursor_after_self(renderer);
