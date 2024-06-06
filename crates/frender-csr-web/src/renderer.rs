@@ -190,7 +190,7 @@ impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
                     // web_sys::console::log_2(&"InsertAfter".into(), pre);
 
                     pre.parent_node()
-                        .unwrap()
+                        .expect_throw("the previous node should have a parent node")
                         .insert_before(node, pre.next_sibling().as_ref())
                         .unwrap_throw();
                 }
