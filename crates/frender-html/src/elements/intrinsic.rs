@@ -59,10 +59,10 @@ mod imp {
 
         fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let this = self.project();
-            let element = if let Some(v) = this.element_and_mounted {
-                &mut v.element
-            } else {
-                return std::task::Poll::Ready(());
+
+            let element = match this.element_and_mounted {
+                Some(v) if v.mounted => &mut v.element,
+                _ => return std::task::Poll::Ready(()),
             };
 
             element.move_cursor_at_the_first_child_of_self(renderer);
@@ -212,6 +212,14 @@ mod imp {
         force_reposition: bool,
     ) {
         let ElementAndMounted { element, mounted } = element_and_mounted;
+
+        web_sys::console::log_5(
+            &"intrinsic::update_element_maybe_reposition".into(),
+            &"mounted=".into(),
+            &(*mounted).into(),
+            &"force_reposition=".into(),
+            &force_reposition.into(),
+        );
 
         if *mounted && !force_reposition {
             // element.move_cursor_after_self(renderer);
