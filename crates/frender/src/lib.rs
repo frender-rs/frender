@@ -42,6 +42,10 @@ pub use frender_events::event;
 #[cfg(feature = "bg")]
 pub use bg;
 
+pub use frender_render_with::{
+    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, RenderWith,
+};
+
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
 

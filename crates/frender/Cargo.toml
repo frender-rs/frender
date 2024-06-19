@@ -25,6 +25,7 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
+frender-render-with = { version = "0.1.0", path = "../frender-render-with" }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"

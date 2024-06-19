@@ -869,6 +869,7 @@ dependencies = [
  "frender-html",
  "frender-html-common",
  "frender-macros",
+ "frender-render-with",
  "frender-ssr",
  "futures-lite 2.3.0",
  "hooks",
@@ -1049,6 +1050,15 @@ dependencies = [
 [[package]]
 name = "frender-pin-utils"
 version = "0.1.0"
+
+[[package]]
+name = "frender-render-with"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "frender-html",
+ "frender-ssr",
+]
 
 [[package]]
 name = "frender-ssr"
