@@ -25,7 +25,7 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
-frender-render-with = { version = "0.1.0", path = "../frender-render-with" }
+frender-render-with = { version = "0.1.0", path = "../frender-render-with", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -45,7 +45,13 @@ futures-lite = "2.0.1"
 wasm-bindgen-test = "0.3.13"
 
 [features]
-default = ["html-components", "either", "hooks"]
+default = [
+    #
+    "html-components",
+    "either",
+    "hooks",
+    "RenderWith",
+]
 html = ["frender-html", "csr"]
 html-components = ["html"]
 either = [
@@ -58,3 +64,4 @@ web = ["frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
 ssr = [] # TODO: remove ssr feature
 csr = ["ssr", "frender-csr"]
+RenderWith = ["dep:frender-render-with"]
