@@ -1,6 +1,6 @@
 use either::Either;
 use frender::prelude::*;
-use hooks::ShareValue;
+use hooks::{ShareValue, Signal, SignalHook};
 
 struct Data {
     cur: u32,
@@ -71,62 +71,58 @@ impl Data {
 
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
-    let data = hooks::use_shared_signal_with(Data::new);
+    // data's updates are not reactive here
+    let data = hooks::use_mut_with(|| hooks::GenSignalHook::new(Data::new())).to_signal();
+
+    // let data = hooks::use_gen_signal_with(Data::new); // data's updates are reactive here
 
     (
         cs::div.children((
             cs::button
-                .on_click({
-                    let data = data.clone();
-                    move |_: &_| data.map_mut(Data::prepend)
-                })
+                .on_click(move |_: &_| data.map_mut(Data::prepend))
                 .children("Prepend"),
             cs::button
-                .on_click({
-                    let data = data.clone();
-                    move |_: &_| data.map_mut(Data::append)
-                })
+                .on_click(move |_: &_| data.map_mut(Data::append))
                 .children("Append"),
             cs::button
-                .on_click({
-                    let data = data.clone();
-                    move |_: &_| data.map_mut(Data::clear)
-                })
+                .on_click(move |_: &_| data.map_mut(Data::clear))
                 .children("Clear"),
             cs::button
-                .on_click({
-                    let data = data.clone();
-                    move |_: &_| data.map_mut(Data::swap)
-                })
+                .on_click(move |_: &_| data.map_mut(Data::swap))
                 .children("Swap"),
         )),
-        cs::pre.children((
-            cs::code.children(("Item count = ", { data.map(|data| data.items.len()) })),
-            "\n",
-            cs::code.children(("Next Index = ", { data.map(|data| data.cur) })),
-            "\n",
-            cs::code.children({
-                data.map(|data| {
-                    data.selected_index
-                        .map_or(Either::Left("No Selection"), |idx| {
-                            Either::Right((
-                                "Selected   = ",
-                                data.items[idx],
-                                " (index = ",
-                                { idx },
-                                ")",
-                            ))
-                        })
-                })
-            }),
-        )),
+        cs::pre.children(component_fn!(move || {
+            h![data.use_signal()];
+
+            (
+                cs::code.children(("Item count = ", { data.map(|data| data.items.len()) })),
+                "\n",
+                cs::code.children(("Next Index = ", { data.map(|data| data.cur) })),
+                "\n",
+                cs::code.children({
+                    data.map(|data| {
+                        data.selected_index
+                            .map_or(Either::Left("No Selection"), |idx| {
+                                Either::Right((
+                                    "Selected   = ",
+                                    data.items[idx],
+                                    " (index = ",
+                                    { idx },
+                                    ")",
+                                ))
+                            })
+                    })
+                }),
+            )
+        })),
         cs::table.children(cs::tbody.children((
             cs::tr.children((
                 cs::th.children("Index"),
                 cs::th.children("Value"),
                 cs::th.children("Actions"),
             )),
-            {
+            component_fn!(move || {
+                h![data.use_signal()];
                 data.map(
                     |Data {
                          items,
@@ -152,18 +148,14 @@ fn Main() {
                                             cs::td.children(value),
                                             cs::td.children((
                                                 cs::button
-                                                    .on_click({
-                                                        let data = data.clone();
-                                                        move |_: &_| {
-                                                            data.map_mut(|data| {
-                                                                if data.selected_index == Some(idx)
-                                                                {
-                                                                    data.selected_index = None
-                                                                } else {
-                                                                    data.selected_index = Some(idx)
-                                                                }
-                                                            })
-                                                        }
+                                                    .on_click(move |_: &_| {
+                                                        data.map_mut(|data| {
+                                                            if data.selected_index == Some(idx) {
+                                                                data.selected_index = None
+                                                            } else {
+                                                                data.selected_index = Some(idx)
+                                                            }
+                                                        })
                                                     })
                                                     .children(if selected {
                                                         "Unselect"
@@ -171,13 +163,10 @@ fn Main() {
                                                         "Select"
                                                     }),
                                                 cs::button
-                                                    .on_click({
-                                                        let data = data.clone();
-                                                        move |_: &_| {
-                                                            data.map_mut(|data: &mut Data| {
-                                                                data.remove(idx)
-                                                            })
-                                                        }
+                                                    .on_click(move |_: &_| {
+                                                        data.map_mut(|data: &mut Data| {
+                                                            data.remove(idx)
+                                                        })
                                                     })
                                                     .children("Remove"),
                                             )),
@@ -187,7 +176,7 @@ fn Main() {
                             .collect::<Vec<_>>()
                     },
                 )
-            },
+            }),
         ))),
     )
 }
