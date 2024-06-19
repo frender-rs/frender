@@ -64,6 +64,11 @@ pub struct Game {
     step_number: usize,
 }
 
+pub enum GameAction {
+    Click(usize),
+    JumpTo(usize),
+}
+
 impl Game {
     pub fn new() -> Self {
         let mut history = Vec::with_capacity(9);
@@ -131,5 +136,12 @@ impl Game {
         }
         self.step_number = i;
         true
+    }
+
+    pub fn reduce(&mut self, action: GameAction) -> bool {
+        match action {
+            GameAction::Click(i) => self.click(i),
+            GameAction::JumpTo(i) => self.jump_to(i),
+        }
     }
 }

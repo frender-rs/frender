@@ -21,7 +21,7 @@ impl MyCounter {
     #[component]
     pub fn into_element(self) {
         let initial_value: u32 = self.initial_value.unwrap_or(0);
-        let shared_state = hooks::use_shared_state(initial_value);
+        let shared_state = hooks::use_shared_signal(initial_value);
 
         let on_increment = {
             let shared_state = shared_state.clone();

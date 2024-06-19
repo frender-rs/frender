@@ -4,7 +4,7 @@ use hooks::prelude::*;
 #[component]
 pub fn main() {
     // non-reactive
-    let state = hooks::use_mut_with(|| hooks::shared_state::SharedState::new(false));
+    let state = hooks::use_mut_with(|| hooks::SharedSignal::new(false));
 
     cs::div.children((
         cs::button
@@ -14,7 +14,7 @@ pub fn main() {
             let state = state.clone();
             component_fn!(move || {
                 // make this element reactive over state
-                h![state.use_reused()];
+                h![state.use_signal()];
                 state.get().then_some(cs::div.children("a"))
             })
         },

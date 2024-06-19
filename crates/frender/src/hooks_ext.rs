@@ -1,4 +1,4 @@
-use hooks::ShareValue;
+use hooks::{ShareValue, Signal, ToOwnedShareValue, ToOwnedSignal};
 
 pub mod setter {
     use std::borrow::Cow;
@@ -52,7 +52,7 @@ pub mod setter {
 
 pub mod state {
     use frender_html::RenderState;
-    use hooks::{Hook, HookValue, ShareValue};
+    use hooks::{ShareValue, SignalHook};
 
     /// See [`RenderState`] for meaning of `PEH`.
     pub trait UpdateElementWithSharedValue<PEH: ?Sized, R: ?Sized, V: ?Sized> {
@@ -75,10 +75,11 @@ pub mod state {
     );
 
     impl<
-            U: UpdateElementWithSharedValue<PEH, R, <S as ShareValue>::Value>,
+            S: SignalHook<SignalShareValue = Val>,
+            Val,
+            U: UpdateElementWithSharedValue<PEH, R, <S as SignalHook>::SignalShareValue>,
             PEH: ?Sized,
             R: ?Sized,
-            S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S>,
         > RenderState<PEH, R> for State<S, U>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
@@ -133,7 +134,7 @@ pub mod form_control {
         },
         InputValue, InputValueKind,
     };
-    use hooks::{Hook, HookValue, ShareValue};
+    use hooks::{ShareValue, Signal};
 
     #[derive(Debug, Clone, Copy)]
     pub struct ControlledSharedValue<S>(pub S);
@@ -192,8 +193,9 @@ pub mod form_control {
 
     impl<S, Val, VK> InputValue for ControlledSharedValue<S>
     where
-        S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
-        S: ShareValue<Value = Val>,
+        // S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
+        S: Signal<Value = Val> + 'static,
+        S::SignalHook: Unpin,
         Val: FromFormControlValue<VK> + Borrow<VK>,
         Val: PrimarilyBorrow<Borrowed = VK>,
         VK: ?Sized + FormControlValueKind,
@@ -237,14 +239,17 @@ pub mod form_control {
     impl<S, Val, VK> FormControlValue<VK> for ControlledSharedValue<S>
     where
         VK: ?Sized + FormControlValueKind,
-        S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
-        S: ShareValue<Value = Val>,
+        S: Signal<Value = Val> + 'static,
+        S::SignalHook: Unpin,
         Val: FromFormControlValue<VK> + Borrow<VK>,
     {
         type State<
             E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
-        > = CompoundState<Option<ReactiveState<S, VK>>, E::OnValueChangeEventListener<Self>>;
+        > = CompoundState<
+            Option<ReactiveState<S::SignalHook, VK>>,
+            E::OnValueChangeEventListener<Self>,
+        >;
 
         fn update_with_state<
             E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
@@ -260,7 +265,7 @@ pub mod form_control {
                 non_reactive: event_listener,
             } = state;
             if let Some(state) = state {
-                if state.inner.equivalent_to(&this.0) {
+                if this.0.is_signal_of(&state.inner) {
                     return;
                 }
             }
@@ -275,32 +280,11 @@ pub mod form_control {
             });
 
             *state = Some(ReactiveState {
-                inner: this.0.clone(),
+                inner: this.0.to_signal_hook(),
                 update: UpdateFormControlElement::new(),
             });
 
             element.on_value_change(renderer, event_listener, this)
-        }
-    }
-}
-
-pub mod eq {
-    use hooks::ShareValue;
-
-    #[derive(Debug, Clone, Copy)]
-    pub struct EquivalentShareValue<S: ShareValue>(pub S);
-
-    impl<S: ShareValue> PartialEq for EquivalentShareValue<S> {
-        fn eq(&self, other: &Self) -> bool {
-            self.0.equivalent_to(&other.0)
-        }
-    }
-
-    impl<S: ShareValue> std::ops::Deref for EquivalentShareValue<S> {
-        type Target = S;
-
-        fn deref(&self) -> &Self::Target {
-            &self.0
         }
     }
 }
@@ -310,7 +294,7 @@ pub mod element {
 
     use frender_common::PrimarilyBorrow;
     use frender_html::{dom::render::RenderAsText, elements::str::TextNode, RenderHtml};
-    use hooks::{Hook, HookValue, ShareValue};
+    use hooks::{ShareValue, Signal};
 
     #[derive(Debug, Clone, Copy)]
     pub struct SharedStateToElement<S: ShareValue>(pub S);
@@ -355,15 +339,15 @@ pub mod element {
 
     pub type State<S, TextNode> = super::state::State<S, UpdateTextNode<TextNode>>;
 
-    impl<S: ShareValue, V: ?Sized> frender_html::Element for SharedStateToElement<S>
+    impl<S: Signal, V: ?Sized> frender_html::Element for SharedStateToElement<S>
     where
-        S: ShareValue + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
+        S::SignalHook: Unpin,
         <S as ShareValue>::Value: PrimarilyBorrow<Borrowed = V> + Borrow<V>,
         V: frender_ssr::ToSsrElement,
         V: RenderAsText,
     {
         type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
-            Option<State<S, R::Text>>;
+            Option<State<S::SignalHook, R::Text>>;
 
         fn render_update_maybe_reposition<
             PEH: ?Sized,
@@ -380,7 +364,7 @@ pub mod element {
 
             match render_state {
                 Some(render_state) => {
-                    if !render_state.inner.equivalent_to(&self.0) {
+                    if !self.0.is_signal_of(&render_state.inner) {
                         self.0.map(|value| {
                             value.borrow().render_as_text_update(
                                 renderer,
@@ -403,7 +387,7 @@ pub mod element {
                                 TextNode::mount(renderer, node)
                             },
                         },
-                        inner: self.0,
+                        inner: self.0.to_signal_hook(),
                     });
                 }
             }
@@ -437,6 +421,12 @@ pub mod callback {
     }
 }
 
+/// `to_*` methods require [`ToOwnedShareValue`] instead of [`Clone`], so that:
+///  - for [`&SharedSignal`](hooks::SharedSignal), the value is cloned as expected
+///  - for [`SignalEq<&SharedSignal>`](hooks::SignalEq), the inner value is cloned,
+///    so the value becomes `SignalEq<SharedSignal>`
+///    (rather than the reference is copied)
+///  - for `GenSignal` and `SignalEq<GenSignal>`, the value is copied
 pub trait ShareValueExt: ShareValue {
     fn into_controlled(self) -> form_control::ControlledSharedValue<Self>
     where
@@ -445,18 +435,11 @@ pub trait ShareValueExt: ShareValue {
         form_control::ControlledSharedValue(self)
     }
 
-    fn to_eq(&self) -> eq::EquivalentShareValue<Self>
+    fn to_controlled(&self) -> form_control::ControlledSharedValue<Self::OwnedShareValue>
     where
-        Self: Sized + Clone,
+        Self: ToOwnedShareValue,
     {
-        eq::EquivalentShareValue(Self::clone(self))
-    }
-
-    fn into_eq(self) -> eq::EquivalentShareValue<Self>
-    where
-        Self: Sized,
-    {
-        eq::EquivalentShareValue(self)
+        self.to_owned_share_value().into_controlled()
     }
 
     fn into_set_form_control_value(self) -> setter::SetEventTargetFormControlValue<Self>
@@ -467,19 +450,28 @@ pub trait ShareValueExt: ShareValue {
         setter::SetEventTargetFormControlValue(self)
     }
 
-    fn to_set_form_control_value(&self) -> setter::SetEventTargetFormControlValue<Self>
+    fn to_set_form_control_value(
+        &self,
+    ) -> setter::SetEventTargetFormControlValue<Self::OwnedShareValue>
     where
-        Self: Sized + Clone,
-        for<'a> std::borrow::Cow<'a, str>: Into<Self::Value>,
+        Self: ToOwnedShareValue,
+        for<'a> std::borrow::Cow<'a, str>: Into<Self::Value>, // TODO: better constraints
     {
-        self.clone().into_set_form_control_value()
+        self.to_owned_share_value().into_set_form_control_value()
     }
 
-    fn to_element(&self) -> element::SharedStateToElement<Self>
+    fn into_element(self) -> element::SharedStateToElement<Self>
     where
-        Self: Sized + Clone,
+        Self: Sized,
     {
-        element::SharedStateToElement(self.clone())
+        element::SharedStateToElement(self)
+    }
+
+    fn to_element(&self) -> element::SharedStateToElement<Self::OwnedShareValue>
+    where
+        Self: Sized + ToOwnedShareValue,
+    {
+        self.to_owned_share_value().into_element()
     }
 
     fn into_callback_toggle(self) -> callback::Toggle<Self>
@@ -489,11 +481,11 @@ pub trait ShareValueExt: ShareValue {
         callback::Toggle(self)
     }
 
-    fn to_callback_toggle(&self) -> callback::Toggle<Self>
+    fn to_callback_toggle(&self) -> callback::Toggle<Self::OwnedShareValue>
     where
-        Self: Sized + ShareValue<Value = bool> + Clone,
+        Self: ShareValue<Value = bool> + ToOwnedShareValue,
     {
-        self.clone().into_callback_toggle()
+        self.to_owned_share_value().into_callback_toggle()
     }
 }
 

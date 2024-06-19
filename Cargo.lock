@@ -1670,24 +1670,33 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hooks"
-version = "3.0.0-alpha.4"
+version = "3.0.0-alpha.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "604e74c19fcfae6fd50f6e0fa999740f4fafb461c6bb86703b634768749f9e27"
+checksum = "88c17cefad8765ef04e722706607fca15c67548fb961667a788cc4ff42b52776"
 dependencies = [
  "hooks-core",
+ "hooks-gen",
  "pin-project-lite",
- "smallvec",
 ]
 
 [[package]]
 name = "hooks-core"
-version = "3.0.0-alpha.1"
+version = "3.0.0-alpha.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5058bef43f3530887898e8e5475313e3be764533ff5e07d937c43e41e904f688"
+checksum = "94f1fcfaec5835dfab93d752f50ee53b57f8ac6bbf91eeb8670afbc78bcb76b5"
 dependencies = [
  "futures-core",
  "pin-project-lite",
  "syn-lite",
+]
+
+[[package]]
+name = "hooks-gen"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3371136019c917ecf198c738eac42bd1e9698c2aeb85ff307f85c955a29a26a5"
+dependencies = [
+ "slab",
 ]
 
 [[package]]
@@ -2321,9 +2330,9 @@ dependencies = [
 
 [[package]]
 name = "pin-project-lite"
-version = "0.2.13"
+version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8afb450f006bf6385ca15ef45d71d2288452bc3683ce2e2cacc0d18e4be60b58"
+checksum = "bda66fc9667c18cb2758a2ac84d1167245054bcf85d5d1aaa6923f45801bdd02"
 
 [[package]]
 name = "pin-utils"
@@ -2834,9 +2843,9 @@ checksum = "7bd3e3206899af3f8b12af284fafc038cc1dc2b41d1b89dd17297221c5d225de"
 
 [[package]]
 name = "slab"
-version = "0.4.8"
+version = "0.4.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6528351c9bc8ab22353f9d776db39a20288e8d6c37ef8cfe3317cf875eecfc2d"
+checksum = "8f92a496fb766b417c996b9c5e57daf2f7ad3b0bebe1ccfca4856390e3d3bb67"
 dependencies = [
  "autocfg",
 ]

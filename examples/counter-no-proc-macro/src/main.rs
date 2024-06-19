@@ -4,7 +4,7 @@ use hooks::prelude::*;
 component_fn!(
     #[inline]
     fn Counter(initial_value: u32) {
-        let state = h!(use_shared_state(initial_value));
+        let state = h!(use_shared_signal(initial_value));
 
         let increment = {
             let state = state.clone();
@@ -45,8 +45,9 @@ component_fn!(
             initial_interval = 1000;
         }
 
-        let (state, state_updater) = h![hooks::use_state(0usize)];
-        let (stopped, stopped_setter) = h![hooks::use_state(false)];
+        let (state, state_updater) =
+            h![hooks::use_shared_call(0usize, |v| *v = v.saturating_add(1))];
+        let (stopped, stopped_setter) = h![hooks::use_shared_toggle(false)];
 
         let stopped = *stopped;
 
@@ -60,7 +61,7 @@ component_fn!(
                 } else {
                     let interval =
                         gloo::timers::callback::Interval::new(initial_interval, move || {
-                            state_updater.replace_with_fn_pointer(|v| v.overflowing_add(1).0)
+                            state_updater.call()
                         });
 
                     // return a cleanup function which will clear the interval
@@ -75,7 +76,7 @@ component_fn!(
         let toggle_stopped = {
             let stopped_setter = stopped_setter.clone();
 
-            move |_: &_| stopped_setter.replace_with_fn_pointer(|v| !*v)
+            move |_: &_| stopped_setter.toggle()
         };
 
         cs::div.children((

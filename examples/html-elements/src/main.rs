@@ -2,15 +2,14 @@ use frender::{
     html::form_control::value::UncontrolledWithDefaultValue, prelude::*,
     ScriptInnerTextWronglyEncoded,
 };
-use hooks::ShareValue;
+use hooks::{IntoEq, ShareValue, ToOwnedShareValue};
 
 fn input() -> impl Element {
     component_fn!(move || {
-        let state_text = h![hooks::use_shared_state_eq_with(
-            || "default value".to_string()
-        )];
+        let state_text =
+            h![hooks::use_shared_signal_with(|| "default value".to_string())].into_eq();
 
-        let checked = h![hooks::use_shared_state_eq(false)];
+        let checked = h![hooks::use_shared_signal(false)].into_eq();
 
         elements!(
             cs::code.children(r##"input.type_("text")"##),
@@ -30,19 +29,19 @@ fn input() -> impl Element {
             cs::input.value(UncontrolledWithDefaultValue(state_text.get_cloned())),
             cs::br,
             "Controlled with a shared state",
-            cs::input.value(state_text.clone().into_controlled()),
+            cs::input.value(state_text.to_controlled()),
             "Controlled checkbox with a shared state",
             cs::input
                 .r#type("checkbox")
                 .value(state_text.get_cloned())
-                .checked(checked.clone().into_controlled()),
+                .checked(checked.to_controlled()),
             "Uncontrolled, but update state on input",
             cs::input.on_input(state_text.to_set_form_control_value()),
             "Uncontrolled, but update state on change",
             cs::input.on_change(state_text.to_set_form_control_value()),
             cs::button
                 .on_click({
-                    let state_text = state_text.clone();
+                    let state_text = state_text.to_owned_share_value();
                     move |_: &_| state_text.set(current_date_string().into())
                 })
                 .children("Set state to current date string"),
@@ -76,7 +75,7 @@ color: blue;
 
 #[component]
 fn textarea() {
-    let state_text = hooks::use_shared_state_eq_with(|| "default value".to_string());
+    let state_text = hooks::use_shared_signal_with(|| "default value".to_string()).into_eq();
 
     elements!(
         // "One way binding (thus readonly)",
@@ -88,9 +87,9 @@ fn textarea() {
         //     move |v| {}
         // })),
         "Controlled with a shared state",
-        cs::textarea.value(state_text.clone().into_controlled()),
+        cs::textarea.value(state_text.to_controlled()),
         "Controlled with a shared state",
-        cs::textarea.value(state_text.clone().into_controlled()),
+        cs::textarea.value(state_text.to_controlled()),
         "Uncontrolled",
         cs::textarea,
         "Uncontrolled with default value (implicitly)",
@@ -103,7 +102,7 @@ fn textarea() {
         cs::textarea.on_change(state_text.to_set_form_control_value()),
         cs::button
             .on_click({
-                let state_text = state_text.clone();
+                let state_text = state_text.to_owned_share_value();
                 move |_: &_| state_text.set(current_date_string().into())
             })
             .children("Set state to current date string"),

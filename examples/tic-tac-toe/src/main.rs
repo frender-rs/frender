@@ -70,7 +70,8 @@ impl<OnClick: Fn(usize) + Clone + 'static> Board<OnClick> {
 
 #[component]
 fn Game() {
-    let (state, state_setter) = hooks::use_state_with(data::Game::new);
+    let (state, state_setter) =
+        hooks::use_shared_reduce_with(|| (data::Game::new(), data::Game::reduce));
 
     let current = state.current();
     let winner = current.calculate_winner();
@@ -82,20 +83,12 @@ fn Game() {
 
     let on_click = {
         let state_setter = state_setter.clone();
-        move |i| {
-            state_setter.mutate_with_fn_box(move |game| {
-                game.click(i);
-            })
-        }
+        move |i| state_setter.dispatch(data::GameAction::Click(i))
     };
 
     let jump_to = {
         let state_setter = state_setter.clone();
-        move |i| {
-            state_setter.mutate_with_fn_box(move |game| {
-                game.jump_to(i);
-            })
-        }
+        move |i| state_setter.dispatch(data::GameAction::JumpTo(i))
     };
 
     let moves = (0..state.full_history().len())

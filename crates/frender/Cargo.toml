@@ -18,7 +18,7 @@ pin-project-lite = "0.2.9"
 lazy-pinned = "0.1.0"
 either = { version = "1.8.1", default-features = false, optional = true }
 hooks = { version = "3.0.0-alpha", default-features = false, features = [
-    "ShareValue",
+    "Signal",
 ], optional = true }
 frender-events = { version = "0.1.0", path = "../frender-events" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
