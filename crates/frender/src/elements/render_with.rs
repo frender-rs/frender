@@ -3,43 +3,6 @@ use std::{any::Any, marker::PhantomData, pin::Pin};
 use frender_csr::RenderState;
 use frender_html::{impl_unpinned_render_for_unpin, Element, RenderHtml};
 use frender_ssr::SsrElement;
-use hooks::ShareValue;
-
-/// This struct is always `'static`.
-///
-/// ```
-/// # use frender::{TempStr, elements::render_with::ElementKind};
-/// fn test<'a>(a: TempStr<&'a str>) -> impl 'static + Sized {
-///     ElementKind::of_val(&a)
-/// }
-/// # let s = String::new();
-/// # test(TempStr(&s));
-///
-/// trait IsStatic: 'static {}
-/// impl<S: ?Sized + 'static> IsStatic for S {}
-///
-/// const _: &'static dyn IsStatic = &{
-///     let mut s = [0u8; 5];
-///     s = *b"hello";
-///
-///     let s = match std::str::from_utf8(&s) {
-///         Ok(v) => v,
-///         Err(_) => panic!(),
-///     };
-///     let element_kind = ElementKind::of_val(&TempStr(s));
-///     element_kind
-/// };
-/// ```
-pub struct ElementKind<E: Element + ?Sized>(PhantomData<fn(PhantomData<E>)>);
-
-impl<E: Element + ?Sized> ElementKind<E> {
-    pub const fn of() -> Self {
-        Self(PhantomData)
-    }
-    pub const fn of_val(_: &E) -> Self {
-        Self::of()
-    }
-}
 
 pub trait AnyRenderState<PEH: ?Sized, Renderer: ?Sized>:
     RenderState<PEH, Renderer> + Unpin
@@ -143,7 +106,7 @@ impl<'a, PEH: ?Sized, Renderer: ?Sized + RenderHtml> CsrRenderContext<'a, PEH, R
 /// ```
 pub struct Rendered<'a, S: 'static>(PhantomData<&'a mut ()>, PhantomData<S>);
 
-pub struct RenderWith<F>(F);
+pub struct RenderWith<F>(pub F);
 
 impl<F> SsrElement for RenderWith<F> {
     type HtmlChildren = async_str_iter::empty::Empty;
@@ -153,12 +116,12 @@ impl<F> SsrElement for RenderWith<F> {
     }
 }
 
-pub trait DefaultDynRenderState<PEH: ?Sized, Renderer: ?Sized>:
+pub trait DefaultAnyRenderState<PEH: ?Sized, Renderer: ?Sized>:
     'static + Default + AnyRenderState<PEH, Renderer>
 {
 }
 
-impl<PEH: ?Sized, Renderer: ?Sized, S> DefaultDynRenderState<PEH, Renderer> for S where
+impl<PEH: ?Sized, Renderer: ?Sized, S> DefaultAnyRenderState<PEH, Renderer> for S where
     S: 'static + Default + AnyRenderState<PEH, Renderer>
 {
 }
@@ -170,7 +133,7 @@ pub trait FnOnceRenderWithContext {
     fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
         ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultDynRenderState<PEH, Renderer>>;
+    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>>;
 }
 
 impl<F: FnOnceRenderWithContext> Element for RenderWith<F> {
@@ -195,7 +158,7 @@ impl<F: FnOnceRenderWithContext> Element for RenderWith<F> {
         fn default_pin_box_dyn_render_state_with_phantom_hint<
             PEH: ?Sized,
             Renderer: ?Sized,
-            T: DefaultDynRenderState<PEH, Renderer>,
+            T: DefaultAnyRenderState<PEH, Renderer>,
         >(
             _: PhantomData<T>,
         ) -> Pin<Box<dyn 'static + AnyRenderState<PEH, Renderer>>> {
@@ -235,7 +198,7 @@ mod tests {
     use frender_html::{Element, RenderHtml};
     use hooks::ShareValue;
 
-    use super::{CsrRenderContext, DefaultDynRenderState, FnOnceRenderWithContext, Rendered};
+    use super::{CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, Rendered};
 
     struct Test {
         numbers: Vec<i32>,
@@ -245,7 +208,7 @@ mod tests {
         fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
             self,
             ctx: CsrRenderContext<'r, PEH, Renderer>,
-        ) -> Rendered<'r, impl DefaultDynRenderState<PEH, Renderer>> {
+        ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
             use crate::prelude::*;
             use crate::TempStr;
             ctx.render((
@@ -263,7 +226,7 @@ mod tests {
         fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
             self,
             ctx: CsrRenderContext<'r, PEH, Renderer>,
-        ) -> Rendered<'r, impl DefaultDynRenderState<PEH, Renderer>> {
+        ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
             self.0.map(|s| ctx.render(TempStr(s.as_str())))
         }
     }
@@ -273,7 +236,7 @@ mod tests {
         fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
             self,
             ctx: CsrRenderContext<'r, PEH, Renderer>,
-        ) -> Rendered<'r, impl DefaultDynRenderState<PEH, Renderer>> {
+        ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
             let numbers = self.0.borrow();
 
             ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n))))
@@ -286,7 +249,7 @@ mod tests {
         fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
             self,
             ctx: CsrRenderContext<'r, PEH, Renderer>,
-        ) -> Rendered<'r, impl DefaultDynRenderState<PEH, Renderer>> {
+        ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
             self.0
                 .map(|numbers| ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n)))))
         }
