@@ -654,7 +654,7 @@ macro_rules! RenderHtml {
     ) => {
         $($($(
             #[allow(non_camel_case_types)]
-            type $tags: self::behaviors::$trait_name<Self>;
+            type $tags: self::behaviors::$trait_name<Self> + 'static;
             fn $tags(&mut self) -> Self::$tags;
         )*)?)?
     };
