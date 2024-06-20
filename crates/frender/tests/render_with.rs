@@ -5,59 +5,62 @@ use frender_common::TempStr;
 use frender_html::RenderHtml;
 use hooks::ShareValue;
 
-use frender_render_with::{
-    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, Rendered,
+use frender::{
+    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
+    Rendered,
 };
 
 struct Test {
     numbers: Vec<i32>,
 }
 
-impl FnOnceRenderWithContext for Test {
-    fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
+impl IntoFnOnceRenderWithContext for Test {
+    fn into_fn_once_render_with_context<PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
-        ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
-        ctx.render((
-            cs::button
-                .children(TempStr(&*String::new()))
-                .on_click(|_: &_| {}),
-            Elements(self.numbers.iter().map(|i| Keyed(*i, *i))),
-        ))
+    ) -> impl FnOnceRenderWithContext<PEH, Renderer> {
+        move |ctx| {
+            ctx.render((
+                cs::button
+                    .children(TempStr(&*String::new()))
+                    .on_click(|_: &_| {}),
+                Elements(self.numbers.iter().map(|i| Keyed(*i, *i))),
+            ))
+        }
     }
 }
 
 struct TestShareValue<S: ShareValue<Value = String>>(S);
 
-impl<S: ShareValue<Value = String>> FnOnceRenderWithContext for TestShareValue<S> {
-    fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
+impl<S: ShareValue<Value = String>> IntoFnOnceRenderWithContext for TestShareValue<S> {
+    fn into_fn_once_render_with_context<PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
-        ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
-        self.0.map(|s| ctx.render(TempStr(s.as_str())))
+    ) -> impl FnOnceRenderWithContext<PEH, Renderer> {
+        move |ctx| self.0.map(|s| ctx.render(TempStr(s.as_str())))
     }
 }
 
 struct TestRcRefCellElements(std::rc::Rc<RefCell<Vec<i32>>>);
-impl FnOnceRenderWithContext for TestRcRefCellElements {
-    fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
+impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
+    fn into_fn_once_render_with_context<PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
-        ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
-        let numbers = self.0.borrow();
+    ) -> impl FnOnceRenderWithContext<PEH, Renderer> {
+        move |ctx| {
+            let numbers = self.0.borrow();
 
-        ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n))))
+            ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n))))
+        }
     }
 }
 
 struct TestShareElements<S: ShareValue<Value = Vec<i32>>>(S);
 
-impl<S: ShareValue<Value = Vec<i32>>> FnOnceRenderWithContext for TestShareElements<S> {
-    fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
+impl<S: ShareValue<Value = Vec<i32>>> IntoFnOnceRenderWithContext for TestShareElements<S> {
+    fn into_fn_once_render_with_context<PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
-        ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>> {
-        self.0
-            .map(|numbers| ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n)))))
+    ) -> impl FnOnceRenderWithContext<PEH, Renderer> {
+        move |ctx| {
+            self.0
+                .map(|numbers| ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n)))))
+        }
     }
 }

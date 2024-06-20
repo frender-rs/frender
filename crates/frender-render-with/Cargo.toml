@@ -7,3 +7,6 @@ edition = "2021"
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
 frender-html = { version = "0.1.0", path = "../frender-html" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
+
+[features]
+nightly = []

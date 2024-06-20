@@ -43,7 +43,8 @@ pub use frender_events::event;
 pub use bg;
 
 pub use frender_render_with::{
-    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, RenderWith,
+    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
+    RenderWith, Rendered,
 };
 
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;

@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "nightly", feature(impl_trait_in_assoc_type))]
+
 use std::{any::Any, marker::PhantomData, pin::Pin};
 
 use frender_html::{impl_unpinned_render_for_unpin, Element, RenderHtml, RenderState};
@@ -103,10 +105,15 @@ impl<'a, PEH: ?Sized, Renderer: ?Sized + RenderHtml> CsrRenderContext<'a, PEH, R
 ///     a
 /// }
 /// ```
-pub struct Rendered<'a, S: 'static>(PhantomData<&'a mut ()>, PhantomData<S>);
+pub struct Rendered<'a, S>(PhantomData<&'a mut ()>, PhantomData<S>);
+
+impl<S> Rendered<'_, S> {
+    fn type_check(self, _: PhantomData<S>) {}
+}
 
 pub struct RenderWith<F>(pub F);
 
+// TODO: implement ssr with csr
 impl<F> SsrElement for RenderWith<F> {
     type HtmlChildren = async_str_iter::empty::Empty;
 
@@ -128,14 +135,100 @@ impl<PEH: ?Sized, Renderer: ?Sized, S> DefaultAnyRenderState<PEH, Renderer> for 
 /// This might be just
 /// `for<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml> FnMut(CsrRenderContext<'r, PEH, Renderer, dyn Any>) -> Rendered<'r, impl Any>`
 /// in the future.
-pub trait FnOnceRenderWithContext {
-    fn call_once_render_with_context<'r, PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
+pub trait IntoFnOnceRenderWithContext {
+    fn into_fn_once_render_with_context<PEH: ?Sized, Renderer: ?Sized + RenderHtml>(
         self,
-        ctx: CsrRenderContext<'r, PEH, Renderer>,
-    ) -> Rendered<'r, impl DefaultAnyRenderState<PEH, Renderer>>;
+    ) -> impl FnOnceRenderWithContext<PEH, Renderer>;
+    // TODO: `impl DefaultAnyRenderState<PEH, Renderer>` should not capture `'r`. See https://github.com/rust-lang/rust/issues/117210#issuecomment-2180030657
 }
 
-impl<F: FnOnceRenderWithContext> Element for RenderWith<F> {
+pub trait FnOnceRenderWithContext<PEH: ?Sized, Renderer: ?Sized + RenderHtml>:
+    for<'r> FnOnce(CsrRenderContext<'r, PEH, Renderer>) -> Rendered<'r, Self::OutputRenderedState>
+{
+    type OutputRenderedState: DefaultAnyRenderState<PEH, Renderer>;
+}
+
+impl<F, PEH: ?Sized, Renderer: ?Sized + RenderHtml, S> FnOnceRenderWithContext<PEH, Renderer> for F
+where
+    S: DefaultAnyRenderState<PEH, Renderer>,
+    F: for<'r> FnOnce(CsrRenderContext<'r, PEH, Renderer>) -> Rendered<'r, S>,
+{
+    type OutputRenderedState = S;
+}
+
+pub trait RenderContext<PEH: ?Sized, Renderer: ?Sized + RenderHtml> {
+    fn render<E: Element>(
+        self,
+        element: E,
+    ) -> Rendered<'static, E::UnpinnedRenderState<PEH, Renderer>>;
+}
+
+#[cfg(feature = "nightly")]
+mod nightly_impl {
+    use super::*;
+
+    pub trait NamedIntoFnOnceRenderWithContext: IntoFnOnceRenderWithContext {
+        type RenderedRenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized>: DefaultAnyRenderState<PEH, R>;
+
+        fn _named_into_fn_once_render_with_context_helper<
+            PEH: ?Sized,
+            R: frender_html::RenderHtml + ?Sized,
+        >(
+            self,
+        ) -> PhantomData<Self::RenderedRenderState<PEH, R>>;
+    }
+
+    impl<F: IntoFnOnceRenderWithContext> NamedIntoFnOnceRenderWithContext for F {
+        type RenderedRenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            impl DefaultAnyRenderState<PEH, R>;
+
+        fn _named_into_fn_once_render_with_context_helper<
+            PEH: ?Sized,
+            R: frender_html::RenderHtml + ?Sized,
+        >(
+            self,
+        ) -> PhantomData<Self::RenderedRenderState<PEH, R>> {
+            fn test<PEH: ?Sized, Renderer: ?Sized + RenderHtml, S>(
+                _: impl FnOnceRenderWithContext<PEH, Renderer, OutputRenderedState = S>,
+            ) -> PhantomData<S> {
+                PhantomData
+            }
+            test(self.into_fn_once_render_with_context())
+        }
+    }
+
+    impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
+        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+            <F as NamedIntoFnOnceRenderWithContext>::RenderedRenderState<PEH, R>;
+
+        fn render_update_maybe_reposition<
+            PEH: ?Sized,
+            Renderer: frender_html::RenderHtml + ?Sized,
+        >(
+            //
+            self,
+            parent_elements_handle: &mut PEH,
+            renderer: &mut Renderer,
+            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            force_reposition: bool,
+        ) {
+            let render_state = render_state.get_mut();
+
+            let f = self.0.into_fn_once_render_with_context();
+            f(CsrRenderContext {
+                parent_elements_handle,
+                renderer,
+                render_state: render_state as &mut (dyn 'static + Any),
+                force_reposition,
+            });
+        }
+
+        impl_unpinned_render_for_unpin! {}
+    }
+}
+
+#[cfg(not(feature = "nightly"))]
+impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
     // TODO: State should be statically typed and stacked allocated without Pin<Box<dyn __>> with [impl Trait in type aliases](https://github.com/rust-lang/rust/issues/63063)
     type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
         Option<PinBoxDynRenderState<PEH, R>>;
@@ -149,10 +242,8 @@ impl<F: FnOnceRenderWithContext> Element for RenderWith<F> {
         force_reposition: bool,
     ) {
         let state = render_state.get_mut();
-        // state.get_or_insert_with(
-        //     DefaultDynRenderState::<PEH, Renderer>::default_pin_box_dyn_render_state,
-        // );
-        let mut phantom_state = PhantomData;
+
+        let phantom_state = PhantomData;
 
         fn default_pin_box_dyn_render_state_with_phantom_hint<
             PEH: ?Sized,
@@ -173,17 +264,14 @@ impl<F: FnOnceRenderWithContext> Element for RenderWith<F> {
         let render_state = state.render_state.as_mut().get_mut();
         let render_state = render_state.upcast_mut_dyn_any();
 
-        phantom_state = self
-            .0
-            .call_once_render_with_context(CsrRenderContext {
-                parent_elements_handle,
-                renderer,
-                render_state,
-                force_reposition,
-            })
-            .1;
-
-        _ = phantom_state;
+        let f = self.0.into_fn_once_render_with_context();
+        f(CsrRenderContext {
+            parent_elements_handle,
+            renderer,
+            render_state,
+            force_reposition,
+        })
+        .type_check(phantom_state);
     }
 
     impl_unpinned_render_for_unpin! {}
