@@ -99,7 +99,7 @@ mod to_text_node {
     }
 }
 
-impl<V: ?Sized + to_text_node::ToTextNode> RenderTextFrom<Node<web_sys::Text>, V> for Renderer<'_> {
+impl<V: ?Sized + to_text_node::ToTextNode> RenderTextFrom<Node<web_sys::Text>, V> for Renderer {
     fn render_text_from(&mut self, v: &V) -> Node<web_sys::Text> {
         Node(v.to_text_node(self))
     }

@@ -55,7 +55,7 @@ crate::def_intrinsic_component_props!(
 
         #[RenderHtml]
         pub trait RenderHtml {
-            additional_bounds!(dyn RenderTextFromKnown<Self::Text>);
+            additional_bounds!(dyn 'static + RenderTextFromKnown<Self::Text>);
 
             type Text: behaviors::Node<Self> + 'static;
         }

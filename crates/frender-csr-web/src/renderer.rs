@@ -6,21 +6,21 @@ use wasm_bindgen::UnwrapThrowExt;
 mod text;
 
 #[derive(Debug, Clone)]
-enum NextNodePosition<'a> {
-    FirstChildOf(Cow<'a, web_sys::Element>),
-    InsertAfter(Cow<'a, web_sys::Node>),
+enum NextNodePosition {
+    FirstChildOf(web_sys::Element),
+    InsertAfter(web_sys::Node),
 }
 
-pub struct Renderer<'a> {
-    document: &'a web_sys::Document,
-    next_node_position: NextNodePosition<'a>,
+pub struct Renderer {
+    document: web_sys::Document,
+    next_node_position: NextNodePosition,
 }
 
-impl<'a> Renderer<'a> {
-    pub fn new(document: &'a web_sys::Document, root_parent: web_sys::Element) -> Self {
+impl Renderer {
+    pub fn new(document: web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {
             document,
-            next_node_position: NextNodePosition::FirstChildOf(Cow::Owned(root_parent)),
+            next_node_position: NextNodePosition::FirstChildOf(root_parent),
         }
     }
 }
@@ -41,7 +41,7 @@ macro_rules! html_elements {
     )*};
 }
 
-impl RenderHtml for Renderer<'_> {
+impl RenderHtml for Renderer {
     type Text = Node<web_sys::Text>;
 
     html_elements!(
@@ -159,7 +159,7 @@ impl RenderHtml for Renderer<'_> {
     );
 }
 
-impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
+impl frender_html::dom::csr::web::Renderer for Renderer {
     fn document(&self) -> Cow<web_sys::Document> {
         Cow::Borrowed(&self.document)
     }
@@ -174,7 +174,7 @@ impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
 
     fn move_cursor_after_node(&mut self, node: &web_sys::Node) {
         let node = node.clone();
-        self.next_node_position = NextNodePosition::InsertAfter(Cow::Owned(node));
+        self.next_node_position = NextNodePosition::InsertAfter(node);
     }
 
     fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
@@ -197,7 +197,7 @@ impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
             }
         }
 
-        self.next_node_position = NextNodePosition::InsertAfter(Cow::Owned(node.clone()));
+        self.next_node_position = NextNodePosition::InsertAfter(node.clone());
     }
 
     fn remove_node(&mut self, node: &web_sys::Node) {
@@ -215,6 +215,6 @@ impl<'r> frender_html::dom::csr::web::Renderer for Renderer<'r> {
     }
 
     fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element) {
-        self.next_node_position = NextNodePosition::FirstChildOf(Cow::Owned(element.clone()));
+        self.next_node_position = NextNodePosition::FirstChildOf(element.clone());
     }
 }
