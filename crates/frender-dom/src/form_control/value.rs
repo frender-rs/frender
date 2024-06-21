@@ -7,7 +7,9 @@ use std::borrow::{Borrow, Cow};
 
 use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, IntoOneStringOrEmpty};
 
-use crate::{render_state::non_reactive::NonReactiveRenderState, RenderState};
+use crate::{
+    render_state::non_reactive::NonReactiveRenderState, RenderStateWithParentElementsHandle,
+};
 
 use super::element::FormControlElement;
 
@@ -71,7 +73,9 @@ impl<VK: Copy> FromFormControlValue<VK> for VK {
 }
 
 pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default + RenderState<E, R> + Unpin;
+    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default
+        + RenderStateWithParentElementsHandle<E, R>
+        + Unpin;
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
         this: Self,
@@ -215,7 +219,7 @@ impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlVal
                 let state = match state {
                     Left(state) => state,
                     Right(old_state) => {
-                        std::pin::Pin::new(old_state).unmount(element, renderer);
+                        std::pin::Pin::new(old_state).unmount_with_peh(element, renderer);
                         *state = Left(Default::default());
                         match state {
                             Left(state) => state,
@@ -230,7 +234,7 @@ impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlVal
                 let state = match state {
                     Right(state) => state,
                     Left(old_state) => {
-                        std::pin::Pin::new(old_state).unmount(element, renderer);
+                        std::pin::Pin::new(old_state).unmount_with_peh(element, renderer);
                         *state = Right(Default::default());
                         match state {
                             Right(state) => state,

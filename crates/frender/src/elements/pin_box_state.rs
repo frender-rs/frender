@@ -31,16 +31,9 @@ mod csr {
         }
     }
 
-    impl<S: RenderState<PEH, R>, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for State<S> {
-        fn unmount(
-            self: std::pin::Pin<&mut Self>,
-            parent_elements_handle: &mut PEH,
-            renderer: &mut R,
-        ) {
-            self.get_mut()
-                .0
-                .as_mut()
-                .unmount(parent_elements_handle, renderer)
+    impl<S: RenderState<R>, R: ?Sized> RenderState<R> for State<S> {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            self.get_mut().0.as_mut().unmount(renderer)
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -49,14 +42,10 @@ mod csr {
 
         fn poll_render(
             self: std::pin::Pin<&mut Self>,
-            parent_elements_handle: &mut PEH,
             renderer: &mut R,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            self.get_mut()
-                .0
-                .as_mut()
-                .poll_render(parent_elements_handle, renderer, cx)
+            self.get_mut().0.as_mut().poll_render(renderer, cx)
         }
     }
 }
@@ -71,115 +60,80 @@ mod html {
     use super::State;
 
     impl<E: Element> Element for PinBoxState<E> {
-        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
-            State<E::RenderState<PEH, R>>;
+        type RenderState<R: frender_html::RenderHtml + ?Sized> = State<E::RenderState<R>>;
 
-        fn render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
+        fn render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            parent_elements_handle: &mut PEH,
             renderer: &mut Renderer,
-            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
-        ) where
-            Self: Sized,
-        {
-            self.0.render_update(
-                parent_elements_handle,
-                renderer,
-                render_state.get_mut().0.as_mut(),
-            )
-        }
-
-        fn render_update_force_reposition<
-            PEH: ?Sized,
-            Renderer: frender_html::RenderHtml + ?Sized,
-        >(
-            //
-            self,
-            parent_elements_handle: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
-        ) where
-            Self: Sized,
-        {
-            self.0.render_update_force_reposition(
-                parent_elements_handle,
-                renderer,
-                render_state.get_mut().0.as_mut(),
-            )
-        }
-
-        fn render_update_maybe_reposition<
-            PEH: ?Sized,
-            Renderer: frender_html::RenderHtml + ?Sized,
-        >(
-            //
-            self,
-            parent_elements_handle: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
-            force_reposition: bool,
-        ) {
-            self.0.render_update_maybe_reposition(
-                parent_elements_handle,
-                renderer,
-                render_state.get_mut().0.as_mut(),
-                force_reposition,
-            )
-        }
-
-        type UnpinnedRenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
-            E::UnpinnedRenderState<PEH, R>;
-
-        fn unpinned_render_update<PEH: ?Sized, Renderer: frender_html::RenderHtml + ?Sized>(
-            //
-            self,
-            parent_elements_handle: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
             self.0
-                .unpinned_render_update(parent_elements_handle, renderer, render_state)
+                .render_update(renderer, render_state.get_mut().0.as_mut())
         }
 
-        fn unpinned_render_update_force_reposition<
-            PEH: ?Sized,
-            Renderer: frender_html::RenderHtml + ?Sized,
-        >(
+        fn render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            parent_elements_handle: &mut PEH,
             renderer: &mut Renderer,
-            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
-            self.0.unpinned_render_update_force_reposition(
-                parent_elements_handle,
+            self.0
+                .render_update_force_reposition(renderer, render_state.get_mut().0.as_mut())
+        }
+
+        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            renderer: &mut Renderer,
+            render_state: Pin<&mut Self::RenderState<Renderer>>,
+            force_reposition: bool,
+        ) {
+            self.0.render_update_maybe_reposition(
                 renderer,
-                render_state,
+                render_state.get_mut().0.as_mut(),
+                force_reposition,
             )
         }
 
-        fn unpinned_render_update_maybe_reposition<
-            PEH: ?Sized,
-            Renderer: frender_html::RenderHtml + ?Sized,
-        >(
+        type UnpinnedRenderState<R: frender_html::RenderHtml + ?Sized> = E::UnpinnedRenderState<R>;
+
+        fn unpinned_render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            parent_elements_handle: &mut PEH,
             renderer: &mut Renderer,
-            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+            render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        ) where
+            Self: Sized,
+        {
+            self.0.unpinned_render_update(renderer, render_state)
+        }
+
+        fn unpinned_render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        ) where
+            Self: Sized,
+        {
+            self.0
+                .unpinned_render_update_force_reposition(renderer, render_state)
+        }
+
+        fn unpinned_render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
+            //
+            self,
+            renderer: &mut Renderer,
+            render_state: &mut Self::UnpinnedRenderState<Renderer>,
             force_reposition: bool,
         ) {
-            self.0.unpinned_render_update_maybe_reposition(
-                parent_elements_handle,
-                renderer,
-                render_state,
-                force_reposition,
-            )
+            self.0
+                .unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
         }
     }
 }

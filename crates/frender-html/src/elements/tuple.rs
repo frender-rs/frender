@@ -3,17 +3,17 @@
 use crate::{Element, RenderHtml};
 
 impl Element for () {
-    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = ();
+    type RenderState<R: RenderHtml + ?Sized> = ();
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>, _: bool) {}
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>, _: bool) {}
 
-    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
     }
 
-    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
@@ -23,50 +23,38 @@ impl Element for () {
 }
 
 impl<E0: Element> Element for (E0,) {
-    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E0::RenderState<PEH, R>;
+    type RenderState<R: RenderHtml + ?Sized> = E0::RenderState<R>;
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
-        force_reposition: bool,
-    ) {
-        self.0.render_update_maybe_reposition(peh, renderer, render_state, force_reposition)
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        self.0.render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 
-    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
-        self.0.render_update(peh, renderer, render_state)
+        self.0.render_update(renderer, render_state)
     }
 
-    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>)
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
-        self.0.render_update_force_reposition(peh, renderer, render_state)
+        self.0.render_update_force_reposition(renderer, render_state)
     }
 
-    type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E0::UnpinnedRenderState<PEH, R>;
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> = E0::UnpinnedRenderState<R>;
 
-    fn unpinned_render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>) {
-        self.0.unpinned_render_update(peh, renderer, render_state)
+    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+        self.0.unpinned_render_update(renderer, render_state)
     }
 
-    fn unpinned_render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, peh: &mut PEH, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>) {
-        self.0.unpinned_render_update_force_reposition(peh, renderer, render_state)
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+        self.0.unpinned_render_update_force_reposition(renderer, render_state)
     }
 
-    fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-        self,
-        peh: &mut PEH,
-        renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
-        force_reposition: bool,
-    ) {
-        self.0.unpinned_render_update_maybe_reposition(peh, renderer, render_state, force_reposition)
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+        self.0.unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 }
 
@@ -74,90 +62,84 @@ macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
         $(
             impl<$($field: Element),+> Element for ($($field,)+) {
-                type RenderState<PEH: ?Sized, R: RenderHtml+?Sized> = ($($field::RenderState<PEH, R>,)+);
+                type RenderState< R: RenderHtml+?Sized> = ($($field::RenderState<R>,)+);
 
-                fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn render_update_maybe_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+                    render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                     force_reposition: bool,
                 ) {
                     let ($($field,)+) = self;
                     let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update_maybe_reposition($field, peh, renderer, $field_var, force_reposition);)+
+                    $($field::render_update_maybe_reposition($field,  renderer, $field_var, force_reposition);)+
                 }
 
-                fn render_update<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn render_update< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+                    render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                 ) {
                     let ($($field,)+) = self;
                     let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update($field, peh, renderer, $field_var);)+
+                    $($field::render_update($field,  renderer, $field_var);)+
                 }
 
-                fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn render_update_force_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+                    render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                 ) {
                     let ($($field,)+) = self;
                     let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update_force_reposition($field, peh, renderer, $field_var);)+
+                    $($field::render_update_force_reposition($field,  renderer, $field_var);)+
                 }
 
-                type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml+?Sized> = ($($field::UnpinnedRenderState<PEH, R>,)+);
+                type UnpinnedRenderState< R: RenderHtml+?Sized> = ($($field::UnpinnedRenderState<R>,)+);
 
-                fn unpinned_render_update<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn unpinned_render_update< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+                    render_state: &mut Self::UnpinnedRenderState<Renderer>,
                 ) {
                     match self {
                         ($($field,)+) => {
                             match render_state {
                                 ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update($field, peh, renderer, $field_var);
+                                    $field::unpinned_render_update($field,  renderer, $field_var);
                                 )+}
                             }
                         }
                     }
                 }
 
-                fn unpinned_render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn unpinned_render_update_force_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+                    render_state: &mut Self::UnpinnedRenderState<Renderer>,
                 ) {
                     match self {
                         ($($field,)+) => {
                             match render_state {
                                 ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update_force_reposition($field, peh, renderer, $field_var);
+                                    $field::unpinned_render_update_force_reposition($field,  renderer, $field_var);
                                 )+}
                             }
                         }
                     }
                 }
 
-                fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml+?Sized>(
+                fn unpinned_render_update_maybe_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    peh: &mut PEH,
                     renderer: &mut Renderer,
-                    render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+                    render_state: &mut Self::UnpinnedRenderState<Renderer>,
                     force_reposition: bool,
                 ) {
                     match self {
                         ($($field,)+) => {
                             match render_state {
                                 ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update_maybe_reposition($field, peh, renderer, $field_var, force_reposition);
+                                    $field::unpinned_render_update_maybe_reposition($field,  renderer, $field_var, force_reposition);
                                 )+}
                             }
                         }

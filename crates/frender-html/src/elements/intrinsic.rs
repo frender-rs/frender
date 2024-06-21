@@ -5,6 +5,8 @@ pub struct ElementAndMounted<E> {
 }
 
 mod imp {
+    use frender_dom::RenderStateWithParentElementsHandle;
+
     use crate::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
 
     use crate::{CreateNode, RenderHtml, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
@@ -32,32 +34,35 @@ mod imp {
 
     impl<
             //
-            PEH: ?Sized,
             R: ?Sized,
             E: crate::html::behaviors::Element<R>,
-            S: RenderState<E, R>,
-        > RenderState<PEH, R> for IntrinsicElementRenderState<E, S>
+            S: RenderStateWithParentElementsHandle<E, R>,
+        > RenderState<R> for IntrinsicElementRenderState<E, S>
     {
-        fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R) {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
             let this = self.project();
             if let Some(ElementAndMounted { element, mounted }) = this.element_and_mounted {
                 if *mounted {
                     *mounted = false;
                     // renderer.remove_node(element);
                     element.remove_self(renderer);
-                    this.props_state.state_unmount();
+                    this.props_state.state_unmount_with_peh(element);
                 }
             }
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
             let this = self.project();
-            if this.element_and_mounted.as_ref().map_or(false, |v| v.mounted) {
-                this.props_state.state_unmount();
+            match this.element_and_mounted {
+                // TODO: Do we need to record whether state_unmounted?
+                Some(v) if v.mounted => {
+                    this.props_state.state_unmount_with_peh(&mut v.element);
+                }
+                _ => {}
             }
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             let this = self.project();
 
             let element = match this.element_and_mounted {
@@ -67,7 +72,7 @@ mod imp {
 
             element.move_cursor_at_the_first_child_of_self(renderer);
             // renderer.mark_position_at_first_child(element);
-            let result = S::poll_render(this.props_state, element, renderer, cx);
+            let result = S::poll_render_with_peh(this.props_state, element, renderer, cx);
 
             element.move_cursor_after_self(renderer);
             // renderer.mark_position_after(element);
@@ -91,21 +96,32 @@ mod imp {
             //
             PEH: ?Sized,
             R: ?Sized,
-            C: RenderState<PEH, R>,
+            C: RenderStateWithParentElementsHandle<PEH, R>,
             A,
             EL,
-        > RenderState<PEH, R> for ElementPropsState<C, A, EL>
+        > RenderStateWithParentElementsHandle<PEH, R> for ElementPropsState<C, A, EL>
     {
-        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-            self.project().children_render_state.unmount(peh, renderer)
+        frender_dom::proxy_render_state_with_peh!(|self| -> (PEH, R) { self.project().children_render_state });
+    }
+
+    impl<
+            //
+            R: ?Sized,
+            C: RenderState<R>,
+            A,
+            EL,
+        > RenderState<R> for ElementPropsState<C, A, EL>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            self.project().children_render_state.unmount(renderer)
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
             self.project().children_render_state.state_unmount()
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-            self.project().children_render_state.poll_render(peh, renderer, cx)
+        fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            self.project().children_render_state.poll_render(renderer, cx)
         }
     }
 
@@ -118,7 +134,7 @@ mod imp {
         P::Attributes: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
         C: crate::dom::component::SsrComponent<P::Attributes, P::Children>,
     {
-        type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
+        type RenderState<R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
             C::Element<R>,
             ElementPropsState<
                 //
@@ -128,13 +144,7 @@ mod imp {
             >,
         >;
 
-        fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-            self,
-            _: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
-            force_reposition: bool,
-        ) {
+        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
             let render_state = render_state.project();
 
             let props_state = render_state.props_state.project();
@@ -164,7 +174,7 @@ mod imp {
             )
         }
 
-        type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
+        type UnpinnedRenderState<R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
             C::Element<R>,
             ElementPropsState<
                 //
@@ -174,13 +184,7 @@ mod imp {
             >,
         >;
 
-        fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-            self,
-            _: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
-            force_reposition: bool,
-        ) {
+        fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
             let props_state = &mut render_state.props_state;
 
             let crate::dom::component::ElementProps { children, attributes, event_listeners } = P::into_element_props(self.1);

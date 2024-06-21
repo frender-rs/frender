@@ -7,10 +7,9 @@ pin_project_lite::pin_project!(
         renderer: R,
         element: Option<E>,
         #[pin]
-        state: E::RenderState<(), R>,
+        state: E::RenderState<R>,
         #[pin]
         stop: Stop,
-        root_element: (),
     }
 );
 
@@ -27,7 +26,6 @@ impl<R: RenderHtml, E: Element, Stop> RenderElement<R, E, Stop> {
             element: Some(element),
             state: Default::default(),
             stop,
-            root_element: (),
         }
     }
 }
@@ -44,19 +42,15 @@ impl<R: RenderHtml, E: Element, Stop: Future<Output = ()>> std::future::Future
         let mut this = self.project();
 
         if let Some(element) = this.element.take() {
-            element.render_update(this.root_element, this.renderer, this.state.as_mut())
+            element.render_update(this.renderer, this.state.as_mut())
         }
 
-        if let std::task::Poll::Pending =
-            this.state
-                .as_mut()
-                .poll_render(this.root_element, this.renderer, cx)
-        {
+        if let std::task::Poll::Pending = this.state.as_mut().poll_render(this.renderer, cx) {
             return std::task::Poll::Pending;
         }
 
         if let std::task::Poll::Ready(()) = this.stop.poll(cx) {
-            this.state.unmount(this.root_element, this.renderer);
+            this.state.unmount(this.renderer);
             return std::task::Poll::Ready(());
         }
 

@@ -100,17 +100,17 @@ mod csr {
         }
     }
 
-    impl<PEH: ?Sized + IntoMut<E>, R: ?Sized, S: frender_dom::RenderState<E, R>, E: ?Sized> frender_dom::RenderState<PEH, R> for StateWithElementIntoMut<S, E> {
-        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-            self.project().inner.unmount(peh.into_mut(), renderer)
+    impl<PEH: ?Sized + IntoMut<E>, R: ?Sized, S: frender_dom::RenderStateWithParentElementsHandle<E, R>, E: ?Sized> frender_dom::RenderStateWithParentElementsHandle<PEH, R> for StateWithElementIntoMut<S, E> {
+        fn unmount_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+            self.project().inner.unmount_with_peh(peh.into_mut(), renderer)
         }
 
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
-            self.project().inner.state_unmount()
+        fn state_unmount_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH) {
+            self.project().inner.state_unmount_with_peh(peh.into_mut())
         }
 
-        fn poll_render(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-            self.project().inner.poll_render(peh.into_mut(), renderer, cx)
+        fn poll_render_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            self.project().inner.poll_render_with_peh(peh.into_mut(), renderer, cx)
         }
     }
 

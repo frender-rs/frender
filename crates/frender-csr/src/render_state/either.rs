@@ -4,17 +4,13 @@ use either::Either;
 
 use crate::RenderState;
 
-impl<
-        PEH: ?Sized,
-        Renderer: ?Sized,
-        L: RenderState<PEH, Renderer>,
-        R: RenderState<PEH, Renderer>,
-    > RenderState<PEH, Renderer> for Either<L, R>
+impl<Renderer: ?Sized, L: RenderState<Renderer>, R: RenderState<Renderer>> RenderState<Renderer>
+    for Either<L, R>
 {
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut Renderer) {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut Renderer) {
         match self.as_pin_mut() {
-            Either::Left(s) => s.unmount(peh, renderer),
-            Either::Right(s) => s.unmount(peh, renderer),
+            Either::Left(s) => s.unmount(renderer),
+            Either::Right(s) => s.unmount(renderer),
         }
     }
 
@@ -27,13 +23,12 @@ impl<
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut Renderer,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         match self.as_pin_mut() {
-            Either::Left(s) => s.poll_render(peh, renderer, cx),
-            Either::Right(s) => s.poll_render(peh, renderer, cx),
+            Either::Left(s) => s.poll_render(renderer, cx),
+            Either::Right(s) => s.poll_render(renderer, cx),
         }
     }
 }
@@ -63,11 +58,9 @@ impl<A: Default, B: Default> Default for EitherRenderState<A, B> {
     }
 }
 
-impl<PEH: ?Sized, R: ?Sized, A: RenderState<PEH, R>, B: RenderState<PEH, R>> RenderState<PEH, R>
-    for EitherRenderState<A, B>
-{
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-        self.project().inner.unmount(peh, renderer)
+impl<R: ?Sized, A: RenderState<R>, B: RenderState<R>> RenderState<R> for EitherRenderState<A, B> {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+        self.project().inner.unmount(renderer)
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
@@ -76,10 +69,9 @@ impl<PEH: ?Sized, R: ?Sized, A: RenderState<PEH, R>, B: RenderState<PEH, R>> Ren
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        self.project().inner.poll_render(peh, renderer, cx)
+        self.project().inner.poll_render(renderer, cx)
     }
 }

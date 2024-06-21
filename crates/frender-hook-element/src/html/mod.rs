@@ -19,16 +19,15 @@ impl<
         HookData: HookPollNextUpdate + HookUnmount + Default,
         U,
         E: Element,
-        PEH: ?Sized,
         R: RenderHtml + ?Sized,
-    > RenderState<PEH, R> for State<HookData, E::RenderState<PEH, R>, Option<U>>
+    > RenderState<R> for State<HookData, E::RenderState<R>, Option<U>>
 where
     U: FnMut(Pin<&mut HookData>) -> E,
 {
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
         let this = self.project();
         this.hook_data.unmount();
-        this.render_state.unmount(peh, renderer);
+        this.render_state.unmount(renderer);
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
@@ -39,7 +38,6 @@ where
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
@@ -53,14 +51,14 @@ where
 
         loop {
             let a = this.hook_data.as_mut().poll_next_update(cx);
-            let b = this.render_state.as_mut().poll_render(peh, renderer, cx);
+            let b = this.render_state.as_mut().poll_render(renderer, cx);
 
             match (a, b) {
                 (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
                 (Poll::Ready(true), _) => {
                     let element = use_hook(this.hook_data.as_mut());
 
-                    element.render_update(peh, renderer, this.render_state.as_mut());
+                    element.render_update(renderer, this.render_state.as_mut());
 
                     if *this.render_iteration_count == u8::MAX {
                         *this.render_iteration_count = 0;
@@ -90,17 +88,16 @@ impl<
         HookData: HookPollNextUpdate + HookUnmount + Default,
         U,
         E: Element,
-        PEH: ?Sized,
         R: RenderHtml + ?Sized,
-    > RenderState<PEH, R> for UnpinnedState<HookData, E::UnpinnedRenderState<PEH, R>, Option<U>>
+    > RenderState<R> for UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>
 where
     U: FnMut(Pin<&mut HookData>) -> E,
     HookData: Unpin,
 {
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
         let this = self.get_mut();
         Pin::new(&mut this.hook_data).unmount();
-        RenderState::<_, _>::unmount(Pin::new(&mut this.render_state), peh, renderer);
+        RenderState::<_>::unmount(Pin::new(&mut this.render_state), renderer);
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
@@ -111,7 +108,6 @@ where
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
@@ -125,14 +121,14 @@ where
 
         loop {
             let a = Pin::new(&mut this.hook_data).poll_next_update(cx);
-            let b = Pin::new(&mut this.render_state).poll_render(peh, renderer, cx);
+            let b = Pin::new(&mut this.render_state).poll_render(renderer, cx);
 
             match (a, b) {
                 (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
                 (Poll::Ready(true), _) => {
                     let element = use_hook(Pin::new(&mut this.hook_data));
 
-                    element.unpinned_render_update(peh, renderer, &mut this.render_state);
+                    element.unpinned_render_update(renderer, &mut this.render_state);
 
                     if this.render_iteration_count == u8::MAX {
                         this.render_iteration_count = 0;
@@ -159,19 +155,16 @@ where
     U: FnMut(Pin<&mut HookData>) -> E,
     HookData: Unpin,
 {
-    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
-        State<HookData, E::RenderState<PEH, R>, Option<U>>;
+    type RenderState<R: RenderHtml + ?Sized> = State<HookData, E::RenderState<R>, Option<U>>;
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         mut self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
         let render_state = render_state.project();
         (self.use_hook)(render_state.hook_data).render_update_maybe_reposition(
-            peh,
             renderer,
             render_state.render_state,
             force_reposition,
@@ -179,19 +172,17 @@ where
         *render_state.use_hook = Some(self.use_hook);
     }
 
-    type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> =
-        UnpinnedState<HookData, E::UnpinnedRenderState<PEH, R>, Option<U>>;
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> =
+        UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>;
 
-    fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         mut self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
         force_reposition: bool,
     ) {
         (self.use_hook)(Pin::new(&mut render_state.hook_data))
             .unpinned_render_update_maybe_reposition(
-                peh,
                 renderer,
                 &mut render_state.render_state,
                 force_reposition,

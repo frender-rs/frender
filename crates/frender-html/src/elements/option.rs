@@ -3,23 +3,22 @@ use std::pin::Pin;
 use crate::{Element, RenderHtml, RenderState};
 
 macro_rules! update_option {
-    ($_self:ident . $method:ident ($peh:ident, $ctx:ident, $state:ident $(, $arg:expr)? )) => {
+    ($_self:ident . $method:ident ($ctx:ident, $state:ident $(, $arg:expr)? )) => {
         if let Some(this) = $_self {
-            this.$method($peh, $ctx, $state $(, $arg)?);
+            this.$method($ctx, $state $(, $arg)?);
         } else {
-            <E::RenderState<PEH, Renderer> as RenderState<_, _>>::unmount($state, $peh, $ctx)
+            <E::RenderState<Renderer> as RenderState<_>>::unmount($state, $ctx)
         }
     };
 }
 
 macro_rules! unpinned_update_option {
-    ($_self:ident . $method:ident ($peh:ident, $ctx:ident, $state:ident $(, $arg:expr)? )) => {
+    ($_self:ident . $method:ident ($ctx:ident, $state:ident $(, $arg:expr)? )) => {
         if let Some(this) = $_self {
-            this.$method($peh, $ctx, $state $(, $arg)?);
+            this.$method($ctx, $state $(, $arg)?);
         } else {
-            <E::UnpinnedRenderState<PEH, Renderer> as RenderState<_, _>>::unmount(
+            <E::UnpinnedRenderState<Renderer> as RenderState<_>>::unmount(
                 Pin::new($state),
-                $peh,
                 $ctx
             )
         }
@@ -27,86 +26,78 @@ macro_rules! unpinned_update_option {
 }
 
 impl<E: Element> Element for Option<E> {
-    type RenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E::RenderState<PEH, R>;
+    type RenderState<R: RenderHtml + ?Sized> = E::RenderState<R>;
 
-    fn render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn render_update<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) where
         Self: Sized,
     {
-        update_option!(self.render_update(peh, renderer, render_state))
+        update_option!(self.render_update(renderer, render_state))
     }
 
-    fn render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) where
         Self: Sized,
     {
-        update_option!(self.render_update_force_reposition(peh, renderer, render_state))
+        update_option!(self.render_update_force_reposition(renderer, render_state))
     }
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: Pin<&mut Self::RenderState<PEH, Renderer>>,
+        render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
         update_option!(self.render_update_maybe_reposition(
             //
-            peh,
             renderer,
             render_state,
             force_reposition
         ))
     }
 
-    type UnpinnedRenderState<PEH: ?Sized, R: RenderHtml + ?Sized> = E::UnpinnedRenderState<PEH, R>;
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> = E::UnpinnedRenderState<R>;
 
-    fn unpinned_render_update<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
     ) where
         Self: Sized,
     {
-        unpinned_update_option!(self.unpinned_render_update(peh, renderer, render_state))
+        unpinned_update_option!(self.unpinned_render_update(renderer, render_state))
     }
 
-    fn unpinned_render_update_force_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
     ) where
         Self: Sized,
     {
-        unpinned_update_option!(self.unpinned_render_update_force_reposition(peh, renderer, render_state))
+        unpinned_update_option!(self.unpinned_render_update_force_reposition(renderer, render_state))
     }
 
-    fn unpinned_render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        peh: &mut PEH,
         renderer: &mut Renderer,
-        render_state: &mut Self::UnpinnedRenderState<PEH, Renderer>,
+        render_state: &mut Self::UnpinnedRenderState<Renderer>,
         force_reposition: bool,
     ) {
         unpinned_update_option!(self.unpinned_render_update_maybe_reposition(
             //
-            peh,
             renderer,
             render_state,
             force_reposition

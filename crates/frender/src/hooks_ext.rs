@@ -51,18 +51,28 @@ pub mod setter {
 }
 
 pub mod state {
-    use frender_html::RenderState;
+    use frender_html::{RenderState, RenderStateWithParentElementsHandle};
     use hooks::{ShareValue, SignalHook};
 
-    /// See [`RenderState`] for meaning of `PEH`.
-    pub trait UpdateElementWithSharedValue<PEH: ?Sized, R: ?Sized, V: ?Sized> {
-        fn unmount_element_with_shared_value(&mut self, peh: &mut PEH, renderer: &mut R);
-        fn update_element_with_shared_value(
+    /// See [`RenderStateWithParentElementsHandle`] for meaning of `PEH`.
+    pub trait UpdateElementWithSharedValueWithParentElementsHandle<
+        PEH: ?Sized,
+        R: ?Sized,
+        V: ?Sized,
+    >
+    {
+        fn unmount_element_with_shared_value_with_peh(&mut self, peh: &mut PEH, renderer: &mut R);
+        fn update_element_with_shared_value_with_peh(
             &mut self,
             peh: &mut PEH,
             renderer: &mut R,
             shared_value: &V,
         );
+    }
+
+    pub trait UpdateElementWithSharedValue<R: ?Sized, V: ?Sized> {
+        fn unmount_element_with_shared_value(&mut self, renderer: &mut R);
+        fn update_element_with_shared_value(&mut self, renderer: &mut R, shared_value: &V);
     }
 
     pin_project_lite::pin_project!(
@@ -77,24 +87,28 @@ pub mod state {
     impl<
             S: SignalHook<SignalShareValue = Val>,
             Val,
-            U: UpdateElementWithSharedValue<PEH, R, <S as SignalHook>::SignalShareValue>,
+            U: UpdateElementWithSharedValueWithParentElementsHandle<
+                PEH,
+                R,
+                <S as SignalHook>::SignalShareValue,
+            >,
             PEH: ?Sized,
             R: ?Sized,
-        > RenderState<PEH, R> for State<S, U>
+        > RenderStateWithParentElementsHandle<PEH, R> for State<S, U>
     {
-        fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+        fn unmount_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
             let StateProj { inner, update } = self.project();
 
-            update.unmount_element_with_shared_value(peh, renderer);
+            update.unmount_element_with_shared_value_with_peh(peh, renderer);
 
             S::unmount(inner);
         }
 
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        fn state_unmount_with_peh(self: std::pin::Pin<&mut Self>, _: &mut PEH) {
             S::unmount(self.project().inner)
         }
 
-        fn poll_render(
+        fn poll_render_with_peh(
             self: std::pin::Pin<&mut Self>,
             peh: &mut PEH,
             renderer: &mut R,
@@ -108,7 +122,54 @@ pub mod state {
                         let state = inner.use_hook(); // mark as seen
 
                         state.map(|shared_value| {
-                            update.update_element_with_shared_value(peh, renderer, shared_value)
+                            update.update_element_with_shared_value_with_peh(
+                                peh,
+                                renderer,
+                                shared_value,
+                            )
+                        });
+                    }
+
+                    std::task::Poll::Ready(())
+                }
+                std::task::Poll::Pending => std::task::Poll::Pending,
+            }
+        }
+    }
+
+    impl<
+            S: SignalHook<SignalShareValue = Val>,
+            Val,
+            U: UpdateElementWithSharedValue<R, <S as SignalHook>::SignalShareValue>,
+            R: ?Sized,
+        > RenderState<R> for State<S, U>
+    {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            let StateProj { inner, update } = self.project();
+
+            update.unmount_element_with_shared_value(renderer);
+
+            S::unmount(inner);
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            S::unmount(self.project().inner)
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            let StateProj { mut inner, update } = self.project();
+
+            match inner.as_mut().poll_next_update(cx) {
+                std::task::Poll::Ready(active) => {
+                    if active {
+                        let state = inner.use_hook(); // mark as seen
+
+                        state.map(|shared_value| {
+                            update.update_element_with_shared_value(renderer, shared_value)
                         });
                     }
 
@@ -217,13 +278,18 @@ pub mod form_control {
             PEH: FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
             SV: Borrow<VK>,
-        > super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateFormControlElement<VK>
+        > super::state::UpdateElementWithSharedValueWithParentElementsHandle<PEH, R, SV>
+        for UpdateFormControlElement<VK>
     {
-        fn unmount_element_with_shared_value(&mut self, element: &mut PEH, renderer: &mut R) {
+        fn unmount_element_with_shared_value_with_peh(
+            &mut self,
+            element: &mut PEH,
+            renderer: &mut R,
+        ) {
             element.remove_value(renderer); // TODO: is this needed?
         }
 
-        fn update_element_with_shared_value(
+        fn update_element_with_shared_value_with_peh(
             &mut self,
             element: &mut PEH,
             renderer: &mut R,
@@ -271,7 +337,7 @@ pub mod form_control {
             }
 
             this.0.map(|shared_value| {
-                super::state::UpdateElementWithSharedValue::update_element_with_shared_value(
+                super::state::UpdateElementWithSharedValueWithParentElementsHandle::update_element_with_shared_value_with_peh(
                     &mut UpdateFormControlElement::new(),
                     element,
                     renderer,
@@ -317,22 +383,17 @@ pub mod element {
         text_node: TextNode<TN>,
     }
 
-    impl<PEH: ?Sized, R: ?Sized, SV: ?Sized + PrimarilyBorrow<Borrowed = V>, V: ?Sized>
-        super::state::UpdateElementWithSharedValue<PEH, R, SV> for UpdateTextNode<R::Text>
+    impl<R: ?Sized, SV: ?Sized + PrimarilyBorrow<Borrowed = V>, V: ?Sized>
+        super::state::UpdateElementWithSharedValue<R, SV> for UpdateTextNode<R::Text>
     where
         R: RenderHtml,
         V: RenderAsText,
     {
-        fn unmount_element_with_shared_value(&mut self, _: &mut PEH, renderer: &mut R) {
+        fn unmount_element_with_shared_value(&mut self, renderer: &mut R) {
             self.text_node.unmount(renderer)
         }
 
-        fn update_element_with_shared_value(
-            &mut self,
-            _: &mut PEH,
-            renderer: &mut R,
-            shared_value: &SV,
-        ) {
+        fn update_element_with_shared_value(&mut self, renderer: &mut R, shared_value: &SV) {
             V::render_as_text_update(shared_value.borrow(), renderer, &mut self.text_node.node)
         }
     }
@@ -346,18 +407,14 @@ pub mod element {
         V: frender_ssr::ToSsrElement,
         V: RenderAsText,
     {
-        type RenderState<PEH: ?Sized, R: frender_html::RenderHtml + ?Sized> =
+        type RenderState<R: frender_html::RenderHtml + ?Sized> =
             Option<State<S::SignalHook, R::Text>>;
 
-        fn render_update_maybe_reposition<
-            PEH: ?Sized,
-            Renderer: frender_html::RenderHtml + ?Sized,
-        >(
+        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            _: &mut PEH,
             renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
+            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
             let render_state = render_state.get_mut();

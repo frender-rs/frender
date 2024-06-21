@@ -4,12 +4,10 @@ use frender_common::utils::pin_project_map_array;
 
 use crate::RenderState;
 
-impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, const N: usize> RenderState<PEH, R>
-    for [S; N]
-{
-    fn unmount(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for [S; N] {
+    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
         // pin_project_map_array_with_mut(self, S::unmount, renderer)
-        pin_project_map_array(self, |s| s.unmount(peh, renderer))
+        pin_project_map_array(self, |s| s.unmount(renderer))
     }
 
     fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -18,19 +16,16 @@ impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, const N: usize> RenderState
 
     fn poll_render(
         self: std::pin::Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         let mut res = std::task::Poll::Ready(());
 
-        pin_project_map_array(self, |state| {
-            match S::poll_render(state, peh, renderer, cx) {
-                std::task::Poll::Ready(()) => {}
-                v @ std::task::Poll::Pending => {
-                    if let std::task::Poll::Ready(()) = res {
-                        res = v;
-                    }
+        pin_project_map_array(self, |state| match S::poll_render(state, renderer, cx) {
+            std::task::Poll::Ready(()) => {}
+            v @ std::task::Poll::Pending => {
+                if let std::task::Poll::Ready(()) = res {
+                    res = v;
                 }
             }
         });
@@ -54,11 +49,9 @@ impl<S: Default, const N: usize> Default for ArrayRenderState<S, N> {
     }
 }
 
-impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, const N: usize> RenderState<PEH, R>
-    for ArrayRenderState<S, N>
-{
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-        self.project_inner().unmount(peh, renderer)
+impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for ArrayRenderState<S, N> {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+        self.project_inner().unmount(renderer)
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
@@ -67,10 +60,9 @@ impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, const N: usize> RenderState
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        self.project_inner().poll_render(peh, renderer, cx)
+        self.project_inner().poll_render(renderer, cx)
     }
 }

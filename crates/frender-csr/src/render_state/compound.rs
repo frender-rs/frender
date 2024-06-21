@@ -21,11 +21,9 @@ impl<S, T> CompoundState<S, T> {
     }
 }
 
-impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, T> RenderState<PEH, R>
-    for CompoundState<S, T>
-{
-    fn unmount(self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-        self.project().reactive.unmount(peh, renderer)
+impl<R: ?Sized, S: RenderState<R>, T> RenderState<R> for CompoundState<S, T> {
+    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+        self.project().reactive.unmount(renderer)
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
@@ -34,10 +32,9 @@ impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>, T> RenderState<PEH, R>
 
     fn poll_render(
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        self.project().reactive.poll_render(peh, renderer, cx)
+        self.project().reactive.poll_render(renderer, cx)
     }
 }

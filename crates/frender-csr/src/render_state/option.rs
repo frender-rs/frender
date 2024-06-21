@@ -2,15 +2,16 @@ use std::pin::Pin;
 
 use crate::RenderState;
 
-impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>> RenderState<PEH, R> for Option<S> {
-    fn unmount(mut self: Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
+impl<R: ?Sized, S: RenderState<R>> RenderState<R> for Option<S> {
+    fn unmount(mut self: Pin<&mut Self>, renderer: &mut R) {
         let this = self.as_mut().as_pin_mut();
         match this {
             Some(state) => {
-                S::unmount(state, peh, renderer);
+                S::unmount(state, renderer);
             }
             None => return,
         }
+        // TODO: is this needed?
         self.set(None)
     }
 
@@ -21,12 +22,11 @@ impl<PEH: ?Sized, R: ?Sized, S: RenderState<PEH, R>> RenderState<PEH, R> for Opt
     fn poll_render(
         //
         self: Pin<&mut Self>,
-        peh: &mut PEH,
         renderer: &mut R,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         match self.as_pin_mut() {
-            Some(s) => S::poll_render(s, peh, renderer, cx),
+            Some(s) => S::poll_render(s, renderer, cx),
             None => std::task::Poll::Ready(()),
         }
     }

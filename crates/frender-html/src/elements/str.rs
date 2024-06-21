@@ -195,15 +195,15 @@ impl<Cache, Text> State<Cache, Text> {
 
 impl<Cache, Text> Unpin for State<Cache, Text> {}
 
-impl<Cache, Text: Node<R>, PEH: ?Sized, R: ?Sized> RenderState<PEH, R> for State<Cache, Text> {
-    fn unmount(self: std::pin::Pin<&mut Self>, _: &mut PEH, renderer: &mut R) {
+impl<Cache, Text: Node<R>, R: ?Sized> RenderState<R> for State<Cache, Text> {
+    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
         let this = self.get_mut();
         this.text_node.unmount(renderer);
     }
 
     fn state_unmount(self: std::pin::Pin<&mut Self>) {}
 
-    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut PEH, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
 }
@@ -219,15 +219,9 @@ frender_common::impl_many!(
             std::sync::Arc<str>,
         ]
     {
-        type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;
+        type RenderState<Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;
 
-        fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(
-            self,
-            _: &mut PEH,
-            renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>,
-            force_reposition: bool,
-        ) {
+        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
             match render_state.get_mut() {
                 Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(self, renderer, force_reposition, RenderingStr::not_match_cache, RenderingStr::update_cache),
                 render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, renderer, RenderingStr::create_cache)),
@@ -239,9 +233,9 @@ frender_common::impl_many!(
 );
 
 impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
-    type RenderState<PEH: ?Sized, Renderer: RenderHtml + ?Sized> = Option<State<<S as frender_common::IntoStaticStr>::IntoStaticStr, Renderer::Text>>;
+    type RenderState<Renderer: RenderHtml + ?Sized> = Option<State<<S as frender_common::IntoStaticStr>::IntoStaticStr, Renderer::Text>>;
 
-    fn render_update_maybe_reposition<PEH: ?Sized, Renderer: RenderHtml + ?Sized>(self, _: &mut PEH, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<PEH, Renderer>>, force_reposition: bool) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         match render_state.get_mut() {
             Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(
                 self.0,
