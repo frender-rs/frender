@@ -24,21 +24,106 @@ pub trait ElementsAlgorithm<K, E> {
     }
 }
 
+/// The problem is how to deal with the following two cases with one algorithm:
+///
+/// - Case I : `1 2 3 4 5 6 7        => 1 *4* 2 3 4 5 6 7`
+/// - Case II: `1 2 3 4 5 6 7 8 9... => 1  4  5 6 7 8 9 ... *2 3*`
+///
+/// In case I, it's more performant to just move *4* to after 2
+/// (force_reposition *4* and go on as normal).
+///
+/// In case II, it's more performant to move *2 3* to the end.
+/// (mark *2 3* as MightUnmount and go on as normal.
+/// When *2* is met, force_reposition *2*.
+/// When *3* is met, force_reposition *3*.).
+///
+/// The problem is: while iterating elements, we meet *1* followed by *4*.
+/// We can't decide this is case I or case II.
+///
+/// The current algorithm is: If there were more elements between 1 and 4 than the elements after 4,
+/// we assume this is case I. Otherwise, we assume it's case II.
+/// With this algorithm, the above case I will be assumed as case II.
+/// But we just force_positioned one more element which is ok.
+///
+/// # Implementation details
+///
+/// The render state `Element::UnpinnedRenderState` might NOT get dropped when unmounted.
+/// [`RenderState::unmount`] will always run when unmounted.
 pub mod default {
-    use std::{collections::HashMap, hash::Hash, pin::Pin};
+    use std::{
+        cmp::Ordering,
+        collections::{hash_map, HashMap},
+        hash::Hash,
+        pin::Pin,
+    };
 
     use frender_common::{DefaultElementsAlgorithm, Keyed};
-    use indexmap::IndexMap;
+    use indexmap::{IndexMap, IndexSet};
+    use slab::Slab;
 
     use crate::{Element, RenderHtml, RenderState};
 
     use super::ElementsAlgorithm;
 
-    pub struct States<K, S>(IndexMap<K, S>);
+    #[derive(Default)]
+    struct State<S> {
+        render_state: S,
+        // The following two fields could have a smaller representation like `usize`.
+        order: usize,
+        state_unmounted: bool,
+    }
+
+    pub struct States<K, S> {
+        // the first `key_to_index.len()` states are mounted.
+        states: Vec<State<S>>,
+        key_to_index: IndexSet<K>,
+    }
+
+    // the returned index will be `real_len`
+    fn push_state_with_real_len<T: Default>(states: &mut Vec<T>, real_len: usize) -> &mut T {
+        debug_assert!(states.len() >= real_len);
+
+        if states.len() == real_len {
+            states.push(Default::default());
+        } else {
+        }
+        &mut states[real_len]
+    }
+
+    // returns the state at index now
+    fn swap_states<S>(states: &mut Vec<State<S>>, index: usize, old_index: usize) -> &mut State<S> {
+        debug_assert!(old_index > index);
+        states.swap(index, old_index);
+
+        let state = &mut states[index];
+
+        let real_index;
+        if state.state_unmounted {
+            real_index = state.order;
+            let prev_state = &mut states[real_index];
+            debug_assert_eq!(prev_state.order, index);
+            debug_assert_eq!(prev_state.state_unmounted, false);
+            prev_state.order = old_index;
+        } else {
+            real_index = index;
+            state.order = old_index;
+        }
+
+        {
+            let state = &mut states[old_index];
+            state.order = real_index;
+            state.state_unmounted = true;
+        }
+
+        &mut states[index]
+    }
 
     impl<K, S> Default for States<K, S> {
         fn default() -> Self {
-            Self(Default::default())
+            Self {
+                states: Vec::new(),
+                key_to_index: Default::default(),
+            }
         }
     }
 
@@ -47,29 +132,49 @@ pub mod default {
     impl<K, S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for States<K, S> {
         fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
             let this = self.get_mut();
-            for state in this.0.values_mut() {
-                S::unmount(Pin::new(state), renderer)
-            }
-            this.0 = Default::default();
+            let real_len = this.key_to_index.len();
+
+            this.key_to_index.clear();
+
+            this.states.iter_mut().take(real_len).for_each(|State { render_state, .. }| {
+                S::unmount(Pin::new(render_state), renderer);
+            });
+
+            // TODO(perf): should we free the memory or reuse it in case mounted again? Currently States<K, S> keeps the allocated memory.
+            // We could keep the allocated memory in implementations,
+            // and have a wrapper type `DropOnUnmount` which drop the old value and set it to default.
         }
 
         fn state_unmount(self: Pin<&mut Self>) {
-            for state in self.get_mut().0.values_mut() {
-                S::state_unmount(Pin::new(state))
-            }
+            let this = self.get_mut();
+            let real_len = this.key_to_index.len();
+
+            this.key_to_index.clear();
+
+            this.states.iter_mut().take(real_len).for_each(|State { render_state, state_unmounted, .. }| {
+                if !*state_unmounted {
+                    S::state_unmount(Pin::new(render_state));
+                    *state_unmounted = true;
+                }
+            });
         }
 
         fn poll_render(self: Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
+            let this = self.get_mut();
+            let real_len = this.key_to_index.len();
+
             let mut res = std::task::Poll::Ready(());
 
-            for state in self.get_mut().0.values_mut() {
-                match S::poll_render(std::pin::Pin::new(state), renderer, cx) {
-                    std::task::Poll::Ready(()) => {}
-                    v @ std::task::Poll::Pending => {
-                        res = v;
+            this.states.iter_mut().take(real_len).for_each(|State { render_state, state_unmounted, .. }| {
+                if !*state_unmounted {
+                    match S::poll_render(std::pin::Pin::new(render_state), renderer, cx) {
+                        std::task::Poll::Ready(()) => {}
+                        v @ std::task::Poll::Pending => {
+                            res = v;
+                        }
                     }
                 }
-            }
+            });
 
             res
         }
@@ -79,7 +184,7 @@ pub mod default {
         type CsrState<R: RenderHtml + ?Sized> = States<K, E::UnpinnedRenderState<R>>;
 
         fn keyed_elements_update_csr_state<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml + ?Sized>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
-            let state = state.get_mut();
+            let States { states, key_to_index } = state.get_mut();
 
             let elements = keyed_elements.into_iter();
 
@@ -88,96 +193,181 @@ pub mod default {
             //     return state.clear();
             // }
 
-            let states = &mut state.0;
-
-            let mut old_states = std::mem::replace(states, IndexMap::new());
-
-            let mut removed = HashMap::new();
-
             let mut cur = 0;
+            let mut old_cur = 0;
+            let mut newly_inserted_count: usize = 0;
+
+            let might_unmount_range = 0..0;
+            let order_to_index_unmount_range = 1;
+
+            let old_mounted_count = key_to_index.len();
+            let mut mounted_count = old_mounted_count;
+            debug_assert!(states.len() >= mounted_count);
+
+            // for state in states {}
+
+            (&mut states[..mounted_count]).into_iter().for_each(|state| {
+                // TODO: state unmount
+            });
 
             for Keyed(key, element) in elements {
-                if let Some(mut old_idx) = old_states.get_index_of(&key) {
-                    match old_idx.cmp(&cur) {
-                        std::cmp::Ordering::Equal => {}
-                        std::cmp::Ordering::Less => unreachable!(),
-                        std::cmp::Ordering::Greater => {
-                            if old_states.len() - old_idx < old_idx - cur {
-                                // drain tail
+                match key_to_index.entry(key) {
+                    hash_map::Entry::Occupied(entry) => {
+                        // old element old state, possible new position
 
-                                let mut to_remove = old_states.drain(old_idx..);
-                                let old = to_remove.next().unwrap();
-                                removed.extend(to_remove);
+                        let index = *entry.get();
+                        let State { render_state, order, state_unmounted } = &mut states[index];
 
-                                states.extend(old_states.drain(..cur).chain(Some(old)));
+                        enum Strategy {
+                            // force_position = false
+                            NoMove,
+                            // force_position = false
+                            Skip,
+                            // force_position = true
+                            Move,
+                        }
 
-                                let (key_old, old_state) = states.last_mut().unwrap();
+                        let strategy = match old_cur.cmp(order) {
+                            Ordering::Equal => Strategy::NoMove,
+                            Ordering::Less => {
+                                // order = 4, old_cur = 2
+                                // *4* is moved left or *2 3* is moved right
+                                // 1 2 3 4 => 1 4 2 3
+                                // 1 2 3 4 5 6 7 8 => 1 4 2 3 5 6 7 8
+                                // 1 2 3 4 5 6 7 8 => 1 4 5 6 7 8 2 3
+                                let before = *order - old_cur;
+                                let after = old_mounted_count - *order;
 
-                                debug_assert!(*key_old == key);
-
-                                element.unpinned_render_update_force_reposition(renderer, old_state);
-
-                                cur = 0;
-                                continue;
-                            } else {
-                                // drain before this
-                                let mut old_states_and_to_remove = old_states.drain(..old_idx);
-
-                                states.extend((&mut old_states_and_to_remove).take(cur));
-                                removed.extend(old_states_and_to_remove);
-                                old_idx = 0;
-                                cur = 0;
+                                if before < after {
+                                    // *2 3* were marked as MightUnmount (state_unmounted=true) at the start
+                                    // They will be removed or mounted later.
+                                    Strategy::Skip
+                                } else {
+                                    // mark this state as moved left
+                                    old_order_to_index[*order] = usize::MAX;
+                                    // move *4* left
+                                    Strategy::Move
+                                }
                             }
+                            Ordering::Greater => {
+                                // this state were skipped before
+                                Strategy::Move
+                            }
+                        };
+
+                        let force_reposition = matches!(strategy, Strategy::Move);
+                        element.unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition);
+
+                        match strategy {
+                            Strategy::NoMove | Strategy::Skip => {
+                                old_cur = *order + 1;
+                                while old_order_to_index.get(old_cur) == Some(&usize::MAX) {
+                                    old_cur += 1;
+                                }
+                            }
+                            Strategy::Move => {} // old_cur doesn't change
                         }
                     }
+                    hash_map::Entry::Vacant(entry) => {
+                        let index = mounted_count;
+                        debug_assert!(states.len() >= index);
+                        // TODO: swap with the first MightUnmount state
+                        let render_state = if states.len() == index {
+                            states.push(State {
+                                render_state: Default::default(),
+                                order: cur,
+                                state_unmounted: false,
+                            });
 
-                    // "equal" or "greater but drained"
-                    let state_old: &mut <E as Element>::UnpinnedRenderState<R> = &mut old_states[old_idx];
-                    element.unpinned_render_update(renderer, state_old);
-                    cur += 1;
-                } else {
-                    states.extend(old_states.drain(..cur));
-                    cur = 0;
-                    state_vacant_and_then(states, key, |entry| {
-                        let old_state = if let Some(old_state) = removed.remove(entry.key()) { old_state } else { Default::default() };
-                        let state = entry.insert(old_state);
-                        element.unpinned_render_update_force_reposition(renderer, state)
-                    });
-                }
-            }
+                            &mut states[index].render_state
+                        } else {
+                            let State { render_state, order, state_unmounted } = &mut states[index];
+                            *order = cur;
+                            *state_unmounted = false;
+                            render_state
+                        };
 
-            old_states.drain(cur..).map(|(_, v)| v).chain(removed.into_values()).for_each(|ref mut state| Pin::new(state).unmount(renderer));
+                        element.unpinned_render_update_force_reposition(renderer, render_state);
 
-            if states.is_empty() {
-                *states = old_states;
-            } else {
-                states.extend(old_states);
+                        entry.insert(index);
+                    }
+                };
+
+                cur += 1;
+                mounted_count += 1;
             }
         }
 
         fn keyed_elements_update_csr_state_force_reposition<I: IntoIterator<Item = Keyed<K, E>>, R: RenderHtml + ?Sized>(self, keyed_elements: I, renderer: &mut R, state: Pin<&mut Self::CsrState<R>>) {
-            let states = &mut state.get_mut().0;
+            let States { states, key_to_index, order_to_index } = state.get_mut();
+
+            let mut real_len = key_to_index.len();
 
             let elements = keyed_elements.into_iter();
 
-            let mut old_states = std::mem::replace(states, IndexMap::new());
-            // TODO: optimize perf with IndexMap::with_capacity(elements.len());
+            states.iter_mut().take(real_len).for_each(|state| {
+                state.state_unmounted = false;
+            });
+
+            debug_assert!(states[real_len..].iter().all(|state| !state.state_unmounted));
+
+            let mut index = 0;
 
             for Keyed(key, element) in elements {
-                let state = old_states.remove(&key);
+                let render_state = match key_to_index.entry(key) {
+                    hash_map::Entry::Occupied(mut entry) => {
+                        let old_index = entry.insert(index);
 
-                let entry = states.entry(key);
+                        let state = match old_index.cmp(&index) {
+                            Ordering::Equal => &mut states[index],
+                            Ordering::Less => {
+                                let real_old_index = states[old_index].order;
+                                debug_assert!(real_old_index > index);
+                                debug_assert_eq!(states[real_old_index].order, old_index);
+                                debug_assert_eq!(states[real_old_index].state_unmounted, true);
+                                swap_states(states, index, real_old_index)
+                            }
+                            Ordering::Greater => swap_states(states, index, old_index),
+                        };
+                        &mut state.render_state
+                    }
+                    hash_map::Entry::Vacant(entry) => {
+                        entry.insert(index);
 
-                debug_assert!(matches!(entry, indexmap::map::Entry::Vacant(_)));
+                        // the pushed index
+                        let old_index = real_len;
+                        {
+                            let State { state_unmounted, .. } = push_state_with_real_len(states, old_index);
+                            *state_unmounted = false;
+                        }
+                        real_len += 1;
 
-                let render_state = entry.or_insert(state.unwrap_or_default());
+                        let state = swap_states(states, index, old_index);
+                        &mut state.render_state
+                    }
+                };
 
-                E::unpinned_render_update_force_reposition(element, renderer, render_state);
+                element.unpinned_render_update_force_reposition(renderer, render_state);
+
+                index += 1;
             }
 
-            for state in old_states.values_mut().map(std::pin::Pin::new) {
-                state.unmount(renderer)
-            }
+            states.iter_mut().enumerate().take(index).for_each(|(i, state)| {
+                debug_assert!(!state.state_unmounted);
+                state.order = i;
+            });
+
+            // states that should be unmounted
+            states[index..real_len].iter_mut().for_each(|state| {
+                if state.state_unmounted {
+                    Pin::new(&mut state.render_state).unmount(renderer);
+                    state.state_unmounted = false;
+                    let index = state.order;
+                    key_to_index.remove_by_index(index);
+                }
+            });
+
+            debug_assert!(states.iter().all(|state| !state.state_unmounted));
         }
     }
 
