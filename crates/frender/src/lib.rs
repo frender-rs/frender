@@ -9,7 +9,7 @@ pub use empty::Empty;
 mod missing;
 pub use missing::Missing;
 
-pub use frender_common::{Elements, EventListenerOptions, HandleEventWithOptions, Keyed, TempStr};
+pub use frender_common::{EventListenerOptions, HandleEventWithOptions, TempStr};
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
 pub use frender_html::dom;
@@ -42,10 +42,14 @@ pub use frender_events::event;
 #[cfg(feature = "bg")]
 pub use bg;
 
+#[cfg(feature = "RenderWith")]
 pub use frender_render_with::{
     CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
     RenderWith, Rendered,
 };
+
+#[cfg(feature = "Elements")]
+pub use frender_elements::{DefaultElementsAlgorithm, Elements, Keyed};
 
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
@@ -82,7 +86,8 @@ pub mod prelude {
 
     pub use frender_html::Element;
 
-    pub use frender_common::{Elements, Keyed};
+    #[cfg(feature = "Elements")]
+    pub use crate::{Elements, Keyed};
 
     pub use frender_html_common::dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
 

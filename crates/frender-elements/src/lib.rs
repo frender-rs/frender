@@ -7,6 +7,7 @@ impl<K, E> Keyed<K, E> {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct DefaultElementsAlgorithm;
 
 #[derive(Debug, Clone, Copy)]
@@ -16,9 +17,15 @@ pub struct Elements<I: IntoIterator, A = DefaultElementsAlgorithm> {
 }
 
 #[allow(non_snake_case)]
-pub fn Elements<I: IntoIterator>(iter: I) -> Elements<I> {
+pub const fn Elements<I: IntoIterator>(iter: I) -> Elements<I> {
     Elements {
         iter,
         algorithm: DefaultElementsAlgorithm,
     }
 }
+
+#[cfg(feature = "ssr")]
+pub mod ssr;
+
+#[cfg(feature = "csr")]
+pub mod csr;

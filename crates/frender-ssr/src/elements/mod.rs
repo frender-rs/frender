@@ -1,5 +1,4 @@
 pub mod array;
-pub mod keyed;
 
 mod boxed;
 mod char;

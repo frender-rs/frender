@@ -136,6 +136,12 @@ pub trait IntoFnOnceRenderWithContext {
     // TODO: `impl DefaultAnyRenderState<Renderer>` should not capture `'r`. See https://github.com/rust-lang/rust/issues/117210#issuecomment-2180030657
 }
 
+// trait Helper<Renderer: ?Sized + RenderHtml>: FnOnce(T) -> Self::FnOnceRenderWithContext {
+//     type FnOnceRenderWithContext: FnOnceRenderWithContext<Renderer>;
+// }
+
+// TODO: RenderWith(Test::default())
+
 pub trait FnOnceRenderWithContext<Renderer: ?Sized + RenderHtml>:
     for<'r> FnOnce(CsrRenderContext<'r, Renderer>) -> Rendered<'r, Self::OutputRenderedState>
 {

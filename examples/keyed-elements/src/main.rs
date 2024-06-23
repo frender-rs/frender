@@ -129,51 +129,54 @@ fn Main() {
                          selected_index,
                          ..
                      }| {
-                        items
-                            .iter()
-                            .enumerate()
-                            .map(|(idx, &value)| {
-                                let selected = *selected_index == Some(idx);
+                        Elements(
+                            items
+                                .iter()
+                                .enumerate()
+                                .map(|(idx, &value)| {
+                                    let selected = *selected_index == Some(idx);
 
-                                Keyed(
-                                    value,
-                                    cs::tr
-                                        .style(if selected {
-                                            Some("outline: outset 1px orange")
-                                        } else {
-                                            None
-                                        })
-                                        .children((
-                                            cs::td.children(idx),
-                                            cs::td.children(value),
-                                            cs::td.children((
-                                                cs::button
-                                                    .on_click(move |_: &_| {
-                                                        data.map_mut(|data| {
-                                                            if data.selected_index == Some(idx) {
-                                                                data.selected_index = None
-                                                            } else {
-                                                                data.selected_index = Some(idx)
-                                                            }
+                                    Keyed(
+                                        value,
+                                        cs::tr
+                                            .style(if selected {
+                                                Some("outline: outset 1px orange")
+                                            } else {
+                                                None
+                                            })
+                                            .children((
+                                                cs::td.children(idx),
+                                                cs::td.children(value),
+                                                cs::td.children((
+                                                    cs::button
+                                                        .on_click(move |_: &_| {
+                                                            data.map_mut(|data| {
+                                                                if data.selected_index == Some(idx)
+                                                                {
+                                                                    data.selected_index = None
+                                                                } else {
+                                                                    data.selected_index = Some(idx)
+                                                                }
+                                                            })
                                                         })
-                                                    })
-                                                    .children(if selected {
-                                                        "Unselect"
-                                                    } else {
-                                                        "Select"
-                                                    }),
-                                                cs::button
-                                                    .on_click(move |_: &_| {
-                                                        data.map_mut(|data: &mut Data| {
-                                                            data.remove(idx)
+                                                        .children(if selected {
+                                                            "Unselect"
+                                                        } else {
+                                                            "Select"
+                                                        }),
+                                                    cs::button
+                                                        .on_click(move |_: &_| {
+                                                            data.map_mut(|data: &mut Data| {
+                                                                data.remove(idx)
+                                                            })
                                                         })
-                                                    })
-                                                    .children("Remove"),
+                                                        .children("Remove"),
+                                                )),
                                             )),
-                                        )),
-                                )
-                            })
-                            .collect::<Vec<_>>()
+                                    )
+                                })
+                                .collect::<Vec<_>>(),
+                        )
                     },
                 )
             }),

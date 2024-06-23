@@ -91,22 +91,20 @@ fn Game() {
         move |i| state_setter.dispatch(data::GameAction::JumpTo(i))
     };
 
-    let moves = (0..state.full_history().len())
-        .map(|i: usize| {
-            let desc = if i > 0 {
-                format!("Go to move #{i}")
-            } else {
-                "Go to game start".to_string()
-            };
+    let moves = Elements((0..state.full_history().len()).map(move |i: usize| {
+        let desc = if i > 0 {
+            format!("Go to move #{i}")
+        } else {
+            "Go to game start".to_string()
+        };
 
-            let jump_to = jump_to.clone();
-            rsx!(
-              <li key={i}>
-                <button on_click={move |_: &_| jump_to(i)}>{desc}</button>
-              </li>
-            )
-        })
-        .collect::<Vec<_>>();
+        let jump_to = jump_to.clone();
+        rsx!(
+          <li key={i}>
+            <button on_click={move |_: &_| jump_to(i)}>{desc}</button>
+          </li>
+        )
+    }));
 
     rsx!(
         <div class="game">

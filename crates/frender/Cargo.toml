@@ -26,6 +26,7 @@ frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
 frender-render-with = { version = "0.1.0", path = "../frender-render-with", optional = true }
+frender-elements = { version = "0.1.0", path = "../frender-elements", optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -51,6 +52,7 @@ default = [
     "either",
     "hooks",
     "RenderWith",
+    "Elements",
 ]
 nightly = ["frender-render-with?/nightly"]
 html = ["frender-html", "csr"]
@@ -63,6 +65,7 @@ either = [
 ]
 web = ["frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
-ssr = [] # TODO: remove ssr feature
-csr = ["ssr", "frender-csr"]
+ssr = ["frender-elements?/ssr"] # TODO: remove ssr feature
+csr = ["ssr", "frender-csr", "frender-elements?/csr"]
 RenderWith = ["dep:frender-render-with"]
+Elements = ["dep:frender-elements"]

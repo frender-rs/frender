@@ -1,18 +1,6 @@
-use frender_common::{Elements, Keyed};
+use frender_ssr::SsrElement;
 
-use crate::SsrElement;
-
-impl<K, E> SsrElement for Vec<Keyed<K, E>>
-where
-    K: std::hash::Hash + Eq, // TODO: ToString ?
-    E: SsrElement,
-{
-    type HtmlChildren = async_str_iter::flat::Flat<IterKeyed<std::vec::IntoIter<Keyed<K, E>>>>;
-
-    fn into_html_children(self) -> Self::HtmlChildren {
-        async_str_iter::flat::Flat::new(IterKeyed(self.into_iter()))
-    }
-}
+use crate::{Elements, Keyed};
 
 pub struct IterKeyed<I>(I);
 

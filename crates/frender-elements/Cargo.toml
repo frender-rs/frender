@@ -1,0 +1,14 @@
+[package]
+name = "frender-elements"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false, optional = true }
+frender-html = { version = "0.1.0", path = "../frender-html", default-features = false, optional = true }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false, optional = true }
+indexmap = { version = "2.2.6", optional = true }
+
+[features]
+ssr = ["dep:async-str-iter", "dep:frender-ssr"]
+csr = ["ssr", "dep:frender-html", "dep:indexmap"]
