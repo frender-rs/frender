@@ -69,6 +69,7 @@ crate::def_intrinsic_component_props!(
             pub trait Element {
                 trait_bounds!(
                     frender_dom::behaviors::Element<Renderer>
+                        + frender_dom::behaviors::ElementWithClassList<Renderer>
                         + OnEvent<Renderer, event_types::on_cancel>
                         + OnEvent<Renderer, event_types::on_error>
                         + OnEvent<Renderer, event_types::on_scroll>
@@ -106,27 +107,7 @@ crate::def_intrinsic_component_props!(
                         + OnEvent<Renderer, event_types::on_touch_start>
                 );
 
-                verbatim_trait_items!(
-                    type ClassList<'a>: frender_html_common::DomTokenList
-                    where
-                        Self: 'a,
-                        Renderer: 'a;
-                    fn class_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::ClassList<'a>;
-                );
-
-                impl_for_web!(
-                    verbatim_trait_items!(
-                        type ClassList<'a> = ::frender_dom::csr::web::DomTokenList
-                        where
-                            Self: 'a,
-                            Renderer: 'a;
-
-                        fn class_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::ClassList<'a> {
-                            let element: &web_sys::Element = self.0.as_ref();
-                            element.class_list().into()
-                        }
-                    );
-                );
+                impl_for_web!();
 
                 fn children(value: children![impl frender_ssr::SsrElement]);
 
@@ -134,7 +115,7 @@ crate::def_intrinsic_component_props!(
 
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
-                        get_mut_dom_token_list: behaviors::Element::class_list,
+                        get_mut_dom_token_list: frender_dom::behaviors::ElementWithClassList::class_list,
                     });
                 }
 
@@ -470,29 +451,14 @@ crate::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithRelAttribute {
-                        verbatim_trait_items!(
-                            type RelList<'a>: ::frender_html_common::DomTokenList
-                            where
-                                Self: 'a,
-                                Renderer: 'a;
-                            fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a>;
-                        );
+                        trait_bounds!(frender_dom::behaviors::ElementWithRelList<Renderer>);
                         impl_for_web!(
                             only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,);
-                            verbatim_trait_items!(
-                                type RelList<'a> = ::frender_dom::csr::web::DomTokenList
-                                where
-                                    Self: 'a,
-                                    Renderer: 'a;
-                                fn rel_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::RelList<'a> {
-                                    self.0.rel_list().into()
-                                }
-                            );
                         );
 
                         fn rel(value: bounds![DomTokens]) {
                             impl_with!(csr {
-                                get_mut_dom_token_list: behaviors::ElementWithRelAttribute::rel_list,
+                                get_mut_dom_token_list: frender_dom::behaviors::ElementWithRelList::rel_list,
                             });
                         }
                     }

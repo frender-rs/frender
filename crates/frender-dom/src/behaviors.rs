@@ -35,6 +35,22 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement);
 }
 
+pub trait ElementWithClassList<Renderer: ?Sized>: Element<Renderer> {
+    type ClassList<'a>: frender_html_common::DomTokenList
+    where
+        Self: 'a,
+        Renderer: 'a;
+    fn class_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::ClassList<'a>;
+}
+
+pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
+    type RelList<'a>: ::frender_html_common::DomTokenList
+    where
+        Self: 'a,
+        Renderer: 'a;
+    fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a>;
+}
+
 #[cfg(feature = "web")]
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
@@ -117,4 +133,50 @@ impl<
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement) {
         AsRef::<web_sys::HtmlElement>::as_ref(&self.0)
     }
+}
+
+#[cfg(feature = "web")]
+mod web {
+    use crate::shims::RelList as _;
+
+    use super::*;
+
+    impl<
+            N: AsRef<web_sys::Node> + AsRef<web_sys::Element>,
+            Renderer: ?Sized + crate::csr::web::Renderer,
+        > ElementWithClassList<Renderer> for crate::csr::web::Node<N>
+    {
+        type ClassList<'a> = crate::csr::web::DomTokenList
+        where
+            Self: 'a,
+            Renderer: 'a;
+
+        fn class_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::ClassList<'a> {
+            let element: &web_sys::Element = self.0.as_ref();
+            element.class_list().into()
+        }
+    }
+
+    frender_common::impl_many!(
+        impl<__>
+            (
+                Generics![Renderer: ?Sized + crate::csr::web::Renderer],
+                Trait![ElementWithRelList<Renderer>],
+                each_of![
+                    crate::csr::web::Node<web_sys::HtmlAnchorElement>,
+                    crate::csr::web::Node<web_sys::HtmlAreaElement>,
+                    crate::csr::web::Node<web_sys::HtmlFormElement>,
+                    crate::csr::web::Node<web_sys::HtmlLinkElement>,
+                ],
+            )
+        {
+            type RelList<'a> = crate::csr::web::DomTokenList
+            where
+                Self: 'a,
+                Renderer: 'a;
+            fn rel_list<'a>(&'a mut self, _: &'a mut Renderer) -> Self::RelList<'a> {
+                self.0.rel_list().into()
+            }
+        }
+    );
 }
