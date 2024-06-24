@@ -118,6 +118,7 @@ pub mod unpinned {
             f: F,
         ) {
             if let Some(this) = &self.0 {
+                // TODO: what if the event target is not the same
                 this.update(f)
             } else {
                 self.0 = Some(EventListener::new(target, event_type, f))
