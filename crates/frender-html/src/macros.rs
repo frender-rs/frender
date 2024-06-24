@@ -192,6 +192,21 @@ macro_rules! behaviors {
             })*
         }
 
+        #[cfg(feature="ElementProxyAttrs")]
+        impl<
+            Renderer: ?Sized,
+            E: ?Sized + frender_dom::behaviors::Element<Renderer>,
+        > $trait_name<Renderer> for crate::ElementProxyAttrs<E>
+        where Self:
+            $($extends<Renderer> +)*
+            $($($($special_super_traits<Renderer> + )+ )?)?
+            $($($trait_bounds)*)?
+        {
+            $(crate::element_proxy_attrs::macros::impl_behavior_fn! {
+                $fn_name $fn_args $fn_body_or_semi ($trait_name)
+            })*
+        }
+
         // if `impl_for_web`
         #[cfg(feature = "web")]
         ::frender_common::expand! { if ($( ! $($($verbatim_trait_items_impl_web)*)?)?) {

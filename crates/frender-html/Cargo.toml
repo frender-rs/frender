@@ -105,3 +105,4 @@ web = [
 ]
 macros_not_expanded = []
 either = ["dep:either", "frender-ssr/either", "frender-dom/either"]
+ElementProxyAttrs = []

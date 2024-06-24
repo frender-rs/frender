@@ -16,6 +16,12 @@ pub mod props_builder;
 
 pub use html::{components as cs, prelude_props_builders};
 
+#[cfg(feature = "ElementProxyAttrs")]
+pub mod element_proxy_attrs;
+
+#[cfg(feature = "ElementProxyAttrs")]
+pub use element_proxy_attrs::ElementProxyAttrs;
+
 mod create_node;
 mod update_element;
 
