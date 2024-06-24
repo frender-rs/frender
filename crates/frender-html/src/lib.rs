@@ -1,6 +1,6 @@
 pub use frender_common::expand;
 pub use frender_dom as dom;
-pub use frender_html_common::{DomTokenList, DomTokens, IntoOneStringOrEmpty};
+pub use frender_html_common::{DomToken, DomTokenList, DomTokens, IntoOneStringOrEmpty};
 
 pub use create_node::CreateNode;
 pub use html::RenderHtml;
