@@ -74,14 +74,9 @@ pub trait ElementsAlgorithm<K, E> {
 /// The render state `Element::UnpinnedRenderState` might NOT get dropped when unmounted.
 /// [`RenderState::unmount`] will always run when unmounted.
 pub mod default {
-    use std::{
-        cmp::Ordering,
-        collections::{hash_map, HashMap},
-        hash::Hash,
-        pin::Pin,
-    };
+    use std::{cmp::Ordering, hash::Hash, pin::Pin};
 
-    use indexmap::{IndexMap, IndexSet};
+    use indexmap::IndexMap;
 
     use frender_html::{Element, RenderHtml, RenderState};
 
@@ -133,34 +128,6 @@ pub mod default {
         if states.len() == real_len {
             states.push(Default::default());
         }
-    }
-
-    // returns the state at index now
-    fn swap_states<S>(states: &mut Vec<State<S>>, index: usize, old_index: usize) -> &mut State<S> {
-        debug_assert!(old_index > index);
-        states.swap(index, old_index);
-
-        let state = &mut states[index];
-
-        let real_index;
-        if state.state_unmounted {
-            real_index = state.order;
-            let prev_state = &mut states[real_index];
-            debug_assert_eq!(prev_state.order, index);
-            debug_assert_eq!(prev_state.state_unmounted, false);
-            prev_state.order = old_index;
-        } else {
-            real_index = index;
-            state.order = old_index;
-        }
-
-        {
-            let state = &mut states[old_index];
-            state.order = real_index;
-            state.state_unmounted = true;
-        }
-
-        &mut states[index]
     }
 
     impl<K, S> Default for States<K, S> {
@@ -286,6 +253,7 @@ pub mod default {
                         let State {
                             render_state,
                             order,
+                            state_unmounted,
                             ..
                         } = &mut states[index];
 
@@ -335,9 +303,13 @@ pub mod default {
                             force_reposition,
                         );
 
+                        *state_unmounted = false;
+                        let ord_order = *order;
+                        *order = cur;
+
                         match strategy {
                             Strategy::NoMove | Strategy::Skip => {
-                                old_cur = *order + 1;
+                                old_cur = ord_order + 1;
                                 while states
                                     .get_mut(old_cur)
                                     .map(|state| std::mem::take(&mut state.cache))
@@ -399,7 +371,11 @@ pub mod default {
             while mounted_count < key_to_index.len() {
                 if states[mounted_count].state_unmounted {
                     key_to_index.swap_remove_index(mounted_count);
-                    states.swap(mounted_count, key_to_index.len() - 1);
+                    states.swap(
+                        mounted_count,
+                        // this has been decremented
+                        key_to_index.len(),
+                    );
                 } else {
                     mounted_count += 1;
                 }
