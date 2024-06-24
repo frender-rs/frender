@@ -14,6 +14,8 @@ pub mod html;
 pub mod impl_bounds;
 pub mod props_builder;
 
+pub use html::{components as cs, prelude_props_builders};
+
 mod create_node;
 mod update_element;
 
