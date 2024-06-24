@@ -49,8 +49,18 @@ where
             return Poll::Ready(());
         };
 
+        let mut initial_cursor = None;
+
         loop {
             let a = this.hook_data.as_mut().poll_next_update(cx);
+
+            let initial_cursor = if let Some(initial_cursor) = &initial_cursor {
+                renderer.set_cursor_by_ref(initial_cursor);
+                initial_cursor
+            } else {
+                initial_cursor.insert(renderer.cursor())
+            };
+
             let b = this.render_state.as_mut().poll_render(renderer, cx);
 
             match (a, b) {
@@ -58,6 +68,7 @@ where
                 (Poll::Ready(true), _) => {
                     let element = use_hook(this.hook_data.as_mut());
 
+                    renderer.set_cursor_by_ref(initial_cursor);
                     element.render_update(renderer, this.render_state.as_mut());
 
                     if *this.render_iteration_count == u8::MAX {
@@ -119,8 +130,18 @@ where
             return Poll::Ready(());
         };
 
+        let mut initial_cursor = None;
+
         loop {
             let a = Pin::new(&mut this.hook_data).poll_next_update(cx);
+
+            let initial_cursor = if let Some(initial_cursor) = &initial_cursor {
+                renderer.set_cursor_by_ref(initial_cursor);
+                initial_cursor
+            } else {
+                initial_cursor.insert(renderer.cursor())
+            };
+
             let b = Pin::new(&mut this.render_state).poll_render(renderer, cx);
 
             match (a, b) {
@@ -128,6 +149,7 @@ where
                 (Poll::Ready(true), _) => {
                     let element = use_hook(Pin::new(&mut this.hook_data));
 
+                    renderer.set_cursor_by_ref(initial_cursor);
                     element.unpinned_render_update(renderer, &mut this.render_state);
 
                     if this.render_iteration_count == u8::MAX {

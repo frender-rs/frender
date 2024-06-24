@@ -42,10 +42,15 @@ impl<R: RenderHtml, E: Element, Stop: Future<Output = ()>> std::future::Future
         let mut this = self.project();
 
         if let Some(element) = this.element.take() {
-            element.render_update(this.renderer, this.state.as_mut())
+            this.renderer.with_render_context(|renderer| {
+                element.render_update(renderer, this.state.as_mut())
+            });
         }
 
-        if let std::task::Poll::Pending = this.state.as_mut().poll_render(this.renderer, cx) {
+        if let std::task::Poll::Pending = this
+            .renderer
+            .with_render_context(|renderer| this.state.as_mut().poll_render(renderer, cx))
+        {
             return std::task::Poll::Pending;
         }
 

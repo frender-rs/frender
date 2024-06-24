@@ -1,4 +1,7 @@
-use frender_dom::{render::RenderTextFromKnown, OnEvent};
+use frender_dom::{
+    render::{Render, RenderTextFromKnown},
+    OnEvent,
+};
 use frender_html_common::{ContentEditable, Spellcheck};
 
 use crate::impl_bounds::{DomTokens, SetRef};
@@ -55,7 +58,7 @@ crate::def_intrinsic_component_props!(
 
         #[RenderHtml]
         pub trait RenderHtml {
-            additional_bounds!(dyn 'static + RenderTextFromKnown<Self::Text>);
+            additional_bounds!(dyn 'static + RenderTextFromKnown<Self::Text> + Render);
 
             type Text: behaviors::Node<Self> + 'static;
         }

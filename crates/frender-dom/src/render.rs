@@ -97,3 +97,27 @@ impl<S: std::borrow::Borrow<str>> RenderAsText for frender_common::TempStr<S> {
         str::render_as_text_update(self.borrow(), renderer, text)
     }
 }
+
+pub trait Render: RenderWithCursor {
+    fn log(&mut self, v: &str);
+}
+
+// TODO: redesign renderer api with RenderContext
+pub trait RenderWithCursor {
+    type Cursor;
+
+    fn cursor(&self) -> Self::Cursor;
+
+    fn set_cursor(&mut self, cursor: Self::Cursor);
+
+    fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor);
+
+    fn with_render_context<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+        let cursor = self.cursor();
+        let res = f(self);
+        self.set_cursor(cursor);
+        res
+    }
+
+    fn log_cursor(&mut self);
+}

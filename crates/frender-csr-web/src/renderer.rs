@@ -1,6 +1,12 @@
 use std::borrow::Cow;
 
-use frender_html::{dom::csr::web::Node, RenderHtml};
+use frender_html::{
+    dom::{
+        csr::web::Node,
+        render::{Render, RenderWithCursor},
+    },
+    RenderHtml,
+};
 use wasm_bindgen::UnwrapThrowExt;
 
 mod text;
@@ -39,6 +45,39 @@ macro_rules! html_elements {
             Node(element.unchecked_into())
         }
     )*};
+}
+
+pub struct Cursor(NextNodePosition);
+
+impl RenderWithCursor for Renderer {
+    type Cursor = Cursor;
+
+    fn cursor(&self) -> Self::Cursor {
+        Cursor(self.next_node_position.clone())
+    }
+
+    fn set_cursor(&mut self, cursor: Self::Cursor) {
+        self.next_node_position = cursor.0;
+    }
+
+    fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor) {
+        self.next_node_position = cursor.0.clone();
+    }
+
+    fn log_cursor(&mut self) {
+        let (kind, node) = match &self.next_node_position {
+            NextNodePosition::FirstChildOf(node) => ("FirstChildOf", node.as_ref()),
+            NextNodePosition::InsertAfter(node) => ("InsertAfter", node.as_ref()),
+        };
+
+        web_sys::console::log_3(&"cursor=".into(), &kind.into(), node);
+    }
+}
+
+impl Render for Renderer {
+    fn log(&mut self, v: &str) {
+        web_sys::console::log_1(&v.into())
+    }
 }
 
 impl RenderHtml for Renderer {
