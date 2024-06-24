@@ -9,6 +9,9 @@ frender-html = { version = "0.1.0", path = "../frender-html", default-features =
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", default-features = false, optional = true }
 indexmap = { version = "2.2.6", optional = true }
 
+[dev-dependencies]
+frender-test = { version = "0.1.0", path = "../frender-test" }
+
 [features]
 ssr = ["dep:async-str-iter", "dep:frender-ssr"]
 csr = ["ssr", "dep:frender-html", "dep:indexmap"]

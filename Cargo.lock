@@ -966,6 +966,7 @@ dependencies = [
  "async-str-iter",
  "frender-html",
  "frender-ssr",
+ "frender-test",
  "indexmap 2.2.6",
 ]
 
@@ -1089,6 +1090,15 @@ dependencies = [
  "either",
  "html-escape",
  "pin-project-lite",
+]
+
+[[package]]
+name = "frender-test"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
+ "frender-macro-rules",
+ "indexmap 2.2.6",
 ]
 
 [[package]]
