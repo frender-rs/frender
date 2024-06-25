@@ -1,4 +1,6 @@
 pub trait Node<Renderer: ?Sized> {
+    fn log_self(&self, renderer: &mut Renderer);
+
     fn cursor_is_at_self(&self, renderer: &Renderer) -> bool;
 
     fn move_cursor_after_self(&mut self, renderer: &mut Renderer);
@@ -48,6 +50,10 @@ pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
 {
+    fn log_self(&self, _: &mut Renderer) {
+        web_sys::console::log_1(self.0.as_ref());
+    }
+
     fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
         renderer.cursor_is_at_node(self.0.as_ref())
     }

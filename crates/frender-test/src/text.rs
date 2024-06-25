@@ -47,6 +47,10 @@ impl Text {
 }
 
 impl frender_html::dom::behaviors::Node<Renderer> for Text {
+    fn log_self(&self, _: &mut Renderer) {
+        eprintln!("{:?}", self)
+    }
+
     fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
         renderer
             .cursor

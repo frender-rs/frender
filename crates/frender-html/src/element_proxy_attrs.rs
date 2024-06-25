@@ -79,6 +79,10 @@ mod dom {
     use super::ElementProxyAttrs;
 
     impl<R: ?Sized, E: ?Sized + behaviors::Node<R>> behaviors::Node<R> for ElementProxyAttrs<E> {
+        fn log_self(&self, renderer: &mut R) {
+            self.0.log_self(renderer)
+        }
+
         fn cursor_is_at_self(&self, renderer: &R) -> bool {
             self.0.cursor_is_at_self(renderer)
         }
