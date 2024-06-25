@@ -226,6 +226,13 @@ mod imp {
         // );
 
         if *mounted && !force_reposition {
+            #[cfg(debug_assertions)]
+            if !element.cursor_is_at_self(renderer) {
+                renderer.log("[debug assertion failed] Cursor should be at:");
+                element.log_self(renderer);
+                renderer.log("But the cursor is at:");
+                renderer.log_cursor();
+            }
             // element.move_cursor_after_self(renderer);
         } else {
             // if *mounted && element.cursor_is_at_self(renderer) {
