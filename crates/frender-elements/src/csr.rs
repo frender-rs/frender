@@ -283,6 +283,7 @@ pub mod default {
                                 if before < after {
                                     // *2 3* were marked as MightUnmount (state_unmounted=true) at the start
                                     // They will be removed or mounted later.
+                                    renderer.set_cursor_skipped(true);
                                     Strategy::Skip
                                 } else {
                                     // move *4* left
