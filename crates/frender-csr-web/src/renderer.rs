@@ -20,6 +20,7 @@ enum NextNodePosition {
 pub struct Renderer {
     document: web_sys::Document,
     next_node_position: NextNodePosition,
+    cursor_skipped: bool,
 }
 
 impl Renderer {
@@ -27,6 +28,7 @@ impl Renderer {
         Self {
             document,
             next_node_position: NextNodePosition::FirstChildOf(root_parent),
+            cursor_skipped: false,
         }
     }
 }
@@ -47,30 +49,50 @@ macro_rules! html_elements {
     )*};
 }
 
-pub struct Cursor(NextNodePosition);
+pub struct Cursor(NextNodePosition, bool);
 
 impl RenderWithCursor for Renderer {
     type Cursor = Cursor;
 
     fn cursor(&self) -> Self::Cursor {
-        Cursor(self.next_node_position.clone())
+        Cursor(self.next_node_position.clone(), self.cursor_skipped)
     }
 
     fn set_cursor(&mut self, cursor: Self::Cursor) {
         self.next_node_position = cursor.0;
+        self.cursor_skipped = cursor.1;
+    }
+
+    fn cursor_skipped(&self) -> bool {
+        self.cursor_skipped
+    }
+
+    fn set_cursor_skipped(&mut self, cursor_skipped: bool) {
+        self.cursor_skipped = cursor_skipped;
     }
 
     fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor) {
         self.next_node_position = cursor.0.clone();
+        self.cursor_skipped = cursor.1;
     }
 
     fn log_cursor(&mut self) {
-        let (kind, node) = match &self.next_node_position {
-            NextNodePosition::FirstChildOf(node) => ("FirstChildOf", node.as_ref()),
-            NextNodePosition::InsertAfter(node) => ("InsertAfter", node.as_ref()),
+        let (kind, node, cur) = match &self.next_node_position {
+            NextNodePosition::FirstChildOf(node) => {
+                ("FirstChildOf", node.as_ref(), node.first_child())
+            }
+            NextNodePosition::InsertAfter(node) => {
+                ("InsertAfter", node.as_ref(), node.next_sibling())
+            }
         };
 
-        web_sys::console::log_3(&"cursor=".into(), &kind.into(), node);
+        web_sys::console::log_5(
+            &"cursor=".into(),
+            &kind.into(),
+            node,
+            &"=".into(),
+            &cur.into(),
+        );
     }
 }
 
@@ -214,6 +236,7 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
     fn move_cursor_after_node(&mut self, node: &web_sys::Node) {
         let node = node.clone();
         self.next_node_position = NextNodePosition::InsertAfter(node);
+        self.cursor_skipped = false;
     }
 
     fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
@@ -237,6 +260,7 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
         }
 
         self.next_node_position = NextNodePosition::InsertAfter(node.clone());
+        self.cursor_skipped = false;
     }
 
     fn remove_node(&mut self, node: &web_sys::Node) {
@@ -255,5 +279,6 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
 
     fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element) {
         self.next_node_position = NextNodePosition::FirstChildOf(element.clone());
+        self.cursor_skipped = false;
     }
 }

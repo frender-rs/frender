@@ -37,6 +37,7 @@ impl VirtualDom {
 pub struct Renderer {
     root: crate::element::Element,
     pub(crate) cursor: crate::element::Cursor,
+    pub(crate) cursor_skipped: bool,
 }
 
 impl Renderer {
@@ -45,6 +46,7 @@ impl Renderer {
         Self {
             cursor: crate::element::Cursor::FirstChildOf(root.clone()),
             root,
+            cursor_skipped: false,
         }
     }
 
@@ -52,7 +54,8 @@ impl Renderer {
         self.cursor = crate::element::Cursor::After {
             node,
             children_index_hint: 0, // TODO: optimize
-        }
+        };
+        self.cursor_skipped = false;
     }
 
     fn readd_node_force_reposition(&mut self, node: Cow<Node>) {
@@ -115,21 +118,31 @@ macro_rules! html_elements {
     };
 }
 
-pub struct Cursor(crate::element::Cursor);
+pub struct Cursor(crate::element::Cursor, bool);
 
 impl RenderWithCursor for Renderer {
     type Cursor = Cursor;
 
     fn cursor(&self) -> Self::Cursor {
-        Cursor(self.cursor.cloned_cursor())
+        Cursor(self.cursor.cloned_cursor(), self.cursor_skipped)
     }
 
     fn set_cursor(&mut self, cursor: Self::Cursor) {
         self.cursor = cursor.0;
+        self.cursor_skipped = cursor.1;
+    }
+
+    fn cursor_skipped(&self) -> bool {
+        self.cursor_skipped
+    }
+
+    fn set_cursor_skipped(&mut self, cursor_skipped: bool) {
+        self.cursor_skipped = cursor_skipped
     }
 
     fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor) {
         self.cursor = cursor.0.cloned_cursor();
+        self.cursor_skipped = cursor.1;
     }
 
     fn log_cursor(&mut self) {

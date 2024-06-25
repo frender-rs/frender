@@ -227,7 +227,7 @@ mod imp {
 
         if *mounted && !force_reposition {
             #[cfg(debug_assertions)]
-            if !element.cursor_is_at_self(renderer) {
+            if !renderer.cursor_skipped() && !element.cursor_is_at_self(renderer) {
                 renderer.log("[debug assertion failed] Cursor should be at:");
                 element.log_self(renderer);
                 renderer.log("But the cursor is at:");

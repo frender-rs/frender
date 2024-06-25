@@ -308,6 +308,7 @@ mod dom {
     impl behaviors::Element<Renderer> for Element {
         fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer) {
             renderer.cursor = super::Cursor::FirstChildOf(self.clone());
+            renderer.cursor_skipped = false;
         }
 
         fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str) {

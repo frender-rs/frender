@@ -110,6 +110,12 @@ pub trait RenderWithCursor {
 
     fn set_cursor(&mut self, cursor: Self::Cursor);
 
+    /// Only for debugging
+    fn cursor_skipped(&self) -> bool;
+
+    /// Only for debugging
+    fn set_cursor_skipped(&mut self, cursor_skipped: bool);
+
     fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor);
 
     fn with_render_context<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
