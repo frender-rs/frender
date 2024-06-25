@@ -145,6 +145,29 @@ impl RenderWithCursor for Renderer {
         self.cursor_skipped = cursor.1;
     }
 
+    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool {
+        self.cursor_skipped == other.1
+            && match (&self.cursor, &other.0) {
+                (
+                    crate::element::Cursor::FirstChildOf(a),
+                    crate::element::Cursor::FirstChildOf(b),
+                ) => a.is_same_element(b),
+
+                (
+                    crate::element::Cursor::After {
+                        node: a,
+                        children_index_hint: _,
+                    },
+                    crate::element::Cursor::After {
+                        node: b,
+                        children_index_hint: _,
+                    },
+                ) => a.is_same_node(b),
+
+                _ => false,
+            }
+    }
+
     fn log_cursor(&mut self) {
         eprintln!("{:?}", self.cursor)
     }

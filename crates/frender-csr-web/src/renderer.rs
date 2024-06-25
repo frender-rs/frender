@@ -76,6 +76,15 @@ impl RenderWithCursor for Renderer {
         self.cursor_skipped = cursor.1;
     }
 
+    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool {
+        self.cursor_skipped == other.1
+            && match (&self.next_node_position, &other.0) {
+                (NextNodePosition::FirstChildOf(a), NextNodePosition::FirstChildOf(b)) => a == b,
+                (NextNodePosition::InsertAfter(a), NextNodePosition::InsertAfter(b)) => a == b,
+                _ => false,
+            }
+    }
+
     fn log_cursor(&mut self) {
         let (kind, node, cur) = match &self.next_node_position {
             NextNodePosition::FirstChildOf(node) => {

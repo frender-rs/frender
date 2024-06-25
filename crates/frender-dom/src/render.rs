@@ -125,5 +125,7 @@ pub trait RenderWithCursor {
         res
     }
 
+    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool;
+
     fn log_cursor(&mut self);
 }
