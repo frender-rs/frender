@@ -23,6 +23,7 @@ features = [
     #
     "console",
     "Event",
+    "Comment",
     "Text",
     "Node",
     "HtmlMenuElement",

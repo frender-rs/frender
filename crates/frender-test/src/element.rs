@@ -11,7 +11,29 @@ use indexmap::IndexMap;
 use crate::text::Text;
 
 #[derive(Debug, Clone)]
+pub struct CursorPlaceholder {
+    inner: Rc<RefCell<Option<WeakElement>>>,
+}
+
+impl CursorPlaceholder {
+    pub(crate) fn new() -> Self {
+        Self {
+            inner: Rc::new(RefCell::new(None)),
+        }
+    }
+
+    pub(crate) fn parent(&self) -> Option<WeakElement> {
+        self.inner.borrow().clone()
+    }
+
+    fn set_parent(&self, parent: Option<WeakElement>) {
+        *self.inner.borrow_mut() = parent
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum Node {
+    CursorPlaceholder(CursorPlaceholder),
     Text(Text),
     Element(Element),
 }
@@ -19,6 +41,7 @@ pub enum Node {
 impl Node {
     pub(crate) fn parent(&self) -> Option<WeakElement> {
         match self {
+            Node::CursorPlaceholder(cp) => cp.parent(),
             Node::Text(text) => text.parent(),
             Node::Element(element) => element.parent(),
         }
@@ -68,6 +91,7 @@ impl Node {
         match self {
             Node::Text(this) => this.set_parent(parent),
             Node::Element(this) => this.set_parent(parent),
+            Node::CursorPlaceholder(cp) => cp.set_parent(parent),
         }
     }
 }

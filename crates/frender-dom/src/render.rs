@@ -128,4 +128,16 @@ pub trait RenderWithCursor {
     fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool;
 
     fn log_cursor(&mut self);
+
+    type CursorPlaceholder: 'static;
+
+    /// Should add the placeholder to dom and move cursor after the placeholder
+    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder;
+
+    /// Should move the placeholder and move cursor after the placeholder
+    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder);
+
+    fn cursor_placeholder_unmount(&mut self, placeholder: &mut Self::CursorPlaceholder);
+
+    fn move_cursor_after_placeholder(&mut self, placeholder: &mut Self::CursorPlaceholder);
 }

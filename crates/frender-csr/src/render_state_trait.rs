@@ -5,6 +5,7 @@ pub trait RenderState<R: ?Sized> {
 
     fn state_unmount(self: Pin<&mut Self>);
 
+    /// Implementation shouldn't change cursor
     fn poll_render(
         self: Pin<&mut Self>,
         renderer: &mut R,

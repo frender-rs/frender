@@ -5,7 +5,10 @@ use frender_html::{
     RenderHtml,
 };
 
-use crate::{element::Node, text::Text};
+use crate::{
+    element::{CursorPlaceholder, Node},
+    text::Text,
+};
 
 pub struct VirtualDom {
     renderer: Renderer,
@@ -170,6 +173,31 @@ impl RenderWithCursor for Renderer {
 
     fn log_cursor(&mut self) {
         eprintln!("{:?}", self.cursor)
+    }
+
+    type CursorPlaceholder = CursorPlaceholder;
+
+    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder {
+        let cp = CursorPlaceholder::new();
+        self.readd_node_force_reposition(Cow::Owned(Node::CursorPlaceholder(cp.clone())));
+        cp
+    }
+
+    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder) {
+        self.readd_node_force_reposition(Cow::Owned(Node::CursorPlaceholder(cp.clone())));
+    }
+
+    fn cursor_placeholder_unmount(&mut self, placeholder: &mut Self::CursorPlaceholder) {
+        placeholder
+            .parent()
+            .expect("CursorPlaceholder should have a parent")
+            .upgrade()
+            .expect("CursorPlaceholder's parent should not have been dropped")
+            .remove_child(&Node::CursorPlaceholder(placeholder.clone()));
+    }
+
+    fn move_cursor_after_placeholder(&mut self, placeholder: &mut Self::CursorPlaceholder) {
+        self.move_cursor_after_node(Node::CursorPlaceholder(placeholder.clone()))
     }
 }
 

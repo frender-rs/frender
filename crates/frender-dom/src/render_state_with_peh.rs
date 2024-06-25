@@ -7,6 +7,7 @@ pub trait RenderStateWithParentElementsHandle<PEH: ?Sized, R: ?Sized> {
 
     fn state_unmount_with_peh(self: Pin<&mut Self>, peh: &mut PEH);
 
+    /// Implementation shouldn't change cursor
     fn poll_render_with_peh(
         self: Pin<&mut Self>,
         peh: &mut PEH,

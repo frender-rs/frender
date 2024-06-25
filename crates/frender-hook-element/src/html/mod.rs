@@ -4,9 +4,8 @@ use frender_html::{Element, RenderHtml, RenderState};
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 
 pin_project_lite::pin_project!(
-    #[derive(Default)]
-    pub struct State<HookData, S, U> {
-        use_hook: U,
+    pub struct State<HookData, S, U, C> {
+        use_hook_and_cursor_placeholder: StatedUseHookAndCursorPlaceholder<U, C>,
         render_iteration_count: u8,
         #[pin]
         hook_data: HookData,
@@ -15,25 +14,109 @@ pin_project_lite::pin_project!(
     }
 );
 
+impl<HookData: Default, S: Default, U, C> Default for State<HookData, S, U, C> {
+    fn default() -> Self {
+        Self {
+            use_hook_and_cursor_placeholder: StatedUseHookAndCursorPlaceholder {
+                use_hook_and_cursor_placeholder: None,
+                mount_state: MountState::Unmounted,
+            },
+            render_iteration_count: 0,
+            hook_data: Default::default(),
+            render_state: Default::default(),
+        }
+    }
+}
+
+enum MountState {
+    Unmounted,
+    StateUnmounted,
+    Mounted,
+}
+
+struct StatedUseHookAndCursorPlaceholder<U, C> {
+    use_hook_and_cursor_placeholder: Option<(U, C)>,
+    mount_state: MountState,
+}
+
+pub trait UseHookRenderUpdate<HookData> {
+    type State<R: RenderHtml + ?Sized>: RenderState<R>;
+    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+        &mut self,
+        hook_data: Pin<&mut HookData>,
+        renderer: &mut R,
+        render_state: Pin<&mut Self::State<R>>,
+    );
+}
+
+pub struct UseHookWithRenderState<U>(pub U);
+
+impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdate<HookData>
+    for UseHookWithRenderState<U>
+{
+    type State<R: RenderHtml + ?Sized> = E::RenderState<R>;
+
+    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+        &mut self,
+        hook_data: Pin<&mut HookData>,
+        renderer: &mut R,
+        render_state: Pin<&mut Self::State<R>>,
+    ) {
+        self.0(hook_data).render_update(renderer, render_state)
+    }
+}
+
+pub struct UseHookWithUnpinnedRenderState<U>(pub U);
+
+impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdate<HookData>
+    for UseHookWithUnpinnedRenderState<U>
+{
+    type State<R: RenderHtml + ?Sized> = E::UnpinnedRenderState<R>;
+
+    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+        &mut self,
+        hook_data: Pin<&mut HookData>,
+        renderer: &mut R,
+        render_state: Pin<&mut Self::State<R>>,
+    ) {
+        self.0(hook_data).unpinned_render_update(renderer, render_state.get_mut())
+    }
+}
+
 impl<
         HookData: HookPollNextUpdate + HookUnmount + Default,
-        U,
-        E: Element,
+        U: UseHookRenderUpdate<HookData>,
         R: RenderHtml + ?Sized,
-    > RenderState<R> for State<HookData, E::RenderState<R>, Option<U>>
-where
-    U: FnMut(Pin<&mut HookData>) -> E,
+    > RenderState<R> for State<HookData, U::State<R>, U, R::CursorPlaceholder>
 {
     fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+        if let MountState::Unmounted = self.use_hook_and_cursor_placeholder.mount_state {
+            return;
+        }
+
         let this = self.project();
-        this.hook_data.unmount();
+
+        if let MountState::Mounted = this.use_hook_and_cursor_placeholder.mount_state {
+            this.hook_data.unmount();
+        }
+
         this.render_state.unmount(renderer);
+
+        this.use_hook_and_cursor_placeholder.mount_state = MountState::Unmounted;
     }
 
     fn state_unmount(self: Pin<&mut Self>) {
+        if !matches!(
+            self.use_hook_and_cursor_placeholder.mount_state,
+            MountState::Mounted
+        ) {
+            return;
+        }
+
         let this = self.project();
         this.hook_data.unmount();
         this.render_state.state_unmount();
+        this.use_hook_and_cursor_placeholder.mount_state = MountState::StateUnmounted;
     }
 
     fn poll_render(
@@ -43,33 +126,39 @@ where
     ) -> std::task::Poll<()> {
         let mut this = self.project();
 
-        let use_hook = if let Some(use_hook) = this.use_hook {
-            use_hook
-        } else {
-            return Poll::Ready(());
+        let (use_hook, placeholder) = match this.use_hook_and_cursor_placeholder {
+            StatedUseHookAndCursorPlaceholder {
+                use_hook_and_cursor_placeholder: Some(u),
+                mount_state: MountState::Mounted,
+            } => u,
+            _ => return Poll::Ready(()),
         };
-
-        let mut initial_cursor = None;
 
         loop {
             let a = this.hook_data.as_mut().poll_next_update(cx);
 
-            let initial_cursor = if let Some(initial_cursor) = &initial_cursor {
-                renderer.set_cursor_by_ref(initial_cursor);
-                initial_cursor
-            } else {
-                initial_cursor.insert(renderer.cursor())
-            };
+            #[cfg(debug_assertions)]
+            let initial_cursor = renderer.cursor();
 
             let b = this.render_state.as_mut().poll_render(renderer, cx);
+
+            #[cfg(debug_assertions)]
+            assert!(
+                renderer.cursor_is_same_as(&initial_cursor),
+                "cursor changed in hook element RenderState::poll_render"
+            );
 
             match (a, b) {
                 (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
                 (Poll::Ready(true), _) => {
-                    let element = use_hook(this.hook_data.as_mut());
-
-                    renderer.set_cursor_by_ref(initial_cursor);
-                    element.render_update(renderer, this.render_state.as_mut());
+                    renderer.with_render_context(|renderer| {
+                        renderer.move_cursor_after_placeholder(placeholder);
+                        use_hook.use_hook_render_update(
+                            this.hook_data.as_mut(),
+                            renderer,
+                            this.render_state.as_mut(),
+                        );
+                    });
 
                     if *this.render_iteration_count == u8::MAX {
                         *this.render_iteration_count = 0;
@@ -77,87 +166,6 @@ where
                         return Poll::Pending;
                     } else {
                         *this.render_iteration_count += 1;
-                    }
-                }
-                _ => return Poll::Pending,
-            }
-        }
-    }
-}
-
-#[derive(Default)]
-pub struct UnpinnedState<HookData, S, U> {
-    use_hook: U,
-    render_iteration_count: u8,
-    hook_data: HookData,
-    render_state: S,
-}
-
-impl<HookData, S, U> Unpin for UnpinnedState<HookData, S, U> {}
-
-impl<
-        HookData: HookPollNextUpdate + HookUnmount + Default,
-        U,
-        E: Element,
-        R: RenderHtml + ?Sized,
-    > RenderState<R> for UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>
-where
-    U: FnMut(Pin<&mut HookData>) -> E,
-    HookData: Unpin,
-{
-    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
-        let this = self.get_mut();
-        Pin::new(&mut this.hook_data).unmount();
-        RenderState::<_>::unmount(Pin::new(&mut this.render_state), renderer);
-    }
-
-    fn state_unmount(self: Pin<&mut Self>) {
-        let this = self.get_mut();
-        Pin::new(&mut this.hook_data).unmount();
-        Pin::new(&mut this.render_state).state_unmount();
-    }
-
-    fn poll_render(
-        self: Pin<&mut Self>,
-        renderer: &mut R,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        let this = self.get_mut();
-
-        let use_hook = if let Some(use_hook) = &mut this.use_hook {
-            use_hook
-        } else {
-            return Poll::Ready(());
-        };
-
-        let mut initial_cursor = None;
-
-        loop {
-            let a = Pin::new(&mut this.hook_data).poll_next_update(cx);
-
-            let initial_cursor = if let Some(initial_cursor) = &initial_cursor {
-                renderer.set_cursor_by_ref(initial_cursor);
-                initial_cursor
-            } else {
-                initial_cursor.insert(renderer.cursor())
-            };
-
-            let b = Pin::new(&mut this.render_state).poll_render(renderer, cx);
-
-            match (a, b) {
-                (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
-                (Poll::Ready(true), _) => {
-                    let element = use_hook(Pin::new(&mut this.hook_data));
-
-                    renderer.set_cursor_by_ref(initial_cursor);
-                    element.unpinned_render_update(renderer, &mut this.render_state);
-
-                    if this.render_iteration_count == u8::MAX {
-                        this.render_iteration_count = 0;
-                        cx.waker().wake_by_ref();
-                        return Poll::Pending;
-                    } else {
-                        this.render_iteration_count += 1;
                     }
                 }
                 _ => return Poll::Pending,
@@ -177,39 +185,88 @@ where
     U: FnMut(Pin<&mut HookData>) -> E,
     HookData: Unpin,
 {
-    type RenderState<R: RenderHtml + ?Sized> = State<HookData, E::RenderState<R>, Option<U>>;
+    type RenderState<R: RenderHtml + ?Sized> =
+        State<HookData, E::RenderState<R>, UseHookWithRenderState<U>, R::CursorPlaceholder>;
 
     fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
-        mut self,
+        self,
         renderer: &mut Renderer,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
-        force_reposition: bool,
+        mut force_reposition: bool,
     ) {
         let render_state = render_state.project();
-        (self.use_hook)(render_state.hook_data).render_update_maybe_reposition(
+        let StatedUseHookAndCursorPlaceholder {
+            use_hook_and_cursor_placeholder,
+            mount_state,
+        } = render_state.use_hook_and_cursor_placeholder;
+
+        let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
+            force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
+            if force_reposition {
+                renderer.cursor_placeholder_force_reposition(cp);
+            }
+            use_hook.0 = self.use_hook;
+
+            use_hook
+        } else {
+            force_reposition = true;
+            let cp = renderer.cursor_placeholder_render();
+            let (use_hook, _) =
+                use_hook_and_cursor_placeholder.insert((UseHookWithRenderState(self.use_hook), cp));
+            use_hook
+        };
+
+        (use_hook.0)(render_state.hook_data).render_update_maybe_reposition(
             renderer,
             render_state.render_state,
             force_reposition,
         );
-        *render_state.use_hook = Some(self.use_hook);
+
+        *mount_state = MountState::Mounted;
     }
 
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> =
-        UnpinnedState<HookData, E::UnpinnedRenderState<R>, Option<U>>;
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> = State<
+        HookData,
+        E::UnpinnedRenderState<R>,
+        UseHookWithUnpinnedRenderState<U>,
+        R::CursorPlaceholder,
+    >;
 
     fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
-        mut self,
+        self,
         renderer: &mut Renderer,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
-        force_reposition: bool,
+        mut force_reposition: bool,
     ) {
-        (self.use_hook)(Pin::new(&mut render_state.hook_data))
+        let StatedUseHookAndCursorPlaceholder {
+            use_hook_and_cursor_placeholder,
+            mount_state,
+        } = &mut render_state.use_hook_and_cursor_placeholder;
+
+        let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
+            force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
+            if force_reposition {
+                renderer.cursor_placeholder_force_reposition(cp);
+            }
+            use_hook.0 = self.use_hook;
+
+            use_hook
+        } else {
+            force_reposition = true;
+            let cp = renderer.cursor_placeholder_render();
+            let (use_hook, _) = use_hook_and_cursor_placeholder
+                .insert((UseHookWithUnpinnedRenderState(self.use_hook), cp));
+            use_hook
+        };
+
+        (use_hook.0)(Pin::new(&mut render_state.hook_data))
             .unpinned_render_update_maybe_reposition(
                 renderer,
                 &mut render_state.render_state,
                 force_reposition,
             );
-        render_state.use_hook = Some(self.use_hook);
+
+        *mount_state = MountState::Mounted;
     }
 }
 

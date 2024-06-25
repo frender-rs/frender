@@ -5,6 +5,7 @@ pub struct ElementAndMounted<E> {
 }
 
 mod imp {
+    use frender_dom::render::RenderWithCursor;
     use frender_dom::RenderStateWithParentElementsHandle;
 
     use crate::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
@@ -34,7 +35,7 @@ mod imp {
 
     impl<
             //
-            R: ?Sized,
+            R: ?Sized + RenderWithCursor,
             E: crate::html::behaviors::Element<R>,
             S: RenderStateWithParentElementsHandle<E, R>,
         > RenderState<R> for IntrinsicElementRenderState<E, S>
@@ -70,12 +71,11 @@ mod imp {
                 _ => return std::task::Poll::Ready(()),
             };
 
-            element.move_cursor_at_the_first_child_of_self(renderer);
-            // renderer.mark_position_at_first_child(element);
-            let result = S::poll_render_with_peh(this.props_state, element, renderer, cx);
+            let result = renderer.with_render_context(|renderer| {
+                element.move_cursor_at_the_first_child_of_self(renderer);
 
-            element.move_cursor_after_self(renderer);
-            // renderer.mark_position_after(element);
+                S::poll_render_with_peh(this.props_state, element, renderer, cx)
+            });
 
             result
         }

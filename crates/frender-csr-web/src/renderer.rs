@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use frender_html::{
     dom::{
-        csr::web::Node,
+        csr::web::{Node, Renderer as _},
         render::{Render, RenderWithCursor},
     },
     RenderHtml,
@@ -50,6 +50,8 @@ macro_rules! html_elements {
 }
 
 pub struct Cursor(NextNodePosition, bool);
+
+pub struct CursorPlaceholder(web_sys::Comment);
 
 impl RenderWithCursor for Renderer {
     type Cursor = Cursor;
@@ -102,6 +104,27 @@ impl RenderWithCursor for Renderer {
             &"=".into(),
             &cur.into(),
         );
+    }
+
+    type CursorPlaceholder = CursorPlaceholder;
+
+    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder {
+        let node = self.document.create_comment("");
+
+        self.readd_node(&node, true);
+        CursorPlaceholder(node)
+    }
+
+    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder) {
+        self.readd_node(&cp.0, true);
+    }
+
+    fn cursor_placeholder_unmount(&mut self, cp: &mut Self::CursorPlaceholder) {
+        cp.0.remove()
+    }
+
+    fn move_cursor_after_placeholder(&mut self, place_holder: &mut Self::CursorPlaceholder) {
+        self.move_cursor_after_node(&place_holder.0)
     }
 }
 
