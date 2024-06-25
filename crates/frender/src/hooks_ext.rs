@@ -141,7 +141,7 @@ pub mod state {
             S: SignalHook<SignalShareValue = Val>,
             Val,
             U: UpdateElementWithSharedValue<R, <S as SignalHook>::SignalShareValue>,
-            R: ?Sized,
+            R: ?Sized + frender_html::dom::render::RenderWithCursor,
         > RenderState<R> for State<S, U>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
@@ -163,19 +163,28 @@ pub mod state {
         ) -> std::task::Poll<()> {
             let StateProj { mut inner, update } = self.project();
 
-            match inner.as_mut().poll_next_update(cx) {
-                std::task::Poll::Ready(active) => {
-                    if active {
-                        let state = inner.use_hook(); // mark as seen
+            let mut initial_cursor = None;
+
+            loop {
+                match inner.as_mut().poll_next_update(cx) {
+                    std::task::Poll::Ready(true) => {
+                        let state = inner.as_mut().use_hook(); // mark as seen
 
                         state.map(|shared_value| {
-                            update.update_element_with_shared_value(renderer, shared_value)
+                            if let Some(initial_cursor) = &mut initial_cursor {
+                                renderer.set_cursor_by_ref(initial_cursor)
+                            } else {
+                                initial_cursor = Some(renderer.cursor())
+                            };
+
+                            renderer.with_render_context(|renderer| {
+                                update.update_element_with_shared_value(renderer, shared_value)
+                            })
                         });
                     }
-
-                    std::task::Poll::Ready(())
+                    std::task::Poll::Ready(false) => return std::task::Poll::Ready(()),
+                    std::task::Poll::Pending => return std::task::Poll::Pending,
                 }
-                std::task::Poll::Pending => std::task::Poll::Pending,
             }
         }
     }
