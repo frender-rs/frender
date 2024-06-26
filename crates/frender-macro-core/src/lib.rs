@@ -1,3 +1,5 @@
+#![allow(dead_code)] // TODO: remove this
+
 mod err;
 mod utils;
 

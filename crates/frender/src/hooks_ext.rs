@@ -1,4 +1,4 @@
-use hooks::{ShareValue, Signal, ToOwnedShareValue, ToOwnedSignal};
+use hooks::{ShareValue, ToOwnedShareValue};
 
 pub mod setter {
     use std::borrow::Cow;

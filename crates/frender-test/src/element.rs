@@ -75,22 +75,6 @@ impl Node {
         }
     }
 
-    pub(crate) fn try_into_text(self) -> Result<Text, Self> {
-        if let Self::Text(v) = self {
-            Ok(v)
-        } else {
-            Err(self)
-        }
-    }
-
-    pub(crate) fn try_into_element(self) -> Result<Element, Self> {
-        if let Self::Element(v) = self {
-            Ok(v)
-        } else {
-            Err(self)
-        }
-    }
-
     fn set_parent(&self, parent: Option<WeakElement>) {
         match self {
             Node::Text(this) => this.set_parent(parent),
@@ -111,18 +95,6 @@ pub(crate) enum Cursor {
 }
 
 impl Cursor {
-    pub(crate) fn cloned_cursor(&self) -> Self {
-        match self {
-            Cursor::FirstChildOf(this) => Cursor::FirstChildOf(this.clone()),
-            Cursor::After {
-                node,
-                children_index_hint,
-            } => Cursor::After {
-                node: node.clone(),
-                children_index_hint: *children_index_hint,
-            },
-        }
-    }
     pub(crate) fn current_node(&self) -> Option<Node> {
         match self {
             Cursor::FirstChildOf(parent) => parent.inner.borrow().children.first().cloned(),

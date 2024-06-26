@@ -1,3 +1,5 @@
+#![allow(dead_code)] // TODO: add tests
+
 use std::cell::RefCell;
 
 use frender::prelude::*;
@@ -5,10 +7,7 @@ use frender_common::TempStr;
 use frender_html::RenderHtml;
 use hooks::ShareValue;
 
-use frender::{
-    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
-    Rendered,
-};
+use frender::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext};
 
 struct Test {
     numbers: Vec<i32>,

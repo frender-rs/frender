@@ -10,7 +10,6 @@ use wasm_bindgen::UnwrapThrowExt as _;
 
 use crate::render::RenderWithContext;
 
-pub mod event;
 pub mod event_listener;
 
 mod cursor_place_holder;

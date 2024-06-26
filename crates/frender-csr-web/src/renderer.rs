@@ -2,21 +2,14 @@ use std::borrow::Cow;
 
 use frender_html::{
     dom::{
-        csr::web::{CursorPlaceholder, Node, RenderContext, Renderer as _},
+        csr::web::{CursorPlaceholder, Node, RenderContext},
         render::{Render, RenderWithContext},
         ProvideRenderContext,
     },
     RenderHtml,
 };
-use wasm_bindgen::UnwrapThrowExt;
 
 mod text;
-
-#[derive(Debug, Clone)]
-enum NextNodePosition {
-    FirstChildOf(web_sys::Element),
-    InsertAfter(web_sys::Node),
-}
 
 pub struct Renderer {
     document: web_sys::Document,
