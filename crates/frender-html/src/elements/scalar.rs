@@ -14,11 +14,11 @@ frender_common::impl_many!(
         fn render_update_maybe_reposition<Renderer: crate::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            renderer: &mut Renderer::RenderContext<'_>,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
-            super::str::render_update_maybe_reposition::<Self, Self, Self, _>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
+            super::str::render_update_maybe_reposition::<Self, Self, Self, Renderer>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
         }
 
         crate::impl_unpinned_render_for_unpin! {}

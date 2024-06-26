@@ -51,21 +51,16 @@ impl frender_html::dom::behaviors::Node<Renderer> for Text {
         eprintln!("{:?}", self)
     }
 
-    fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
-        renderer
-            .cursor
-            .current_node()
-            .as_ref()
-            .and_then(Node::as_text)
-            .map_or(false, |e| e.is_same_text(self))
+    fn cursor_is_at_self(&self, renderer: &crate::renderer::RenderContext) -> bool {
+        renderer.cursor_is_at(|node| matches!(node, Node::Text(t) if t.is_same_text(self)))
     }
 
-    fn move_cursor_after_self(&mut self, renderer: &mut Renderer) {
-        renderer.move_cursor_after_node(Node::Text(self.clone()))
-    }
-
-    fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool) {
-        renderer.readd_node(Cow::Owned(Node::Text(self.clone())), force_reposition)
+    fn readd_self(
+        &mut self,
+        render_context: &mut crate::renderer::RenderContext<'_>,
+        force_reposition: bool,
+    ) {
+        render_context.readd_node(Cow::Owned(Node::Text(self.clone())), force_reposition)
     }
 
     fn remove_self(&mut self, _: &mut Renderer) {

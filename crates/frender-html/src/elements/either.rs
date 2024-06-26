@@ -10,7 +10,7 @@ macro_rules! update_either {
         match $_self {
             Either::Left(e) => {
                 if let Either::Right(other_state) = $state.as_mut().as_pin_mut() {
-                    other_state.unmount($ctx);
+                    other_state.unmount(frender_dom::render::RenderContext::renderer_mut($ctx));
                     $state.set(Either::Left(Default::default()))
                 }
 
@@ -24,7 +24,7 @@ macro_rules! update_either {
             }
             Either::Right(e) => {
                 if let Either::Left(other_state) = $state.as_mut().as_pin_mut() {
-                    other_state.unmount($ctx);
+                    other_state.unmount(frender_dom::render::RenderContext::renderer_mut($ctx));
                     $state.set(Either::Right(Default::default()))
                 }
 
@@ -46,7 +46,7 @@ macro_rules! unpinned_update_either {
         match $_self {
             Either::Left(e) => {
                 if let Either::Right(other_state) = $state {
-                    Pin::new(other_state).unmount($ctx);
+                    Pin::new(other_state).unmount(frender_dom::render::RenderContext::renderer_mut($ctx));
                     *$state = Either::Left(Default::default());
                 }
 
@@ -60,7 +60,7 @@ macro_rules! unpinned_update_either {
             }
             Either::Right(e) => {
                 if let Either::Left(other_state) = $state {
-                    Pin::new(other_state).unmount($ctx);
+                    Pin::new(other_state).unmount(frender_dom::render::RenderContext::renderer_mut($ctx));
                     *$state = Either::Right(Default::default());
                 }
 
@@ -83,29 +83,29 @@ where
 {
     type RenderState<Renderer: RenderHtml + ?Sized> = EitherRenderState<L::RenderState<Renderer>, R::RenderState<Renderer>>;
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         update_either!(self.render_update(renderer, render_state))
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>) {
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>) {
         update_either!(self.render_update_force_reposition(renderer, render_state))
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         update_either!(self.render_update_maybe_reposition(renderer, render_state, force_reposition))
     }
 
     type UnpinnedRenderState<Renderer: RenderHtml + ?Sized> = EitherRenderState<L::UnpinnedRenderState<Renderer>, R::UnpinnedRenderState<Renderer>>;
 
-    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         unpinned_update_either!(self.unpinned_render_update(renderer, render_state))
     }
 
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         unpinned_update_either!(self.unpinned_render_update_force_reposition(renderer, render_state))
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
         unpinned_update_either!(self.unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition))
     }
 }

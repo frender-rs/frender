@@ -1,19 +1,40 @@
+use crate::render::RenderWithContext;
+
+pub trait NodeRenderSelf<Renderer: ?Sized + RenderWithContext> {
+    /// Should create the node,
+    /// add the node to dom at the cursor,
+    /// and move the cursor after the node.
+    fn render_self(render_context: &mut Renderer::RenderContext<'_>) -> Self;
+}
+
+pub trait NodeWithRenderContextAfterSelf<Renderer: ?Sized + RenderWithContext> {
+    fn with_render_context_after_self<Res>(
+        &mut self,
+        renderer: &mut Renderer,
+        f: impl FnOnce(&mut Renderer::RenderContext<'_>) -> Res,
+    ) -> Res;
+}
+
 pub trait Node<Renderer: ?Sized> {
     fn log_self(&self, renderer: &mut Renderer);
 
-    fn cursor_is_at_self(&self, renderer: &Renderer) -> bool;
+    /// Should move the node if `force_reposition`,
+    /// and move cursor after the node.
+    fn readd_self(
+        &mut self,
+        render_context: &mut Renderer::RenderContext<'_>,
+        force_reposition: bool,
+    ) where
+        Renderer: crate::render::RenderWithContext;
 
-    fn move_cursor_after_self(&mut self, renderer: &mut Renderer);
-
-    /// should move cursor
-    fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool);
+    fn cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>) -> bool
+    where
+        Renderer: crate::render::RenderWithContext;
 
     fn remove_self(&mut self, renderer: &mut Renderer);
 }
 
 pub trait Element<Renderer: ?Sized>: Node<Renderer> {
-    fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer);
-
     fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str);
     fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
 
@@ -50,7 +71,7 @@ pub trait ElementWithChildren<Renderer: ?Sized> {
     fn with_render_context_at_first_child_of_self<R>(
         &mut self,
         renderer: &mut Renderer,
-        f: impl FnOnce(Renderer::RenderContext<'_>) -> R,
+        f: impl FnOnce(&mut Renderer::RenderContext<'_>) -> R,
     ) -> R
     where
         Renderer: crate::render::RenderWithContext;
@@ -64,16 +85,21 @@ impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node
         web_sys::console::log_1(self.0.as_ref());
     }
 
-    fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
-        renderer.cursor_is_at_node(self.0.as_ref())
+    fn cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>) -> bool
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        Renderer::cursor_is_at_node(render_context, self.0.as_ref())
     }
 
-    fn move_cursor_after_self(&mut self, renderer: &mut Renderer) {
-        renderer.move_cursor_after_node(self.0.as_ref())
-    }
-
-    fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool) {
-        renderer.readd_node(self.0.as_ref(), force_reposition)
+    fn readd_self(
+        &mut self,
+        render_context: &mut Renderer::RenderContext<'_>,
+        force_reposition: bool,
+    ) where
+        Renderer: crate::render::RenderWithContext,
+    {
+        Renderer::readd_node(render_context, self.0.as_ref(), force_reposition)
     }
 
     fn remove_self(&mut self, renderer: &mut Renderer) {
@@ -87,10 +113,6 @@ impl<
         Renderer: ?Sized + crate::csr::web::Renderer,
     > Element<Renderer> for crate::csr::web::Node<N>
 {
-    fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer) {
-        renderer.move_cursor_at_the_first_child_of_element(self.0.as_ref())
-    }
-
     fn set_attribute(&mut self, _: &mut Renderer, name: &str, value: &str) {
         use wasm_bindgen::UnwrapThrowExt;
 
@@ -139,13 +161,13 @@ mod web {
 
     impl<
             N: AsRef<web_sys::Node> + AsRef<web_sys::Element>,
-            Renderer: ?Sized + crate::csr::web::Renderer + crate::csr::web::RendererWithCursor,
+            Renderer: ?Sized + crate::csr::web::Renderer,
         > ElementWithChildren<Renderer> for crate::csr::web::Node<N>
     {
         fn with_render_context_at_first_child_of_self<R>(
             &mut self,
             renderer: &mut Renderer,
-            f: impl FnOnce(<Renderer as crate::render::RenderWithContext>::RenderContext<'_>) -> R,
+            f: impl FnOnce(&mut <Renderer as crate::render::RenderWithContext>::RenderContext<'_>) -> R,
         ) -> R {
             renderer.with_render_context_at_first_child_of_element(self.0.as_ref(), f)
         }

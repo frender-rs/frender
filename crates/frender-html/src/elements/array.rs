@@ -6,21 +6,21 @@ impl<E: Element, const N: usize> Element for [E; N] {
     // type RenderState<R: RenderHtml> = [E::RenderState<R>; N];
     type RenderState<R: RenderHtml + ?Sized> = ArrayRenderState<E::RenderState<R>, N>;
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>) {
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>) {
         let render_state = render_state.project_inner();
         let mut this = self.into_iter();
         pin_project_map_array(render_state, |state| this.next().unwrap().render_update(renderer, state));
         debug_assert!(this.next().is_none());
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>) {
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>) {
         let render_state = render_state.project_inner();
         let mut this = self.into_iter();
         pin_project_map_array(render_state, |state| this.next().unwrap().render_update_force_reposition(renderer, state));
         debug_assert!(this.next().is_none());
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         let render_state = render_state.project_inner();
         let mut this = self.into_iter();
         pin_project_map_array(render_state, |state| this.next().unwrap().render_update_maybe_reposition(renderer, state, force_reposition));
@@ -30,7 +30,7 @@ impl<E: Element, const N: usize> Element for [E; N] {
     // type UnpinnedRenderState<R: RenderHtml> = [E::UnpinnedRenderState<R>; N];
     type UnpinnedRenderState<R: RenderHtml + ?Sized> = ArrayRenderState<E::UnpinnedRenderState<R>, N>;
 
-    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         let render_state = &mut render_state.0;
 
         let mut this = self.into_iter();
@@ -44,7 +44,7 @@ impl<E: Element, const N: usize> Element for [E; N] {
         debug_assert!(this.next().is_none());
     }
 
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         let render_state = &mut render_state.0;
 
         let mut this = self.into_iter();
@@ -58,7 +58,7 @@ impl<E: Element, const N: usize> Element for [E; N] {
         debug_assert!(this.next().is_none());
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
         let render_state = &mut render_state.0;
 
         let mut this = self.into_iter();

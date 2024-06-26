@@ -32,7 +32,7 @@ pub fn mount_to_dom_element<'e, E: Element + 'e>(
     let document = window.document().unwrap();
     let current_parent = get_dom_element.get_dom_element(&document);
 
-    crate::renderer::Renderer::new(document, current_parent).into_render_element(element)
+    crate::renderer::RendererWithRoot::new(document, current_parent).into_render_element(element)
 }
 
 #[cfg(feature = "spawn")]

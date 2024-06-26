@@ -52,7 +52,7 @@ mod csr {
 mod html {
     use std::pin::Pin;
 
-    use frender_html::{Element, RenderState};
+    use frender_html::{dom::render::RenderContext, Element, RenderState};
 
     use super::super::Preserved;
     use super::State;
@@ -63,47 +63,52 @@ mod html {
         fn render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
             let render_state = render_state.project().inner;
             if let Some(this) = self.0 {
-                E::render_update(this, renderer, render_state)
+                E::render_update(this, render_context, render_state)
             } else {
-                render_state.unmount(renderer)
+                render_state.unmount(render_context.renderer_mut())
             }
         }
 
         fn render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
             let render_state = render_state.project().inner;
             if let Some(this) = self.0 {
-                E::render_update_force_reposition(this, renderer, render_state)
+                E::render_update_force_reposition(this, render_context, render_state)
             } else {
-                render_state.unmount(renderer)
+                render_state.unmount(render_context.renderer_mut())
             }
         }
 
         fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
             let render_state = render_state.project().inner;
             if let Some(this) = self.0 {
-                E::render_update_maybe_reposition(this, renderer, render_state, force_reposition)
+                E::render_update_maybe_reposition(
+                    this,
+                    render_context,
+                    render_state,
+                    force_reposition,
+                )
             } else {
-                render_state.unmount(renderer)
+                render_state.unmount(render_context.renderer_mut())
             }
         }
 
@@ -113,39 +118,39 @@ mod html {
         fn unpinned_render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
         {
             let render_state = &mut render_state.inner;
             if let Some(this) = self.0 {
-                E::unpinned_render_update(this, renderer, render_state)
+                E::unpinned_render_update(this, render_context, render_state)
             } else {
-                Pin::new(render_state).unmount(renderer)
+                Pin::new(render_state).unmount(render_context.renderer_mut())
             }
         }
 
         fn unpinned_render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
         {
             let render_state = &mut render_state.inner;
             if let Some(this) = self.0 {
-                E::unpinned_render_update_force_reposition(this, renderer, render_state)
+                E::unpinned_render_update_force_reposition(this, render_context, render_state)
             } else {
-                Pin::new(render_state).unmount(renderer)
+                Pin::new(render_state).unmount(render_context.renderer_mut())
             }
         }
 
         fn unpinned_render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
             force_reposition: bool,
         ) {
@@ -153,12 +158,12 @@ mod html {
             if let Some(this) = self.0 {
                 E::unpinned_render_update_maybe_reposition(
                     this,
-                    renderer,
+                    render_context,
                     render_state,
                     force_reposition,
                 )
             } else {
-                Pin::new(render_state).unmount(renderer)
+                Pin::new(render_state).unmount(render_context.renderer_mut())
             }
         }
     }

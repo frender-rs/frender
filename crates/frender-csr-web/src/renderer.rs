@@ -2,8 +2,9 @@ use std::borrow::Cow;
 
 use frender_html::{
     dom::{
-        csr::web::{Node, Renderer as _},
-        render::{Render, RenderWithContext, RenderWithCursor},
+        csr::web::{CursorPlaceholder, Node, RenderContext, Renderer as _},
+        render::{Render, RenderWithContext},
+        ProvideRenderContext,
     },
     RenderHtml,
 };
@@ -19,16 +20,39 @@ enum NextNodePosition {
 
 pub struct Renderer {
     document: web_sys::Document,
-    next_node_position: NextNodePosition,
-    cursor_skipped: bool,
 }
 
-impl Renderer {
+pub struct RendererWithRoot {
+    renderer: Renderer,
+    root: web_sys::Element,
+}
+
+impl ProvideRenderContext for RendererWithRoot {
+    type Renderer = Renderer;
+
+    fn provide_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        let mut ctx = RenderContext {
+            renderer: &mut self.renderer,
+            cursor: &mut frender_html::dom::csr::web::Cursor::first_child_of(Cow::Borrowed(
+                &self.root,
+            )),
+        };
+        f(&mut ctx)
+    }
+
+    fn renderer_mut(&mut self) -> &mut Self::Renderer {
+        todo!()
+    }
+}
+
+impl RendererWithRoot {
     pub fn new(document: web_sys::Document, root_parent: web_sys::Element) -> Self {
         Self {
-            document,
-            next_node_position: NextNodePosition::FirstChildOf(root_parent),
-            cursor_skipped: false,
+            renderer: Renderer { document },
+            root: root_parent,
         }
     }
 }
@@ -49,93 +73,16 @@ macro_rules! html_elements {
     )*};
 }
 
-pub struct Cursor(NextNodePosition, bool);
-
-pub struct CursorPlaceholder(web_sys::Comment);
-
-impl RenderWithCursor for Renderer {
-    type Cursor = Cursor;
-
-    fn cursor(&self) -> Self::Cursor {
-        Cursor(self.next_node_position.clone(), self.cursor_skipped)
-    }
-
-    fn set_cursor(&mut self, cursor: Self::Cursor) {
-        self.next_node_position = cursor.0;
-        self.cursor_skipped = cursor.1;
-    }
-
-    fn cursor_skipped(&self) -> bool {
-        self.cursor_skipped
-    }
-
-    fn set_cursor_skipped(&mut self, cursor_skipped: bool) {
-        self.cursor_skipped = cursor_skipped;
-    }
-
-    fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor) {
-        self.next_node_position = cursor.0.clone();
-        self.cursor_skipped = cursor.1;
-    }
-
-    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool {
-        self.cursor_skipped == other.1
-            && match (&self.next_node_position, &other.0) {
-                (NextNodePosition::FirstChildOf(a), NextNodePosition::FirstChildOf(b)) => a == b,
-                (NextNodePosition::InsertAfter(a), NextNodePosition::InsertAfter(b)) => a == b,
-                _ => false,
-            }
-    }
-
-    fn log_cursor(&mut self) {
-        let (kind, node, cur) = match &self.next_node_position {
-            NextNodePosition::FirstChildOf(node) => {
-                ("FirstChildOf", node.as_ref(), node.first_child())
-            }
-            NextNodePosition::InsertAfter(node) => {
-                ("InsertAfter", node.as_ref(), node.next_sibling())
-            }
-        };
-
-        web_sys::console::log_5(
-            &"cursor=".into(),
-            &kind.into(),
-            node,
-            &"=".into(),
-            &cur.into(),
-        );
-    }
-
-    type CursorPlaceholder = CursorPlaceholder;
-
-    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder {
-        let node = self.document.create_comment("");
-
-        self.readd_node(&node, true);
-        CursorPlaceholder(node)
-    }
-
-    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder) {
-        self.readd_node(&cp.0, true);
-    }
-
-    fn cursor_placeholder_unmount(&mut self, cp: &mut Self::CursorPlaceholder) {
-        cp.0.remove()
-    }
-
-    fn move_cursor_after_placeholder(&mut self, place_holder: &mut Self::CursorPlaceholder) {
-        self.move_cursor_after_node(&place_holder.0)
-    }
-}
-
 impl Render for Renderer {
     fn log(&mut self, v: &str) {
         web_sys::console::log_1(&v.into())
     }
+
+    type CursorPlaceholder = CursorPlaceholder;
 }
 
 impl RenderWithContext for Renderer {
-    type RenderContext<'a> = frender_html::dom::csr::web::RenderContext<'a, Self>;
+    type RenderContext<'a> = RenderContext<'a, Self>;
 }
 
 impl RenderHtml for Renderer {
@@ -261,42 +208,24 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
         Cow::Borrowed(&self.document)
     }
 
-    fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool {
-        match &self.next_node_position {
-            NextNodePosition::FirstChildOf(parent) => parent.first_child(),
-            NextNodePosition::InsertAfter(previous) => previous.next_sibling(),
-        }
-        .map_or(false, |c| *node == c)
+    fn cursor_is_at_node(
+        render_context: &<Self as RenderWithContext>::RenderContext<'_>,
+        node: &web_sys::Node,
+    ) -> bool
+    where
+        Self: RenderWithContext,
+    {
+        render_context.cursor.cursor_is_at_node(node)
     }
 
-    fn move_cursor_after_node(&mut self, node: &web_sys::Node) {
-        let node = node.clone();
-        self.next_node_position = NextNodePosition::InsertAfter(node);
-        self.cursor_skipped = false;
-    }
-
-    fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
-        // web_sys::console::log_3(&"readd_node".into(), node, &force_reposition.into());
-        if force_reposition {
-            match &self.next_node_position {
-                NextNodePosition::FirstChildOf(parent) => {
-                    // web_sys::console::log_2(&"FirstChildOf".into(), parent);
-
-                    parent.prepend_with_node_1(node).unwrap_throw()
-                }
-                NextNodePosition::InsertAfter(pre) => {
-                    // web_sys::console::log_2(&"InsertAfter".into(), pre);
-
-                    pre.parent_node()
-                        .expect_throw("the previous node should have a parent node")
-                        .insert_before(node, pre.next_sibling().as_ref())
-                        .unwrap_throw();
-                }
-            }
-        }
-
-        self.next_node_position = NextNodePosition::InsertAfter(node.clone());
-        self.cursor_skipped = false;
+    fn readd_node(
+        render_context: &mut <Self as RenderWithContext>::RenderContext<'_>,
+        node: &web_sys::Node,
+        force_reposition: bool,
+    ) where
+        Self: RenderWithContext,
+    {
+        render_context.cursor.readd_node(node, force_reposition)
     }
 
     fn remove_node(&mut self, node: &web_sys::Node) {
@@ -311,10 +240,5 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
         }
 
         node.unchecked_ref::<Removable>().remove()
-    }
-
-    fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element) {
-        self.next_node_position = NextNodePosition::FirstChildOf(element.clone());
-        self.cursor_skipped = false;
     }
 }

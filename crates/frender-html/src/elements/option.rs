@@ -7,7 +7,7 @@ macro_rules! update_option {
         if let Some(this) = $_self {
             this.$method($ctx, $state $(, $arg)?);
         } else {
-            <E::RenderState<Renderer> as RenderState<_>>::unmount($state, $ctx)
+            <E::RenderState<Renderer> as RenderState<_>>::unmount($state, frender_dom::render::RenderContext::renderer_mut($ctx))
         }
     };
 }
@@ -19,7 +19,7 @@ macro_rules! unpinned_update_option {
         } else {
             <E::UnpinnedRenderState<Renderer> as RenderState<_>>::unmount(
                 Pin::new($state),
-                $ctx
+                frender_dom::render::RenderContext::renderer_mut($ctx)
             )
         }
     };
@@ -31,7 +31,7 @@ impl<E: Element> Element for Option<E> {
     fn render_update<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) where
         Self: Sized,
@@ -42,7 +42,7 @@ impl<E: Element> Element for Option<E> {
     fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) where
         Self: Sized,
@@ -53,7 +53,7 @@ impl<E: Element> Element for Option<E> {
     fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
@@ -70,7 +70,7 @@ impl<E: Element> Element for Option<E> {
     fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
     ) where
         Self: Sized,
@@ -81,7 +81,7 @@ impl<E: Element> Element for Option<E> {
     fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
     ) where
         Self: Sized,
@@ -92,7 +92,7 @@ impl<E: Element> Element for Option<E> {
     fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut Renderer::RenderContext<'_>,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
         force_reposition: bool,
     ) {

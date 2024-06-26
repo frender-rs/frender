@@ -4,9 +4,9 @@ use std::str::FromStr;
 
 use frender_elements::{Elements, Keyed};
 use frender_html::Element;
-use frender_test::{element::Node, renderer::VirtualDom};
+use frender_test::{element::Node, renderer::RendererWithRoot};
 
-fn dom_nodes_parse<T: FromStr + PartialEq>(dom: &VirtualDom) -> Vec<T>
+fn dom_nodes_parse<T: FromStr + PartialEq>(dom: &RendererWithRoot) -> Vec<T>
 where
     <T as FromStr>::Err: std::fmt::Debug,
 {
@@ -20,26 +20,26 @@ where
 #[cfg(feature = "csr")]
 #[test]
 fn remove() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = (0..5).filter(|n| *n != 2).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 3, 4]);
     }
 
     {
         let elements = std::iter::empty::<Keyed<i32, i32>>();
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), []);
     }
 }
@@ -47,26 +47,26 @@ fn remove() {
 #[cfg(feature = "csr")]
 #[test]
 fn replace() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [0, 1, 9, 3, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 9, 3, 4]);
     }
 
     {
         let elements = [20, 1, 9, 3, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [20, 1, 9, 3, 4]);
     }
 }
@@ -74,26 +74,26 @@ fn replace() {
 #[cfg(feature = "csr")]
 #[test]
 fn move_one() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [0, 4, 1, 2, 3].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 4, 1, 2, 3]);
     }
 
     {
         let elements = [0, 4, 1, 3, 2].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 4, 1, 3, 2]);
     }
 }
@@ -101,26 +101,26 @@ fn move_one() {
 #[cfg(feature = "csr")]
 #[test]
 fn prepend() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [9, 0, 1, 2, 3, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [9, 0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [10, 11, 12, 9, 0, 1, 2, 3, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [10, 11, 12, 9, 0, 1, 2, 3, 4]);
     }
 }
@@ -128,20 +128,20 @@ fn prepend() {
 #[cfg(feature = "csr")]
 #[test]
 fn prepend_many() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [5, 6, 7, 8, 9, 0, 1, 2, 3, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]);
     }
 }
@@ -149,26 +149,26 @@ fn prepend_many() {
 #[cfg(feature = "csr")]
 #[test]
 fn append() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = (0..6).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4, 5]);
     }
 
     {
         let elements = (0..9).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4, 5, 6, 7, 8]);
     }
 }
@@ -176,26 +176,26 @@ fn append() {
 #[cfg(feature = "csr")]
 #[test]
 fn remove_one_by_one() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = (0..5).map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [0, 1, 2, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 2, 4]);
     }
 
     {
         let elements = [0, 1, 4].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1, 4]);
     }
 }
@@ -203,26 +203,26 @@ fn remove_one_by_one() {
 #[cfg(feature = "csr")]
 #[test]
 fn swap() {
-    let mut dom = VirtualDom::new();
+    let mut dom = RendererWithRoot::new();
     let mut render_state = Default::default();
 
     assert!(dom.nodes().is_empty());
 
     {
         let elements = [0, 1].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1]);
     }
 
     {
         let elements = [1, 0].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [1, 0]);
     }
 
     {
         let elements = [0, 1].map(|n| Keyed(n, n));
-        Elements(elements).unpinned_render_update(dom.start_render_context(), &mut render_state);
+        dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_parse::<i32>(&dom), [0, 1]);
     }
 }

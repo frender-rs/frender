@@ -5,7 +5,7 @@ pub struct ElementAndMounted<E> {
 }
 
 mod imp {
-    use frender_dom::render::RenderWithCursor;
+    use frender_dom::render::RenderContext;
     use frender_dom::RenderStateWithParentElementsHandle;
 
     use crate::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
@@ -35,7 +35,7 @@ mod imp {
 
     impl<
             //
-            R: ?Sized + RenderWithCursor,
+            R: ?Sized,
             E: crate::html::behaviors::Element<R>,
             S: RenderStateWithParentElementsHandle<E, R>,
         > RenderState<R> for IntrinsicElementRenderState<E, S>
@@ -71,13 +71,7 @@ mod imp {
                 _ => return std::task::Poll::Ready(()),
             };
 
-            let result = renderer.with_render_context(|renderer| {
-                element.move_cursor_at_the_first_child_of_self(renderer);
-
-                S::poll_render_with_peh(this.props_state, element, renderer, cx)
-            });
-
-            result
+            S::poll_render_with_peh(this.props_state, element, renderer, cx)
         }
     }
 
@@ -144,7 +138,7 @@ mod imp {
             >,
         >;
 
-        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
             let render_state = render_state.project();
 
             let props_state = render_state.props_state.project();
@@ -157,7 +151,7 @@ mod imp {
             } = P::into_element_props(self.1);
 
             let element_and_mounted = render_state.element_and_mounted.get_or_insert_with(|| ElementAndMounted {
-                element: <C::Element<Renderer>>::from(<C as CreateNode>::create_node(renderer)),
+                element: <C::Element<Renderer>>::from(<C as CreateNode>::create_node(renderer.renderer_mut())),
                 mounted: false,
             });
 
@@ -184,13 +178,13 @@ mod imp {
             >,
         >;
 
-        fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+        fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
             let props_state = &mut render_state.props_state;
 
             let crate::dom::component::ElementProps { children, attributes, event_listeners } = P::into_element_props(self.1);
 
             let element_and_mounted = render_state.element_and_mounted.get_or_insert_with(|| ElementAndMounted {
-                element: <C as CreateNode>::create_node(renderer).into(),
+                element: <C as CreateNode>::create_node(renderer.renderer_mut()).into(),
                 mounted: false,
             });
 
@@ -211,7 +205,7 @@ mod imp {
 
     pub fn update_element_maybe_reposition<E: crate::html::behaviors::Element<R>, R: ?Sized + RenderHtml>(
         element_and_mounted: &mut ElementAndMounted<E>,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         update: impl FnOnce(&mut E, &mut R),
         force_reposition: bool,
     ) {
@@ -227,11 +221,12 @@ mod imp {
 
         if *mounted && !force_reposition {
             #[cfg(debug_assertions)]
-            if !renderer.cursor_skipped() && !element.cursor_is_at_self(renderer) {
+            if !element.cursor_is_at_self(render_context) {
+                let renderer = render_context.renderer_mut();
                 renderer.log("[debug assertion failed] Cursor should be at:");
                 element.log_self(renderer);
                 renderer.log("But the cursor is at:");
-                renderer.log_cursor();
+                render_context.log_cursor();
             }
             // element.move_cursor_after_self(renderer);
         } else {
@@ -240,15 +235,10 @@ mod imp {
             //     return;
             // }
 
-            element.readd_self(renderer, true);
+            element.readd_self(render_context, true);
             *mounted = true;
         }
 
-        {
-            element.move_cursor_at_the_first_child_of_self(renderer);
-            update(element, renderer);
-        };
-
-        element.move_cursor_after_self(renderer);
+        update(element, render_context.renderer_mut());
     }
 }

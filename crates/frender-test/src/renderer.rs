@@ -1,7 +1,11 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    dom::render::{Render, RenderTextFrom, RenderWithContext, RenderWithCursor},
+    dom::{
+        behaviors::ElementWithChildren as _,
+        render::{Render, RenderTextFrom, RenderWithContext},
+        ProvideRenderContext,
+    },
     RenderHtml,
 };
 
@@ -10,55 +14,73 @@ use crate::{
     text::Text,
 };
 
-pub struct VirtualDom {
+#[non_exhaustive]
+pub struct Renderer {}
+
+pub struct RendererWithRoot {
     renderer: Renderer,
+    root: crate::element::Element,
 }
 
-impl VirtualDom {
+impl RendererWithRoot {
     pub fn new() -> Self {
+        let root = crate::element::Element::new_dummy();
         Self {
-            renderer: Renderer::new(),
+            renderer: Renderer {},
+            root,
         }
     }
 
     pub fn nodes(&self) -> Vec<Node> {
-        self.renderer.root.children()
+        self.root.children()
     }
 
-    pub fn start_render_context(&mut self) -> &mut Renderer {
-        let renderer = &mut self.renderer;
+    pub fn render_update<E: frender_html::Element>(
+        &mut self,
+        element: E,
+        render_state: std::pin::Pin<&mut E::RenderState<Renderer>>,
+    ) {
+        self.provide_render_context(|render_context| {
+            frender_html::Element::render_update(element, render_context, render_state)
+        })
+    }
 
-        if !matches!(&renderer.cursor, crate::element::Cursor::FirstChildOf(parent) if parent.is_same_element(&renderer.root))
-        {
-            renderer.cursor = crate::element::Cursor::FirstChildOf(renderer.root.clone());
-        }
-
-        renderer
+    pub fn unpinned_render_update<E: frender_html::Element>(
+        &mut self,
+        element: E,
+        render_state: &mut E::UnpinnedRenderState<Renderer>,
+    ) {
+        self.provide_render_context(|render_context| {
+            frender_html::Element::unpinned_render_update(element, render_context, render_state)
+        })
     }
 }
 
-pub struct Renderer {
-    root: crate::element::Element,
-    pub(crate) cursor: crate::element::Cursor,
-    pub(crate) cursor_skipped: bool,
-}
+impl ProvideRenderContext for RendererWithRoot {
+    type Renderer = Renderer;
 
-impl Renderer {
-    fn new() -> Self {
-        let root = crate::element::Element::new_dummy();
-        Self {
-            cursor: crate::element::Cursor::FirstChildOf(root.clone()),
-            root,
-            cursor_skipped: false,
-        }
+    fn provide_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        self.root
+            .with_render_context_at_first_child_of_self(&mut self.renderer, f)
     }
 
+    fn renderer_mut(&mut self) -> &mut Self::Renderer {
+        &mut self.renderer
+    }
+}
+
+impl RenderContext<'_> {
     pub(crate) fn move_cursor_after_node(&mut self, node: Node) {
-        self.cursor = crate::element::Cursor::After {
-            node,
-            children_index_hint: 0, // TODO: optimize
-        };
-        self.cursor_skipped = false;
+        *self.cursor = Cursor(
+            crate::element::Cursor::After {
+                node,
+                children_index_hint: 0, // TODO: optimize
+            },
+            false,
+        )
     }
 
     fn readd_node_force_reposition(&mut self, node: Cow<Node>) {
@@ -71,7 +93,7 @@ impl Renderer {
             node.into_owned()
         };
 
-        match &mut self.cursor {
+        match &mut self.cursor.0 {
             crate::element::Cursor::FirstChildOf(parent) => parent.prepend_child(node.clone()),
             crate::element::Cursor::After {
                 node: after,
@@ -95,13 +117,38 @@ impl Renderer {
         }
     }
 
-    pub(crate) fn with_render_context_at_first_child_of_element<R>(
+    pub(crate) fn cursor_is_at(&self, f: impl FnOnce(Node) -> bool) -> bool {
+        // TODO: check is sibling
+        self.cursor.1 || self.current_node().map_or(false, f)
+    }
+}
+
+impl Renderer {
+    pub(crate) fn with_render_context_at_first_child_of_element<Res>(
         &mut self,
         el: &mut crate::element::Element,
-        f: impl FnOnce(RenderContext<'_>) -> R,
-    ) -> R {
-        f(RenderContext {
+        f: impl FnOnce(&mut RenderContext<'_>) -> Res,
+    ) -> Res {
+        f(&mut RenderContext {
+            renderer: self,
             cursor: &mut Cursor(crate::element::Cursor::FirstChildOf(el.clone()), false),
+        })
+    }
+
+    pub(crate) fn with_render_context_after_node<Res>(
+        &mut self,
+        node: Node,
+        f: impl FnOnce(&mut RenderContext<'_>) -> Res,
+    ) -> Res {
+        f(&mut RenderContext {
+            renderer: self,
+            cursor: &mut Cursor(
+                crate::element::Cursor::After {
+                    node,
+                    children_index_hint: 0, // TODO: perf
+                },
+                false,
+            ),
         })
     }
 }
@@ -133,34 +180,10 @@ macro_rules! html_elements {
 
 pub struct Cursor(crate::element::Cursor, bool);
 
-impl RenderWithCursor for Renderer {
-    type Cursor = Cursor;
-
-    fn cursor(&self) -> Self::Cursor {
-        Cursor(self.cursor.cloned_cursor(), self.cursor_skipped)
-    }
-
-    fn set_cursor(&mut self, cursor: Self::Cursor) {
-        self.cursor = cursor.0;
-        self.cursor_skipped = cursor.1;
-    }
-
-    fn cursor_skipped(&self) -> bool {
-        self.cursor_skipped
-    }
-
-    fn set_cursor_skipped(&mut self, cursor_skipped: bool) {
-        self.cursor_skipped = cursor_skipped
-    }
-
-    fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor) {
-        self.cursor = cursor.0.cloned_cursor();
-        self.cursor_skipped = cursor.1;
-    }
-
-    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool {
-        self.cursor_skipped == other.1
-            && match (&self.cursor, &other.0) {
+impl Cursor {
+    fn is_same_cursor(&self, other: &Self) -> bool {
+        self.1 == other.1
+            && match (&self.0, &other.0) {
                 (
                     crate::element::Cursor::FirstChildOf(a),
                     crate::element::Cursor::FirstChildOf(b),
@@ -180,45 +203,40 @@ impl RenderWithCursor for Renderer {
                 _ => false,
             }
     }
-
-    fn log_cursor(&mut self) {
-        eprintln!("{:?}", self.cursor)
-    }
-
-    type CursorPlaceholder = CursorPlaceholder;
-
-    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder {
-        let cp = CursorPlaceholder::new();
-        self.readd_node_force_reposition(Cow::Owned(Node::CursorPlaceholder(cp.clone())));
-        cp
-    }
-
-    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder) {
-        self.readd_node_force_reposition(Cow::Owned(Node::CursorPlaceholder(cp.clone())));
-    }
-
-    fn cursor_placeholder_unmount(&mut self, placeholder: &mut Self::CursorPlaceholder) {
-        placeholder
-            .parent()
-            .expect("CursorPlaceholder should have a parent")
-            .upgrade()
-            .expect("CursorPlaceholder's parent should not have been dropped")
-            .remove_child(&Node::CursorPlaceholder(placeholder.clone()));
-    }
-
-    fn move_cursor_after_placeholder(&mut self, placeholder: &mut Self::CursorPlaceholder) {
-        self.move_cursor_after_node(Node::CursorPlaceholder(placeholder.clone()))
-    }
 }
 
 impl Render for Renderer {
+    type CursorPlaceholder = CursorPlaceholder;
+
     fn log(&mut self, v: &str) {
         eprintln!("{v}");
     }
 }
 
 pub struct RenderContext<'a> {
+    renderer: &'a mut Renderer,
     cursor: &'a mut Cursor,
+}
+impl RenderContext<'_> {
+    pub(crate) fn current_node(&self) -> Option<Node> {
+        self.cursor.0.current_node()
+    }
+}
+
+impl frender_html::dom::render::RenderContext for RenderContext<'_> {
+    type Renderer = Renderer;
+
+    fn renderer_mut(&mut self) -> &mut Self::Renderer {
+        &mut self.renderer
+    }
+
+    fn log_cursor(&mut self) {
+        eprintln!("{:?} (skipped={:?})", self.cursor.0, self.cursor.1)
+    }
+
+    fn mark_cursor_skipped(&mut self) {
+        self.cursor.1 = true
+    }
 }
 
 impl RenderWithContext for Renderer {

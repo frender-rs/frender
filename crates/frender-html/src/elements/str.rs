@@ -3,6 +3,8 @@ use std::ops::Deref;
 
 // use wasm_bindgen::{JsCast, JsValue};
 
+use frender_dom::render::{RenderContext, RenderWithContext};
+
 use crate::dom::render::RenderTextFrom;
 use crate::{dom::behaviors::Node, RenderHtml};
 
@@ -15,11 +17,11 @@ pub struct TextNode<Text> {
 }
 
 impl<Text> TextNode<Text> {
-    pub fn readd_self<R: ?Sized>(&mut self, renderer: &mut R, force_reposition: bool)
+    pub fn readd_self<R: ?Sized + RenderWithContext>(&mut self, render_context: &mut R::RenderContext<'_>, force_reposition: bool)
     where
         Text: Node<R>,
     {
-        self.node.readd_self(renderer, force_reposition || self.unmounted);
+        self.node.readd_self(render_context, force_reposition || self.unmounted);
     }
 
     pub fn unmount<R: ?Sized>(&mut self, renderer: &mut R)
@@ -30,21 +32,21 @@ impl<Text> TextNode<Text> {
         self.node.remove_self(renderer);
     }
 
-    pub fn mount<R: ?Sized>(renderer: &mut R, mut node: Text) -> Self
+    pub fn mount<R: ?Sized + RenderWithContext>(render_context: &mut R::RenderContext<'_>, mut node: Text) -> Self
     where
         Text: Node<R>,
     {
-        node.readd_self(renderer, true);
+        node.readd_self(render_context, true);
         Self { node, unmounted: false }
     }
 
-    fn mount_from<R: ?Sized, V: ?Sized>(renderer: &mut R, v: &V) -> Self
+    fn mount_from<R: ?Sized + RenderWithContext, V: ?Sized>(render_context: &mut R::RenderContext<'_>, v: &V) -> Self
     where
         R: RenderTextFrom<Text, V>,
         Text: Node<R>,
     {
-        let node = renderer.render_text_from(v);
-        Self::mount(renderer, node)
+        let node = render_context.renderer_mut().render_text_from(v);
+        Self::mount(render_context, node)
     }
 }
 
@@ -119,7 +121,7 @@ impl<Cache, Text> State<Cache, Text> {
     fn update_with_str_maybe_reposition<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(
         &mut self,
         data: S,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         force_reposition: bool,
         not_match_cache: impl FnOnce(&S, &Cache) -> bool,
         update_cache: impl FnOnce(&mut Cache, S),
@@ -127,20 +129,24 @@ impl<Cache, Text> State<Cache, Text> {
         Text: Node<R>,
     {
         if not_match_cache(&data, &self.cache) {
-            renderer.update_text_from(&mut self.text_node.node, data.borrow());
+            render_context.renderer_mut().update_text_from(&mut self.text_node.node, data.borrow());
 
             update_cache(&mut self.cache, data);
         }
 
-        self.text_node.readd_self(renderer, force_reposition)
+        self.text_node.readd_self(render_context, force_reposition)
     }
 
-    pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized, S: Borrow<V>, V: ?Sized>(data: S, renderer: &mut R, create_cache: impl FnOnce(S) -> Cache) -> Self
+    pub fn initialize_with_str<R: RenderHtml<Text = Text> + RenderTextFrom<Text, V> + ?Sized + RenderWithContext, S: Borrow<V>, V: ?Sized>(
+        data: S,
+        render_context: &mut R::RenderContext<'_>,
+        create_cache: impl FnOnce(S) -> Cache,
+    ) -> Self
     where
         Text: Node<R>,
     {
         State {
-            text_node: TextNode::mount_from(renderer, data.borrow()),
+            text_node: TextNode::mount_from(render_context, data.borrow()),
             cache: create_cache(data),
         }
     }
@@ -221,7 +227,7 @@ frender_common::impl_many!(
     {
         type RenderState<Renderer: RenderHtml + ?Sized> = Option<State<Self, Renderer::Text>>;
 
-        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+        fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
             match render_state.get_mut() {
                 Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(self, renderer, force_reposition, RenderingStr::not_match_cache, RenderingStr::update_cache),
                 render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, renderer, RenderingStr::create_cache)),
@@ -235,7 +241,7 @@ frender_common::impl_many!(
 impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
     type RenderState<Renderer: RenderHtml + ?Sized> = Option<State<<S as frender_common::IntoStaticStr>::IntoStaticStr, Renderer::Text>>;
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         match render_state.get_mut() {
             Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(
                 self.0,
@@ -253,7 +259,7 @@ impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for fr
 
 pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Renderer: RenderHtml + RenderTextFrom<Renderer::Text, V> + ?Sized>(
     data: S,
-    renderer: &mut Renderer,
+    renderer: &mut Renderer::RenderContext<'_>,
     render_state: std::pin::Pin<&mut Option<State<Cache, Renderer::Text>>>,
     force_reposition: bool,
     not_match_cache: impl FnOnce(&S, &Cache) -> bool,

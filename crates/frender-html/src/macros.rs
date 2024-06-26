@@ -212,9 +212,7 @@ macro_rules! behaviors {
         ::frender_common::expand! { if ($( ! $($($verbatim_trait_items_impl_web)*)?)?) {
             ::frender_common::expand! { if ($($( ! $($impl_for_web_only_for_types)*)?)?) {
                 ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
-                    prepend(impl<
-                        Renderer: ?Sized + ::frender_dom::csr::web::Renderer + ::frender_dom::csr::web::RendererWithCursor
-                        > $trait_name<Renderer> for ::frender_dom::csr::web::Node<)
+                    prepend(impl<Renderer: ?Sized + ::frender_dom::csr::web::Renderer> $trait_name<Renderer> for ::frender_dom::csr::web::Node<)
                     append( > $($(where Self: $($special_super_traits<Renderer> + )+ )?)? {
                         $($($($verbatim_trait_items_impl_web)*)?)?
 

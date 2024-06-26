@@ -65,36 +65,36 @@ mod html {
         fn render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
             self.0
-                .render_update(renderer, render_state.get_mut().0.as_mut())
+                .render_update(render_context, render_state.get_mut().0.as_mut())
         }
 
         fn render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
             self.0
-                .render_update_force_reposition(renderer, render_state.get_mut().0.as_mut())
+                .render_update_force_reposition(render_context, render_state.get_mut().0.as_mut())
         }
 
         fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
             self.0.render_update_maybe_reposition(
-                renderer,
+                render_context,
                 render_state.get_mut().0.as_mut(),
                 force_reposition,
             )
@@ -105,35 +105,38 @@ mod html {
         fn unpinned_render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
         {
-            self.0.unpinned_render_update(renderer, render_state)
+            self.0.unpinned_render_update(render_context, render_state)
         }
 
         fn unpinned_render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
         {
             self.0
-                .unpinned_render_update_force_reposition(renderer, render_state)
+                .unpinned_render_update_force_reposition(render_context, render_state)
         }
 
         fn unpinned_render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
             force_reposition: bool,
         ) {
-            self.0
-                .unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
+            self.0.unpinned_render_update_maybe_reposition(
+                render_context,
+                render_state,
+                force_reposition,
+            )
         }
     }
 }

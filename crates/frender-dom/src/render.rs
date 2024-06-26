@@ -98,50 +98,23 @@ impl<S: std::borrow::Borrow<str>> RenderAsText for frender_common::TempStr<S> {
     }
 }
 
-pub trait Render: RenderWithCursor + RenderWithContext {
+pub trait Render: RenderWithContext {
     fn log(&mut self, v: &str);
+
+    type CursorPlaceholder: 'static
+        + crate::behaviors::NodeRenderSelf<Self>
+        + crate::behaviors::NodeWithRenderContextAfterSelf<Self>
+        + crate::behaviors::Node<Self>;
 }
 
 pub trait RenderWithContext {
-    type RenderContext<'a>;
+    type RenderContext<'a>: ?Sized + RenderContext<Renderer = Self>;
 }
 
-// TODO: redesign renderer api with RenderContext
-pub trait RenderWithCursor {
-    type Cursor;
+pub trait RenderContext {
+    type Renderer: ?Sized + RenderWithContext;
 
-    fn cursor(&self) -> Self::Cursor;
-
-    fn set_cursor(&mut self, cursor: Self::Cursor);
-
-    /// Only for debugging
-    fn cursor_skipped(&self) -> bool;
-
-    /// Only for debugging
-    fn set_cursor_skipped(&mut self, cursor_skipped: bool);
-
-    fn set_cursor_by_ref(&mut self, cursor: &Self::Cursor);
-
-    fn with_render_context<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
-        let cursor = self.cursor();
-        let res = f(self);
-        self.set_cursor(cursor);
-        res
-    }
-
-    fn cursor_is_same_as(&self, other: &Self::Cursor) -> bool;
-
+    fn renderer_mut(&mut self) -> &mut Self::Renderer;
     fn log_cursor(&mut self);
-
-    type CursorPlaceholder: 'static;
-
-    /// Should add the placeholder to dom and move cursor after the placeholder
-    fn cursor_placeholder_render(&mut self) -> Self::CursorPlaceholder;
-
-    /// Should move the placeholder and move cursor after the placeholder
-    fn cursor_placeholder_force_reposition(&mut self, cp: &mut Self::CursorPlaceholder);
-
-    fn cursor_placeholder_unmount(&mut self, placeholder: &mut Self::CursorPlaceholder);
-
-    fn move_cursor_after_placeholder(&mut self, placeholder: &mut Self::CursorPlaceholder);
+    fn mark_cursor_skipped(&mut self);
 }

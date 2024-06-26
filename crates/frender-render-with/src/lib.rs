@@ -2,7 +2,10 @@
 
 use std::{any::Any, marker::PhantomData, pin::Pin};
 
-use frender_html::{impl_unpinned_render_for_unpin, Element, RenderHtml, RenderState};
+use frender_html::{
+    dom::render::RenderWithContext, impl_unpinned_render_for_unpin, Element, RenderHtml,
+    RenderState,
+};
 use frender_ssr::SsrElement;
 
 pub trait AnyRenderState<Renderer: ?Sized>: RenderState<Renderer> + Unpin {
@@ -54,13 +57,13 @@ impl<R: ?Sized> RenderState<R> for PinBoxDynRenderState<R> {
     }
 }
 
-pub struct CsrRenderContext<'a, Renderer: ?Sized, S: ?Sized = dyn Any> {
-    renderer: &'a mut Renderer,
+pub struct CsrRenderContext<'a, 'b, Renderer: ?Sized + RenderWithContext, S: ?Sized = dyn Any> {
+    render_context: &'a mut Renderer::RenderContext<'b>,
     render_state: &'a mut S,
     force_reposition: bool,
 }
 
-impl<'a, Renderer: ?Sized + RenderHtml> CsrRenderContext<'a, Renderer> {
+impl<'a, Renderer: ?Sized + RenderHtml> CsrRenderContext<'a, '_, Renderer> {
     pub fn render<E: Element>(
         self,
         element: E,
@@ -74,7 +77,7 @@ impl<'a, Renderer: ?Sized + RenderHtml> CsrRenderContext<'a, Renderer> {
             .expect("Element State type mismatch");
 
         element.unpinned_render_update_maybe_reposition(
-            self.renderer,
+            self.render_context,
             render_state,
             self.force_reposition,
         );
@@ -143,7 +146,7 @@ pub trait IntoFnOnceRenderWithContext {
 // TODO: RenderWith(Test::default())
 
 pub trait FnOnceRenderWithContext<Renderer: ?Sized + RenderHtml>:
-    for<'r> FnOnce(CsrRenderContext<'r, Renderer>) -> Rendered<'r, Self::OutputRenderedState>
+    for<'r> FnOnce(CsrRenderContext<'r, '_, Renderer>) -> Rendered<'r, Self::OutputRenderedState>
 {
     type OutputRenderedState: DefaultAnyRenderState<Renderer>;
 }
@@ -151,7 +154,7 @@ pub trait FnOnceRenderWithContext<Renderer: ?Sized + RenderHtml>:
 impl<F, Renderer: ?Sized + RenderHtml, S> FnOnceRenderWithContext<Renderer> for F
 where
     S: DefaultAnyRenderState<Renderer>,
-    F: for<'r> FnOnce(CsrRenderContext<'r, Renderer>) -> Rendered<'r, S>,
+    F: for<'r> FnOnce(CsrRenderContext<'r, '_, Renderer>) -> Rendered<'r, S>,
 {
     type OutputRenderedState = S;
 }
@@ -221,7 +224,7 @@ impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
     fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
         //
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
@@ -249,7 +252,7 @@ impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
 
         let f = self.0.into_fn_once_render_with_context();
         f(CsrRenderContext {
-            renderer,
+            render_context,
             render_state,
             force_reposition,
         })

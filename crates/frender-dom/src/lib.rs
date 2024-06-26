@@ -4,6 +4,7 @@ pub use frender_csr::{
     render_state, RenderState,
 };
 pub use frender_events::{event, event_types, HasEventTypeName};
+pub use provide_render_context::ProvideRenderContext;
 pub use render_state_with_peh::{RenderStateWithAnyParent, RenderStateWithParentElementsHandle};
 
 pub mod render;
@@ -26,6 +27,7 @@ pub mod event_listener;
 
 pub mod form_control;
 
+mod provide_render_context;
 mod render_state_with_peh;
 
 #[cfg(feature = "web")]

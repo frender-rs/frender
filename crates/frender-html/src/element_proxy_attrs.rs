@@ -83,16 +83,18 @@ mod dom {
             self.0.log_self(renderer)
         }
 
-        fn cursor_is_at_self(&self, renderer: &R) -> bool {
-            self.0.cursor_is_at_self(renderer)
+        fn cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>) -> bool
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            self.0.cursor_is_at_self(render_context)
         }
 
-        fn move_cursor_after_self(&mut self, renderer: &mut R) {
-            self.0.move_cursor_after_self(renderer)
-        }
-
-        fn readd_self(&mut self, renderer: &mut R, force_reposition: bool) {
-            self.0.readd_self(renderer, force_reposition)
+        fn readd_self(&mut self, render_context: &mut <R>::RenderContext<'_>, force_reposition: bool)
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            E::readd_self(&mut self.0, render_context, force_reposition)
         }
 
         fn remove_self(&mut self, renderer: &mut R) {
@@ -101,10 +103,6 @@ mod dom {
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::Element<R>> behaviors::Element<R> for ElementProxyAttrs<E> {
-        fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut R) {
-            self.0.move_cursor_at_the_first_child_of_self(renderer)
-        }
-
         fn set_attribute(&mut self, renderer: &mut R, name: &str, value: &str) {
             self.0.set_attribute(renderer, name, value)
         }
@@ -155,7 +153,7 @@ mod dom {
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::ElementWithChildren<R>> behaviors::ElementWithChildren<R> for ElementProxyAttrs<E> {
-        fn with_render_context_at_first_child_of_self<Res>(&mut self, renderer: &mut R, f: impl FnOnce(R::RenderContext<'_>) -> Res) -> Res
+        fn with_render_context_at_first_child_of_self<Res>(&mut self, renderer: &mut R, f: impl FnOnce(&mut R::RenderContext<'_>) -> Res) -> Res
         where
             R: frender_dom::render::RenderWithContext,
         {

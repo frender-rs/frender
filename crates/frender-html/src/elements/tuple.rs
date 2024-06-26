@@ -5,15 +5,15 @@ use crate::{Element, RenderHtml};
 impl Element for () {
     type RenderState<R: RenderHtml + ?Sized> = ();
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>, _: bool) {}
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer::RenderContext<'_>, _: std::pin::Pin<&mut Self::RenderState<Renderer>>, _: bool) {}
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer::RenderContext<'_>, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, _: &mut Renderer::RenderContext<'_>, _: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
@@ -25,18 +25,18 @@ impl Element for () {
 impl<E0: Element> Element for (E0,) {
     type RenderState<R: RenderHtml + ?Sized> = E0::RenderState<R>;
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
+    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
         self.0.render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
         self.0.render_update(renderer, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
+    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>)
     where
         Self: Sized,
     {
@@ -45,15 +45,15 @@ impl<E0: Element> Element for (E0,) {
 
     type UnpinnedRenderState<R: RenderHtml + ?Sized> = E0::UnpinnedRenderState<R>;
 
-    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         self.0.unpinned_render_update(renderer, render_state)
     }
 
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
+    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
         self.0.unpinned_render_update_force_reposition(renderer, render_state)
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
+    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
         self.0.unpinned_render_update_maybe_reposition(renderer, render_state, force_reposition)
     }
 }
@@ -66,7 +66,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn render_update_maybe_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                     force_reposition: bool,
                 ) {
@@ -77,7 +77,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn render_update< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                 ) {
                     let ($($field,)+) = self;
@@ -87,7 +87,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn render_update_force_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
                 ) {
                     let ($($field,)+) = self;
@@ -99,7 +99,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn unpinned_render_update< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: &mut Self::UnpinnedRenderState<Renderer>,
                 ) {
                     match self {
@@ -115,7 +115,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn unpinned_render_update_force_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: &mut Self::UnpinnedRenderState<Renderer>,
                 ) {
                     match self {
@@ -131,7 +131,7 @@ macro_rules! impl_render_for_tuple {
 
                 fn unpinned_render_update_maybe_reposition< Renderer: RenderHtml+?Sized>(
                     self,
-                    renderer: &mut Renderer,
+                    renderer: &mut Renderer::RenderContext<'_>,
                     render_state: &mut Self::UnpinnedRenderState<Renderer>,
                     force_reposition: bool,
                 ) {

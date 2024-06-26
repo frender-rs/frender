@@ -1,28 +1,37 @@
 use std::future::Future;
 
-use frender_html::{Element, RenderHtml, RenderState};
+use frender_html::{dom::ProvideRenderContext, Element, RenderHtml, RenderState};
 
 pin_project_lite::pin_project!(
-    pub struct RenderElement<R: RenderHtml, E: Element, Stop = std::future::Pending<()>> {
-        renderer: R,
+    pub struct RenderElement<P: ProvideRenderContext, E: Element, Stop = std::future::Pending<()>>
+    where
+        P::Renderer: RenderHtml,
+    {
+        p: P,
         element: Option<E>,
         #[pin]
-        state: E::RenderState<R>,
+        state: E::RenderState<P::Renderer>,
         #[pin]
         stop: Stop,
     }
 );
 
-impl<R: RenderHtml, E: Element> RenderElement<R, E> {
-    pub fn new(renderer: R, element: E) -> Self {
-        Self::new_with_stop(renderer, element, std::future::pending())
+impl<P: ProvideRenderContext, E: Element> RenderElement<P, E>
+where
+    P::Renderer: RenderHtml,
+{
+    pub fn new(render_context: P, element: E) -> Self {
+        Self::new_with_stop(render_context, element, std::future::pending())
     }
 }
 
-impl<R: RenderHtml, E: Element, Stop> RenderElement<R, E, Stop> {
-    pub fn new_with_stop(renderer: R, element: E, stop: Stop) -> Self {
+impl<P: ProvideRenderContext, E: Element, Stop> RenderElement<P, E, Stop>
+where
+    P::Renderer: RenderHtml,
+{
+    pub fn new_with_stop(render_context: P, element: E, stop: Stop) -> Self {
         Self {
-            renderer,
+            p: render_context,
             element: Some(element),
             state: Default::default(),
             stop,
@@ -30,8 +39,10 @@ impl<R: RenderHtml, E: Element, Stop> RenderElement<R, E, Stop> {
     }
 }
 
-impl<R: RenderHtml, E: Element, Stop: Future<Output = ()>> std::future::Future
-    for RenderElement<R, E, Stop>
+impl<P: ProvideRenderContext, E: Element, Stop: Future<Output = ()>> std::future::Future
+    for RenderElement<P, E, Stop>
+where
+    P::Renderer: RenderHtml,
 {
     type Output = ();
 
@@ -42,20 +53,18 @@ impl<R: RenderHtml, E: Element, Stop: Future<Output = ()>> std::future::Future
         let mut this = self.project();
 
         if let Some(element) = this.element.take() {
-            this.renderer.with_render_context(|renderer| {
-                element.render_update(renderer, this.state.as_mut())
+            this.p.provide_render_context(|render_context| {
+                element.render_update::<P::Renderer>(render_context, this.state.as_mut())
             });
         }
 
-        if let std::task::Poll::Pending = this
-            .renderer
-            .with_render_context(|renderer| this.state.as_mut().poll_render(renderer, cx))
+        if let std::task::Poll::Pending = this.state.as_mut().poll_render(this.p.renderer_mut(), cx)
         {
             return std::task::Poll::Pending;
         }
 
         if let std::task::Poll::Ready(()) = this.stop.poll(cx) {
-            this.state.unmount(this.renderer);
+            this.state.unmount(this.p.renderer_mut());
             return std::task::Poll::Ready(());
         }
 

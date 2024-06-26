@@ -4,47 +4,51 @@ pub use frender_events::web::{Event, JsCastEventType};
 
 pub use frender_html_common::web::DomTokenList;
 
+pub use self::cursor_place_holder::CursorPlaceholder;
+
+use wasm_bindgen::UnwrapThrowExt as _;
+
 use crate::render::RenderWithContext;
 
 pub mod event;
 pub mod event_listener;
 
+mod cursor_place_holder;
+
 #[derive(Debug)]
 pub struct Node<N>(pub N);
 
-pub trait Renderer {
+pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>> {
     fn document(&self) -> Cow<web_sys::Document>;
 
-    fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool;
-    fn move_cursor_after_node(&mut self, node: &web_sys::Node);
-    fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool);
+    fn cursor_is_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node) -> bool
+    where
+        Self: RenderWithContext;
+
+    /// See [`crate::behaviors::Node::readd_self`].
+    fn readd_node(
+        render_context: &mut Self::RenderContext<'_>,
+        node: &web_sys::Node,
+        force_reposition: bool,
+    ) where
+        Self: RenderWithContext;
+
     fn remove_node(&mut self, node: &web_sys::Node);
 
-    fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element);
-}
-
-pub trait RendererWithCursor:
-    for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>>
-{
     fn with_render_context_at_first_child_of_element<R>(
         &mut self,
         parent: &web_sys::Element,
-        f: impl FnOnce(RenderContext<'_, Self>) -> R,
+        f: impl FnOnce(&mut RenderContext<'_, Self>) -> R,
     ) -> R {
         let mut cursor = Cursor {
             position: CursorPosition::FirstChildOf(Cow::Borrowed(parent)),
             skipped: false,
         };
-        f(RenderContext {
+        f(&mut RenderContext {
             renderer: self,
             cursor: &mut cursor,
         })
     }
-}
-
-impl<R: ?Sized + for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>>>
-    RendererWithCursor for R
-{
 }
 
 enum CursorPosition<'a> {
@@ -57,9 +61,91 @@ pub struct Cursor<'a> {
     skipped: bool,
 }
 
+impl<'a> Cursor<'a> {
+    pub fn first_child_of(el: Cow<'a, web_sys::Element>) -> Self {
+        Self {
+            position: CursorPosition::FirstChildOf(el),
+            skipped: false,
+        }
+    }
+
+    fn after(node: Cow<'a, web_sys::Node>) -> Self {
+        Self {
+            position: CursorPosition::After(node),
+            skipped: false,
+        }
+    }
+}
+
 pub struct RenderContext<'a, R: ?Sized> {
-    renderer: &'a mut R,
-    cursor: &'a mut Cursor<'a>,
+    pub renderer: &'a mut R,
+    pub cursor: &'a mut Cursor<'a>,
+}
+
+impl<'a> Cursor<'a> {
+    pub fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool {
+        match &self.position {
+            CursorPosition::FirstChildOf(parent) => parent.first_child(),
+            CursorPosition::After(previous) => previous.next_sibling(),
+        }
+        .map_or(false, |c| *node == c)
+    }
+
+    pub fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
+        if force_reposition {
+            match &self.position {
+                CursorPosition::FirstChildOf(parent) => {
+                    // web_sys::console::log_2(&"FirstChildOf".into(), parent);
+
+                    parent.prepend_with_node_1(node).unwrap_throw()
+                }
+                CursorPosition::After(pre) => {
+                    // web_sys::console::log_2(&"InsertAfter".into(), pre);
+
+                    pre.parent_node()
+                        .expect_throw("the previous node should have a parent node")
+                        .insert_before(node, pre.next_sibling().as_ref())
+                        .unwrap_throw();
+                }
+            }
+        } else {
+            // TODO: check position
+        }
+
+        self.position = CursorPosition::After(Cow::Owned(node.clone()));
+        self.skipped = false;
+    }
+}
+
+impl<'a, R: ?Sized + RenderWithContext> crate::render::RenderContext for RenderContext<'a, R> {
+    type Renderer = R;
+
+    fn renderer_mut(&mut self) -> &mut Self::Renderer {
+        self.renderer
+    }
+
+    fn log_cursor(&mut self) {
+        let (kind, node, cur) = match &self.cursor.position {
+            CursorPosition::FirstChildOf(node) => (
+                "FirstChildOf",
+                AsRef::<web_sys::Node>::as_ref(node.as_ref()),
+                node.first_child(),
+            ),
+            CursorPosition::After(node) => ("After", node.as_ref(), node.next_sibling()),
+        };
+
+        web_sys::console::log_5(
+            &"cursor=".into(),
+            &kind.into(),
+            node,
+            &"=".into(),
+            &cur.into(),
+        );
+    }
+
+    fn mark_cursor_skipped(&mut self) {
+        self.cursor.skipped = true;
+    }
 }
 
 impl<
@@ -73,64 +159,4 @@ impl<
 
     type EventListenerUnpinned<F: frender_common::HandleEvent<ET::Event> + 'static> =
         event_listener::unpinned::MaybeEventListenerOfType<F, ET>;
-}
-
-#[cfg(aaa)]
-mod impl_node_behaviors {
-    use frender_common::try_behavior::TryWithTryBehavior;
-
-    use crate::renderer::node_behaviors;
-    impl<E: AsRef<web_sys::Node>, R: ?Sized + super::Renderer> node_behaviors::Node<R>
-        for super::Node<E>
-    {
-        fn cursor_is_at_self(&self, renderer: &R) -> bool {
-            renderer.cursor_is_at_node(self.0.as_ref())
-        }
-
-        fn move_cursor_after_self(&mut self, renderer: &mut R) {
-            renderer.move_cursor_after_node(self.0.as_ref())
-        }
-
-        fn readd_self(&mut self, renderer: &mut R, force_reposition: bool) {
-            renderer.readd_node(self.0.as_ref(), force_reposition)
-        }
-
-        fn remove_self(&mut self, renderer: &mut R) {
-            renderer.remove_node(self.0.as_ref())
-        }
-    }
-
-    impl<E: AsRef<web_sys::Element> + AsRef<web_sys::Node>, R: ?Sized + super::Renderer>
-        node_behaviors::Element<R> for super::Node<E>
-    {
-        fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut R) {
-            renderer.move_cursor_at_the_first_child_of_element(self.0.as_ref())
-        }
-
-        fn set_attribute(&mut self, renderer: &mut R, name: &str, value: &str) {
-            AsRef::<web_sys::Element>::as_ref(&self.0)
-                .set_attribute(name, value)
-                .unwrap_with_behavior(&mut renderer.try_behavior())
-        }
-
-        fn remove_attribute(&mut self, renderer: &mut R, name: &str) {
-            AsRef::<web_sys::Element>::as_ref(&self.0)
-                .remove_attribute(name)
-                .unwrap_with_behavior(&mut renderer.try_behavior())
-        }
-
-        type ClassList<'a> = super::DomTokenList<R::TryBehavior<'a>>
-        where
-            Self: 'a,
-            R: 'a;
-
-        fn class_list<'a>(&'a mut self, renderer: &'a mut R) -> Self::ClassList<'a> {
-            let element: &web_sys::Element = self.0.as_ref();
-            super::DomTokenList(element.class_list(), renderer.try_behavior())
-        }
-
-        fn set_id(&mut self, renderer: &mut R, id: &str) {
-            AsRef::<web_sys::Element>::as_ref(&self.0).set_id(id)
-        }
-    }
 }

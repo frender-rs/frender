@@ -1,5 +1,8 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
+use frender_html::dom::behaviors::{
+    Node as _, NodeRenderSelf, NodeWithRenderContextAfterSelf as _,
+};
 use frender_html::{Element, RenderHtml, RenderState};
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 
@@ -44,7 +47,7 @@ pub trait UseHookRenderUpdate<HookData> {
     fn use_hook_render_update<R: RenderHtml + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         render_state: Pin<&mut Self::State<R>>,
     );
 }
@@ -59,10 +62,10 @@ impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdat
     fn use_hook_render_update<R: RenderHtml + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         render_state: Pin<&mut Self::State<R>>,
     ) {
-        self.0(hook_data).render_update(renderer, render_state)
+        self.0(hook_data).render_update(render_context, render_state)
     }
 }
 
@@ -76,10 +79,10 @@ impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdat
     fn use_hook_render_update<R: RenderHtml + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         render_state: Pin<&mut Self::State<R>>,
     ) {
-        self.0(hook_data).unpinned_render_update(renderer, render_state.get_mut())
+        self.0(hook_data).unpinned_render_update(render_context, render_state.get_mut())
     }
 }
 
@@ -137,25 +140,15 @@ impl<
         loop {
             let a = this.hook_data.as_mut().poll_next_update(cx);
 
-            #[cfg(debug_assertions)]
-            let initial_cursor = renderer.cursor();
-
             let b = this.render_state.as_mut().poll_render(renderer, cx);
-
-            #[cfg(debug_assertions)]
-            assert!(
-                renderer.cursor_is_same_as(&initial_cursor),
-                "cursor changed in hook element RenderState::poll_render"
-            );
 
             match (a, b) {
                 (Poll::Ready(false), Poll::Ready(())) => return Poll::Ready(()),
                 (Poll::Ready(true), _) => {
-                    renderer.with_render_context(|renderer| {
-                        renderer.move_cursor_after_placeholder(placeholder);
+                    placeholder.with_render_context_after_self(renderer, |render_context| {
                         use_hook.use_hook_render_update(
                             this.hook_data.as_mut(),
-                            renderer,
+                            render_context,
                             this.render_state.as_mut(),
                         );
                     });
@@ -190,7 +183,7 @@ where
 
     fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
         mut force_reposition: bool,
     ) {
@@ -202,22 +195,22 @@ where
 
         let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
             force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
-            if force_reposition {
-                renderer.cursor_placeholder_force_reposition(cp);
-            }
+
+            cp.readd_self(render_context, force_reposition);
+
             use_hook.0 = self.use_hook;
 
             use_hook
         } else {
             force_reposition = true;
-            let cp = renderer.cursor_placeholder_render();
+            let cp = NodeRenderSelf::render_self(render_context);
             let (use_hook, _) =
                 use_hook_and_cursor_placeholder.insert((UseHookWithRenderState(self.use_hook), cp));
             use_hook
         };
 
         (use_hook.0)(render_state.hook_data).render_update_maybe_reposition(
-            renderer,
+            render_context,
             render_state.render_state,
             force_reposition,
         );
@@ -234,7 +227,7 @@ where
 
     fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: &mut Self::UnpinnedRenderState<Renderer>,
         mut force_reposition: bool,
     ) {
@@ -245,15 +238,15 @@ where
 
         let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
             force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
-            if force_reposition {
-                renderer.cursor_placeholder_force_reposition(cp);
-            }
+
+            cp.readd_self(render_context, force_reposition);
+
             use_hook.0 = self.use_hook;
 
             use_hook
         } else {
             force_reposition = true;
-            let cp = renderer.cursor_placeholder_render();
+            let cp = NodeRenderSelf::render_self(render_context);
             let (use_hook, _) = use_hook_and_cursor_placeholder
                 .insert((UseHookWithUnpinnedRenderState(self.use_hook), cp));
             use_hook
@@ -261,7 +254,7 @@ where
 
         (use_hook.0)(Pin::new(&mut render_state.hook_data))
             .unpinned_render_update_maybe_reposition(
-                renderer,
+                render_context,
                 &mut render_state.render_state,
                 force_reposition,
             );

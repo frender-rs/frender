@@ -16,6 +16,10 @@ pub struct CursorPlaceholder {
 }
 
 impl CursorPlaceholder {
+    fn is_same_cursor_placeholder(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.inner, &other.inner)
+    }
+
     pub(crate) fn new() -> Self {
         Self {
             inner: Rc::new(RefCell::new(None)),
@@ -292,6 +296,68 @@ impl WeakElement {
     }
 }
 
+mod cursor_placeholder {
+    use std::borrow::Cow;
+
+    use frender_html::dom::behaviors::{self, Node as _};
+
+    use crate::renderer::{RenderContext, Renderer};
+
+    use super::{CursorPlaceholder, Node};
+
+    impl behaviors::Node<Renderer> for CursorPlaceholder {
+        fn log_self(&self, _: &mut Renderer) {
+            eprintln!("{:?}", self)
+        }
+
+        fn readd_self(&mut self, render_context: &mut RenderContext, force_reposition: bool) {
+            render_context.readd_node(
+                Cow::Owned(Node::CursorPlaceholder(self.clone())),
+                force_reposition,
+            );
+        }
+
+        fn cursor_is_at_self(&self, render_context: &RenderContext) -> bool
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.cursor_is_at(
+                |node| matches!(node, Node::CursorPlaceholder(cp) if cp.is_same_cursor_placeholder(self)),
+            )
+        }
+
+        fn remove_self(&mut self, _: &mut Renderer) {
+            self.parent()
+                .expect("CursorPlaceholder should have a parent")
+                .upgrade()
+                .expect("CursorPlaceholder's parent should not have been dropped")
+                .remove_child(&Node::CursorPlaceholder(self.clone()));
+        }
+    }
+
+    impl behaviors::NodeRenderSelf<Renderer> for CursorPlaceholder {
+        fn render_self(
+            render_context: &mut <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
+        ) -> Self {
+            let mut node = Self::new();
+            node.readd_self(render_context, true);
+            node
+        }
+    }
+
+    impl behaviors::NodeWithRenderContextAfterSelf<Renderer> for CursorPlaceholder {
+        fn with_render_context_after_self<Res>(
+            &mut self,
+            renderer: &mut Renderer,
+            f: impl FnOnce(
+                &mut <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
+            ) -> Res,
+        ) -> Res {
+            renderer.with_render_context_after_node(Node::CursorPlaceholder(self.clone()), f)
+        }
+    }
+}
+
 mod dom {
     use crate::renderer::Renderer;
 
@@ -304,21 +370,22 @@ mod dom {
             eprintln!("{:?}", self)
         }
 
-        fn cursor_is_at_self(&self, renderer: &Renderer) -> bool {
-            renderer
-                .cursor
+        fn cursor_is_at_self(&self, render_context: &crate::renderer::RenderContext<'_>) -> bool {
+            render_context
                 .current_node()
                 .as_ref()
                 .and_then(Node::as_element)
                 .map_or(false, |e| e.is_same_element(self))
         }
 
-        fn move_cursor_after_self(&mut self, renderer: &mut Renderer) {
-            renderer.move_cursor_after_node(Node::Element(self.clone()))
-        }
-
-        fn readd_self(&mut self, renderer: &mut Renderer, force_reposition: bool) {
-            renderer.readd_node(
+        fn readd_self(
+            &mut self,
+            render_context: &mut crate::renderer::RenderContext<'_>,
+            force_reposition: bool,
+        ) where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(
                 std::borrow::Cow::Owned(Node::Element(self.clone())),
                 force_reposition,
             )
@@ -330,11 +397,6 @@ mod dom {
     }
 
     impl behaviors::Element<Renderer> for Element {
-        fn move_cursor_at_the_first_child_of_self(&mut self, renderer: &mut Renderer) {
-            renderer.cursor = super::Cursor::FirstChildOf(self.clone());
-            renderer.cursor_skipped = false;
-        }
-
         fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str) {
             todo!()
         }
@@ -388,9 +450,7 @@ mod dom {
         fn with_render_context_at_first_child_of_self<R>(
             &mut self,
             renderer: &mut Renderer,
-            f: impl FnOnce(
-                <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
-            ) -> R,
+            f: impl FnOnce(&mut crate::renderer::RenderContext<'_>) -> R,
         ) -> R {
             renderer.with_render_context_at_first_child_of_element(self, f)
         }

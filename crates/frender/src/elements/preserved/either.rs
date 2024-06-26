@@ -75,7 +75,7 @@ mod csr {
 #[cfg(feature = "html")]
 mod html {
     use either::Either;
-    use frender_html::{Element, RenderState};
+    use frender_html::{dom::render::RenderContext as _, Element, RenderState};
 
     use super::super::Preserved;
     use super::State;
@@ -89,14 +89,14 @@ mod html {
                         LE::$method(this, $arg2, render_state.left, $($($arg4)?)?)
                     }
                     Either::Right(this) => {
-                        render_state.left.unmount($arg2);
+                        render_state.left.unmount($arg2.renderer_mut());
                         *render_state.left_is_mounted = Some(false);
                         RE::$method(this, $arg2, render_state.right, $($($arg4)?)?)
                     }
                 },
                 Some(false) => match $element {
                     Either::Left(this) => {
-                        render_state.right.unmount($arg2);
+                        render_state.right.unmount($arg2.renderer_mut());
                         *render_state.left_is_mounted = Some(true);
                         LE::$method(this, $arg2, render_state.left, $($($arg4)?)?)
                     }
@@ -126,14 +126,14 @@ mod html {
                         LE::$method(this, $arg2, &mut $render_state.left, $($($arg4)?)?)
                     }
                     Either::Right(this) => {
-                        std::pin::Pin::new(&mut $render_state.left).unmount($arg2);
+                        std::pin::Pin::new(&mut $render_state.left).unmount($arg2.renderer_mut());
                         $render_state.left_is_mounted = Some(false);
                         RE::$method(this, $arg2, &mut $render_state.right, $($($arg4)?)?)
                     }
                 },
                 Some(false) => match $element {
                     Either::Left(this) => {
-                        std::pin::Pin::new(&mut $render_state.right).unmount($arg2);
+                        std::pin::Pin::new(&mut $render_state.right).unmount($arg2.renderer_mut());
                         $render_state.left_is_mounted = Some(true);
                         LE::$method(this, $arg2, &mut $render_state.left, $($($arg4)?)?)
                     }
@@ -166,18 +166,18 @@ mod html {
         fn render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
         {
-            update!(self.0, render_update, renderer, render_state,)
+            update!(self.0, render_update, render_context, render_state,)
         }
 
         fn render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
         ) where
             Self: Sized,
@@ -185,7 +185,7 @@ mod html {
             update!(
                 self.0,
                 render_update_force_reposition,
-                renderer,
+                render_context,
                 render_state,
             )
         }
@@ -193,14 +193,14 @@ mod html {
         fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
             update!(
                 self.0,
                 render_update_maybe_reposition,
-                renderer,
+                render_context,
                 render_state,
                 force_reposition,
             )
@@ -212,14 +212,14 @@ mod html {
         fn unpinned_render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
             force_reposition: bool,
         ) {
             update_unpinned!(
                 self.0,
                 unpinned_render_update_maybe_reposition,
-                renderer,
+                render_context,
                 render_state,
                 force_reposition,
             )
@@ -228,18 +228,18 @@ mod html {
         fn unpinned_render_update<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
         {
-            update_unpinned!(self.0, unpinned_render_update, renderer, render_state,)
+            update_unpinned!(self.0, unpinned_render_update, render_context, render_state,)
         }
 
         fn unpinned_render_update_force_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: &mut Self::UnpinnedRenderState<Renderer>,
         ) where
             Self: Sized,
@@ -247,7 +247,7 @@ mod html {
             update_unpinned!(
                 self.0,
                 unpinned_render_update_force_reposition,
-                renderer,
+                render_context,
                 render_state,
             )
         }

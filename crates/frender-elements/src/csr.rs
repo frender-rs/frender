@@ -13,7 +13,7 @@ pub trait ElementsAlgorithm<K, E> {
     >(
         self,
         keyed_elements: I,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         state: Pin<&mut Self::CsrState<R>>,
     );
 
@@ -24,7 +24,7 @@ pub trait ElementsAlgorithm<K, E> {
     >(
         self,
         keyed_elements: I,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         state: Pin<&mut Self::CsrState<R>>,
     );
 
@@ -34,16 +34,20 @@ pub trait ElementsAlgorithm<K, E> {
     >(
         self,
         keyed_elements: I,
-        renderer: &mut R,
+        render_context: &mut R::RenderContext<'_>,
         state: Pin<&mut Self::CsrState<R>>,
         force_reposition: bool,
     ) where
         Self: Sized,
     {
         if force_reposition {
-            self.keyed_elements_update_csr_state_force_reposition(keyed_elements, renderer, state)
+            self.keyed_elements_update_csr_state_force_reposition(
+                keyed_elements,
+                render_context,
+                state,
+            )
         } else {
-            self.keyed_elements_update_csr_state(keyed_elements, renderer, state)
+            self.keyed_elements_update_csr_state(keyed_elements, render_context, state)
         }
     }
 }
@@ -78,7 +82,7 @@ pub mod default {
 
     use indexmap::IndexMap;
 
-    use frender_html::{Element, RenderHtml, RenderState};
+    use frender_html::{dom::render::RenderContext, Element, RenderHtml, RenderState};
 
     use crate::{DefaultElementsAlgorithm, Keyed};
 
@@ -220,7 +224,7 @@ pub mod default {
         >(
             self,
             keyed_elements: I,
-            renderer: &mut R,
+            render_context: &mut R::RenderContext<'_>,
             state: Pin<&mut Self::CsrState<R>>,
         ) {
             let States {
@@ -283,7 +287,7 @@ pub mod default {
                                 if before < after {
                                     // *2 3* were marked as MightUnmount (state_unmounted=true) at the start
                                     // They will be removed or mounted later.
-                                    renderer.set_cursor_skipped(true);
+                                    render_context.mark_cursor_skipped();
                                     Strategy::Skip
                                 } else {
                                     // move *4* left
@@ -299,7 +303,7 @@ pub mod default {
                         let force_reposition =
                             matches!(strategy, Strategy::MoveLeft { .. } | Strategy::MoveRight);
                         element.unpinned_render_update_maybe_reposition(
-                            renderer,
+                            render_context,
                             render_state,
                             force_reposition,
                         );
@@ -358,7 +362,8 @@ pub mod default {
                             render_state
                         };
 
-                        element.unpinned_render_update_force_reposition(renderer, render_state);
+                        element
+                            .unpinned_render_update_force_reposition(render_context, render_state);
 
                         entry.insert(());
                     }
@@ -382,6 +387,7 @@ pub mod default {
                 }
             }
 
+            let renderer = render_context.renderer_mut();
             states[mounted_count..real_len]
                 .iter_mut()
                 .for_each(|state| {
@@ -396,7 +402,7 @@ pub mod default {
         >(
             self,
             keyed_elements: I,
-            renderer: &mut R,
+            render_context: &mut R::RenderContext<'_>,
             state: Pin<&mut Self::CsrState<R>>,
         ) {
             let states = state.get_mut();
@@ -411,13 +417,17 @@ pub mod default {
                 state.state_unmounted = false;
                 state.order = index;
 
-                element.unpinned_render_update_force_reposition(renderer, &mut state.render_state);
+                element.unpinned_render_update_force_reposition(
+                    render_context,
+                    &mut state.render_state,
+                );
 
                 index += 1;
             }
 
             // states that should be unmounted
             let real_len = states.key_to_index.len();
+            let renderer = render_context.renderer_mut();
             states.states[index..real_len].iter_mut().for_each(|state| {
                 Pin::new(&mut state.render_state).unmount(renderer);
                 state.state_unmounted = false;
@@ -1479,35 +1489,35 @@ where
 
     fn render_update<Renderer: RenderHtml + ?Sized>(
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) {
-        A::keyed_elements_update_csr_state(self.algorithm, self.iter, renderer, render_state)
+        A::keyed_elements_update_csr_state(self.algorithm, self.iter, render_context, render_state)
     }
 
     fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
     ) {
         A::keyed_elements_update_csr_state_force_reposition(
             self.algorithm,
             self.iter,
-            renderer,
+            render_context,
             render_state,
         )
     }
 
     fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Renderer::RenderContext<'_>,
         render_state: Pin<&mut Self::RenderState<Renderer>>,
         force_reposition: bool,
     ) {
         A::keyed_elements_update_csr_state_maybe_reposition(
             self.algorithm,
             self.iter,
-            renderer,
+            render_context,
             render_state,
             force_reposition,
         )

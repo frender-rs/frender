@@ -141,7 +141,7 @@ pub mod state {
             S: SignalHook<SignalShareValue = Val>,
             Val,
             U: UpdateElementWithSharedValue<R, <S as SignalHook>::SignalShareValue>,
-            R: ?Sized + frender_html::dom::render::RenderWithCursor,
+            R: ?Sized + frender_html::dom::render::Render,
         > RenderState<R> for State<S, U>
     {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
@@ -163,23 +163,13 @@ pub mod state {
         ) -> std::task::Poll<()> {
             let StateProj { mut inner, update } = self.project();
 
-            let mut initial_cursor = None;
-
             loop {
                 match inner.as_mut().poll_next_update(cx) {
                     std::task::Poll::Ready(true) => {
                         let state = inner.as_mut().use_hook(); // mark as seen
 
                         state.map(|shared_value| {
-                            if let Some(initial_cursor) = &mut initial_cursor {
-                                renderer.set_cursor_by_ref(initial_cursor)
-                            } else {
-                                initial_cursor = Some(renderer.cursor())
-                            };
-
-                            renderer.with_render_context(|renderer| {
-                                update.update_element_with_shared_value(renderer, shared_value)
-                            })
+                            update.update_element_with_shared_value(renderer, shared_value)
                         });
                     }
                     std::task::Poll::Ready(false) => return std::task::Poll::Ready(()),
@@ -368,7 +358,11 @@ pub mod element {
     use std::borrow::Borrow;
 
     use frender_common::PrimarilyBorrow;
-    use frender_html::{dom::render::RenderAsText, elements::str::TextNode, RenderHtml};
+    use frender_html::{
+        dom::render::{RenderAsText, RenderContext},
+        elements::str::TextNode,
+        RenderHtml,
+    };
     use hooks::{ShareValue, Signal};
 
     #[derive(Debug, Clone, Copy)]
@@ -422,7 +416,7 @@ pub mod element {
         fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
             //
             self,
-            renderer: &mut Renderer,
+            render_context: &mut Renderer::RenderContext<'_>,
             render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
             force_reposition: bool,
         ) {
@@ -433,7 +427,7 @@ pub mod element {
                     if !self.0.is_signal_of(&render_state.inner) {
                         self.0.map(|value| {
                             value.borrow().render_as_text_update(
-                                renderer,
+                                render_context.renderer_mut(),
                                 &mut render_state.update.text_node.node,
                             )
                         })
@@ -442,15 +436,16 @@ pub mod element {
                     render_state
                         .update
                         .text_node
-                        .readd_self(renderer, force_reposition)
+                        .readd_self(render_context, force_reposition)
                 }
                 render_state => {
                     *render_state = Some(State {
                         update: UpdateTextNode {
                             text_node: {
-                                let node =
-                                    self.0.map(|value| value.borrow().render_as_text(renderer));
-                                TextNode::mount(renderer, node)
+                                let node = self.0.map(|value| {
+                                    value.borrow().render_as_text(render_context.renderer_mut())
+                                });
+                                TextNode::mount(render_context, node)
                             },
                         },
                         inner: self.0.to_signal_hook(),
