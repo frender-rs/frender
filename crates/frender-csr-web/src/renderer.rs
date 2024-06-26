@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use frender_html::{
     dom::{
         csr::web::{Node, Renderer as _},
-        render::{Render, RenderWithCursor},
+        render::{Render, RenderWithContext, RenderWithCursor},
     },
     RenderHtml,
 };
@@ -132,6 +132,10 @@ impl Render for Renderer {
     fn log(&mut self, v: &str) {
         web_sys::console::log_1(&v.into())
     }
+}
+
+impl RenderWithContext for Renderer {
+    type RenderContext<'a> = frender_html::dom::csr::web::RenderContext<'a, Self>;
 }
 
 impl RenderHtml for Renderer {

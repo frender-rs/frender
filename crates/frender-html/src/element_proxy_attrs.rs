@@ -153,6 +153,15 @@ mod dom {
             self.0.rel_list(renderer)
         }
     }
+
+    impl<R: ?Sized, E: ?Sized + behaviors::ElementWithChildren<R>> behaviors::ElementWithChildren<R> for ElementProxyAttrs<E> {
+        fn with_render_context_at_first_child_of_self<Res>(&mut self, renderer: &mut R, f: impl FnOnce(R::RenderContext<'_>) -> Res) -> Res
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            self.0.with_render_context_at_first_child_of_self(renderer, f)
+        }
+    }
 }
 
 mod form_control {

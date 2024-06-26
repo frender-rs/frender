@@ -4,6 +4,8 @@ pub use frender_events::web::{Event, JsCastEventType};
 
 pub use frender_html_common::web::DomTokenList;
 
+use crate::render::RenderWithContext;
+
 pub mod event;
 pub mod event_listener;
 
@@ -19,6 +21,45 @@ pub trait Renderer {
     fn remove_node(&mut self, node: &web_sys::Node);
 
     fn move_cursor_at_the_first_child_of_element(&mut self, element: &web_sys::Element);
+}
+
+pub trait RendererWithCursor:
+    for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>>
+{
+    fn with_render_context_at_first_child_of_element<R>(
+        &mut self,
+        parent: &web_sys::Element,
+        f: impl FnOnce(RenderContext<'_, Self>) -> R,
+    ) -> R {
+        let mut cursor = Cursor {
+            position: CursorPosition::FirstChildOf(Cow::Borrowed(parent)),
+            skipped: false,
+        };
+        f(RenderContext {
+            renderer: self,
+            cursor: &mut cursor,
+        })
+    }
+}
+
+impl<R: ?Sized + for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>>>
+    RendererWithCursor for R
+{
+}
+
+enum CursorPosition<'a> {
+    After(Cow<'a, web_sys::Node>),
+    FirstChildOf(Cow<'a, web_sys::Element>),
+}
+
+pub struct Cursor<'a> {
+    position: CursorPosition<'a>,
+    skipped: bool,
+}
+
+pub struct RenderContext<'a, R: ?Sized> {
+    renderer: &'a mut R,
+    cursor: &'a mut Cursor<'a>,
 }
 
 impl<

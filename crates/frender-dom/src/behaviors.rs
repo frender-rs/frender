@@ -46,6 +46,16 @@ pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
     fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a>;
 }
 
+pub trait ElementWithChildren<Renderer: ?Sized> {
+    fn with_render_context_at_first_child_of_self<R>(
+        &mut self,
+        renderer: &mut Renderer,
+        f: impl FnOnce(Renderer::RenderContext<'_>) -> R,
+    ) -> R
+    where
+        Renderer: crate::render::RenderWithContext;
+}
+
 #[cfg(feature = "web")]
 impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node<Renderer>
     for crate::csr::web::Node<N>
@@ -126,6 +136,20 @@ mod web {
     use crate::shims::RelList as _;
 
     use super::*;
+
+    impl<
+            N: AsRef<web_sys::Node> + AsRef<web_sys::Element>,
+            Renderer: ?Sized + crate::csr::web::Renderer + crate::csr::web::RendererWithCursor,
+        > ElementWithChildren<Renderer> for crate::csr::web::Node<N>
+    {
+        fn with_render_context_at_first_child_of_self<R>(
+            &mut self,
+            renderer: &mut Renderer,
+            f: impl FnOnce(<Renderer as crate::render::RenderWithContext>::RenderContext<'_>) -> R,
+        ) -> R {
+            renderer.with_render_context_at_first_child_of_element(self.0.as_ref(), f)
+        }
+    }
 
     impl<
             N: AsRef<web_sys::Node> + AsRef<web_sys::Element>,

@@ -98,8 +98,12 @@ impl<S: std::borrow::Borrow<str>> RenderAsText for frender_common::TempStr<S> {
     }
 }
 
-pub trait Render: RenderWithCursor {
+pub trait Render: RenderWithCursor + RenderWithContext {
     fn log(&mut self, v: &str);
+}
+
+pub trait RenderWithContext {
+    type RenderContext<'a>;
 }
 
 // TODO: redesign renderer api with RenderContext

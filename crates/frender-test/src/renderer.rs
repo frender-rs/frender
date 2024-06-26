@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    dom::render::{Render, RenderTextFrom, RenderWithCursor},
+    dom::render::{Render, RenderTextFrom, RenderWithContext, RenderWithCursor},
     RenderHtml,
 };
 
@@ -93,6 +93,16 @@ impl Renderer {
         } else {
             self.move_cursor_after_node(node.into_owned())
         }
+    }
+
+    pub(crate) fn with_render_context_at_first_child_of_element<R>(
+        &mut self,
+        el: &mut crate::element::Element,
+        f: impl FnOnce(RenderContext<'_>) -> R,
+    ) -> R {
+        f(RenderContext {
+            cursor: &mut Cursor(crate::element::Cursor::FirstChildOf(el.clone()), false),
+        })
     }
 }
 
@@ -205,6 +215,14 @@ impl Render for Renderer {
     fn log(&mut self, v: &str) {
         eprintln!("{v}");
     }
+}
+
+pub struct RenderContext<'a> {
+    cursor: &'a mut Cursor,
+}
+
+impl RenderWithContext for Renderer {
+    type RenderContext<'a> = RenderContext<'a>;
 }
 
 impl RenderHtml for Renderer {

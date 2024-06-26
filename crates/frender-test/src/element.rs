@@ -383,6 +383,18 @@ mod dom {
             todo!()
         }
     }
+
+    impl behaviors::ElementWithChildren<Renderer> for Element {
+        fn with_render_context_at_first_child_of_self<R>(
+            &mut self,
+            renderer: &mut Renderer,
+            f: impl FnOnce(
+                <Renderer as frender_html::dom::render::RenderWithContext>::RenderContext<'_>,
+            ) -> R,
+        ) -> R {
+            renderer.with_render_context_at_first_child_of_element(self, f)
+        }
+    }
 }
 
 mod dom_token_list {
