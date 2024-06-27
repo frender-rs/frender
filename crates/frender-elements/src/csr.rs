@@ -1,6 +1,9 @@
 use std::pin::Pin;
 
-use frender_html::{impl_unpinned_render_for_unpin, Element, RenderHtml, RenderState};
+use frender_html::{
+    impl_unpinned_render_for_unpin, Element, RenderHtml, RenderState, RenderStateKindPinned,
+    RenderStateKindUnpinned,
+};
 
 use crate::{Elements, Keyed};
 
@@ -216,7 +219,10 @@ pub mod default {
     }
 
     impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
-        type CsrState<R: RenderHtml + ?Sized> = States<K, E::UnpinnedRenderState<R>>;
+        type CsrState<R: RenderHtml + ?Sized> = States<
+            K,
+            <E::RenderStateKind as frender_html::RenderStateKindUnpinned>::UnpinnedRenderState<R>,
+        >;
 
         fn keyed_elements_update_csr_state<
             I: IntoIterator<Item = Keyed<K, E>>,
@@ -1478,6 +1484,22 @@ pub mod linked_vec {
     }
 }
 
+enum Never {}
+pub struct Kind<A, K, E>(Never, std::marker::PhantomData<(A, K, E)>);
+
+impl<A, K, E> RenderStateKindPinned for Kind<A, K, E>
+where
+    A: ElementsAlgorithm<K, E>,
+{
+    type RenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
+}
+impl<A, K, E> RenderStateKindUnpinned for Kind<A, K, E>
+where
+    A: ElementsAlgorithm<K, E>,
+{
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
+}
+
 impl<I, A, K, E> Element for Elements<I, A>
 where
     I: IntoIterator<Item = Keyed<K, E>>,
@@ -1485,42 +1507,54 @@ where
     E: Element,
     A: ElementsAlgorithm<K, E>,
 {
-    type RenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
+    type RenderStateKind = Kind<A, K, E>; // TODO: should not be generic over E but E::RenderStateKind
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(
+    fn render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
         self,
-        render_context: &mut Renderer::RenderContext<'_>,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
     ) {
-        A::keyed_elements_update_csr_state(self.algorithm, self.iter, render_context, render_state)
+        render_context.map_mut_render_context(|render_context| {
+            A::keyed_elements_update_csr_state(
+                self.algorithm,
+                self.iter,
+                render_context,
+                render_state,
+            )
+        })
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(
+    fn render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
         self,
-        render_context: &mut Renderer::RenderContext<'_>,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
     ) {
-        A::keyed_elements_update_csr_state_force_reposition(
-            self.algorithm,
-            self.iter,
-            render_context,
-            render_state,
-        )
+        render_context.map_mut_render_context(|render_context| {
+            A::keyed_elements_update_csr_state_force_reposition(
+                self.algorithm,
+                self.iter,
+                render_context,
+                render_state,
+            )
+        })
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
+    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
         self,
-        render_context: &mut Renderer::RenderContext<'_>,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
         force_reposition: bool,
     ) {
-        A::keyed_elements_update_csr_state_maybe_reposition(
-            self.algorithm,
-            self.iter,
-            render_context,
-            render_state,
-            force_reposition,
-        )
+        render_context.map_mut_render_context(|render_context| {
+            A::keyed_elements_update_csr_state_maybe_reposition(
+                self.algorithm,
+                self.iter,
+                render_context,
+                render_state,
+                force_reposition,
+            )
+        })
     }
 
     impl_unpinned_render_for_unpin! {}

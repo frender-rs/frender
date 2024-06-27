@@ -116,8 +116,16 @@ impl<'a> Cursor<'a> {
     }
 }
 
-impl<'a, R: ?Sized + RenderWithContext> crate::render::RenderContext for RenderContext<'a, R> {
+impl<'a, R: ?Sized + Renderer> crate::render::RenderContext for RenderContext<'a, R> {
     type Renderer = R;
+
+    #[inline(always)]
+    fn map_mut_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        f(self)
+    }
 
     fn renderer_mut(&mut self) -> &mut Self::Renderer {
         self.renderer

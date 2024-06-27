@@ -3,6 +3,7 @@ use crate::render::RenderWithContext;
 pub trait ProvideRenderContext {
     type Renderer: ?Sized + RenderWithContext;
 
+    // Should provide the same render context in multiple calls
     fn provide_render_context<Res>(
         &mut self,
         f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,

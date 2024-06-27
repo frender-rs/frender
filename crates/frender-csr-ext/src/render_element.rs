@@ -10,7 +10,8 @@ pin_project_lite::pin_project!(
         p: P,
         element: Option<E>,
         #[pin]
-        state: E::RenderState<P::Renderer>,
+        state:
+            <E::RenderStateKind as frender_html::RenderStateKindPinned>::RenderState<P::Renderer>,
         #[pin]
         stop: Stop,
     }
@@ -54,7 +55,7 @@ where
 
         if let Some(element) = this.element.take() {
             this.p.provide_render_context(|render_context| {
-                element.render_update::<P::Renderer>(render_context, this.state.as_mut())
+                element.render_update(render_context, this.state.as_mut())
             });
         }
 

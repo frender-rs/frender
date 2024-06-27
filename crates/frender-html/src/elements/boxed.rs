@@ -1,33 +1,31 @@
 use std::pin::Pin;
 
-use crate::{Element, RenderHtml};
+use crate::{Element, HtmlRenderContext, RenderStateOfContext, UnpinnedRenderStateOfContext};
 
 impl<E: Element> Element for Box<E> {
-    type RenderState<R: RenderHtml + ?Sized> = E::RenderState<R>;
+    type RenderStateKind = E::RenderStateKind;
 
-    fn render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        E::render_update(*self, renderer, render_state)
+    fn render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
+        E::render_update(*self, render_context, render_state)
     }
 
-    fn render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>) {
-        E::render_update_force_reposition(*self, renderer, render_state)
+    fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
+        E::render_update_force_reposition(*self, render_context, render_state)
     }
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: Pin<&mut Self::RenderState<Renderer>>, force_reposition: bool) {
-        E::render_update_maybe_reposition(*self, renderer, render_state, force_reposition)
+    fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
+        E::render_update_maybe_reposition(*self, render_context, render_state, force_reposition)
     }
 
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = E::UnpinnedRenderState<R>;
-
-    fn unpinned_render_update<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
-        E::unpinned_render_update(*self, renderer, render_state)
+    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
+        E::unpinned_render_update(*self, render_context, render_state)
     }
 
-    fn unpinned_render_update_force_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>) {
-        E::unpinned_render_update_force_reposition(*self, renderer, render_state)
+    fn unpinned_render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
+        E::unpinned_render_update_force_reposition(*self, render_context, render_state)
     }
 
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(self, renderer: &mut Renderer::RenderContext<'_>, render_state: &mut Self::UnpinnedRenderState<Renderer>, force_reposition: bool) {
-        E::unpinned_render_update_maybe_reposition(*self, renderer, render_state, force_reposition)
+    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>, force_reposition: bool) {
+        E::unpinned_render_update_maybe_reposition(*self, render_context, render_state, force_reposition)
     }
 }

@@ -6,7 +6,7 @@ use frender_html::{
         render::{Render, RenderTextFrom, RenderWithContext},
         ProvideRenderContext,
     },
-    RenderHtml,
+    RenderHtml, RenderStateKindPinned, RenderStateKindUnpinned,
 };
 
 use crate::{
@@ -38,7 +38,9 @@ impl RendererWithRoot {
     pub fn render_update<E: frender_html::Element>(
         &mut self,
         element: E,
-        render_state: std::pin::Pin<&mut E::RenderState<Renderer>>,
+        render_state: std::pin::Pin<
+            &mut <E::RenderStateKind as RenderStateKindPinned>::RenderState<Renderer>,
+        >,
     ) {
         self.provide_render_context(|render_context| {
             frender_html::Element::render_update(element, render_context, render_state)
@@ -48,7 +50,9 @@ impl RendererWithRoot {
     pub fn unpinned_render_update<E: frender_html::Element>(
         &mut self,
         element: E,
-        render_state: &mut E::UnpinnedRenderState<Renderer>,
+        render_state: &mut <E::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
+            Renderer,
+        >,
     ) {
         self.provide_render_context(|render_context| {
             frender_html::Element::unpinned_render_update(element, render_context, render_state)
@@ -225,6 +229,13 @@ impl RenderContext<'_> {
 
 impl frender_html::dom::render::RenderContext for RenderContext<'_> {
     type Renderer = Renderer;
+
+    fn map_mut_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        f(self)
+    }
 
     fn renderer_mut(&mut self) -> &mut Self::Renderer {
         &mut self.renderer

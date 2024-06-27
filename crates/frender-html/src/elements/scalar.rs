@@ -1,4 +1,6 @@
-use crate::Element;
+use std::pin::Pin;
+
+use crate::{Element, HtmlRenderContext, RenderStateOfContext};
 
 frender_common::impl_many!(
     impl<__> Element
@@ -9,16 +11,10 @@ frender_common::impl_many!(
             char,
         ]
     {
-        type RenderState<R: crate::RenderHtml + ?Sized> = Option<super::str::State<Self, R::Text>>;
+        type RenderStateKind = super::str::Kind<Self>;
 
-        fn render_update_maybe_reposition<Renderer: crate::RenderHtml + ?Sized>(
-            //
-            self,
-            renderer: &mut Renderer::RenderContext<'_>,
-            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-            force_reposition: bool,
-        ) {
-            super::str::render_update_maybe_reposition::<Self, Self, Self, Renderer>(self, renderer, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
+        fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
+            super::str::render_update_maybe_reposition::<Self, Self, Self, Ctx>(self, render_context, render_state, force_reposition, PartialEq::ne, |vv, v| *vv = v, std::convert::identity)
         }
 
         crate::impl_unpinned_render_for_unpin! {}

@@ -19,13 +19,13 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
 }
 
 impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for C {
-    type ChildrenRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<Children::RenderState<R>>;
+    type ChildrenRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<Children::RenderStateKind as crate::RenderStateKindPinned>::RenderState<R>>;
 
     fn children_render_update<R: RenderHtml + ?Sized>(children: Children, el: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
         el.with_render_context_at_first_child_of_self(renderer, |renderer| Children::render_update(children, renderer, children_state.as_pin_mut()))
     }
 
-    type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<Children::UnpinnedRenderState<R>>;
+    type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<Children::RenderStateKind as crate::RenderStateKindUnpinned>::UnpinnedRenderState<R>>;
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: Children, el: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
         el.with_render_context_at_first_child_of_self(renderer, |renderer| Children::unpinned_render_update(children, renderer, &mut children_state.render_state))

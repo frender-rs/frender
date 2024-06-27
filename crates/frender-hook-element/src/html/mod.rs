@@ -3,7 +3,11 @@ use std::{marker::PhantomData, pin::Pin, task::Poll};
 use frender_html::dom::behaviors::{
     Node as _, NodeRenderSelf, NodeWithRenderContextAfterSelf as _,
 };
-use frender_html::{Element, RenderHtml, RenderState};
+use frender_html::{
+    Element, HtmlRenderContext, RenderHtml, RenderState, RenderStateKind, RenderStateKindPinned,
+    RenderStateKindUnpinned, RenderStateOfContext,
+};
+use frender_ssr::html::assert::HtmlChildren;
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 
 pin_project_lite::pin_project!(
@@ -43,27 +47,28 @@ struct StatedUseHookAndCursorPlaceholder<U, C> {
 }
 
 pub trait UseHookRenderUpdate<HookData> {
-    type State<R: RenderHtml + ?Sized>: RenderState<R>;
-    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+    type UseHookRenderStateKindPinned: RenderStateKindPinned;
+
+    fn use_hook_render_update<Ctx: HtmlRenderContext + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        render_context: &mut R::RenderContext<'_>,
-        render_state: Pin<&mut Self::State<R>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut RenderStateOfContext<Self::UseHookRenderStateKindPinned, Ctx>>,
     );
 }
 
 pub struct UseHookWithRenderState<U>(pub U);
 
-impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdate<HookData>
+impl<HookData, U: FnMutOutputElementOfSameKind<HookData>> UseHookRenderUpdate<HookData>
     for UseHookWithRenderState<U>
 {
-    type State<R: RenderHtml + ?Sized> = E::RenderState<R>;
+    type UseHookRenderStateKindPinned = U::OutputElementOfSameRenderStateKind;
 
-    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+    fn use_hook_render_update<Ctx: HtmlRenderContext + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        render_context: &mut R::RenderContext<'_>,
-        render_state: Pin<&mut Self::State<R>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut RenderStateOfContext<Self::UseHookRenderStateKindPinned, Ctx>>,
     ) {
         self.0(hook_data).render_update(render_context, render_state)
     }
@@ -71,16 +76,22 @@ impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdat
 
 pub struct UseHookWithUnpinnedRenderState<U>(pub U);
 
-impl<HookData, U: FnMut(Pin<&mut HookData>) -> E, E: Element> UseHookRenderUpdate<HookData>
+pub struct KindOfUnpinned<K: RenderStateKindUnpinned>(Never, PhantomData<K>);
+
+impl<K: RenderStateKindUnpinned> RenderStateKindPinned for KindOfUnpinned<K> {
+    type RenderState<R: RenderHtml + ?Sized> = K::UnpinnedRenderState<R>;
+}
+
+impl<HookData, U: FnMutOutputElementOfSameKind<HookData>> UseHookRenderUpdate<HookData>
     for UseHookWithUnpinnedRenderState<U>
 {
-    type State<R: RenderHtml + ?Sized> = E::UnpinnedRenderState<R>;
+    type UseHookRenderStateKindPinned = KindOfUnpinned<U::OutputElementOfSameRenderStateKind>;
 
-    fn use_hook_render_update<R: RenderHtml + ?Sized>(
+    fn use_hook_render_update<Ctx: HtmlRenderContext + ?Sized>(
         &mut self,
         hook_data: Pin<&mut HookData>,
-        render_context: &mut R::RenderContext<'_>,
-        render_state: Pin<&mut Self::State<R>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut RenderStateOfContext<Self::UseHookRenderStateKindPinned, Ctx>>,
     ) {
         self.0(hook_data).unpinned_render_update(render_context, render_state.get_mut())
     }
@@ -90,7 +101,13 @@ impl<
         HookData: HookPollNextUpdate + HookUnmount + Default,
         U: UseHookRenderUpdate<HookData>,
         R: RenderHtml + ?Sized,
-    > RenderState<R> for State<HookData, U::State<R>, U, R::CursorPlaceholder>
+    > RenderState<R>
+    for State<
+        HookData,
+        <U::UseHookRenderStateKindPinned as RenderStateKindPinned>::RenderState<R>,
+        U,
+        R::CursorPlaceholder,
+    >
 {
     fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
         if let MountState::Unmounted = self.use_hook_and_cursor_placeholder.mount_state {
@@ -172,19 +189,95 @@ pub struct FnHookElement<HookData: HookPollNextUpdate + HookUnmount + Default, U
     _phantom: PhantomData<HookData>,
 }
 
-impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: Element> Element
-    for FnHookElement<HookData, U>
+enum Never {}
+pub struct Kind<
+    HookData: HookPollNextUpdate + HookUnmount + Default,
+    U: FnMutOutputElementOfSameKind<HookData>,
+>(Never, std::marker::PhantomData<(HookData, U)>);
+
+pub trait FnMutOutputElementOfSameKind<HookData>:
+    for<'a> FnMutOutputElement<
+    Pin<&'a mut HookData>,
+    OutputElementRenderStateKind = Self::OutputElementOfSameRenderStateKind,
+    OutputElementHtmlChildren = Self::OutputElementOfSameHtmlChildren,
+>
+{
+    type OutputElementOfSameRenderStateKind: RenderStateKind;
+    type OutputElementOfSameHtmlChildren: HtmlChildren;
+}
+
+impl<F: ?Sized, HookData, K, C> FnMutOutputElementOfSameKind<HookData> for F
 where
-    U: FnMut(Pin<&mut HookData>) -> E,
+    F: for<'a> FnMutOutputElement<
+        Pin<&'a mut HookData>,
+        OutputElementRenderStateKind = K,
+        OutputElementHtmlChildren = C,
+    >,
+    K: RenderStateKind,
+    C: HtmlChildren,
+{
+    type OutputElementOfSameRenderStateKind = K;
+    type OutputElementOfSameHtmlChildren = C;
+}
+
+pub trait FnMutOutputElement<Arg>: FnMut(Arg) -> Self::OutputElement {
+    type OutputElementRenderStateKind: RenderStateKind;
+    type OutputElementHtmlChildren: HtmlChildren;
+    type OutputElement: Element<
+        RenderStateKind = Self::OutputElementRenderStateKind,
+        HtmlChildren = Self::OutputElementHtmlChildren,
+    >;
+}
+
+impl<Arg, F: ?Sized, E: Element> FnMutOutputElement<Arg> for F
+where
+    F: FnMut(Arg) -> E,
+{
+    type OutputElementRenderStateKind = E::RenderStateKind;
+    type OutputElementHtmlChildren = E::HtmlChildren;
+    type OutputElement = E;
+}
+
+impl<HookData, U> RenderStateKindPinned for Kind<HookData, U>
+where
+    HookData: HookPollNextUpdate + HookUnmount + Default,
+    U: FnMutOutputElementOfSameKind<HookData>,
+{
+    type RenderState<R: RenderHtml + ?Sized> = State<
+        HookData,
+        <U::OutputElementOfSameRenderStateKind as RenderStateKindPinned>::RenderState<R>,
+        UseHookWithRenderState<U>,
+        R::CursorPlaceholder,
+    >;
+}
+
+impl<HookData, U> RenderStateKindUnpinned for Kind<HookData, U>
+where
+    HookData: HookPollNextUpdate + HookUnmount + Default,
+    U: FnMutOutputElementOfSameKind<HookData>,
     HookData: Unpin,
 {
-    type RenderState<R: RenderHtml + ?Sized> =
-        State<HookData, E::RenderState<R>, UseHookWithRenderState<U>, R::CursorPlaceholder>;
+    type UnpinnedRenderState<R: RenderHtml + ?Sized> = State<
+        HookData,
+        <U::OutputElementOfSameRenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<R>,
+        UseHookWithUnpinnedRenderState<U>,
+        R::CursorPlaceholder,
+    >;
+}
 
-    fn render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
+impl<HookData, U, E> Element for FnHookElement<HookData, U>
+where
+    HookData: HookPollNextUpdate + HookUnmount + Default,
+    U: FnMut(Pin<&mut HookData>) -> E, // TODO: FnMutOutputElementOfSameRenderStateKind
+    HookData: Unpin,
+    E: Element,
+{
+    type RenderStateKind = Kind<HookData, U>;
+
+    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
         self,
-        render_context: &mut Renderer::RenderContext<'_>,
-        render_state: Pin<&mut Self::RenderState<Renderer>>,
+        render_context: &mut Ctx,
+        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
         mut force_reposition: bool,
     ) {
         let render_state = render_state.project();
@@ -196,14 +289,18 @@ where
         let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
             force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
 
-            cp.readd_self(render_context, force_reposition);
+            render_context.map_mut_render_context(|render_context: &mut _| {
+                cp.readd_self(render_context, force_reposition)
+            });
 
             use_hook.0 = self.use_hook;
 
             use_hook
         } else {
             force_reposition = true;
-            let cp = NodeRenderSelf::render_self(render_context);
+            let cp = render_context.map_mut_render_context(|render_context: &mut _| {
+                NodeRenderSelf::render_self(render_context)
+            });
             let (use_hook, _) =
                 use_hook_and_cursor_placeholder.insert((UseHookWithRenderState(self.use_hook), cp));
             use_hook
@@ -218,17 +315,11 @@ where
         *mount_state = MountState::Mounted;
     }
 
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = State<
-        HookData,
-        E::UnpinnedRenderState<R>,
-        UseHookWithUnpinnedRenderState<U>,
-        R::CursorPlaceholder,
-    >;
-
-    fn unpinned_render_update_maybe_reposition<Renderer: RenderHtml + ?Sized>(
+    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
         self,
-        render_context: &mut Renderer::RenderContext<'_>,
-        render_state: &mut Self::UnpinnedRenderState<Renderer>,
+        render_context: &mut Ctx,
+        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
         mut force_reposition: bool,
     ) {
         let StatedUseHookAndCursorPlaceholder {
@@ -239,14 +330,18 @@ where
         let use_hook = if let Some((use_hook, cp)) = use_hook_and_cursor_placeholder {
             force_reposition = force_reposition || matches!(mount_state, MountState::Unmounted);
 
-            cp.readd_self(render_context, force_reposition);
+            render_context.map_mut_render_context(|render_context: &mut _| {
+                cp.readd_self(render_context, force_reposition)
+            });
 
             use_hook.0 = self.use_hook;
 
             use_hook
         } else {
             force_reposition = true;
-            let cp = NodeRenderSelf::render_self(render_context);
+            let cp = render_context.map_mut_render_context(|render_context: &mut _| {
+                NodeRenderSelf::render_self(render_context)
+            });
             let (use_hook, _) = use_hook_and_cursor_placeholder
                 .insert((UseHookWithUnpinnedRenderState(self.use_hook), cp));
             use_hook
@@ -263,12 +358,12 @@ where
     }
 }
 
-impl<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: Element> frender_ssr::SsrElement
+impl<HookData: HookPollNextUpdate + HookUnmount + Default, U> frender_ssr::SsrElement
     for FnHookElement<HookData, U>
 where
-    U: FnMut(Pin<&mut HookData>) -> E,
+    U: FnMutOutputElementOfSameKind<HookData>,
 {
-    type HtmlChildren = E::HtmlChildren;
+    type HtmlChildren = U::OutputElementOfSameHtmlChildren;
 
     fn into_html_children(mut self) -> Self::HtmlChildren {
         let hook_data = HookData::default();

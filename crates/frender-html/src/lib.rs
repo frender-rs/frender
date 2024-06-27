@@ -6,7 +6,7 @@ pub use create_node::CreateNode;
 pub use html::RenderHtml;
 pub use update_element::{BehaviorType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
-pub use element::Element;
+pub use element::{Element, HtmlRenderContext, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned, RenderStateOfContext, UnpinnedRenderStateOfContext};
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
 pub use frender_dom::{form_control, render_state, RenderState, RenderStateWithParentElementsHandle};
 
