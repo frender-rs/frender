@@ -254,7 +254,7 @@ impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for fr
                 self.0,
                 render_context,
                 force_reposition,
-                |s, cache| *s.borrow() == *cache.borrow(),
+                |s, cache| *s.borrow() != *cache.borrow(),
                 |cache, s| frender_common::IntoStaticStr::update_into_static_str(s, cache),
             ),
             render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self.0, render_context, frender_common::IntoStaticStr::into_static_str)),
