@@ -681,7 +681,7 @@ pub mod element {
                         cursor_placeholder.readd_self(render_context, force_reposition)
                     });
                 } else {
-                    // force_reposition = true;
+                    force_reposition = true;
                     let node = render_context.map_mut_render_context(|render_context: &mut _| {
                         NodeRenderSelf::render_self(render_context)
                     });
@@ -695,7 +695,7 @@ pub mod element {
                 }
                 signal_hook => {
                     // new signal
-                    force_reposition = true;
+                    // force_reposition = true;
                     self.0.map(|el| {
                         el.to_element().render_update_maybe_reposition(
                             render_context,
@@ -741,7 +741,7 @@ pub mod element {
                         cursor_placeholder.readd_self(render_context, force_reposition)
                     });
                 } else {
-                    // force_reposition = true;
+                    force_reposition = true;
                     let node = render_context.map_mut_render_context(|render_context: &mut _| {
                         NodeRenderSelf::render_self(render_context)
                     });
@@ -755,7 +755,7 @@ pub mod element {
                 }
                 signal_hook => {
                     // new signal
-                    force_reposition = true;
+                    // force_reposition = true;
                     self.0.map(|el| {
                         el.to_element().unpinned_render_update_maybe_reposition(
                             render_context,
