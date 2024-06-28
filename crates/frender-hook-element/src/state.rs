@@ -1,3 +1,7 @@
+pub use self::cursor_placeholder::{
+    CursorPlaceholderWithRenderState, CursorPlaceholderWithRenderStatePinProject,
+};
+
 use std::pin::Pin;
 
 #[derive(Debug, Default)]
@@ -149,6 +153,72 @@ mod imp {
                     Poll::Pending => return Poll::Pending,
                 }
             }
+        }
+    }
+}
+
+mod cursor_placeholder {
+    use std::pin::Pin;
+
+    use frender_html::{dom::behaviors::Node, RenderState};
+
+    pin_project_lite::pin_project!(
+        pub struct CursorPlaceholderWithRenderState<C, T, S> {
+            pub cursor_placeholder_and_data: Option<(C, T)>,
+            #[pin]
+            pub render_state: S,
+        }
+    );
+
+    pub struct CursorPlaceholderWithRenderStatePinProject<'a, C, T, S> {
+        pub cursor_placeholder_and_data: &'a mut Option<(C, T)>,
+        pub render_state: Pin<&'a mut S>,
+    }
+
+    impl<C, T, S> CursorPlaceholderWithRenderState<C, T, S> {
+        pub fn pin_project(
+            self: Pin<&mut Self>,
+        ) -> CursorPlaceholderWithRenderStatePinProject<C, T, S> {
+            let this = self.project();
+            CursorPlaceholderWithRenderStatePinProject {
+                cursor_placeholder_and_data: this.cursor_placeholder_and_data,
+                render_state: this.render_state,
+            }
+        }
+    }
+
+    impl<C, T, S: Default> Default for CursorPlaceholderWithRenderState<C, T, S> {
+        fn default() -> Self {
+            Self {
+                cursor_placeholder_and_data: None,
+                render_state: Default::default(),
+            }
+        }
+    }
+
+    impl<C, T, S, R: ?Sized> RenderState<R> for CursorPlaceholderWithRenderState<C, T, S>
+    where
+        C: Node<R>,
+        S: RenderState<R>,
+    {
+        fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+            let this = self.project();
+            if let Some((ref mut cp, _)) = this.cursor_placeholder_and_data {
+                cp.remove_self(renderer)
+            }
+            this.render_state.unmount(renderer)
+        }
+
+        fn state_unmount(self: Pin<&mut Self>) {
+            self.project().render_state.state_unmount()
+        }
+
+        fn poll_render(
+            self: Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<()> {
+            self.project().render_state.poll_render(renderer, cx)
         }
     }
 }

@@ -380,20 +380,16 @@ pub mod form_control {
 }
 
 pub mod element {
-    use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
+    use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-    use frender_common::PrimarilyBorrow;
     use frender_csr::RenderState;
-    use frender_hook_element::state::{MaybeIntoPollNextUpdate, MountState};
+    use frender_hook_element::state::{
+        CursorPlaceholderWithRenderStatePinProject, MaybeIntoPollNextUpdate, MountState,
+    };
 
     use frender_html::{
-        dom::{
-            behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
-            render::{RenderAsText, RenderContext, RenderWithContext},
-        },
-        elements::str::TextNode,
-        Element, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
-        RenderStateOfContext,
+        dom::behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
+        Element, RenderHtml, RenderStateKindPinned, RenderStateKindUnpinned, RenderStateOfContext,
     };
     use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
 
@@ -422,6 +418,9 @@ pub mod element {
     where
         SH: Unpin + SignalHook,
         SH::SignalShareValue: ToElement;
+
+    type CursorPlaceholderWithRenderState<C, S> =
+        frender_hook_element::state::CursorPlaceholderWithRenderState<C, (), S>;
 
     impl<SH> RenderStateKindUnpinned for Kind<SH>
     where
@@ -601,17 +600,19 @@ pub mod element {
                 &'a mut CursorPlaceholderWithRenderState<R::CursorPlaceholder, U::State>,
             >,
         ) -> Option<Self::IntoPollNextUpdate<'a>> {
-            let render_state = render_state.project();
+            let render_state = render_state.pin_project();
             match (
                 &mut hook_data.get_mut().inner,
-                render_state.cursor_placeholder,
+                render_state.cursor_placeholder_and_data,
             ) {
-                (Some(signal_hook), Some(cursor_placeholder)) => Some(CursorPlaceholderRender {
-                    renderer,
-                    cursor_placeholder,
-                    render_state: render_state.render_state,
-                    signal_hook: Pin::new(signal_hook),
-                }),
+                (Some(signal_hook), Some((cursor_placeholder, ()))) => {
+                    Some(CursorPlaceholderRender {
+                        renderer,
+                        cursor_placeholder,
+                        render_state: render_state.render_state,
+                        signal_hook: Pin::new(signal_hook),
+                    })
+                }
                 _ => None,
             }
         }
@@ -645,50 +646,6 @@ pub mod element {
         }
     );
 
-    pin_project_lite::pin_project!(
-        #[project = CursorPlaceholderWithRenderStateProj]
-        pub struct CursorPlaceholderWithRenderState<C, S> {
-            cursor_placeholder: Option<C>,
-            #[pin]
-            render_state: S,
-        }
-    );
-
-    impl<C, S: Default> Default for CursorPlaceholderWithRenderState<C, S> {
-        fn default() -> Self {
-            Self {
-                cursor_placeholder: None,
-                render_state: Default::default(),
-            }
-        }
-    }
-
-    impl<C, S, R: ?Sized> RenderState<R> for CursorPlaceholderWithRenderState<C, S>
-    where
-        C: Node<R>,
-        S: RenderState<R>,
-    {
-        fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
-            let this = self.project();
-            if let Some(ref mut cp) = this.cursor_placeholder {
-                cp.remove_self(renderer)
-            }
-            this.render_state.unmount(renderer)
-        }
-
-        fn state_unmount(self: Pin<&mut Self>) {
-            self.project().render_state.state_unmount()
-        }
-
-        fn poll_render(
-            self: Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> Poll<()> {
-            self.project().render_state.poll_render(renderer, cx)
-        }
-    }
-
     impl<S: Signal> frender_html::Element for SharedStateToElement<S>
     where
         S::SignalHook: Unpin,
@@ -710,25 +667,25 @@ pub mod element {
                 inner: _,
             } = render_state.pin_project();
 
-            let CursorPlaceholderWithRenderStateProj {
-                cursor_placeholder,
+            let CursorPlaceholderWithRenderStatePinProject {
+                cursor_placeholder_and_data,
                 render_state,
-            } = render_state.project();
+            } = render_state.pin_project();
 
             // mount cursor placeholder
             {
-                if let Some(cursor_placeholder) = cursor_placeholder {
+                if let Some((cursor_placeholder, ())) = cursor_placeholder_and_data {
                     force_reposition =
                         force_reposition || matches!(mount_state, MountState::Unmounted);
                     render_context.map_mut_render_context(|render_context: &mut _| {
                         cursor_placeholder.readd_self(render_context, force_reposition)
                     });
                 } else {
-                    force_reposition = true;
+                    // force_reposition = true;
                     let node = render_context.map_mut_render_context(|render_context: &mut _| {
                         NodeRenderSelf::render_self(render_context)
                     });
-                    *cursor_placeholder = Some(node);
+                    *cursor_placeholder_and_data = Some((node, ()));
                 }
             }
 
@@ -771,24 +728,24 @@ pub mod element {
             } = render_state.as_mut_project();
 
             let CursorPlaceholderWithRenderState {
-                cursor_placeholder,
+                cursor_placeholder_and_data,
                 render_state,
             } = render_state;
 
             // mount cursor placeholder
             {
-                if let Some(cursor_placeholder) = cursor_placeholder {
+                if let Some((cursor_placeholder, ())) = cursor_placeholder_and_data {
                     force_reposition =
                         force_reposition || matches!(mount_state, MountState::Unmounted);
                     render_context.map_mut_render_context(|render_context: &mut _| {
                         cursor_placeholder.readd_self(render_context, force_reposition)
                     });
                 } else {
-                    force_reposition = true;
+                    // force_reposition = true;
                     let node = render_context.map_mut_render_context(|render_context: &mut _| {
                         NodeRenderSelf::render_self(render_context)
                     });
-                    *cursor_placeholder = Some(node);
+                    *cursor_placeholder_and_data = Some((node, ()));
                 }
             }
 
