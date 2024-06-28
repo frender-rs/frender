@@ -72,10 +72,10 @@ pub mod form_control {
     use super::element::OptionSignalHook;
 
     #[derive(Debug, Clone, Copy)]
-    pub struct ControlledSharedValue<S>(pub S);
+    pub struct SignalIntoControlledValue<S>(pub S);
 
     impl<S, Val, VK: ?Sized + FormControlValueKind> HandleFormControlValue<VK>
-        for ControlledSharedValue<S>
+        for SignalIntoControlledValue<S>
     where
         S: ShareValue<Value = Val>,
         Val: FromFormControlValue<VK>,
@@ -88,7 +88,7 @@ pub mod form_control {
         }
     }
 
-    impl<S: ShareValue> frender_html::IntoOneStringOrEmpty for ControlledSharedValue<S>
+    impl<S: ShareValue> frender_html::IntoOneStringOrEmpty for SignalIntoControlledValue<S>
     where
         S::Value: Clone + Borrow<str>,
     {
@@ -100,7 +100,7 @@ pub mod form_control {
         }
     }
 
-    impl<S, Val, VK> ProvideFormControlValue<VK> for ControlledSharedValue<S>
+    impl<S, Val, VK> ProvideFormControlValue<VK> for SignalIntoControlledValue<S>
     where
         S: ShareValue<Value = Val>,
         Val: Borrow<VK>,
@@ -111,7 +111,7 @@ pub mod form_control {
         }
     }
 
-    impl<S, Val, VK> MaybeProvideFormControlValue<VK> for ControlledSharedValue<S>
+    impl<S, Val, VK> MaybeProvideFormControlValue<VK> for SignalIntoControlledValue<S>
     where
         S: ShareValue<Value = Val>,
         Val: Borrow<VK>,
@@ -126,7 +126,7 @@ pub mod form_control {
         }
     }
 
-    impl<S, Val, VK> InputValue for ControlledSharedValue<S>
+    impl<S, Val, VK> InputValue for SignalIntoControlledValue<S>
     where
         // S: Clone + 'static + Hook + for<'hook> HookValue<'hook, Value = &'hook S> + Unpin,
         S: Signal<Value = Val> + 'static,
@@ -232,7 +232,7 @@ pub mod form_control {
         }
     }
 
-    impl<S, Val, VK> FormControlValue<VK> for ControlledSharedValue<S>
+    impl<S, Val, VK> FormControlValue<VK> for SignalIntoControlledValue<S>
     where
         VK: ?Sized + FormControlValueKind,
         S: Signal<Value = Val> + 'static,
@@ -301,12 +301,12 @@ pub mod element {
     use crate::into_element::ToElement;
 
     #[derive(Debug, Clone, Copy)]
-    pub struct SharedStateToElement<S: ShareValue>(pub S);
+    pub struct SignalIntoElement<S: ShareValue>(pub S);
 
     mod ssr {
         use super::*;
 
-        impl<S: ShareValue> frender_ssr::SsrElement for SharedStateToElement<S>
+        impl<S: ShareValue> frender_ssr::SsrElement for SignalIntoElement<S>
         where
             S::Value: ToElement,
         {
@@ -551,7 +551,7 @@ pub mod element {
         }
     );
 
-    impl<S: Signal> frender_html::Element for SharedStateToElement<S>
+    impl<S: Signal> frender_html::Element for SignalIntoElement<S>
     where
         S::SignalHook: Unpin,
         <S as ShareValue>::Value: ToElement,
@@ -706,14 +706,14 @@ pub mod callback {
 ///    (rather than the reference is copied)
 ///  - for `GenSignal` and `SignalEq<GenSignal>`, the value is copied
 pub trait ShareValueExt: ShareValue {
-    fn into_controlled(self) -> form_control::ControlledSharedValue<Self>
+    fn into_controlled(self) -> form_control::SignalIntoControlledValue<Self>
     where
         Self: Sized,
     {
-        form_control::ControlledSharedValue(self)
+        form_control::SignalIntoControlledValue(self)
     }
 
-    fn to_controlled(&self) -> form_control::ControlledSharedValue<Self::OwnedShareValue>
+    fn to_controlled(&self) -> form_control::SignalIntoControlledValue<Self::OwnedShareValue>
     where
         Self: ToOwnedShareValue,
     {
@@ -738,14 +738,14 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_set_form_control_value()
     }
 
-    fn into_element(self) -> element::SharedStateToElement<Self>
+    fn into_element(self) -> element::SignalIntoElement<Self>
     where
         Self: Sized,
     {
-        element::SharedStateToElement(self)
+        element::SignalIntoElement(self)
     }
 
-    fn to_element(&self) -> element::SharedStateToElement<Self::OwnedShareValue>
+    fn to_element(&self) -> element::SignalIntoElement<Self::OwnedShareValue>
     where
         Self: Sized + ToOwnedShareValue,
     {
