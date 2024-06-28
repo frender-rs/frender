@@ -53,6 +53,7 @@ default = [
     "hooks",
     "RenderWith",
     "Elements",
+    "IntoElement",
 ]
 nightly = ["frender-render-with?/nightly"]
 html = ["frender-html", "csr"]
@@ -69,3 +70,4 @@ ssr = ["frender-elements?/ssr"] # TODO: remove ssr feature
 csr = ["ssr", "frender-csr", "frender-elements?/csr"]
 RenderWith = ["dep:frender-render-with"]
 Elements = ["dep:frender-elements"]
+IntoElement = []

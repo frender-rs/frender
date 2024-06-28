@@ -51,6 +51,8 @@ pub mod setter {
 }
 
 pub mod state {
+    use std::pin::Pin;
+
     use frender_html::{RenderState, RenderStateWithParentElementsHandle};
     use hooks::{ShareValue, SignalHook};
 
@@ -71,8 +73,13 @@ pub mod state {
     }
 
     pub trait UpdateElementWithSharedValue<R: ?Sized, V: ?Sized> {
-        fn unmount_element_with_shared_value(&mut self, renderer: &mut R);
-        fn update_element_with_shared_value(&mut self, renderer: &mut R, shared_value: &V);
+        fn state_unmount_element_with_shared_value(self: Pin<&mut Self>);
+        fn unmount_element_with_shared_value(self: Pin<&mut Self>, renderer: &mut R);
+        fn update_element_with_shared_value(
+            self: Pin<&mut Self>,
+            renderer: &mut R,
+            shared_value: &V,
+        );
     }
 
     pin_project_lite::pin_project!(
@@ -80,6 +87,7 @@ pub mod state {
         pub struct State<S, U> {
             #[pin]
             pub(crate) inner: S,
+            #[pin]
             pub(crate) update: U,
         }
     );
@@ -87,11 +95,12 @@ pub mod state {
     impl<
             S: SignalHook<SignalShareValue = Val>,
             Val,
-            U: UpdateElementWithSharedValueWithParentElementsHandle<
-                PEH,
-                R,
-                <S as SignalHook>::SignalShareValue,
-            >,
+            U: Unpin
+                + UpdateElementWithSharedValueWithParentElementsHandle<
+                    PEH,
+                    R,
+                    <S as SignalHook>::SignalShareValue,
+                >,
             PEH: ?Sized,
             R: ?Sized,
         > RenderStateWithParentElementsHandle<PEH, R> for State<S, U>
@@ -99,7 +108,9 @@ pub mod state {
         fn unmount_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
             let StateProj { inner, update } = self.project();
 
-            update.unmount_element_with_shared_value_with_peh(peh, renderer);
+            update
+                .get_mut()
+                .unmount_element_with_shared_value_with_peh(peh, renderer);
 
             S::unmount(inner);
         }
@@ -116,23 +127,28 @@ pub mod state {
         ) -> std::task::Poll<()> {
             let StateProj { mut inner, update } = self.project();
 
-            match inner.as_mut().poll_next_update(cx) {
-                std::task::Poll::Ready(active) => {
-                    if active {
-                        let state = inner.use_hook(); // mark as seen
+            let update = update.get_mut();
 
-                        state.map(|shared_value| {
-                            update.update_element_with_shared_value_with_peh(
-                                peh,
-                                renderer,
-                                shared_value,
-                            )
-                        });
+            loop {
+                match inner.as_mut().poll_next_update(cx) {
+                    std::task::Poll::Ready(active) => {
+                        if active {
+                            let state = inner.as_mut().use_hook(); // mark as seen
+
+                            state.map(|shared_value| {
+                                update.update_element_with_shared_value_with_peh(
+                                    peh,
+                                    renderer,
+                                    shared_value,
+                                )
+                            });
+                            // TODO: limit loop
+                        } else {
+                            return std::task::Poll::Ready(());
+                        }
                     }
-
-                    std::task::Poll::Ready(())
+                    std::task::Poll::Pending => return std::task::Poll::Pending,
                 }
-                std::task::Poll::Pending => std::task::Poll::Pending,
             }
         }
     }
@@ -161,7 +177,10 @@ pub mod state {
             renderer: &mut R,
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
-            let StateProj { mut inner, update } = self.project();
+            let StateProj {
+                mut inner,
+                mut update,
+            } = self.project();
 
             loop {
                 match inner.as_mut().poll_next_update(cx) {
@@ -169,8 +188,12 @@ pub mod state {
                         let state = inner.as_mut().use_hook(); // mark as seen
 
                         state.map(|shared_value| {
-                            update.update_element_with_shared_value(renderer, shared_value)
+                            update
+                                .as_mut()
+                                .update_element_with_shared_value(renderer, shared_value)
                         });
+
+                        // TODO: limit loop
                     }
                     std::task::Poll::Ready(false) => return std::task::Poll::Ready(()),
                     std::task::Poll::Pending => return std::task::Poll::Pending,
@@ -266,6 +289,8 @@ pub mod form_control {
 
     pub struct UpdateFormControlElement<VK: ?Sized + FormControlValueKind>(PhantomData<VK>);
 
+    impl<VK: ?Sized + FormControlValueKind> Unpin for UpdateFormControlElement<VK> {}
+
     impl<VK: ?Sized + FormControlValueKind> UpdateFormControlElement<VK> {
         pub const fn new() -> Self {
             Self(PhantomData)
@@ -355,106 +380,436 @@ pub mod form_control {
 }
 
 pub mod element {
-    use std::borrow::Borrow;
+    use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
 
     use frender_common::PrimarilyBorrow;
+    use frender_csr::RenderState;
+    use frender_hook_element::state::{MaybeIntoPollNextUpdate, MountState};
+
     use frender_html::{
-        dom::render::{RenderAsText, RenderContext},
+        dom::{
+            behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
+            render::{RenderAsText, RenderContext, RenderWithContext},
+        },
         elements::str::TextNode,
-        RenderHtml,
+        Element, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
+        RenderStateOfContext,
     };
-    use hooks::{ShareValue, Signal};
+    use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
+
+    use crate::into_element::ToElement;
 
     #[derive(Debug, Clone, Copy)]
     pub struct SharedStateToElement<S: ShareValue>(pub S);
 
-    impl<S: ShareValue, V: ?Sized> frender_ssr::SsrElement for SharedStateToElement<S>
+    mod ssr {
+        use super::*;
+
+        impl<S: ShareValue> frender_ssr::SsrElement for SharedStateToElement<S>
+        where
+            S::Value: ToElement,
+        {
+            type HtmlChildren = <S::Value as ToElement>::ToElementHtmlChildren;
+
+            fn into_html_children(self) -> Self::HtmlChildren {
+                self.0.map(|s| s.to_element().into_html_children())
+            }
+        }
+    }
+
+    enum Never {}
+    pub struct Kind<SH>(Never, std::marker::PhantomData<SH>)
     where
-        S::Value: PrimarilyBorrow<Borrowed = V>,
-        V: frender_ssr::ToSsrElement,
-    {
-        type HtmlChildren = <V::ToSsrElement as frender_ssr::SsrElement>::HtmlChildren;
+        SH: Unpin + SignalHook,
+        SH::SignalShareValue: ToElement;
 
-        fn into_html_children(self) -> Self::HtmlChildren {
-            self.0
-                .map(|s| s.borrow().to_ssr_element())
-                .into_html_children()
-        }
-    }
-
-    pub struct UpdateTextNode<TN> {
-        text_node: TextNode<TN>,
-    }
-
-    impl<R: ?Sized, SV: ?Sized + PrimarilyBorrow<Borrowed = V>, V: ?Sized>
-        super::state::UpdateElementWithSharedValue<R, SV> for UpdateTextNode<R::Text>
+    impl<SH> RenderStateKindUnpinned for Kind<SH>
     where
-        R: RenderHtml,
-        V: RenderAsText,
+        SH: Unpin + SignalHook,
+        SH::SignalShareValue: ToElement,
     {
-        fn unmount_element_with_shared_value(&mut self, renderer: &mut R) {
-            self.text_node.unmount(renderer)
-        }
+        type UnpinnedRenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
+            OptionSignalHook<SH>,
+            CursorPlaceholderWithRenderState<
+                R::CursorPlaceholder,
+                UnpinnedRenderStateOfToElement<SH::SignalShareValue, R>,
+            >,
+            SignalHookToElement<RenderUpdateToElementWithUnpinnedState>,
+        >;
+    }
 
-        fn update_element_with_shared_value(&mut self, renderer: &mut R, shared_value: &SV) {
-            V::render_as_text_update(shared_value.borrow(), renderer, &mut self.text_node.node)
+    impl<SH> RenderStateKindPinned for Kind<SH>
+    where
+        SH: Unpin + SignalHook,
+        SH::SignalShareValue: ToElement,
+    {
+        type RenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
+            OptionSignalHook<SH>,
+            CursorPlaceholderWithRenderState<
+                R::CursorPlaceholder,
+                RenderStateOfToElement<SH::SignalShareValue, R>,
+            >,
+            SignalHookToElement<RenderUpdateToElementWithPinnedState>,
+        >;
+    }
+
+    #[derive(Debug, Default)]
+    struct ToElementWithHookData<T>(T);
+
+    #[derive(Debug)]
+    pub struct SignalHookToElement<U>(std::marker::PhantomData<U>);
+
+    impl<U> Default for SignalHookToElement<U> {
+        fn default() -> Self {
+            Self(PhantomData)
         }
     }
 
-    pub type State<S, TextNode> = super::state::State<S, UpdateTextNode<TextNode>>;
+    pub struct CursorPlaceholderRender<
+        'a,
+        R: ?Sized + RenderHtml,
+        SH: SignalHook,
+        U: RenderUpdateToElement<R, SH::SignalShareValue>,
+    >
+    where
+        SH::SignalShareValue: ToElement,
+    {
+        renderer: &'a mut R,
+        cursor_placeholder: &'a mut R::CursorPlaceholder,
+        render_state: Pin<&'a mut U::State>,
+        signal_hook: Pin<&'a mut SH>,
+    }
 
-    impl<S: Signal, V: ?Sized> frender_html::Element for SharedStateToElement<S>
+    impl<
+            'a,
+            R: ?Sized + RenderHtml,
+            SH: SignalHook,
+            U: RenderUpdateToElement<R, SH::SignalShareValue>,
+        > Unpin for CursorPlaceholderRender<'a, R, SH, U>
+    where
+        SH::SignalShareValue: ToElement,
+    {
+    }
+
+    impl<
+            'a,
+            R: ?Sized + RenderHtml,
+            SH: SignalHook,
+            U: RenderUpdateToElement<R, SH::SignalShareValue>,
+        > HookPollNextUpdate for CursorPlaceholderRender<'a, R, SH, U>
+    where
+        SH::SignalShareValue: ToElement,
+    {
+        fn poll_next_update(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<bool> {
+            let Self {
+                renderer,
+                cursor_placeholder,
+                render_state,
+                signal_hook,
+            } = self.get_mut();
+
+            let render_state = render_state.as_mut();
+
+            match signal_hook.as_mut().poll_next_update(cx) {
+                Poll::Ready(true) => {
+                    let signal = signal_hook.as_mut().use_hook(); // mark as seen
+
+                    signal.map(|el| {
+                        cursor_placeholder.with_render_context_after_self(
+                            renderer,
+                            |render_context| {
+                                U::render_update_to_element(el, render_context, render_state)
+                            },
+                        )
+                    });
+                    Poll::Ready(true)
+                }
+                _ => render_state.poll_render(renderer, cx).map(|()| false),
+            }
+        }
+    }
+
+    pub enum RenderUpdateToElementWithPinnedState {}
+
+    impl<R: ?Sized + RenderHtml, V: ?Sized + ToElement> RenderUpdateToElement<R, V>
+        for RenderUpdateToElementWithPinnedState
+    {
+        type State = RenderStateOfToElement<V, R>;
+        fn render_update_to_element(
+            el: &V,
+            render_context: &mut <R>::RenderContext<'_>,
+            render_state: Pin<&mut Self::State>,
+        ) {
+            el.to_element().render_update(render_context, render_state)
+        }
+    }
+
+    pub enum RenderUpdateToElementWithUnpinnedState {}
+
+    impl<R: ?Sized + RenderHtml, V: ?Sized + ToElement> RenderUpdateToElement<R, V>
+        for RenderUpdateToElementWithUnpinnedState
+    {
+        type State = UnpinnedRenderStateOfToElement<V, R>;
+        fn render_update_to_element(
+            el: &V,
+            render_context: &mut <R>::RenderContext<'_>,
+            render_state: Pin<&mut Self::State>,
+        ) {
+            el.to_element()
+                .unpinned_render_update(render_context, render_state.get_mut())
+        }
+    }
+
+    pub trait RenderUpdateToElement<R: ?Sized + RenderHtml, V: ?Sized + ToElement> {
+        type State: RenderState<R>;
+
+        fn render_update_to_element(
+            el: &V,
+            render_context: &mut R::RenderContext<'_>,
+            render_state: Pin<&mut Self::State>,
+        );
+    }
+
+    type RenderStateOfToElement<E, R> =
+        <<E as ToElement>::ToElementRenderStateKind as RenderStateKindPinned>::RenderState<R>;
+    type UnpinnedRenderStateOfToElement<E, R> =
+        <<E as ToElement>::ToElementRenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<R>;
+
+    impl<R, SH, U>
+        MaybeIntoPollNextUpdate<
+            R,
+            OptionSignalHook<SH>,
+            CursorPlaceholderWithRenderState<R::CursorPlaceholder, U::State>,
+        > for SignalHookToElement<U>
+    where
+        R: ?Sized + RenderHtml,
+        SH: SignalHook + Unpin,
+        SH::SignalShareValue: ToElement,
+        U: RenderUpdateToElement<R, SH::SignalShareValue>,
+    {
+        type IntoPollNextUpdate<'a> = CursorPlaceholderRender<'a, R, SH, U>
+        where
+            Self: 'a,
+            R: 'a,
+            SH: 'a;
+
+        fn maybe_into_poll_next_update<'a>(
+            self: Pin<&'a mut Self>,
+            renderer: &'a mut R,
+            hook_data: Pin<&'a mut OptionSignalHook<SH>>,
+            render_state: Pin<
+                &'a mut CursorPlaceholderWithRenderState<R::CursorPlaceholder, U::State>,
+            >,
+        ) -> Option<Self::IntoPollNextUpdate<'a>> {
+            let render_state = render_state.project();
+            match (
+                &mut hook_data.get_mut().inner,
+                render_state.cursor_placeholder,
+            ) {
+                (Some(signal_hook), Some(cursor_placeholder)) => Some(CursorPlaceholderRender {
+                    renderer,
+                    cursor_placeholder,
+                    render_state: render_state.render_state,
+                    signal_hook: Pin::new(signal_hook),
+                }),
+                _ => None,
+            }
+        }
+    }
+
+    pub struct OptionSignalHook<SH> {
+        inner: Option<SH>,
+    }
+
+    impl<SH> Default for OptionSignalHook<SH> {
+        fn default() -> Self {
+            Self { inner: None }
+        }
+    }
+
+    hooks::impl_hook!(
+        type For<SH: Unpin + HookUnmount + HookPollNextUpdate> = OptionSignalHook<SH>;
+
+        fn unmount(self) {
+            if let Some(ref mut inner) = self.get_mut().inner {
+                Pin::new(inner).unmount()
+            }
+        }
+
+        fn poll_next_update(self, cx: _) {
+            if let Some(ref mut inner) = self.get_mut().inner {
+                Pin::new(inner).poll_next_update(cx)
+            } else {
+                std::task::Poll::Ready(false)
+            }
+        }
+    );
+
+    pin_project_lite::pin_project!(
+        #[project = CursorPlaceholderWithRenderStateProj]
+        pub struct CursorPlaceholderWithRenderState<C, S> {
+            cursor_placeholder: Option<C>,
+            #[pin]
+            render_state: S,
+        }
+    );
+
+    impl<C, S: Default> Default for CursorPlaceholderWithRenderState<C, S> {
+        fn default() -> Self {
+            Self {
+                cursor_placeholder: None,
+                render_state: Default::default(),
+            }
+        }
+    }
+
+    impl<C, S, R: ?Sized> RenderState<R> for CursorPlaceholderWithRenderState<C, S>
+    where
+        C: Node<R>,
+        S: RenderState<R>,
+    {
+        fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
+            let this = self.project();
+            if let Some(ref mut cp) = this.cursor_placeholder {
+                cp.remove_self(renderer)
+            }
+            this.render_state.unmount(renderer)
+        }
+
+        fn state_unmount(self: Pin<&mut Self>) {
+            self.project().render_state.state_unmount()
+        }
+
+        fn poll_render(
+            self: Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> Poll<()> {
+            self.project().render_state.poll_render(renderer, cx)
+        }
+    }
+
+    impl<S: Signal> frender_html::Element for SharedStateToElement<S>
     where
         S::SignalHook: Unpin,
-        <S as ShareValue>::Value: PrimarilyBorrow<Borrowed = V> + Borrow<V>,
-        V: frender_ssr::ToSsrElement,
-        V: RenderAsText,
+        <S as ShareValue>::Value: ToElement,
     {
-        type RenderState<R: frender_html::RenderHtml + ?Sized> =
-            Option<State<S::SignalHook, R::Text>>;
+        type RenderStateKind = Kind<S::SignalHook>;
 
-        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
+        fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
             //
             self,
-            render_context: &mut Renderer::RenderContext<'_>,
-            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
-            force_reposition: bool,
+            render_context: &mut Ctx,
+            render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
+            mut force_reposition: bool,
         ) {
-            let render_state = render_state.get_mut();
+            let frender_hook_element::state::StatePinProject {
+                mount_state,
+                hook_data,
+                render_state,
+                inner: _,
+            } = render_state.pin_project();
 
-            match render_state {
-                Some(render_state) => {
-                    if !self.0.is_signal_of(&render_state.inner) {
-                        self.0.map(|value| {
-                            value.borrow().render_as_text_update(
-                                render_context.renderer_mut(),
-                                &mut render_state.update.text_node.node,
-                            )
-                        })
-                    }
+            let CursorPlaceholderWithRenderStateProj {
+                cursor_placeholder,
+                render_state,
+            } = render_state.project();
 
-                    render_state
-                        .update
-                        .text_node
-                        .readd_self(render_context, force_reposition)
-                }
-                render_state => {
-                    *render_state = Some(State {
-                        update: UpdateTextNode {
-                            text_node: {
-                                let node = self.0.map(|value| {
-                                    value.borrow().render_as_text(render_context.renderer_mut())
-                                });
-                                TextNode::mount(render_context, node)
-                            },
-                        },
-                        inner: self.0.to_signal_hook(),
+            // mount cursor placeholder
+            {
+                if let Some(cursor_placeholder) = cursor_placeholder {
+                    force_reposition =
+                        force_reposition || matches!(mount_state, MountState::Unmounted);
+                    render_context.map_mut_render_context(|render_context: &mut _| {
+                        cursor_placeholder.readd_self(render_context, force_reposition)
                     });
+                } else {
+                    force_reposition = true;
+                    let node = render_context.map_mut_render_context(|render_context: &mut _| {
+                        NodeRenderSelf::render_self(render_context)
+                    });
+                    *cursor_placeholder = Some(node);
+                }
+            }
+
+            match &mut hook_data.get_mut().inner {
+                Some(signal_hook) if self.0.is_signal_of(signal_hook) => {
+                    // signal hasn't changed. no need to update
+                }
+                signal_hook => {
+                    // new signal
+                    force_reposition = true;
+                    self.0.map(|el| {
+                        el.to_element().render_update_maybe_reposition(
+                            render_context,
+                            render_state,
+                            force_reposition,
+                        )
+                    });
+                    *signal_hook = Some(self.0.to_signal_hook())
                 }
             }
         }
 
-        frender_html::impl_unpinned_render_for_unpin! {}
+        fn unpinned_render_update_maybe_reposition<
+            Ctx: ?Sized + frender_html::HtmlRenderContext,
+        >(
+            //
+            self,
+            render_context: &mut Ctx,
+            render_state: &mut frender_html::UnpinnedRenderStateOfContext<
+                Self::RenderStateKind,
+                Ctx,
+            >,
+            mut force_reposition: bool,
+        ) {
+            let frender_hook_element::state::StateMutProject {
+                mount_state,
+                hook_data,
+                render_state,
+                inner: _,
+            } = render_state.as_mut_project();
+
+            let CursorPlaceholderWithRenderState {
+                cursor_placeholder,
+                render_state,
+            } = render_state;
+
+            // mount cursor placeholder
+            {
+                if let Some(cursor_placeholder) = cursor_placeholder {
+                    force_reposition =
+                        force_reposition || matches!(mount_state, MountState::Unmounted);
+                    render_context.map_mut_render_context(|render_context: &mut _| {
+                        cursor_placeholder.readd_self(render_context, force_reposition)
+                    });
+                } else {
+                    force_reposition = true;
+                    let node = render_context.map_mut_render_context(|render_context: &mut _| {
+                        NodeRenderSelf::render_self(render_context)
+                    });
+                    *cursor_placeholder = Some(node);
+                }
+            }
+
+            match &mut hook_data.inner {
+                Some(signal_hook) if self.0.is_signal_of(signal_hook) => {
+                    // signal hasn't changed. no need to update
+                }
+                signal_hook => {
+                    // new signal
+                    force_reposition = true;
+                    self.0.map(|el| {
+                        el.to_element().unpinned_render_update_maybe_reposition(
+                            render_context,
+                            render_state,
+                            force_reposition,
+                        )
+                    });
+                    *signal_hook = Some(self.0.to_signal_hook())
+                }
+            }
+        }
     }
 }
 

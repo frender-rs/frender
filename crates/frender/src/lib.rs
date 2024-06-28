@@ -3,6 +3,11 @@ pub mod hooks_ext;
 
 pub mod elements;
 
+#[cfg(feature = "IntoElement")]
+mod into_element;
+#[cfg(feature = "IntoElement")]
+pub use into_element::{IntoElement, IntoElements};
+
 mod empty;
 pub use empty::Empty;
 
