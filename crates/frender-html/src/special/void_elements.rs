@@ -54,9 +54,8 @@ frender_common::impl_many!(
             ],
         )
     {
-        type ChildrenRenderState<R: RenderHtml + ?Sized> = ();
-        fn children_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {}
-        type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = ();
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: &mut Self::ChildrenUnpinnedRenderState<R>) {}
+        type ChildrenRenderStateKind = crate::elements::tuple::KindOfNoState;
+        fn children_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
     }
 );

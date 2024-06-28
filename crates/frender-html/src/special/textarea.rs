@@ -56,26 +56,39 @@ pub mod ssr {
 pub mod csr {
     use frender_html_common::IntoOneStringOrEmpty;
 
+    use crate::element_types::RenderStateWithPehKind;
     use crate::form_control::value::FormControlValue;
     use crate::{html::tags, CsrComponent, RenderHtml};
+
+    enum Never {}
+    pub struct Kind<V>(Never, std::marker::PhantomData<V>);
+
+    impl<V: FormControlValue<str>> RenderStateWithPehKind<tags::textarea> for Kind<V> {
+        type RenderStateWithPeh<R: RenderHtml + ?Sized> = V::State<R::textarea, R>;
+        type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = V::State<R::textarea, R>;
+    }
 
     impl<Children> CsrComponent<Children> for tags::textarea
     where
         Children: FormControlValue<str> + IntoOneStringOrEmpty,
     {
-        type ChildrenRenderState<R: RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
+        type ChildrenRenderStateKind = Kind<Children>;
 
-        fn children_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+        fn children_render_update<R: RenderHtml + ?Sized>(
+            children: Children,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+        ) {
             Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
         }
 
-        type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = Children::State<
-            //
-            R::textarea,
-            R,
-        >;
-
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+            children: Children,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+        ) {
             let element: &mut R::textarea = element;
             Children::update_with_state(children, children_state, element, renderer)
         }

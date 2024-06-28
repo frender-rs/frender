@@ -3,7 +3,7 @@ mod csr {
     use frender_dom::{render_state::non_reactive::NonReactiveRenderState, special::DangerousInnerHtml};
     use frender_html_common::{MaybeValue, ValueUpdater};
 
-    use crate::{CsrComponent, CsrComponentNormalElement};
+    use crate::{element_types::RenderStateWithPehKind, CsrComponent, CsrComponentNormalElement};
 
     struct UpdateElementInnerHtml<'a, E: ?Sized, R: ?Sized> {
         element: &'a mut E,
@@ -20,16 +20,32 @@ mod csr {
         }
     }
 
-    impl<C: CsrComponentNormalElement, S: MaybeValue<str> + IntoAsyncStrIterator> CsrComponent<DangerousInnerHtml<S>> for C {
-        type ChildrenRenderState<R: crate::RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
+    enum Never {}
+    pub struct Kind<S: Default>(Never, std::marker::PhantomData<S>);
 
-        fn children_render_update<R: crate::RenderHtml + ?Sized>(children: DangerousInnerHtml<S>, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+    impl<S: Default, C: CsrComponentNormalElement> RenderStateWithPehKind<C> for Kind<S> {
+        type RenderStateWithPeh<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<S>;
+        type RenderStateWithPehUnpinned<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<S>;
+    }
+
+    impl<C: CsrComponentNormalElement, S: MaybeValue<str> + IntoAsyncStrIterator> CsrComponent<DangerousInnerHtml<S>> for C {
+        type ChildrenRenderStateKind = Kind<S::UpdateWithState>;
+
+        fn children_render_update<R: crate::RenderHtml + ?Sized>(
+            children: DangerousInnerHtml<S>,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: std::pin::Pin<&mut NonReactiveRenderState<S::UpdateWithState>>,
+        ) {
             Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
         }
 
-        type ChildrenUnpinnedRenderState<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<S::UpdateWithState>;
-
-        fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(children: DangerousInnerHtml<S>, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+        fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
+            children: DangerousInnerHtml<S>,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: &mut NonReactiveRenderState<S::UpdateWithState>,
+        ) {
             S::update_with_state(children.0, &mut children_state.0, UpdateElementInnerHtml { element, renderer })
         }
     }

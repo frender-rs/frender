@@ -73,10 +73,11 @@ mod ssr {
 
 mod csr {
     use frender_common::convert::IntoMut;
-    use frender_dom::render_state::compound::CompoundState;
+    use frender_dom::{form_control::InputChecked, render_state::compound::CompoundState};
     use frender_html_common::MaybeStringValue;
 
     use crate::{
+        element_types::RenderStateWithPehKind,
         form_control::{value::FormControlValue, InputDataModel, InputValue, InputValueKind, IntoInputDataModel},
         html::tags,
         CsrComponent, RenderHtml,
@@ -114,30 +115,48 @@ mod csr {
         }
     }
 
-    impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for tags::input {
-        type ChildrenRenderState<R: RenderHtml + ?Sized> = Self::ChildrenUnpinnedRenderState<R>;
+    enum Never {}
+    pub struct Kind<Value, Checked, TypeCache>(Never, std::marker::PhantomData<(Value, Checked, TypeCache)>);
 
-        fn children_render_update<R: RenderHtml + ?Sized>(children: DataModel, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
+    type State<R, Value, Checked, TypeCache> = CompoundState<
+        //
+        (
+            StateWithElementIntoMut<
+                <Value as FormControlValue<<Value as InputValue>::ValueKind>>::State<
+                    <<Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<<R as RenderHtml>::input, R>,
+                    //
+                    R,
+                >,
+                <<Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<<R as RenderHtml>::input, R>,
+            >,
+            <Checked as FormControlValue<bool>>::State<<R as RenderHtml>::input, R>,
+        ),
+        Option<TypeCache>,
+    >;
+
+    impl<Value: InputValue, Checked: InputChecked, TypeCache> RenderStateWithPehKind<tags::input> for Kind<Value, Checked, TypeCache> {
+        type RenderStateWithPeh<R: RenderHtml + ?Sized> = Self::RenderStateWithPehUnpinned<R>;
+        type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = State<R, Value, Checked, TypeCache>;
+    }
+
+    impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for tags::input {
+        type ChildrenRenderStateKind = Kind<DataModel::Value, DataModel::Checked, <DataModel::Type as MaybeStringValue>::StringValue>;
+
+        fn children_render_update<R: RenderHtml + ?Sized>(
+            children: DataModel,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+        ) {
             Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
         }
 
-        type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = CompoundState<
-            //
-            (
-                StateWithElementIntoMut<
-                    <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::State<
-                        <<DataModel::Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<R::input, R>,
-                        //
-                        R,
-                    >,
-                    <<DataModel::Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<R::input, R>,
-                >,
-                <DataModel::Checked as FormControlValue<bool>>::State<R::input, R>,
-            ),
-            Option<<DataModel::Type as MaybeStringValue>::StringValue>,
-        >;
-
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: DataModel, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+            children: DataModel,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+        ) {
             let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 
             let CompoundState {

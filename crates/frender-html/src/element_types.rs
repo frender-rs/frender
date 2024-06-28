@@ -1,5 +1,5 @@
 use frender_dom::behaviors::ElementWithChildren;
-use frender_dom::RenderStateWithAnyParent;
+use frender_dom::{RenderStateWithAnyParent, RenderStateWithParentElementsHandle};
 
 use crate::RenderHtml;
 
@@ -8,26 +8,60 @@ use crate::Element;
 
 pub trait CsrComponentNormalElement: behavior_type_traits::Element {}
 
+pub trait RenderStateWithPehKind<ElType: ?Sized + behavior_type_traits::Element> {
+    type RenderStateWithPeh<R: RenderHtml + ?Sized>: RenderStateWithParentElementsHandle<ElType::Element<R>, R> + Default;
+    type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized>: RenderStateWithParentElementsHandle<ElType::Element<R>, R> + Default + Unpin;
+}
+
+impl<ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for crate::elements::tuple::KindOfNoState {
+    type RenderStateWithPeh<R: RenderHtml + ?Sized> = ();
+    type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = ();
+}
+
 pub trait CsrComponent<Children>: behavior_type_traits::Element {
-    type ChildrenRenderState<R: RenderHtml + ?Sized>: crate::RenderStateWithParentElementsHandle<Self::Element<R>, R> + Default;
+    type ChildrenRenderStateKind: RenderStateWithPehKind<Self>;
 
-    fn children_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>);
+    fn children_render_update<R: RenderHtml + ?Sized>(
+        children: Children,
+        element: &mut Self::Element<R>,
+        renderer: &mut R,
+        children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+    );
 
-    type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized>: crate::RenderStateWithParentElementsHandle<Self::Element<R>, R> + Default + Unpin;
+    fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+        children: Children,
+        element: &mut Self::Element<R>,
+        renderer: &mut R,
+        children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+    );
+}
 
-    fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: Children, element: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>);
+enum Never {}
+pub struct KindRenderStateWithAnyParent<K: crate::RenderStateKind>(Never, std::marker::PhantomData<K>);
+
+impl<K: crate::RenderStateKind, ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for KindRenderStateWithAnyParent<K> {
+    type RenderStateWithPeh<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<K as crate::RenderStateKindPinned>::RenderState<R>>;
+    type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<K as crate::RenderStateKindUnpinned>::UnpinnedRenderState<R>>;
 }
 
 impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for C {
-    type ChildrenRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<Children::RenderStateKind as crate::RenderStateKindPinned>::RenderState<R>>;
+    type ChildrenRenderStateKind = KindRenderStateWithAnyParent<Children::RenderStateKind>;
 
-    fn children_render_update<R: RenderHtml + ?Sized>(children: Children, el: &mut Self::Element<R>, renderer: &mut R, children_state: std::pin::Pin<&mut Self::ChildrenRenderState<R>>) {
-        el.with_render_context_at_first_child_of_self(renderer, |renderer| Children::render_update(children, renderer, children_state.as_pin_mut()))
+    fn children_render_update<R: RenderHtml + ?Sized>(
+        children: Children,
+        element: &mut Self::Element<R>,
+        renderer: &mut R,
+        children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+    ) {
+        element.with_render_context_at_first_child_of_self(renderer, |renderer| Children::render_update(children, renderer, children_state.as_pin_mut()))
     }
 
-    type ChildrenUnpinnedRenderState<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<Children::RenderStateKind as crate::RenderStateKindUnpinned>::UnpinnedRenderState<R>>;
-
-    fn children_unpinned_render_update<R: RenderHtml + ?Sized>(children: Children, el: &mut Self::Element<R>, renderer: &mut R, children_state: &mut Self::ChildrenUnpinnedRenderState<R>) {
-        el.with_render_context_at_first_child_of_self(renderer, |renderer| Children::unpinned_render_update(children, renderer, &mut children_state.render_state))
+    fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+        children: Children,
+        element: &mut Self::Element<R>,
+        renderer: &mut R,
+        children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+    ) {
+        element.with_render_context_at_first_child_of_self(renderer, |renderer| Children::unpinned_render_update(children, renderer, &mut children_state.render_state))
     }
 }

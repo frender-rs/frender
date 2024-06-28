@@ -10,35 +10,37 @@ mod imp {
 
     use crate::dom::component::{HasIntrinsicComponentTag, IntoElementProps};
 
+    use crate::element_types::RenderStateWithPehKind;
+    use crate::html::behavior_type_traits;
     use crate::{CreateNode, CsrComponent, HtmlRenderContext, RenderHtml, RenderStateKind, UnpinnedRenderStateOfContext, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
     use crate::{Element, RenderState};
 
     use super::ElementAndMounted;
 
-    pub struct Kind<C, Children, Attrs, EventListeners>(super::super::Kind<(C, Children, Attrs, EventListeners)>);
+    pub struct Kind<C: behavior_type_traits::Element, ChildrenKind: RenderStateWithPehKind<C>, Attrs, EventListeners>(super::super::Kind<(C, ChildrenKind, Attrs, EventListeners)>);
 
-    impl<C: CsrComponent<Children>, Children, Attrs: UpdateNodeNonReactive<C>, EventListeners: UpdateNodeNonReactive<C> + UpdateNodeNonReactivePinned<C>> crate::RenderStateKindPinned
-        for Kind<C, Children, Attrs, EventListeners>
+    impl<C: behavior_type_traits::Element, ChildrenKind: RenderStateWithPehKind<C>, Attrs: UpdateNodeNonReactive<C>, EventListeners: UpdateNodeNonReactive<C> + UpdateNodeNonReactivePinned<C>> crate::RenderStateKindPinned
+        for Kind<C, ChildrenKind, Attrs, EventListeners>
     {
         type RenderState<R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
             C::Element<R>,
             ElementPropsState<
                 //
-                <C as crate::CsrComponent<Children>>::ChildrenRenderState<R>,
+                <ChildrenKind as RenderStateWithPehKind<C>>::RenderStateWithPeh<R>,
                 <Attrs as UpdateNodeNonReactive<C>>::State<R>,
                 <EventListeners as UpdateNodeNonReactivePinned<C>>::StatePinned<R>,
             >,
         >;
     }
-    impl<C: CsrComponent<Children>, Children, Attrs: UpdateNodeNonReactive<C>, EventListeners: UpdateNodeNonReactive<C> + UpdateNodeNonReactivePinned<C>> crate::RenderStateKindUnpinned
-        for Kind<C, Children, Attrs, EventListeners>
+    impl<C: behavior_type_traits::Element, ChildrenKind: RenderStateWithPehKind<C>, Attrs: UpdateNodeNonReactive<C>, EventListeners: UpdateNodeNonReactive<C> + UpdateNodeNonReactivePinned<C>>
+        crate::RenderStateKindUnpinned for Kind<C, ChildrenKind, Attrs, EventListeners>
     {
         type UnpinnedRenderState<R: RenderHtml + ?Sized> = IntrinsicElementRenderState<
             C::Element<R>,
             ElementPropsState<
                 //
-                <C as crate::CsrComponent<Children>>::ChildrenUnpinnedRenderState<R>,
+                <ChildrenKind as RenderStateWithPehKind<C>>::RenderStateWithPehUnpinned<R>,
                 (<Attrs as UpdateNodeNonReactive<C>>::State<R>, <EventListeners as UpdateNodeNonReactive<C>>::State<R>),
                 (),
             >,
@@ -157,7 +159,7 @@ mod imp {
         P::Attributes: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
         C: crate::dom::component::SsrComponent<P::Attributes, P::Children>,
     {
-        type RenderStateKind = Kind<C, P::Children, P::Attributes, P::EventListeners>; // TODO: shouldn't be generic over P
+        type RenderStateKind = Kind<C, C::ChildrenRenderStateKind, P::Attributes, P::EventListeners>; // TODO: shouldn't be generic over P
 
         fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
             //
