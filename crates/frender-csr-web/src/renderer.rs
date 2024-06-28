@@ -37,7 +37,7 @@ impl ProvideRenderContext for RendererWithRoot {
     }
 
     fn renderer_mut(&mut self) -> &mut Self::Renderer {
-        todo!()
+        &mut self.renderer
     }
 }
 
