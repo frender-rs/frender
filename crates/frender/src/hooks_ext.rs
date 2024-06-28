@@ -50,174 +50,26 @@ pub mod setter {
     }
 }
 
-pub mod state {
-    use std::pin::Pin;
-
-    use frender_html::{RenderState, RenderStateWithParentElementsHandle};
-    use hooks::{ShareValue, SignalHook};
-
-    /// See [`RenderStateWithParentElementsHandle`] for meaning of `PEH`.
-    pub trait UpdateElementWithSharedValueWithParentElementsHandle<
-        PEH: ?Sized,
-        R: ?Sized,
-        V: ?Sized,
-    >
-    {
-        fn unmount_element_with_shared_value_with_peh(&mut self, peh: &mut PEH, renderer: &mut R);
-        fn update_element_with_shared_value_with_peh(
-            &mut self,
-            peh: &mut PEH,
-            renderer: &mut R,
-            shared_value: &V,
-        );
-    }
-
-    pub trait UpdateElementWithSharedValue<R: ?Sized, V: ?Sized> {
-        fn state_unmount_element_with_shared_value(self: Pin<&mut Self>);
-        fn unmount_element_with_shared_value(self: Pin<&mut Self>, renderer: &mut R);
-        fn update_element_with_shared_value(
-            self: Pin<&mut Self>,
-            renderer: &mut R,
-            shared_value: &V,
-        );
-    }
-
-    pin_project_lite::pin_project!(
-        #[project = StateProj]
-        pub struct State<S, U> {
-            #[pin]
-            pub(crate) inner: S,
-            #[pin]
-            pub(crate) update: U,
-        }
-    );
-
-    impl<
-            S: SignalHook<SignalShareValue = Val>,
-            Val,
-            U: Unpin
-                + UpdateElementWithSharedValueWithParentElementsHandle<
-                    PEH,
-                    R,
-                    <S as SignalHook>::SignalShareValue,
-                >,
-            PEH: ?Sized,
-            R: ?Sized,
-        > RenderStateWithParentElementsHandle<PEH, R> for State<S, U>
-    {
-        fn unmount_with_peh(self: std::pin::Pin<&mut Self>, peh: &mut PEH, renderer: &mut R) {
-            let StateProj { inner, update } = self.project();
-
-            update
-                .get_mut()
-                .unmount_element_with_shared_value_with_peh(peh, renderer);
-
-            S::unmount(inner);
-        }
-
-        fn state_unmount_with_peh(self: std::pin::Pin<&mut Self>, _: &mut PEH) {
-            S::unmount(self.project().inner)
-        }
-
-        fn poll_render_with_peh(
-            self: std::pin::Pin<&mut Self>,
-            peh: &mut PEH,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            let StateProj { mut inner, update } = self.project();
-
-            let update = update.get_mut();
-
-            loop {
-                match inner.as_mut().poll_next_update(cx) {
-                    std::task::Poll::Ready(active) => {
-                        if active {
-                            let state = inner.as_mut().use_hook(); // mark as seen
-
-                            state.map(|shared_value| {
-                                update.update_element_with_shared_value_with_peh(
-                                    peh,
-                                    renderer,
-                                    shared_value,
-                                )
-                            });
-                            // TODO: limit loop
-                        } else {
-                            return std::task::Poll::Ready(());
-                        }
-                    }
-                    std::task::Poll::Pending => return std::task::Poll::Pending,
-                }
-            }
-        }
-    }
-
-    impl<
-            S: SignalHook<SignalShareValue = Val>,
-            Val,
-            U: UpdateElementWithSharedValue<R, <S as SignalHook>::SignalShareValue>,
-            R: ?Sized + frender_html::dom::render::Render,
-        > RenderState<R> for State<S, U>
-    {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-            let StateProj { inner, update } = self.project();
-
-            update.unmount_element_with_shared_value(renderer);
-
-            S::unmount(inner);
-        }
-
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
-            S::unmount(self.project().inner)
-        }
-
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            let StateProj {
-                mut inner,
-                mut update,
-            } = self.project();
-
-            loop {
-                match inner.as_mut().poll_next_update(cx) {
-                    std::task::Poll::Ready(true) => {
-                        let state = inner.as_mut().use_hook(); // mark as seen
-
-                        state.map(|shared_value| {
-                            update
-                                .as_mut()
-                                .update_element_with_shared_value(renderer, shared_value)
-                        });
-
-                        // TODO: limit loop
-                    }
-                    std::task::Poll::Ready(false) => return std::task::Poll::Ready(()),
-                    std::task::Poll::Pending => return std::task::Poll::Pending,
-                }
-            }
-        }
-    }
-}
-
 pub mod form_control {
-    use std::{borrow::Borrow, marker::PhantomData};
+    use std::{borrow::Borrow, marker::PhantomData, pin::Pin};
 
     use async_str_iter::IntoAsyncStrIterator;
     use frender_common::PrimarilyBorrow;
-    use frender_csr::render_state::compound::CompoundState;
-    use frender_html::form_control::{
-        element::FormControlElement,
-        value::{
-            FormControlValue, FormControlValueKind, FromFormControlValue, HandleFormControlValue,
-            MaybeProvideFormControlValue, ProvideFormControlValue,
+    use frender_hook_element::state::{MaybeIntoPollNextUpdateWithPeh, MountState};
+    use frender_html::{
+        elements::non_reactive::NonReactiveRenderState,
+        form_control::{
+            element::FormControlElement,
+            value::{
+                FormControlValue, FormControlValueKind, FromFormControlValue,
+                HandleFormControlValue, MaybeProvideFormControlValue, ProvideFormControlValue,
+            },
+            InputValue, InputValueKind,
         },
-        InputValue, InputValueKind,
     };
-    use hooks::{ShareValue, Signal};
+    use hooks::{HookPollNextUpdate, ShareValue, Signal, SignalHook};
+
+    use super::element::OptionSignalHook;
 
     #[derive(Debug, Clone, Copy)]
     pub struct ControlledSharedValue<S>(pub S);
@@ -291,40 +143,94 @@ pub mod form_control {
 
     impl<VK: ?Sized + FormControlValueKind> Unpin for UpdateFormControlElement<VK> {}
 
-    impl<VK: ?Sized + FormControlValueKind> UpdateFormControlElement<VK> {
-        pub const fn new() -> Self {
+    impl<VK: ?Sized + FormControlValueKind> Default for UpdateFormControlElement<VK> {
+        fn default() -> Self {
             Self(PhantomData)
         }
     }
 
-    impl<
-            VK: ?Sized + FormControlValueKind,
-            PEH: FormControlElement<VK, R> + ?Sized,
-            R: ?Sized,
-            SV: Borrow<VK>,
-        > super::state::UpdateElementWithSharedValueWithParentElementsHandle<PEH, R, SV>
-        for UpdateFormControlElement<VK>
-    {
-        fn unmount_element_with_shared_value_with_peh(
-            &mut self,
-            element: &mut PEH,
-            renderer: &mut R,
-        ) {
-            element.remove_value(renderer); // TODO: is this needed?
-        }
+    pub struct FormControlElementPollNextUpdate<'a, PEH: ?Sized, R: ?Sized, SH, VK: ?Sized> {
+        peh: &'a mut PEH,
+        renderer: &'a mut R,
+        signal_hook: &'a mut SH,
+        _vk: PhantomData<VK>,
+    }
 
-        fn update_element_with_shared_value_with_peh(
-            &mut self,
-            element: &mut PEH,
-            renderer: &mut R,
-            value: &SV,
-        ) {
-            element.set_default_value(renderer, value.borrow());
-            element.set_value(renderer, value.borrow());
+    impl<'a, PEH: ?Sized, R: ?Sized, SH, VK: ?Sized> Unpin
+        for FormControlElementPollNextUpdate<'a, PEH, R, SH, VK>
+    {
+    }
+
+    impl<'a, PEH: ?Sized, R: ?Sized, SH, VK> HookPollNextUpdate
+        for FormControlElementPollNextUpdate<'a, PEH, R, SH, VK>
+    where
+        PEH: FormControlElement<VK, R>,
+        SH: SignalHook + Unpin,
+        SH::SignalShareValue: Borrow<VK>,
+        VK: ?Sized + FormControlValueKind,
+    {
+        fn poll_next_update(
+            self: Pin<&mut Self>,
+            cx: &mut std::task::Context<'_>,
+        ) -> std::task::Poll<bool> {
+            let Self {
+                peh,
+                renderer,
+                signal_hook,
+                _vk: _,
+            } = self.get_mut();
+
+            match Pin::new(&mut **signal_hook).poll_next_update(cx) {
+                std::task::Poll::Ready(true) => {
+                    let signal = Pin::new(&mut **signal_hook).use_hook();
+                    signal.map(|value| {
+                        let value = value.borrow();
+
+                        peh.set_default_value(renderer, value);
+                        peh.set_value(renderer, value);
+                    });
+                    std::task::Poll::Ready(true)
+                }
+                _ => std::task::Poll::Ready(false), // the render state is NonReactive
+            }
         }
     }
 
-    pub type ReactiveState<S, VK> = super::state::State<S, UpdateFormControlElement<VK>>;
+    impl<VK: ?Sized + FormControlValueKind, PEH: ?Sized, R: ?Sized, SH, S>
+        MaybeIntoPollNextUpdateWithPeh<PEH, R, OptionSignalHook<SH>, S>
+        for UpdateFormControlElement<VK>
+    where
+        PEH: FormControlElement<VK, R>,
+        SH: SignalHook + Unpin,
+        SH::SignalShareValue: FromFormControlValue<VK> + Borrow<VK>,
+    {
+        type IntoPollNextUpdate<'a> = FormControlElementPollNextUpdate<'a, PEH, R, SH, VK>
+        where
+            Self: 'a,
+            PEH: 'a,
+            R: 'a,
+            SH: 'a,
+            S: 'a;
+
+        fn maybe_into_poll_next_update_with_peh<'a>(
+            self: Pin<&'a mut Self>,
+            peh: &'a mut PEH,
+            renderer: &'a mut R,
+            hook_data: Pin<&'a mut OptionSignalHook<SH>>,
+            _: Pin<&'a mut S>,
+        ) -> Option<Self::IntoPollNextUpdate<'a>> {
+            if let Some(signal_hook) = &mut hook_data.get_mut().inner {
+                Some(FormControlElementPollNextUpdate {
+                    peh,
+                    renderer,
+                    signal_hook,
+                    _vk: PhantomData,
+                })
+            } else {
+                None
+            }
+        }
+    }
 
     impl<S, Val, VK> FormControlValue<VK> for ControlledSharedValue<S>
     where
@@ -336,9 +242,10 @@ pub mod form_control {
         type State<
             E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
-        > = CompoundState<
-            Option<ReactiveState<S::SignalHook, VK>>,
-            E::OnValueChangeEventListener<Self>,
+        > = frender_hook_element::state::State<
+            super::element::OptionSignalHook<S::SignalHook>,
+            NonReactiveRenderState<E::OnValueChangeEventListener<Self>>,
+            UpdateFormControlElement<VK>,
         >;
 
         fn update_with_state<
@@ -350,31 +257,29 @@ pub mod form_control {
             element: &mut E,
             renderer: &mut R,
         ) {
-            let CompoundState {
-                reactive: state,
-                non_reactive: event_listener,
-            } = state;
-            if let Some(state) = state {
-                if this.0.is_signal_of(&state.inner) {
+            let frender_hook_element::state::StateMutProject {
+                mount_state,
+                hook_data,
+                render_state: NonReactiveRenderState(event_listener),
+                inner: _,
+            } = state.as_mut_project();
+            if let Some(signal_hook) = &mut hook_data.inner {
+                if this.0.is_signal_of(signal_hook) {
                     return;
                 }
             }
 
-            this.0.map(|shared_value| {
-                super::state::UpdateElementWithSharedValueWithParentElementsHandle::update_element_with_shared_value_with_peh(
-                    &mut UpdateFormControlElement::new(),
-                    element,
-                    renderer,
-                    shared_value,
-                );
+            this.0.map(|value| {
+                let value = value.borrow();
+                element.set_default_value(renderer, value);
+                element.set_value(renderer, value);
             });
 
-            *state = Some(ReactiveState {
-                inner: this.0.to_signal_hook(),
-                update: UpdateFormControlElement::new(),
-            });
+            hook_data.inner = Some(this.0.to_signal_hook());
 
-            element.on_value_change(renderer, event_listener, this)
+            element.on_value_change(renderer, event_listener, this);
+
+            *mount_state = MountState::Mounted;
         }
     }
 }
@@ -619,7 +524,7 @@ pub mod element {
     }
 
     pub struct OptionSignalHook<SH> {
-        inner: Option<SH>,
+        pub(crate) inner: Option<SH>,
     }
 
     impl<SH> Default for OptionSignalHook<SH> {
