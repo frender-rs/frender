@@ -1,7 +1,8 @@
 pub mod state;
 
 mod html;
-pub use html::*;
+
+pub use self::html::{new_fn_hook_element, FnHookElement, FnMutOutputElementOfSameKind};
 
 pub use frender_html::Element;
 

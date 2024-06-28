@@ -123,9 +123,6 @@ where
 #[derive(Debug, Default)]
 pub struct PollUseHookRenderUpdate;
 
-#[derive(Debug, Default)]
-struct PollUseHookRenderUpdateUnpinned;
-
 pub struct PollNextUpdateAndUseHook<
     'a,
     R: ?Sized + RenderHtml,
@@ -259,12 +256,11 @@ where
     >;
 }
 
-impl<HookData, U, E> Element for FnHookElement<HookData, U>
+impl<HookData, U> Element for FnHookElement<HookData, U>
 where
     HookData: HookPollNextUpdate + HookUnmount + Default,
-    U: FnMut(Pin<&mut HookData>) -> E, // TODO: FnMutOutputElementOfSameRenderStateKind
+    U: FnMutOutputElementOfSameKind<HookData>,
     HookData: Unpin,
-    E: Element,
 {
     type RenderStateKind = Kind<HookData, U>;
 
@@ -376,11 +372,11 @@ where
     }
 }
 
-pub fn new_fn_hook_element<HookData: HookPollNextUpdate + HookUnmount + Default, U, E: Element>(
+pub fn new_fn_hook_element<HookData: HookPollNextUpdate + HookUnmount + Default, U>(
     use_hook: U,
 ) -> FnHookElement<HookData, U>
 where
-    U: FnMut(Pin<&mut HookData>) -> E,
+    U: FnMutOutputElementOfSameKind<HookData>,
 {
     FnHookElement {
         use_hook,
