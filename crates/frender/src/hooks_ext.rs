@@ -298,7 +298,7 @@ pub mod element {
     };
     use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
 
-    use crate::into_element::ToElement;
+    use crate::ToElement;
 
     #[derive(Debug, Clone, Copy)]
     pub struct SignalIntoElement<S: ShareValue>(pub S);

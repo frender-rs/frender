@@ -8,6 +8,11 @@ mod into_element;
 #[cfg(feature = "IntoElement")]
 pub use into_element::{IntoElement, IntoElements};
 
+#[cfg(feature = "ToElement")]
+mod to_element;
+#[cfg(feature = "ToElement")]
+pub use to_element::{ToElement, ToElementWithFn};
+
 mod empty;
 pub use empty::Empty;
 
