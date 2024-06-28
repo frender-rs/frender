@@ -114,8 +114,16 @@ fn current_date_string() -> String {
 }
 
 mod option;
+mod temp_str;
 
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
-    (input(), script(), style(), textarea(), option::main())
+    (
+        temp_str::main(),
+        input(),
+        script(),
+        style(),
+        textarea(),
+        option::main(),
+    )
 }

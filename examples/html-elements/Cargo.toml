@@ -9,3 +9,4 @@ edition = "2021"
 frender = { path = "../../crates/frender", features = ["web", "spawn"] }
 hooks = "3.0.0-alpha"
 js-sys = "0.3.66"
+gloo = "0.11.0"

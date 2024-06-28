@@ -18,7 +18,7 @@ pub mod component_fn_options {
 pub mod __private {
     pub use hooks_core;
     pub use hooks_core::transform_hook_fn_body_as_closure;
-    pub use syn_lite::{expand_or, parse_item_fn};
+    pub use syn_lite::{expand_or, parse_generics, parse_item_fn};
 }
 
 #[doc(hidden)]
@@ -324,8 +324,65 @@ macro_rules! __impl_component_fn_item_fn_parsed {
     };
 }
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_component_fn_closure_generics_parsed {
+    (
+        generics! {
+            params! $params:tt
+            impl_generics! { $($impl_generics:tt)* }
+            type_generics! $type_generics:tt
+            params_name! $params_name:tt
+        }
+        rest! {
+            move || -> $element_ty:ty { $($stmts:tt)* }
+        }
+    ) => {{
+        #[allow(unused_imports)]
+        use $crate::__private::hooks_core::prelude_h::*;
+
+        #[inline(always)]
+        fn __frender_hook_element_identity<
+            // TODO: generics and where clause
+            __FrenderHookElementFnMut: for<'hook> ::core::ops::FnMut(::core::pin::Pin<&'hook mut __FrenderHookElementHookData>) -> $element_ty,
+            __FrenderHookElementHookData,
+            $($impl_generics)*
+        >(f: __FrenderHookElementFnMut) -> __FrenderHookElementFnMut { f }
+
+        $crate::new_fn_hook_element(__frender_hook_element_identity($crate::__private::transform_hook_fn_body_as_closure! {
+            []
+            { $($stmts)* }
+        }))
+    }};
+}
+
 #[macro_export]
 macro_rules! component_fn {
+    (
+        for $($rest:tt)*
+    ) => {
+        $crate::__private::parse_generics! {
+            {$($rest)*} => $crate::__impl_component_fn_closure_generics_parsed!
+        }
+    };
+    (
+        move || -> $element_ty:ty { $($stmts:tt)* }
+    ) => {{
+        #[allow(unused_imports)]
+        use $crate::__private::hooks_core::prelude_h::*;
+
+        // TODO: allow user defined identity fn
+        #[inline(always)]
+        fn __frender_hook_element_identity<
+            __FrenderHookElementFnMut: for<'hook> ::core::ops::FnMut(::core::pin::Pin<&'hook mut __FrenderHookElementHookData>) -> $element_ty,
+            __FrenderHookElementHookData,
+        >(f: __FrenderHookElementFnMut) -> __FrenderHookElementFnMut { f }
+
+        $crate::new_fn_hook_element(__frender_hook_element_identity($crate::__private::transform_hook_fn_body_as_closure! {
+            []
+            { $($stmts)* }
+        }))
+    }};
     (
         move || $stmts:tt
     ) => {{
