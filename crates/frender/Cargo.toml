@@ -53,7 +53,6 @@ default = [
     "hooks",
     "RenderWith",
     "Elements",
-    "IntoElement",
     "ToElement",
 ]
 nightly = ["frender-render-with?/nightly"]
@@ -72,4 +71,3 @@ csr = ["ssr", "frender-csr", "frender-elements?/csr"]
 RenderWith = ["dep:frender-render-with"]
 Elements = ["dep:frender-elements"]
 ToElement = []
-IntoElement = []
