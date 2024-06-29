@@ -1,3 +1,5 @@
+pub use self::with::*;
+
 use frender_html::{Element, RenderStateKind};
 use frender_ssr::html::assert::HtmlChildren;
 
@@ -27,37 +29,79 @@ impl<E: ?Sized + ToElement> ToElement for &E {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct ToElementWithFn<E, F>(pub E, pub F);
+pub mod with {
+    use frender_html::{Element, RenderStateKind};
+    use frender_ssr::html::assert::HtmlChildren;
 
-mod sealed {
-    use crate::Element;
+    use crate::ToElement;
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct ToElementWithFn<E, F>(pub E, pub F);
+
+    #[derive(Debug)]
+    pub struct RefToElementWithFn<'a, E: ?Sized, F>(pub &'a E, pub F);
+
+    impl<'a, E, F: Copy> Copy for RefToElementWithFn<'a, E, F> {}
+
+    impl<'a, E, F: Clone> Clone for RefToElementWithFn<'a, E, F> {
+        fn clone(&self) -> Self {
+            Self(self.0, self.1.clone())
+        }
+    }
 
     pub trait FnOutputElement<Arg>: Fn(Arg) -> Self::OutputElement {
-        type OutputElement: Element;
+        type OutputElement: Element<
+            HtmlChildren = Self::OutputElementHtmlChildren,
+            RenderStateKind = Self::OutputElementRenderStateKind,
+        >;
+        type OutputElementHtmlChildren: HtmlChildren;
+        type OutputElementRenderStateKind: RenderStateKind;
     }
 
-    impl<F: Fn(Arg) -> E, Arg, E: Element> FnOutputElement<Arg> for F {
+    impl<F: ?Sized + Fn(Arg) -> E, Arg, E: Element> FnOutputElement<Arg> for F {
         type OutputElement = E;
+        type OutputElementHtmlChildren = E::HtmlChildren;
+        type OutputElementRenderStateKind = E::RenderStateKind;
     }
-}
 
-impl<E, F: for<'a> sealed::FnOutputElement<&'a E>, C, K> ToElement for ToElementWithFn<E, F>
-where
-    for<'a> <F as sealed::FnOutputElement<&'a E>>::OutputElement:
-        Element<HtmlChildren = C, RenderStateKind = K>,
-    C: HtmlChildren,
-    K: RenderStateKind,
-{
-    type ToElement<'a> = <F as sealed::FnOutputElement<&'a E>>::OutputElement
+    impl<E, F, C, K> ToElement for ToElementWithFn<E, F>
     where
-        Self: 'a;
+        C: HtmlChildren,
+        K: RenderStateKind,
+        F: for<'a> FnOutputElement<
+            &'a E,
+            OutputElementHtmlChildren = C,
+            OutputElementRenderStateKind = K,
+        >,
+    {
+        type ToElement<'a> = <F as FnOutputElement<&'a E>>::OutputElement
+        where
+            Self: 'a;
 
-    type ToElementHtmlChildren = C;
+        type ToElementHtmlChildren = C;
+        type ToElementRenderStateKind = K;
 
-    type ToElementRenderStateKind = K;
+        fn to_element(&self) -> Self::ToElement<'_> {
+            (self.1)(&self.0)
+        }
+    }
 
-    fn to_element(&self) -> Self::ToElement<'_> {
-        (self.1)(&self.0)
+    impl<'e, E, F, C, K> ToElement for RefToElementWithFn<'e, E, F>
+    where
+        E: ?Sized,
+        C: HtmlChildren,
+        K: RenderStateKind,
+        F: FnOutputElement<&'e E, OutputElementHtmlChildren = C, OutputElementRenderStateKind = K>,
+    {
+        type ToElementHtmlChildren = C;
+        type ToElementRenderStateKind = K;
+
+        type ToElement<'a> = <F as FnOutputElement<&'e E>>::OutputElement
+        where
+            Self: 'a;
+
+        fn to_element(&self) -> Self::ToElement<'_> {
+            (self.1)(self.0)
+        }
     }
 }

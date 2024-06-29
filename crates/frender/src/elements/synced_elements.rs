@@ -12,7 +12,7 @@ use std::{
 use frender_csr::RenderState;
 use frender_html::RenderStateKind;
 
-use crate::ToElement;
+use crate::{FnOutputElement, ToElement};
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
@@ -499,7 +499,7 @@ mod to_element {
 
         use crate::{
             elements::synced_elements::weak_vec1::{self, RcWithKey},
-            ToElement,
+            ToElement, ToIterOfToElement,
         };
 
         use super::{
@@ -520,12 +520,13 @@ mod to_element {
                 State<K::UnpinnedRenderState<R>>;
         }
 
-        impl<'a, E: ToElement + 'a> Element for SyncedElementsToElement<'a, Vec<E>>
+        impl<'a, ES: 'a> Element for SyncedElementsToElement<'a, ES>
         where
+            ES: ToIterOfToElement,
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            E::ToElementRenderStateKind: 'static,
+            ES::IterOfToElementRenderStateKind: 'static,
         {
-            type RenderStateKind = Kind<E::ToElementRenderStateKind>;
+            type RenderStateKind = Kind<ES::IterOfToElementRenderStateKind>;
 
             fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
                 //
@@ -550,7 +551,7 @@ mod to_element {
                 self,
                 render_context: &mut Ctx,
                 render_state: &mut State<
-                    UnpinnedRenderStateOfContext<E::ToElementRenderStateKind, Ctx>,
+                    UnpinnedRenderStateOfContext<ES::IterOfToElementRenderStateKind, Ctx>,
                 >,
                 force_reposition: bool,
             ) {
@@ -561,11 +562,13 @@ mod to_element {
                             let render_states = &mut *render_states.borrow_mut();
                             let render_states = render_states.clean(render_context.renderer_mut());
 
-                            debug_assert_eq!(render_states.len(), self.0.elements.len());
+                            let mut render_states = render_states.iter_mut();
+                            let mut elements = self.0.elements.to_iter_of_to_element();
 
-                            let zip = self.0.elements.iter().zip(render_states.iter_mut());
+                            let zip = render_states.by_ref().zip(elements.by_ref());
+
                             if force_reposition {
-                                zip.for_each(|(el, render_state)| {
+                                zip.for_each(|(render_state, el)| {
                                     unpinned_render_update_force_reposition(
                                         el,
                                         render_context,
@@ -573,10 +576,13 @@ mod to_element {
                                     )
                                 })
                             } else {
-                                zip.for_each(|(el, render_state)| {
+                                zip.for_each(|(render_state, el)| {
                                     unpinned_render_update(el, render_context, render_state)
                                 })
                             }
+
+                            assert_eq!(render_states.len(), 0, "too many render states");
+                            assert!(elements.next().is_none(), "too many elements");
 
                             return;
                         } else {
@@ -588,7 +594,7 @@ mod to_element {
                                     states.states.split_at_mut(real_len)
                                 };
 
-                                let mut elements = self.0.elements.iter();
+                                let mut elements = self.0.elements.to_iter_of_to_element();
 
                                 let mut mounted = mounted.iter_mut();
                                 elements
@@ -634,7 +640,7 @@ mod to_element {
                             states: self
                                 .0
                                 .elements
-                                .iter()
+                                .to_iter_of_to_element()
                                 .map(|el| new_unpinned_render_state(el, render_context))
                                 .collect(),
                             ready_to_unmount_count: 0,
@@ -660,7 +666,7 @@ mod to_element {
         }
 
         fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext, E: ToElement>(
-            el: &E,
+            el: E,
             render_context: &mut Ctx,
             Stated {
                 render_state,
@@ -686,7 +692,7 @@ mod to_element {
             Ctx: ?Sized + frender_html::HtmlRenderContext,
             E: ToElement,
         >(
-            el: &E,
+            el: E,
             render_context: &mut Ctx,
             Stated {
                 render_state,
@@ -719,13 +725,14 @@ mod to_element {
     }
 }
 
-// TODO: currently only Vec<E> is implemented
-impl<E: ToElement> ToElement for SyncedElementCollection<Vec<E>>
+impl<ES> ToElement for SyncedElementCollection<ES>
 where
+    // for<'a> &'a ES: IntoIterator<Item = &'a E>,
+    ES: ToIterOfToElement,
     // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-    E::ToElementRenderStateKind: 'static,
+    ES::IterOfToElementRenderStateKind: 'static,
 {
-    type ToElement<'a> = SyncedElementsToElement<'a, Vec<E>>
+    type ToElement<'a> = SyncedElementsToElement<'a, ES>
     where
         Self: 'a;
 
@@ -734,9 +741,9 @@ where
     }
 
     type ToElementHtmlChildren =
-        async_str_iter::flat::Flat<std::vec::IntoIter<E::ToElementHtmlChildren>>;
+        async_str_iter::flat::Flat<std::vec::IntoIter<ES::IterOfToElementHtmlChildren>>;
 
-    type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
+    type ToElementRenderStateKind = Kind<ES::IterOfToElementRenderStateKind>;
 }
 
 pub type SyncedElements<E> = SyncedElementCollection<Vec<E>>;
@@ -778,7 +785,7 @@ pub trait ToIterOfToElement {
     fn to_iter_of_to_element(&self) -> Self::IterOfToElement<'_>;
 }
 
-impl<ES, E: ToElement> ToIterOfToElement for ES
+impl<ES, E: ?Sized + ToElement> ToIterOfToElement for ES
 where
     for<'a> &'a ES: IntoIterator<Item = &'a E>,
 {
@@ -792,4 +799,122 @@ where
 
     type IterOfToElementHtmlChildren = E::ToElementHtmlChildren;
     type IterOfToElementRenderStateKind = E::ToElementRenderStateKind;
+}
+
+pub trait RefIntoIteratorOfRef
+where
+    for<'a> &'a Self: IntoIterator<Item = &'a Self::ItemOfRef>,
+{
+    type ItemOfRef: ?Sized;
+}
+
+impl<T: ?Sized, Item: ?Sized> RefIntoIteratorOfRef for T
+where
+    for<'a> &'a T: IntoIterator<Item = &'a Item>,
+{
+    type ItemOfRef = Item;
+}
+
+pub mod with_fn {
+
+    use frender_html::RenderStateKind;
+    use frender_ssr::html::assert::HtmlChildren;
+
+    use crate::{FnOutputElement, RefToElementWithFn, ToIterOfToElement};
+
+    pub struct ElementCollectionWithFn<ES, F: for<'a> FnOutputElement<&'a E>, E: ?Sized>(
+        pub ES,
+        pub F,
+    )
+    where
+        for<'a> &'a ES: IntoIterator<Item = &'a E>;
+
+    pub struct IterElementsWithFn<
+        'a,
+        ES: Iterator<Item = &'a E>,
+        FE: FnOutputElement<&'a E>,
+        E: 'a + ?Sized,
+    > {
+        elements: ES,
+        f: &'a FE,
+    }
+
+    impl<'a, ES, FE, E> Iterator for IterElementsWithFn<'a, ES, FE, E>
+    where
+        ES: Iterator<Item = &'a E>,
+        FE: FnOutputElement<&'a E>,
+        E: 'a + ?Sized,
+    {
+        type Item = RefToElementWithFn<'a, E, &'a FE>;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            self.elements.next().map(|e| RefToElementWithFn(e, self.f))
+        }
+
+        fn fold<B, F>(self, init: B, mut f: F) -> B
+        where
+            Self: Sized,
+            F: FnMut(B, Self::Item) -> B,
+        {
+            self.elements
+                .fold(init, |v, e| f(v, RefToElementWithFn(e, self.f)))
+        }
+    }
+
+    impl<
+            ES,
+            E: ?Sized,
+            C: HtmlChildren,
+            K: RenderStateKind,
+            F: for<'a> FnOutputElement<
+                &'a E,
+                OutputElementHtmlChildren = C,
+                OutputElementRenderStateKind = K,
+            >,
+        > ToIterOfToElement for ElementCollectionWithFn<ES, F, E>
+    where
+        for<'a> &'a ES: IntoIterator<Item = &'a E>,
+    {
+        type IterOfToElement<'a> = IterElementsWithFn<'a, <&'a ES as IntoIterator>::IntoIter, F, E>
+        where
+            Self: 'a;
+
+        type IterOfToElementHtmlChildren = C;
+
+        type IterOfToElementRenderStateKind = K;
+
+        fn to_iter_of_to_element(&self) -> Self::IterOfToElement<'_> {
+            IterElementsWithFn {
+                elements: IntoIterator::into_iter(&self.0),
+                f: &self.1,
+            }
+        }
+    }
+}
+
+pub type SyncedElementCollectionWithFn<ES, F> = SyncedElementCollection<
+    with_fn::ElementCollectionWithFn<ES, F, <ES as RefIntoIteratorOfRef>::ItemOfRef>,
+>;
+
+impl<ES, F, E> SyncedElementCollectionWithFn<ES, F>
+where
+    E: ?Sized,
+    F: for<'a> FnOutputElement<&'a E>,
+    for<'a> &'a ES: IntoIterator<Item = &'a E>,
+{
+    pub fn new_with(elements: ES, f: F) -> Self {
+        Self::new(with_fn::ElementCollectionWithFn(elements, f))
+    }
+}
+
+pub type SyncedElementsWithFn<E, F> =
+    SyncedElementCollection<with_fn::ElementCollectionWithFn<Vec<E>, F, E>>;
+
+/// Note that `f` is considered never changed.
+#[allow(non_snake_case)]
+pub fn SyncedElementsWithFn<E, F: for<'a> FnOutputElement<&'a E>>(
+    elements: Vec<E>,
+    f: F,
+) -> SyncedElementsWithFn<E, F> {
+    SyncedElementsWithFn::new_with(elements, f)
 }
