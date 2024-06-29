@@ -8,6 +8,11 @@ mod to_element;
 #[cfg(feature = "ToElement")]
 pub use to_element::{ToElement, ToElementWithFn};
 
+#[cfg(feature = "ToElement")]
+pub use elements::synced_elements::{
+    IteratorOfToElement, SyncedElementCollection, SyncedElements, ToIterOfToElement,
+};
+
 mod empty;
 pub use empty::Empty;
 
