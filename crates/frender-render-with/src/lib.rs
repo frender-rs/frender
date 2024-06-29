@@ -3,8 +3,8 @@
 use std::{any::Any, marker::PhantomData, pin::Pin};
 
 use frender_html::{
-    dom::render::RenderWithContext, impl_unpinned_render_for_unpin, Element, HtmlRenderContext,
-    RenderHtml, RenderState, RenderStateKind, RenderStateKindUnpinned,
+    impl_unpinned_render_for_unpin, Element, HtmlRenderContext, RenderHtml, RenderState,
+    RenderStateKind, RenderStateKindUnpinned,
 };
 use frender_ssr::SsrElement;
 
@@ -103,6 +103,7 @@ impl<'a, Ctx: ?Sized + HtmlRenderContext> CsrRenderContext<'a, Ctx> {
 /// ```
 pub struct Rendered<'a, S>(PhantomData<&'a mut ()>, PhantomData<S>);
 
+#[cfg(not(feature = "nightly"))]
 impl<S> Rendered<'_, S> {
     fn type_check(self, _: PhantomData<S>) {}
 }
@@ -160,48 +161,63 @@ where
 
 #[cfg(feature = "nightly")]
 mod nightly_impl {
+    use frender_html::RenderStateKindPinned;
+
     use super::*;
 
     pub trait NamedIntoFnOnceRenderWithContext: IntoFnOnceRenderWithContext {
-        type RenderedRenderState<R: frender_html::RenderHtml + ?Sized>: DefaultAnyRenderState<R>;
+        // TODO: should not be generic over R
+        type RenderedRenderStateKind<R: frender_html::RenderHtml + ?Sized>: RenderStateKind;
 
         fn _named_into_fn_once_render_with_context_helper<R: frender_html::RenderHtml + ?Sized>(
             self,
-        ) -> PhantomData<Self::RenderedRenderState<R>>;
+        ) -> PhantomData<Self::RenderedRenderStateKind<R>>;
     }
 
     impl<F: IntoFnOnceRenderWithContext> NamedIntoFnOnceRenderWithContext for F {
-        type RenderedRenderState<R: frender_html::RenderHtml + ?Sized> =
-            impl DefaultAnyRenderState<R>;
+        type RenderedRenderStateKind<R: frender_html::RenderHtml + ?Sized> =
+            impl 'static + RenderStateKind;
 
         fn _named_into_fn_once_render_with_context_helper<R: frender_html::RenderHtml + ?Sized>(
             self,
-        ) -> PhantomData<Self::RenderedRenderState<R>> {
-            fn test<Renderer: ?Sized + RenderHtml, S>(
-                _: impl FnOnceRenderWithContext<Renderer, OutputRenderedState = S>,
-            ) -> PhantomData<S> {
+        ) -> PhantomData<Self::RenderedRenderStateKind<R>> {
+            fn test<'a, Renderer: ?Sized + RenderHtml, K>(
+                _: impl FnOnceRenderWithContext<Renderer::RenderContext<'a>, OutputRenderStateKind = K>,
+            ) -> PhantomData<K> {
                 PhantomData
             }
-            test(self.into_fn_once_render_with_context())
+            test::<R, _>(self.into_fn_once_render_with_context::<R::RenderContext<'_>>())
         }
     }
 
-    impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
-        type RenderState<R: frender_html::RenderHtml + ?Sized> =
-            <F as NamedIntoFnOnceRenderWithContext>::RenderedRenderState<R>;
+    enum Never {}
+    pub struct Kind<F: NamedIntoFnOnceRenderWithContext>(Never, PhantomData<F>);
 
-        fn render_update_maybe_reposition<Renderer: frender_html::RenderHtml + ?Sized>(
+    impl<F: NamedIntoFnOnceRenderWithContext> RenderStateKindPinned for Kind<F> {
+        type RenderState<R: RenderHtml + ?Sized> =
+            <F::RenderedRenderStateKind<R> as RenderStateKindUnpinned>::UnpinnedRenderState<R>;
+    }
+
+    impl<F: NamedIntoFnOnceRenderWithContext> RenderStateKindUnpinned for Kind<F> {
+        type UnpinnedRenderState<R: RenderHtml + ?Sized> =
+            <F::RenderedRenderStateKind<R> as RenderStateKindUnpinned>::UnpinnedRenderState<R>;
+    }
+
+    impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
+        type RenderStateKind = Kind<F>;
+
+        fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
             //
             self,
-            renderer: &mut Renderer,
-            render_state: std::pin::Pin<&mut Self::RenderState<Renderer>>,
+            render_context: &mut Ctx,
+            render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
             force_reposition: bool,
         ) {
             let render_state = render_state.get_mut();
 
             let f = self.0.into_fn_once_render_with_context();
             f(CsrRenderContext {
-                renderer,
+                render_context,
                 render_state: render_state as &mut (dyn 'static + Any),
                 force_reposition,
             });
