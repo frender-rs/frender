@@ -13,6 +13,20 @@ pub trait ToElement {
     fn to_element(&self) -> Self::ToElement<'_>;
 }
 
+impl<E: ?Sized + ToElement> ToElement for &E {
+    type ToElementHtmlChildren = E::ToElementHtmlChildren;
+
+    type ToElementRenderStateKind = E::ToElementRenderStateKind;
+
+    type ToElement<'a>= E::ToElement<'a>
+    where
+        Self: 'a;
+
+    fn to_element(&self) -> Self::ToElement<'_> {
+        E::to_element(self)
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct ToElementWithFn<E, F>(pub E, pub F);
 
