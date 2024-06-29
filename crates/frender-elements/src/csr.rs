@@ -104,6 +104,7 @@ pub mod default {
         // the first `key_to_index.len()` states are mounted.
         states: Vec<State<S>>,
         key_to_index: IndexMap<K, ()>,
+        all_state_unmounted: bool,
     }
 
     impl<K: Hash + Eq, S: Default> States<K, S> {
@@ -142,6 +143,7 @@ pub mod default {
             Self {
                 states: Vec::new(),
                 key_to_index: Default::default(),
+                all_state_unmounted: false,
             }
         }
     }
@@ -162,6 +164,8 @@ pub mod default {
                     S::unmount(Pin::new(render_state), renderer);
                 });
 
+            this.all_state_unmounted = true;
+
             // TODO(perf): should we free the memory or reuse it in case mounted again? Currently States<K, S> keeps the allocated memory.
             // We could keep the allocated memory in implementations,
             // and have a wrapper type `DropOnUnmount` which drop the old value and set it to default.
@@ -169,9 +173,10 @@ pub mod default {
 
         fn state_unmount(self: Pin<&mut Self>) {
             let this = self.get_mut();
+            if this.all_state_unmounted {
+                return;
+            }
             let real_len = this.key_to_index.len();
-
-            this.key_to_index.clear();
 
             this.states.iter_mut().take(real_len).for_each(
                 |State {
@@ -185,6 +190,8 @@ pub mod default {
                     }
                 },
             );
+
+            this.all_state_unmounted = true;
         }
 
         fn poll_render(
@@ -193,6 +200,11 @@ pub mod default {
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
             let this = self.get_mut();
+
+            if this.all_state_unmounted {
+                return std::task::Poll::Ready(());
+            }
+
             let real_len = this.key_to_index.len();
 
             let mut res = std::task::Poll::Ready(());
@@ -236,7 +248,10 @@ pub mod default {
             let States {
                 states,
                 key_to_index,
+                all_state_unmounted,
             } = state.get_mut();
+
+            *all_state_unmounted = false;
 
             let elements = keyed_elements.into_iter();
 
@@ -412,6 +427,8 @@ pub mod default {
             state: Pin<&mut Self::CsrState<R>>,
         ) {
             let states = state.get_mut();
+
+            states.all_state_unmounted = false;
 
             let elements = keyed_elements.into_iter();
 
