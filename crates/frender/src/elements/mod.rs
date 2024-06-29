@@ -1,2 +1,2 @@
-#[cfg(feature = "IntoElementa")]
-pub mod elements_synced;
+#[cfg(feature = "ToElement")]
+pub mod synced_elements;
