@@ -344,6 +344,12 @@ impl<T> SyncedCollection<Vec<T>> {
     }
 }
 
+impl<Items: FromIterator<A>, A> FromIterator<A> for SyncedCollection<Items> {
+    fn from_iter<T: IntoIterator<Item = A>>(iter: T) -> Self {
+        Self::new(Items::from_iter(iter))
+    }
+}
+
 mod render_states {
     use std::pin::Pin;
 
