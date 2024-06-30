@@ -30,10 +30,10 @@ impl<E: ?Sized + ToElement> ToElement for &E {
 }
 
 pub mod with {
-    use frender_html::{Element, RenderStateKind};
+    use frender_html::RenderStateKind;
     use frender_ssr::html::assert::HtmlChildren;
 
-    use crate::ToElement;
+    use crate::{FnMapRefToElement, FnOutputElement, ToElement};
 
     #[derive(Debug, Clone, Copy)]
     pub struct ToElementWithFn<E, F>(pub E, pub F);
@@ -49,37 +49,16 @@ pub mod with {
         }
     }
 
-    pub trait FnOutputElement<Arg>: Fn(Arg) -> Self::OutputElement {
-        type OutputElement: Element<
-            HtmlChildren = Self::OutputElementHtmlChildren,
-            RenderStateKind = Self::OutputElementRenderStateKind,
-        >;
-        type OutputElementHtmlChildren: HtmlChildren;
-        type OutputElementRenderStateKind: RenderStateKind;
-    }
-
-    impl<F: ?Sized + Fn(Arg) -> E, Arg, E: Element> FnOutputElement<Arg> for F {
-        type OutputElement = E;
-        type OutputElementHtmlChildren = E::HtmlChildren;
-        type OutputElementRenderStateKind = E::RenderStateKind;
-    }
-
-    impl<E, F, C, K> ToElement for ToElementWithFn<E, F>
+    impl<E, F> ToElement for ToElementWithFn<E, F>
     where
-        C: HtmlChildren,
-        K: RenderStateKind,
-        F: for<'a> FnOutputElement<
-            &'a E,
-            OutputElementHtmlChildren = C,
-            OutputElementRenderStateKind = K,
-        >,
+        F: FnMapRefToElement<E>,
     {
         type ToElement<'a> = <F as FnOutputElement<&'a E>>::OutputElement
         where
             Self: 'a;
 
-        type ToElementHtmlChildren = C;
-        type ToElementRenderStateKind = K;
+        type ToElementHtmlChildren = F::RefToElementHtmlChildren;
+        type ToElementRenderStateKind = F::RefToElementRenderStateKind;
 
         fn to_element(&self) -> Self::ToElement<'_> {
             (self.1)(&self.0)

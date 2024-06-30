@@ -3,10 +3,13 @@ pub mod hooks_ext;
 
 pub mod elements;
 
+mod fn_traits;
+pub use fn_traits::*;
+
 #[cfg(feature = "ToElement")]
 mod to_element;
 #[cfg(feature = "ToElement")]
-pub use to_element::{FnOutputElement, RefToElementWithFn, ToElement, ToElementWithFn};
+pub use to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
 #[cfg(feature = "ToElement")]
 pub use elements::synced_elements::{

@@ -67,9 +67,36 @@ pub mod form_control {
             InputValue, InputValueKind,
         },
     };
-    use hooks::{HookPollNextUpdate, ShareValue, Signal, SignalHook};
+    use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
 
-    use super::element::OptionSignalHook;
+    pub struct OptionSignalHook<SH> {
+        pub(crate) inner: Option<SH>,
+    }
+
+    impl<SH> Default for OptionSignalHook<SH> {
+        fn default() -> Self {
+            Self { inner: None }
+        }
+    }
+
+    hooks::impl_hook!(
+        type For<SH: Unpin + HookUnmount + HookPollNextUpdate> = OptionSignalHook<SH>;
+
+        fn unmount(self) {
+            if let Some(ref mut inner) = self.get_mut().inner {
+                Pin::new(inner).unmount()
+            }
+        }
+
+        // TODO: remove
+        fn poll_next_update(self, cx: _) {
+            if let Some(ref mut inner) = self.get_mut().inner {
+                Pin::new(inner).poll_next_update(cx)
+            } else {
+                std::task::Poll::Ready(false)
+            }
+        }
+    );
 
     #[derive(Debug, Clone, Copy)]
     pub struct SignalIntoControlledValue<S>(pub S);
@@ -243,7 +270,7 @@ pub mod form_control {
             E: frender_html::form_control::element::FormControlElement<VK, R> + ?Sized,
             R: ?Sized,
         > = frender_hook_element::state::State<
-            super::element::OptionSignalHook<S::SignalHook>,
+            OptionSignalHook<S::SignalHook>,
             NonReactiveRenderState<E::OnValueChangeEventListener<Self>>,
             UpdateFormControlElement<VK>,
         >;
@@ -294,64 +321,139 @@ pub mod element {
 
     use frender_html::{
         dom::behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
-        Element, RenderHtml, RenderStateKindPinned, RenderStateKindUnpinned, RenderStateOfContext,
+        Element, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
+        RenderStateOfContext,
     };
+    use frender_ssr::html::assert::HtmlChildren;
     use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
 
-    use crate::ToElement;
+    use crate::{FnMutMapRefToElement, FnMutOutputElement, ToElement};
+
+    pub trait MapToElement<V: ?Sized> {
+        type RefToElement<'a>: Element<
+            RenderStateKind = Self::RefToElementRenderStateKind,
+            HtmlChildren = Self::RefToElementHtmlChildren,
+        >
+        where
+            V: 'a;
+
+        type RefToElementHtmlChildren: HtmlChildren;
+        type RefToElementRenderStateKind: RenderStateKind;
+        fn map_to_element<'a>(&mut self, v: &'a V) -> Self::RefToElement<'a>;
+    }
 
     #[derive(Debug, Clone, Copy)]
-    pub struct SignalIntoElement<S: ShareValue>(pub S);
+    pub struct WithToElement;
+
+    impl<V: ?Sized + ToElement> MapToElement<V> for WithToElement {
+        type RefToElement<'a> = V::ToElement<'a>
+        where
+            V: 'a;
+
+        type RefToElementHtmlChildren = V::ToElementHtmlChildren;
+        type RefToElementRenderStateKind = V::ToElementRenderStateKind;
+
+        fn map_to_element<'a>(&mut self, v: &'a V) -> Self::RefToElement<'a> {
+            v.to_element()
+        }
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct WithFn<F>(pub F);
+
+    impl<V, F> MapToElement<V> for WithFn<F>
+    where
+        V: ?Sized,
+        F: FnMutMapRefToElement<V>,
+    {
+        type RefToElement<'a> = <F as FnMutOutputElement<&'a V>>::OutputElement
+        where
+            V: 'a;
+
+        type RefToElementHtmlChildren = F::RefToElementHtmlChildren;
+        type RefToElementRenderStateKind = F::RefToElementRenderStateKind;
+
+        fn map_to_element<'a>(&mut self, v: &'a V) -> Self::RefToElement<'a> {
+            (self.0)(v)
+        }
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct SignalIntoElement<S: ShareValue, F: MapToElement<S::Value> = WithToElement>(
+        pub S,
+        pub F,
+    );
 
     mod ssr {
         use super::*;
 
-        impl<S: ShareValue> frender_ssr::SsrElement for SignalIntoElement<S>
+        impl<S: ShareValue, F> frender_ssr::SsrElement for SignalIntoElement<S, F>
         where
-            S::Value: ToElement,
+            F: MapToElement<S::Value>,
         {
-            type HtmlChildren = <S::Value as ToElement>::ToElementHtmlChildren;
+            type HtmlChildren = F::RefToElementHtmlChildren;
 
-            fn into_html_children(self) -> Self::HtmlChildren {
-                self.0.map(|s| s.to_element().into_html_children())
+            fn into_html_children(mut self) -> Self::HtmlChildren {
+                self.0
+                    .map(|s| self.1.map_to_element(s).into_html_children())
+            }
+        }
+    }
+
+    pub struct OptionSignalHookAndMapToElement<SH, F> {
+        inner: Option<(SH, F)>,
+    }
+
+    impl<SH, F> Unpin for OptionSignalHookAndMapToElement<SH, F> {}
+
+    impl<SH, F> Default for OptionSignalHookAndMapToElement<SH, F> {
+        fn default() -> Self {
+            Self { inner: None }
+        }
+    }
+
+    impl<SH: HookUnmount + Unpin, F> HookUnmount for OptionSignalHookAndMapToElement<SH, F> {
+        fn unmount(self: Pin<&mut Self>) {
+            if let Some((signal_hook, _)) = &mut self.get_mut().inner {
+                SH::unmount(Pin::new(signal_hook))
             }
         }
     }
 
     enum Never {}
-    pub struct Kind<SH>(Never, std::marker::PhantomData<SH>)
+    pub struct Kind<SH, F>(Never, std::marker::PhantomData<(SH, F)>)
     where
         SH: Unpin + SignalHook,
-        SH::SignalShareValue: ToElement;
+        F: MapToElement<SH::SignalShareValue>;
 
     type CursorPlaceholderWithRenderState<C, S> =
         frender_hook_element::state::CursorPlaceholderWithRenderState<C, (), S>;
 
-    impl<SH> RenderStateKindUnpinned for Kind<SH>
+    impl<SH, F> RenderStateKindUnpinned for Kind<SH, F>
     where
         SH: Unpin + SignalHook,
-        SH::SignalShareValue: ToElement,
+        F: MapToElement<SH::SignalShareValue>,
     {
         type UnpinnedRenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
-            OptionSignalHook<SH>,
+            OptionSignalHookAndMapToElement<SH, F>,
             CursorPlaceholderWithRenderState<
                 R::CursorPlaceholder,
-                UnpinnedRenderStateOfToElement<SH::SignalShareValue, R>,
+                UnpinnedRenderStateOfMapToElement<F, SH::SignalShareValue, R>,
             >,
             SignalHookToElement<RenderUpdateToElementWithUnpinnedState>,
         >;
     }
 
-    impl<SH> RenderStateKindPinned for Kind<SH>
+    impl<SH, F> RenderStateKindPinned for Kind<SH, F>
     where
         SH: Unpin + SignalHook,
-        SH::SignalShareValue: ToElement,
+        F: MapToElement<SH::SignalShareValue>,
     {
         type RenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
-            OptionSignalHook<SH>,
+            OptionSignalHookAndMapToElement<SH, F>,
             CursorPlaceholderWithRenderState<
                 R::CursorPlaceholder,
-                RenderStateOfToElement<SH::SignalShareValue, R>,
+                RenderStateOfMapToElement<F, SH::SignalShareValue, R>,
             >,
             SignalHookToElement<RenderUpdateToElementWithPinnedState>,
         >;
@@ -369,40 +471,35 @@ pub mod element {
         }
     }
 
-    pub struct CursorPlaceholderRender<
-        'a,
+    pub struct CursorPlaceholderRender<'a, R, SH, F, U>
+    where
         R: ?Sized + RenderHtml,
         SH: SignalHook,
-        U: RenderUpdateToElement<R, SH::SignalShareValue>,
-    >
-    where
-        SH::SignalShareValue: ToElement,
+        F: ?Sized,
+        U: RenderUpdateMapToElement<R, F, SH::SignalShareValue>,
     {
         renderer: &'a mut R,
         cursor_placeholder: &'a mut R::CursorPlaceholder,
         render_state: Pin<&'a mut U::State>,
         signal_hook: Pin<&'a mut SH>,
+        f: &'a mut F,
     }
 
-    impl<
-            'a,
-            R: ?Sized + RenderHtml,
-            SH: SignalHook,
-            U: RenderUpdateToElement<R, SH::SignalShareValue>,
-        > Unpin for CursorPlaceholderRender<'a, R, SH, U>
+    impl<'a, R, SH, F, U> Unpin for CursorPlaceholderRender<'a, R, SH, F, U>
     where
-        SH::SignalShareValue: ToElement,
+        R: ?Sized + RenderHtml,
+        SH: SignalHook,
+        F: ?Sized,
+        U: RenderUpdateMapToElement<R, F, SH::SignalShareValue>,
     {
     }
 
-    impl<
-            'a,
-            R: ?Sized + RenderHtml,
-            SH: SignalHook,
-            U: RenderUpdateToElement<R, SH::SignalShareValue>,
-        > HookPollNextUpdate for CursorPlaceholderRender<'a, R, SH, U>
+    impl<'a, R, SH, F, U> HookPollNextUpdate for CursorPlaceholderRender<'a, R, SH, F, U>
     where
-        SH::SignalShareValue: ToElement,
+        R: ?Sized + RenderHtml,
+        SH: SignalHook,
+        F: ?Sized,
+        U: RenderUpdateMapToElement<R, F, SH::SignalShareValue>,
     {
         fn poll_next_update(self: Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<bool> {
             let Self {
@@ -410,6 +507,7 @@ pub mod element {
                 cursor_placeholder,
                 render_state,
                 signal_hook,
+                f,
             } = self.get_mut();
 
             let render_state = render_state.as_mut();
@@ -422,7 +520,7 @@ pub mod element {
                         cursor_placeholder.with_render_context_after_self(
                             renderer,
                             |render_context| {
-                                U::render_update_to_element(el, render_context, render_state)
+                                U::render_update_to_element(f, el, render_context, render_state)
                             },
                         )
                     });
@@ -435,72 +533,80 @@ pub mod element {
 
     pub enum RenderUpdateToElementWithPinnedState {}
 
-    impl<R: ?Sized + RenderHtml, V: ?Sized + ToElement> RenderUpdateToElement<R, V>
-        for RenderUpdateToElementWithPinnedState
+    impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MapToElement<V>>
+        RenderUpdateMapToElement<R, F, V> for RenderUpdateToElementWithPinnedState
     {
-        type State = RenderStateOfToElement<V, R>;
+        type State = RenderStateOfMapToElement<F, V, R>;
         fn render_update_to_element(
+            f: &mut F,
             el: &V,
             render_context: &mut <R>::RenderContext<'_>,
             render_state: Pin<&mut Self::State>,
         ) {
-            el.to_element().render_update(render_context, render_state)
+            f.map_to_element(el)
+                .render_update(render_context, render_state)
         }
     }
 
     pub enum RenderUpdateToElementWithUnpinnedState {}
 
-    impl<R: ?Sized + RenderHtml, V: ?Sized + ToElement> RenderUpdateToElement<R, V>
-        for RenderUpdateToElementWithUnpinnedState
+    impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MapToElement<V>>
+        RenderUpdateMapToElement<R, F, V> for RenderUpdateToElementWithUnpinnedState
     {
-        type State = UnpinnedRenderStateOfToElement<V, R>;
+        type State = UnpinnedRenderStateOfMapToElement<F, V, R>;
         fn render_update_to_element(
+            f: &mut F,
             el: &V,
             render_context: &mut <R>::RenderContext<'_>,
             render_state: Pin<&mut Self::State>,
         ) {
-            el.to_element()
+            f.map_to_element(el)
                 .unpinned_render_update(render_context, render_state.get_mut())
         }
     }
 
-    pub trait RenderUpdateToElement<R: ?Sized + RenderHtml, V: ?Sized + ToElement> {
+    pub trait RenderUpdateMapToElement<R: ?Sized + RenderHtml, F: ?Sized, V: ?Sized> {
         type State: RenderState<R>;
 
         fn render_update_to_element(
+            f: &mut F,
             el: &V,
             render_context: &mut R::RenderContext<'_>,
             render_state: Pin<&mut Self::State>,
         );
     }
 
-    type RenderStateOfToElement<E, R> =
-        <<E as ToElement>::ToElementRenderStateKind as RenderStateKindPinned>::RenderState<R>;
-    type UnpinnedRenderStateOfToElement<E, R> =
-        <<E as ToElement>::ToElementRenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<R>;
+    type RenderStateOfMapToElement<F, E, R> =
+        <<F as MapToElement<E>>::RefToElementRenderStateKind as RenderStateKindPinned>::RenderState<
+            R,
+        >;
+    type UnpinnedRenderStateOfMapToElement<F, E, R> =
+        <<F as MapToElement<E>>::RefToElementRenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
+            R
+        >;
 
-    impl<R, SH, U>
+    impl<R, SH, F, U>
         MaybeIntoPollNextUpdate<
             R,
-            OptionSignalHook<SH>,
+            OptionSignalHookAndMapToElement<SH, F>,
             CursorPlaceholderWithRenderState<R::CursorPlaceholder, U::State>,
         > for SignalHookToElement<U>
     where
         R: ?Sized + RenderHtml,
         SH: SignalHook + Unpin,
-        SH::SignalShareValue: ToElement,
-        U: RenderUpdateToElement<R, SH::SignalShareValue>,
+        U: RenderUpdateMapToElement<R, F, SH::SignalShareValue>,
     {
-        type IntoPollNextUpdate<'a> = CursorPlaceholderRender<'a, R, SH, U>
+        type IntoPollNextUpdate<'a> = CursorPlaceholderRender<'a, R, SH, F, U>
         where
             Self: 'a,
             R: 'a,
-            SH: 'a;
+            SH: 'a,
+            F:'a;
 
         fn maybe_into_poll_next_update<'a>(
             self: Pin<&'a mut Self>,
             renderer: &'a mut R,
-            hook_data: Pin<&'a mut OptionSignalHook<SH>>,
+            hook_data: Pin<&'a mut OptionSignalHookAndMapToElement<SH, F>>,
             render_state: Pin<
                 &'a mut CursorPlaceholderWithRenderState<R::CursorPlaceholder, U::State>,
             >,
@@ -510,12 +616,13 @@ pub mod element {
                 &mut hook_data.get_mut().inner,
                 render_state.cursor_placeholder_and_data,
             ) {
-                (Some(signal_hook), Some((cursor_placeholder, ()))) => {
+                (Some((signal_hook, f)), Some((cursor_placeholder, ()))) => {
                     Some(CursorPlaceholderRender {
                         renderer,
                         cursor_placeholder,
                         render_state: render_state.render_state,
                         signal_hook: Pin::new(signal_hook),
+                        f,
                     })
                 }
                 _ => None,
@@ -523,40 +630,12 @@ pub mod element {
         }
     }
 
-    pub struct OptionSignalHook<SH> {
-        pub(crate) inner: Option<SH>,
-    }
-
-    impl<SH> Default for OptionSignalHook<SH> {
-        fn default() -> Self {
-            Self { inner: None }
-        }
-    }
-
-    hooks::impl_hook!(
-        type For<SH: Unpin + HookUnmount + HookPollNextUpdate> = OptionSignalHook<SH>;
-
-        fn unmount(self) {
-            if let Some(ref mut inner) = self.get_mut().inner {
-                Pin::new(inner).unmount()
-            }
-        }
-
-        fn poll_next_update(self, cx: _) {
-            if let Some(ref mut inner) = self.get_mut().inner {
-                Pin::new(inner).poll_next_update(cx)
-            } else {
-                std::task::Poll::Ready(false)
-            }
-        }
-    );
-
-    impl<S: Signal> frender_html::Element for SignalIntoElement<S>
+    impl<S: Signal, F> frender_html::Element for SignalIntoElement<S, F>
     where
         S::SignalHook: Unpin,
-        <S as ShareValue>::Value: ToElement,
+        F: MapToElement<<S as ShareValue>::Value>,
     {
-        type RenderStateKind = Kind<S::SignalHook>;
+        type RenderStateKind = Kind<S::SignalHook, F>;
 
         fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
             //
@@ -595,20 +674,21 @@ pub mod element {
             }
 
             match &mut hook_data.get_mut().inner {
-                Some(signal_hook) if self.0.is_signal_of(signal_hook) => {
+                Some((signal_hook, _)) if self.0.is_signal_of(signal_hook) => {
                     // signal hasn't changed. no need to update
                 }
                 signal_hook => {
                     // new signal
                     // force_reposition = true;
+                    let mut f = self.1;
                     self.0.map(|el| {
-                        el.to_element().render_update_maybe_reposition(
+                        f.map_to_element(el).render_update_maybe_reposition(
                             render_context,
                             render_state,
                             force_reposition,
                         )
                     });
-                    *signal_hook = Some(self.0.to_signal_hook())
+                    *signal_hook = Some((self.0.to_signal_hook(), f))
                 }
             }
         }
@@ -655,20 +735,22 @@ pub mod element {
             }
 
             match &mut hook_data.inner {
-                Some(signal_hook) if self.0.is_signal_of(signal_hook) => {
+                Some((signal_hook, _)) if self.0.is_signal_of(signal_hook) => {
                     // signal hasn't changed. no need to update
                 }
                 signal_hook => {
                     // new signal
                     // force_reposition = true;
+                    let mut f = self.1;
                     self.0.map(|el| {
-                        el.to_element().unpinned_render_update_maybe_reposition(
-                            render_context,
-                            render_state,
-                            force_reposition,
-                        )
+                        f.map_to_element(el)
+                            .unpinned_render_update_maybe_reposition(
+                                render_context,
+                                render_state,
+                                force_reposition,
+                            )
                     });
-                    *signal_hook = Some(self.0.to_signal_hook())
+                    *signal_hook = Some((self.0.to_signal_hook(), f))
                 }
             }
         }
@@ -741,15 +823,37 @@ pub trait ShareValueExt: ShareValue {
     fn into_element(self) -> element::SignalIntoElement<Self>
     where
         Self: Sized,
+        Self::Value: crate::ToElement, // TODO: relax to ToSsrElement
     {
-        element::SignalIntoElement(self)
+        element::SignalIntoElement(self, element::WithToElement)
     }
 
     fn to_element(&self) -> element::SignalIntoElement<Self::OwnedShareValue>
     where
         Self: Sized + ToOwnedShareValue,
+        Self::Value: crate::ToElement, // TODO: relax to ToSsrElement
     {
         self.to_owned_share_value().into_element()
+    }
+
+    /// Note that f is considered non reactive
+    fn into_element_with_fn<F>(self, f: F) -> element::SignalIntoElement<Self, element::WithFn<F>>
+    where
+        Self: Sized,
+        F: crate::FnMutMapRefToElement<Self::Value>,
+    {
+        element::SignalIntoElement(self, element::WithFn(f))
+    }
+
+    fn to_element_with_fn<F>(
+        &self,
+        f: F,
+    ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithFn<F>>
+    where
+        Self: Sized + ToOwnedShareValue,
+        F: crate::FnMutMapRefToElement<Self::Value>,
+    {
+        self.to_owned_share_value().into_element_with_fn(f)
     }
 
     fn into_callback_toggle(self) -> callback::Toggle<Self>
