@@ -781,11 +781,7 @@ where
         Self: 'a;
 
     fn to_element(&self) -> Self::ToElement<'_> {
-        SyncedElementsToElement {
-            all_states: &self.all_states,
-            elements: IntoIterator::into_iter(&self.elements),
-            f: to_element::MapItemWithToElement,
-        }
+        self.to_element_with(to_element::MapItemWithToElement)
     }
 
     type ToElementHtmlChildren =
@@ -799,4 +795,32 @@ pub type SyncedElements<E> = SyncedElementCollection<Vec<E>>;
 #[allow(non_snake_case)]
 pub fn SyncedElements<E: ToElement>(elements: Vec<E>) -> SyncedElementCollection<Vec<E>> {
     SyncedElementCollection::new(elements)
+}
+
+impl<ES> SyncedElementCollection<ES>
+where
+    for<'a> &'a ES: IntoIterator,
+{
+    #[inline(always)]
+    fn to_element_with<'a, F: to_element::MapItemToElement<<&'a ES as IntoIterator>::Item>>(
+        &'a self,
+        f: F,
+    ) -> SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
+        SyncedElementsToElement {
+            all_states: &self.all_states,
+            elements: IntoIterator::into_iter(&self.elements),
+            f,
+        }
+    }
+
+    pub fn to_element_with_fn<
+        'a,
+        E: crate::Element,
+        F: FnMut(<&'a ES as IntoIterator>::Item) -> E,
+    >(
+        &'a self,
+        f: F,
+    ) -> SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
+        self.to_element_with(f)
+    }
 }
