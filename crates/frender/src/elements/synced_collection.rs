@@ -255,6 +255,7 @@ like_vec!(
     type Item = E;
 
     trait StatesLikeVec {
+        fn clear(&mut self);
         fn swap(&mut self, a: usize, b: usize);
         fn remove(&mut self, index: usize) -> E;
         fn swap_remove(&mut self, index: usize) -> E;
@@ -400,6 +401,10 @@ mod render_states {
     }
 
     impl<S> StatesLikeVec for RenderStates<S> {
+        fn clear(&mut self) {
+            self.ready_to_unmount_count = self.states.len();
+        }
+
         fn swap(&mut self, a: usize, b: usize) {
             let states = self.states_mut();
 
