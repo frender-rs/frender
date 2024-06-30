@@ -294,172 +294,187 @@ impl<ES: IndexMut<usize>> IndexMut<usize> for SyncedCollection<ES> {
     }
 }
 
-enum MountState {
-    MountedAndUpToDate,
-    Outdated,
-    OutdatedAndMoved,
-    // UpdateToDateButMoved,
-}
+mod render_states {
+    use std::pin::Pin;
 
-impl MountState {
-    fn mark_as_moved(&mut self) {
-        *self = Self::OutdatedAndMoved
+    use frender_csr::RenderState;
+
+    use super::{StatesLikeVec, StatesMarkIndexAsUpdated};
+
+    pub(super) enum MountState {
+        MountedAndUpToDate,
+        Outdated,
+        OutdatedAndMoved,
+        // UpdateToDateButMoved,
     }
 
-    fn mark_as_outdated(&mut self) {
-        *self = match self {
-            MountState::MountedAndUpToDate => Self::Outdated,
-            MountState::Outdated => Self::Outdated,
-            MountState::OutdatedAndMoved => MountState::OutdatedAndMoved,
+    impl MountState {
+        fn mark_as_moved(&mut self) {
+            *self = Self::OutdatedAndMoved
+        }
+
+        fn mark_as_outdated(&mut self) {
+            *self = match self {
+                MountState::MountedAndUpToDate => Self::Outdated,
+                MountState::Outdated => Self::Outdated,
+                MountState::OutdatedAndMoved => MountState::OutdatedAndMoved,
+            }
         }
     }
-}
 
-struct Stated<S> {
-    render_state: S,
-    mount_state: MountState,
-}
-
-struct RenderStates<S> {
-    states: Vec<Stated<S>>,
-    // last `ready_to_unmount_count` states should be unmounted on next render_update
-    ready_to_unmount_count: usize,
-}
-
-impl<S> RenderStates<S> {
-    fn real_len(&self) -> usize {
-        self.states.len() - self.ready_to_unmount_count
+    pub(super) struct Stated<S> {
+        pub(super) render_state: S,
+        pub(super) mount_state: MountState,
     }
-    fn states_mut(&mut self) -> &mut [Stated<S>] {
-        let real_len = self.real_len();
-        &mut self.states[..real_len]
+
+    pub(super) struct RenderStates<S> {
+        pub(super) states: Vec<Stated<S>>,
+        // last `ready_to_unmount_count` states should be unmounted on next render_update
+        pub(super) ready_to_unmount_count: usize,
     }
-    fn clean<R: ?Sized>(&mut self, renderer: &mut R) -> &mut Vec<Stated<S>>
-    where
-        S: RenderState<R> + Unpin,
-    {
-        if self.ready_to_unmount_count > 0 {
+
+    impl<S> RenderStates<S> {
+        pub(super) fn real_len(&self) -> usize {
+            self.states.len() - self.ready_to_unmount_count
+        }
+        fn states_mut(&mut self) -> &mut [Stated<S>] {
             let real_len = self.real_len();
-            self.states[real_len..]
-                .iter_mut()
-                .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
-            self.states.truncate(real_len);
-            self.ready_to_unmount_count = 0;
+            &mut self.states[..real_len]
         }
-        &mut self.states
-    }
-}
-
-impl<S> StatesLikeVec for RenderStates<S> {
-    fn swap(&mut self, a: usize, b: usize) {
-        let states = self.states_mut();
-
-        states.swap(a, b);
-        states[a].mount_state.mark_as_moved();
-        states[b].mount_state.mark_as_moved();
-    }
-
-    fn remove(&mut self, index: usize) {
-        // not real remove
-        self.states_mut()[index..].rotate_left(1);
-        self.ready_to_unmount_count += 1;
-    }
-
-    fn swap_remove(&mut self, index: usize) {
-        // not real remove
-        let states = self.states_mut();
-        states.swap(index, states.len() - 1);
-        states[index].mount_state.mark_as_moved();
-        self.ready_to_unmount_count += 1;
-    }
-}
-
-impl<S> StatesMarkIndexAsUpdated for RenderStates<S> {
-    fn mark_index_as_updated(&mut self, i: usize) {
-        self.states_mut()[i].mount_state.mark_as_outdated()
-    }
-}
-
-impl<S> Default for RenderStates<S> {
-    fn default() -> Self {
-        Self {
-            states: Vec::new(),
-            ready_to_unmount_count: 0,
-        }
-    }
-}
-
-pub struct State<S> {
-    render_states: Option<RcWithKey<RefCell<RenderStates<S>>>>,
-    state_unmounted: bool,
-}
-
-impl<S> Default for State<S> {
-    fn default() -> Self {
-        Self {
-            render_states: None,
-            state_unmounted: false,
-        }
-    }
-}
-
-impl<S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for State<S> {
-    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-        let this = self.get_mut();
-        if let Some(render_states) = &mut this.render_states {
-            render_states
-                .borrow_mut()
-                .states
-                .iter_mut()
-                .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
-        }
-
-        *this = Default::default();
-    }
-
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {
-        let this = self.get_mut();
-
-        if this.state_unmounted {
-            return;
-        }
-
-        if let Some(render_states) = &mut this.render_states {
-            render_states
-                .borrow_mut()
-                .states
-                .iter_mut()
-                .for_each(|state| S::state_unmount(Pin::new(&mut state.render_state)));
-            this.state_unmounted = true;
+        pub(super) fn clean<R: ?Sized>(&mut self, renderer: &mut R) -> &mut Vec<Stated<S>>
+        where
+            S: RenderState<R> + Unpin,
+        {
+            if self.ready_to_unmount_count > 0 {
+                let real_len = self.real_len();
+                self.states[real_len..]
+                    .iter_mut()
+                    .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
+                self.states.truncate(real_len);
+                self.ready_to_unmount_count = 0;
+            }
+            &mut self.states
         }
     }
 
-    fn poll_render(
-        self: std::pin::Pin<&mut Self>,
-        renderer: &mut R,
-        cx: &mut std::task::Context<'_>,
-    ) -> Poll<()> {
-        match self.get_mut() {
+    impl<S> StatesLikeVec for RenderStates<S> {
+        fn swap(&mut self, a: usize, b: usize) {
+            let states = self.states_mut();
+
+            states.swap(a, b);
+            states[a].mount_state.mark_as_moved();
+            states[b].mount_state.mark_as_moved();
+        }
+
+        fn remove(&mut self, index: usize) {
+            // not real remove
+            self.states_mut()[index..].rotate_left(1);
+            self.ready_to_unmount_count += 1;
+        }
+
+        fn swap_remove(&mut self, index: usize) {
+            // not real remove
+            let states = self.states_mut();
+            states.swap(index, states.len() - 1);
+            states[index].mount_state.mark_as_moved();
+            self.ready_to_unmount_count += 1;
+        }
+    }
+
+    impl<S> StatesMarkIndexAsUpdated for RenderStates<S> {
+        fn mark_index_as_updated(&mut self, i: usize) {
+            self.states_mut()[i].mount_state.mark_as_outdated()
+        }
+    }
+
+    impl<S> Default for RenderStates<S> {
+        fn default() -> Self {
             Self {
-                render_states: Some(render_states),
-                state_unmounted: false,
-            } => render_states
-                .borrow_mut()
-                // on poll_render, if !state_unmounted, ready_to_unmount states are unmounted
-                .clean(renderer)
-                .iter_mut()
-                .fold(Poll::Ready(()), |res, state| {
-                    match S::poll_render(Pin::new(&mut state.render_state), renderer, cx) {
-                        Poll::Ready(()) => res,
-                        Poll::Pending => Poll::Pending,
-                    }
-                }),
-            _ => Poll::Ready(()),
+                states: Vec::new(),
+                ready_to_unmount_count: 0,
+            }
         }
     }
 }
 
-#[cfg(feature = "ToElement")]
+mod state {
+    use std::{cell::RefCell, pin::Pin, task::Poll};
+
+    use frender_csr::RenderState;
+
+    use super::{render_states::RenderStates, RcWithKey};
+
+    pub struct State<S> {
+        pub(super) render_states: Option<RcWithKey<RefCell<RenderStates<S>>>>,
+        pub(super) state_unmounted: bool,
+    }
+
+    impl<S> Default for State<S> {
+        fn default() -> Self {
+            Self {
+                render_states: None,
+                state_unmounted: false,
+            }
+        }
+    }
+
+    impl<S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for State<S> {
+        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
+            let this = self.get_mut();
+            if let Some(render_states) = &mut this.render_states {
+                render_states
+                    .borrow_mut()
+                    .states
+                    .iter_mut()
+                    .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
+            }
+
+            *this = Default::default();
+        }
+
+        fn state_unmount(self: std::pin::Pin<&mut Self>) {
+            let this = self.get_mut();
+
+            if this.state_unmounted {
+                return;
+            }
+
+            if let Some(render_states) = &mut this.render_states {
+                render_states
+                    .borrow_mut()
+                    .states
+                    .iter_mut()
+                    .for_each(|state| S::state_unmount(Pin::new(&mut state.render_state)));
+                this.state_unmounted = true;
+            }
+        }
+
+        fn poll_render(
+            self: std::pin::Pin<&mut Self>,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> Poll<()> {
+            match self.get_mut() {
+                Self {
+                    render_states: Some(render_states),
+                    state_unmounted: false,
+                } => render_states
+                    .borrow_mut()
+                    // on poll_render, if !state_unmounted, ready_to_unmount states are unmounted
+                    .clean(renderer)
+                    .iter_mut()
+                    .fold(Poll::Ready(()), |res, state| {
+                        match S::poll_render(Pin::new(&mut state.render_state), renderer, cx) {
+                            Poll::Ready(()) => res,
+                            Poll::Pending => Poll::Pending,
+                        }
+                    }),
+                _ => Poll::Ready(()),
+            }
+        }
+    }
+}
+
 mod to_element {
     use std::cell::RefCell;
 
@@ -538,7 +553,10 @@ mod to_element {
         use crate::elements::synced_collection::weak_vec1::{self, RcWithKey};
 
         use super::{
-            super::{MountState, RenderStates, State, Stated},
+            super::{
+                render_states::{MountState, RenderStates, Stated},
+                state::State,
+            },
             MapItemToElement, SyncedCollectionToElement,
         };
 
