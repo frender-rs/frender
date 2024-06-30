@@ -12,7 +12,7 @@ use std::{
 use frender_csr::RenderState;
 use frender_html::RenderStateKind;
 
-use crate::{FnOutputElement, ToElement};
+use crate::{hooks_ext::element::WithToElement, FnOutputElement, ToElement};
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
@@ -463,27 +463,67 @@ impl<S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for State<S> {
 }
 
 mod to_element {
-    pub struct SyncedElementsToElement<'a, ES>(pub(crate) &'a super::SyncedElementCollection<ES>);
+    use std::cell::RefCell;
+
+    use frender_html::Element;
+
+    use crate::{FnMutOutputElement, ToElement};
+
+    use super::AllStates;
+
+    pub trait MapItemToElement<Item> {
+        type ItemToElement: Element;
+        fn map_item_to_element(&mut self, item: Item) -> Self::ItemToElement;
+    }
+
+    impl<F, Item, E: Element> MapItemToElement<Item> for F
+    where
+        F: FnMut(Item) -> E,
+    {
+        type ItemToElement = E;
+
+        #[inline(always)]
+        fn map_item_to_element(&mut self, item: Item) -> Self::ItemToElement {
+            self(item)
+        }
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    pub struct MapItemWithToElement;
+
+    impl<'a, Item: ToElement> MapItemToElement<&'a Item> for MapItemWithToElement {
+        type ItemToElement = Item::ToElement<'a>;
+        fn map_item_to_element(&mut self, item: &'a Item) -> Self::ItemToElement {
+            item.to_element()
+        }
+    }
+
+    pub struct SyncedElementsToElement<
+        'a,
+        ES: Iterator,
+        F: MapItemToElement<ES::Item> = MapItemWithToElement,
+    > {
+        pub(crate) all_states: &'a RefCell<AllStates>,
+        pub(crate) elements: ES,
+        pub(crate) f: F,
+    }
 
     mod ssr {
         use frender_ssr::SsrElement;
 
-        use crate::{elements::synced_elements::ToIterOfToElement, ToElement};
+        use super::{MapItemToElement, SyncedElementsToElement};
 
-        use super::SyncedElementsToElement;
-
-        impl<'a, ES> SsrElement for SyncedElementsToElement<'a, ES>
-        where
-            ES: ToIterOfToElement,
+        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SsrElement
+            for SyncedElementsToElement<'a, ES, F>
         {
-            type HtmlChildren =
-                async_str_iter::flat::Flat<std::vec::IntoIter<ES::IterOfToElementHtmlChildren>>;
+            type HtmlChildren = async_str_iter::flat::Flat<
+                std::vec::IntoIter<<F::ItemToElement as SsrElement>::HtmlChildren>,
+            >;
 
-            fn into_html_children(self) -> Self::HtmlChildren {
+            fn into_html_children(mut self) -> Self::HtmlChildren {
                 let children = self
-                    .0
-                    .to_iter_of_to_element()
-                    .map(|el| el.to_element().into_html_children())
+                    .elements
+                    .map(|el| self.f.map_item_to_element(el).into_html_children())
                     .collect::<Vec<_>>();
                 async_str_iter::flat::Flat::new(children.into_iter())
             }
@@ -499,12 +539,12 @@ mod to_element {
 
         use crate::{
             elements::synced_elements::weak_vec1::{self, RcWithKey},
-            ToElement, ToIterOfToElement,
+            FnMutOutputElement, ToElement,
         };
 
         use super::{
             super::{MountState, RenderStates, State, Stated},
-            SyncedElementsToElement,
+            MapItemToElement, SyncedElementsToElement,
         };
 
         enum Never {}
@@ -520,13 +560,12 @@ mod to_element {
                 State<K::UnpinnedRenderState<R>>;
         }
 
-        impl<'a, ES: 'a> Element for SyncedElementsToElement<'a, ES>
+        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> Element for SyncedElementsToElement<'a, ES, F>
         where
-            ES: ToIterOfToElement,
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            ES::IterOfToElementRenderStateKind: 'static,
+            <F::ItemToElement as Element>::RenderStateKind: 'static,
         {
-            type RenderStateKind = Kind<ES::IterOfToElementRenderStateKind>;
+            type RenderStateKind = Kind<<F::ItemToElement as Element>::RenderStateKind>;
 
             fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
                 //
@@ -551,109 +590,124 @@ mod to_element {
                 self,
                 render_context: &mut Ctx,
                 render_state: &mut State<
-                    UnpinnedRenderStateOfContext<ES::IterOfToElementRenderStateKind, Ctx>,
+                    UnpinnedRenderStateOfContext<
+                        <F::ItemToElement as Element>::RenderStateKind,
+                        Ctx,
+                    >,
                 >,
                 force_reposition: bool,
             ) {
-                let rc_with_old_key =
-                    if let Some(render_states) = &mut render_state.render_states {
-                        if self.0.all_states.borrow().0.contains(&*render_states) {
-                            // render_states is up-to-date as of it's order and count
-                            let render_states = &mut *render_states.borrow_mut();
-                            let render_states = render_states.clean(render_context.renderer_mut());
+                let rc_with_old_key = if let Some(render_states) = &mut render_state.render_states {
+                    if self.all_states.borrow().0.contains(&*render_states) {
+                        // render_states is up-to-date as of it's order and count
+                        let render_states = &mut *render_states.borrow_mut();
+                        let render_states = render_states.clean(render_context.renderer_mut());
 
-                            let mut render_states = render_states.iter_mut();
-                            let mut elements = self.0.elements.to_iter_of_to_element();
+                        let mut render_states = render_states.iter_mut();
+                        let mut elements = self.elements;
+                        let mut f = self.f;
 
-                            let zip = render_states.by_ref().zip(elements.by_ref());
+                        let zip = render_states.by_ref().zip(elements.by_ref());
 
-                            if force_reposition {
-                                zip.for_each(|(render_state, el)| {
-                                    unpinned_render_update_force_reposition(
-                                        el,
-                                        render_context,
-                                        render_state,
-                                    )
-                                })
-                            } else {
-                                zip.for_each(|(render_state, el)| {
-                                    unpinned_render_update(el, render_context, render_state)
-                                })
-                            }
-
-                            assert_eq!(render_states.len(), 0, "too many render states");
-                            assert!(elements.next().is_none(), "too many elements");
-
-                            return;
+                        if force_reposition {
+                            zip.for_each(|(render_state, el)| {
+                                unpinned_render_update_force_reposition(
+                                    f.map_item_to_element(el),
+                                    render_context,
+                                    render_state,
+                                )
+                            })
                         } else {
-                            // the states are outdated
-                            {
-                                let states = Rc::get_mut(&mut render_states.rc).unwrap().get_mut();
-                                let (mounted, unmounted) = {
-                                    let real_len = states.real_len();
-                                    states.states.split_at_mut(real_len)
-                                };
+                            zip.for_each(|(render_state, el)| {
+                                unpinned_render_update(
+                                    f.map_item_to_element(el),
+                                    render_context,
+                                    render_state,
+                                )
+                            })
+                        }
 
-                                let mut elements = self.0.elements.to_iter_of_to_element();
+                        assert_eq!(render_states.len(), 0, "too many render states");
+                        assert!(elements.next().is_none(), "too many elements");
 
-                                let mut mounted = mounted.iter_mut();
-                                elements
-                                    .by_ref()
-                                    .zip(mounted.by_ref())
-                                    .for_each(|(el, state)| {
-                                        unpinned_render_update(el, render_context, state)
-                                    });
+                        return;
+                    } else {
+                        // the states are outdated
+                        {
+                            let states = Rc::get_mut(&mut render_states.rc).unwrap().get_mut();
+                            let (mounted, unmounted) = {
+                                let real_len = states.real_len();
+                                states.states.split_at_mut(real_len)
+                            };
 
-                                if mounted.len() > 0 {
-                                    states.ready_to_unmount_count += mounted.len();
+                            let mut elements = self.elements;
+                            let mut f = self.f;
+
+                            let mut mounted = mounted.iter_mut();
+                            elements
+                                .by_ref()
+                                .zip(mounted.by_ref())
+                                .for_each(|(el, state)| {
+                                    unpinned_render_update(
+                                        f.map_item_to_element(el),
+                                        render_context,
+                                        state,
+                                    )
+                                });
+
+                            if mounted.len() > 0 {
+                                states.ready_to_unmount_count += mounted.len();
+                            } else {
+                                let mut unmounted = unmounted.iter_mut();
+
+                                elements.by_ref().zip(unmounted.by_ref()).for_each(
+                                    |(el, state)| {
+                                        unpinned_render_update_force_reposition(
+                                            f.map_item_to_element(el),
+                                            render_context,
+                                            state,
+                                        )
+                                    },
+                                );
+
+                                if unmounted.len() > 0 {
+                                    states.ready_to_unmount_count = unmounted.len();
                                 } else {
-                                    let mut unmounted = unmounted.iter_mut();
-
-                                    elements.by_ref().zip(unmounted.by_ref()).for_each(
-                                        |(el, state)| {
-                                            unpinned_render_update_force_reposition(
-                                                el,
-                                                render_context,
-                                                state,
-                                            )
-                                        },
-                                    );
-
-                                    if unmounted.len() > 0 {
-                                        states.ready_to_unmount_count = unmounted.len();
-                                    } else {
-                                        states.ready_to_unmount_count = 0;
-                                        states.states.extend(elements.map(|el| {
-                                            new_unpinned_render_state(el, render_context)
-                                        }))
-                                    }
+                                    states.ready_to_unmount_count = 0;
+                                    states.states.extend(elements.map(|el| {
+                                        new_unpinned_render_state(
+                                            f.map_item_to_element(el),
+                                            render_context,
+                                        )
+                                    }))
                                 }
-
-                                states.clean(render_context.renderer_mut());
                             }
 
-                            render_states
+                            states.clean(render_context.renderer_mut());
                         }
-                    } else {
-                        // new
-                        let states = RenderStates {
-                            states: self
-                                .0
-                                .elements
-                                .to_iter_of_to_element()
-                                .map(|el| new_unpinned_render_state(el, render_context))
-                                .collect(),
-                            ready_to_unmount_count: 0,
-                        };
 
-                        render_state.render_states.insert(RcWithKey {
-                            rc: Rc::new(RefCell::new(states)),
-                            key: weak_vec1::Key::STACK,
-                        })
+                        render_states
+                    }
+                } else {
+                    // new
+                    let mut f = self.f;
+                    let states = RenderStates {
+                        states: self
+                            .elements
+                            .map(|el| {
+                                new_unpinned_render_state(f.map_item_to_element(el), render_context)
+                            })
+                            .collect(),
+                        ready_to_unmount_count: 0,
                     };
 
+                    render_state.render_states.insert(RcWithKey {
+                        rc: Rc::new(RefCell::new(states)),
+                        key: weak_vec1::Key::STACK,
+                    })
+                };
+
                 rc_with_old_key.key = self
-                    .0
                     .all_states
                     .borrow_mut()
                     .make_rc_states_with_old_key_hint(
@@ -665,22 +719,20 @@ mod to_element {
             }
         }
 
-        fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext, E: ToElement>(
+        fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext, E: Element>(
             el: E,
             render_context: &mut Ctx,
             Stated {
                 render_state,
                 mount_state,
-            }: &mut Stated<
-                UnpinnedRenderStateOfContext<E::ToElementRenderStateKind, Ctx>,
-            >,
+            }: &mut Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>>,
         ) {
             let force_reposition = match mount_state {
                 MountState::MountedAndUpToDate => return,
                 MountState::Outdated => false,
                 MountState::OutdatedAndMoved => true,
             };
-            el.to_element().unpinned_render_update_maybe_reposition(
+            el.unpinned_render_update_maybe_reposition(
                 render_context,
                 render_state,
                 force_reposition,
@@ -690,60 +742,56 @@ mod to_element {
 
         fn unpinned_render_update_force_reposition<
             Ctx: ?Sized + frender_html::HtmlRenderContext,
-            E: ToElement,
+            E: Element,
         >(
             el: E,
             render_context: &mut Ctx,
             Stated {
                 render_state,
                 mount_state,
-            }: &mut Stated<
-                UnpinnedRenderStateOfContext<E::ToElementRenderStateKind, Ctx>,
-            >,
+            }: &mut Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>>,
         ) {
-            el.to_element()
-                .unpinned_render_update_force_reposition(render_context, render_state);
+            el.unpinned_render_update_force_reposition(render_context, render_state);
             *mount_state = MountState::MountedAndUpToDate;
         }
 
-        fn new_unpinned_render_state<
-            Ctx: ?Sized + frender_html::HtmlRenderContext,
-            E: ToElement,
-        >(
+        fn new_unpinned_render_state<Ctx: ?Sized + frender_html::HtmlRenderContext, E: Element>(
             el: E,
             render_context: &mut Ctx,
-        ) -> Stated<UnpinnedRenderStateOfContext<E::ToElementRenderStateKind, Ctx>> {
+        ) -> Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>> {
             let mut state = Stated {
                 render_state: Default::default(),
                 mount_state: MountState::MountedAndUpToDate,
             };
-            el.to_element()
-                .unpinned_render_update(render_context, &mut state.render_state);
+            el.unpinned_render_update(render_context, &mut state.render_state);
 
             state
         }
     }
 }
 
-impl<ES> ToElement for SyncedElementCollection<ES>
+impl<ES, E: ToElement> ToElement for SyncedElementCollection<ES>
 where
-    // for<'a> &'a ES: IntoIterator<Item = &'a E>,
-    ES: ToIterOfToElement,
+    for<'a> &'a ES: IntoIterator<Item = &'a E>,
     // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-    ES::IterOfToElementRenderStateKind: 'static,
+    E::ToElementRenderStateKind: 'static,
 {
-    type ToElement<'a> = SyncedElementsToElement<'a, ES>
+    type ToElement<'a> = SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, to_element::MapItemWithToElement>
     where
         Self: 'a;
 
     fn to_element(&self) -> Self::ToElement<'_> {
-        SyncedElementsToElement(self)
+        SyncedElementsToElement {
+            all_states: &self.all_states,
+            elements: IntoIterator::into_iter(&self.elements),
+            f: to_element::MapItemWithToElement,
+        }
     }
 
     type ToElementHtmlChildren =
-        async_str_iter::flat::Flat<std::vec::IntoIter<ES::IterOfToElementHtmlChildren>>;
+        async_str_iter::flat::Flat<std::vec::IntoIter<E::ToElementHtmlChildren>>;
 
-    type ToElementRenderStateKind = Kind<ES::IterOfToElementRenderStateKind>;
+    type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
 }
 
 pub type SyncedElements<E> = SyncedElementCollection<Vec<E>>;
@@ -769,36 +817,6 @@ where
     type ItemToElement = I::Item;
     type ItemToElementHtmlChildren = <I::Item as ToElement>::ToElementHtmlChildren;
     type ItemToElementRenderStateKind = <I::Item as ToElement>::ToElementRenderStateKind;
-}
-
-pub trait ToIterOfToElement {
-    type IterOfToElement<'a>: IteratorOfToElement<
-        ItemToElementHtmlChildren = Self::IterOfToElementHtmlChildren,
-        ItemToElementRenderStateKind = Self::IterOfToElementRenderStateKind,
-    >
-    where
-        Self: 'a;
-
-    type IterOfToElementHtmlChildren: frender_ssr::html::assert::HtmlChildren;
-    type IterOfToElementRenderStateKind: RenderStateKind;
-
-    fn to_iter_of_to_element(&self) -> Self::IterOfToElement<'_>;
-}
-
-impl<ES, E: ?Sized + ToElement> ToIterOfToElement for ES
-where
-    for<'a> &'a ES: IntoIterator<Item = &'a E>,
-{
-    type IterOfToElement<'a> = <&'a Self as IntoIterator>::IntoIter
-    where
-        Self: 'a;
-
-    fn to_iter_of_to_element(&self) -> <&Self as IntoIterator>::IntoIter {
-        self.into_iter()
-    }
-
-    type IterOfToElementHtmlChildren = E::ToElementHtmlChildren;
-    type IterOfToElementRenderStateKind = E::ToElementRenderStateKind;
 }
 
 pub trait RefIntoIteratorOfRef
