@@ -10,9 +10,8 @@ use std::{
 };
 
 use frender_csr::RenderState;
-use frender_html::RenderStateKind;
 
-use crate::{hooks_ext::element::WithToElement, FnOutputElement, ToElement};
+use crate::ToElement;
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
@@ -467,7 +466,7 @@ mod to_element {
 
     use frender_html::Element;
 
-    use crate::{FnMutOutputElement, ToElement};
+    use crate::ToElement;
 
     use super::AllStates;
 
@@ -503,9 +502,9 @@ mod to_element {
         ES: Iterator,
         F: MapItemToElement<ES::Item> = MapItemWithToElement,
     > {
-        pub(crate) all_states: &'a RefCell<AllStates>,
-        pub(crate) elements: ES,
-        pub(crate) f: F,
+        pub(super) all_states: &'a RefCell<AllStates>,
+        pub(super) elements: ES,
+        pub(super) f: F,
     }
 
     mod ssr {
@@ -537,10 +536,7 @@ mod to_element {
             Element, RenderStateKindPinned, RenderStateKindUnpinned, UnpinnedRenderStateOfContext,
         };
 
-        use crate::{
-            elements::synced_elements::weak_vec1::{self, RcWithKey},
-            FnMutOutputElement, ToElement,
-        };
+        use crate::elements::synced_elements::weak_vec1::{self, RcWithKey};
 
         use super::{
             super::{MountState, RenderStates, State, Stated},
