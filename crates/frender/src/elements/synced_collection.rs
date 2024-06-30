@@ -1037,12 +1037,43 @@ where
 
     pub fn to_element_with_fn<
         'a,
-        E: crate::Element,
-        F: FnMut(<&'a ES as IntoIterator>::Item) -> E,
+        F: for<'e> crate::FnMutOutputElement<<&'e ES as IntoIterator>::Item>,
+        // `F` is more restricted than the following bounds but is more developer friendly
+        // E: crate::Element,
+        // F: FnMut(<&'a ES as IntoIterator>::Item) -> E,
     >(
         &'a self,
         f: F,
     ) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
         self.to_element_with(f)
     }
+}
+
+/// An identity fn
+#[inline(always)]
+pub fn synced_collection_to_elements<
+    ES,
+    V: ?Sized,
+    F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F2>,
+    F2: for<'a> crate::FnMutOutputElement<<&'a ES as IntoIterator>::Item>,
+>(
+    f: F,
+) -> F
+where
+    for<'a> &'a ES: IntoIterator,
+{
+    f
+}
+
+/// An identity fn
+#[inline(always)]
+pub fn synced_vec_to_elements<
+    T,
+    V: ?Sized,
+    F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, std::slice::Iter<'a, T>, F2>,
+    F2: crate::FnMutMapRefToElement<T>,
+>(
+    f: F,
+) -> F {
+    f
 }
