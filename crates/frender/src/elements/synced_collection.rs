@@ -4,12 +4,8 @@ use weak_vec1::RcWithKey;
 use std::{
     cell::RefCell,
     ops::{Deref, Index, IndexMut},
-    pin::Pin,
     rc::Weak,
-    task::Poll,
 };
-
-use frender_csr::RenderState;
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
@@ -155,9 +151,12 @@ impl AllStates {
     }
 }
 
-impl StatesMarkIndexAsUpdated for AllStates {
+impl StatesCommon for AllStates {
     fn mark_index_as_updated(&mut self, i: usize) {
         self.for_each_alive_mut(|states| states.mark_index_as_updated(i))
+    }
+    fn extend(&mut self, len: usize) {
+        self.for_each_alive_mut(|states| states.extend(len))
     }
 }
 
@@ -178,16 +177,17 @@ impl AllStates {
     }
 }
 
-trait StatesMarkIndexAsUpdated {
+trait StatesCommon {
     fn mark_index_as_updated(&mut self, i: usize);
+    fn extend(&mut self, len: usize);
 }
 
-trait States: StatesMarkIndexAsUpdated + StatesLikeVec {}
+trait States: StatesCommon + StatesLikeVec {}
 
-impl<S: ?Sized + StatesMarkIndexAsUpdated + StatesLikeVec> States for S {}
+impl<S: ?Sized + StatesCommon + StatesLikeVec> States for S {}
 
-/// All mutations are recorded so that before they `render_update`,
-/// their render states can reposition and only `render_update`s the updated elements.
+/// All mutations are synced to the registered render states so that before elements `render_update`,
+/// the render states can reposition and only `render_update`s the updated elements.
 ///
 /// - [`IndexMut<usize>`] would record a update at the index.
 ///
@@ -294,12 +294,54 @@ impl<ES: IndexMut<usize>> IndexMut<usize> for SyncedCollection<ES> {
     }
 }
 
+trait CollectionWithCount {
+    fn count(&self) -> usize;
+}
+
+macro_rules! impl_for_collection {
+    (
+        impl<$T:ident> $Trait:ident for
+            each_of![$($for_ty:ty),+ $(,)?]
+        $impl_block:tt
+    ) => {
+        $(
+            impl<$T> $Trait for $for_ty
+            $impl_block
+        )+
+    };
+}
+
+impl_for_collection!(
+    impl<T> CollectionWithCount
+        for each_of![
+            Vec<T>,
+            std::collections::VecDeque<T>,
+            std::collections::LinkedList<T>,
+        ]
+    {
+        #[inline(always)]
+        fn count(&self) -> usize {
+            self.len()
+        }
+    }
+);
+
+impl<ES: CollectionWithCount + Extend<A>, A> Extend<A> for SyncedCollection<ES> {
+    fn extend<T: IntoIterator<Item = A>>(&mut self, iter: T) {
+        let old_len = self.items.count();
+        self.items.extend(iter);
+        let new_len = self.items.count();
+        let count = new_len - old_len;
+        self.all_states.get_mut().extend(count);
+    }
+}
+
 mod render_states {
     use std::pin::Pin;
 
     use frender_csr::RenderState;
 
-    use super::{StatesLikeVec, StatesMarkIndexAsUpdated};
+    use super::{StatesCommon, StatesLikeVec};
 
     pub(super) enum MountState {
         MountedAndUpToDate,
@@ -381,9 +423,30 @@ mod render_states {
         }
     }
 
-    impl<S> StatesMarkIndexAsUpdated for RenderStates<S> {
+    impl<S: Default> StatesCommon for RenderStates<S> {
         fn mark_index_as_updated(&mut self, i: usize) {
             self.states_mut()[i].mount_state.mark_as_outdated()
+        }
+
+        fn extend(&mut self, len: usize) {
+            if len > self.ready_to_unmount_count {
+                self.ready_to_unmount_count = 0;
+                let new_count = len - self.ready_to_unmount_count;
+                self.states.extend(
+                    std::iter::repeat_with(|| Stated {
+                        render_state: S::default(),
+                        mount_state: MountState::Outdated,
+                    })
+                    .take(new_count),
+                );
+            } else {
+                let from = self.real_len();
+                self.ready_to_unmount_count -= len;
+
+                self.states[from..(from + len)]
+                    .iter_mut()
+                    .for_each(|s| s.mount_state.mark_as_outdated());
+            }
         }
     }
 
