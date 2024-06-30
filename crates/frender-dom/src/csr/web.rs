@@ -74,6 +74,25 @@ impl<'a> Cursor<'a> {
             skipped: false,
         }
     }
+
+    fn log_self(&self) {
+        let (kind, node, cur) = match &self.position {
+            CursorPosition::FirstChildOf(node) => (
+                "FirstChildOf",
+                AsRef::<web_sys::Node>::as_ref(node.as_ref()),
+                node.first_child(),
+            ),
+            CursorPosition::After(node) => ("After", node.as_ref(), node.next_sibling()),
+        };
+
+        web_sys::console::log_5(
+            &"cursor=".into(),
+            &kind.into(),
+            node,
+            &"=".into(),
+            &cur.into(),
+        );
+    }
 }
 
 pub struct RenderContext<'a, R: ?Sized> {
@@ -108,7 +127,15 @@ impl<'a> Cursor<'a> {
                 }
             }
         } else {
-            // TODO: check position
+            #[cfg(debug_assertions)]
+            if !(self.skipped || self.cursor_is_at_node(node)) {
+                web_sys::console::log_3(
+                    &"[debug assertion failed] Cursor should be at:".into(),
+                    node,
+                    &"But the cursor is at:".into(),
+                );
+                self.log_self();
+            }
         }
 
         self.position = CursorPosition::After(Cow::Owned(node.clone()));
@@ -132,22 +159,7 @@ impl<'a, R: ?Sized + Renderer> crate::render::RenderContext for RenderContext<'a
     }
 
     fn log_cursor(&mut self) {
-        let (kind, node, cur) = match &self.cursor.position {
-            CursorPosition::FirstChildOf(node) => (
-                "FirstChildOf",
-                AsRef::<web_sys::Node>::as_ref(node.as_ref()),
-                node.first_child(),
-            ),
-            CursorPosition::After(node) => ("After", node.as_ref(), node.next_sibling()),
-        };
-
-        web_sys::console::log_5(
-            &"cursor=".into(),
-            &kind.into(),
-            node,
-            &"=".into(),
-            &cur.into(),
-        );
+        self.cursor.log_self()
     }
 
     fn mark_cursor_skipped(&mut self) {

@@ -250,26 +250,8 @@ mod imp {
         //     &force_reposition.into(),
         // );
 
-        if *mounted && !force_reposition {
-            #[cfg(debug_assertions)]
-            if !element.cursor_is_at_self(render_context) {
-                let renderer = render_context.renderer_mut();
-                renderer.log("[debug assertion failed] Cursor should be at:");
-                element.log_self(renderer);
-                renderer.log("But the cursor is at:");
-                render_context.log_cursor();
-            }
-            // element.move_cursor_after_self(renderer);
-            element.readd_self(render_context, false);
-        } else {
-            // if *mounted && element.cursor_is_at_self(renderer) {
-            //     element.move_cursor_after_self(renderer);
-            //     return;
-            // }
-
-            element.readd_self(render_context, true);
-            *mounted = true;
-        }
+        element.readd_self(render_context, force_reposition || !*mounted);
+        *mounted = true;
 
         update(element, render_context.renderer_mut());
     }
