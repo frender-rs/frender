@@ -290,6 +290,9 @@ pub mod form_control {
                 render_state: NonReactiveRenderState(event_listener),
                 inner: _,
             } = state.as_mut_project();
+
+            *mount_state = MountState::Mounted;
+
             if let Some(signal_hook) = &mut hook_data.inner {
                 if this.0.is_signal_of(signal_hook) {
                     return;
@@ -305,8 +308,6 @@ pub mod form_control {
             hook_data.inner = Some(this.0.to_signal_hook());
 
             element.on_value_change(renderer, event_listener, this);
-
-            *mount_state = MountState::Mounted;
         }
     }
 }
@@ -691,6 +692,8 @@ pub mod element {
                     *signal_hook = Some((self.0.to_signal_hook(), f))
                 }
             }
+
+            *mount_state = MountState::Mounted;
         }
 
         fn unpinned_render_update_maybe_reposition<
@@ -753,6 +756,8 @@ pub mod element {
                     *signal_hook = Some((self.0.to_signal_hook(), f))
                 }
             }
+
+            *mount_state = MountState::Mounted;
         }
     }
 }
