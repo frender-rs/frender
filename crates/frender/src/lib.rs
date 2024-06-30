@@ -13,8 +13,7 @@ pub use to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
 #[cfg(feature = "ToElement")]
 pub use elements::synced_elements::{
-    IteratorOfToElement, SyncedElementCollection, SyncedElementCollectionWithFn, SyncedElements,
-    SyncedElementsWithFn, ToIterOfToElement,
+    IteratorOfToElement, SyncedElementCollection, SyncedElements, ToIterOfToElement,
 };
 
 mod empty;
