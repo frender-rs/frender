@@ -11,7 +11,6 @@ mod to_element;
 #[cfg(feature = "ToElement")]
 pub use to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
-#[cfg(feature = "ToElement")]
 pub use elements::synced_collection::{SyncedCollection, SyncedVec};
 
 mod empty;

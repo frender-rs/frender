@@ -1,4 +1,4 @@
-pub use to_element::{csr::Kind, SyncedElementsToElement};
+pub use to_element::{csr::Kind, SyncedCollectionToElement};
 use weak_vec1::RcWithKey;
 
 use std::{
@@ -10,8 +10,6 @@ use std::{
 };
 
 use frender_csr::RenderState;
-
-use crate::ToElement;
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
@@ -461,6 +459,7 @@ impl<S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for State<S> {
     }
 }
 
+#[cfg(feature = "ToElement")]
 mod to_element {
     use std::cell::RefCell;
 
@@ -497,7 +496,7 @@ mod to_element {
         }
     }
 
-    pub struct SyncedElementsToElement<
+    pub struct SyncedCollectionToElement<
         'a,
         ES: Iterator,
         F: MapItemToElement<ES::Item> = MapItemWithToElement,
@@ -510,10 +509,10 @@ mod to_element {
     mod ssr {
         use frender_ssr::SsrElement;
 
-        use super::{MapItemToElement, SyncedElementsToElement};
+        use super::{MapItemToElement, SyncedCollectionToElement};
 
         impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SsrElement
-            for SyncedElementsToElement<'a, ES, F>
+            for SyncedCollectionToElement<'a, ES, F>
         {
             type HtmlChildren = async_str_iter::flat::Flat<
                 std::vec::IntoIter<<F::ItemToElement as SsrElement>::HtmlChildren>,
@@ -540,7 +539,7 @@ mod to_element {
 
         use super::{
             super::{MountState, RenderStates, State, Stated},
-            MapItemToElement, SyncedElementsToElement,
+            MapItemToElement, SyncedCollectionToElement,
         };
 
         enum Never {}
@@ -556,7 +555,8 @@ mod to_element {
                 State<K::UnpinnedRenderState<R>>;
         }
 
-        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> Element for SyncedElementsToElement<'a, ES, F>
+        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> Element
+            for SyncedCollectionToElement<'a, ES, F>
         where
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
             <F::ItemToElement as Element>::RenderStateKind: 'static,
@@ -764,32 +764,41 @@ mod to_element {
             state
         }
     }
-}
 
-impl<ES, E: ToElement> ToElement for SyncedCollection<ES>
-where
-    for<'a> &'a ES: IntoIterator<Item = &'a E>,
-    // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-    E::ToElementRenderStateKind: 'static,
-{
-    type ToElement<'a> = SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, to_element::MapItemWithToElement>
-    where
-        Self: 'a;
+    #[cfg(feature = "ToElement")]
+    mod with_to_element {
+        use crate::ToElement;
 
-    fn to_element(&self) -> Self::ToElement<'_> {
-        self.to_element_with(to_element::MapItemWithToElement)
+        use super::{
+            super::SyncedCollection, csr::Kind, MapItemWithToElement, SyncedCollectionToElement,
+        };
+
+        impl<ES, E: ToElement> ToElement for SyncedCollection<ES>
+        where
+            for<'a> &'a ES: IntoIterator<Item = &'a E>,
+            // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
+            E::ToElementRenderStateKind: 'static,
+        {
+            type ToElement<'a> = SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, MapItemWithToElement>
+            where
+                Self: 'a;
+
+            fn to_element(&self) -> Self::ToElement<'_> {
+                self.to_element_with(MapItemWithToElement)
+            }
+
+            type ToElementHtmlChildren =
+                async_str_iter::flat::Flat<std::vec::IntoIter<E::ToElementHtmlChildren>>;
+
+            type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
+        }
     }
-
-    type ToElementHtmlChildren =
-        async_str_iter::flat::Flat<std::vec::IntoIter<E::ToElementHtmlChildren>>;
-
-    type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
 }
 
 pub type SyncedVec<E> = SyncedCollection<Vec<E>>;
 
 #[allow(non_snake_case)]
-pub fn SyncedVec<E: ToElement>(elements: Vec<E>) -> SyncedVec<E> {
+pub fn SyncedVec<E>(elements: Vec<E>) -> SyncedVec<E> {
     SyncedCollection::new(elements)
 }
 
@@ -801,8 +810,8 @@ where
     fn to_element_with<'a, F: to_element::MapItemToElement<<&'a ES as IntoIterator>::Item>>(
         &'a self,
         f: F,
-    ) -> SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
-        SyncedElementsToElement {
+    ) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
+        SyncedCollectionToElement {
             all_states: &self.all_states,
             items: IntoIterator::into_iter(&self.items),
             f,
@@ -816,7 +825,7 @@ where
     >(
         &'a self,
         f: F,
-    ) -> SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
+    ) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
         self.to_element_with(f)
     }
 }
