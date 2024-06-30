@@ -800,35 +800,3 @@ pub type SyncedElements<E> = SyncedElementCollection<Vec<E>>;
 pub fn SyncedElements<E: ToElement>(elements: Vec<E>) -> SyncedElementCollection<Vec<E>> {
     SyncedElementCollection::new(elements)
 }
-
-pub trait IteratorOfToElement: Iterator<Item = Self::ItemToElement> {
-    type ItemToElementHtmlChildren: frender_ssr::html::assert::HtmlChildren;
-    type ItemToElementRenderStateKind: RenderStateKind;
-    type ItemToElement: ToElement<
-        ToElementHtmlChildren = Self::ItemToElementHtmlChildren,
-        ToElementRenderStateKind = Self::ItemToElementRenderStateKind,
-    >;
-}
-
-impl<I: Iterator> IteratorOfToElement for I
-where
-    I::Item: ToElement,
-{
-    type ItemToElement = I::Item;
-    type ItemToElementHtmlChildren = <I::Item as ToElement>::ToElementHtmlChildren;
-    type ItemToElementRenderStateKind = <I::Item as ToElement>::ToElementRenderStateKind;
-}
-
-pub trait RefIntoIteratorOfRef
-where
-    for<'a> &'a Self: IntoIterator<Item = &'a Self::ItemOfRef>,
-{
-    type ItemOfRef: ?Sized;
-}
-
-impl<T: ?Sized, Item: ?Sized> RefIntoIteratorOfRef for T
-where
-    for<'a> &'a T: IntoIterator<Item = &'a Item>,
-{
-    type ItemOfRef = Item;
-}
