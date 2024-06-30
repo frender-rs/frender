@@ -260,6 +260,7 @@ mod imp {
                 render_context.log_cursor();
             }
             // element.move_cursor_after_self(renderer);
+            element.readd_self(render_context, false);
         } else {
             // if *mounted && element.cursor_is_at_self(renderer) {
             //     element.move_cursor_after_self(renderer);
