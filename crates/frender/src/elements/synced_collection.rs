@@ -337,6 +337,13 @@ impl<ES: CollectionWithCount + Extend<A>, A> Extend<A> for SyncedCollection<ES> 
     }
 }
 
+impl<T> SyncedCollection<Vec<T>> {
+    pub fn push(&mut self, value: T) {
+        self.items.push(value);
+        self.all_states.get_mut().extend(1);
+    }
+}
+
 mod render_states {
     use std::pin::Pin;
 
