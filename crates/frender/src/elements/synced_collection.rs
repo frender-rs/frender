@@ -197,14 +197,14 @@ impl<S: ?Sized + StatesMarkIndexAsUpdated + StatesLikeVec> States for S {}
 #[derive(Debug, Default)]
 pub struct SyncedCollection<ES> {
     all_states: RefCell<AllStates>,
-    elements: ES,
+    items: ES,
 }
 
 impl<ES> SyncedCollection<ES> {
-    pub const fn new(elements: ES) -> Self {
+    pub const fn new(items: ES) -> Self {
         Self {
             all_states: RefCell::new(AllStates::new()),
-            elements,
+            items,
         }
     }
 }
@@ -264,7 +264,7 @@ like_vec!(
 
     impl<__> SyncedCollection<Vec<E>> {
         proxy!(self.all_states.get_mut());
-        real_vec!(self.elements);
+        real_vec!(self.items);
     }
 
     impl<__> AllStates {
@@ -277,7 +277,7 @@ impl<ES> Deref for SyncedCollection<ES> {
     type Target = ES;
 
     fn deref(&self) -> &Self::Target {
-        &self.elements
+        &self.items
     }
 }
 
@@ -285,14 +285,14 @@ impl<ES: Index<Idx>, Idx> Index<Idx> for SyncedCollection<ES> {
     type Output = ES::Output;
 
     fn index(&self, index: Idx) -> &Self::Output {
-        self.elements.index(index)
+        self.items.index(index)
     }
 }
 
 impl<ES: IndexMut<usize>> IndexMut<usize> for SyncedCollection<ES> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         self.all_states.get_mut().mark_index_as_updated(index);
-        self.elements.index_mut(index)
+        self.items.index_mut(index)
     }
 }
 
@@ -503,7 +503,7 @@ mod to_element {
         F: MapItemToElement<ES::Item> = MapItemWithToElement,
     > {
         pub(super) all_states: &'a RefCell<AllStates>,
-        pub(super) elements: ES,
+        pub(super) items: ES,
         pub(super) f: F,
     }
 
@@ -521,7 +521,7 @@ mod to_element {
 
             fn into_html_children(mut self) -> Self::HtmlChildren {
                 let children = self
-                    .elements
+                    .items
                     .map(|el| self.f.map_item_to_element(el).into_html_children())
                     .collect::<Vec<_>>();
                 async_str_iter::flat::Flat::new(children.into_iter())
@@ -600,7 +600,7 @@ mod to_element {
                         let render_states = render_states.clean(render_context.renderer_mut());
 
                         let mut render_states = render_states.iter_mut();
-                        let mut elements = self.elements;
+                        let mut elements = self.items;
                         let mut f = self.f;
 
                         let zip = render_states.by_ref().zip(elements.by_ref());
@@ -636,7 +636,7 @@ mod to_element {
                                 states.states.split_at_mut(real_len)
                             };
 
-                            let mut elements = self.elements;
+                            let mut elements = self.items;
                             let mut f = self.f;
 
                             let mut mounted = mounted.iter_mut();
@@ -689,7 +689,7 @@ mod to_element {
                     let mut f = self.f;
                     let states = RenderStates {
                         states: self
-                            .elements
+                            .items
                             .map(|el| {
                                 new_unpinned_render_state(f.map_item_to_element(el), render_context)
                             })
@@ -804,7 +804,7 @@ where
     ) -> SyncedElementsToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
         SyncedElementsToElement {
             all_states: &self.all_states,
-            elements: IntoIterator::into_iter(&self.elements),
+            items: IntoIterator::into_iter(&self.items),
             f,
         }
     }
