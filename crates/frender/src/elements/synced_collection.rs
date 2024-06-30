@@ -195,12 +195,12 @@ impl<S: ?Sized + StatesMarkIndexAsUpdated + StatesLikeVec> States for S {}
 ///
 ///   `elements[i] = new_element` or even just `&mut elements[i]` is a update mutation at `i`.
 #[derive(Debug, Default)]
-pub struct SyncedElementCollection<ES> {
+pub struct SyncedCollection<ES> {
     all_states: RefCell<AllStates>,
     elements: ES,
 }
 
-impl<ES> SyncedElementCollection<ES> {
+impl<ES> SyncedCollection<ES> {
     pub const fn new(elements: ES) -> Self {
         Self {
             all_states: RefCell::new(AllStates::new()),
@@ -262,7 +262,7 @@ like_vec!(
         fn swap_remove(&mut self, index: usize) -> E;
     }
 
-    impl<__> SyncedElementCollection<Vec<E>> {
+    impl<__> SyncedCollection<Vec<E>> {
         proxy!(self.all_states.get_mut());
         real_vec!(self.elements);
     }
@@ -273,7 +273,7 @@ like_vec!(
 );
 
 /// Only [`Deref`] is implemented.
-impl<ES> Deref for SyncedElementCollection<ES> {
+impl<ES> Deref for SyncedCollection<ES> {
     type Target = ES;
 
     fn deref(&self) -> &Self::Target {
@@ -281,7 +281,7 @@ impl<ES> Deref for SyncedElementCollection<ES> {
     }
 }
 
-impl<ES: Index<Idx>, Idx> Index<Idx> for SyncedElementCollection<ES> {
+impl<ES: Index<Idx>, Idx> Index<Idx> for SyncedCollection<ES> {
     type Output = ES::Output;
 
     fn index(&self, index: Idx) -> &Self::Output {
@@ -289,7 +289,7 @@ impl<ES: Index<Idx>, Idx> Index<Idx> for SyncedElementCollection<ES> {
     }
 }
 
-impl<ES: IndexMut<usize>> IndexMut<usize> for SyncedElementCollection<ES> {
+impl<ES: IndexMut<usize>> IndexMut<usize> for SyncedCollection<ES> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         self.all_states.get_mut().mark_index_as_updated(index);
         self.elements.index_mut(index)
@@ -536,7 +536,7 @@ mod to_element {
             Element, RenderStateKindPinned, RenderStateKindUnpinned, UnpinnedRenderStateOfContext,
         };
 
-        use crate::elements::synced_elements::weak_vec1::{self, RcWithKey};
+        use crate::elements::synced_collection::weak_vec1::{self, RcWithKey};
 
         use super::{
             super::{MountState, RenderStates, State, Stated},
@@ -766,7 +766,7 @@ mod to_element {
     }
 }
 
-impl<ES, E: ToElement> ToElement for SyncedElementCollection<ES>
+impl<ES, E: ToElement> ToElement for SyncedCollection<ES>
 where
     for<'a> &'a ES: IntoIterator<Item = &'a E>,
     // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
@@ -786,14 +786,14 @@ where
     type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
 }
 
-pub type SyncedElements<E> = SyncedElementCollection<Vec<E>>;
+pub type SyncedVec<E> = SyncedCollection<Vec<E>>;
 
 #[allow(non_snake_case)]
-pub fn SyncedElements<E: ToElement>(elements: Vec<E>) -> SyncedElementCollection<Vec<E>> {
-    SyncedElementCollection::new(elements)
+pub fn SyncedVec<E: ToElement>(elements: Vec<E>) -> SyncedVec<E> {
+    SyncedCollection::new(elements)
 }
 
-impl<ES> SyncedElementCollection<ES>
+impl<ES> SyncedCollection<ES>
 where
     for<'a> &'a ES: IntoIterator,
 {
