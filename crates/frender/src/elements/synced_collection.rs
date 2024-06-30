@@ -158,6 +158,12 @@ impl StatesCommon for AllStates {
     fn extend(&mut self, len: usize) {
         self.for_each_alive_mut(|states| states.extend(len))
     }
+    fn splice(&mut self, range: std::ops::Range<usize>, len: usize) {
+        self.for_each_alive_mut(|states| states.splice(range.clone(), len))
+    }
+    fn drain(&mut self, range: std::ops::Range<usize>) {
+        self.for_each_alive_mut(|states| states.drain(range.clone()))
+    }
 }
 
 impl AllStates {
@@ -180,6 +186,8 @@ impl AllStates {
 trait StatesCommon {
     fn mark_index_as_updated(&mut self, i: usize);
     fn extend(&mut self, len: usize);
+    fn splice(&mut self, range: std::ops::Range<usize>, len: usize);
+    fn drain(&mut self, range: std::ops::Range<usize>);
 }
 
 trait States: StatesCommon + StatesLikeVec {}
@@ -337,12 +345,67 @@ impl<ES: CollectionWithCount + Extend<A>, A> Extend<A> for SyncedCollection<ES> 
     }
 }
 
+/// copied from [std::slice::range]
+fn parse_range<R>(range: &R, len: usize) -> std::ops::Range<usize>
+where
+    R: std::ops::RangeBounds<usize>,
+{
+    use std::ops;
+    let start = match range.start_bound() {
+        ops::Bound::Included(&start) => start,
+        ops::Bound::Excluded(start) => start.checked_add(1).unwrap(),
+        ops::Bound::Unbounded => 0,
+    };
+
+    let end = match range.end_bound() {
+        ops::Bound::Included(end) => end.checked_add(1).unwrap(),
+        ops::Bound::Excluded(&end) => end,
+        ops::Bound::Unbounded => len,
+    };
+
+    start..end
+}
+
 impl<T> SyncedCollection<Vec<T>> {
     pub fn push(&mut self, value: T) {
         self.items.push(value);
         self.all_states.get_mut().extend(1);
     }
+
+    pub fn splice<R, I>(
+        &mut self,
+        range: R,
+        replace_with: I,
+    ) -> std::vec::Splice<'_, splice::SpliceReplaceWith<'_, I::IntoIter>>
+    where
+        R: std::ops::RangeBounds<usize>,
+        I: IntoIterator<Item = T>,
+    {
+        let parsed_range = parse_range(&range, self.items.len());
+
+        self.items.splice(
+            range,
+            splice::SpliceReplaceWith {
+                iter: replace_with.into_iter(),
+                all_states: &mut self.all_states,
+                range: parsed_range,
+                count: 0,
+            },
+        )
+    }
+
+    pub fn drain<R>(&mut self, range: R) -> drain::Drain<'_, T>
+    where
+        R: std::ops::RangeBounds<usize>,
+    {
+        let drain_range = parse_range(&range, self.items.len());
+
+        drain::Drain::new(&mut self.all_states, self.items.drain(range), drain_range)
+    }
 }
+
+pub mod drain;
+pub mod splice;
 
 impl<Items: FromIterator<A>, A> FromIterator<A> for SyncedCollection<Items> {
     fn from_iter<T: IntoIterator<Item = A>>(iter: T) -> Self {
@@ -411,6 +474,14 @@ mod render_states {
             }
             &mut self.states
         }
+
+        fn insert_many_at(&mut self, at: usize, len: usize)
+        where
+            S: Default,
+        {
+            self.extend(len);
+            self.states_mut()[at..].rotate_right(len);
+        }
     }
 
     impl<S> StatesLikeVec for RenderStates<S> {
@@ -458,13 +529,60 @@ mod render_states {
                     .take(new_count),
                 );
             } else {
-                let from = self.real_len();
-                self.ready_to_unmount_count -= len;
+                // the items should already be marked as outdated
+                //
+                // let from = self.real_len();
+                // self.states[from..(from + len)]
+                //     .iter_mut()
+                //     .for_each(|s| s.mount_state.mark_as_outdated());
 
-                self.states[from..(from + len)]
-                    .iter_mut()
-                    .for_each(|s| s.mount_state.mark_as_outdated());
+                self.ready_to_unmount_count -= len;
             }
+        }
+
+        fn splice(&mut self, range: std::ops::Range<usize>, new_len: usize) {
+            let real_len = self.real_len();
+            assert!(range.start <= range.end);
+            assert!(range.end <= real_len);
+
+            let removed_len = range.end - range.start;
+
+            if removed_len >= new_len {
+                let drain_start = range.start + new_len;
+                self.states[(range.start)..drain_start]
+                    .iter_mut()
+                    .for_each(|state| state.mount_state.mark_as_outdated());
+
+                self.drain(drain_start..(range.end))
+            } else {
+                let end = range.end;
+                self.states[range]
+                    .iter_mut()
+                    .for_each(|state| state.mount_state.mark_as_outdated());
+
+                self.insert_many_at(end, new_len - removed_len);
+            }
+        }
+
+        fn drain(&mut self, range: std::ops::Range<usize>) {
+            let real_len = self.real_len();
+            assert!(range.start <= range.end);
+            assert!(range.end <= real_len);
+
+            let states = &mut self.states_mut()[(range.start)..];
+            let removed_len = range.end - range.start;
+
+            if removed_len < states.len() {
+                states[..removed_len]
+                    .iter_mut()
+                    .for_each(|state| state.mount_state = MountState::OutdatedAndMoved);
+                states.rotate_left(removed_len);
+            } else {
+                states
+                    .iter_mut()
+                    .for_each(|state| state.mount_state.mark_as_outdated());
+            }
+            self.ready_to_unmount_count += removed_len;
         }
     }
 
