@@ -538,6 +538,7 @@ mod render_states {
         pub(super) states: Vec<Stated<S>>,
         // last `ready_to_unmount_count` states should be unmounted on next render_update
         pub(super) ready_to_unmount_count: usize,
+        pub(super) all_outdated: bool,
     }
 
     impl<S> RenderStates<S> {
@@ -694,12 +695,20 @@ mod render_states {
         }
 
         fn mark_all_as_outdated(&mut self) {
-            // Does nothing because current implementation assumes all as outdated in render_update
+            self.all_outdated = true;
         }
 
         fn mark_range_as_outdated(&mut self, range: &std::ops::Range<usize>) {
-            _ = range;
-            // Does nothing because current implementation assumes all as outdated in render_update
+            if self.all_outdated {
+                return;
+            }
+            if range.start == 0 && range.end == self.real_len() {
+                self.mark_all_as_outdated()
+            } else {
+                self.states_mut()[range.clone()]
+                    .iter_mut()
+                    .for_each(|state| state.mount_state.mark_as_outdated())
+            }
         }
     }
 
@@ -708,6 +717,7 @@ mod render_states {
             Self {
                 states: Vec::new(),
                 ready_to_unmount_count: 0,
+                all_outdated: false,
             }
         }
     }
@@ -927,6 +937,8 @@ mod to_element {
                 >,
                 force_reposition: bool,
             ) {
+                render_state.state_unmounted = false;
+
                 let rc_with_old_key = if let Some(render_states) = &mut render_state.render_states {
                     if self.all_states.borrow().0.contains(&*render_states) {
                         /*
@@ -958,8 +970,11 @@ mod to_element {
                         }
                         */
 
-                        // render_states is up-to-date as of it's order and count
+                        // render_states is properly synced
                         let render_states = &mut *render_states.borrow_mut();
+
+                        let all_outdated = std::mem::take(&mut render_states.all_outdated);
+
                         let render_states = render_states.clean(render_context.renderer_mut());
 
                         let mut render_states = render_states.iter_mut();
@@ -994,6 +1009,11 @@ mod to_element {
                         // the states are outdated
                         {
                             let states = Rc::get_mut(&mut render_states.rc).unwrap().get_mut();
+
+                            // It should be set to false when finished.
+                            // We can assume all_outdated=true in this branch so we set it earlier.
+                            states.all_outdated = false;
+
                             let (mounted, unmounted) = {
                                 let real_len = states.real_len();
                                 states.states.split_at_mut(real_len)
@@ -1058,6 +1078,7 @@ mod to_element {
                             })
                             .collect(),
                         ready_to_unmount_count: 0,
+                        all_outdated: false,
                     };
 
                     render_state.render_states.insert(RcWithKey {
@@ -1073,8 +1094,6 @@ mod to_element {
                         rc_with_old_key.key,
                         Rc::downgrade(&rc_with_old_key.rc),
                     );
-
-                render_state.state_unmounted = false;
             }
         }
 
