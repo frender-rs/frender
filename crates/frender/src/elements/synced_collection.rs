@@ -164,6 +164,9 @@ impl StatesCommon for AllStates {
     fn drain(&mut self, range: std::ops::Range<usize>) {
         self.for_each_alive_mut(|states| states.drain(range.clone()))
     }
+    fn mark_all_as_outdated(&mut self) {
+        self.for_each_alive_mut(|states| states.mark_all_as_outdated())
+    }
 }
 
 impl AllStates {
@@ -188,6 +191,8 @@ trait StatesCommon {
     fn extend(&mut self, len: usize);
     fn splice(&mut self, range: std::ops::Range<usize>, len: usize);
     fn drain(&mut self, range: std::ops::Range<usize>);
+
+    fn mark_all_as_outdated(&mut self);
 }
 
 trait States: StatesCommon + StatesLikeVec {}
@@ -215,6 +220,10 @@ impl<ES> SyncedCollection<ES> {
             all_states: RefCell::new(AllStates::new()),
             items,
         }
+    }
+
+    pub fn mark_all_as_outdated(&mut self) {
+        self.all_states.get_mut().mark_all_as_outdated()
     }
 }
 
@@ -631,6 +640,10 @@ mod render_states {
                     .for_each(|state| state.mount_state.mark_as_outdated());
             }
             self.ready_to_unmount_count += removed_len;
+        }
+
+        fn mark_all_as_outdated(&mut self) {
+            // Does nothing because current implementation assumes all as outdated in render_update
         }
     }
 
