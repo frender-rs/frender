@@ -32,6 +32,14 @@ impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for [S; N] {
 
         res
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        self.iter()
+            .for_each(|state| state.check_and_move_cursor(render_context))
+    }
 }
 
 pub struct ArrayRenderState<S, const N: usize>(pub [S; N]);
@@ -64,5 +72,12 @@ impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for ArrayRende
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         self.project_inner().poll_render(renderer, cx)
+    }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        self.0.check_and_move_cursor(render_context)
     }
 }

@@ -24,6 +24,12 @@ pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<
     where
         Self: RenderWithContext;
 
+    fn check_and_move_cursor_after_node(
+        render_context: &mut Self::RenderContext<'_>,
+        node: &web_sys::Node,
+    ) where
+        Self: RenderWithContext;
+
     /// See [`crate::behaviors::Node::readd_self`].
     fn readd_node(
         render_context: &mut Self::RenderContext<'_>,
@@ -111,6 +117,13 @@ impl<'a> Cursor<'a> {
 
     pub fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
         if force_reposition {
+            // #[cfg(debug_assertions)]
+            // if self.skipped {
+            //     web_sys::console::warn_1(
+            //         &"Dom renderer's cursor can not be skipped when moving node".into(),
+            //     );
+            // }
+
             match &self.position {
                 CursorPosition::FirstChildOf(parent) => {
                     // web_sys::console::log_2(&"FirstChildOf".into(), parent);
@@ -127,17 +140,27 @@ impl<'a> Cursor<'a> {
                 }
             }
         } else {
-            #[cfg(debug_assertions)]
-            if !(self.skipped || self.cursor_is_at_node(node)) {
-                web_sys::console::log_3(
-                    &"[debug assertion failed] Cursor should be at:".into(),
-                    node,
-                    &"But the cursor is at:".into(),
-                );
-                self.log_self();
-            }
+            self.check_cursor_is_at_node_or_warn(node);
         }
 
+        self.position = CursorPosition::After(Cow::Owned(node.clone()));
+        self.skipped = false;
+    }
+
+    fn check_cursor_is_at_node_or_warn(&self, node: &web_sys::Node) {
+        #[cfg(debug_assertions)]
+        if !(self.skipped || self.cursor_is_at_node(node)) {
+            web_sys::console::log_3(
+                &"[debug assertion failed] Cursor should be at:".into(),
+                node,
+                &"But the cursor is at:".into(),
+            );
+            self.log_self();
+        }
+    }
+
+    pub fn check_and_move_cursor_after_node(&mut self, node: &web_sys::Node) {
+        self.check_cursor_is_at_node_or_warn(node);
         self.position = CursorPosition::After(Cow::Owned(node.clone()));
         self.skipped = false;
     }

@@ -17,6 +17,12 @@ impl<R: ?Sized> RenderState<R> for () {
     ) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
+
+    fn check_and_move_cursor(&self, _: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+    }
 }
 
 macro_rules! impl_render_for_tuple {
@@ -48,6 +54,15 @@ macro_rules! impl_render_for_tuple {
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
                         _ => std::task::Poll::Pending,
                     }
+                }
+
+                fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+                where
+                    R: crate::render::RenderWithContext,
+                {
+                    let ($($field,)+) = self;
+
+                    $( $field.check_and_move_cursor(render_context); )+
                 }
             }
         )+

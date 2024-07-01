@@ -221,6 +221,15 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
         render_context.cursor.readd_node(node, force_reposition)
     }
 
+    fn check_and_move_cursor_after_node(
+        render_context: &mut Self::RenderContext<'_>,
+        node: &web_sys::Node,
+    ) where
+        Self: RenderWithContext,
+    {
+        render_context.cursor.check_and_move_cursor_after_node(node)
+    }
+
     fn remove_node(&mut self, node: &web_sys::Node) {
         use wasm_bindgen::prelude::*;
 

@@ -210,6 +210,16 @@ impl<Cache, Text: Node<R>, R: ?Sized> RenderState<R> for State<Cache, Text> {
     fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: frender_dom::render::RenderWithContext,
+    {
+        match &self.text_node {
+            TextNode { node, unmounted: false } => node.check_and_move_cursor_after_self(render_context),
+            _ => {}
+        }
+    }
 }
 
 pub struct Kind<Cache: 'static>(super::Kind<Cache>);

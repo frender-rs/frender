@@ -31,6 +31,16 @@ impl<Renderer: ?Sized, L: RenderState<Renderer>, R: RenderState<Renderer>> Rende
             Either::Right(s) => s.poll_render(renderer, cx),
         }
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <Renderer>::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        match self {
+            Either::Left(this) => this.check_and_move_cursor(render_context),
+            Either::Right(this) => this.check_and_move_cursor(render_context),
+        }
+    }
 }
 
 pin_project_lite::pin_project!(
@@ -73,5 +83,12 @@ impl<R: ?Sized, A: RenderState<R>, B: RenderState<R>> RenderState<R> for EitherR
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         self.project().inner.poll_render(renderer, cx)
+    }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        self.inner.check_and_move_cursor(render_context)
     }
 }

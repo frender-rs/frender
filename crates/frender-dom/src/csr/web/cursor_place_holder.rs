@@ -17,6 +17,13 @@ impl<R: ?Sized + Renderer> behaviors::Node<R> for CursorPlaceholder {
         R::readd_node(render_context, &mut self.0, force_reposition)
     }
 
+    fn check_and_move_cursor_after_self(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        R::check_and_move_cursor_after_node(render_context, &self.0)
+    }
+
     fn cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>) -> bool
     where
         R: crate::render::RenderWithContext,

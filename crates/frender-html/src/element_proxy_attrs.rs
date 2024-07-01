@@ -90,6 +90,13 @@ mod dom {
             self.0.cursor_is_at_self(render_context)
         }
 
+        fn check_and_move_cursor_after_self(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            self.0.check_and_move_cursor_after_self(render_context)
+        }
+
         fn readd_self(&mut self, render_context: &mut <R>::RenderContext<'_>, force_reposition: bool)
         where
             R: frender_dom::render::RenderWithContext,

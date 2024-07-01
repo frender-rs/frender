@@ -31,6 +31,10 @@ pub trait Node<Renderer: ?Sized> {
     where
         Renderer: crate::render::RenderWithContext;
 
+    fn check_and_move_cursor_after_self(&self, render_context: &mut Renderer::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext;
+
     fn remove_self(&mut self, renderer: &mut Renderer);
 }
 
@@ -90,6 +94,13 @@ impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node
         Renderer: crate::render::RenderWithContext,
     {
         Renderer::cursor_is_at_node(render_context, self.0.as_ref())
+    }
+
+    fn check_and_move_cursor_after_self(&self, render_context: &mut <Renderer>::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        Renderer::check_and_move_cursor_after_node(render_context, self.0.as_ref())
     }
 
     fn readd_self(

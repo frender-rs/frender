@@ -37,4 +37,11 @@ impl<R: ?Sized, S: RenderState<R>, T> RenderState<R> for CompoundState<S, T> {
     ) -> std::task::Poll<()> {
         self.project().reactive.poll_render(renderer, cx)
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        self.reactive.check_and_move_cursor(render_context)
+    }
 }

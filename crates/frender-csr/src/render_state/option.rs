@@ -30,4 +30,13 @@ impl<R: ?Sized, S: RenderState<R>> RenderState<R> for Option<S> {
             None => std::task::Poll::Ready(()),
         }
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        if let Some(this) = self {
+            this.check_and_move_cursor(render_context)
+        }
+    }
 }

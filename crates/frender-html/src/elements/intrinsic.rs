@@ -104,6 +104,17 @@ mod imp {
 
             S::poll_render_with_peh(this.props_state, element, renderer, cx)
         }
+
+        /// children states are not checked
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            match &self.element_and_mounted {
+                Some(ElementAndMounted { element, mounted: true }) => element.check_and_move_cursor_after_self(render_context),
+                _ => {}
+            }
+        }
     }
 
     pin_project_lite::pin_project! {
@@ -147,6 +158,13 @@ mod imp {
 
         fn poll_render(self: std::pin::Pin<&mut Self>, renderer: &mut R, cx: &mut std::task::Context<'_>) -> std::task::Poll<()> {
             self.project().children_render_state.poll_render(renderer, cx)
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_dom::render::RenderWithContext,
+        {
+            self.children_render_state.check_and_move_cursor(render_context)
         }
     }
 

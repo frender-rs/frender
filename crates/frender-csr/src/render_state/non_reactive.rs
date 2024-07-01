@@ -17,4 +17,10 @@ impl<T, R: ?Sized> RenderState<R> for NonReactiveRenderState<T> {
     ) -> std::task::Poll<()> {
         std::task::Poll::Ready(())
     }
+
+    fn check_and_move_cursor(&self, _: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+    }
 }

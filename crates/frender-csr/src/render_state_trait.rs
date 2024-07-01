@@ -12,8 +12,8 @@ pub trait RenderState<R: ?Sized> {
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>;
 
-    //     fn check_and_move_cursor_after_self(
-    //         self: Pin<&mut Self>,
-    // render_context: R
-    //     )where R:Renderer ;
+    // without updating the state
+    fn check_and_move_cursor(&self, render_context: &mut R::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext;
 }
