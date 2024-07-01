@@ -197,6 +197,9 @@ impl<S: ?Sized + StatesCommon + StatesLikeVec> States for S {}
 /// All mutations are synced to the registered render states so that before elements `render_update`,
 /// the render states can reposition and only `render_update`s the updated elements.
 ///
+/// Currently all elements will render_update if any one element is updated.
+/// This might change in the future.
+///
 /// - [`IndexMut<usize>`] would record a update at the index.
 ///
 ///   `elements[i] = new_element` or even just `&mut elements[i]` is a update mutation at `i`.
@@ -422,13 +425,22 @@ mod render_states {
 
     pub(super) enum MountState {
         MountedAndUpToDate,
+        MountedAndUpToDateButPreviousWasSkipped,
         Outdated,
+        OutdatedAndPreviousWasSkipped,
         OutdatedAndMoved,
         // UpdateToDateButMoved,
     }
 
     impl MountState {
+        // caller should mark the next one as previous_was_skipped
+        // There might be a UpdateToDateButMoved variant so this method is different from mark_as_outdated_and_moved
         fn mark_as_moved(&mut self) {
+            *self = Self::OutdatedAndMoved
+        }
+
+        // caller should mark the next one as previous_was_skipped
+        fn mark_as_outdated_and_moved(&mut self) {
             *self = Self::OutdatedAndMoved
         }
 
@@ -437,6 +449,22 @@ mod render_states {
                 MountState::MountedAndUpToDate => Self::Outdated,
                 MountState::Outdated => Self::Outdated,
                 MountState::OutdatedAndMoved => MountState::OutdatedAndMoved,
+                MountState::MountedAndUpToDateButPreviousWasSkipped => {
+                    MountState::OutdatedAndPreviousWasSkipped
+                }
+                MountState::OutdatedAndPreviousWasSkipped => {
+                    MountState::OutdatedAndPreviousWasSkipped
+                }
+            }
+        }
+
+        fn mark_previous_was_skipped(&mut self) {
+            match self {
+                MountState::MountedAndUpToDate => {
+                    *self = MountState::MountedAndUpToDateButPreviousWasSkipped
+                }
+                MountState::Outdated => *self = MountState::OutdatedAndPreviousWasSkipped,
+                _ => {}
             }
         }
     }
@@ -493,21 +521,40 @@ mod render_states {
             let states = self.states_mut();
 
             states.swap(a, b);
-            states[a].mount_state.mark_as_moved();
-            states[b].mount_state.mark_as_moved();
+
+            if a != b {
+                states[a].mount_state.mark_as_moved();
+                states[b].mount_state.mark_as_moved();
+
+                // a,x,b -> b,x,a
+                if a.abs_diff(b) > 1 {
+                    states[a.min(b) + 1].mount_state.mark_previous_was_skipped()
+                }
+            }
         }
 
         fn remove(&mut self, index: usize) {
             // not real remove
-            self.states_mut()[index..].rotate_left(1);
+            let states = &mut self.states_mut()[index..];
+            states[0].mount_state.mark_as_outdated_and_moved();
+            if states.len() > 1 {
+                states[1].mount_state.mark_previous_was_skipped();
+                states.rotate_left(1);
+            }
             self.ready_to_unmount_count += 1;
         }
 
         fn swap_remove(&mut self, index: usize) {
             // not real remove
             let states = self.states_mut();
-            states.swap(index, states.len() - 1);
-            states[index].mount_state.mark_as_moved();
+            let to_swap = states.len() - 1;
+            if index < to_swap {
+                states.swap(index, to_swap);
+                states[index + 1].mount_state.mark_previous_was_skipped();
+            }
+            states[index].mount_state.mark_as_outdated_and_moved();
+
+            states[index + 1].mount_state.mark_as_moved();
             self.ready_to_unmount_count += 1;
         }
     }
@@ -575,8 +622,9 @@ mod render_states {
             if removed_len < states.len() {
                 states[..removed_len]
                     .iter_mut()
-                    .for_each(|state| state.mount_state = MountState::OutdatedAndMoved);
+                    .for_each(|state| state.mount_state.mark_as_outdated_and_moved());
                 states.rotate_left(removed_len);
+                states[0].mount_state.mark_previous_was_skipped();
             } else {
                 states
                     .iter_mut()
@@ -810,8 +858,36 @@ mod to_element {
                 >,
                 force_reposition: bool,
             ) {
+                use frender_html::dom::render::Render;
+
                 let rc_with_old_key = if let Some(render_states) = &mut render_state.render_states {
                     if self.all_states.borrow().0.contains(&*render_states) {
+                        /*
+                        {
+                            let states = render_states.rc.borrow();
+                            render_context.renderer_mut().log(
+                                &states
+                                    .states
+                                    .iter()
+                                    .map(|s| match s.mount_state {
+                                        MountState::MountedAndUpToDate => "MountedAndUpToDate ",
+                                        MountState::Outdated => "Outdated ",
+                                        MountState::OutdatedAndMoved => "OutdatedAndMoved ",
+                                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
+                                            "MountedAndUpToDateButPreviousWasSkipped "
+                                        }
+                                        MountState::OutdatedAndPreviousWasSkipped => {
+                                            "OutdatedAndPreviousWasSkipped "
+                                        }
+                                    })
+                                    .collect::<String>(),
+                            );
+                            render_context
+                                .renderer_mut()
+                                .log(&states.ready_to_unmount_count.to_string());
+                        }
+                        */
+
                         // render_states is up-to-date as of it's order and count
                         let render_states = &mut *render_states.borrow_mut();
                         let render_states = render_states.clean(render_context.renderer_mut());
@@ -940,11 +1016,18 @@ mod to_element {
                 mount_state,
             }: &mut Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>>,
         ) {
-            let force_reposition = match mount_state {
-                MountState::MountedAndUpToDate => return,
-                MountState::Outdated => false,
-                MountState::OutdatedAndMoved => true,
+            let (force_reposition, cursor_should_skip) = match mount_state {
+                MountState::MountedAndUpToDate => (false, false), // TODO: just move cursor and return
+                MountState::MountedAndUpToDateButPreviousWasSkipped => (false, true),
+                MountState::Outdated => (false, false),
+                MountState::OutdatedAndPreviousWasSkipped => (false, true),
+                MountState::OutdatedAndMoved => (true, false),
             };
+
+            if cursor_should_skip {
+                render_context.mark_cursor_skipped()
+            }
+
             el.unpinned_render_update_maybe_reposition(
                 render_context,
                 render_state,
