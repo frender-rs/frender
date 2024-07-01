@@ -15,6 +15,7 @@ impl<'a> Drop for SyncedDrain<'a> {
 
 pub struct Drain<'a, T> {
     vec_drain: std::vec::Drain<'a, T>,
+    #[allow(dead_code)]
     synced: SyncedDrain<'a>,
 }
 

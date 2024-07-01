@@ -4,7 +4,6 @@ use std::cell::RefCell;
 
 use frender::prelude::*;
 use frender_common::TempStr;
-use frender_html::RenderHtml;
 use hooks::ShareValue;
 
 use frender::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext};

@@ -927,13 +927,14 @@ mod to_element {
                 >,
                 force_reposition: bool,
             ) {
-                use frender_html::dom::render::Render;
-
                 let rc_with_old_key = if let Some(render_states) = &mut render_state.render_states {
                     if self.all_states.borrow().0.contains(&*render_states) {
                         /*
                         {
+                            use frender_html::dom::render::Render;
+
                             let states = render_states.rc.borrow();
+
                             render_context.renderer_mut().log(
                                 &states
                                     .states

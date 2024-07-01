@@ -8,7 +8,7 @@ use frender_dom::render::{RenderContext, RenderWithContext};
 use crate::dom::render::RenderTextFrom;
 use crate::{dom::behaviors::Node, RenderHtml};
 
-use crate::{Element, HtmlRenderContext, RenderState, RenderStateKind, RenderStateOfContext};
+use crate::{Element, HtmlRenderContext, RenderState, RenderStateOfContext};
 
 /// `Text` node with a field recording whether it is unmounted.
 pub struct TextNode<Text> {

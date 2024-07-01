@@ -2,7 +2,6 @@ use frender_common::utils::pin_project_map_array;
 
 use crate::{render_state::array::ArrayRenderState, Element, HtmlRenderContext, RenderHtml, RenderStateKind, RenderStateOfContext, UnpinnedRenderStateOfContext};
 
-enum Never {}
 pub struct Kind<K: RenderStateKind, const N: usize>(super::Kind<K>);
 
 impl<K: RenderStateKind, const N: usize> crate::RenderStateKindPinned for Kind<K, N> {

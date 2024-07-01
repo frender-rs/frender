@@ -12,7 +12,7 @@ mod imp {
 
     use crate::element_types::RenderStateWithPehKind;
     use crate::html::behavior_type_traits;
-    use crate::{CreateNode, CsrComponent, HtmlRenderContext, RenderHtml, RenderStateKind, UnpinnedRenderStateOfContext, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
+    use crate::{CreateNode, HtmlRenderContext, RenderHtml, UnpinnedRenderStateOfContext, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
     use crate::{Element, RenderState};
 
