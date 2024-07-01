@@ -1,0 +1,16 @@
+[package]
+name = "synced"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+frender = { path = "../../crates/frender", features = [
+    "web",
+    "spawn",
+    "either",
+] }
+hooks = "3.0.0-alpha"
+gloo = "0.11.0"
+either = "1.8.1"
