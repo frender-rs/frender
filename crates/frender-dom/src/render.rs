@@ -1,3 +1,5 @@
+pub use frender_csr::render::{RenderContext, RenderWithContext};
+
 pub trait RenderTextFrom<Text, V: ?Sized> {
     /// should not move cursor
     fn render_text_from(&mut self, v: &V) -> Text;
@@ -52,22 +54,4 @@ pub trait Render: RenderWithContext {
         + crate::behaviors::NodeRenderSelf<Self>
         + crate::behaviors::NodeWithRenderContextAfterSelf<Self>
         + crate::behaviors::Node<Self>;
-}
-
-pub trait RenderWithContext {
-    type RenderContext<'a>: ?Sized + RenderContext<Renderer = Self>;
-}
-
-pub trait RenderContext {
-    type Renderer: ?Sized + RenderWithContext;
-
-    // TODO: remove
-    fn map_mut_render_context<Res>(
-        &mut self,
-        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
-    ) -> Res;
-
-    fn renderer_mut(&mut self) -> &mut Self::Renderer;
-    fn log_cursor(&mut self);
-    fn mark_cursor_skipped(&mut self);
 }
