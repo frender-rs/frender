@@ -100,36 +100,46 @@ pub mod default {
         cache: bool,
     }
 
-    pub struct States<K, S> {
+    enum MountState {
+        Mounted,
+        StateUnmounted,
+        AllStatesUnmounted,
+    }
+
+    pub struct States<K, S, C> {
         // the first `key_to_index.len()` states are mounted.
         states: Vec<State<S>>,
         key_to_index: IndexMap<K, ()>,
-        all_state_unmounted: bool,
+        mount_state: MountState,
+        // elements are surrounded by two cursor placeholders.
+        cursor_placeholders: Option<(C, C)>,
     }
 
-    impl<K: Hash + Eq, S: Default> States<K, S> {
-        fn insert_at_index(&mut self, key: K, index: usize) -> &mut State<S> {
-            debug_assert!(index <= self.key_to_index.len());
-            let old_index = match self.key_to_index.entry(key) {
-                indexmap::map::Entry::Occupied(entry) => entry.index(),
-                indexmap::map::Entry::Vacant(entry) => {
-                    let real_len = entry.index();
-                    entry.insert(());
-                    push_state_with_real_len(&mut self.states, real_len);
-                    real_len
-                }
-            };
-
-            if old_index != index {
-                self.key_to_index.swap_indices(old_index, index);
-                self.states.swap(old_index, index);
+    fn insert_at_index<'s, K: Hash + Eq, S: Default>(
+        states: &'s mut Vec<State<S>>,
+        key_to_index: &mut IndexMap<K, ()>,
+        key: K,
+        index: usize,
+    ) -> &'s mut State<S> {
+        debug_assert!(index <= key_to_index.len());
+        let old_index = match key_to_index.entry(key) {
+            indexmap::map::Entry::Occupied(entry) => entry.index(),
+            indexmap::map::Entry::Vacant(entry) => {
+                let real_len = entry.index();
+                entry.insert(());
+                push_state_with_real_len(states, real_len);
+                real_len
             }
+        };
 
-            &mut self.states[index]
+        if old_index != index {
+            key_to_index.swap_indices(old_index, index);
+            states.swap(old_index, index);
         }
+
+        &mut states[index]
     }
 
-    // the returned index will be `real_len`
     fn push_state_with_real_len<T: Default>(states: &mut Vec<T>, real_len: usize) {
         debug_assert!(states.len() >= real_len);
 
@@ -138,24 +148,36 @@ pub mod default {
         }
     }
 
-    impl<K, S> Default for States<K, S> {
+    impl<K, S, C> Default for States<K, S, C> {
         fn default() -> Self {
             Self {
                 states: Vec::new(),
                 key_to_index: Default::default(),
-                all_state_unmounted: false,
+                mount_state: MountState::AllStatesUnmounted,
+                cursor_placeholders: None,
             }
         }
     }
 
-    impl<K, S> Unpin for States<K, S> {}
+    impl<K, S, C> Unpin for States<K, S, C> {}
 
-    impl<K, S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for States<K, S> {
+    impl<K, S: RenderState<R> + Unpin, R: ?Sized, C> RenderState<R> for States<K, S, C>
+    where
+        C: frender_html::dom::behaviors::Node<R>,
+    {
         fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
             let this = self.get_mut();
+
+            let (a, b) = match this.mount_state {
+                MountState::AllStatesUnmounted => return,
+                _ => this.cursor_placeholders.as_mut().unwrap(),
+            };
+
             let real_len = this.key_to_index.len();
 
             this.key_to_index.clear();
+
+            a.remove_self(renderer);
 
             this.states
                 .iter_mut()
@@ -164,7 +186,9 @@ pub mod default {
                     S::unmount(Pin::new(render_state), renderer);
                 });
 
-            this.all_state_unmounted = true;
+            b.remove_self(renderer);
+
+            this.mount_state = MountState::AllStatesUnmounted;
 
             // TODO(perf): should we free the memory or reuse it in case mounted again? Currently States<K, S> keeps the allocated memory.
             // We could keep the allocated memory in implementations,
@@ -173,7 +197,7 @@ pub mod default {
 
         fn state_unmount(self: Pin<&mut Self>) {
             let this = self.get_mut();
-            if this.all_state_unmounted {
+            if !matches!(this.mount_state, MountState::Mounted) {
                 return;
             }
             let real_len = this.key_to_index.len();
@@ -191,7 +215,7 @@ pub mod default {
                 },
             );
 
-            this.all_state_unmounted = true;
+            this.mount_state = MountState::StateUnmounted;
         }
 
         fn poll_render(
@@ -201,7 +225,7 @@ pub mod default {
         ) -> std::task::Poll<()> {
             let this = self.get_mut();
 
-            if this.all_state_unmounted {
+            if !matches!(this.mount_state, MountState::Mounted) {
                 return std::task::Poll::Ready(());
             }
 
@@ -228,12 +252,32 @@ pub mod default {
 
             res
         }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            if matches!(self.mount_state, MountState::AllStatesUnmounted) {
+                return;
+            }
+            // check even if state_unmounted
+            // only check the surrounding placeholders
+            if let Some((a, b)) = &self.cursor_placeholders {
+                a.check_and_move_cursor_after_self(render_context);
+                if self.key_to_index.len() > 0 {
+                    // skip surrounded elements
+                    render_context.mark_cursor_skipped();
+                }
+                b.check_and_move_cursor_after_self(render_context);
+            }
+        }
     }
 
     impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
         type CsrState<R: RenderHtml + ?Sized> = States<
             K,
             <E::RenderStateKind as frender_html::RenderStateKindUnpinned>::UnpinnedRenderState<R>,
+            R::CursorPlaceholder,
         >;
 
         fn keyed_elements_update_csr_state<
@@ -245,13 +289,27 @@ pub mod default {
             render_context: &mut R::RenderContext<'_>,
             state: Pin<&mut Self::CsrState<R>>,
         ) {
+            use frender_html::dom::behaviors::{Node as _, NodeRenderSelf};
+
             let States {
                 states,
                 key_to_index,
-                all_state_unmounted,
+                mount_state,
+                cursor_placeholders,
             } = state.get_mut();
 
-            *all_state_unmounted = false;
+            let cursor_placeholder_force_reposition =
+                matches!(mount_state, MountState::AllStatesUnmounted);
+
+            *mount_state = MountState::Mounted;
+
+            // Ok(&mut cpb) or Err(new_cpa)
+            let cpb_or_new_cpa = if let Some((cpa, cpb)) = cursor_placeholders {
+                cpa.readd_self(render_context, cursor_placeholder_force_reposition);
+                Ok(cpb)
+            } else {
+                Err(NodeRenderSelf::render_self(render_context))
+            };
 
             let elements = keyed_elements.into_iter();
 
@@ -415,6 +473,14 @@ pub mod default {
                     debug_assert!(state.state_unmounted);
                     Pin::new(&mut state.render_state).unmount(renderer);
                 });
+
+            match cpb_or_new_cpa {
+                Ok(cpb) => cpb.readd_self(render_context, cursor_placeholder_force_reposition),
+                Err(new_cpa) => {
+                    let new_cpb = NodeRenderSelf::render_self(render_context);
+                    *cursor_placeholders = Some((new_cpa, new_cpb));
+                }
+            }
         }
 
         fn keyed_elements_update_csr_state_force_reposition<
@@ -426,16 +492,31 @@ pub mod default {
             render_context: &mut R::RenderContext<'_>,
             state: Pin<&mut Self::CsrState<R>>,
         ) {
-            let states = state.get_mut();
+            use frender_html::dom::behaviors::{Node as _, NodeRenderSelf};
 
-            states.all_state_unmounted = false;
+            let States {
+                states,
+                key_to_index,
+                mount_state,
+                cursor_placeholders,
+            } = state.get_mut();
+
+            *mount_state = MountState::Mounted;
+
+            // Ok(&mut cpb) or Err(new_cpa)
+            let cpb_or_new_cpa = if let Some((cpa, cpb)) = cursor_placeholders {
+                cpa.readd_self(render_context, true);
+                Ok(cpb)
+            } else {
+                Err(NodeRenderSelf::render_self(render_context))
+            };
 
             let elements = keyed_elements.into_iter();
 
             let mut index = 0;
 
             for Keyed(key, element) in elements {
-                let state = states.insert_at_index(key, index);
+                let state = insert_at_index(states, key_to_index, key, index);
 
                 state.state_unmounted = false;
                 state.order = index;
@@ -449,14 +530,22 @@ pub mod default {
             }
 
             // states that should be unmounted
-            let real_len = states.key_to_index.len();
+            let real_len = key_to_index.len();
             let renderer = render_context.renderer_mut();
-            states.states[index..real_len].iter_mut().for_each(|state| {
+            states[index..real_len].iter_mut().for_each(|state| {
                 Pin::new(&mut state.render_state).unmount(renderer);
                 state.state_unmounted = false;
             });
 
-            debug_assert!(states.states.iter().all(|state| !state.state_unmounted));
+            match cpb_or_new_cpa {
+                Ok(cpb) => cpb.readd_self(render_context, true),
+                Err(new_cpa) => {
+                    let new_cpb = NodeRenderSelf::render_self(render_context);
+                    *cursor_placeholders = Some((new_cpa, new_cpb));
+                }
+            }
+
+            debug_assert!(states.iter().all(|state| !state.state_unmounted));
         }
     }
 }

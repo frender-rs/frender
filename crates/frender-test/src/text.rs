@@ -63,6 +63,16 @@ impl frender_html::dom::behaviors::Node<Renderer> for Text {
         render_context.readd_node(Cow::Owned(Node::Text(self.clone())), force_reposition)
     }
 
+    fn check_and_move_cursor_after_self(
+        &self,
+        render_context: &mut crate::renderer::RenderContext<'_>,
+    ) where
+        Renderer: frender_html::dom::render::RenderWithContext,
+    {
+        assert!(self.cursor_is_at_self(render_context));
+        render_context.readd_node(Cow::Owned(Node::Text(self.clone())), false)
+    }
+
     fn remove_self(&mut self, _: &mut Renderer) {
         self.parent()
             .expect("text node should have a parent")

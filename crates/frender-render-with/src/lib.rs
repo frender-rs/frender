@@ -55,6 +55,13 @@ impl<R: ?Sized> RenderState<R> for PinBoxDynRenderState<R> {
     ) -> std::task::Poll<()> {
         self.pin_project().poll_render(renderer, cx)
     }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: frender_html::dom::render::RenderWithContext,
+    {
+        self.render_state.check_and_move_cursor(render_context)
+    }
 }
 
 pub struct CsrRenderContext<'a, Ctx: ?Sized + HtmlRenderContext, S: ?Sized = dyn Any> {

@@ -172,6 +172,16 @@ mod imp {
                 }
             }
         }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            if let MountState::Unmounted = self.mount_state {
+                return;
+            }
+            self.render_state.check_and_move_cursor(render_context)
+        }
     }
 
     impl<
@@ -258,6 +268,7 @@ mod cursor_placeholder {
     use frender_html::{dom::behaviors::Node, RenderState};
 
     pin_project_lite::pin_project!(
+        /// Note that this state doesn't assume render_state is unmounted if cursor_placeholder_and_data.is_none().
         pub struct CursorPlaceholderWithRenderState<C, T, S> {
             pub cursor_placeholder_and_data: Option<(C, T)>,
             #[pin]
@@ -314,6 +325,16 @@ mod cursor_placeholder {
             cx: &mut std::task::Context<'_>,
         ) -> std::task::Poll<()> {
             self.project().render_state.poll_render(renderer, cx)
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            if let Some((cp, _)) = &self.cursor_placeholder_and_data {
+                cp.check_and_move_cursor_after_self(render_context)
+            }
+            self.render_state.check_and_move_cursor(render_context)
         }
     }
 }

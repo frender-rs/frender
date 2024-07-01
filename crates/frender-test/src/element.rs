@@ -289,6 +289,14 @@ mod cursor_placeholder {
             );
         }
 
+        fn check_and_move_cursor_after_self(&self, render_context: &mut RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            assert!(self.cursor_is_at_self(render_context));
+            render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), false)
+        }
+
         fn cursor_is_at_self(&self, render_context: &RenderContext) -> bool
         where
             Renderer: frender_html::dom::render::RenderWithContext,
@@ -361,6 +369,16 @@ mod dom {
                 std::borrow::Cow::Owned(Node::Element(self.clone())),
                 force_reposition,
             )
+        }
+
+        fn check_and_move_cursor_after_self(
+            &self,
+            render_context: &mut crate::renderer::RenderContext<'_>,
+        ) where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            assert!(self.cursor_is_at_self(render_context));
+            render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), false)
         }
 
         fn remove_self(&mut self, renderer: &mut Renderer) {

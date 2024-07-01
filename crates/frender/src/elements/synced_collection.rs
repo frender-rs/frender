@@ -726,36 +726,56 @@ mod render_states {
 mod state {
     use std::{cell::RefCell, pin::Pin, task::Poll};
 
-    use frender_csr::RenderState;
+    use frender_csr::{render::RenderContext, RenderState};
 
     use super::{render_states::RenderStates, RcWithKey};
 
-    pub struct State<S> {
+    pub struct State<S, C> {
+        // None means unmounted
         pub(super) render_states: Option<RcWithKey<RefCell<RenderStates<S>>>>,
         pub(super) state_unmounted: bool,
+        pub(super) cursor_placeholders: Option<(C, C)>,
     }
 
-    impl<S> Default for State<S> {
+    impl<S, C> State<S, C> {
+        fn set_to_init(&mut self) {
+            self.render_states = None;
+            self.state_unmounted = false;
+        }
+    }
+
+    impl<S, C> Unpin for State<S, C> {}
+
+    impl<S, C> Default for State<S, C> {
         fn default() -> Self {
             Self {
                 render_states: None,
                 state_unmounted: false,
+                cursor_placeholders: None,
             }
         }
     }
 
-    impl<S: RenderState<R> + Unpin, R: ?Sized> RenderState<R> for State<S> {
+    impl<S: RenderState<R> + Unpin, R: ?Sized, C: frender_html::dom::behaviors::Node<R>>
+        RenderState<R> for State<S, C>
+    {
         fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
             let this = self.get_mut();
             if let Some(render_states) = &mut this.render_states {
+                let (cpa, cpb) = this.cursor_placeholders.as_mut().unwrap();
+
+                cpa.remove_self(renderer);
+
                 render_states
                     .borrow_mut()
                     .states
                     .iter_mut()
                     .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
+
+                cpb.remove_self(renderer);
             }
 
-            *this = Default::default();
+            this.set_to_init();
         }
 
         fn state_unmount(self: std::pin::Pin<&mut Self>) {
@@ -784,6 +804,7 @@ mod state {
                 Self {
                     render_states: Some(render_states),
                     state_unmounted: false,
+                    cursor_placeholders: _,
                 } => render_states
                     .borrow_mut()
                     // on poll_render, if !state_unmounted, ready_to_unmount states are unmounted
@@ -796,6 +817,31 @@ mod state {
                         }
                     }),
                 _ => Poll::Ready(()),
+            }
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_csr::render::RenderWithContext,
+        {
+            match self {
+                Self {
+                    render_states: Some(render_states), // not unmounted
+                    state_unmounted: _, // check_and_move_cursor even if state_unmounted
+                    cursor_placeholders: Some((cpa, cpb)),
+                } => {
+                    cpa.check_and_move_cursor_after_self(render_context);
+                    {
+                        let render_states = render_states.rc.borrow();
+                        if !(render_states.real_len() == 0
+                            && render_states.ready_to_unmount_count == 0)
+                        {
+                            render_context.mark_cursor_skipped();
+                        }
+                    }
+                    cpb.check_and_move_cursor_after_self(render_context);
+                }
+                _ => {}
             }
         }
     }
@@ -873,6 +919,7 @@ mod to_element {
         use std::{cell::RefCell, pin::Pin, rc::Rc};
 
         use frender_html::{
+            dom::behaviors::{Node as _, NodeRenderSelf},
             Element, RenderStateKindPinned, RenderStateKindUnpinned, UnpinnedRenderStateOfContext,
         };
 
@@ -891,12 +938,12 @@ mod to_element {
 
         impl<K: RenderStateKindUnpinned> RenderStateKindPinned for Kind<K> {
             type RenderState<R: frender_html::RenderHtml + ?Sized> =
-                State<K::UnpinnedRenderState<R>>;
+                State<K::UnpinnedRenderState<R>, R::CursorPlaceholder>;
         }
 
         impl<K: RenderStateKindUnpinned> RenderStateKindUnpinned for Kind<K> {
             type UnpinnedRenderState<R: frender_html::RenderHtml + ?Sized> =
-                State<K::UnpinnedRenderState<R>>;
+                State<K::UnpinnedRenderState<R>, R::CursorPlaceholder>;
         }
 
         impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> Element
@@ -934,12 +981,72 @@ mod to_element {
                         <F::ItemToElement as Element>::RenderStateKind,
                         Ctx,
                     >,
+                    <Ctx::Renderer as frender_html::dom::render::Render>::CursorPlaceholder,
                 >,
                 force_reposition: bool,
             ) {
                 render_state.state_unmounted = false;
 
-                let rc_with_old_key = if let Some(render_states) = &mut render_state.render_states {
+                let cursor_placeholder_force_reposition =
+                    force_reposition || render_state.render_states.is_none(); // Was unmounted, so must re-mount
+
+                let State {
+                    render_states,
+                    state_unmounted: _,
+                    cursor_placeholders,
+                } = render_state;
+
+                let cpb_or_new_cpa = render_context.map_mut_render_context(|render_context| {
+                    if let Some((cpa, cpb)) = cursor_placeholders {
+                        cpa.readd_self(render_context, cursor_placeholder_force_reposition);
+                        Ok(cpb)
+                    } else {
+                        let new_cpa = NodeRenderSelf::render_self(render_context);
+                        Err(new_cpa)
+                    }
+                });
+
+                self.unpinned_impl(render_context, render_states, force_reposition);
+
+                match cpb_or_new_cpa {
+                    Ok(cpb) => render_context.map_mut_render_context(|render_context| {
+                        cpb.readd_self(render_context, cursor_placeholder_force_reposition)
+                    }),
+                    Err(new_cpa) => {
+                        let new_cpb = render_context.map_mut_render_context(|render_context| {
+                            NodeRenderSelf::render_self(render_context)
+                        });
+                        *cursor_placeholders = Some((new_cpa, new_cpb));
+                    }
+                };
+            }
+        }
+
+        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SyncedCollectionToElement<'a, ES, F>
+        where
+            // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
+            <F::ItemToElement as Element>::RenderStateKind: 'static,
+        {
+            // without caring about cursor placeholders
+            fn unpinned_impl<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+                render_states: &mut Option<
+                    RcWithKey<
+                        RefCell<
+                            RenderStates<
+                                UnpinnedRenderStateOfContext<
+                                    <F::ItemToElement as Element>::RenderStateKind,
+                                    Ctx,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+                force_reposition: bool,
+            ) {
+                let rc_with_old_key = if let Some(render_states) = render_states {
                     if self.all_states.borrow().0.contains(&*render_states) {
                         /*
                         {
@@ -984,6 +1091,7 @@ mod to_element {
                         let zip = render_states.by_ref().zip(elements.by_ref());
 
                         if force_reposition {
+                            // TODO: we could just unpinned_render_update_force_reposition outdated elements, and just force_reposition UpdateToDateButMoved elements, if not all_outdated
                             zip.for_each(|(render_state, el)| {
                                 unpinned_render_update_force_reposition(
                                     f.map_item_to_element(el),
@@ -992,13 +1100,74 @@ mod to_element {
                                 )
                             })
                         } else {
-                            zip.for_each(|(render_state, el)| {
-                                unpinned_render_update(
-                                    f.map_item_to_element(el),
-                                    render_context,
-                                    render_state,
-                                )
-                            })
+                            if all_outdated {
+                                zip.for_each(|(render_state, el)| {
+                                    unpinned_render_update(
+                                        f.map_item_to_element(el),
+                                        render_context,
+                                        render_state,
+                                    )
+                                })
+                            } else {
+                                // only update outdated elements
+                                zip.for_each(|(render_state, el): (&mut _, _)| {
+                                    let Stated {
+                                        render_state,
+                                        mount_state,
+                                    } = render_state;
+
+                                    enum SimpleMountState {
+                                        UpToDate,
+                                        Outdated,
+                                        OutdatedAndMoved,
+                                    }
+
+                                    let (simple_mount_state, cursor_should_skip) = match mount_state
+                                    {
+                                        MountState::MountedAndUpToDate => {
+                                            (SimpleMountState::UpToDate, false)
+                                        }
+                                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
+                                            (SimpleMountState::UpToDate, true)
+                                        }
+                                        MountState::Outdated => (SimpleMountState::Outdated, false),
+                                        MountState::OutdatedAndPreviousWasSkipped => {
+                                            (SimpleMountState::Outdated, true)
+                                        }
+                                        MountState::OutdatedAndMoved => {
+                                            (SimpleMountState::OutdatedAndMoved, false)
+                                        }
+                                    };
+
+                                    if cursor_should_skip {
+                                        render_context.mark_cursor_skipped()
+                                    }
+
+                                    *mount_state = MountState::MountedAndUpToDate;
+
+                                    let force_reposition = match simple_mount_state {
+                                        SimpleMountState::UpToDate => {
+                                            render_context.map_mut_render_context(|render_context| {
+                                                frender_html::RenderState::check_and_move_cursor(
+                                                    render_state,
+                                                    render_context,
+                                                )
+                                            });
+                                            return;
+                                        }
+                                        SimpleMountState::Outdated => false,
+                                        SimpleMountState::OutdatedAndMoved => true,
+                                    };
+
+                                    let el = f.map_item_to_element(el);
+
+                                    el.unpinned_render_update_maybe_reposition(
+                                        render_context,
+                                        render_state,
+                                        force_reposition,
+                                    );
+                                })
+                            }
                         }
 
                         assert_eq!(render_states.len(), 0, "too many render states");
@@ -1081,7 +1250,7 @@ mod to_element {
                         all_outdated: false,
                     };
 
-                    render_state.render_states.insert(RcWithKey {
+                    render_states.insert(RcWithKey {
                         rc: Rc::new(RefCell::new(states)),
                         key: weak_vec1::Key::STACK,
                     })
