@@ -167,6 +167,9 @@ impl StatesCommon for AllStates {
     fn mark_all_as_outdated(&mut self) {
         self.for_each_alive_mut(|states| states.mark_all_as_outdated())
     }
+    fn mark_range_as_outdated(&mut self, range: &std::ops::Range<usize>) {
+        self.for_each_alive_mut(|states| states.mark_range_as_outdated(range))
+    }
 }
 
 impl AllStates {
@@ -193,6 +196,7 @@ trait StatesCommon {
     fn drain(&mut self, range: std::ops::Range<usize>);
 
     fn mark_all_as_outdated(&mut self);
+    fn mark_range_as_outdated(&mut self, range: &std::ops::Range<usize>);
 }
 
 trait States: StatesCommon + StatesLikeVec {}
@@ -413,6 +417,53 @@ impl<T> SyncedCollection<Vec<T>> {
         let drain_range = parse_range(&range, self.items.len());
 
         drain::Drain::new(&mut self.all_states, self.items.drain(range), drain_range)
+    }
+
+    pub fn as_mut_slice_and_mark_all_outdated(&mut self) -> &mut [T] {
+        self.mark_all_as_outdated();
+        self.items.as_mut_slice()
+    }
+
+    pub fn as_mut_slice_range_and_mark_outdated<R: std::ops::RangeBounds<usize>>(
+        &mut self,
+        range: R,
+    ) -> &mut [T] {
+        let range = parse_range(&range, self.items.len());
+        let slice = &mut self.items[range.clone()];
+
+        self.all_states.get_mut().mark_range_as_outdated(&range);
+
+        slice
+    }
+
+    pub fn get2_mut(&mut self, a: usize, b: usize) -> Option<(&mut T, &mut T)> {
+        #[inline(always)]
+        fn get2_mut_impl<T>(
+            items: &mut [T],
+            less: usize,
+            greater: usize,
+        ) -> Option<(&mut T, &mut T)> {
+            if greater < items.len() {
+                let (first, second) = items.split_at_mut(greater);
+                Some((&mut first[less], &mut second[0]))
+            } else {
+                None
+            }
+        }
+
+        let res = match a.cmp(&b) {
+            std::cmp::Ordering::Less => get2_mut_impl(&mut self.items, a, b),
+            std::cmp::Ordering::Greater => get2_mut_impl(&mut self.items, b, a),
+            std::cmp::Ordering::Equal => None,
+        };
+
+        if res.is_some() {
+            let all_states = self.all_states.get_mut();
+            all_states.mark_index_as_updated(a);
+            all_states.mark_index_as_updated(b);
+        }
+
+        res
     }
 }
 
@@ -643,6 +694,11 @@ mod render_states {
         }
 
         fn mark_all_as_outdated(&mut self) {
+            // Does nothing because current implementation assumes all as outdated in render_update
+        }
+
+        fn mark_range_as_outdated(&mut self, range: &std::ops::Range<usize>) {
+            _ = range;
             // Does nothing because current implementation assumes all as outdated in render_update
         }
     }
