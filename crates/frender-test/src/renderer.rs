@@ -117,6 +117,7 @@ impl RenderContext<'_> {
         if force_reposition {
             self.readd_node_force_reposition(node)
         } else {
+            self.assert_cursor_is_at_node(&node);
             self.move_cursor_after_node(node.into_owned())
         }
     }
@@ -124,6 +125,28 @@ impl RenderContext<'_> {
     pub(crate) fn cursor_is_at(&self, f: impl FnOnce(Node) -> bool) -> bool {
         // TODO: check is sibling
         self.cursor.1 || self.current_node().map_or(false, f)
+    }
+
+    fn assert_cursor_is_at_node(&self, node: &Node) {
+        assert!(
+            node.parent()
+                .unwrap()
+                .upgrade()
+                .unwrap()
+                .try_position_of_child(&node)
+                .is_some(),
+            "node should be mounted as a child: {:?}",
+            node
+        );
+
+        if !self.cursor_is_at(|c| c.is_same_node(node)) {
+            panic!(
+                "Cursor should be at {:?}\n\nBut cursor is {:?},\n\nwhich is at {:?}",
+                node,
+                self.cursor,
+                self.current_node(),
+            )
+        }
     }
 }
 
@@ -144,6 +167,17 @@ impl Renderer {
         node: Node,
         f: impl FnOnce(&mut RenderContext<'_>) -> Res,
     ) -> Res {
+        assert!(
+            node.parent()
+                .unwrap()
+                .upgrade()
+                .unwrap()
+                .try_position_of_child(&node)
+                .is_some(),
+            "node should be mounted: {:?}",
+            node
+        );
+
         f(&mut RenderContext {
             renderer: self,
             cursor: &mut Cursor(
@@ -183,6 +217,12 @@ macro_rules! html_elements {
 }
 
 pub struct Cursor(crate::element::Cursor, bool);
+
+impl std::fmt::Debug for Cursor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Cursor({:?}, skipped={:?})", self.0, self.1)
+    }
+}
 
 impl Cursor {
     fn is_same_cursor(&self, other: &Self) -> bool {
@@ -242,7 +282,7 @@ impl frender_html::dom::render::RenderContext for RenderContext<'_> {
     }
 
     fn log_cursor(&mut self) {
-        eprintln!("{:?} (skipped={:?})", self.cursor.0, self.cursor.1)
+        eprintln!("{:?}", self.cursor)
     }
 
     fn mark_cursor_skipped(&mut self) {

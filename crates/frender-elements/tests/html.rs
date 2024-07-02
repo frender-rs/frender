@@ -5,8 +5,11 @@ use frender_html::{cs, prelude_props_builders::*};
 use frender_test::{element::Node, renderer::RendererWithRoot};
 
 fn dom_nodes_div_i32(dom: &RendererWithRoot) -> Vec<i32> {
-    dom.nodes()
-        .iter()
+    let nodes = dom.nodes();
+    let mut nodes = nodes.iter();
+    assert!(nodes.next().unwrap().is_cursor_placeholder());
+    assert!(nodes.next_back().unwrap().is_cursor_placeholder());
+    nodes
         .map(Node::as_element)
         .map(|el| {
             let el = el.unwrap().data_cloned();

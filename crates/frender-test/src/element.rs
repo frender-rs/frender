@@ -71,6 +71,9 @@ impl Node {
         match (self, node) {
             (Node::Text(a), Node::Text(b)) => a.is_same_text(b),
             (Node::Element(a), Node::Element(b)) => a.is_same_element(b),
+            (Node::CursorPlaceholder(a), Node::CursorPlaceholder(b)) => {
+                a.is_same_cursor_placeholder(b)
+            }
             _ => false,
         }
     }
@@ -81,6 +84,14 @@ impl Node {
             Node::Element(this) => this.set_parent(parent),
             Node::CursorPlaceholder(cp) => cp.set_parent(parent),
         }
+    }
+
+    /// Returns `true` if the node is [`CursorPlaceholder`].
+    ///
+    /// [`CursorPlaceholder`]: Node::CursorPlaceholder
+    #[must_use]
+    pub fn is_cursor_placeholder(&self) -> bool {
+        matches!(self, Self::CursorPlaceholder(..))
     }
 }
 
@@ -109,17 +120,19 @@ impl Cursor {
                     .expect("cursor node's parent has been dropped");
                 let children = &parent.inner.borrow().children;
 
-                let node = children[*children_index_hint..]
+                let node_pos = children[*children_index_hint..]
                     .iter()
-                    .find(|n| n.is_same_node(node))
+                    .position(|n| n.is_same_node(node))
+                    .map(|pos| pos + children_index_hint)
                     .or_else(|| {
                         children[..*children_index_hint]
                             .iter()
-                            .find(|n| n.is_same_node(node))
+                            .position(|n| n.is_same_node(node))
                     })
                     .expect("node should be in its parent's children");
 
-                Some(node.clone())
+                let next_node = children.get(node_pos + 1);
+                next_node.cloned()
             }
         }
     }
@@ -212,13 +225,17 @@ impl Element {
         self.inner.borrow().children.clone()
     }
 
-    pub(crate) fn position_of_child(&self, node: &Node) -> usize {
+    pub(crate) fn try_position_of_child(&self, node: &Node) -> Option<usize> {
         self.inner
             .borrow()
             .children
             .iter()
             .position(|n| node.is_same_node(n))
-            .expect("node should be a child")
+    }
+
+    pub(crate) fn position_of_child(&self, node: &Node) -> usize {
+        self.try_position_of_child(node)
+            .unwrap_or_else(|| panic!("node should be a child: {:?}", node))
     }
 
     pub(crate) fn remove_child(&self, child: &Node) -> Node {

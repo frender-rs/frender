@@ -9,8 +9,11 @@ fn dom_nodes_parse<T: FromStr + PartialEq>(dom: &RendererWithRoot) -> Vec<T>
 where
     <T as FromStr>::Err: std::fmt::Debug,
 {
-    dom.nodes()
-        .iter()
+    let nodes = dom.nodes();
+    let mut nodes = nodes.iter();
+    assert!(nodes.next().unwrap().is_cursor_placeholder());
+    assert!(nodes.next_back().unwrap().is_cursor_placeholder());
+    nodes
         .map(Node::as_text)
         .map(|text| T::from_str(&text.unwrap().to_string()).unwrap())
         .collect::<Vec<_>>()
