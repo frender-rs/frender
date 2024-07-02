@@ -84,3 +84,67 @@ pub mod with {
         }
     }
 }
+
+mod imps {
+    use crate::{Element, SsrElement, TempStr};
+
+    use super::ToElement;
+
+    // scalar
+    frender_common::impl_many!(
+        impl<__> ToElement
+            for each_of![
+                i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize, f32, f64, //
+                char,
+            ]
+        {
+            type ToElementHtmlChildren = <Self as SsrElement>::HtmlChildren;
+            type ToElementRenderStateKind = <Self as Element>::RenderStateKind;
+            type ToElement<'a> = Self
+            where
+                Self: 'a;
+            fn to_element(&self) -> Self {
+                *self
+            }
+        }
+    );
+
+    // acts like `TempStr<&'static str>`
+    frender_common::impl_many!(
+        impl<__> ToElement
+            for each_of![
+                str, //
+                String,
+                std::borrow::Cow<'_, str>,
+            ]
+        {
+            type ToElementHtmlChildren = <TempStr<&'static str> as SsrElement>::HtmlChildren;
+            type ToElementRenderStateKind = <TempStr<&'static str> as Element>::RenderStateKind;
+            type ToElement<'a> = TempStr<&'a Self>
+            where
+                Self: 'a;
+            fn to_element(&self) -> TempStr<&Self> {
+                TempStr(self)
+            }
+        }
+    );
+
+    // CheapClone
+    frender_common::impl_many!(
+        impl<__> ToElement
+            for each_of![
+                std::rc::Rc<str>, //
+                std::sync::Arc<str>,
+            ]
+        {
+            type ToElementHtmlChildren = <Self as SsrElement>::HtmlChildren;
+            type ToElementRenderStateKind = <Self as Element>::RenderStateKind;
+            type ToElement<'a> = Self
+            where
+                Self: 'a;
+            fn to_element(&self) -> Self {
+                self.clone()
+            }
+        }
+    );
+}
