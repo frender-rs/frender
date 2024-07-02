@@ -268,9 +268,9 @@ mod imp {
         //     &force_reposition.into(),
         // );
 
+        update(element, render_context.renderer_mut());
+
         element.readd_self(render_context, force_reposition || !*mounted);
         *mounted = true;
-
-        update(element, render_context.renderer_mut());
     }
 }
