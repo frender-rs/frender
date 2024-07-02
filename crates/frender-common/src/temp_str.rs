@@ -43,6 +43,20 @@ impl IntoStaticStr for &str {
     }
 }
 
+impl IntoStaticStr for &String {
+    type IntoStaticStr = String;
+    fn into_static_str(self) -> Self::IntoStaticStr {
+        self.to_owned()
+    }
+
+    fn update_into_static_str(self, target: &mut Self::IntoStaticStr)
+    where
+        Self: Sized,
+    {
+        self.clone_into(target)
+    }
+}
+
 impl IntoStaticStr for std::borrow::Cow<'_, str> {
     type IntoStaticStr = String;
     fn into_static_str(self) -> Self::IntoStaticStr {
