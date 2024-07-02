@@ -27,7 +27,6 @@ frender_common::impl_many!(
 
 impl<S> SsrElement for frender_common::TempStr<S>
 where
-    S: std::borrow::Borrow<str>,
     S: frender_common::IntoStaticStr,
 {
     type HtmlChildren = frender_ssr_html::encode::Encode<
