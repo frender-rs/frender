@@ -129,8 +129,23 @@ impl<Cache, Text> State<Cache, Text> {
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
+        self.update_maybe_reposition(data, render_context, force_reposition, Borrow::borrow, not_match_cache, update_cache)
+    }
+
+    fn update_maybe_reposition<Ctx: ?Sized + RenderContext, S, V: ?Sized>(
+        &mut self,
+        data: S,
+        render_context: &mut Ctx,
+        force_reposition: bool,
+        get_value: impl FnOnce(&S) -> &V,
+        not_match_cache: impl FnOnce(&S, &Cache) -> bool,
+        update_cache: impl FnOnce(&mut Cache, S),
+    ) where
+        Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
+        Text: Node<Ctx::Renderer>,
+    {
         if not_match_cache(&data, &self.cache) {
-            render_context.renderer_mut().update_text_from(&mut self.text_node.node, data.borrow());
+            render_context.renderer_mut().update_text_from(&mut self.text_node.node, get_value(&data));
 
             update_cache(&mut self.cache, data);
         }
@@ -143,8 +158,16 @@ impl<Cache, Text> State<Cache, Text> {
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
+        Self::init(data, render_context, Borrow::borrow, create_cache)
+    }
+
+    fn init<Ctx: ?Sized + RenderContext, S, V: ?Sized>(data: S, render_context: &mut Ctx, get_value: impl FnOnce(&S) -> &V, create_cache: impl FnOnce(S) -> Cache) -> Self
+    where
+        Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
+        Text: Node<Ctx::Renderer>,
+    {
         State {
-            text_node: TextNode::mount_from(render_context, data.borrow()),
+            text_node: TextNode::mount_from(render_context, get_value(&data)),
             cache: create_cache(data),
         }
     }
@@ -255,19 +278,20 @@ frender_common::impl_many!(
     }
 );
 
-impl<S: std::borrow::Borrow<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
+impl<S: AsRef<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
     type RenderStateKind = Kind<<S as frender_common::IntoStaticStr>::IntoStaticStr>;
 
     fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
         match render_state.get_mut() {
-            Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(
+            Some(render_state) => render_state.update_maybe_reposition(
                 self.0,
                 render_context,
                 force_reposition,
-                |s, cache| *s.borrow() != *cache.borrow(),
+                AsRef::as_ref,
+                |s, cache| *s.as_ref() != *cache.borrow(),
                 |cache, s| frender_common::IntoStaticStr::update_into_static_str(s, cache),
             ),
-            render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self.0, render_context, frender_common::IntoStaticStr::into_static_str)),
+            render_state @ None => *render_state = Some(State::init(self.0, render_context, AsRef::as_ref, frender_common::IntoStaticStr::into_static_str)),
         }
     }
 
