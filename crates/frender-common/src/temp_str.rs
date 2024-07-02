@@ -91,6 +91,22 @@ impl IntoStaticStr for &std::borrow::Cow<'_, str> {
     }
 }
 
+impl IntoStaticStr for &std::rc::Rc<str> {
+    type IntoStaticStr = std::rc::Rc<str>;
+
+    fn into_static_str(self) -> Self::IntoStaticStr {
+        self.clone()
+    }
+}
+
+impl IntoStaticStr for &std::sync::Arc<str> {
+    type IntoStaticStr = std::sync::Arc<str>;
+
+    fn into_static_str(self) -> Self::IntoStaticStr {
+        self.clone()
+    }
+}
+
 #[cfg(test)]
 mod asserts {
     use super::IntoStaticStr;
@@ -102,6 +118,8 @@ mod asserts {
         &'a String: AsRef<str> + IntoStaticStr,
         std::borrow::Cow<'a, str>: AsRef<str> + IntoStaticStr,
         &'a std::borrow::Cow<'a, str>: AsRef<str> + IntoStaticStr,
+        &'a std::rc::Rc<str>: AsRef<str> + IntoStaticStr,
+        &'a std::sync::Arc<str>: AsRef<str> + IntoStaticStr,
     {
     }
 
