@@ -73,3 +73,37 @@ impl IntoStaticStr for std::borrow::Cow<'_, str> {
         }
     }
 }
+
+impl IntoStaticStr for &std::borrow::Cow<'_, str> {
+    type IntoStaticStr = String;
+    fn into_static_str(self) -> Self::IntoStaticStr {
+        str::to_owned(self)
+    }
+
+    fn update_into_static_str(self, target: &mut Self::IntoStaticStr)
+    where
+        Self: Sized,
+    {
+        match self {
+            std::borrow::Cow::Borrowed(v) => str::clone_into(v, target),
+            std::borrow::Cow::Owned(v) => String::clone_into(v, target),
+        }
+    }
+}
+
+#[cfg(test)]
+mod asserts {
+    use super::IntoStaticStr;
+
+    #[test]
+    const fn test<'a>()
+    where
+        &'a str: AsRef<str> + IntoStaticStr,
+        &'a String: AsRef<str> + IntoStaticStr,
+        std::borrow::Cow<'a, str>: AsRef<str> + IntoStaticStr,
+        &'a std::borrow::Cow<'a, str>: AsRef<str> + IntoStaticStr,
+    {
+    }
+
+    const _: () = test();
+}
