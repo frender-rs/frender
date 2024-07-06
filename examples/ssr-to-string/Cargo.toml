@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-frender = { path = "../../crates/frender", features = ["ssr"] }
+frender = { path = "../../packages/frender", features = ["ssr"] }
 futures-lite = "2.2.0"
