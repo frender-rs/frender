@@ -27,6 +27,7 @@ frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
 frender-render-with = { version = "0.1.0", path = "../frender-render-with", optional = true }
 frender-elements = { version = "0.1.0", path = "../frender-elements", optional = true }
+frender-context = { version = "0.1.0", path = "../frender-context", default-features = false, optional = true }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
@@ -54,6 +55,7 @@ default = [
     "RenderWith",
     "Elements",
     "ToElement",
+    "context",
 ]
 nightly = ["frender-render-with?/nightly"]
 html = ["frender-html", "csr"]
@@ -71,3 +73,5 @@ csr = ["ssr", "frender-csr", "frender-elements?/csr"]
 RenderWith = ["dep:frender-render-with"]
 Elements = ["dep:frender-elements"]
 ToElement = []
+context = ["dep:frender-context"]
+hooks = ["dep:hooks", "frender-context?/hooks"]

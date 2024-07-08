@@ -862,6 +862,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-context",
  "frender-csr",
  "frender-csr-web",
  "frender-elements",
@@ -887,6 +888,16 @@ version = "0.1.0"
 dependencies = [
  "frender-macro-rules",
  "frender-pin-utils",
+]
+
+[[package]]
+name = "frender-context"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
+ "frender-ssr",
+ "hooks",
+ "pin-project-lite",
 ]
 
 [[package]]
@@ -1889,9 +1900,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hooks"
-version = "3.0.0-alpha.10"
+version = "3.0.0-alpha.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88c17cefad8765ef04e722706607fca15c67548fb961667a788cc4ff42b52776"
+checksum = "4056acff9a301acb7325d4953d0d0e8b6a9a8a80cfd3b6b78970d733a5fd7b1e"
 dependencies = [
  "hooks-core",
  "hooks-gen",
