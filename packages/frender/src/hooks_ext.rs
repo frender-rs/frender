@@ -677,6 +677,9 @@ pub mod element {
             match &mut hook_data.get_mut().inner {
                 Some((signal_hook, _)) if self.0.is_signal_of(signal_hook) => {
                     // signal hasn't changed. no need to update
+                    render_context.map_mut_render_context(|render_context| {
+                        render_state.check_and_move_cursor(render_context)
+                    })
                 }
                 signal_hook => {
                     // new signal
@@ -740,6 +743,9 @@ pub mod element {
             match &mut hook_data.inner {
                 Some((signal_hook, _)) if self.0.is_signal_of(signal_hook) => {
                     // signal hasn't changed. no need to update
+                    render_context.map_mut_render_context(|render_context| {
+                        render_state.check_and_move_cursor(render_context)
+                    })
                 }
                 signal_hook => {
                     // new signal
