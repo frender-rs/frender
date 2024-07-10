@@ -63,6 +63,14 @@ pub use frender_render_with::{
 #[cfg(feature = "Elements")]
 pub use frender_elements::{DefaultElementsAlgorithm, Elements, Keyed};
 
+#[cfg(feature = "context")]
+pub use frender_context as context;
+#[cfg(feature = "context")]
+pub use frender_context::{
+    local::{LocalContextKeyProvided, LocalContextKeyUnprovided},
+    local_context,
+};
+
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
 
