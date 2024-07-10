@@ -284,7 +284,7 @@ impl<T, Inner: ContextKeyInner<Value = T>> ContextKey<Inner> {
 
 #[cfg(feature = "hooks")]
 pub mod hooks {
-    use hooks::Signal;
+    use hooks::{Signal, SignalHook};
 
     use super::{ContextKey, ContextKeyInner};
 
@@ -311,6 +311,47 @@ pub mod hooks {
     impl<S: Signal, Inner: 'static + ContextKeyInner<Value = S>> ContextKey<Inner> {
         pub fn use_signal(&'static self) -> UseSignal<Inner> {
             UseSignal(self)
+        }
+    }
+
+    pub struct UseSignalHook<Inner: 'static + ContextKeyInner>(&'static ContextKey<Inner>)
+    where
+        Inner::Value: SignalHook;
+
+    hooks::impl_hook!(
+        type For<SH: SignalHook, Inner: 'static + ContextKeyInner<Value = SH>> =
+            UseSignalHook<Inner>;
+
+        fn into_hook(self) -> SH {
+            self.0.map(|sh| sh.to_signal().to_signal_hook())
+        }
+
+        fn update_hook(self, hook: _) {
+            self.0
+                .map(|signal| signal.to_signal().update_signal_hook(hook))
+        }
+    );
+
+    impl<
+            SH: SignalHook,
+            Inner: 'static + ContextKeyInner<Value = SH>,
+            SHU: hooks::HookPollNextUpdate + hooks::HookUnmount + Default,
+        > hooks::UpdateHookUninitialized for UseSignalHook<Inner>
+    where
+        for<'a> hooks::Value<'a, SH>: Signal<SignalHookUninitialized = SHU>,
+    {
+        type Uninitialized = SHU;
+        fn h(
+            self,
+            hook: std::pin::Pin<&mut Self::Uninitialized>,
+        ) -> <Self::Hook as hooks::HookValue<'_>>::Value {
+            self.0.map(|signal| signal.to_signal().h_signal_hook(hook))
+        }
+    }
+
+    impl<S: SignalHook, Inner: 'static + ContextKeyInner<Value = S>> ContextKey<Inner> {
+        pub fn use_signal_hook(&'static self) -> UseSignalHook<Inner> {
+            UseSignalHook(self)
         }
     }
 }
@@ -469,7 +510,7 @@ pub mod element {
 
         use crate::{ContextKeyInner, MaybeContextKeyAndValue};
 
-        use super::{ContextKey, ElementWithContext, IntoContextValue};
+        use super::{ElementWithContext, IntoContextValue};
 
         pin_project_lite::pin_project!(
             #[project = StateWithContextProj]
@@ -485,8 +526,6 @@ pub mod element {
             use std::{pin::Pin, task::Poll};
 
             use frender_html::RenderState;
-
-            use crate::ContextKeyInner;
 
             use super::{MaybeContextKeyAndValue, StateWithContext};
 
