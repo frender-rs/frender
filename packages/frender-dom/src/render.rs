@@ -1,5 +1,7 @@
 pub use frender_csr::render::{RenderContext, RenderWithContext};
 
+use crate::string_element::StringElement;
+
 pub trait RenderTextFrom<Text, V: ?Sized> {
     /// should not move cursor
     fn render_text_from(&mut self, v: &V) -> Text;
@@ -24,6 +26,7 @@ pub trait RenderTextFromKnown<Text>:
     + RenderTextFrom<Text, f32>
     + RenderTextFrom<Text, f64>
     + RenderTextFrom<Text, char>
+    + RenderTextFrom<Text, StringElement>
 {
 }
 
@@ -44,6 +47,7 @@ impl<R: ?Sized, Text> RenderTextFromKnown<Text> for R where
         + RenderTextFrom<Text, f32>
         + RenderTextFrom<Text, f64>
         + RenderTextFrom<Text, char>
+        + RenderTextFrom<Text, StringElement>
 {
 }
 

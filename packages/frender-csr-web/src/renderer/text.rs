@@ -13,11 +13,17 @@ mod js_shims {
         #[wasm_bindgen(method, setter)]
         pub fn set_data(this: &Text, val: JsString);
 
+        #[wasm_bindgen(method, setter = data)]
+        pub fn set_data_ref(this: &Text, val: &JsString);
+
         #[wasm_bindgen(js_name = Document)]
         pub type Document;
 
         #[wasm_bindgen(method, structural, js_class = "Document", js_name = createTextNode)]
         pub fn create_text_node(this: &Document, data: JsString) -> web_sys::Text;
+
+        #[wasm_bindgen(method, structural, js_class = "Document", js_name = createTextNode)]
+        pub fn create_text_node_ref(this: &Document, data: &JsString) -> web_sys::Text;
 
         /// Calls `String(value)`
         #[wasm_bindgen(js_name = String)]
@@ -65,6 +71,8 @@ mod to_js_string {
 }
 
 mod to_text_node {
+    use frender_html::dom::string_element::StringElement;
+
     use super::Renderer;
 
     pub(super) trait ToTextNode {
@@ -95,6 +103,31 @@ mod to_text_node {
 
         fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
             text.set_data(self)
+        }
+    }
+
+    impl ToTextNode for StringElement {
+        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
+            match self.as_js_string() {
+                Ok(this) => {
+                    use wasm_bindgen::JsCast;
+                    super::js_shims::Document::create_text_node_ref(
+                        renderer.document.unchecked_ref(),
+                        this,
+                    )
+                }
+                Err(this) => renderer.document.create_text_node(this),
+            }
+        }
+
+        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
+            match self.as_js_string() {
+                Ok(this) => {
+                    use wasm_bindgen::JsCast;
+                    super::js_shims::Text::set_data_ref(text.unchecked_ref(), this)
+                }
+                Err(this) => text.set_data(this),
+            }
         }
     }
 }
