@@ -73,6 +73,7 @@ pub use frender_context::{
 
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
+pub use frender_html::dom::string_element::StringElement;
 
 pub use frender_html_common::dom_tokens;
 pub use frender_html_common::dom_tokens::{
