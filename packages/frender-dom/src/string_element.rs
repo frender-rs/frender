@@ -1,15 +1,30 @@
 use std::{marker::PhantomData, str::FromStr};
 
+mod imp_wasm {
+    pub(super) type StaticOwnedStr = String;
+}
+mod imp_not_wasm {
+    pub(super) type StaticOwnedStr = std::rc::Rc<str>;
+}
+
 #[cfg(all(feature = "web", target_arch = "wasm32"))]
 mod imp {
     pub(super) type Repr = web_sys::js_sys::JsString;
     pub(super) use Result::Ok as ResultJsString;
+
+    pub(super) use super::imp_wasm::*;
+    pub(super) fn into_static_owned_string(repr: Repr) -> StaticOwnedStr {
+        repr.into()
+    }
 }
 
 #[cfg(not(all(feature = "web", target_arch = "wasm32")))]
 mod imp {
     pub(super) type Repr = std::rc::Rc<str>;
     pub(super) use Result::Err as ResultJsString;
+
+    pub(super) use super::imp_not_wasm::*;
+    pub(super) use std::convert::identity as into_static_owned_string;
 }
 
 /// If compiling on `wasm` and crate feature `web` is enabled,
@@ -59,5 +74,47 @@ impl FromStr for StringElement {
 impl std::fmt::Display for StringElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(&self.repr, f)
+    }
+}
+
+pub mod ssr {
+    use std::marker::PhantomData;
+
+    use async_str_iter::IntoAsyncStrIterator;
+    use frender_ssr::SsrElement;
+
+    use super::StringElement;
+
+    pub struct StringElementIntoStaticOwnedStr(
+        super::imp::StaticOwnedStr,
+        // marks as not threadsafe
+        PhantomData<(
+            super::imp_wasm::StaticOwnedStr,
+            super::imp_not_wasm::StaticOwnedStr,
+        )>,
+    );
+
+    impl AsRef<str> for StringElementIntoStaticOwnedStr {
+        fn as_ref(&self) -> &str {
+            self.0.as_ref()
+        }
+    }
+
+    impl SsrElement for StringElement {
+        type HtmlChildren = frender_ssr::html::encode::Encode<
+            frender_ssr::html::escape_safe::Safe,
+            async_str_iter::any_str::IterAnyStr<StringElementIntoStaticOwnedStr>,
+        >;
+
+        fn into_html_children(self) -> Self::HtmlChildren {
+            let s = StringElementIntoStaticOwnedStr(
+                super::imp::into_static_owned_string(self.repr),
+                PhantomData,
+            );
+            Self::HtmlChildren::new(
+                frender_ssr::html::escape_safe::Safe,
+                async_str_iter::any_str::AnyStr(s).into_async_str_iterator(),
+            )
+        }
     }
 }

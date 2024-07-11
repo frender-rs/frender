@@ -1,9 +1,9 @@
 use std::borrow::{Borrow, Cow};
-use std::ops::Deref;
 
 // use wasm_bindgen::{JsCast, JsValue};
 
 use frender_dom::render::{RenderContext, RenderWithContext};
+use frender_dom::string_element::StringElement;
 
 use crate::dom::render::RenderTextFrom;
 use crate::{dom::behaviors::Node, RenderHtml};
@@ -55,16 +55,12 @@ pub struct State<Cache, Text> {
     cache: Cache,
 }
 
-trait RenderingStr: Deref<Target = str> {
-    type Cache;
-
-    fn create_cache(value: Self) -> Self::Cache;
-    fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool;
-    fn update_cache(cache: &mut Self::Cache, value: Self);
+trait BorrowText: Borrow<Self::Text> {
+    type Text: ?Sized;
 }
 
 frender_common::impl_many!(
-    impl<__> RenderingStr
+    impl<__> BorrowText
         for each_of![
             //
             &'static str,
@@ -74,48 +70,35 @@ frender_common::impl_many!(
             std::sync::Arc<str>,
         ]
     {
-        type Cache = Self;
-
-        #[inline]
-        fn create_cache(value: Self) -> Self::Cache {
-            value
-        }
-
-        #[inline]
-        fn not_match_cache(this: &Self, cache: &Self::Cache) -> bool {
-            cache != this
-        }
-
-        #[inline]
-        fn update_cache(cache: &mut Self::Cache, value: Self) {
-            *cache = value
-        }
+        type Text = str;
     }
 );
 
-#[cfg(remove)]
-mod js {
-    use js_sys::JsString;
-    use wasm_bindgen::prelude::*;
-
-    #[wasm_bindgen]
-    extern "C" {
-        pub type Text;
-
-        #[wasm_bindgen(method, setter)]
-        pub fn set_data(this: &Text, val: JsString);
-
-        #[wasm_bindgen(js_name = Document)]
-        pub type Document;
-
-        #[wasm_bindgen(method, structural, js_class = "Document", js_name = createTextNode)]
-        pub fn create_text_node(this: &Document, data: JsString) -> web_sys::Text;
-
-        /// Calls `String(value)`
-        #[wasm_bindgen(js_name = String)]
-        pub fn js_string(value: JsValue) -> JsString;
+frender_common::impl_many!(
+    impl<__> BorrowText
+        for each_of![
+            StringElement,
+            // scalar types
+            i8,
+            u8,
+            i16,
+            u16,
+            i32,
+            u32,
+            i64,
+            u64,
+            i128,
+            u128,
+            isize,
+            usize,
+            f32,
+            f64,
+            char,
+        ]
+    {
+        type Text = Self;
     }
-}
+);
 
 impl<Cache, Text> State<Cache, Text> {
     fn update_with_str_maybe_reposition<Ctx: ?Sized + RenderContext, S: Borrow<V>, V: ?Sized>(
@@ -171,53 +154,6 @@ impl<Cache, Text> State<Cache, Text> {
             cache: create_cache(data),
         }
     }
-
-    #[cfg(remove)]
-    /// The js value returned by `to_js` will be called with `String(value)`
-    /// and then set as data of `Text` node.
-    pub(crate) fn update_with_js_value_maybe_reposition(&mut self, data: Cache, renderer: &mut R, to_js: impl FnOnce(&Cache) -> JsValue, force_reposition: bool)
-    where
-        Cache: PartialEq<Cache>,
-    {
-        self.update_with_js_string_maybe_reposition(data, renderer, move |v| js::js_string(to_js(v)), force_reposition)
-    }
-
-    #[cfg(remove)]
-    /// The js value returned by `to_js` will be called with `String(value)`
-    /// and then set as data of `Text` node.
-    #[inline]
-    pub fn initialize_with_js_value(data: Cache, dom_ctx: &mut CsrContext, to_js: impl FnOnce(&Cache) -> JsValue) -> Self
-    where
-        Cache: PartialEq<Cache>,
-    {
-        Self::initialize_with_js_string(data, dom_ctx, move |v| js::js_string(to_js(v)))
-    }
-
-    #[cfg(remove)]
-    pub(crate) fn update_with_js_string_maybe_reposition(&mut self, data: Cache, dom_ctx: &mut R, to_js: impl FnOnce(&Cache) -> JsString, force_reposition: bool)
-    where
-        Cache: PartialEq<Cache>,
-    {
-        if self.cache != data {
-            let s = to_js(&data);
-            self.node.unchecked_ref::<js::Text>().set_data(s);
-            self.cache = data;
-        }
-
-        self.add_self_to_dom(dom_ctx, force_reposition)
-    }
-
-    #[cfg(remove)]
-    pub fn initialize_with_js_string(data: Cache, dom_ctx: &mut R, to_js: impl FnOnce(&Cache) -> JsString) -> Self {
-        let s = to_js(&data);
-        let text = dom_ctx.document.unchecked_ref::<js::Document>().create_text_node(s);
-        dom_ctx.next_node_position.add_node(Cow::Owned(text.clone().into()));
-        Self {
-            node: text,
-            cache: data,
-            unmounted: false,
-        }
-    }
 }
 
 impl<Cache, Text> Unpin for State<Cache, Text> {}
@@ -257,20 +193,38 @@ impl<Cache: 'static> crate::RenderStateKindUnpinned for Kind<Cache> {
 frender_common::impl_many!(
     impl<__> Element
         for each_of![
-            //
+            // static strings
             Cow<'static, str>,
             &'static str,
             String,
             std::rc::Rc<str>,
             std::sync::Arc<str>,
+            //
+            StringElement,
+            // scalar types
+            i8,
+            u8,
+            i16,
+            u16,
+            i32,
+            u32,
+            i64,
+            u64,
+            i128,
+            u128,
+            isize,
+            usize,
+            f32,
+            f64,
+            char,
         ]
     {
         type RenderStateKind = Kind<Self>;
 
         fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
             match render_state.get_mut() {
-                Some(render_state) => render_state.update_with_str_maybe_reposition::<_, _, str>(self, render_context, force_reposition, RenderingStr::not_match_cache, RenderingStr::update_cache),
-                render_state @ None => *render_state = Some(State::initialize_with_str::<_, _, str>(self, render_context, RenderingStr::create_cache)),
+                Some(render_state) => render_state.update_with_str_maybe_reposition::<Ctx, Self, <Self as BorrowText>::Text>(self, render_context, force_reposition, PartialEq::ne, |cache, this| *cache = this),
+                render_state @ None => *render_state = Some(State::initialize_with_str::<Ctx, Self, <Self as BorrowText>::Text>(self, render_context, std::convert::identity)),
             }
         }
 
@@ -296,21 +250,4 @@ impl<S: AsRef<str> + frender_common::IntoStaticStr> Element for frender_common::
     }
 
     crate::impl_unpinned_render_for_unpin! {}
-}
-
-pub(crate) fn render_update_maybe_reposition<V: ?Sized, S: Borrow<V>, Cache, Ctx: ?Sized + HtmlRenderContext>(
-    data: S,
-    render_context: &mut Ctx,
-    render_state: std::pin::Pin<&mut Option<State<Cache, <Ctx::Renderer as RenderHtml>::Text>>>,
-    force_reposition: bool,
-    not_match_cache: impl FnOnce(&S, &Cache) -> bool,
-    update_cache: impl FnOnce(&mut Cache, S),
-    create_cache: impl FnOnce(S) -> Cache,
-) where
-    Ctx::Renderer: RenderTextFrom<<Ctx::Renderer as RenderHtml>::Text, V>,
-{
-    match render_state.get_mut() {
-        Some(render_state) => render_state.update_with_str_maybe_reposition::<Ctx, S, V>(data, render_context, force_reposition, not_match_cache, update_cache),
-        render_state @ None => *render_state = Some(State::initialize_with_str::<Ctx, S, V>(data, render_context, create_cache)),
-    }
 }

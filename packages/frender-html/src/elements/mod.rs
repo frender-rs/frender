@@ -7,7 +7,6 @@ pub mod boxed;
 pub mod either;
 pub mod intrinsic;
 pub mod option;
-pub mod scalar;
 pub mod str;
 pub mod tuple;
 
