@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use frender_events::{event::Event, event_types::EventType};
+use frender_events::event::Event;
 
 use crate::behaviors;
 
@@ -80,16 +80,20 @@ impl<VK: ?Sized + HandleFormControlValueKind, F: HandleFormControlValue<VK>, E: 
 
 #[cfg(feature = "web")]
 mod web {
-    use frender_events::{event::InputEvent, web::JsCastEventType, HasEventTypeName};
+    use frender_events::{
+        event::Event, event_types::EventType, web::JsCastEventType, HasEventTypeName,
+    };
 
     use crate::csr::web::event_listener::unpinned;
 
-    use super::*;
+    use super::{
+        super::value::HandleFormControlValue, FormControlElement, HandleFormControlValueChange,
+    };
 
     pub enum Input {}
 
     impl EventType for Input {
-        type Event = dyn InputEvent;
+        type Event = dyn Event;
     }
 
     impl HasEventTypeName for Input {
@@ -98,7 +102,7 @@ mod web {
 
     impl JsCastEventType for Input {
         type JsEventTarget = web_sys::EventTarget;
-        type JsCastEvent = web_sys::InputEvent;
+        type JsCastEvent = web_sys::Event;
 
         fn js_event_as_event(event: &Self::JsCastEvent) -> &Self::Event {
             crate::csr::web::Event::new_from_ref(event)
