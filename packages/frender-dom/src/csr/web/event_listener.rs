@@ -29,10 +29,7 @@ mod handle_js_cast_event {
         HandleEvent<web_sys::Event> for HandleJsCastEvent<E, F>
     {
         fn handle_event(&mut self, event: &web_sys::Event) {
-            use wasm_bindgen::JsCast;
-            // TODO: check event type
-            let event: &E::JsCastEvent = event.unchecked_ref();
-            self.f.handle_event(E::js_event_as_event(event))
+            E::handle_js_cast_event(event, |event| self.f.handle_event(event))
         }
 
         fn event_listener_options(&self) -> frender_common::EventListenerOptions {
