@@ -13,11 +13,6 @@ pub trait RenderStateWithPehKind<ElType: ?Sized + behavior_type_traits::Element>
     type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized>: RenderStateWithParentElementsHandle<ElType::Element<R>, R> + Default + Unpin;
 }
 
-impl<ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for crate::elements::tuple::KindOfNoState {
-    type RenderStateWithPeh<R: RenderHtml + ?Sized> = ();
-    type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = ();
-}
-
 pub trait CsrComponent<Children>: behavior_type_traits::Element {
     type ChildrenRenderStateKind: RenderStateWithPehKind<Self>;
 

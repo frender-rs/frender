@@ -1,13 +1,5 @@
 use crate::SsrElement;
 
-impl SsrElement for () {
-    type HtmlChildren = async_str_iter::empty::Empty;
-
-    fn into_html_children(self) -> Self::HtmlChildren {
-        async_str_iter::empty::Empty
-    }
-}
-
 impl<R0: SsrElement> SsrElement for (R0,) {
     type HtmlChildren = R0::HtmlChildren;
 

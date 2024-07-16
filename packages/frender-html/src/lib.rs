@@ -29,6 +29,8 @@ mod element;
 
 mod element_types;
 
+pub mod kinds;
+
 pub mod elements;
 
 mod macros;

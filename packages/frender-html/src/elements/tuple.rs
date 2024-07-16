@@ -4,25 +4,6 @@ use std::pin::Pin;
 
 use crate::{Element, HtmlRenderContext, RenderHtml, RenderStateKind, RenderStateOfContext, UnpinnedRenderStateOfContext};
 
-pub enum KindOfNoState {}
-
-impl crate::RenderStateKindPinned for KindOfNoState {
-    type RenderState<R: RenderHtml + ?Sized> = ();
-}
-impl crate::RenderStateKindUnpinned for KindOfNoState {
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = ();
-}
-
-impl Element for () {
-    type RenderStateKind = KindOfNoState;
-
-    fn render_update<Ctx: ?Sized + HtmlRenderContext>(self, _: &mut Ctx, _: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {}
-    fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, _: &mut Ctx, _: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {}
-    fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, _: &mut Ctx, _: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, _: bool) {}
-
-    crate::impl_unpinned_render_for_unpin! {}
-}
-
 impl<E0: Element> Element for (E0,) {
     type RenderStateKind = E0::RenderStateKind;
 
