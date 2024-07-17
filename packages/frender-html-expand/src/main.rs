@@ -23,7 +23,7 @@ fn expand_and_write(src_root: &Path, mod_name: &str) -> io::Result<()> {
 
 fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
-    let src_root = workspace_root.join("crates/frender-html/src");
+    let src_root = workspace_root.join("packages/frender-html/src");
 
     expand_and_write(&src_root, "props_builders")?;
     expand_and_write(&src_root, "prelude_props_builders")?;
