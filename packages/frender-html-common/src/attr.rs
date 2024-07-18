@@ -32,15 +32,6 @@ impl<S: std::borrow::Borrow<str>> MaybeIntoHtmlAttributeValue<str> for frender_c
     }
 }
 
-/// The attribute is absent
-impl<AttributeType: ?Sized> MaybeIntoHtmlAttributeValue<AttributeType> for () {
-    type HtmlAttributeValue = async_str_iter::never::Never;
-
-    fn maybe_into_html_attribute_value((): Self) -> Option<Self::HtmlAttributeValue> {
-        None
-    }
-}
-
 impl<AttributeType: ?Sized, V: MaybeIntoHtmlAttributeValue<AttributeType>>
     MaybeIntoHtmlAttributeValue<AttributeType> for Option<V>
 {
