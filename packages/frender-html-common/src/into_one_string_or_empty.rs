@@ -7,14 +7,6 @@ pub trait IntoOneStringOrEmpty {
     fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty;
 }
 
-impl IntoOneStringOrEmpty for () {
-    type OneStringOrEmpty = async_str_iter::empty::Empty;
-
-    fn into_one_string_or_empty((): Self) -> Self::OneStringOrEmpty {
-        async_str_iter::empty::Empty
-    }
-}
-
 impl<T: IntoOneStringOrEmpty> IntoOneStringOrEmpty for Option<T> {
     type OneStringOrEmpty = async_str_iter::option::IterOption<T::OneStringOrEmpty>;
 
