@@ -5,7 +5,7 @@ pub trait PropsBuilder: Sized {
     type EventListeners;
 }
 
-pub trait PropsBuilderWithChildren<C>: PropsBuilder<Children = ()> {
+pub trait PropsBuilderWithChildren<C>: PropsBuilder<Children = crate::Empty> {
     type WithChildren: PropsBuilder<Children = C>;
     fn children(self, children: C) -> Self::WithChildren;
 }

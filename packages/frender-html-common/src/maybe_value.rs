@@ -66,12 +66,6 @@ impl<S: std::borrow::Borrow<str>> MaybeValue<str> for frender_common::TempStr<S>
     }
 }
 
-impl<V: ?Sized + ValueKind> MaybeValue<V> for () {
-    type UpdateWithState = ();
-
-    fn update_with_state((): Self, (): &mut Self::UpdateWithState, _: impl ValueUpdater<V>) {}
-}
-
 impl<T: MaybeValue<V>, V: ?Sized + ValueKind> MaybeValue<V> for Option<T> {
     type UpdateWithState = T::UpdateWithState;
 

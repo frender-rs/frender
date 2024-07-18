@@ -1,16 +1,16 @@
 use frender_dom::{
     component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent},
-    script::SsrElementScriptContent,
+    script::IntoScriptContent,
 };
 use frender_html_common::MaybeValue;
 
 use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, CsrComponent};
 
-impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrElementScriptContent> SsrComponent<Attrs, Children> for crate::html::tags::script {
-    type OneElement = frender_ssr::html::element::ScriptElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::ScriptContent>;
+impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrComponent<Attrs, Children> for crate::html::tags::script {
+    type OneElement = frender_ssr::html::element::ScriptElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::IntoScriptContent>;
 
     fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
-        Self::OneElement::new(attrs.into_space_and_html_attributes_or_empty(), SsrElementScriptContent::into_script_content(children))
+        Self::OneElement::new(attrs.into_space_and_html_attributes_or_empty(), IntoScriptContent::into_script_content(children))
     }
 }
 
@@ -22,8 +22,8 @@ impl<Cache: Default> RenderStateWithPehKind<crate::html::tags::script> for Kind<
     type RenderStateWithPehUnpinned<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<Cache>;
 }
 
-impl<Children: SsrElementScriptContent> CsrComponent<Children> for crate::html::tags::script {
-    type ChildrenRenderStateKind = Kind<<Children as MaybeValue<str>>::UpdateWithState>;
+impl<Children: IntoScriptContent> CsrComponent<Children> for crate::html::tags::script {
+    type ChildrenRenderStateKind = Kind<<Children::IntoScriptInnerText as MaybeValue<str>>::UpdateWithState>;
 
     fn children_render_update<R: crate::RenderHtml + ?Sized>(
         children: Children,
@@ -42,7 +42,7 @@ impl<Children: SsrElementScriptContent> CsrComponent<Children> for crate::html::
     ) {
         MaybeValue::<str>::update_with_state(
             //
-            children,
+            Children::into_script_inner_text(children),
             &mut children_state.0,
             super::utils::UpdateInnerText(element, renderer),
         )

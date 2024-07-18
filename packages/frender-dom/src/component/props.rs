@@ -1,3 +1,5 @@
+use crate::Empty;
+
 pub trait IntoElementProps {
     type Children;
     type Attributes;
@@ -15,7 +17,7 @@ pub struct ElementProps<Children, Attrs, EL> {
     pub event_listeners: EL,
 }
 
-impl<Attrs, EL> ElementProps<(), Attrs, EL> {
+impl<Attrs, EL> ElementProps<Empty, Attrs, EL> {
     #[inline(always)]
     pub fn children<C>(self, children: C) -> ElementProps<C, Attrs, EL> {
         ElementProps {

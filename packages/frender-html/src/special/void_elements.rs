@@ -1,4 +1,5 @@
 use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::Empty;
 use frender_ssr::html::tag::AssertTagName;
 
 use crate::{html::tags, CsrComponent, RenderHtml};
@@ -7,7 +8,7 @@ frender_common::impl_many!(
     impl<__>
         (
             Generics![Attrs: IntoSpaceAndHtmlAttributesOrEmpty],
-            Trait![SsrComponent<Attrs, ()>],
+            Trait![SsrComponent<Attrs, Empty>],
             each_of![
                 tags::area,
                 tags::base,
@@ -27,7 +28,7 @@ frender_common::impl_many!(
     {
         type OneElement = frender_ssr::html::element::VoidElement<AssertTagName<&'static str>, <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty>;
 
-        fn ssr_component(attrs: Attrs, (): ()) -> Self::OneElement {
+        fn ssr_component(attrs: Attrs, Empty: Empty) -> Self::OneElement {
             Self::OneElement::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty())
         }
     }
@@ -36,7 +37,7 @@ frender_common::impl_many!(
 frender_common::impl_many!(
     impl<__>
         (
-            Trait![CsrComponent<()>],
+            Trait![CsrComponent<Empty>],
             each_of![
                 tags::area,
                 tags::base,
@@ -55,7 +56,7 @@ frender_common::impl_many!(
         )
     {
         type ChildrenRenderStateKind = crate::kinds::KindOfNoState;
-        fn children_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(_: (), _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
+        fn children_render_update<R: RenderHtml + ?Sized>(Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
     }
 );

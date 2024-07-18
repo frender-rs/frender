@@ -107,10 +107,10 @@ frender_common::impl_many!(
 );
 
 // nothing
-impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for () {
+impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK> for crate::Empty {
     type ProvideFormControlValue = NeverProvideFormControlValue;
 
-    fn maybe_into_provide_form_control_value((): Self) -> Option<Self::ProvideFormControlValue> {
+    fn maybe_into_provide_form_control_value(Self: Self) -> Option<Self::ProvideFormControlValue> {
         None
     }
 }

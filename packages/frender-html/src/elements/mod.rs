@@ -10,5 +10,7 @@ pub mod option;
 pub mod str;
 pub mod tuple;
 
+mod empty;
+
 enum Never {}
 struct Kind<K>(std::marker::PhantomData<K>, Never);

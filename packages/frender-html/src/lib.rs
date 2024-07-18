@@ -2,6 +2,8 @@ pub use frender_common::expand;
 pub use frender_dom as dom;
 pub use frender_html_common::{DomToken, DomTokenList, DomTokens, IntoOneStringOrEmpty};
 
+pub use self::dom::Empty;
+
 pub use create_node::CreateNode;
 pub use html::RenderHtml;
 pub use update_element::{BehaviorType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};

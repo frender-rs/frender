@@ -1,5 +1,5 @@
 use frender::{
-    html::form_control::value::UncontrolledWithDefaultValue, prelude::*,
+    html::form_control::value::UncontrolledWithDefaultValue, prelude::*, Empty,
     ScriptInnerTextWronglyEncoded,
 };
 use hooks::{IntoEq, ShareValue, ToOwnedShareValue};
@@ -16,8 +16,8 @@ fn input() -> impl Element {
             "uncontrolled, value and checked are absent",
             cs::input,
             cs::input.type_("text"),
-            "uncontrolled, value and checked are ()",
-            cs::input.type_("text").value(()).checked(()),
+            "uncontrolled, value and checked are Empty",
+            cs::input.type_("text").value(Empty).checked(Empty),
             "uncontrolled, with defaultValue and defaultChecked",
             cs::input.value(state_text.get_cloned()),
             "Uncontrolled, with defaultChecked and value",

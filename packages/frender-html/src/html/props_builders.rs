@@ -241,7 +241,7 @@ pub trait Element: Node {
 impl<C, A, ELS> Element for super::props::Element<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::Element<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::Element, Props: Element> Element for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::Element<crate::Empty, A, ELS> {
     type WithChildren = super::props::Element<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::Element { props: self.props.children(children) }
@@ -256,7 +256,7 @@ impl<C, A, ELS> ElementWithHrefAttribute for super::props::ElementWithHrefAttrib
 impl<C, A, ELS> Element for super::props::ElementWithHrefAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithHrefAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithHrefAttribute, Props: ElementWithHrefAttribute> ElementWithHrefAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithHrefAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefAttribute { props: self.props.children(children) }
@@ -271,7 +271,7 @@ impl<C, A, ELS> ElementWithTargetAttribute for super::props::ElementWithTargetAt
 impl<C, A, ELS> Element for super::props::ElementWithTargetAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithTargetAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithTargetAttribute, Props: ElementWithTargetAttribute> ElementWithTargetAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTargetAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithTargetAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTargetAttribute { props: self.props.children(children) }
@@ -289,7 +289,7 @@ impl<C, A, ELS> ElementWithTypeAttribute for super::props::ElementWithTypeAttrib
 impl<C, A, ELS> Element for super::props::ElementWithTypeAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithTypeAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithTypeAttribute, Props: ElementWithTypeAttribute> ElementWithTypeAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithTypeAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithTypeAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithTypeAttribute { props: self.props.children(children) }
@@ -304,7 +304,7 @@ impl<C, A, ELS> ElementWithCiteAttribute for super::props::ElementWithCiteAttrib
 impl<C, A, ELS> Element for super::props::ElementWithCiteAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithCiteAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithCiteAttribute, Props: ElementWithCiteAttribute> ElementWithCiteAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCiteAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithCiteAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCiteAttribute { props: self.props.children(children) }
@@ -319,7 +319,7 @@ impl<C, A, ELS> ElementWithPlaceHolderAttribute for super::props::ElementWithPla
 impl<C, A, ELS> Element for super::props::ElementWithPlaceHolderAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithPlaceHolderAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithPlaceHolderAttribute, Props: ElementWithPlaceHolderAttribute> ElementWithPlaceHolderAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithPlaceHolderAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithPlaceHolderAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithPlaceHolderAttribute { props: self.props.children(children) }
@@ -337,7 +337,7 @@ impl<C, A, ELS> ElementWithMaxMinLengthAttributes for super::props::ElementWithM
 impl<C, A, ELS> Element for super::props::ElementWithMaxMinLengthAttributes<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithMaxMinLengthAttributes<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithMaxMinLengthAttributes, Props: ElementWithMaxMinLengthAttributes> ElementWithMaxMinLengthAttributes for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxMinLengthAttributes<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithMaxMinLengthAttributes<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxMinLengthAttributes { props: self.props.children(children) }
@@ -355,7 +355,7 @@ impl<C, A, ELS> ElementWithHeightWidthStrAttributes for super::props::ElementWit
 impl<C, A, ELS> Element for super::props::ElementWithHeightWidthStrAttributes<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithHeightWidthStrAttributes<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithHeightWidthStrAttributes, Props: ElementWithHeightWidthStrAttributes> ElementWithHeightWidthStrAttributes for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthStrAttributes<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithHeightWidthStrAttributes<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthStrAttributes { props: self.props.children(children) }
@@ -373,7 +373,7 @@ impl<C, A, ELS> ElementWithHeightWidthU32Attributes for super::props::ElementWit
 impl<C, A, ELS> Element for super::props::ElementWithHeightWidthU32Attributes<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithHeightWidthU32Attributes<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithHeightWidthU32Attributes, Props: ElementWithHeightWidthU32Attributes> ElementWithHeightWidthU32Attributes for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHeightWidthU32Attributes<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithHeightWidthU32Attributes<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHeightWidthU32Attributes { props: self.props.children(children) }
@@ -388,7 +388,7 @@ impl<C, A, ELS> ElementWithMaxF64Attribute for super::props::ElementWithMaxF64At
 impl<C, A, ELS> Element for super::props::ElementWithMaxF64Attribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithMaxF64Attribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithMaxF64Attribute, Props: ElementWithMaxF64Attribute> ElementWithMaxF64Attribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMaxF64Attribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithMaxF64Attribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMaxF64Attribute { props: self.props.children(children) }
@@ -403,7 +403,7 @@ impl<C, A, ELS> ElementWithValueF64Attribute for super::props::ElementWithValueF
 impl<C, A, ELS> Element for super::props::ElementWithValueF64Attribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithValueF64Attribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithValueF64Attribute, Props: ElementWithValueF64Attribute> ElementWithValueF64Attribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueF64Attribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithValueF64Attribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueF64Attribute { props: self.props.children(children) }
@@ -418,7 +418,7 @@ impl<C, A, ELS> ElementWithValueStrAttribute for super::props::ElementWithValueS
 impl<C, A, ELS> Element for super::props::ElementWithValueStrAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithValueStrAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithValueStrAttribute, Props: ElementWithValueStrAttribute> ElementWithValueStrAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithValueStrAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithValueStrAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithValueStrAttribute { props: self.props.children(children) }
@@ -433,7 +433,7 @@ impl<C, A, ELS> ElementWithOpenAttribute for super::props::ElementWithOpenAttrib
 impl<C, A, ELS> Element for super::props::ElementWithOpenAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithOpenAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithOpenAttribute, Props: ElementWithOpenAttribute> ElementWithOpenAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithOpenAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithOpenAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithOpenAttribute { props: self.props.children(children) }
@@ -448,7 +448,7 @@ impl<C, A, ELS> ElementWithNameAttribute for super::props::ElementWithNameAttrib
 impl<C, A, ELS> Element for super::props::ElementWithNameAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithNameAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithNameAttribute, Props: ElementWithNameAttribute> ElementWithNameAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithNameAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithNameAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithNameAttribute { props: self.props.children(children) }
@@ -463,7 +463,7 @@ impl<C, A, ELS> ElementWithDisabledAttribute for super::props::ElementWithDisabl
 impl<C, A, ELS> Element for super::props::ElementWithDisabledAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithDisabledAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithDisabledAttribute, Props: ElementWithDisabledAttribute> ElementWithDisabledAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDisabledAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithDisabledAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDisabledAttribute { props: self.props.children(children) }
@@ -478,7 +478,7 @@ impl<C, A, ELS> ElementWithCrossOriginAttribute for super::props::ElementWithCro
 impl<C, A, ELS> Element for super::props::ElementWithCrossOriginAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithCrossOriginAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithCrossOriginAttribute, Props: ElementWithCrossOriginAttribute> ElementWithCrossOriginAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithCrossOriginAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithCrossOriginAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithCrossOriginAttribute { props: self.props.children(children) }
@@ -493,7 +493,7 @@ impl<C, A, ELS> ElementWithRelAttribute for super::props::ElementWithRelAttribut
 impl<C, A, ELS> Element for super::props::ElementWithRelAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithRelAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithRelAttribute, Props: ElementWithRelAttribute> ElementWithRelAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRelAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithRelAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRelAttribute { props: self.props.children(children) }
@@ -508,7 +508,7 @@ impl<C, A, ELS> ElementWithReferrerPolicyAttribute for super::props::ElementWith
 impl<C, A, ELS> Element for super::props::ElementWithReferrerPolicyAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithReferrerPolicyAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithReferrerPolicyAttribute, Props: ElementWithReferrerPolicyAttribute> ElementWithReferrerPolicyAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReferrerPolicyAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithReferrerPolicyAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReferrerPolicyAttribute { props: self.props.children(children) }
@@ -523,7 +523,7 @@ impl<C, A, ELS> ElementWithAltAttribute for super::props::ElementWithAltAttribut
 impl<C, A, ELS> Element for super::props::ElementWithAltAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithAltAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithAltAttribute, Props: ElementWithAltAttribute> ElementWithAltAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAltAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithAltAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAltAttribute { props: self.props.children(children) }
@@ -538,7 +538,7 @@ impl<C, A, ELS> ElementWithLoadingAttribute for super::props::ElementWithLoading
 impl<C, A, ELS> Element for super::props::ElementWithLoadingAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithLoadingAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithLoadingAttribute, Props: ElementWithLoadingAttribute> ElementWithLoadingAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLoadingAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithLoadingAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLoadingAttribute { props: self.props.children(children) }
@@ -553,7 +553,7 @@ impl<C, A, ELS> ElementWithAcceptAttribute for super::props::ElementWithAcceptAt
 impl<C, A, ELS> Element for super::props::ElementWithAcceptAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithAcceptAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithAcceptAttribute, Props: ElementWithAcceptAttribute> ElementWithAcceptAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAcceptAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithAcceptAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAcceptAttribute { props: self.props.children(children) }
@@ -568,7 +568,7 @@ impl<C, A, ELS> ElementWithAutoCompleteAttribute for super::props::ElementWithAu
 impl<C, A, ELS> Element for super::props::ElementWithAutoCompleteAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithAutoCompleteAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithAutoCompleteAttribute, Props: ElementWithAutoCompleteAttribute> ElementWithAutoCompleteAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCompleteAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithAutoCompleteAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAutoCompleteAttribute { props: self.props.children(children) }
@@ -583,7 +583,7 @@ impl<C, A, ELS> ElementWithAutoCorrectAttribute for super::props::ElementWithAut
 impl<C, A, ELS> Element for super::props::ElementWithAutoCorrectAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithAutoCorrectAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithAutoCorrectAttribute, Props: ElementWithAutoCorrectAttribute> ElementWithAutoCorrectAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCorrectAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAutoCorrectAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithAutoCorrectAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAutoCorrectAttribute { props: self.props.children(children) }
@@ -598,7 +598,7 @@ impl<C, A, ELS> ElementWithFormAttribute for super::props::ElementWithFormAttrib
 impl<C, A, ELS> Element for super::props::ElementWithFormAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithFormAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithFormAttribute, Props: ElementWithFormAttribute> ElementWithFormAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithFormAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttribute { props: self.props.children(children) }
@@ -626,7 +626,7 @@ impl<C, A, ELS> ElementWithFormAttribute for super::props::ElementWithFormAttrib
 impl<C, A, ELS> Element for super::props::ElementWithFormAttributes<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithFormAttributes<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithFormAttributes, Props: ElementWithFormAttributes> ElementWithFormAttributes for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFormAttributes<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithFormAttributes<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFormAttributes { props: self.props.children(children) }
@@ -641,7 +641,7 @@ impl<C, A, ELS> ElementWithFetchPriorityAttribute for super::props::ElementWithF
 impl<C, A, ELS> Element for super::props::ElementWithFetchPriorityAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithFetchPriorityAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithFetchPriorityAttribute, Props: ElementWithFetchPriorityAttribute> ElementWithFetchPriorityAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithFetchPriorityAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithFetchPriorityAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithFetchPriorityAttribute { props: self.props.children(children) }
@@ -657,7 +657,7 @@ impl<C, A, ELS> ElementWithHrefAttribute for super::props::ElementWithHrefLangAt
 impl<C, A, ELS> Element for super::props::ElementWithHrefLangAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithHrefLangAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithHrefLangAttribute, Props: ElementWithHrefLangAttribute> ElementWithHrefLangAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithHrefLangAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithHrefLangAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithHrefLangAttribute { props: self.props.children(children) }
@@ -672,7 +672,7 @@ impl<C, A, ELS> ElementWithSizesAttribute for super::props::ElementWithSizesAttr
 impl<C, A, ELS> Element for super::props::ElementWithSizesAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithSizesAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithSizesAttribute, Props: ElementWithSizesAttribute> ElementWithSizesAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizesAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithSizesAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizesAttribute { props: self.props.children(children) }
@@ -687,7 +687,7 @@ impl<C, A, ELS> ElementWithUseMapAttribute for super::props::ElementWithUseMapAt
 impl<C, A, ELS> Element for super::props::ElementWithUseMapAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithUseMapAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithUseMapAttribute, Props: ElementWithUseMapAttribute> ElementWithUseMapAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithUseMapAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithUseMapAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithUseMapAttribute { props: self.props.children(children) }
@@ -702,7 +702,7 @@ impl<C, A, ELS> ElementWithLabelAttribute for super::props::ElementWithLabelAttr
 impl<C, A, ELS> Element for super::props::ElementWithLabelAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithLabelAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithLabelAttribute, Props: ElementWithLabelAttribute> ElementWithLabelAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithLabelAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithLabelAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithLabelAttribute { props: self.props.children(children) }
@@ -720,7 +720,7 @@ impl<C, A, ELS> ElementWithForAttribute for super::props::ElementWithForAttribut
 impl<C, A, ELS> Element for super::props::ElementWithForAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithForAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithForAttribute, Props: ElementWithForAttribute> ElementWithForAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithForAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithForAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithForAttribute { props: self.props.children(children) }
@@ -735,7 +735,7 @@ impl<C, A, ELS> ElementWithIntegrityAttribute for super::props::ElementWithInteg
 impl<C, A, ELS> Element for super::props::ElementWithIntegrityAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithIntegrityAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithIntegrityAttribute, Props: ElementWithIntegrityAttribute> ElementWithIntegrityAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithIntegrityAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithIntegrityAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithIntegrityAttribute { props: self.props.children(children) }
@@ -750,7 +750,7 @@ impl<C, A, ELS> ElementWithBlockingAttribute for super::props::ElementWithBlocki
 impl<C, A, ELS> Element for super::props::ElementWithBlockingAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithBlockingAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithBlockingAttribute, Props: ElementWithBlockingAttribute> ElementWithBlockingAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBlockingAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithBlockingAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBlockingAttribute { props: self.props.children(children) }
@@ -765,7 +765,7 @@ impl<C, A, ELS> ElementWithMultipleAttribute for super::props::ElementWithMultip
 impl<C, A, ELS> Element for super::props::ElementWithMultipleAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithMultipleAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithMultipleAttribute, Props: ElementWithMultipleAttribute> ElementWithMultipleAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMultipleAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithMultipleAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMultipleAttribute { props: self.props.children(children) }
@@ -780,7 +780,7 @@ impl<C, A, ELS> ElementWithRequiredAttribute for super::props::ElementWithRequir
 impl<C, A, ELS> Element for super::props::ElementWithRequiredAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithRequiredAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithRequiredAttribute, Props: ElementWithRequiredAttribute> ElementWithRequiredAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithRequiredAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithRequiredAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithRequiredAttribute { props: self.props.children(children) }
@@ -795,7 +795,7 @@ impl<C, A, ELS> ElementWithSizeU32Attribute for super::props::ElementWithSizeU32
 impl<C, A, ELS> Element for super::props::ElementWithSizeU32Attribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithSizeU32Attribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithSizeU32Attribute, Props: ElementWithSizeU32Attribute> ElementWithSizeU32Attribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSizeU32Attribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithSizeU32Attribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSizeU32Attribute { props: self.props.children(children) }
@@ -810,7 +810,7 @@ impl<C, A, ELS> ElementWithSrcAttribute for super::props::ElementWithSrcAttribut
 impl<C, A, ELS> Element for super::props::ElementWithSrcAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithSrcAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithSrcAttribute, Props: ElementWithSrcAttribute> ElementWithSrcAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithSrcAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcAttribute { props: self.props.children(children) }
@@ -826,7 +826,7 @@ impl<C, A, ELS> ElementWithSrcAttribute for super::props::ElementWithSrcsetAttri
 impl<C, A, ELS> Element for super::props::ElementWithSrcsetAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithSrcsetAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithSrcsetAttribute, Props: ElementWithSrcsetAttribute> ElementWithSrcsetAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithSrcsetAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithSrcsetAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithSrcsetAttribute { props: self.props.children(children) }
@@ -841,7 +841,7 @@ impl<C, A, ELS> ElementWithBgColorAttribute for super::props::ElementWithBgColor
 impl<C, A, ELS> Element for super::props::ElementWithBgColorAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithBgColorAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithBgColorAttribute, Props: ElementWithBgColorAttribute> ElementWithBgColorAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithBgColorAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithBgColorAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithBgColorAttribute { props: self.props.children(children) }
@@ -856,7 +856,7 @@ impl<C, A, ELS> ElementWithAlignAttribute for super::props::ElementWithAlignAttr
 impl<C, A, ELS> Element for super::props::ElementWithAlignAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithAlignAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithAlignAttribute, Props: ElementWithAlignAttribute> ElementWithAlignAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithAlignAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithAlignAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithAlignAttribute { props: self.props.children(children) }
@@ -871,7 +871,7 @@ impl<C, A, ELS> ElementWithMediaAttribute for super::props::ElementWithMediaAttr
 impl<C, A, ELS> Element for super::props::ElementWithMediaAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithMediaAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithMediaAttribute, Props: ElementWithMediaAttribute> ElementWithMediaAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithMediaAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithMediaAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithMediaAttribute { props: self.props.children(children) }
@@ -886,7 +886,7 @@ impl<C, A, ELS> ElementWithReadOnlyAttribute for super::props::ElementWithReadOn
 impl<C, A, ELS> Element for super::props::ElementWithReadOnlyAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithReadOnlyAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithReadOnlyAttribute, Props: ElementWithReadOnlyAttribute> ElementWithReadOnlyAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithReadOnlyAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithReadOnlyAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithReadOnlyAttribute { props: self.props.children(children) }
@@ -901,7 +901,7 @@ impl<C, A, ELS> ElementWithDateTimeAttribute for super::props::ElementWithDateTi
 impl<C, A, ELS> Element for super::props::ElementWithDateTimeAttribute<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::ElementWithDateTimeAttribute<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::ElementWithDateTimeAttribute, Props: ElementWithDateTimeAttribute> ElementWithDateTimeAttribute for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::ElementWithDateTimeAttribute<crate::Empty, A, ELS> {
     type WithChildren = super::props::ElementWithDateTimeAttribute<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::ElementWithDateTimeAttribute { props: self.props.children(children) }
@@ -1199,7 +1199,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlElement, Props: HtmlElement> HtmlElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElement { props: self.props.children(children) }
@@ -1211,7 +1211,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDataListElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDataListElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDataListElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDataListElement, Props: HtmlDataListElement> HtmlDataListElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataListElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDataListElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataListElement { props: self.props.children(children) }
@@ -1223,7 +1223,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDivElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDivElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDivElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDivElement, Props: HtmlDivElement> HtmlDivElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDivElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDivElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDivElement { props: self.props.children(children) }
@@ -1235,7 +1235,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDListElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDListElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDListElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDListElement, Props: HtmlDListElement> HtmlDListElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDListElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDListElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDListElement { props: self.props.children(children) }
@@ -1247,7 +1247,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlHeadingElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlHeadingElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlHeadingElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlHeadingElement, Props: HtmlHeadingElement> HtmlHeadingElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadingElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlHeadingElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadingElement { props: self.props.children(children) }
@@ -1259,7 +1259,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlHeadElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlHeadElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlHeadElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlHeadElement, Props: HtmlHeadElement> HtmlHeadElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHeadElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlHeadElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHeadElement { props: self.props.children(children) }
@@ -1271,7 +1271,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlHrElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlHrElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlHrElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlHrElement, Props: HtmlHrElement> HtmlHrElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHrElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlHrElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHrElement { props: self.props.children(children) }
@@ -1283,7 +1283,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlLegendElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlLegendElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlLegendElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlLegendElement, Props: HtmlLegendElement> HtmlLegendElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLegendElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlLegendElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLegendElement { props: self.props.children(children) }
@@ -1295,7 +1295,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlMenuElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlMenuElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlMenuElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlMenuElement, Props: HtmlMenuElement> HtmlMenuElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMenuElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlMenuElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMenuElement { props: self.props.children(children) }
@@ -1307,7 +1307,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlParagraphElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlParagraphElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlParagraphElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlParagraphElement, Props: HtmlParagraphElement> HtmlParagraphElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlParagraphElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlParagraphElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlParagraphElement { props: self.props.children(children) }
@@ -1319,7 +1319,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlPictureElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlPictureElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlPictureElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlPictureElement, Props: HtmlPictureElement> HtmlPictureElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPictureElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlPictureElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPictureElement { props: self.props.children(children) }
@@ -1331,7 +1331,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlPreElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlPreElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlPreElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlPreElement, Props: HtmlPreElement> HtmlPreElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlPreElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlPreElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlPreElement { props: self.props.children(children) }
@@ -1343,7 +1343,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlSpanElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlSpanElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlSpanElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlSpanElement, Props: HtmlSpanElement> HtmlSpanElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSpanElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlSpanElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSpanElement { props: self.props.children(children) }
@@ -1355,7 +1355,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTemplateElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTemplateElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTemplateElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTemplateElement, Props: HtmlTemplateElement> HtmlTemplateElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTemplateElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTemplateElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTemplateElement { props: self.props.children(children) }
@@ -1367,7 +1367,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTitleElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTitleElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTitleElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTitleElement, Props: HtmlTitleElement> HtmlTitleElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTitleElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTitleElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTitleElement { props: self.props.children(children) }
@@ -1390,7 +1390,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlElementWithHref<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlElementWithHref<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlElementWithHref<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlElementWithHref, Props: HtmlElementWithHref> HtmlElementWithHref for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlElementWithHref<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlElementWithHref<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlElementWithHref { props: self.props.children(children) }
@@ -1412,7 +1412,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlAnchorElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlAnchorElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlAnchorElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlAnchorElement, Props: HtmlAnchorElement> HtmlAnchorElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAnchorElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlAnchorElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAnchorElement { props: self.props.children(children) }
@@ -1437,7 +1437,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlAreaElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlAreaElement, Props: HtmlAreaElement> HtmlAreaElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAreaElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlAreaElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAreaElement { props: self.props.children(children) }
@@ -1605,7 +1605,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlMediaElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlMediaElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlMediaElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlMediaElement, Props: HtmlMediaElement> HtmlMediaElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMediaElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlMediaElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMediaElement { props: self.props.children(children) }
@@ -1619,7 +1619,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlBaseElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlBaseElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlBaseElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlBaseElement, Props: HtmlBaseElement> HtmlBaseElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBaseElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlBaseElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBaseElement { props: self.props.children(children) }
@@ -1632,7 +1632,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlQuoteElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlQuoteElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlQuoteElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlQuoteElement, Props: HtmlQuoteElement> HtmlQuoteElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlQuoteElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlQuoteElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlQuoteElement { props: self.props.children(children) }
@@ -1649,7 +1649,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlBodyElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlBodyElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlBodyElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlBodyElement, Props: HtmlBodyElement> HtmlBodyElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBodyElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlBodyElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBodyElement { props: self.props.children(children) }
@@ -1666,7 +1666,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlBrElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlBrElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlBrElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlBrElement, Props: HtmlBrElement> HtmlBrElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlBrElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlBrElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlBrElement { props: self.props.children(children) }
@@ -1687,7 +1687,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlButtonElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlButtonElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlButtonElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlButtonElement, Props: HtmlButtonElement> HtmlButtonElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlButtonElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlButtonElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlButtonElement { props: self.props.children(children) }
@@ -1700,7 +1700,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlCanvasElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlCanvasElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlCanvasElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlCanvasElement, Props: HtmlCanvasElement> HtmlCanvasElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlCanvasElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlCanvasElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlCanvasElement { props: self.props.children(children) }
@@ -1713,7 +1713,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableCaptionElement<C, A, ELS>
 impl<C, A, ELS> Element for super::props::HtmlTableCaptionElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableCaptionElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableCaptionElement, Props: HtmlTableCaptionElement> HtmlTableCaptionElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCaptionElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableCaptionElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCaptionElement { props: self.props.children(children) }
@@ -1726,7 +1726,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDataElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDataElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDataElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDataElement, Props: HtmlDataElement> HtmlDataElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDataElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDataElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDataElement { props: self.props.children(children) }
@@ -1740,7 +1740,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlModElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlModElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlModElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlModElement, Props: HtmlModElement> HtmlModElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlModElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlModElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlModElement { props: self.props.children(children) }
@@ -1753,7 +1753,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDetailsElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDetailsElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDetailsElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDetailsElement, Props: HtmlDetailsElement> HtmlDetailsElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDetailsElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDetailsElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDetailsElement { props: self.props.children(children) }
@@ -1766,7 +1766,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlDialogElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlDialogElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlDialogElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlDialogElement, Props: HtmlDialogElement> HtmlDialogElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlDialogElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlDialogElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlDialogElement { props: self.props.children(children) }
@@ -1781,7 +1781,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlEmbedElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlEmbedElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlEmbedElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlEmbedElement, Props: HtmlEmbedElement> HtmlEmbedElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlEmbedElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlEmbedElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlEmbedElement { props: self.props.children(children) }
@@ -1796,7 +1796,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlFieldSetElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlFieldSetElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlFieldSetElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlFieldSetElement, Props: HtmlFieldSetElement> HtmlFieldSetElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFieldSetElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlFieldSetElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFieldSetElement { props: self.props.children(children) }
@@ -1847,7 +1847,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlFormElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlFormElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlFormElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlFormElement, Props: HtmlFormElement> HtmlFormElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlFormElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlFormElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlFormElement { props: self.props.children(children) }
@@ -1863,7 +1863,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlHtmlElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlHtmlElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlHtmlElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlHtmlElement, Props: HtmlHtmlElement> HtmlHtmlElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlHtmlElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlHtmlElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlHtmlElement { props: self.props.children(children) }
@@ -1902,7 +1902,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlIFrameElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlIFrameElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlIFrameElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlIFrameElement, Props: HtmlIFrameElement> HtmlIFrameElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlIFrameElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlIFrameElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlIFrameElement { props: self.props.children(children) }
@@ -1944,7 +1944,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlImageElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlImageElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlImageElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlImageElement, Props: HtmlImageElement> HtmlImageElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlImageElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlImageElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlImageElement { props: self.props.children(children) }
@@ -2012,7 +2012,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlInputElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlInputElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlInputElement, Props: HtmlInputElement> HtmlInputElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlInputElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlInputElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlInputElement { props: self.props.children(children) }
@@ -2025,7 +2025,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlLabelElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlLabelElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlLabelElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlLabelElement, Props: HtmlLabelElement> HtmlLabelElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLabelElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlLabelElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLabelElement { props: self.props.children(children) }
@@ -2041,7 +2041,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlLiElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlLiElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlLiElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlLiElement, Props: HtmlLiElement> HtmlLiElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLiElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlLiElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLiElement { props: self.props.children(children) }
@@ -2093,7 +2093,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlLinkElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlLinkElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlLinkElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlLinkElement, Props: HtmlLinkElement> HtmlLinkElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlLinkElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlLinkElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlLinkElement { props: self.props.children(children) }
@@ -2106,7 +2106,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlMapElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlMapElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlMapElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlMapElement, Props: HtmlMapElement> HtmlMapElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMapElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlMapElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMapElement { props: self.props.children(children) }
@@ -2129,7 +2129,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlMetaElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlMetaElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlMetaElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlMetaElement, Props: HtmlMetaElement> HtmlMetaElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMetaElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlMetaElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMetaElement { props: self.props.children(children) }
@@ -2156,7 +2156,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlMeterElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlMeterElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlMeterElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlMeterElement, Props: HtmlMeterElement> HtmlMeterElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlMeterElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlMeterElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlMeterElement { props: self.props.children(children) }
@@ -2177,7 +2177,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlObjectElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlObjectElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlObjectElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlObjectElement, Props: HtmlObjectElement> HtmlObjectElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlObjectElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlObjectElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlObjectElement { props: self.props.children(children) }
@@ -2197,7 +2197,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlOListElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlOListElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlOListElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlOListElement, Props: HtmlOListElement> HtmlOListElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOListElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlOListElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOListElement { props: self.props.children(children) }
@@ -2211,7 +2211,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlOptGroupElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlOptGroupElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlOptGroupElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlOptGroupElement, Props: HtmlOptGroupElement> HtmlOptGroupElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptGroupElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlOptGroupElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptGroupElement { props: self.props.children(children) }
@@ -2230,7 +2230,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlOptionElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlOptionElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlOptionElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlOptionElement, Props: HtmlOptionElement> HtmlOptionElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOptionElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlOptionElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOptionElement { props: self.props.children(children) }
@@ -2245,7 +2245,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlOutputElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlOutputElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlOutputElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlOutputElement, Props: HtmlOutputElement> HtmlOutputElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlOutputElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlOutputElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlOutputElement { props: self.props.children(children) }
@@ -2259,7 +2259,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlProgressElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlProgressElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlProgressElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlProgressElement, Props: HtmlProgressElement> HtmlProgressElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlProgressElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlProgressElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlProgressElement { props: self.props.children(children) }
@@ -2297,7 +2297,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlScriptElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlScriptElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlScriptElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlScriptElement, Props: HtmlScriptElement> HtmlScriptElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_dom::script::SsrElementScriptContent> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement<(), A, ELS> {
+impl<A, ELS, C: frender_dom::script::IntoScriptContent> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlScriptElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlScriptElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlScriptElement { props: self.props.children(children) }
@@ -2326,7 +2326,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlSelectElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlSelectElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlSelectElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlSelectElement, Props: HtmlSelectElement> HtmlSelectElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSelectElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlSelectElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSelectElement { props: self.props.children(children) }
@@ -2339,7 +2339,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlSlotElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlSlotElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlSlotElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlSlotElement, Props: HtmlSlotElement> HtmlSlotElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSlotElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlSlotElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSlotElement { props: self.props.children(children) }
@@ -2360,7 +2360,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlSourceElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlSourceElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlSourceElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlSourceElement, Props: HtmlSourceElement> HtmlSourceElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlSourceElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlSourceElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlSourceElement { props: self.props.children(children) }
@@ -2375,7 +2375,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlStyleElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlStyleElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlStyleElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlStyleElement, Props: HtmlStyleElement> HtmlStyleElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlStyleElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlStyleElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlStyleElement { props: self.props.children(children) }
@@ -2418,7 +2418,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTableElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableElement, Props: HtmlTableElement> HtmlTableElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableElement { props: self.props.children(children) }
@@ -2445,7 +2445,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableChildElement<C, A, ELS> {
 impl<C, A, ELS> Element for super::props::HtmlTableChildElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableChildElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableChildElement, Props: HtmlTableChildElement> HtmlTableChildElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableChildElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableChildElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableChildElement { props: self.props.children(children) }
@@ -2460,7 +2460,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableSectionElement<C, A, ELS>
 impl<C, A, ELS> Element for super::props::HtmlTableSectionElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableSectionElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableSectionElement, Props: HtmlTableSectionElement> HtmlTableSectionElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableSectionElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableSectionElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableSectionElement { props: self.props.children(children) }
@@ -2475,7 +2475,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableRowElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTableRowElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableRowElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableRowElement, Props: HtmlTableRowElement> HtmlTableRowElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableRowElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableRowElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableRowElement { props: self.props.children(children) }
@@ -2498,7 +2498,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableColElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTableColElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableColElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableColElement, Props: HtmlTableColElement> HtmlTableColElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableColElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableColElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableColElement { props: self.props.children(children) }
@@ -2536,7 +2536,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTableCellElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTableCellElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTableCellElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTableCellElement, Props: HtmlTableCellElement> HtmlTableCellElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTableCellElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTableCellElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTableCellElement { props: self.props.children(children) }
@@ -2578,7 +2578,9 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTextAreaElement, Props: HtmlTextAreaElement> HtmlTextAreaElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: crate::form_control::value::FormControlValue<str> + frender_html_common::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTextAreaElement<(), A, ELS> {
+impl<A, ELS, C: crate::form_control::value::FormControlValue<str> + frender_html_common::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C>
+    for super::props::HtmlTextAreaElement<crate::Empty, A, ELS>
+{
     type WithChildren = super::props::HtmlTextAreaElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTextAreaElement { props: self.props.children(children) }
@@ -2591,7 +2593,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTimeElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTimeElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTimeElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTimeElement, Props: HtmlTimeElement> HtmlTimeElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTimeElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTimeElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTimeElement { props: self.props.children(children) }
@@ -2615,7 +2617,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTrackElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTrackElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTrackElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTrackElement, Props: HtmlTrackElement> HtmlTrackElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTrackElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTrackElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTrackElement { props: self.props.children(children) }
@@ -2633,7 +2635,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlUListElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlUListElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlUListElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlUListElement, Props: HtmlUListElement> HtmlUListElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlUListElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlUListElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlUListElement { props: self.props.children(children) }
@@ -2648,7 +2650,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlAudioElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlAudioElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlAudioElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlAudioElement, Props: HtmlAudioElement> HtmlAudioElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlAudioElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlAudioElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlAudioElement { props: self.props.children(children) }
@@ -2671,7 +2673,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlVideoElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlVideoElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlVideoElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlVideoElement, Props: HtmlVideoElement> HtmlVideoElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement<(), A, ELS> {
+impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlVideoElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlVideoElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlVideoElement { props: self.props.children(children) }

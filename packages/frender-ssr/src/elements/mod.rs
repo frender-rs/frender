@@ -2,6 +2,7 @@ pub mod array;
 
 mod boxed;
 mod char;
+mod empty;
 mod option;
 mod scalar;
 mod str;

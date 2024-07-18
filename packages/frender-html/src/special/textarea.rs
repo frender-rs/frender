@@ -6,7 +6,7 @@ mod props_builder {
     use crate::html::props::HtmlTextAreaElement;
     use crate::props_builder::PropsBuilderWithValue;
 
-    impl<V: FormControlValue<str> + IntoOneStringOrEmpty, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<(), Attrs, EL> {
+    impl<V: FormControlValue<str> + IntoOneStringOrEmpty, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<crate::Empty, Attrs, EL> {
         type WithValue = HtmlTextAreaElement<V, Attrs, EL>;
 
         /// Alias for [`Self::children`]

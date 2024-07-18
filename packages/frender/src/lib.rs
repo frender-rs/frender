@@ -15,9 +15,6 @@ pub use elements::synced_collection::{
     synced_collection_to_elements, synced_vec_to_elements, SyncedCollection, SyncedVec,
 };
 
-mod empty;
-pub use empty::Empty;
-
 mod missing;
 pub use missing::Missing;
 
@@ -71,6 +68,7 @@ pub use frender_context::{
     local_context,
 };
 
+pub use frender_common::Empty;
 pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
 pub use frender_html::dom::string_element::StringElement;

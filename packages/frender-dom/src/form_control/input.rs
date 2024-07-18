@@ -4,8 +4,9 @@ use async_str_iter::IntoAsyncStrIterator;
 use frender_common::PrimarilyBorrow;
 use frender_html_common::MaybeStringValue;
 
-use crate::form_control::value::{
-    FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue,
+use crate::{
+    form_control::value::{FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue},
+    Empty,
 };
 
 use super::{
@@ -243,7 +244,7 @@ pub trait InputChecked: FormControlValue<bool> + MaybeProvideFormControlValue<bo
 impl<T: FormControlValue<bool> + MaybeProvideFormControlValue<bool>> InputChecked for T {}
 
 // Uncontrolled
-impl InputValue for () {
+impl InputValue for Empty {
     type ValueKind = str;
 }
 
@@ -347,16 +348,16 @@ pub trait IntoInputDataModel {
     fn into_input_data_model(self) -> InputDataModel<Self::Type, Self::Value, Self::Checked>;
 }
 
-impl IntoInputDataModel for () {
-    type Type = ();
-    type Value = ();
-    type Checked = ();
+impl IntoInputDataModel for Empty {
+    type Type = Empty;
+    type Value = Empty;
+    type Checked = Empty;
 
     fn into_input_data_model(self) -> InputDataModel<Self::Type, Self::Value, Self::Checked> {
         InputDataModel {
-            r#type: (),
-            value: (),
-            checked: (),
+            r#type: Empty,
+            value: Empty,
+            checked: Empty,
         }
     }
 }

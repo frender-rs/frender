@@ -1,4 +1,4 @@
-use frender::prelude::*;
+use frender::{prelude::*, Empty};
 use futures_lite::future::block_on;
 
 #[test]
@@ -8,7 +8,7 @@ fn script_empty() {
         "<script></script>"
     );
     assert_eq!(
-        block_on(rsx!(<script>{()}</script>).render_to_string()),
+        block_on(rsx!(<script>{Empty}</script>).render_to_string()),
         "<script></script>"
     );
 }
@@ -16,11 +16,11 @@ fn script_empty() {
 #[test]
 fn script_option_empty() {
     assert_eq!(
-        block_on(rsx!(<script>{None::<()>}</script>).render_to_string()),
+        block_on(rsx!(<script>{None::<Empty>}</script>).render_to_string()),
         "<script></script>"
     );
     assert_eq!(
-        block_on(rsx!(<script>{Some(())}</script>).render_to_string()),
+        block_on(rsx!(<script>{Some(Empty)}</script>).render_to_string()),
         "<script></script>"
     );
 }

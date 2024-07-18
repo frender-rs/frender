@@ -3,37 +3,38 @@ mod props_builder {
 
     use crate::form_control::InputChecked;
     use crate::html::props::HtmlInputElement;
+    use crate::Empty;
     use crate::{
         form_control::{InputDataModel, InputValue, IntoInputDataModel},
         props_builder::{PropsBuilderWithChecked, PropsBuilderWithType, PropsBuilderWithValue},
     };
 
-    impl<DataModel: IntoInputDataModel<Type = ()>, Attrs, EL, V: MaybeStringValue> PropsBuilderWithType<V> for HtmlInputElement<DataModel, Attrs, EL> {
+    impl<DataModel: IntoInputDataModel<Type = Empty>, Attrs, EL, V: MaybeStringValue> PropsBuilderWithType<V> for HtmlInputElement<DataModel, Attrs, EL> {
         type WithType = HtmlInputElement<InputDataModel<V, DataModel::Value, DataModel::Checked>, Attrs, EL>;
 
         fn r#type(self, value: V) -> Self::WithType {
             HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_type(|()| value)),
+                props: self.props.map_children(|data| data.into_input_data_model().map_type(|Empty| value)),
             }
         }
     }
 
-    impl<DataModel: IntoInputDataModel<Checked = ()>, Attrs, EL, V: InputChecked> PropsBuilderWithChecked<V> for HtmlInputElement<DataModel, Attrs, EL> {
+    impl<DataModel: IntoInputDataModel<Checked = Empty>, Attrs, EL, V: InputChecked> PropsBuilderWithChecked<V> for HtmlInputElement<DataModel, Attrs, EL> {
         type WithChecked = HtmlInputElement<InputDataModel<DataModel::Type, DataModel::Value, V>, Attrs, EL>;
 
         fn checked(self, value: V) -> Self::WithChecked {
             HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_checked(|()| value)),
+                props: self.props.map_children(|data| data.into_input_data_model().map_checked(|Empty| value)),
             }
         }
     }
 
-    impl<DataModel: IntoInputDataModel<Value = ()>, V: InputValue, Attrs, EL> PropsBuilderWithValue<V> for HtmlInputElement<DataModel, Attrs, EL> {
+    impl<DataModel: IntoInputDataModel<Value = Empty>, V: InputValue, Attrs, EL> PropsBuilderWithValue<V> for HtmlInputElement<DataModel, Attrs, EL> {
         type WithValue = HtmlInputElement<InputDataModel<DataModel::Type, V, DataModel::Checked>, Attrs, EL>;
 
         fn value(self, value: V) -> Self::WithValue {
             HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_value(|()| value)),
+                props: self.props.map_children(|data| data.into_input_data_model().map_value(|Empty| value)),
             }
         }
     }

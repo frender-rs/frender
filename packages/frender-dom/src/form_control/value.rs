@@ -86,11 +86,11 @@ pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
 }
 
 /// Uncontrolled form control value (no default value).
-impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for () {
+impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for crate::Empty {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
-        (): Self,
+        Self: Self,
         (): &mut Self::State<E, R>,
         _: &mut E,
         _: &mut R,

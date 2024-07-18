@@ -962,9 +962,9 @@ macro_rules! define_props {
         }
 
         #[allow(non_upper_case_globals)]
-        $vis const $trait_name: $trait_name<(), (), ()> = $trait_name {
+        $vis const $trait_name: $trait_name<crate::Empty, (), ()> = $trait_name {
             props: $crate::dom::component::ElementProps {
-                children: (),
+                children: crate::Empty,
                 attributes: (),
                 event_listeners: (),
             }
@@ -1442,7 +1442,7 @@ macro_rules! impl_children {
             A, ELS,
             C: $($bounds)+,
         > crate::props_builder::PropsBuilderWithChildren<C>
-            for $($props_path)+<(), A, ELS> {
+            for $($props_path)+<crate::Empty, A, ELS> {
             type WithChildren = $($props_path)+<C, A, ELS>;
             fn children(self, children: C) -> Self::WithChildren {
                 $($props_path)+ {
@@ -1468,7 +1468,7 @@ macro_rules! define_component {
         >;
 
         #[allow(non_upper_case_globals)]
-        $vis const $component_name: $component_name<(), (), ()> = $crate::dom::component::IntrinsicElement(
+        $vis const $component_name: $component_name<crate::Empty, (), ()> = $crate::dom::component::IntrinsicElement(
             super::tags::$component_name,
             super::props::$props_name,
         );

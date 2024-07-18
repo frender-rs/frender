@@ -1668,7 +1668,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (script { custom_content_model },)); // TODO: special children
                                 impl_for_web!();
 
-                                fn children(value: children![impl frender_dom::script::SsrElementScriptContent]);
+                                fn children(value: children![impl frender_dom::script::IntoScriptContent]);
 
                                 fn r#async(value: maybe![bool]) {
                                     attr_name!("async");

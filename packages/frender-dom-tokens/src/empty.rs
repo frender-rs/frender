@@ -1,7 +1,6 @@
-use crate::{ChainableDomTokens, ConstPossibleDomTokens, DomTokens};
+use frender_common::Empty;
 
-#[derive(Debug, Clone, Copy)]
-pub struct Empty;
+use crate::{ChainableDomTokens, ConstPossibleDomTokens, DomTokens};
 
 impl DomTokens for Empty {
     type UpdateWithState = ();

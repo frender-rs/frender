@@ -35,14 +35,6 @@ impl<S: StringValue> MaybeStringValue for S {
     }
 }
 
-impl MaybeStringValue for () {
-    type StringValue = async_str_iter::never::Never;
-
-    fn maybe_string_value((): Self) -> Option<Self::StringValue> {
-        None
-    }
-}
-
 impl<T: MaybeStringValue> MaybeStringValue for Option<T> {
     type StringValue = T::StringValue;
 

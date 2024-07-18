@@ -1,6 +1,6 @@
 pub use chain::Chain;
 pub use dom_token::{put_tokens_at, DomToken, UniqueDomTokenArray, UniqueDomTokens};
-pub use empty::Empty;
+pub use frender_common::Empty;
 
 use async_str_iter::AsyncStrIterator;
 
