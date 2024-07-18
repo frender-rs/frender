@@ -634,7 +634,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('tic-tac-toe-195e3f3812eda9d6_bg.wasm', import.meta.url);
+        input = new URL('tic-tac-toe-9017d59a6898bb12_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
