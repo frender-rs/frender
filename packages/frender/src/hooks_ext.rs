@@ -395,7 +395,6 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_element()
     }
 
-    /// Note that f is considered non reactive
     fn into_element_with_fn<F>(self, f: F) -> element::SignalIntoElement<Self, element::WithFn<F>>
     where
         Self: Sized,
@@ -413,6 +412,32 @@ pub trait ShareValueExt: ShareValue {
         F: crate::FnMutMapRefToElement<Self::Value>,
     {
         self.to_owned_share_value().into_element_with_fn(f)
+    }
+
+    fn into_element_with_memo<F, Dep>(
+        self,
+        f: F,
+        dep: Dep,
+    ) -> element::SignalIntoElement<Self, crate::Memo<F, Dep>>
+    where
+        Self: Sized,
+        F: crate::FnMutMap2RefsToElement<Self::Value, Dep>,
+        Dep: PartialEq,
+    {
+        element::SignalIntoElement(self, crate::Memo(f, dep))
+    }
+
+    fn to_element_with_memo<F, Dep>(
+        &self,
+        f: F,
+        dep: Dep,
+    ) -> element::SignalIntoElement<Self::OwnedShareValue, crate::Memo<F, Dep>>
+    where
+        Self: Sized + ToOwnedShareValue,
+        F: crate::FnMutMap2RefsToElement<Self::Value, Dep>,
+        Dep: PartialEq,
+    {
+        self.to_owned_share_value().into_element_with_memo(f, dep)
     }
 
     fn into_callback_toggle(self) -> callback::Toggle<Self>
