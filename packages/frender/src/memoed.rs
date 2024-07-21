@@ -1,0 +1,153 @@
+pub use self::element::csr::{Kind, StateWithMemo};
+pub use self::Memo as memo;
+
+pub struct Memo<F, Dep>(pub F, pub Dep);
+
+impl<F, Dep> Memo<F, Dep> {
+    // The third argument of `run` is `new_dep == memoed_dep`.
+    // `true` means new dep equals to the memoed dep.
+    fn map_memoed<R>(
+        self,
+        memoed_dep: &mut Option<Dep>,
+        eq: impl FnOnce(&Dep, &Dep) -> bool,
+        run: impl FnOnce(F, &mut Dep, bool) -> R,
+    ) -> R {
+        let Self(f, dep) = self;
+        let (memoed_dep, dep_eq_memoed_dep) = match memoed_dep {
+            Some(memoed_dep) if eq(memoed_dep, &dep) => {
+                *memoed_dep = dep;
+                (memoed_dep, true)
+            }
+            _ => {
+                let memoed_dep = memoed_dep.insert(dep);
+                (memoed_dep, false)
+            }
+        };
+
+        run(f, memoed_dep, dep_eq_memoed_dep)
+    }
+}
+
+mod element {
+    mod ssr {
+        use frender_ssr::SsrElement;
+
+        use crate::FnOnceOutputElement;
+
+        use super::super::Memo;
+
+        impl<
+                F: for<'a> FnOnceOutputElement<&'a Dep, OutputElementHtmlChildren = C>,
+                Dep,
+                C: frender_ssr::html::assert::HtmlChildren,
+            > SsrElement for Memo<F, Dep>
+        {
+            type HtmlChildren = C;
+
+            fn into_html_children(self) -> Self::HtmlChildren {
+                (self.0)(&self.1).into_html_children()
+            }
+        }
+    }
+
+    pub(super) mod csr {
+        use frender_csr::{render_state::compound::CompoundState, RenderState};
+        use frender_html::{
+            Element, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
+        };
+
+        use crate::FnOnceOutputElement;
+
+        use super::super::Memo;
+
+        enum Never {}
+        pub struct Kind<K, Dep>(Never, std::marker::PhantomData<(K, Dep)>);
+
+        pub type StateWithMemo<S, Dep> = CompoundState<S, Option<Dep>>;
+
+        impl<K: RenderStateKindPinned, Dep> RenderStateKindPinned for Kind<K, Dep> {
+            type RenderState<R: frender_html::RenderHtml + ?Sized> =
+                StateWithMemo<K::RenderState<R>, Dep>;
+        }
+
+        impl<K: RenderStateKindUnpinned, Dep> RenderStateKindUnpinned for Kind<K, Dep> {
+            type UnpinnedRenderState<R: frender_html::RenderHtml + ?Sized> =
+                StateWithMemo<K::UnpinnedRenderState<R>, Dep>;
+        }
+
+        impl<
+                F: for<'a> FnOnceOutputElement<
+                    &'a Dep,
+                    OutputElementHtmlChildren = C,
+                    OutputElementRenderStateKind = K,
+                >,
+                Dep: PartialEq,
+                C: frender_ssr::html::assert::HtmlChildren,
+                K: RenderStateKind,
+            > Element for Memo<F, Dep>
+        {
+            type RenderStateKind = Kind<K, Dep>;
+
+            fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+                render_state: std::pin::Pin<
+                    &mut StateWithMemo<frender_html::RenderStateOfContext<K, Ctx>, Dep>,
+                >,
+                force_reposition: bool,
+            ) {
+                let CompoundState {
+                    reactive: render_state,
+                    non_reactive: memoed_dep,
+                } = render_state.pin_project();
+                self.map_memoed(memoed_dep, PartialEq::eq, |f, dep, unchanged| {
+                    if unchanged {
+                        render_context.map_mut_render_context(|render_context| {
+                            render_state.check_and_move_cursor(render_context)
+                        });
+                    } else {
+                        let element = f(dep);
+                        element.render_update_maybe_reposition(
+                            render_context,
+                            render_state,
+                            force_reposition,
+                        )
+                    }
+                })
+            }
+
+            fn unpinned_render_update_maybe_reposition<
+                Ctx: ?Sized + frender_html::HtmlRenderContext,
+            >(
+                //
+                self,
+                render_context: &mut Ctx,
+                render_state: &mut frender_html::UnpinnedRenderStateOfContext<
+                    Self::RenderStateKind,
+                    Ctx,
+                >,
+                force_reposition: bool,
+            ) {
+                let CompoundState {
+                    reactive: render_state,
+                    non_reactive: memoed_dep,
+                } = render_state;
+                self.map_memoed(memoed_dep, PartialEq::eq, |f, dep, unchanged| {
+                    if unchanged {
+                        render_context.map_mut_render_context(|render_context| {
+                            render_state.check_and_move_cursor(render_context)
+                        });
+                    } else {
+                        let element = f(dep);
+                        element.unpinned_render_update_maybe_reposition(
+                            render_context,
+                            render_state,
+                            force_reposition,
+                        )
+                    }
+                })
+            }
+        }
+    }
+}

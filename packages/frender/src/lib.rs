@@ -79,6 +79,9 @@ pub use frender_html_common::dom_tokens::{
     ChainableDomTokens, DomTokenList, DomTokens,
 };
 
+pub mod memoed;
+pub use memoed::{memo, Memo};
+
 #[cfg(all(feature = "web"))]
 pub use frender_csr_web::mount::GetDomElement;
 

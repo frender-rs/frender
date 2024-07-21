@@ -33,7 +33,7 @@ pub mod with {
     use frender_html::RenderStateKind;
     use frender_ssr::html::assert::HtmlChildren;
 
-    use crate::{FnMapRefToElement, FnOutputElement, ToElement};
+    use crate::{FnMapRefToElement, FnOnceOutputElement, FnOutputElement, ToElement};
 
     #[derive(Debug, Clone, Copy)]
     pub struct ToElementWithFn<E, F>(pub E, pub F);
@@ -53,7 +53,7 @@ pub mod with {
     where
         F: FnMapRefToElement<E>,
     {
-        type ToElement<'a> = <F as FnOutputElement<&'a E>>::OutputElement
+        type ToElement<'a> = <F as FnOnceOutputElement<&'a E>>::OutputElement
         where
             Self: 'a;
 
@@ -75,7 +75,7 @@ pub mod with {
         type ToElementHtmlChildren = C;
         type ToElementRenderStateKind = K;
 
-        type ToElement<'a> = <F as FnOutputElement<&'e E>>::OutputElement
+        type ToElement<'a> = <F as FnOnceOutputElement<&'e E>>::OutputElement
         where
             Self: 'a;
 
