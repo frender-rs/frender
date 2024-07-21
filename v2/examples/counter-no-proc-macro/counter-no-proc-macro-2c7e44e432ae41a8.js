@@ -660,7 +660,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('counter-no-proc-macro-98ac6a1652162842_bg.wasm', import.meta.url);
+        input = new URL('counter-no-proc-macro-2c7e44e432ae41a8_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 
