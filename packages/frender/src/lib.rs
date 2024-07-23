@@ -18,7 +18,9 @@ pub use elements::synced_collection::{
 mod missing;
 pub use missing::Missing;
 
-pub use frender_common::{EventListenerOptions, HandleEventWithOptions, TempStr};
+pub use frender_common::{
+    EventListenerOptions, HandleEventWithOptions, TempStr, ToStaticCache, ToStaticStr,
+};
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
 pub use frender_html::dom;
