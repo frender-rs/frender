@@ -27,11 +27,11 @@ frender_common::impl_many!(
 
 impl<S> SsrElement for frender_common::TempStr<S>
 where
-    S: frender_common::IntoStaticStr,
+    S: frender_common::ToStaticStr,
 {
     type HtmlChildren = frender_ssr_html::encode::Encode<
         frender_ssr_html::escape_safe::Safe,
-        async_str_iter::borrow_str::IterBorrowStr<S::IntoStaticStr>,
+        async_str_iter::borrow_str::IterBorrowStr<S::StaticStr>,
     >;
 
     fn into_html_children(self) -> Self::HtmlChildren {

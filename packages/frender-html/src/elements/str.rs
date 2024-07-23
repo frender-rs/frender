@@ -100,6 +100,14 @@ frender_common::impl_many!(
     }
 );
 
+trait FnOnceOutputBorrow<Arg, V: ?Sized>: FnOnce(Arg) -> Self::OutputBorrow {
+    type OutputBorrow: Borrow<V>;
+}
+
+impl<Arg, V: ?Sized, F: FnOnce(Arg) -> R, R: Borrow<V>> FnOnceOutputBorrow<Arg, V> for F {
+    type OutputBorrow = R;
+}
+
 impl<Cache, Text> State<Cache, Text> {
     fn update_with_str_maybe_reposition<Ctx: ?Sized + RenderContext, S: Borrow<V>, V: ?Sized>(
         &mut self,
@@ -107,12 +115,12 @@ impl<Cache, Text> State<Cache, Text> {
         render_context: &mut Ctx,
         force_reposition: bool,
         not_match_cache: impl FnOnce(&S, &Cache) -> bool,
-        update_cache: impl FnOnce(&mut Cache, S),
+        update_cache: impl FnOnce(S, &mut Cache),
     ) where
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
-        self.update_maybe_reposition(data, render_context, force_reposition, Borrow::borrow, not_match_cache, update_cache)
+        self.update_maybe_reposition::<Ctx, S, V>(data, render_context, force_reposition, Borrow::borrow, not_match_cache, update_cache)
     }
 
     fn update_maybe_reposition<Ctx: ?Sized + RenderContext, S, V: ?Sized>(
@@ -120,17 +128,17 @@ impl<Cache, Text> State<Cache, Text> {
         data: S,
         render_context: &mut Ctx,
         force_reposition: bool,
-        get_value: impl FnOnce(&S) -> &V,
+        get_value: impl for<'a> FnOnceOutputBorrow<&'a S, V>,
         not_match_cache: impl FnOnce(&S, &Cache) -> bool,
-        update_cache: impl FnOnce(&mut Cache, S),
+        update_cache: impl FnOnce(S, &mut Cache),
     ) where
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
         if not_match_cache(&data, &self.cache) {
-            render_context.renderer_mut().update_text_from(&mut self.text_node.node, get_value(&data));
+            render_context.renderer_mut().update_text_from(&mut self.text_node.node, get_value(&data).borrow());
 
-            update_cache(&mut self.cache, data);
+            update_cache(data, &mut self.cache);
         }
 
         render_context.map_mut_render_context(|render_context| self.text_node.readd_self(render_context, force_reposition))
@@ -141,16 +149,25 @@ impl<Cache, Text> State<Cache, Text> {
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
-        Self::init(data, render_context, Borrow::borrow, create_cache)
+        Self::init::<Ctx, S, V>(data, render_context, Borrow::borrow, create_cache)
     }
 
-    fn init<Ctx: ?Sized + RenderContext, S, V: ?Sized>(data: S, render_context: &mut Ctx, get_value: impl FnOnce(&S) -> &V, create_cache: impl FnOnce(S) -> Cache) -> Self
+    fn init<Ctx: ?Sized + RenderContext, S, V: ?Sized>(
+        //
+        data: S,
+        render_context: &mut Ctx,
+        get_value: impl for<'a> FnOnceOutputBorrow<&'a S, V>,
+        create_cache: impl FnOnce(S) -> Cache,
+    ) -> Self
     where
         Ctx::Renderer: RenderHtml<Text = Text> + RenderTextFrom<Text, V>,
         Text: Node<Ctx::Renderer>,
     {
         State {
-            text_node: TextNode::mount_from(render_context, get_value(&data)),
+            text_node: {
+                let text_node = TextNode::mount_from(render_context, get_value(&data).borrow());
+                text_node
+            },
             cache: create_cache(data),
         }
     }
@@ -223,7 +240,7 @@ frender_common::impl_many!(
 
         fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
             match render_state.get_mut() {
-                Some(render_state) => render_state.update_with_str_maybe_reposition::<Ctx, Self, <Self as BorrowText>::Text>(self, render_context, force_reposition, PartialEq::ne, |cache, this| *cache = this),
+                Some(render_state) => render_state.update_with_str_maybe_reposition::<Ctx, Self, <Self as BorrowText>::Text>(self, render_context, force_reposition, PartialEq::ne, |this, cache| *cache = this),
                 render_state @ None => *render_state = Some(State::initialize_with_str::<Ctx, Self, <Self as BorrowText>::Text>(self, render_context, std::convert::identity)),
             }
         }
@@ -232,8 +249,8 @@ frender_common::impl_many!(
     }
 );
 
-impl<S: AsRef<str> + frender_common::IntoStaticStr> Element for frender_common::TempStr<S> {
-    type RenderStateKind = Kind<<S as frender_common::IntoStaticStr>::IntoStaticStr>;
+impl<S: frender_common::ToStaticStr + frender_common::ToStaticCache> Element for frender_common::TempStr<S> {
+    type RenderStateKind = Kind<<S as frender_common::ToStaticCache>::StaticCache>;
 
     fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
         match render_state.get_mut() {
@@ -241,11 +258,11 @@ impl<S: AsRef<str> + frender_common::IntoStaticStr> Element for frender_common::
                 self.0,
                 render_context,
                 force_reposition,
-                AsRef::as_ref,
-                |s, cache| *s.as_ref() != *cache.borrow(),
-                |cache, s| frender_common::IntoStaticStr::update_into_static_str(s, cache),
+                frender_common::ToStaticStr::to_static_str,
+                frender_common::ToStaticCache::not_match_cache,
+                frender_common::ToStaticCache::update_into_static_cache,
             ),
-            render_state @ None => *render_state = Some(State::init(self.0, render_context, AsRef::as_ref, frender_common::IntoStaticStr::into_static_str)),
+            render_state @ None => *render_state = Some(State::init(self.0, render_context, frender_common::ToStaticStr::to_static_str, frender_common::ToStaticCache::into_static_cache)),
         }
     }
 
