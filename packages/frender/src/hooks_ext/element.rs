@@ -450,6 +450,14 @@ where
     }
 }
 
+fn use_signal_hook_map<SH: SignalHook, R>(
+    sh: Pin<&mut SH>,
+    f: impl FnOnce(&SH::SignalShareValue) -> R,
+) -> R {
+    let signal = hooks::Hook::use_hook(sh);
+    signal.map(f)
+}
+
 fn render_update<'a, S: Signal, E, Ctx: ?Sized + frender_html::HtmlRenderContext>(
     signal: S,
     mount_state: &'a mut MountState,
@@ -461,7 +469,9 @@ fn render_update<'a, S: Signal, E, Ctx: ?Sized + frender_html::HtmlRenderContext
     update: impl FnOnce(&S::Value, &mut Ctx, bool) -> E,
     render_context: &mut Ctx,
     mut force_reposition: bool,
-) {
+) where
+    S::SignalHook: Unpin,
+{
     // mount cursor placeholder
     {
         if let Some((cursor_placeholder, ())) = cursor_placeholder_and_data {
@@ -482,12 +492,18 @@ fn render_update<'a, S: Signal, E, Ctx: ?Sized + frender_html::HtmlRenderContext
         Some((signal_hook, other)) if signal.is_signal_of(signal_hook) => {
             // signal hasn't changed. no need to update
 
-            signal.map(|value| *other = update(value, render_context, force_reposition));
+            // mark signal as seen if it has a new value, to prevent unnecessary re-render
+            use_signal_hook_map(Pin::new(signal_hook), |value| {
+                *other = update(value, render_context, force_reposition)
+            });
         }
         signal_hook => {
             // new signal
-            let el = signal.map(|value| update(value, render_context, force_reposition));
-            *signal_hook = Some((signal.to_signal_hook(), el))
+            let mut sh = signal.to_signal_hook();
+            let el = use_signal_hook_map(Pin::new(&mut sh), |value| {
+                update(value, render_context, force_reposition)
+            });
+            *signal_hook = Some((sh, el))
         }
     }
 
