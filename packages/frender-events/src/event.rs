@@ -40,6 +40,10 @@ pub trait Event {
 
     /// Returns `Some(checked)` when `event.target` is `HtmlInputElement`.
     fn target_input_checked(&self) -> Option<bool>;
+
+    /// Returns [`Some(selectedIndex)`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement/selectedIndex)
+    /// when `event.target` is `HtmlSelectElement`.
+    fn target_select_selected_index(&self) -> Option<i32>;
 }
 
 pub trait SecurityPolicyViolationEvent: Event {
@@ -360,6 +364,15 @@ mod web {
                 target
                     .dyn_ref::<web_sys::HtmlInputElement>()
                     .map(web_sys::HtmlInputElement::checked)
+            })
+        }
+
+        fn target_select_selected_index(&self) -> Option<i32> {
+            use wasm_bindgen::JsCast;
+            self.0.as_ref().target().and_then(|target| {
+                target
+                    .dyn_ref::<web_sys::HtmlSelectElement>()
+                    .map(web_sys::HtmlSelectElement::selected_index)
             })
         }
     }
