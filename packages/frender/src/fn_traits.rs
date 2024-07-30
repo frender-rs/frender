@@ -1,21 +1,41 @@
-use frender_html::RenderStateKind;
-use frender_ssr::html::assert::HtmlChildren;
+use frender_html::{CsrElement, RenderStateKind};
+use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
 use crate::Element;
 
-pub trait FnOnceOutputElement<Arg>: FnOnce(Arg) -> Self::OutputElement {
-    type OutputElement: Element<
-        HtmlChildren = Self::OutputElementHtmlChildren,
-        RenderStateKind = Self::OutputElementRenderStateKind,
-    >;
+pub trait FnOnceOutputSsrElement<Arg>: FnOnce(Arg) -> Self::OutputSsrElement {
+    type OutputSsrElement: SsrElement<HtmlChildren = Self::OutputElementHtmlChildren>;
     type OutputElementHtmlChildren: HtmlChildren;
+}
+
+impl<Arg, F: ?Sized + FnOnce(Arg) -> Out, Out: SsrElement> FnOnceOutputSsrElement<Arg> for F {
+    type OutputSsrElement = Out;
+    type OutputElementHtmlChildren = Out::HtmlChildren;
+}
+
+pub trait FnOnceOutputCsrElement<Arg>: FnOnce(Arg) -> Self::OutputCsrElement {
+    type OutputCsrElement: CsrElement<RenderStateKind = Self::OutputElementRenderStateKind>;
     type OutputElementRenderStateKind: RenderStateKind;
+}
+
+impl<Arg, F: ?Sized + FnOnce(Arg) -> Out, Out: CsrElement> FnOnceOutputCsrElement<Arg> for F {
+    type OutputCsrElement = Out;
+    type OutputElementRenderStateKind = Out::RenderStateKind;
+}
+
+pub trait FnOnceOutputElement<Arg>:
+    FnOnce(Arg) -> Self::OutputElement
+    + FnOnceOutputSsrElement<Arg, OutputSsrElement = Self::OutputElement>
+    + FnOnceOutputCsrElement<Arg, OutputCsrElement = Self::OutputElement>
+{
+    type OutputElement: Element<
+        RenderStateKind = Self::OutputElementRenderStateKind,
+        HtmlChildren = Self::OutputElementHtmlChildren,
+    >;
 }
 
 impl<Arg, F: ?Sized + FnOnce(Arg) -> E, E: Element> FnOnceOutputElement<Arg> for F {
     type OutputElement = E;
-    type OutputElementHtmlChildren = E::HtmlChildren;
-    type OutputElementRenderStateKind = E::RenderStateKind;
 }
 
 pub trait FnMutOutputElement<Arg>:
@@ -29,19 +49,50 @@ pub trait FnOutputElement<Arg>: FnMutOutputElement<Arg> + Fn(Arg) -> Self::Outpu
 
 impl<Arg, F: ?Sized + Fn(Arg) -> E, E: Element> FnOutputElement<Arg> for F {}
 
-pub trait FnOnce2OutputElement<A1, A2>: FnOnce(A1, A2) -> Self::OutputElement {
-    type OutputElement: Element<
-        HtmlChildren = Self::OutputElementHtmlChildren,
-        RenderStateKind = Self::OutputElementRenderStateKind,
-    >;
+pub trait FnOnce2<A1, A2>: FnOnce(A1, A2) -> Self::Output_ {
+    type Output_;
+}
+impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out> FnOnce2<A1, A2> for F {
+    type Output_ = Out;
+}
+
+pub trait FnOnce2OutputSsrElement<A1, A2>: FnOnce(A1, A2) -> Self::OutputSsrElement {
+    type OutputSsrElement: SsrElement<HtmlChildren = Self::OutputElementHtmlChildren>;
     type OutputElementHtmlChildren: HtmlChildren;
+}
+
+impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out: SsrElement> FnOnce2OutputSsrElement<A1, A2>
+    for F
+{
+    type OutputSsrElement = Out;
+    type OutputElementHtmlChildren = Out::HtmlChildren;
+}
+
+pub trait FnOnce2OutputCsrElement<A1, A2>: FnOnce(A1, A2) -> Self::OutputCsrElement {
+    type OutputCsrElement: CsrElement<RenderStateKind = Self::OutputElementRenderStateKind>;
     type OutputElementRenderStateKind: RenderStateKind;
+}
+
+impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out: CsrElement> FnOnce2OutputCsrElement<A1, A2>
+    for F
+{
+    type OutputCsrElement = Out;
+    type OutputElementRenderStateKind = Out::RenderStateKind;
+}
+
+pub trait FnOnce2OutputElement<A1, A2>:
+    FnOnce(A1, A2) -> Self::OutputElement
+    + FnOnce2OutputSsrElement<A1, A2, OutputSsrElement = Self::OutputElement>
+    + FnOnce2OutputCsrElement<A1, A2, OutputCsrElement = Self::OutputElement>
+{
+    type OutputElement: Element<
+        RenderStateKind = Self::OutputElementRenderStateKind,
+        HtmlChildren = Self::OutputElementHtmlChildren,
+    >;
 }
 
 impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> E, E: Element> FnOnce2OutputElement<A1, A2> for F {
     type OutputElement = E;
-    type OutputElementHtmlChildren = E::HtmlChildren;
-    type OutputElementRenderStateKind = E::RenderStateKind;
 }
 
 pub trait FnMut2OutputElement<A1, A2>:

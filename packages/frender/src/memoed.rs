@@ -37,7 +37,7 @@ impl<F, Dep> Memo<F, Dep> {
 ///     - if `SKIP_IF_DEP_IS_NONE` is `false`: panic
 ///     - if `SKIP_IF_DEP_IS_NONE` is `true`: silently skip (`F` is not called and the render state is not updated)
 pub struct MemoPhantom<
-    F: for<'a> crate::FnOnceOutputElement<&'a Dep>,
+    F: for<'a> crate::FnOnceOutputCsrElement<&'a Dep>,
     Dep,
     const SKIP_IF_DEP_IS_NONE: bool,
 > {
@@ -45,7 +45,7 @@ pub struct MemoPhantom<
     _dep: std::marker::PhantomData<Dep>,
 }
 
-impl<F: for<'a> crate::FnOnceOutputElement<&'a Dep>, Dep, const SKIP_IF_DEP_IS_NONE: bool>
+impl<F: for<'a> crate::FnOnceOutputCsrElement<&'a Dep>, Dep, const SKIP_IF_DEP_IS_NONE: bool>
     MemoPhantom<F, Dep, SKIP_IF_DEP_IS_NONE>
 {
     pub const fn new(f: F) -> Self {
@@ -60,12 +60,12 @@ mod element {
     mod ssr {
         use frender_ssr::SsrElement;
 
-        use crate::FnOnceOutputElement;
+        use crate::{FnOnce2OutputSsrElement, FnOnceOutputSsrElement};
 
-        use super::super::Memo;
+        use super::super::{Memo, MemoAndProvideFirstArgument};
 
         impl<
-                F: for<'a> FnOnceOutputElement<&'a Dep, OutputElementHtmlChildren = C>,
+                F: for<'a> FnOnceOutputSsrElement<&'a Dep, OutputElementHtmlChildren = C>,
                 Dep,
                 C: frender_ssr::html::assert::HtmlChildren,
             > SsrElement for Memo<F, Dep>
@@ -76,6 +76,20 @@ mod element {
                 (self.0)(&self.1).into_html_children()
             }
         }
+
+        impl<
+                F: for<'a> FnOnce2OutputSsrElement<A, &'a Dep, OutputElementHtmlChildren = C>,
+                A,
+                Dep,
+                C: frender_ssr::html::assert::HtmlChildren,
+            > SsrElement for MemoAndProvideFirstArgument<F, A, Dep>
+        {
+            type HtmlChildren = C;
+
+            fn into_html_children(self) -> Self::HtmlChildren {
+                (self.0)(self.1, &self.2).into_html_children()
+            }
+        }
     }
 
     pub(super) mod csr {
@@ -84,7 +98,7 @@ mod element {
             CsrElement, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
         };
 
-        use crate::{FnOnce2OutputElement, FnOnceOutputElement};
+        use crate::{FnOnce2OutputCsrElement, FnOnceOutputCsrElement};
 
         use super::super::{
             Memo, MemoAndProvideFirstArgument, MemoPhantom, MemoPhantomAndProvideFirstArgument,
@@ -106,13 +120,8 @@ mod element {
         }
 
         impl<
-                F: for<'a> FnOnceOutputElement<
-                    &'a Dep,
-                    OutputElementHtmlChildren = C,
-                    OutputElementRenderStateKind = K,
-                >,
+                F: for<'a> FnOnceOutputCsrElement<&'a Dep, OutputElementRenderStateKind = K>,
                 Dep: PartialEq,
-                C: frender_ssr::html::assert::HtmlChildren,
                 K: RenderStateKind,
             > CsrElement for Memo<F, Dep>
         {
@@ -181,15 +190,9 @@ mod element {
         }
 
         impl<
-                F: for<'a> FnOnce2OutputElement<
-                    A,
-                    &'a Dep,
-                    OutputElementHtmlChildren = C,
-                    OutputElementRenderStateKind = K,
-                >,
+                F: for<'a> FnOnce2OutputCsrElement<A, &'a Dep, OutputElementRenderStateKind = K>,
                 A,
                 Dep: PartialEq,
-                C: frender_ssr::html::assert::HtmlChildren,
                 K: RenderStateKind,
             > CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
         {
@@ -219,7 +222,7 @@ mod element {
         impl<F, Dep, K: RenderStateKind, const SKIP_IF_DEP_IS_NONE: bool> CsrElement
             for MemoPhantom<F, Dep, SKIP_IF_DEP_IS_NONE>
         where
-            F: for<'a> FnOnceOutputElement<&'a Dep, OutputElementRenderStateKind = K>,
+            F: for<'a> FnOnceOutputCsrElement<&'a Dep, OutputElementRenderStateKind = K>,
         {
             type RenderStateKind = crate::memoed::Kind<K, Dep>;
 
@@ -370,7 +373,7 @@ mod element {
         impl<F, V, Dep, K: RenderStateKind, const SKIP_IF_DEP_IS_NONE: bool> CsrElement
             for MemoPhantomAndProvideFirstArgument<F, V, Dep, SKIP_IF_DEP_IS_NONE>
         where
-            F: for<'a> FnOnce2OutputElement<V, &'a Dep, OutputElementRenderStateKind = K>,
+            F: for<'a> FnOnce2OutputCsrElement<V, &'a Dep, OutputElementRenderStateKind = K>,
         {
             type RenderStateKind = crate::memoed::Kind<K, Dep>;
 
@@ -379,7 +382,7 @@ mod element {
     }
 }
 
-pub struct MemoAndProvideFirstArgument<F: for<'a> crate::FnOnce2OutputElement<A, &'a Dep>, A, Dep>(
+pub struct MemoAndProvideFirstArgument<F: for<'a> crate::FnOnce2<A, &'a Dep>, A, Dep>(
     pub F,
     pub A,
     pub Dep,
@@ -387,12 +390,12 @@ pub struct MemoAndProvideFirstArgument<F: for<'a> crate::FnOnce2OutputElement<A,
 
 impl<F, A, Dep> MemoAndProvideFirstArgument<F, A, Dep>
 where
-    F: for<'a> crate::FnOnce2OutputElement<A, &'a Dep>,
+    F: for<'a> crate::FnOnce2<A, &'a Dep>,
 {
     fn into_f_and_dep(
         self,
     ) -> (
-        impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<A, &Dep>>::OutputElement,
+        impl FnOnce(&Dep) -> <F as crate::FnOnce2<A, &Dep>>::Output_,
         Dep,
     ) {
         let Self(f, arg, dep) = self;
@@ -402,8 +405,7 @@ where
 
     pub fn into_memo(
         self,
-    ) -> Memo<impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<A, &Dep>>::OutputElement, Dep>
-    {
+    ) -> Memo<impl FnOnce(&Dep) -> <F as crate::FnOnce2<A, &Dep>>::Output_, Dep> {
         let (f, dep) = self.into_f_and_dep();
         Memo(f, dep)
     }
@@ -411,7 +413,7 @@ where
 
 /// Works like [`MemoPhantom`]
 pub struct MemoPhantomAndProvideFirstArgument<
-    F: for<'a> crate::FnOnce2OutputElement<A, &'a Dep>,
+    F: for<'a> crate::FnOnce2OutputCsrElement<A, &'a Dep>,
     A,
     Dep,
     const SKIP_IF_DEP_IS_NONE: bool,
@@ -422,7 +424,7 @@ pub struct MemoPhantomAndProvideFirstArgument<
 }
 
 impl<
-        F: for<'a> crate::FnOnce2OutputElement<V, &'a Dep>,
+        F: for<'a> crate::FnOnce2OutputCsrElement<V, &'a Dep>,
         V,
         Dep,
         const SKIP_IF_DEP_IS_NONE: bool,
@@ -438,14 +440,14 @@ impl<
 
     fn into_f(
         self,
-    ) -> impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<V, &Dep>>::OutputElement {
+    ) -> impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputCsrElement<V, &Dep>>::OutputCsrElement {
         move |dep: &_| (self.f)(self.first_argument, dep)
     }
 
     pub fn into_memo_phantom(
         self,
     ) -> MemoPhantom<
-        impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<V, &Dep>>::OutputElement,
+        impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputCsrElement<V, &Dep>>::OutputCsrElement,
         Dep,
         SKIP_IF_DEP_IS_NONE,
     > {
