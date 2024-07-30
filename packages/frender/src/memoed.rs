@@ -374,7 +374,7 @@ mod element {
         {
             type RenderStateKind = crate::memoed::Kind<K, Dep>;
 
-            frender_html::proxy_csr_element!(|this| this.f);
+            frender_html::proxy_csr_element!(|this| this.into_memo_phantom());
         }
     }
 }
