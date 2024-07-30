@@ -4,13 +4,15 @@ mod html;
 
 pub use self::html::{new_fn_hook_element, FnHookElement, FnMutOutputElementOfSameKind};
 
-pub use frender_html::Element;
-
 pub mod component_fn_options {
-    pub use frender_html::Element;
+    pub use frender_element::Element;
 
     pub mod ssr_only {
         pub use frender_ssr::SsrElement as Element;
+    }
+
+    pub mod csr_only {
+        pub use frender_html::CsrElement as Element;
     }
 }
 

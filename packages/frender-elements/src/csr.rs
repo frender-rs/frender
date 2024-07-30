@@ -1,7 +1,7 @@
 use std::pin::Pin;
 
 use frender_html::{
-    impl_unpinned_render_for_unpin, Element, RenderHtml, RenderState, RenderStateKindPinned,
+    impl_unpinned_render_for_unpin, CsrElement, RenderHtml, RenderState, RenderStateKindPinned,
     RenderStateKindUnpinned,
 };
 
@@ -85,7 +85,7 @@ pub mod default {
 
     use indexmap::IndexMap;
 
-    use frender_html::{dom::render::RenderContext, Element, RenderHtml, RenderState};
+    use frender_html::{dom::render::RenderContext, CsrElement, RenderHtml, RenderState};
 
     use crate::{DefaultElementsAlgorithm, Keyed};
 
@@ -273,7 +273,7 @@ pub mod default {
         }
     }
 
-    impl<K: Hash + Eq, E: Element> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
+    impl<K: Hash + Eq, E: CsrElement> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
         type CsrState<R: RenderHtml + ?Sized> = States<
             K,
             <E::RenderStateKind as frender_html::RenderStateKindUnpinned>::UnpinnedRenderState<R>,
@@ -1606,11 +1606,11 @@ where
     type UnpinnedRenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
 }
 
-impl<I, A, K, E> Element for Elements<I, A>
+impl<I, A, K, E> CsrElement for Elements<I, A>
 where
     I: IntoIterator<Item = Keyed<K, E>>,
     K: std::hash::Hash + Eq,
-    E: Element,
+    E: CsrElement,
     A: ElementsAlgorithm<K, E>,
 {
     type RenderStateKind = Kind<A, K, E>; // TODO: should not be generic over E but E::RenderStateKind

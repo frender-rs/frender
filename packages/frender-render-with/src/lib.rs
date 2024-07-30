@@ -3,8 +3,8 @@
 use std::{any::Any, marker::PhantomData, pin::Pin};
 
 use frender_html::{
-    impl_unpinned_render_for_unpin, Element, HtmlRenderContext, RenderHtml, RenderState,
-    RenderStateKind, RenderStateKindUnpinned,
+    impl_unpinned_render_for_unpin, CsrElement as Element, HtmlRenderContext, RenderHtml,
+    RenderState, RenderStateKind, RenderStateKindUnpinned,
 };
 use frender_ssr::SsrElement;
 

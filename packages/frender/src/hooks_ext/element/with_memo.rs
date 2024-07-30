@@ -1,5 +1,5 @@
 use frender_csr::render_state::compound::CompoundState;
-use frender_html::Element;
+use frender_html::CsrElement;
 
 use crate::{FnMutMap2RefsToElement, FnOnce2OutputElement, Memo};
 

@@ -850,7 +850,7 @@ mod state {
 mod to_element {
     use std::cell::RefCell;
 
-    use frender_html::Element;
+    use frender_element::Element;
 
     use crate::ToElement;
 
@@ -920,7 +920,8 @@ mod to_element {
 
         use frender_html::{
             dom::behaviors::{Node as _, NodeRenderSelf},
-            Element, RenderStateKindPinned, RenderStateKindUnpinned, UnpinnedRenderStateOfContext,
+            CsrElement as Element, RenderStateKindPinned, RenderStateKindUnpinned,
+            UnpinnedRenderStateOfContext,
         };
 
         use crate::elements::synced_collection::weak_vec1::{self, RcWithKey};

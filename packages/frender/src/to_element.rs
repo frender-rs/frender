@@ -1,6 +1,7 @@
 pub use self::with::*;
 
-use frender_html::{Element, RenderStateKind};
+use frender_element::Element;
+use frender_html::RenderStateKind;
 use frender_ssr::html::assert::HtmlChildren;
 
 pub trait ToElement {
@@ -86,7 +87,7 @@ pub mod with {
 }
 
 mod imps {
-    use crate::{Element, SsrElement, TempStr};
+    use crate::{CsrElement, SsrElement, TempStr};
 
     use super::ToElement;
 
@@ -99,7 +100,7 @@ mod imps {
             ]
         {
             type ToElementHtmlChildren = <Self as SsrElement>::HtmlChildren;
-            type ToElementRenderStateKind = <Self as Element>::RenderStateKind;
+            type ToElementRenderStateKind = <Self as CsrElement>::RenderStateKind;
             type ToElement<'a> = Self
             where
                 Self: 'a;
@@ -119,7 +120,7 @@ mod imps {
             ]
         {
             type ToElementHtmlChildren = <TempStr<&'static str> as SsrElement>::HtmlChildren;
-            type ToElementRenderStateKind = <TempStr<&'static str> as Element>::RenderStateKind;
+            type ToElementRenderStateKind = <TempStr<&'static str> as CsrElement>::RenderStateKind;
             type ToElement<'a> = TempStr<&'a Self>
             where
                 Self: 'a;
@@ -138,7 +139,7 @@ mod imps {
             ]
         {
             type ToElementHtmlChildren = <Self as SsrElement>::HtmlChildren;
-            type ToElementRenderStateKind = <Self as Element>::RenderStateKind;
+            type ToElementRenderStateKind = <Self as CsrElement>::RenderStateKind;
             type ToElement<'a> = Self
             where
                 Self: 'a;

@@ -1,6 +1,6 @@
 use std::future::Future;
 
-use frender_html::{dom::ProvideRenderContext, Element, RenderHtml, RenderState};
+use frender_html::{dom::ProvideRenderContext, CsrElement as Element, RenderHtml, RenderState};
 
 pin_project_lite::pin_project!(
     pub struct RenderElement<P: ProvideRenderContext, E: Element, Stop = std::future::Pending<()>>

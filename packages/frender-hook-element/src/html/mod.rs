@@ -1,10 +1,11 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
+use frender_element::Element;
 use frender_html::dom::behaviors::{
     Node as _, NodeRenderSelf, NodeWithRenderContextAfterSelf as _,
 };
 use frender_html::{
-    Element, HtmlRenderContext, RenderHtml, RenderState, RenderStateKind, RenderStateKindPinned,
+    CsrElement, HtmlRenderContext, RenderHtml, RenderState, RenderStateKind, RenderStateKindPinned,
     RenderStateKindUnpinned, RenderStateOfContext,
 };
 use frender_ssr::html::assert::HtmlChildren;
@@ -256,7 +257,7 @@ where
     >;
 }
 
-impl<HookData, U> Element for FnHookElement<HookData, U>
+impl<HookData, U> frender_html::CsrElement for FnHookElement<HookData, U>
 where
     HookData: HookPollNextUpdate + HookUnmount + Default,
     U: FnMutOutputElementOfSameKind<HookData>,

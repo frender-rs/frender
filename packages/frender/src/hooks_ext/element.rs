@@ -7,9 +7,10 @@ use frender_hook_element::state::{
     CursorPlaceholderWithRenderStatePinProject, MaybeIntoPollNextUpdate, MountState,
 };
 
+use frender_element::Element;
 use frender_html::{
     dom::behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
-    Element, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
+    CsrElement, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
     RenderStateOfContext, UnpinnedRenderStateOfContext,
 };
 use frender_ssr::{html::assert::HtmlChildren, SsrElement};
@@ -510,7 +511,7 @@ fn render_update<'a, S: Signal, E, Ctx: ?Sized + frender_html::HtmlRenderContext
     *mount_state = MountState::Mounted;
 }
 
-impl<S: Signal, F> frender_html::Element for SignalIntoElement<S, F>
+impl<S: Signal, F> frender_html::CsrElement for SignalIntoElement<S, F>
 where
     S::SignalHook: Unpin,
     F: IntoMutElementWithValue<<S as ShareValue>::Value>,

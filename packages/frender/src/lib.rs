@@ -1,3 +1,5 @@
+// pub use frender_element::Element;
+
 #[cfg(feature = "hooks")]
 pub mod hooks_ext;
 
@@ -108,7 +110,9 @@ pub mod prelude {
 
     pub use frender_hook_element::component_fn;
 
-    pub use frender_html::Element;
+    pub use frender_html::CsrElement;
+
+    pub use frender_element::Element;
 
     #[cfg(feature = "Elements")]
     pub use crate::{Elements, Keyed};

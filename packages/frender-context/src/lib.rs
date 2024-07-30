@@ -716,7 +716,7 @@ pub mod element {
     mod csr {
         use std::{marker::PhantomData, pin::Pin};
 
-        use frender_html::{Element, RenderStateKindPinned, RenderStateKindUnpinned};
+        use frender_html::{CsrElement, RenderStateKindPinned, RenderStateKindUnpinned};
 
         use crate::{ContextKeyInner, MaybeContextKeyAndValue};
 
@@ -833,9 +833,9 @@ pub mod element {
                 T,
                 Inner: 'static + ContextKeyInner<Value = T>,
                 F: IntoContextValue<ContextValue = T>,
-                E: Element,
+                E: CsrElement,
                 FE: FnOnce() -> E,
-            > Element for ElementWithContext<Inner, F, FE>
+            > CsrElement for ElementWithContext<Inner, F, FE>
         {
             type RenderStateKind = Kind<Inner::MaybeContextKeyAndValue, E::RenderStateKind>;
 

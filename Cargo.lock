@@ -865,6 +865,7 @@ dependencies = [
  "frender-context",
  "frender-csr",
  "frender-csr-web",
+ "frender-element",
  "frender-elements",
  "frender-events",
  "frender-hook-element",
@@ -971,6 +972,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-element"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
+ "frender-ssr",
+]
+
+[[package]]
 name = "frender-elements"
 version = "0.1.0"
 dependencies = [
@@ -994,6 +1003,7 @@ dependencies = [
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [
+ "frender-element",
  "frender-html",
  "frender-ssr",
  "hooks-core",

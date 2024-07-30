@@ -53,7 +53,7 @@ mod element {
     pub(super) mod csr {
         use frender_csr::{render_state::compound::CompoundState, RenderState};
         use frender_html::{
-            Element, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
+            CsrElement, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
         };
 
         use crate::FnOnceOutputElement;
@@ -84,7 +84,7 @@ mod element {
                 Dep: PartialEq,
                 C: frender_ssr::html::assert::HtmlChildren,
                 K: RenderStateKind,
-            > Element for Memo<F, Dep>
+            > CsrElement for Memo<F, Dep>
         {
             type RenderStateKind = Kind<K, Dep>;
 

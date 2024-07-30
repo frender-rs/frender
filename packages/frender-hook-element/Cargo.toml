@@ -11,3 +11,4 @@ pin-project-lite = "0.2.9"
 hooks-core = { version = "3.0.0-alpha", default-features = false }
 syn-lite = "0.1.0"
 frender-html = { version = "0.1.0", path = "../frender-html" }
+frender-element = { version = "0.1.0", path = "../frender-element" }

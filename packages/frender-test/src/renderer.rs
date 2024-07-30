@@ -35,7 +35,7 @@ impl RendererWithRoot {
         self.root.children()
     }
 
-    pub fn render_update<E: frender_html::Element>(
+    pub fn render_update<E: frender_html::CsrElement>(
         &mut self,
         element: E,
         render_state: std::pin::Pin<
@@ -43,11 +43,11 @@ impl RendererWithRoot {
         >,
     ) {
         self.provide_render_context(|render_context| {
-            frender_html::Element::render_update(element, render_context, render_state)
+            frender_html::CsrElement::render_update(element, render_context, render_state)
         })
     }
 
-    pub fn unpinned_render_update<E: frender_html::Element>(
+    pub fn unpinned_render_update<E: frender_html::CsrElement>(
         &mut self,
         element: E,
         render_state: &mut <E::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
@@ -55,7 +55,7 @@ impl RendererWithRoot {
         >,
     ) {
         self.provide_render_context(|render_context| {
-            frender_html::Element::unpinned_render_update(element, render_context, render_state)
+            frender_html::CsrElement::unpinned_render_update(element, render_context, render_state)
         })
     }
 }
