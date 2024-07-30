@@ -1900,9 +1900,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hooks"
-version = "3.0.0-alpha.11"
+version = "3.0.0-alpha.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4056acff9a301acb7325d4953d0d0e8b6a9a8a80cfd3b6b78970d733a5fd7b1e"
+checksum = "67db448a8454da99ccacd1e55ce84a10653683efc9429e8e359c4b2cd1c5c92c"
 dependencies = [
  "hooks-core",
  "hooks-gen",
