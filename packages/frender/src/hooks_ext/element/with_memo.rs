@@ -1,9 +1,9 @@
 use frender_csr::render_state::compound::CompoundState;
 use frender_html::CsrElement;
 
-use crate::{FnMutMap2RefsToElement, FnOnce2OutputElement, Memo};
+use crate::{memoed::MemoAndProvideFirstArgument, FnMutMap2RefsToElement, Memo};
 
-use super::{IntoMutElementWithValue, MutCsrElementWithValue};
+use super::{AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue, IntoHtmlChildrenWithValue};
 
 pub struct MemoCallWithRef<F, Dep> {
     f: F,
@@ -19,32 +19,58 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
     }
 }
 
-impl<V, F, Dep> MutCsrElementWithValue<V> for MemoCallWithRef<F, Dep>
+pub struct MemoCallWithRefAsMutElement<'a, F, Dep, V: ?Sized> {
+    f: &'a mut F,
+    value: &'a V,
+    _dep: std::marker::PhantomData<Dep>,
+}
+
+impl<'a, F, Dep, V: ?Sized> CsrElement for MemoCallWithRefAsMutElement<'a, F, Dep, V>
 where
-    V: ?Sized,
     F: FnMutMap2RefsToElement<V, Dep>,
 {
     type RenderStateKind = crate::memoed::Kind<F::Refs2ToElementRenderStateKind, Dep>;
 
-    fn mut_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
+    fn render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
         render_context: &mut Ctx,
         render_state: std::pin::Pin<
             &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
         >,
-    ) {
+    ) where
+        Self: Sized,
+    {
         let CompoundState {
             reactive: render_state,
             non_reactive: dep,
         } = render_state.pin_project();
 
-        (self.f)(value, dep.as_ref().unwrap()).render_update(render_context, render_state)
+        (self.f)(self.value, dep.as_ref().unwrap()).render_update(render_context, render_state)
     }
 
-    fn mut_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
+    fn render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        render_state: std::pin::Pin<
+            &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
+        >,
+    ) where
+        Self: Sized,
+    {
+        let CompoundState {
+            reactive: render_state,
+            non_reactive: dep,
+        } = render_state.pin_project();
+
+        (self.f)(self.value, dep.as_ref().unwrap())
+            .render_update_force_reposition(render_context, render_state)
+    }
+
+    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
         render_context: &mut Ctx,
         render_state: std::pin::Pin<
             &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
@@ -56,32 +82,50 @@ where
             non_reactive: dep,
         } = render_state.pin_project();
 
-        (self.f)(value, dep.as_ref().unwrap()).render_update_maybe_reposition(
+        (self.f)(self.value, dep.as_ref().unwrap()).render_update_maybe_reposition(
             render_context,
             render_state,
             force_reposition,
         )
     }
 
-    fn mut_unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
+    fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
         render_context: &mut Ctx,
         render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) {
+    ) where
+        Self: Sized,
+    {
         let CompoundState {
             reactive: render_state,
             non_reactive: dep,
         } = render_state;
 
-        (self.f)(value, dep.as_ref().unwrap()).unpinned_render_update(render_context, render_state)
+        (self.f)(self.value, dep.as_ref().unwrap())
+            .unpinned_render_update(render_context, render_state)
     }
 
-    fn mut_unpinned_render_update_maybe_reposition<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        &mut self,
-        value: &V,
+    fn unpinned_render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
+    ) where
+        Self: Sized,
+    {
+        let CompoundState {
+            reactive: render_state,
+            non_reactive: dep,
+        } = render_state;
+
+        (self.f)(self.value, dep.as_ref().unwrap())
+            .unpinned_render_update_force_reposition(render_context, render_state)
+    }
+
+    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+        //
+        self,
         render_context: &mut Ctx,
         render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
         force_reposition: bool,
@@ -91,7 +135,7 @@ where
             non_reactive: dep,
         } = render_state;
 
-        (self.f)(value, dep.as_ref().unwrap()).unpinned_render_update_maybe_reposition(
+        (self.f)(self.value, dep.as_ref().unwrap()).unpinned_render_update_maybe_reposition(
             render_context,
             render_state,
             force_reposition,
@@ -99,77 +143,67 @@ where
     }
 }
 
-#[inline(always)]
-fn closure_2_to_1<'a, Value: ?Sized, Dep: ?Sized, F: FnMutMap2RefsToElement<Value, Dep>>(
-    mut f: F,
-    value: &'a Value,
-) -> impl for<'d> FnOnce(&'d Dep) -> <F as FnOnce2OutputElement<&'a Value, &'d Dep>>::OutputElement
+impl<V, F, Dep> AsMutCsrElementWithValue<V> for MemoCallWithRef<F, Dep>
+where
+    V: ?Sized,
+    F: FnMutMap2RefsToElement<V, Dep>,
 {
-    move |dep: &_| f(value, dep)
+    type ElementWithValueRenderStateKind =
+        crate::memoed::Kind<F::Refs2ToElementRenderStateKind, Dep>;
+
+    type ElementWithValue<'a> = MemoCallWithRefAsMutElement<'a, F, Dep, V>
+    where
+        Self: 'a,
+        V: 'a;
+
+    fn as_mut_csr_element_with_value<'a>(&'a mut self, value: &'a V) -> Self::ElementWithValue<'a> {
+        MemoCallWithRefAsMutElement {
+            f: &mut self.f,
+            value,
+            _dep: self._dep,
+        }
+    }
 }
 
-impl<V, F, Dep> IntoMutElementWithValue<V> for Memo<F, Dep>
+impl<V, F, Dep> IntoHtmlChildrenWithValue<V> for Memo<F, Dep>
 where
     V: ?Sized,
     F: FnMutMap2RefsToElement<V, Dep>,
     Dep: PartialEq,
 {
-    type HtmlChildren = F::Refs2ToElementHtmlChildren;
+    type HtmlChildrenWithValue = F::Refs2ToElementHtmlChildren;
 
-    fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildren {
-        use crate::SsrElement;
+    fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildrenWithValue {
+        use crate::SsrElement as _;
         (self.0)(value, &self.1).into_html_children()
     }
+}
 
-    type MutCsrElementWithValue = MemoCallWithRef<F, Dep>;
+impl<V, F, Dep> IntoAsMutCsrElementWithValue<V> for Memo<F, Dep>
+where
+    V: ?Sized,
+    F: FnMutMap2RefsToElement<V, Dep>,
+    Dep: PartialEq,
+{
+    type OwnedPart = Dep;
 
-    fn render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: std::pin::Pin<
-            &mut frender_html::RenderStateOfContext<
-                <Self::MutCsrElementWithValue as super::MutCsrElementWithValue<V>>::RenderStateKind,
-                Ctx,
-            >,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue {
-        let Self(mut f, dep) = self;
-        Memo(closure_2_to_1(&mut f, value), dep).render_update_maybe_reposition(
-            render_context,
-            render_state,
-            force_reposition,
-        );
-        MemoCallWithRef {
-            f,
-            _dep: std::marker::PhantomData,
-        }
+    type MutPart = MemoCallWithRef<F, Dep>;
+
+    fn into_csr_parts(self) -> (Self::MutPart, Self::OwnedPart) {
+        let Self(f, dep) = self;
+        (MemoCallWithRef::new(f), dep)
     }
 
-    fn unpinned_render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<
-            <Self::MutCsrElementWithValue as super::MutCsrElementWithValue<V>>::RenderStateKind,
-            Ctx,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue {
-        let Self(mut f, dep) = self;
-        Memo(closure_2_to_1(&mut f, value), dep).unpinned_render_update_maybe_reposition(
-            render_context,
-            render_state,
-            force_reposition,
-        );
-        MemoCallWithRef {
-            f,
-            _dep: std::marker::PhantomData,
-        }
+    type OwnedPartIntoCsrElement<'a> = MemoAndProvideFirstArgument<&'a mut F, &'a V, Dep>
+    where
+        Self: 'a,
+        V: 'a;
+
+    fn owned_part_into_csr_element<'a>(
+        mut_part: &'a mut Self::MutPart,
+        value: &'a V,
+        owned_part: Self::OwnedPart,
+    ) -> Self::OwnedPartIntoCsrElement<'a> {
+        MemoAndProvideFirstArgument(&mut mut_part.f, value, owned_part)
     }
 }

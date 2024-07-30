@@ -1,4 +1,8 @@
-pub use self::{with_fn::WithFn, with_memo::MemoCallWithRef, with_to_element::WithToElement};
+pub use self::{
+    with_fn::WithFn,
+    with_memo::{MemoCallWithRef, MemoCallWithRefAsMutElement},
+    with_to_element::WithToElement,
+};
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
@@ -7,213 +11,95 @@ use frender_hook_element::state::{
     CursorPlaceholderWithRenderStatePinProject, MaybeIntoPollNextUpdate, MountState,
 };
 
-use frender_element::Element;
 use frender_html::{
     dom::behaviors::{Node, NodeRenderSelf, NodeWithRenderContextAfterSelf},
     CsrElement, RenderHtml, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
-    RenderStateOfContext, UnpinnedRenderStateOfContext,
+    RenderStateOfContext,
 };
-use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 use hooks::{HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
 
 mod with_fn;
 mod with_memo;
 mod with_to_element;
 
-pub trait MutCsrElementWithValueUsingMapToElement {}
+pub trait SelfAsMutCsrElementWithValue {}
 
-pub trait MapToElement<V: ?Sized> {
-    type RefToElement<'a>: Element<
-        RenderStateKind = Self::RefToElementRenderStateKind,
-        HtmlChildren = Self::RefToElementHtmlChildren,
+pub trait AsMutCsrElementWithValue<V: ?Sized> {
+    type ElementWithValueRenderStateKind: RenderStateKind;
+
+    type ElementWithValue<'a>: CsrElement<RenderStateKind = Self::ElementWithValueRenderStateKind>
+    where
+        Self: 'a,
+        V: 'a;
+
+    fn as_mut_csr_element_with_value<'a>(&'a mut self, value: &'a V) -> Self::ElementWithValue<'a>;
+}
+
+pub trait IntoAsMutCsrElementWithValue<V: ?Sized> {
+    type OwnedPart;
+    type MutPart: AsMutCsrElementWithValue<V>;
+
+    fn into_csr_parts(self) -> (Self::MutPart, Self::OwnedPart);
+
+    type OwnedPartIntoCsrElement<'a>: CsrElement<
+        RenderStateKind = <Self::MutPart as AsMutCsrElementWithValue<V>>::ElementWithValueRenderStateKind
     >
     where
         Self: 'a,
         V: 'a;
 
-    type RefToElementHtmlChildren: HtmlChildren;
-    type RefToElementRenderStateKind: RenderStateKind;
-    fn map_to_element<'a>(&'a mut self, v: &'a V) -> Self::RefToElement<'a>;
+    fn owned_part_into_csr_element<'a>(
+        mut_part: &'a mut Self::MutPart,
+        value: &'a V,
+        owned_part: Self::OwnedPart,
+    ) -> Self::OwnedPartIntoCsrElement<'a>;
 }
 
-pub trait MutCsrElementWithValue<V: ?Sized> {
-    type RenderStateKind: RenderStateKind;
+pub trait IntoHtmlChildrenWithValue<V: ?Sized> {
+    type HtmlChildrenWithValue: frender_ssr::html::assert::HtmlChildren;
 
-    fn mut_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    );
-
-    fn mut_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        force_reposition: bool,
-    );
-
-    fn mut_unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    );
-
-    fn mut_unpinned_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        force_reposition: bool,
-    );
+    fn into_html_children_with_value(self, value: &V) -> Self::HtmlChildrenWithValue;
 }
 
-impl<V: ?Sized, M: MapToElement<V> + MutCsrElementWithValueUsingMapToElement>
-    MutCsrElementWithValue<V> for M
+pub trait IntoMutElementWithValue<V: ?Sized>:
+    IntoHtmlChildrenWithValue<V> + IntoAsMutCsrElementWithValue<V>
 {
-    type RenderStateKind = M::RefToElementRenderStateKind;
-
-    fn mut_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    ) {
-        self.map_to_element(value)
-            .render_update(render_context, render_state)
-    }
-
-    fn mut_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        force_reposition: bool,
-    ) {
-        self.map_to_element(value).render_update_maybe_reposition(
-            render_context,
-            render_state,
-            force_reposition,
-        )
-    }
-
-    fn mut_unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) {
-        self.map_to_element(value)
-            .unpinned_render_update(render_context, render_state)
-    }
-
-    fn mut_unpinned_render_update_maybe_reposition<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        &mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        force_reposition: bool,
-    ) {
-        self.map_to_element(value)
-            .unpinned_render_update_maybe_reposition(render_context, render_state, force_reposition)
-    }
 }
 
-pub trait IntoMutElementWithValue<V: ?Sized> {
-    type MutCsrElementWithValue: MutCsrElementWithValue<V>;
-
-    type HtmlChildren: frender_ssr::html::assert::HtmlChildren;
-    fn into_html_children_with_value(self, value: &V) -> Self::HtmlChildren;
-
-    fn render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<
-            &mut RenderStateOfContext<
-                <Self::MutCsrElementWithValue as MutCsrElementWithValue<V>>::RenderStateKind,
-                Ctx,
-            >,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue;
-
-    fn unpinned_render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut UnpinnedRenderStateOfContext<
-            <Self::MutCsrElementWithValue as MutCsrElementWithValue<V>>::RenderStateKind,
-            Ctx,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue;
-}
-
-impl<V: ?Sized, M: MapToElement<V> + MutCsrElementWithValueUsingMapToElement>
-    IntoMutElementWithValue<V> for M
+impl<E: ?Sized, V: ?Sized> IntoMutElementWithValue<V> for E where
+    E: IntoHtmlChildrenWithValue<V> + IntoAsMutCsrElementWithValue<V>
 {
-    type MutCsrElementWithValue = M;
-    type HtmlChildren = M::RefToElementHtmlChildren;
+}
 
-    fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildren {
-        self.map_to_element(value).into_html_children()
+impl<V: ?Sized, M: AsMutCsrElementWithValue<V> + SelfAsMutCsrElementWithValue>
+    IntoAsMutCsrElementWithValue<V> for M
+{
+    type OwnedPart = ();
+    type MutPart = Self;
+
+    fn into_csr_parts(self) -> (Self::MutPart, Self::OwnedPart) {
+        (self, ())
     }
 
-    fn render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: Pin<
-            &mut RenderStateOfContext<
-                <Self::MutCsrElementWithValue as MutCsrElementWithValue<V>>::RenderStateKind,
-                Ctx,
-            >,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue {
-        self.map_to_element(value).render_update_maybe_reposition(
-            render_context,
-            render_state,
-            force_reposition,
-        );
-        self
-    }
+    type OwnedPartIntoCsrElement<'a> = M::ElementWithValue<'a>
+    where
+        V: 'a,
+        Self: 'a;
 
-    fn unpinned_render_update_maybe_reposition_with_value_and_into<
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
-    >(
-        mut self,
-        value: &V,
-        render_context: &mut Ctx,
-        render_state: &mut UnpinnedRenderStateOfContext<
-            <Self::MutCsrElementWithValue as MutCsrElementWithValue<V>>::RenderStateKind,
-            Ctx,
-        >,
-        force_reposition: bool,
-    ) -> Self::MutCsrElementWithValue {
-        self.map_to_element(value)
-            .unpinned_render_update_maybe_reposition(
-                render_context,
-                render_state,
-                force_reposition,
-            );
-        self
+    fn owned_part_into_csr_element<'a>(
+        this: &'a mut Self,
+        value: &'a V,
+        (): Self::OwnedPart,
+    ) -> Self::OwnedPartIntoCsrElement<'a> {
+        this.as_mut_csr_element_with_value(value)
     }
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct SignalIntoElement<S: ShareValue, F: IntoMutElementWithValue<S::Value>>(pub S, pub F);
+pub struct SignalIntoElement<S: ShareValue, F: IntoAsMutCsrElementWithValue<S::Value>>(
+    pub S,
+    pub F,
+);
 
 mod ssr {
     use super::*;
@@ -222,7 +108,7 @@ mod ssr {
     where
         F: IntoMutElementWithValue<S::Value>,
     {
-        type HtmlChildren = F::HtmlChildren;
+        type HtmlChildren = F::HtmlChildrenWithValue;
 
         fn into_html_children(self) -> Self::HtmlChildren {
             self.0.map(|s| self.1.into_html_children_with_value(s))
@@ -254,7 +140,7 @@ enum Never {}
 pub struct Kind<SH, E>(Never, std::marker::PhantomData<(SH, E)>)
 where
     SH: Unpin + SignalHook,
-    E: MutCsrElementWithValue<SH::SignalShareValue>;
+    E: AsMutCsrElementWithValue<SH::SignalShareValue>;
 
 type CursorPlaceholderWithRenderState<C, S> =
     frender_hook_element::state::CursorPlaceholderWithRenderState<C, (), S>;
@@ -262,7 +148,7 @@ type CursorPlaceholderWithRenderState<C, S> =
 impl<SH, E> RenderStateKindUnpinned for Kind<SH, E>
 where
     SH: Unpin + SignalHook,
-    E: MutCsrElementWithValue<SH::SignalShareValue>,
+    E: AsMutCsrElementWithValue<SH::SignalShareValue>,
 {
     type UnpinnedRenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
         OptionSignalHookAndOther<SH, E>,
@@ -277,7 +163,7 @@ where
 impl<SH, E> RenderStateKindPinned for Kind<SH, E>
 where
     SH: Unpin + SignalHook,
-    E: MutCsrElementWithValue<SH::SignalShareValue>,
+    E: AsMutCsrElementWithValue<SH::SignalShareValue>,
 {
     type RenderState<R: RenderHtml + ?Sized> = frender_hook_element::state::State<
         OptionSignalHookAndOther<SH, E>,
@@ -360,7 +246,7 @@ where
 
 pub enum RenderUpdateToElementWithPinnedState {}
 
-impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MutCsrElementWithValue<V>>
+impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + AsMutCsrElementWithValue<V>>
     RenderUpdateMapToElement<R, F, V> for RenderUpdateToElementWithPinnedState
 {
     type State = RenderStateOfMutElement<F, V, R>;
@@ -370,13 +256,14 @@ impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MutCsrElementWithValue<V>>
         render_context: &mut <R>::RenderContext<'_>,
         render_state: Pin<&mut Self::State>,
     ) {
-        f.mut_render_update(value, render_context, render_state)
+        f.as_mut_csr_element_with_value(value)
+            .render_update(render_context, render_state)
     }
 }
 
 pub enum RenderUpdateToElementWithUnpinnedState {}
 
-impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MutCsrElementWithValue<V>>
+impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + AsMutCsrElementWithValue<V>>
     RenderUpdateMapToElement<R, F, V> for RenderUpdateToElementWithUnpinnedState
 {
     type State = UnpinnedRenderStateOfMutElement<F, V, R>;
@@ -386,7 +273,8 @@ impl<R: ?Sized + RenderHtml, V: ?Sized, F: ?Sized + MutCsrElementWithValue<V>>
         render_context: &mut <R>::RenderContext<'_>,
         render_state: Pin<&mut Self::State>,
     ) {
-        f.mut_unpinned_render_update(value, render_context, render_state.get_mut())
+        f.as_mut_csr_element_with_value(value)
+            .unpinned_render_update(render_context, render_state.get_mut())
     }
 }
 
@@ -402,9 +290,9 @@ pub trait RenderUpdateMapToElement<R: ?Sized + RenderHtml, F: ?Sized, V: ?Sized>
 }
 
 type RenderStateOfMutElement<E, V, R> =
-    <<E as MutCsrElementWithValue<V>>::RenderStateKind as RenderStateKindPinned>::RenderState<R>;
+    <<E as AsMutCsrElementWithValue<V>>::ElementWithValueRenderStateKind as RenderStateKindPinned>::RenderState<R>;
 type UnpinnedRenderStateOfMutElement<E, V, R> =
-    <<E as MutCsrElementWithValue<V>>::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
+    <<E as AsMutCsrElementWithValue<V>>::ElementWithValueRenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
         R
     >;
 
@@ -514,9 +402,9 @@ fn render_update<'a, S: Signal, E, Ctx: ?Sized + frender_html::HtmlRenderContext
 impl<S: Signal, F> frender_html::CsrElement for SignalIntoElement<S, F>
 where
     S::SignalHook: Unpin,
-    F: IntoMutElementWithValue<<S as ShareValue>::Value>,
+    F: IntoAsMutCsrElementWithValue<<S as ShareValue>::Value>,
 {
-    type RenderStateKind = Kind<S::SignalHook, F::MutCsrElementWithValue>;
+    type RenderStateKind = Kind<S::SignalHook, F::MutPart>;
 
     fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
         //
@@ -543,12 +431,12 @@ where
             hook_data.get_mut(),
             cursor_placeholder_and_data,
             |value, render_context, force_reposition| {
-                self.1.render_update_maybe_reposition_with_value_and_into(
-                    value,
-                    render_context,
-                    render_state,
-                    force_reposition,
-                )
+                let (mut mut_part, owned_part) = self.1.into_csr_parts();
+
+                F::owned_part_into_csr_element(&mut mut_part, value, owned_part)
+                    .render_update_maybe_reposition(render_context, render_state, force_reposition);
+
+                mut_part
             },
             render_context,
             force_reposition,
@@ -579,13 +467,16 @@ where
             hook_data,
             cursor_placeholder_and_data,
             |value, render_context, force_reposition| {
-                self.1
-                    .unpinned_render_update_maybe_reposition_with_value_and_into(
-                        value,
+                let (mut mut_part, owned_part) = self.1.into_csr_parts();
+
+                F::owned_part_into_csr_element(&mut mut_part, value, owned_part)
+                    .unpinned_render_update_maybe_reposition(
                         render_context,
                         render_state,
                         force_reposition,
-                    )
+                    );
+
+                mut_part
             },
             render_context,
             force_reposition,
