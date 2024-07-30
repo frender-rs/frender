@@ -10,6 +10,15 @@ pub struct MemoCallWithRef<F, Dep> {
     _dep: std::marker::PhantomData<Dep>,
 }
 
+impl<F, Dep> MemoCallWithRef<F, Dep> {
+    pub const fn new(f: F) -> Self {
+        Self {
+            f,
+            _dep: std::marker::PhantomData,
+        }
+    }
+}
+
 impl<V, F, Dep> MutCsrElementWithValue<V> for MemoCallWithRef<F, Dep>
 where
     V: ?Sized,
