@@ -338,9 +338,46 @@ macro_rules! impl_unpinned_render_for_unpin {
             self,
             render_context: &mut Ctx,
             render_state: &mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-            force_reposition: bool,
+            force_reposition: ::core::primitive::bool,
         ) {
             self.render_update_maybe_reposition(render_context, ::core::pin::Pin::new(render_state), force_reposition)
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_render_for_unpin {
+    () => {
+        fn render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
+        ) where
+            Self: Sized,
+        {
+            self.unpinned_render_update(render_context, render_state.get_mut())
+        }
+
+        fn render_update_force_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
+        ) where
+            Self: Sized,
+        {
+            self.unpinned_render_update_force_reposition(render_context, render_state.get_mut())
+        }
+
+        fn render_update_maybe_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
+            force_reposition: ::core::primitive::bool,
+        ) {
+            self.unpinned_render_update_maybe_reposition(render_context, render_state.get_mut(), force_reposition)
         }
     };
 }
