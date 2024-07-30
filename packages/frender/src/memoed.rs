@@ -56,9 +56,9 @@ mod element {
             CsrElement, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned,
         };
 
-        use crate::FnOnceOutputElement;
+        use crate::{FnOnce2OutputElement, FnOnceOutputElement};
 
-        use super::super::Memo;
+        use super::super::{Memo, MemoAndProvideFirstArgument};
 
         enum Never {}
         pub struct Kind<K, Dep>(Never, std::marker::PhantomData<(K, Dep)>);
@@ -149,5 +149,53 @@ mod element {
                 })
             }
         }
+
+        impl<
+                F: for<'a> FnOnce2OutputElement<
+                    A,
+                    &'a Dep,
+                    OutputElementHtmlChildren = C,
+                    OutputElementRenderStateKind = K,
+                >,
+                A,
+                Dep: PartialEq,
+                C: frender_ssr::html::assert::HtmlChildren,
+                K: RenderStateKind,
+            > CsrElement for MemoAndProvideFirstArgument<F, A, Dep>
+        {
+            type RenderStateKind = Kind<K, Dep>;
+
+            frender_html::proxy_csr_element!(|this| this.into_memo());
+        }
+    }
+}
+
+pub struct MemoAndProvideFirstArgument<F: for<'a> crate::FnOnce2OutputElement<A, &'a Dep>, A, Dep>(
+    pub F,
+    pub A,
+    pub Dep,
+);
+
+impl<F, A, Dep> MemoAndProvideFirstArgument<F, A, Dep>
+where
+    F: for<'a> crate::FnOnce2OutputElement<A, &'a Dep>,
+{
+    fn into_f_and_dep(
+        self,
+    ) -> (
+        impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<A, &Dep>>::OutputElement,
+        Dep,
+    ) {
+        let Self(f, arg, dep) = self;
+
+        (move |dep| f(arg, dep), dep)
+    }
+
+    pub fn into_memo(
+        self,
+    ) -> Memo<impl FnOnce(&Dep) -> <F as crate::FnOnce2OutputElement<A, &Dep>>::OutputElement, Dep>
+    {
+        let (f, dep) = self.into_f_and_dep();
+        Memo(f, dep)
     }
 }
