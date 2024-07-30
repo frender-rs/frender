@@ -1,8 +1,4 @@
-pub use self::{
-    with_fn::WithFn,
-    with_memo::{MemoCallWithRef, MemoCallWithRefAsMutElement},
-    with_to_element::WithToElement,
-};
+pub use self::{with_fn::WithFn, with_memo::MemoCallWithRef, with_to_element::WithToElement};
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
