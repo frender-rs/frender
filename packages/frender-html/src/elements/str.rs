@@ -276,7 +276,7 @@ impl<S: frender_common::ToAsRefStr + frender_common::ToStaticCache> Element for 
                 frender_common::ToStaticCache::not_match_cache,
                 frender_common::ToStaticCache::update_into_static_cache,
             ),
-            render_state @ None => *render_state = Some(State::init(self.0, render_context, frender_common::ToStaticStr::to_static_str, frender_common::ToStaticCache::into_static_cache)),
+            render_state @ None => *render_state = Some(State::init(self.0, render_context, to_as_ref_str_and_borrow, frender_common::ToStaticCache::into_static_cache)),
         }
     }
 
