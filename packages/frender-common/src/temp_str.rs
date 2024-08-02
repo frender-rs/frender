@@ -242,19 +242,67 @@ crate::impl_many!(
     }
 );
 
+/// Consider this trait as a borrowed version of [`ToString`].
+pub trait ToAsRefStr: ToStaticStr {
+    type ToAsRefStr<'a>: AsRef<str> + ToStaticStr
+    where
+        Self: 'a;
+
+    fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_>;
+}
+
+impl<'this, T: ?Sized + ToAsRefStr> ToAsRefStr for &'this T {
+    type ToAsRefStr<'a> = T::ToAsRefStr<'this>
+    where
+        Self: 'a;
+
+    fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+        T::to_as_ref_str(self)
+    }
+}
+
+impl ToAsRefStr for str {
+    type ToAsRefStr<'a> = &'a str
+    where
+        Self: 'a;
+
+    fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+        self
+    }
+}
+
+crate::impl_many!(
+    impl<__> ToAsRefStr
+        for each_of![
+            String,
+            std::borrow::Cow<'_, str>,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
+        ]
+    {
+        type ToAsRefStr<'a> = &'a Self
+        where
+            Self: 'a;
+
+        fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+            self
+        }
+    }
+);
+
 #[cfg(test)]
 mod asserts {
-    use super::{ToStaticCache, ToStaticStr};
+    use super::{ToAsRefStr, ToStaticCache, ToStaticStr};
 
     #[test]
     const fn test<'a>()
     where
-        &'a str: AsRef<str> + ToStaticStr + ToStaticCache,
-        &'a String: AsRef<str> + ToStaticStr + ToStaticCache,
-        std::borrow::Cow<'a, str>: AsRef<str> + ToStaticStr + ToStaticCache,
-        &'a std::borrow::Cow<'a, str>: AsRef<str> + ToStaticStr + ToStaticCache,
-        &'a std::rc::Rc<str>: AsRef<str> + ToStaticStr + ToStaticCache,
-        &'a std::sync::Arc<str>: AsRef<str> + ToStaticStr + ToStaticCache,
+        &'a str: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
+        &'a String: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
+        std::borrow::Cow<'a, str>: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
+        &'a std::borrow::Cow<'a, str>: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
+        &'a std::rc::Rc<str>: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
+        &'a std::sync::Arc<str>: AsRef<str> + ToStaticStr + ToStaticCache + ToAsRefStr,
     {
     }
 
