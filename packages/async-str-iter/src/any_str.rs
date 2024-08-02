@@ -5,6 +5,12 @@ pub struct IterAnyStr<S: AsRef<str>> {
     taken: bool,
 }
 
+impl<S: AsRef<str>> IterAnyStr<S> {
+    pub const fn new(s: S) -> Self {
+        Self { s, taken: false }
+    }
+}
+
 impl<S: AsRef<str>> Unpin for IterAnyStr<S> {}
 
 impl<S: AsRef<str>> AsyncStrIterator for IterAnyStr<S> {
