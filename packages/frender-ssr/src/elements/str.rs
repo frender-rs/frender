@@ -31,13 +31,13 @@ where
 {
     type HtmlChildren = frender_ssr_html::encode::Encode<
         frender_ssr_html::escape_safe::Safe,
-        async_str_iter::borrow_str::IterBorrowStr<S::StaticStr>,
+        async_str_iter::any_str::IterAnyStr<S::StaticStr>,
     >;
 
     fn into_html_children(self) -> Self::HtmlChildren {
         Self::HtmlChildren::new(
             frender_ssr_html::escape_safe::Safe,
-            async_str_iter::borrow_str::IterBorrowStr::new(self.0.into_static_str()),
+            async_str_iter::any_str::IterAnyStr::new(self.0.into_static_str()),
         )
     }
 }

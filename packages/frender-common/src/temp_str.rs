@@ -1,10 +1,8 @@
-use std::borrow::Borrow;
-
 #[derive(Debug, Clone, Copy)]
 pub struct TempStr<S>(pub S);
 
 pub trait ToStaticStr {
-    type StaticStr: 'static + Borrow<str>;
+    type StaticStr: 'static + AsRef<str>;
 
     fn to_static_str(&self) -> Self::StaticStr;
     fn into_static_str(self) -> Self::StaticStr
