@@ -249,16 +249,30 @@ frender_common::impl_many!(
     }
 );
 
-impl<S: frender_common::ToStaticStr + frender_common::ToStaticCache> Element for frender_common::TempStr<S> {
+// stricter than impl SsrElement
+impl<S: frender_common::ToAsRefStr + frender_common::ToStaticCache> Element for frender_common::TempStr<S> {
     type RenderStateKind = Kind<<S as frender_common::ToStaticCache>::StaticCache>;
 
     fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
+        fn to_as_ref_str_and_borrow(v: &impl frender_common::ToAsRefStr) -> impl '_ + Borrow<str> {
+            let v = frender_common::ToAsRefStr::to_as_ref_str(v);
+            struct BorrowAsRef<S>(S);
+
+            impl<S: AsRef<str>> Borrow<str> for BorrowAsRef<S> {
+                fn borrow(&self) -> &str {
+                    self.0.as_ref()
+                }
+            }
+
+            BorrowAsRef(v)
+        }
+
         match render_state.get_mut() {
             Some(render_state) => render_state.update_maybe_reposition(
                 self.0,
                 render_context,
                 force_reposition,
-                frender_common::ToStaticStr::to_static_str,
+                to_as_ref_str_and_borrow,
                 frender_common::ToStaticCache::not_match_cache,
                 frender_common::ToStaticCache::update_into_static_cache,
             ),
