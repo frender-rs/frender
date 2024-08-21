@@ -1,8 +1,6 @@
 use crate::ToElement;
 
-use super::{
-    AsMutCsrElementWithValue, IntoHtmlChildrenWithValue, SelfAsMutCsrElementWithValue,
-};
+use super::{AsMutCsrElementWithValue, IntoHtmlChildrenWithValue, SelfAsMutCsrElementWithValue};
 
 #[derive(Debug, Clone, Copy)]
 pub struct WithToElement;
