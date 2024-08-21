@@ -1,0 +1,220 @@
+pub mod assert {
+    use async_str_iter::AsyncStrIterator;
+
+    mod sealed {
+        pub trait DeclarationList {}
+        pub trait DeclarationListPrefixSemicolon {}
+    }
+
+    /// A string stream which is either empty or
+    /// a valid [Declaration](ccss::parse::declaration::Declaration) list separated by semicolon.
+    pub trait DeclarationList: AsyncStrIterator + sealed::DeclarationList {}
+
+    /// A string stream which is either empty or
+    /// starts with a semicolon `;` and the rest is a [`SsrDeclarationList`].
+    pub trait DeclarationListPrefixSemicolon:
+        AsyncStrIterator + sealed::DeclarationListPrefixSemicolon
+    {
+    }
+
+    impl<T: DeclarationList> sealed::DeclarationList for async_str_iter::option::IterOption<T> {}
+    impl<T: DeclarationList> DeclarationList for async_str_iter::option::IterOption<T> {}
+
+    impl<T: DeclarationListPrefixSemicolon> sealed::DeclarationListPrefixSemicolon
+        for async_str_iter::option::IterOption<T>
+    {
+    }
+    impl<T: DeclarationListPrefixSemicolon> DeclarationListPrefixSemicolon
+        for async_str_iter::option::IterOption<T>
+    {
+    }
+
+    impl<A: DeclarationList, B: DeclarationListPrefixSemicolon> sealed::DeclarationList
+        for async_str_iter::chain::Chain<A, B>
+    {
+    }
+    impl<A: DeclarationList, B: DeclarationListPrefixSemicolon> DeclarationList
+        for async_str_iter::chain::Chain<A, B>
+    {
+    }
+
+    impl<A: DeclarationListPrefixSemicolon, B: DeclarationListPrefixSemicolon>
+        sealed::DeclarationListPrefixSemicolon for async_str_iter::chain::Chain<A, B>
+    {
+    }
+    // let a: impl DeclarationListPrefixSemicolon;
+    // let b: impl DeclarationListPrefixSemicolon;
+    // let this = a + b;
+    // - If `a` is empty, then `this` is `b`,
+    //   which is a valid DeclarationListPrefixSemicolon.
+    // - Else, `a` starts with a semicolon, so
+    //   `a + b` starts with a semicolon, which is a valid DeclarationListPrefixSemicolon.
+    impl<A: DeclarationListPrefixSemicolon, B: DeclarationListPrefixSemicolon>
+        DeclarationListPrefixSemicolon for async_str_iter::chain::Chain<A, B>
+    {
+    }
+
+    impl<A: DeclarationList, B: DeclarationList> sealed::DeclarationList
+        for async_str_iter::either::IterEither<A, B>
+    {
+    }
+    impl<A: DeclarationList, B: DeclarationList> DeclarationList
+        for async_str_iter::either::IterEither<A, B>
+    {
+    }
+
+    impl<A: DeclarationListPrefixSemicolon, B: DeclarationListPrefixSemicolon>
+        sealed::DeclarationListPrefixSemicolon for async_str_iter::either::IterEither<A, B>
+    {
+    }
+    impl<A: DeclarationListPrefixSemicolon, B: DeclarationListPrefixSemicolon>
+        DeclarationListPrefixSemicolon for async_str_iter::either::IterEither<A, B>
+    {
+    }
+
+    impl<T: ?Sized + crate::constness::HasConstDeclarationList> sealed::DeclarationList
+        for crate::constness::ssr::ConstDeclarationListIntoSsr<T>
+    {
+    }
+    impl<T: ?Sized + crate::constness::HasConstDeclarationList> DeclarationList
+        for crate::constness::ssr::ConstDeclarationListIntoSsr<T>
+    {
+    }
+
+    impl<T: ?Sized + crate::constness::HasConstDeclarationList>
+        sealed::DeclarationListPrefixSemicolon
+        for crate::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
+    {
+    }
+    impl<T: ?Sized + crate::constness::HasConstDeclarationList> DeclarationListPrefixSemicolon
+        for crate::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
+    {
+    }
+}
+
+mod sealed {
+    pub trait SsrDeclarationList {}
+}
+
+/// This trait is sealed to make sure <code>
+/// [SsrDeclarationList::IntoDeclarationListPrefixSemicolon] == ";" + [SsrDeclarationList::IntoDeclarationList]
+/// </code> if [SsrDeclarationList::IntoDeclarationList] is not empty;
+pub trait SsrDeclarationList: sealed::SsrDeclarationList {
+    type IntoDeclarationList: assert::DeclarationList;
+    type IntoDeclarationListPrefixSemicolon: assert::DeclarationListPrefixSemicolon;
+
+    fn into_declaration_list(this: Self) -> Self::IntoDeclarationList;
+
+    fn into_declaration_list_prefix_semicolon(
+        this: Self,
+    ) -> Self::IntoDeclarationListPrefixSemicolon;
+}
+
+mod imp {
+    use async_str_iter::IntoAsyncStrIterator;
+
+    use super::{sealed, SsrDeclarationList};
+
+    impl<T: SsrDeclarationList> sealed::SsrDeclarationList for Option<T> {}
+
+    impl<T: SsrDeclarationList> SsrDeclarationList for Option<T> {
+        type IntoDeclarationList = async_str_iter::option::IterOption<T::IntoDeclarationList>;
+        type IntoDeclarationListPrefixSemicolon =
+            async_str_iter::option::IterOption<T::IntoDeclarationListPrefixSemicolon>;
+
+        fn into_declaration_list(this: Self) -> Self::IntoDeclarationList {
+            this.map(T::into_declaration_list).into_async_str_iterator()
+        }
+
+        fn into_declaration_list_prefix_semicolon(
+            this: Self,
+        ) -> Self::IntoDeclarationListPrefixSemicolon {
+            this.map(T::into_declaration_list_prefix_semicolon)
+                .into_async_str_iterator()
+        }
+    }
+
+    impl<A: SsrDeclarationList, B: SsrDeclarationList> sealed::SsrDeclarationList
+        for crate::styles::chain::Chain<A, B>
+    {
+    }
+    impl<A: SsrDeclarationList, B: SsrDeclarationList> SsrDeclarationList
+        for crate::styles::chain::Chain<A, B>
+    {
+        type IntoDeclarationList = async_str_iter::chain::Chain<
+            A::IntoDeclarationList,
+            B::IntoDeclarationListPrefixSemicolon,
+        >;
+
+        type IntoDeclarationListPrefixSemicolon = async_str_iter::chain::Chain<
+            A::IntoDeclarationListPrefixSemicolon,
+            B::IntoDeclarationListPrefixSemicolon,
+        >;
+
+        fn into_declaration_list(Self(a, b): Self) -> Self::IntoDeclarationList {
+            async_str_iter::chain::Chain::new(
+                A::into_declaration_list(a),
+                B::into_declaration_list_prefix_semicolon(b),
+            )
+        }
+
+        fn into_declaration_list_prefix_semicolon(
+            Self(a, b): Self,
+        ) -> Self::IntoDeclarationListPrefixSemicolon {
+            async_str_iter::chain::Chain::new(
+                A::into_declaration_list_prefix_semicolon(a),
+                B::into_declaration_list_prefix_semicolon(b),
+            )
+        }
+    }
+
+    impl<A: SsrDeclarationList, B: SsrDeclarationList> sealed::SsrDeclarationList
+        for crate::styles::either::ssr::EitherSsrDeclarationList<A, B>
+    {
+    }
+    impl<A: SsrDeclarationList, B: SsrDeclarationList> SsrDeclarationList
+        for crate::styles::either::ssr::EitherSsrDeclarationList<A, B>
+    {
+        type IntoDeclarationList =
+            async_str_iter::either::IterEither<A::IntoDeclarationList, B::IntoDeclarationList>;
+
+        type IntoDeclarationListPrefixSemicolon = async_str_iter::either::IterEither<
+            A::IntoDeclarationListPrefixSemicolon,
+            B::IntoDeclarationListPrefixSemicolon,
+        >;
+
+        fn into_declaration_list(this: Self) -> Self::IntoDeclarationList {
+            match this {
+                Self::A(this) => {
+                    async_str_iter::either::IterEither::Left(A::into_declaration_list(this))
+                }
+                Self::B(this) => {
+                    async_str_iter::either::IterEither::Right(B::into_declaration_list(this))
+                }
+            }
+        }
+
+        fn into_declaration_list_prefix_semicolon(
+            this: Self,
+        ) -> Self::IntoDeclarationListPrefixSemicolon {
+            match this {
+                Self::A(this) => async_str_iter::either::IterEither::Left(
+                    A::into_declaration_list_prefix_semicolon(this),
+                ),
+                Self::B(this) => async_str_iter::either::IterEither::Right(
+                    B::into_declaration_list_prefix_semicolon(this),
+                ),
+            }
+        }
+    }
+
+    impl<T: ?Sized + crate::constness::HasConstDeclarationList> sealed::SsrDeclarationList
+        for crate::constness::ConstDeclarationList<T>
+    {
+    }
+}
+
+pub trait SsrStyle {
+    type IntoSsrDeclarationList: SsrDeclarationList;
+    fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList;
+}

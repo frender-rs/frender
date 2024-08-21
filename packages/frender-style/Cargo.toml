@@ -1,0 +1,21 @@
+[package]
+name = "frender-style"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", features = [
+    "define_phantom_wrapper",
+] }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+ccss = { version = "0.1.0", path = "../../../ccss" }
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+web-sys = { version = "0.3.69", optional = true, default-features = false, features = [
+    "CssStyleDeclaration",
+] }
+
+[dev-dependencies]
+futures-lite = "2.0.1"
+
+[features]
+web = ["dep:web-sys"]
