@@ -271,7 +271,7 @@ crate::impl_many!(
 
 /// Consider this trait as a borrowed version of [`ToString`].
 pub trait ToAsRefStr: ToStaticStr {
-    type ToAsRefStr<'a>: AsRef<str> + ToStaticStr
+    type ToAsRefStr<'a>: AsRef<str> + ToStaticStr<StaticStr = Self::StaticStr>
     where
         Self: 'a;
 
@@ -312,6 +312,29 @@ crate::impl_many!(
             Self: 'a;
 
         fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+            self
+        }
+    }
+);
+
+/// Consider this as `Into<String | &str | ... | Rc<str>>`
+pub trait IntoAsRefStr: ToAsRefStr {
+    type IntoAsRefStr: AsRef<str> + ToStaticStr<StaticStr = Self::StaticStr>;
+
+    fn into_as_ref_str(self) -> Self::IntoAsRefStr;
+}
+
+crate::impl_many!(
+    impl<__> IntoAsRefStr
+        for each_of![
+            String,
+            std::borrow::Cow<'_, str>,
+            std::rc::Rc<str>,
+            std::sync::Arc<str>,
+        ]
+    {
+        type IntoAsRefStr = Self;
+        fn into_as_ref_str(self) -> Self::IntoAsRefStr {
             self
         }
     }

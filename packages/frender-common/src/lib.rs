@@ -16,6 +16,8 @@ pub mod either;
 mod empty;
 pub use empty::Empty;
 
+pub mod strings;
+
 pub mod utils {
     pub use frender_pin_utils::*;
 }
