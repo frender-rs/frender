@@ -156,6 +156,35 @@ pub trait ToStaticCache {
     }
 }
 
+#[macro_export]
+macro_rules! proxy_to_static_cache {
+    (|$self_:ident| -> $ty:ty { $e:expr }) => {
+        fn match_cache(&$self_, cache: &Self::StaticCache) -> bool {
+            <$ty>::match_cache(&$e, cache)
+        }
+
+        fn to_static_cache(&$self_) -> Self::StaticCache {
+            <$ty>::to_static_cache(&$e)
+        }
+
+        fn not_match_cache(&$self_, cache: &Self::StaticCache) -> bool {
+            <$ty>::not_match_cache(&$e, cache)
+        }
+
+        fn into_static_cache($self_) -> Self::StaticCache {
+            <$ty>::into_static_cache($e)
+        }
+
+        fn update_to_static_cache(&$self_, target: &mut Self::StaticCache) {
+            <$ty>::update_to_static_cache(&$e, target)
+        }
+
+        fn update_into_static_cache($self_, target: &mut Self::StaticCache) {
+            <$ty>::update_into_static_cache($e, target)
+        }
+    };
+}
+
 impl<T: ?Sized + ToStaticCache> ToStaticCache for &T {
     type StaticCache = T::StaticCache;
 
