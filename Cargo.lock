@@ -337,6 +337,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
 
 [[package]]
+name = "ccss"
+version = "0.1.0"
+dependencies = [
+ "konst",
+]
+
+[[package]]
 name = "cesu8"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -438,6 +445,12 @@ dependencies = [
  "cfg-if",
  "wasm-bindgen",
 ]
+
+[[package]]
+name = "const_panic"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6051f239ecec86fde3410901ab7860d458d160371533842974fc61f96d15879b"
 
 [[package]]
 name = "convert_case"
@@ -874,6 +887,7 @@ dependencies = [
  "frender-macros",
  "frender-render-with",
  "frender-ssr",
+ "frender-style",
  "futures-lite 2.3.0",
  "hooks",
  "js-sys",
@@ -955,6 +969,7 @@ dependencies = [
  "frender-events",
  "frender-html-common",
  "frender-ssr",
+ "frender-style",
  "gloo-events 0.2.0",
  "pin-project-lite",
  "wasm-bindgen",
@@ -1008,7 +1023,7 @@ dependencies = [
  "frender-ssr",
  "hooks-core",
  "pin-project-lite",
- "syn-lite",
+ "syn-lite 0.1.2",
 ]
 
 [[package]]
@@ -1023,6 +1038,7 @@ dependencies = [
  "frender-events",
  "frender-html-common",
  "frender-ssr",
+ "frender-style",
  "gloo-events 0.2.0",
  "js-sys",
  "pin-project-lite",
@@ -1066,6 +1082,9 @@ dependencies = [
 [[package]]
 name = "frender-macro-rules"
 version = "0.1.0"
+dependencies = [
+ "syn-lite 0.3.0",
+]
 
 [[package]]
 name = "frender-macros"
@@ -1111,6 +1130,18 @@ dependencies = [
  "either",
  "html-escape",
  "pin-project-lite",
+]
+
+[[package]]
+name = "frender-style"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "ccss",
+ "frender-common",
+ "frender-macro-rules",
+ "futures-lite 2.3.0",
+ "web-sys",
 ]
 
 [[package]]
@@ -1927,7 +1958,7 @@ checksum = "94f1fcfaec5835dfab93d752f50ee53b57f8ac6bbf91eeb8670afbc78bcb76b5"
 dependencies = [
  "futures-core",
  "pin-project-lite",
- "syn-lite",
+ "syn-lite 0.1.2",
 ]
 
 [[package]]
@@ -2138,6 +2169,33 @@ dependencies = [
  "gloo 0.8.0",
  "hooks",
 ]
+
+[[package]]
+name = "konst"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50a0ba6de5f7af397afff922f22c149ff605c766cd3269cf6c1cd5e466dbe3b9"
+dependencies = [
+ "const_panic",
+ "konst_kernel",
+ "konst_proc_macros",
+ "typewit",
+]
+
+[[package]]
+name = "konst_kernel"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be0a455a1719220fd6adf756088e1c69a85bf14b6a9e24537a5cc04f503edb2b"
+dependencies = [
+ "typewit",
+]
+
+[[package]]
+name = "konst_proc_macros"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4e28ab1dc35e09d60c2b8c90d12a9a8d9666c876c10a3739a3196db0103b6043"
 
 [[package]]
 name = "kuchikiki"
@@ -3237,9 +3295,15 @@ dependencies = [
 
 [[package]]
 name = "syn-lite"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a5f753fd99e0542b34bf88c9c2e0f7846e1773d46c5b1bf320e319979456eec"
+checksum = "95841c852a7ba1b0d9352aa8a7c777a6ddd2034ea7c4cf5c01273054fe120791"
+
+[[package]]
+name = "syn-lite"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae47c6053f627732a3ded0adaf2aedddd2c02de71bacdb8a3dabbdcd4931a3ec"
 
 [[package]]
 name = "synced"
@@ -3478,6 +3542,21 @@ name = "typenum"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "497961ef93d974e23eb6f433eb5fe1b7930b659f06d12dec6fc44a8f554c0bba"
+
+[[package]]
+name = "typewit"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6fb9ae6a3cafaf0a5d14c2302ca525f9ae8e07a0f0e6949de88d882c37a6e24"
+dependencies = [
+ "typewit_proc_macros",
+]
+
+[[package]]
+name = "typewit_proc_macros"
+version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e36a83ea2b3c704935a01b4642946aadd445cea40b10935e3f8bd8052b8193d6"
 
 [[package]]
 name = "uds_windows"
