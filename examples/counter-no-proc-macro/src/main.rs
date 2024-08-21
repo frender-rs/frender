@@ -104,12 +104,12 @@ component_fn!(
     fn Main() {
         cs::div
             .id("a")
-            .style(
+            .style(style!(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;
-"#,
-            )
+"#
+            ))
             .children((
                 cs::h1.children((
                     "Counter & Timer (without proc-macro) - ",

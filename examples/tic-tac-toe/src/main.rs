@@ -127,11 +127,11 @@ fn Game() {
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
     rsx!(
-        <div style=r#"
+        <div style={style!(r#"
             margin: auto;
             padding: 16px;
             max-width: 768px;
-        "#>
+        "#)}>
             <h1>
                 "Tic Tac Toe - "
                 <i>
@@ -145,7 +145,7 @@ fn Main() {
                 "This is the frender version of "
                 <a href="https://codepen.io/gaearon/pen/gWWZgR?editors=0010" target="_blank">"ReactJs Tic Tac Toe"</a>
             </p>
-            <main style="margin-top: 32px">
+            <main style={style!("margin-top: 32px")}>
                 {Game()}
             </main>
         </div>

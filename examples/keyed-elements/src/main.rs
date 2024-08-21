@@ -140,7 +140,7 @@ fn Main() {
                                         value,
                                         cs::tr
                                             .style(if selected {
-                                                Some("outline: outset 1px orange")
+                                                Some(style!("outline: outset 1px orange"))
                                             } else {
                                                 None
                                             })

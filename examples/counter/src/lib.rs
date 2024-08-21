@@ -9,11 +9,11 @@ use my_timer::MyTimer;
 #[component(main(get_dom_element = "frender-root"))]
 pub fn Main() {
     rsx!(
-        <div style=r#"
+        <div style={style!(r#"
             margin: auto;
             padding: 16px;
             max-width: 768px;
-        "#>
+        "#)}>
             <h1>
                 "Counter & Timer - "
                 <i>

@@ -5,12 +5,12 @@ component_fn!(
         cs::div
             .class("main")
             .id(main_id)
-            .style(
+            .style(style!(
                 r#"margin: auto;
 padding: 16px;
 max-width: 768px;
-"#,
-            )
+"#
+            ))
             .children(
                 cs::h1.children((
                     "Ssr to String - ",
