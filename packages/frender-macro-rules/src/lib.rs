@@ -185,3 +185,6 @@ mod tests {
         assert_eq!(a, ("a", "b", "a"));
     }
 }
+
+#[cfg(feature = "define_phantom_wrapper")]
+pub mod define_phantom_wrapper;
