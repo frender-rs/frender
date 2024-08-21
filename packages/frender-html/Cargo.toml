@@ -19,6 +19,7 @@ frender-dom = { version = "0.1.0", path = "../frender-dom" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 either = { version = "1.9.0", default-features = false, optional = true }
 chrono = { version = "0.4.38", default-features = false, optional = true }
+frender-style = { version = "0.1.0", path = "../frender-style" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -97,6 +98,7 @@ features = [
 
 [features]
 web = [
+    "frender-style/web",
     "frender-dom/web",
     "dep:gloo-events",
     "dep:js-sys",

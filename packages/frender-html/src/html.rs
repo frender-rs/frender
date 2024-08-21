@@ -4,7 +4,7 @@ use frender_dom::{
 };
 use frender_html_common::{ContentEditable, Spellcheck};
 
-use crate::impl_bounds::{DomTokens, SetRef};
+use crate::impl_bounds::{DomTokens, SetRef, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
 pub mod props_builders;
@@ -710,6 +710,7 @@ crate::def_intrinsic_component_props!(
                     pub trait HtmlElement {
                         trait_bounds!(
                             frender_dom::behaviors::HtmlElement<Renderer>
+                                + frender_dom::behaviors::ElementWithStyle<Renderer>
                                 + OnEvent<Renderer, event_types::on_invalid>
                                 + OnEvent<Renderer, event_types::on_animation_cancel>
                                 + OnEvent<Renderer, event_types::on_animation_end>
@@ -864,7 +865,7 @@ crate::def_intrinsic_component_props!(
                                 impl_with!(update = |element, renderer| element.set_spellcheck(renderer, value.0)),
                             );
                         }
-                        fn style(value: maybe![&str]); // TODO: UpdateStyle
+                        fn style(value: bounds![Style]);
                         fn tab_index(value: maybe![i32]) {
                             attr_name!("tabindex");
                             update_with!(set_tab_index);

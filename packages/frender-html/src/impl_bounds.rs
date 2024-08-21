@@ -605,3 +605,44 @@ pub mod SetRef {
     pub use __Ref_csr as csr;
     pub use __Ref_ssr as ssr;
 }
+
+#[allow(non_snake_case)]
+pub mod Style {
+    pub use frender_style::Style as Bounds;
+
+    pub use crate::default_impl_csr as csr;
+    pub use crate::default_impl_ssr as ssr;
+
+    pub mod csr {
+        use frender_style::csr::CsrStyle;
+
+        pub use super::super::CsrInput as Input;
+        pub use crate::DefaultCsrState as State;
+
+        pub type State<V> = <V as CsrStyle>::UpdateWithState;
+
+        pub fn update_with_state<
+            //
+            V: CsrStyle,
+            E: frender_dom::behaviors::ElementWithStyle<RR>,
+            RR: ?Sized,
+        >(
+            Input { this, element, renderer, attr_name }: Input<V, E, RR>,
+            state: &mut State<V>,
+        ) {
+            V::update_with_state(this, state, &mut element.style(renderer))
+        }
+    }
+
+    pub mod ssr {
+        use frender_style::ssr::{SsrDeclarationList, SsrStyle};
+
+        pub use crate::DefaultSsrHaevoe as Haevoe;
+
+        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<<V as SsrStyle>::IntoSsrDeclarationList as SsrDeclarationList>::IntoDeclarationList>;
+
+        pub fn maybe_into_haevoe<V: SsrStyle>(this: V) -> Option<Haevoe<V>> {
+            Some(Haevoe::<V>::new(SsrDeclarationList::into_declaration_list(V::into_ssr_declaration_list(this))))
+        }
+    }
+}

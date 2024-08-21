@@ -978,7 +978,7 @@ pub trait HtmlElement: Element {
     fn spellcheck<V: crate::impl_bounds::MaybeValue::Bounds<Spellcheck>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::spellcheck<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::spellcheck(value))
     }
-    fn style<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::style<V>> {
+    fn style<V: Style::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::style<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::style(value))
     }
     fn tab_index<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::tab_index<V>> {

@@ -17,6 +17,7 @@ wasm-bindgen = { version = "0.2.83", optional = true }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 either = { version = "1.9.0", default-features = false, optional = true }
 frender-csr = { version = "0.1.0", path = "../frender-csr" }
+frender-style = { version = "0.1.0", path = "../frender-style" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -42,6 +43,7 @@ web = [
     "frender-events/web",
     "dep:gloo-events",
     "frender-html-common/web",
+    "frender-style/web",
 ]
 either = [
     "dep:either",

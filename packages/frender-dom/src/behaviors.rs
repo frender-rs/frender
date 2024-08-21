@@ -71,6 +71,15 @@ pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
     fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a>;
 }
 
+pub trait ElementWithStyle<Renderer: ?Sized>: Element<Renderer> {
+    type Style<'a>: frender_style::csr::CssStyleDeclaration
+    where
+        Self: 'a,
+        Renderer: 'a;
+
+    fn style<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::Style<'a>;
+}
+
 pub trait ElementWithChildren<Renderer: ?Sized> {
     fn with_render_context_at_first_child_of_self<R>(
         &mut self,
@@ -181,6 +190,21 @@ mod web {
             f: impl FnOnce(&mut <Renderer as crate::render::RenderWithContext>::RenderContext<'_>) -> R,
         ) -> R {
             renderer.with_render_context_at_first_child_of_element(self.0.as_ref(), f)
+        }
+    }
+
+    impl<
+            N: AsRef<web_sys::Node> + AsRef<web_sys::Element> + AsRef<web_sys::HtmlElement>,
+            Renderer: ?Sized + crate::csr::web::Renderer,
+        > ElementWithStyle<Renderer> for crate::csr::web::Node<N>
+    {
+        type Style<'a> = web_sys::CssStyleDeclaration
+        where
+            Self: 'a,
+            Renderer: 'a;
+
+        fn style<'a>(&'a mut self, _: &'a mut Renderer) -> Self::Style<'a> {
+            web_sys::HtmlElement::style(self.0.as_ref())
         }
     }
 
