@@ -80,20 +80,20 @@ pub mod form_control {
     }
 
     hooks::impl_hook!(
-        type For<SH: Unpin + HookUnmount + HookPollNextUpdate> = OptionSignalHook<SH>;
-
-        fn unmount(self) {
-            if let Some(ref mut inner) = self.get_mut().inner {
-                Pin::new(inner).unmount()
+        impl<SH: Unpin + HookUnmount + HookPollNextUpdate> OptionSignalHook<SH> {
+            fn unmount(self) {
+                if let Some(ref mut inner) = self.get_mut().inner {
+                    Pin::new(inner).unmount()
+                }
             }
-        }
 
-        // TODO: remove
-        fn poll_next_update(self, cx: _) {
-            if let Some(ref mut inner) = self.get_mut().inner {
-                Pin::new(inner).poll_next_update(cx)
-            } else {
-                std::task::Poll::Ready(false)
+            // TODO: remove
+            fn poll_next_update(self, cx: _) {
+                if let Some(ref mut inner) = self.get_mut().inner {
+                    Pin::new(inner).poll_next_update(cx)
+                } else {
+                    std::task::Poll::Ready(false)
+                }
             }
         }
     );

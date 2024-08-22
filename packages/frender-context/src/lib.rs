@@ -470,21 +470,20 @@ pub mod hooks {
     }
 
     hooks::impl_hook!(
-        type For<S: Signal, Inner: 'static + ContextKeyInner<Value = S>> =
-            ContextKeySignalHook<Inner>;
+        impl<S: Signal, Inner: 'static + ContextKeyInner<Value = S>> ContextKeySignalHook<Inner> {
+            fn unmount(self) {
+                self.project().signal_hook.unmount()
+            }
 
-        fn unmount(self) {
-            self.project().signal_hook.unmount()
-        }
+            fn poll_next_update(self, cx: _) {
+                self.project().signal_hook.poll_next_update(cx)
+            }
 
-        fn poll_next_update(self, cx: _) {
-            self.project().signal_hook.poll_next_update(cx)
-        }
-
-        fn use_hook(self) -> &'static ContextKey<Inner> {
-            let this = self.project();
-            let _ = this.signal_hook.use_hook();
-            this.context_key
+            fn use_hook(self) -> &'static ContextKey<Inner> {
+                let this = self.project();
+                let _ = this.signal_hook.use_hook();
+                this.context_key
+            }
         }
     );
 
@@ -514,15 +513,16 @@ pub mod hooks {
     }
 
     hooks::impl_hook!(
-        type For<S: Signal, Inner: 'static + ContextKeyInner<Value = S>> =
-            ContextKeySignalHookUninitialized<Inner>;
+        impl<S: Signal, Inner: 'static + ContextKeyInner<Value = S>>
+            ContextKeySignalHookUninitialized<Inner>
+        {
+            fn unmount(self) {
+                self.project().signal_hook.unmount()
+            }
 
-        fn unmount(self) {
-            self.project().signal_hook.unmount()
-        }
-
-        fn poll_next_update(self, cx: _) {
-            self.project().signal_hook.poll_next_update(cx)
+            fn poll_next_update(self, cx: _) {
+                self.project().signal_hook.poll_next_update(cx)
+            }
         }
     );
 
