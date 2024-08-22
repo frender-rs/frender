@@ -1,5 +1,21 @@
 //! See [style!].
 
+/// Styles separated by comma.
+///
+/// The macro input will be parsed as [style syntaxes](style::one) separated by comma.
+/// Then all styles will be [`chained`](style::chain).
+#[macro_export]
+macro_rules! style {
+    ($($t:tt)*) => {
+        $crate::style::syntax::paren!(
+            @{$crate::style::syntax}
+            ($($t)*)
+        )
+    };
+}
+
+pub use style as comma_separated;
+
 /// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](crate::constness::ConstDeclarationList).
 #[doc(hidden)]
 #[macro_export]

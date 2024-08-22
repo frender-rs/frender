@@ -22,18 +22,4 @@ pub trait Style: csr::CsrStyle + ssr::SsrStyle {}
 
 impl<S: ?Sized + csr::CsrStyle + ssr::SsrStyle> Style for S {}
 
-/// Styles separated by comma.
-///
-/// The macro input will be parsed as [style syntaxes](style::one) separated by comma.
-/// Then all styles will be [`chained`](style::chain).
-#[macro_export]
-macro_rules! style {
-    ($($t:tt)*) => {
-        $crate::style::syntax::paren!(
-            @{$crate::style::syntax}
-            ($($t)*)
-        )
-    };
-}
-
 pub mod style;

@@ -83,8 +83,11 @@ pub use frender_html_common::dom_tokens::{
     ChainableDomTokens, DomTokenList, DomTokens,
 };
 
-pub use frender_style as style;
-pub use frender_style::{chain_styles, const_style, style};
+pub mod style {
+    pub use frender_style::style::*;
+    pub use frender_style::*;
+}
+pub use frender_style::style::comma_separated as style;
 
 pub mod memoed;
 pub use memoed::{memo, Memo};
@@ -122,7 +125,7 @@ pub mod prelude {
 
     pub use frender_html_common::dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
 
-    pub use frender_style::style;
+    pub use crate::style;
 
     pub use crate::elements;
 
