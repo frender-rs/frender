@@ -17,6 +17,12 @@ pub mod assert {
     {
     }
 
+    impl sealed::DeclarationList for async_str_iter::never::Never {}
+    impl DeclarationList for async_str_iter::never::Never {}
+
+    impl sealed::DeclarationListPrefixSemicolon for async_str_iter::never::Never {}
+    impl DeclarationListPrefixSemicolon for async_str_iter::never::Never {}
+
     impl<T: DeclarationList> sealed::DeclarationList for async_str_iter::option::IterOption<T> {}
     impl<T: DeclarationList> DeclarationList for async_str_iter::option::IterOption<T> {}
 
@@ -212,6 +218,8 @@ mod imp {
         for crate::constness::ConstDeclarationList<T>
     {
     }
+
+    impl sealed::SsrDeclarationList for crate::styles::Never {}
 }
 
 pub trait SsrStyle {
