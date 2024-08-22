@@ -57,7 +57,6 @@ macro_rules! style_const {
 /// Note that the matched expr must be wrapped in `( )`.
 ///
 /// [`Style`]: crate::Style
-/// [`EitherStyle`]: crate::styles::either::EitherStyle
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_one {
@@ -111,7 +110,7 @@ pub mod syntax {
     #[macro_export]
     macro_rules! style_syntax_EitherA {
         ($e:expr) => {
-            $crate::styles::either::EitherStyle::A($e)
+            $crate::styles::EitherStyle::A($e)
         };
     }
 
@@ -119,7 +118,7 @@ pub mod syntax {
     #[macro_export]
     macro_rules! style_syntax_EitherB {
         ($e:expr) => {
-            $crate::styles::either::EitherStyle::B($e)
+            $crate::styles::EitherStyle::B($e)
         };
     }
 
@@ -156,10 +155,8 @@ mod tests {
                 }
             }
         }) {
-            crate::styles::either::EitherStyle::A(crate::constness::ConstDeclarationList {
-                ..
-            }) => {}
-            crate::styles::either::EitherStyle::B(crate::Empty) => panic!(),
+            crate::styles::EitherStyle::A(crate::constness::ConstDeclarationList { .. }) => {}
+            crate::styles::EitherStyle::B(crate::Empty) => panic!(),
         }
 
         match one!(match (1) {
@@ -167,10 +164,10 @@ mod tests {
             b if b < 0 => {}
             _ => {}
         }) {
-            crate::styles::either::EitherStyle::A(crate::Empty) => {}
-            crate::styles::either::EitherStyle::B(other) => match other {
-                crate::styles::either::EitherStyle::A(crate::Empty) => panic!(),
-                crate::styles::either::EitherStyle::B(crate::Empty) => panic!(),
+            crate::styles::EitherStyle::A(crate::Empty) => {}
+            crate::styles::EitherStyle::B(other) => match other {
+                crate::styles::EitherStyle::A(crate::Empty) => panic!(),
+                crate::styles::EitherStyle::B(crate::Empty) => panic!(),
             },
         }
     }
