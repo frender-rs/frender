@@ -8,6 +8,12 @@ pub use frender_events::{event, event_types, HasEventTypeName};
 pub use provide_render_context::ProvideRenderContext;
 pub use render_state_with_peh::{RenderStateWithAnyParent, RenderStateWithParentElementsHandle};
 
+pub mod style {
+    pub mod csr {
+        pub use frender_style::csr::{CssStyleDeclaration, Priority};
+    }
+}
+
 pub mod render;
 
 pub mod csr;
