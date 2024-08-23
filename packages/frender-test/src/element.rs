@@ -146,10 +146,91 @@ pub(crate) enum AttrValue {
 }
 
 #[derive(Debug)]
+struct StyleValue {
+    value: Cow<'static, str>,
+    important: bool,
+}
+
+impl StyleValue {
+    fn to_strings(&self) -> [&str; 2] {
+        [
+            &self.value,
+            if self.important { "!important" } else { "" }.into(),
+        ]
+    }
+}
+
+#[derive(Debug, Default)]
+struct ElementAttrs {
+    style: IndexMap<Cow<'static, str>, StyleValue>,
+    all: IndexMap<Cow<'static, str>, AttrValue>,
+}
+
+impl ElementAttrs {
+    fn style_value(&self) -> String {
+        self.style
+            .iter()
+            .map(|(name, value)| {
+                let mut s = name.clone().into_owned();
+                for v in value.to_strings() {
+                    s.push_str(v)
+                }
+
+                s
+            })
+            .fold(String::new(), |acc, item| {
+                let semi = if acc.is_empty() { "" } else { ";" };
+                acc + semi + &item
+            })
+    }
+
+    fn iter_pair(&self) -> impl '_ + Iterator<Item = (Cow<'static, str>, Option<String>)> {
+        self.all.iter().filter_map(|(name, value)| {
+            let value = match value {
+                AttrValue::Absent => return None,
+                AttrValue::Empty => None,
+                AttrValue::String(s) => Some(s),
+            };
+
+            let n;
+            let v;
+
+            match &**name {
+                "style" => {
+                    debug_assert!(value.is_none());
+                    n = "style".into();
+                    v = Some(self.style_value());
+                }
+                _ => {
+                    n = name.clone();
+                    v = value.cloned();
+                }
+            }
+
+            Some((n, v))
+        })
+    }
+
+    fn remove_style_property(&mut self, property: &str) {
+        self.style.shift_remove(property);
+    }
+
+    fn set_style_property(&mut self, property_name: &str, value: &str, important: bool) {
+        self.style.insert(
+            property_name.to_owned().into(),
+            StyleValue {
+                value: value.to_owned().into(),
+                important,
+            },
+        );
+    }
+}
+
+#[derive(Debug)]
 struct ElementInner {
     parent: Option<WeakElement>,
     tag: Cow<'static, str>,
-    attrs: IndexMap<Cow<'static, str>, AttrValue>,
+    attrs: ElementAttrs,
     children: Vec<Node>,
 }
 
@@ -157,19 +238,7 @@ impl ElementInner {
     fn data_cloned(&self) -> ElementData {
         ElementData {
             tag: self.tag.clone(),
-            attrs: self
-                .attrs
-                .iter()
-                .filter_map(|(name, value)| {
-                    let name = name.clone();
-
-                    match value {
-                        AttrValue::Absent => None,
-                        AttrValue::Empty => Some((name, None)),
-                        AttrValue::String(s) => Some((name, Some(s.clone()))),
-                    }
-                })
-                .collect(),
+            attrs: self.attrs.iter_pair().collect(),
             children: self.children.clone(),
         }
     }
@@ -272,6 +341,20 @@ impl Element {
         WeakElement {
             inner: Rc::downgrade(&self.inner),
         }
+    }
+
+    fn remove_style_property(&self, property: &str) {
+        self.inner
+            .borrow_mut()
+            .attrs
+            .remove_style_property(property);
+    }
+
+    fn set_style_property(&self, property_name: &str, value: &str, important: bool) {
+        self.inner
+            .borrow_mut()
+            .attrs
+            .set_style_property(property_name, value, important)
     }
 }
 
@@ -450,6 +533,41 @@ mod dom {
 
         fn rel_list<'a>(&'a mut self, renderer: &'a mut Renderer) -> Self::RelList<'a> {
             todo!()
+        }
+    }
+
+    mod style {
+        use frender_html::dom::{behaviors, style::csr::CssStyleDeclaration};
+
+        use crate::{element::Element, renderer::Renderer};
+
+        pub struct ElementRenderStyle<'a>(&'a mut Element);
+
+        impl CssStyleDeclaration for ElementRenderStyle<'_> {
+            fn remove_property_str(&mut self, property: &str) {
+                self.0.remove_style_property(property)
+            }
+
+            fn set_property_str_with_value_str_and_priority(
+                &mut self,
+                property_name: &str,
+                value: &str,
+                priority: frender_html::dom::style::csr::Priority,
+            ) {
+                self.0
+                    .set_style_property(property_name, value, priority.is_important())
+            }
+        }
+
+        impl behaviors::ElementWithStyle<Renderer> for Element {
+            type Style<'a> = ElementRenderStyle<'a>
+            where
+                Self: 'a,
+                Renderer: 'a;
+
+            fn style<'a>(&'a mut self, _: &'a mut Renderer) -> Self::Style<'a> {
+                ElementRenderStyle(self)
+            }
         }
     }
 

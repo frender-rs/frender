@@ -159,6 +159,17 @@ mod dom {
         }
     }
 
+    impl<R: ?Sized, E: ?Sized + behaviors::ElementWithStyle<R>> behaviors::ElementWithStyle<R> for ElementProxyAttrs<E> {
+        type Style<'a> = E::Style<'a>
+        where
+            Self: 'a,
+            R: 'a;
+
+        fn style<'a>(&'a mut self, renderer: &'a mut R) -> Self::Style<'a> {
+            self.0.style(renderer)
+        }
+    }
+
     impl<R: ?Sized, E: ?Sized + behaviors::ElementWithChildren<R>> behaviors::ElementWithChildren<R> for ElementProxyAttrs<E> {
         fn with_render_context_at_first_child_of_self<Res>(&mut self, renderer: &mut R, f: impl FnOnce(&mut R::RenderContext<'_>) -> Res) -> Res
         where
