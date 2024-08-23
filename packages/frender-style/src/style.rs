@@ -124,6 +124,14 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
+    macro_rules! style_syntax_array {
+        (@{$($with:tt)*} $e:tt) => {
+            $e
+        };
+    }
+
+    #[doc(hidden)]
+    #[macro_export]
     macro_rules! style_syntax_EitherA {
         ($e:expr) => {
             $crate::styles::EitherStyle::A($e)
@@ -141,7 +149,7 @@ pub mod syntax {
     #[doc(inline)]
     pub use {
         style_syntax_EitherA as EitherA, style_syntax_EitherB as EitherB,
-        style_syntax_never as never,
+        style_syntax_array as array, style_syntax_never as never,
     };
 }
 
@@ -186,5 +194,12 @@ mod tests {
                 crate::styles::EitherStyle::B(crate::Empty) => panic!(),
             },
         }
+    }
+
+    #[test]
+    fn array() {
+        let _: [crate::Empty; 0] = one!([]);
+        let _: [crate::Empty; 1] = one!([crate::Empty]);
+        let _: [crate::Empty; 2] = one!([crate::Empty, crate::Empty]);
     }
 }
