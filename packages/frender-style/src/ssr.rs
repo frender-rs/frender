@@ -181,11 +181,11 @@ mod imp {
     }
 
     impl<A: SsrDeclarationList, B: SsrDeclarationList> sealed::SsrDeclarationList
-        for crate::styles::chain::Chain<A, B>
+        for crate::styles::Chain<A, B>
     {
     }
     impl<A: SsrDeclarationList, B: SsrDeclarationList> SsrDeclarationList
-        for crate::styles::chain::Chain<A, B>
+        for crate::styles::Chain<A, B>
     {
         type IntoDeclarationList = async_str_iter::chain::Chain<
             A::IntoDeclarationList,
