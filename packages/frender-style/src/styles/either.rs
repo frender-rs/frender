@@ -32,6 +32,59 @@ pub mod ssr {
     }
 }
 
+mod csr {
+    use frender_common::either::EitherState;
+
+    use crate::csr::CsrStyle;
+
+    use super::EitherStyle;
+
+    impl<L: CsrStyle, R: CsrStyle> CsrStyle for EitherStyle<L, R> {
+        type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
+
+        fn update_with_state(
+            this: Self,
+            state: &mut Self::UpdateWithState,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+        ) {
+            match this {
+                EitherStyle::A(this) => {
+                    let state = match state {
+                        EitherState::Left { inner: state } => state,
+                        EitherState::Right { inner: old_state } => {
+                            R::remove_with_state(old_state, style);
+                            state.get_left_or_insert_default()
+                        }
+                    };
+
+                    L::update_with_state(this, state, style)
+                }
+                EitherStyle::B(this) => {
+                    let state = match state {
+                        EitherState::Right { inner: state } => state,
+                        EitherState::Left { inner: old_state } => {
+                            L::remove_with_state(old_state, style);
+                            state.get_right_or_insert_default()
+                        }
+                    };
+
+                    R::update_with_state(this, state, style)
+                }
+            }
+        }
+
+        fn remove_with_state(
+            state: &mut Self::UpdateWithState,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+        ) {
+            match state {
+                EitherState::Left { inner: state } => L::remove_with_state(state, style),
+                EitherState::Right { inner: state } => R::remove_with_state(state, style),
+            }
+        }
+    }
+}
+
 #[cfg(feature = "either")]
 mod extern_either {
     use either::Either;
