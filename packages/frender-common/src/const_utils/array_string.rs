@@ -78,6 +78,14 @@ impl<const CAP: usize> ArrayString<CAP> {
     pub const fn remaining_capacity(&self) -> usize {
         CAP - self.len
     }
+
+    pub const fn try_into_filled_bytes(self) -> Result<[u8; CAP], Self> {
+        if self.len == CAP {
+            Ok(self.array)
+        } else {
+            Err(self)
+        }
+    }
 }
 
 #[cfg(test)]
