@@ -496,8 +496,7 @@ pub mod csr {
             }
             *state = false;
             T::DECLARATION_LIST
-                .as_ref()
-                .iter()
+                .into_iter()
                 .for_each(|d| style.remove_property(d.name.as_ref_str()));
         }
     }
