@@ -58,23 +58,23 @@ pub mod ssr {
     use super::DeclarationName;
 
     pub trait IntoSsrDeclarationName {
-        type StaticDeclarationName: 'static + AsRef<str>;
+        type StaticDeclarationNameStr: 'static + AsRef<str>;
 
-        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationName>;
+        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationNameStr>;
     }
 
     impl<S: StrToAsRefStr> IntoSsrDeclarationName for S {
-        type StaticDeclarationName = S::StaticStr;
+        type StaticDeclarationNameStr = S::StaticStr;
 
-        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationName> {
+        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationNameStr> {
             DeclarationName::new(self.into_to_static_str().into_static_str())
         }
     }
 
     impl<N: StrToAsRefStr> IntoSsrDeclarationName for DeclarationName<N> {
-        type StaticDeclarationName = N::StaticStr;
+        type StaticDeclarationNameStr = N::StaticStr;
 
-        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationName> {
+        fn into_static_declaration_name(self) -> DeclarationName<Self::StaticDeclarationNameStr> {
             // This assumes StrToAsRefStr and ToStaticStr are implemented in the way that the string value doesn't change
             DeclarationName(self.0.into_to_static_str().into_static_str())
         }

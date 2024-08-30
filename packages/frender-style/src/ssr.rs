@@ -1,3 +1,5 @@
+use crate::IntoStyle;
+
 pub mod assert {
     use async_str_iter::AsyncStrIterator;
 
@@ -94,6 +96,43 @@ pub mod assert {
     }
     impl<T: ?Sized + crate::constness::HasConstDeclarationList> DeclarationListPrefixSemicolon
         for crate::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
+    {
+    }
+
+    impl<
+            // OneDeclarationAsList can only be constructed from valid name and value
+            // Thus, the bound is just `: AsyncStrIterator`.
+            N: AsyncStrIterator,
+            V: AsyncStrIterator,
+            I: crate::declaration::important::ssr::assert::BangImportantOrEmpty,
+        > sealed::DeclarationList
+        for crate::styles::declaration::ssr::OneDeclarationAsList<N, V, I>
+    {
+    }
+    impl<
+            N: AsyncStrIterator,
+            V: AsyncStrIterator,
+            I: crate::declaration::important::ssr::assert::BangImportantOrEmpty,
+        > DeclarationList for crate::styles::declaration::ssr::OneDeclarationAsList<N, V, I>
+    {
+    }
+
+    impl<
+            // OneDeclarationAsListPrefixSemicolon can only be constructed from valid name and value
+            // Thus, the bound is just `: AsyncStrIterator`.
+            N: AsyncStrIterator,
+            V: AsyncStrIterator,
+            I: crate::declaration::important::ssr::assert::BangImportantOrEmpty,
+        > sealed::DeclarationListPrefixSemicolon
+        for crate::styles::declaration::ssr::OneDeclarationAsListPrefixSemicolon<N, V, I>
+    {
+    }
+    impl<
+            N: AsyncStrIterator,
+            V: AsyncStrIterator,
+            I: crate::declaration::important::ssr::assert::BangImportantOrEmpty,
+        > DeclarationListPrefixSemicolon
+        for crate::styles::declaration::ssr::OneDeclarationAsListPrefixSemicolon<N, V, I>
     {
     }
 }
@@ -220,9 +259,25 @@ mod imp {
     }
 
     impl sealed::SsrDeclarationList for crate::styles::Never {}
+
+    impl<D: crate::declaration::IntoDeclaration> sealed::SsrDeclarationList
+        for crate::declaration::IntoDeclarationAsStyle<D>
+    {
+    }
 }
 
 pub trait SsrStyle {
     type IntoSsrDeclarationList: SsrDeclarationList;
     fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList;
+}
+
+impl<S: IntoStyle> SsrStyle for S
+where
+    S::IntoStyle: SsrStyle,
+{
+    type IntoSsrDeclarationList = <S::IntoStyle as SsrStyle>::IntoSsrDeclarationList;
+
+    fn into_ssr_declaration_list(this: Self) -> Self::IntoSsrDeclarationList {
+        <S::IntoStyle>::into_ssr_declaration_list(this.into_style())
+    }
 }

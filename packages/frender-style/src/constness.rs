@@ -703,7 +703,12 @@ pub mod csr {
             T::DECLARATION_LIST.into_iter().for_each(|d| {
                 let name = d.name;
                 let value = d.value;
-                crate::csr::update_style(style, name.as_ref_str(), value.as_ref_str(), d.important);
+                crate::styles::declaration::csr::update_style(
+                    style,
+                    name.as_ref_str(),
+                    value.as_ref_str(),
+                    d.important,
+                );
             })
         }
 

@@ -20,4 +20,10 @@ pub trait Style: csr::CsrStyle + ssr::SsrStyle {}
 
 impl<S: ?Sized + csr::CsrStyle + ssr::SsrStyle> Style for S {}
 
+pub trait IntoStyle {
+    type IntoStyle;
+
+    fn into_style(self) -> Self::IntoStyle;
+}
+
 pub mod style;

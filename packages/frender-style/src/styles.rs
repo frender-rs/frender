@@ -10,3 +10,5 @@ mod never;
 pub use never::Never;
 
 mod option;
+
+pub mod declaration;
