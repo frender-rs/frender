@@ -92,22 +92,6 @@ impl<'a, Ctx: ?Sized + HtmlRenderContext> CsrRenderContext<'a, Ctx> {
 }
 
 /// A marker returned by [`CsrRenderContext::render`].
-///
-/// This struct is `'static` if and only if `'a: 'static`.
-///
-/// ```
-/// # use frender::{TempStr, elements::render_with::Rendered};
-/// fn test<'a>(a: Rendered<'static, TempStr<&'a str>>) -> impl 'static + Sized {
-///     a
-/// }
-/// ```
-///
-/// ```compile_fail
-/// # use frender::{TempStr, elements::render_with::Rendered};
-/// fn test<'a>(a: Rendered<'a, ()>) -> impl 'static + Sized {
-///     a
-/// }
-/// ```
 pub struct Rendered<'a, S>(PhantomData<&'a mut ()>, PhantomData<S>);
 
 #[cfg(not(feature = "nightly"))]
