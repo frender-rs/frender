@@ -56,7 +56,7 @@ pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
 }
 
 pub trait ElementWithClassList<Renderer: ?Sized>: Element<Renderer> {
-    type ClassList<'a>: frender_html_common::DomTokenList
+    type ClassList<'a>: frender_dom_tokens::DomTokenList
     where
         Self: 'a,
         Renderer: 'a;
@@ -64,7 +64,7 @@ pub trait ElementWithClassList<Renderer: ?Sized>: Element<Renderer> {
 }
 
 pub trait ElementWithRelList<Renderer: ?Sized>: Element<Renderer> {
-    type RelList<'a>: ::frender_html_common::DomTokenList
+    type RelList<'a>: frender_dom_tokens::DomTokenList
     where
         Self: 'a,
         Renderer: 'a;
@@ -213,7 +213,7 @@ mod web {
             Renderer: ?Sized + crate::csr::web::Renderer,
         > ElementWithClassList<Renderer> for crate::csr::web::Node<N>
     {
-        type ClassList<'a> = crate::csr::web::DomTokenList
+        type ClassList<'a> = web_sys::DomTokenList
         where
             Self: 'a,
             Renderer: 'a;
@@ -237,7 +237,7 @@ mod web {
                 ],
             )
         {
-            type RelList<'a> = crate::csr::web::DomTokenList
+            type RelList<'a> = web_sys::DomTokenList
             where
                 Self: 'a,
                 Renderer: 'a;

@@ -1,4 +1,8 @@
-use crate::{ChainableDomTokens, DomTokens};
+use crate::{
+    constness::{ConstUsize, HasConstKnownPossibleDomTokens, IsConstUsize, KnownConstUsizeAdd},
+    dom_token::UniqueDomTokenArrayVec,
+    ChainableDomTokens, DomTokens,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Chain<A, B>(pub A, pub B);
@@ -9,7 +13,19 @@ impl<A, B> Chain<A, B> {
     }
 }
 
-impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
+impl<A, B> Chain<A, B>
+where
+    Self: HasConstKnownPossibleDomTokens,
+{
+    pub const ASSERT_KNOWN_NOT_DUP: () = {
+        _ = Self::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC;
+    };
+}
+
+impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B>
+where
+    Self: HasConstKnownPossibleDomTokens,
+{
     type UpdateWithState = (A::UpdateWithState, B::UpdateWithState);
 
     fn update_with_state(
@@ -17,6 +33,7 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
         dom_token_list: &mut impl crate::DomTokenList,
         (state_a, state_b): &mut Self::UpdateWithState,
     ) {
+        _ = Self::ASSERT_KNOWN_NOT_DUP;
         A::update_with_state(a, dom_token_list, state_a);
         B::update_with_state(b, dom_token_list, state_b);
     }
@@ -25,6 +42,7 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
         dom_token_list: &mut impl crate::DomTokenList,
         (state_a, state_b): &mut Self::UpdateWithState,
     ) {
+        _ = Self::ASSERT_KNOWN_NOT_DUP;
         A::remove_with_state(dom_token_list, state_a);
         B::remove_with_state(dom_token_list, state_b);
     }
@@ -35,6 +53,7 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
     >;
 
     fn dom_tokens_into_async_str_iter(Self(a, b): Self) -> Self::DomTokensIntoAsyncStrIter {
+        _ = Self::ASSERT_KNOWN_NOT_DUP;
         async_str_iter::chain::Chain::new(
             A::dom_tokens_into_async_str_iter(a),
             B::dom_tokens_prefix_space_into_async_str_iter(b),
@@ -42,7 +61,10 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> DomTokens for Chain<A, B> {
     }
 }
 
-impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B> {
+impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<A, B>
+where
+    Self: HasConstKnownPossibleDomTokens,
+{
     type DomTokensPrefixSpaceIntoAsyncStrIter = async_str_iter::chain::Chain<
         A::DomTokensPrefixSpaceIntoAsyncStrIter,
         B::DomTokensPrefixSpaceIntoAsyncStrIter,
@@ -51,9 +73,32 @@ impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for Chain<
     fn dom_tokens_prefix_space_into_async_str_iter(
         Self(a, b): Self,
     ) -> Self::DomTokensPrefixSpaceIntoAsyncStrIter {
+        _ = Self::ASSERT_KNOWN_NOT_DUP;
         async_str_iter::chain::Chain::new(
             A::dom_tokens_prefix_space_into_async_str_iter(a),
             B::dom_tokens_prefix_space_into_async_str_iter(b),
         )
     }
+}
+
+impl<
+        const M: usize,
+        const N: usize,
+        const SUM: usize,
+        A: HasConstKnownPossibleDomTokens,
+        B: HasConstKnownPossibleDomTokens<KnownPossibleDomTokensArrayVecCap = ConstUsize<N>>,
+    > HasConstKnownPossibleDomTokens for Chain<A, B>
+where
+    A::KnownPossibleDomTokensArrayVecCap: IsConstUsize<UniqueDomTokenArrayVec<'static> = UniqueDomTokenArrayVec<'static, M>>
+        + KnownConstUsizeAdd<ConstUsize<N>, Sum = ConstUsize<SUM>>,
+{
+    type KnownPossibleDomTokensArrayVecCap = ConstUsize<SUM>;
+
+    const KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC: UniqueDomTokenArrayVec<'static, SUM> = {
+        A::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC
+            .with_capacity::<SUM>()
+            .with_extend_unique_dom_tokens(
+                B::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC.as_unique_dom_tokens(),
+            )
+    };
 }

@@ -87,7 +87,7 @@ mod r#if {
     use super::DomTokenListAddRemove;
 
     const fn value(predicate: bool) -> impl ChainableDomTokens + Copy {
-        dom_tokens!(if predicate {
+        dom_tokens!(if (predicate) {
             "a"
         })
     }
@@ -127,7 +127,7 @@ mod if_else {
     use super::*;
 
     const fn value(predicate: bool) -> impl ChainableDomTokens + Copy {
-        dom_tokens!(if !!predicate { "a" } else { "b c" })
+        dom_tokens!(if (!!predicate) { "a" } else { "b c" })
     }
 
     #[test]
@@ -171,12 +171,12 @@ mod r#match {
     }
 
     const fn value(theme: Theme) -> impl ChainableDomTokens + Copy {
-        dom_tokens!(match theme {
+        dom_tokens!(match (theme) {
             Theme::Dark => "dark",
             Theme::Light => "light",
             Theme::Contrast { colorful } => dom_tokens!(
                 "contrast",
-                if colorful {
+                if (colorful) {
                     "colorful"
                 }
             ),
@@ -259,10 +259,14 @@ mod r#as {
 
     #[derive(Debug, Clone, Copy)]
     struct MyDomTokens;
-    impl_dom_tokens_for!(|_: MyDomTokens| "light");
+    impl_dom_tokens_for!(|self: MyDomTokens| "light");
 
     const fn value() -> impl ChainableDomTokens + Copy {
-        dom_tokens!(MyDomTokens as MyDomTokens)
+        dom_tokens!({
+            {
+                MyDomTokens
+            }
+        })
     }
 
     #[test]

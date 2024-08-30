@@ -9,6 +9,9 @@ const fn empty() -> impl ChainableDomTokens + Copy {
     dom_tokens!()
 }
 
+// unit tuple is empty
+const _: frender_common::Empty = dom_tokens!(());
+
 #[test]
 fn ssr() {
     futures_lite::future::block_on(async {
@@ -36,7 +39,7 @@ mod impl_dom_tokens {
 
     #[derive(Debug, Clone, Copy)]
     struct MyEmpty;
-    impl_dom_tokens_for!(|_: MyEmpty| dom_tokens!());
+    impl_dom_tokens_for!(|self: MyEmpty| dom_tokens!());
 
     const fn empty() -> impl ChainableDomTokens + Copy {
         MyEmpty

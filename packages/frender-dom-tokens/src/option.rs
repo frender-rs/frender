@@ -1,6 +1,9 @@
 use async_str_iter::{option::IterOption, IntoAsyncStrIterator};
 
-use crate::{ChainableDomTokens, DomTokens};
+use crate::{
+    constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
+    ChainableDomTokens, DomTokens,
+};
 
 impl<T: DomTokens> DomTokens for Option<T> {
     type UpdateWithState = T::UpdateWithState;
@@ -41,4 +44,12 @@ impl<T: ChainableDomTokens> ChainableDomTokens for Option<T> {
         this.map(T::dom_tokens_prefix_space_into_async_str_iter)
             .into_async_str_iterator()
     }
+}
+
+impl<T: HasConstKnownPossibleDomTokens> HasConstKnownPossibleDomTokens for Option<T> {
+    type KnownPossibleDomTokensArrayVecCap = T::KnownPossibleDomTokensArrayVecCap;
+
+    const KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC:
+        <T::KnownPossibleDomTokensArrayVecCap as IsConstUsize>::UniqueDomTokenArrayVec<'static> =
+        T::KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC;
 }

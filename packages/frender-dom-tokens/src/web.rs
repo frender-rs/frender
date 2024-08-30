@@ -1,29 +1,8 @@
-use frender_dom_tokens::DomToken;
 use web_sys::wasm_bindgen::UnwrapThrowExt;
 
-pub struct DomTokenList(pub web_sys::DomTokenList);
+use crate::DomToken;
 
-impl From<web_sys::DomTokenList> for DomTokenList {
-    fn from(value: web_sys::DomTokenList) -> Self {
-        Self(value)
-    }
-}
-
-impl Into<web_sys::DomTokenList> for DomTokenList {
-    fn into(self) -> web_sys::DomTokenList {
-        self.0
-    }
-}
-
-impl std::ops::Deref for DomTokenList {
-    type Target = web_sys::DomTokenList;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl frender_dom_tokens::DomTokenList for DomTokenList {
+impl crate::DomTokenList for web_sys::DomTokenList {
     fn set_value(&mut self, value: &str) {
         web_sys::DomTokenList::set_value(self, value)
     }

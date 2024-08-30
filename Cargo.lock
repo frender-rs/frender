@@ -966,6 +966,7 @@ dependencies = [
  "either",
  "frender-common",
  "frender-csr",
+ "frender-dom-tokens",
  "frender-events",
  "frender-html-common",
  "frender-ssr",
@@ -983,7 +984,9 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-macro-rules",
  "futures-lite 2.3.0",
+ "web-sys",
 ]
 
 [[package]]
@@ -1055,7 +1058,6 @@ dependencies = [
  "frender-common",
  "frender-dom-tokens",
  "frender-ssr-html",
- "web-sys",
 ]
 
 [[package]]

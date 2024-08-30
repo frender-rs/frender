@@ -18,6 +18,7 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 either = { version = "1.9.0", default-features = false, optional = true }
 frender-csr = { version = "0.1.0", path = "../frender-csr" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
+frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -42,7 +43,7 @@ web = [
     "dep:wasm-bindgen",
     "frender-events/web",
     "dep:gloo-events",
-    "frender-html-common/web",
+    "frender-dom-tokens/web",
     "frender-style/web",
 ]
 either = [
@@ -50,4 +51,6 @@ either = [
     "frender-html-common/either",
     "frender-ssr/either",
     "frender-csr/either",
+    "frender-dom-tokens/either",
+    "frender-style/either",
 ]

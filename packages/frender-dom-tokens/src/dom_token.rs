@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use crate::constness::DomTokensInfo;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DomToken<'a>(&'a str);
 
@@ -64,6 +66,8 @@ impl<'a> DomToken<'a> {
     pub const fn as_str(self) -> &'a str {
         self.0
     }
+
+    pub(crate) const DUMMY: Self = Self::new_const("_");
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -166,18 +170,11 @@ const fn assert_each_unique(tokens: &[DomToken]) {
 }
 
 pub const fn put_tokens_at<'a, const N: usize>(
-    mut arr: [DomToken<'a>; N],
-    mut at: usize,
+    arr: [DomToken<'a>; N],
+    at: usize,
     tokens: &[DomToken<'a>],
 ) -> ([DomToken<'a>; N], usize) {
-    let mut j = 0;
-    while j < tokens.len() {
-        arr[at] = tokens[j];
-        at += 1;
-        j += 1;
-    }
-
-    (arr, at)
+    frender_common::const_utils::put_at(arr, at, tokens)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -214,6 +211,134 @@ impl<'a, const N: usize> Deref for UniqueDomTokenArray<'a, N> {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct UniqueDomTokenArrayVec<'a, const CAP: usize> {
+    // array[..len] must be a set
+    array: [DomToken<'a>; CAP],
+    len: usize,
+}
+
+impl<'a, const CAP: usize> UniqueDomTokenArrayVec<'a, CAP> {
+    pub const fn as_slice(&self) -> &[DomToken<'a>] {
+        self.array.split_at(self.len).0
+    }
+
+    pub const fn as_unique_dom_tokens(&self) -> UniqueDomTokens<'_, 'a> {
+        // self.as_slice() is a set
+        UniqueDomTokens(self.as_slice())
+    }
+
+    pub(crate) const EMPTY: Self = UniqueDomTokenArrayVec {
+        array: [DomToken::DUMMY; CAP],
+        len: 0,
+    };
+
+    pub(crate) const fn with_extend_unique_dom_tokens(
+        mut self,
+        other: UniqueDomTokens<'_, 'a>,
+    ) -> Self {
+        let old_len = self.len;
+
+        let other = other.as_slice();
+
+        let mut i = 0;
+
+        while i < other.len() {
+            let t = other[i];
+
+            // other is a set so we only need to check old doesn't contain other[i];
+            let old = self.array.split_at(old_len).0;
+            assert_dom_tokens_not_contain(old, t.as_str());
+
+            self.array[self.len] = t;
+            self.len += 1;
+
+            i += 1;
+        }
+
+        self
+    }
+
+    pub(crate) const fn with_extend_unique_dom_tokens_and_remove_duplicated(
+        mut self,
+        other: UniqueDomTokens<'_, 'a>,
+    ) -> Self {
+        let old_len = self.len;
+
+        let other = other.as_slice();
+
+        let mut i = 0;
+
+        while i < other.len() {
+            let t = other[i];
+
+            // other is a set so we only need to check old doesn't contain other[i];
+            let old = self.array.split_at(old_len).0;
+
+            if !dom_tokens_contain(old, t.as_str()) {
+                self.array[self.len] = t;
+                self.len += 1;
+            }
+
+            i += 1;
+        }
+
+        self
+    }
+
+    pub(crate) const fn with_capacity<const NEW_CAP: usize>(
+        self,
+    ) -> UniqueDomTokenArrayVec<'a, NEW_CAP> {
+        let (array, len) =
+            frender_common::const_utils::put_at([DomToken::DUMMY; NEW_CAP], 0, self.as_slice());
+
+        debug_assert!(len == self.len);
+
+        // array is a set
+        UniqueDomTokenArrayVec { array, len }
+    }
+
+    pub(crate) const fn from_array(dom_tokens: UniqueDomTokenArray<'a, CAP>) -> Self {
+        Self {
+            array: dom_tokens.into_array(),
+            len: CAP,
+        }
+    }
+}
+
+impl<'a, const CAP: usize> AsRef<[DomToken<'a>]> for UniqueDomTokenArrayVec<'a, CAP> {
+    fn as_ref(&self) -> &[DomToken<'a>] {
+        self.as_slice()
+    }
+}
+
+impl<'a, const CAP: usize, const N: usize> TryFrom<UniqueDomTokenArrayVec<'a, CAP>>
+    for UniqueDomTokenArray<'a, N>
+{
+    type Error = UniqueDomTokenArrayVec<'a, CAP>;
+
+    fn try_from(value: UniqueDomTokenArrayVec<'a, CAP>) -> Result<Self, Self::Error> {
+        if value.len == N {
+            Ok(
+                // self.array is a set
+                UniqueDomTokenArray({
+                    let (res, at) = frender_common::const_utils::put_at(
+                        [DomToken("_"); N],
+                        0,
+                        value.as_slice(),
+                    );
+
+                    assert!(at == N);
+
+                    res
+                }),
+            )
+        } else {
+            Err(value)
+        }
+    }
+}
+
 pub const fn dom_tokens_contain(this: &[DomToken], s: &str) -> bool {
     let mut i = 0;
     while i < this.len() {
@@ -223,6 +348,18 @@ pub const fn dom_tokens_contain(this: &[DomToken], s: &str) -> bool {
         i += 1;
     }
     false
+}
+
+const fn assert_dom_tokens_not_contain(this: &[DomToken], s: &str) {
+    if dom_tokens_contain(this, s) {
+        const MSG_CAP: usize = 64;
+
+        let msg = frender_common::const_utils::ArrayString::<MSG_CAP>::new()
+            .with_push_str("duplicated dom token: ")
+            .with_push_str_or_elide(s);
+
+        panic!("{}", msg.as_str());
+    }
 }
 
 const fn slice_range<T>(s: &[T], std::ops::Range { start, end }: std::ops::Range<usize>) -> &[T] {
@@ -420,6 +557,41 @@ pub const fn make_dom_tokens_strings(spaces_and_dom_tokens: &str) -> (&str, &str
     } else {
         // no dom tokens
         ("", "")
+    }
+}
+
+impl DomTokensInfo {
+    pub const fn collect_info_from(s: &str) -> Self {
+        assert_ascii(s);
+
+        let s = s.as_bytes();
+
+        let mut count = 0;
+        let mut prefix_space_len = 0;
+
+        let mut i = 0;
+        let mut current_is_token = false;
+
+        while i < s.len() {
+            if is_space_char(s[i]) {
+                current_is_token = false;
+            } else {
+                if !current_is_token {
+                    count += 1;
+                    prefix_space_len += 2; // space and current char
+
+                    current_is_token = true;
+                } else {
+                    prefix_space_len += 1; // current char
+                }
+            }
+            i += 1;
+        }
+
+        DomTokensInfo {
+            count,
+            prefix_space_len,
+        }
     }
 }
 

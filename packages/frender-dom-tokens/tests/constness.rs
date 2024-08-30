@@ -1,7 +1,7 @@
 //! inline anonymous `dom_tokens!(...)` can be used in const context.
 
 use async_str_iter::ext::AsyncStrIteratorExt as _;
-use frender_dom_tokens::{dom_tokens, ConstPossibleDomTokens, DomTokens};
+use frender_dom_tokens::{constness::HasConstKnownPossibleDomTokens, dom_tokens, DomTokens};
 
 struct Classes {
     circle: bool,
@@ -15,16 +15,16 @@ const fn tokens(
         array,
         dark,
     }: Classes,
-) -> impl DomTokens + Copy + ConstPossibleDomTokens {
+) -> impl DomTokens + Copy + HasConstKnownPossibleDomTokens {
     dom_tokens!(
         "my-btn",
-        if circle {
+        if (circle) {
             "circle"
         },
-        if array {
+        if (array) {
             "a b"
         },
-        if dark { "dark" } else { "light" }
+        if (dark) { "dark" } else { "light" }
     )
 }
 

@@ -6,13 +6,6 @@ pub use maybe_value::{MaybeValue, ValueUpdater};
 
 pub mod attr;
 
-pub use frender_dom_tokens::{
-    self as dom_tokens, ChainableDomTokens, DomToken, DomTokenList, DomTokens,
-};
-
-#[cfg(feature = "web")]
-pub mod web;
-
 mod content_editable;
 pub use content_editable::ContentEditable;
 

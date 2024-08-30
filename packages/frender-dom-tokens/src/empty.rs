@@ -1,6 +1,10 @@
 use frender_common::Empty;
 
-use crate::{ChainableDomTokens, ConstPossibleDomTokens, DomTokens};
+use crate::{
+    constness::{ConstUsize, HasConstKnownPossibleDomTokens},
+    dom_token::UniqueDomTokenArrayVec,
+    ChainableDomTokens, DomTokens,
+};
 
 impl DomTokens for Empty {
     type UpdateWithState = ();
@@ -31,7 +35,9 @@ impl ChainableDomTokens for Empty {
     }
 }
 
-impl ConstPossibleDomTokens for Empty {
-    const POSSIBLE_DOM_TOKENS: crate::UniqueDomTokens<'static, 'static> =
-        crate::UniqueDomTokens::EMPTY;
+impl HasConstKnownPossibleDomTokens for Empty {
+    type KnownPossibleDomTokensArrayVecCap = ConstUsize<0>;
+
+    const KNOWN_POSSIBLE_DOM_TOKENS_ARRAY_VEC: UniqueDomTokenArrayVec<'static, 0> =
+        UniqueDomTokenArrayVec::EMPTY;
 }

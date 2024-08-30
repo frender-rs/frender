@@ -19,3 +19,4 @@ futures-lite = "2.0.1"
 
 [features]
 web = ["dep:web-sys"]
+either = []

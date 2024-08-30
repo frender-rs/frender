@@ -20,7 +20,7 @@ pub use style as comma_separated;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_const {
-    ($s:expr) => {{
+    (const $s:tt) => {{
         enum HasConstDeclarationList {}
         $crate::impl_has_const_declaration_list_for! {
             impl HasConstDeclarationList {
@@ -110,17 +110,9 @@ pub use {style_chain as chain, style_const as r#const, style_one as one};
 pub mod syntax {
     pub use frender_common::const_expr::syntax::*;
 
+    pub use crate::styles::Never;
+
     pub use super::{chain, r#const};
-
-    // TODO: EitherA
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! style_syntax_never {
-        ($e:expr) => {
-            (|| -> $crate::styles::Never { $e })()
-        };
-    }
 
     #[doc(hidden)]
     #[macro_export]
@@ -149,7 +141,7 @@ pub mod syntax {
     #[doc(inline)]
     pub use {
         style_syntax_EitherA as EitherA, style_syntax_EitherB as EitherB,
-        style_syntax_array as array, style_syntax_never as never,
+        style_syntax_array as array,
     };
 }
 

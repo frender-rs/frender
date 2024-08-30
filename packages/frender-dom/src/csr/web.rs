@@ -2,8 +2,6 @@ use std::borrow::Cow;
 
 pub use frender_events::web::{Event, JsCastEventType};
 
-pub use frender_html_common::web::DomTokenList;
-
 pub use self::cursor_place_holder::CursorPlaceholder;
 
 use wasm_bindgen::UnwrapThrowExt as _;
