@@ -14,10 +14,11 @@ web-sys = { version = "0.3.69", optional = true, default-features = false, featu
     "CssStyleDeclaration",
 ] }
 frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
+either = { version = "1.13.0", optional = true, default-features = false }
 
 [dev-dependencies]
 futures-lite = "2.0.1"
 
 [features]
 web = ["dep:web-sys"]
-either = []
+either = ["dep:either"]
