@@ -1,14 +1,7 @@
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __const_expr_parse_one_parse_attributes {
-    (
+#![no_std]
 
-    ) => {};
-}
-
-#[doc(hidden)]
 #[macro_export]
-macro_rules! const_expr_parse_one {
+macro_rules! parse_one {
     (
         // attributes
         {$($finish:tt)*} [$($prepend:tt)*]
@@ -17,7 +10,7 @@ macro_rules! const_expr_parse_one {
         {$pound:tt $attr:tt        $( $rest:tt)*}
         [$($append:tt)*]
     ) => {
-        $crate::const_expr_parse_one! {
+        $crate::parse_one! {
             {$($finish)*} [$($prepend)*]
             ($($pre_expr)* $pound $attr)
             { $($rest)* }
@@ -306,7 +299,7 @@ macro_rules! const_expr_parse_one {
         { $if:tt $predicate:tt      $if_block:tt        $( $after_if_block:tt)* }
         [$($append:tt)*]
     ) => {
-        $crate::__const_expr_syntax_parse_after_if_block! {
+        $crate::__syntax_parse_after_if_block! {
             {{$($finish)*} [$($prepend)*]}
             ($($pre_expr)* $if $predicate $if_block)
             {$($after_if_block)*}
@@ -334,9 +327,8 @@ macro_rules! const_expr_parse_one {
     };
 }
 
-#[doc(hidden)]
 #[macro_export]
-macro_rules! const_expr_expand_parsed {
+macro_rules! expand_parsed {
     (
         with {$($with:tt)*}
         $(attrs {$($attrs:tt)*})?
@@ -352,7 +344,7 @@ macro_rules! const_expr_expand_parsed {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_syntax_parse_after_if_block {
+macro_rules! __syntax_parse_after_if_block {
     // EOF or comma
     (
         {{$($finish:tt)*} [$($prepend:tt)*]}
@@ -376,7 +368,7 @@ macro_rules! __const_expr_syntax_parse_after_if_block {
         { $else:ident $if:ident $predicate:tt      $if_block:tt        $( $after_if_block:tt)* }
         $append:tt
     ) => {
-        $crate::__const_expr_syntax_parse_after_if_block! {
+        $crate::__syntax_parse_after_if_block! {
             $finish_and_prepend
             (
                 $($style_if)*
@@ -407,14 +399,14 @@ macro_rules! __const_expr_syntax_parse_after_if_block {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_expect_one_and_expand_with {
+macro_rules! __expect_one_and_expand_with {
     (
         $with:tt
         attrs $attrs:tt
         $parsed:tt
         {} // rest should be empty
     ) => {
-        $crate::const_expr::expand_parsed! {
+        $crate::expand_parsed! {
             with $with
             attrs $attrs
             parsed $parsed
@@ -425,7 +417,7 @@ macro_rules! __const_expr_expect_one_and_expand_with {
         $parsed:tt
         {} // rest should be empty
     ) => {
-        $crate::const_expr::expand_parsed! {
+        $crate::expand_parsed! {
             with $with
             parsed $parsed
         }
@@ -434,14 +426,14 @@ macro_rules! __const_expr_expect_one_and_expand_with {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_expect_comma_separated_and_chain_with {
+macro_rules! __expect_comma_separated_and_chain_with {
     (
         $with:tt
         attrs {$($attrs:tt)*}
         $parsed:tt
         {$(,)?} // EOF
     ) => {
-        $crate::__const_expr_expect_one_and_expand_with! {
+        $crate::__expect_one_and_expand_with! {
             $with
             attrs {$($attrs)*}
             $parsed
@@ -463,9 +455,8 @@ macro_rules! __const_expr_expect_comma_separated_and_chain_with {
     };
 }
 
-#[doc(hidden)]
 #[macro_export]
-macro_rules! const_expr_assert_expr {
+macro_rules! assert_expr {
     ($e:expr) => {
         $e
     };
@@ -473,7 +464,7 @@ macro_rules! const_expr_assert_expr {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_resolve_match {
+macro_rules! __resolve_match {
     (
         {$($with:tt)*}
         attrs {$($attrs:tt)*}
@@ -483,7 +474,7 @@ macro_rules! __const_expr_resolve_match {
         $($with)*::never! {
             @{$($with)*}
             $($attrs)*
-            $match $crate::const_expr_assert_expr!$paren_matched
+            $match $crate::assert_expr!$paren_matched
             $match_body
         }
     };
@@ -493,7 +484,7 @@ macro_rules! __const_expr_resolve_match {
         {match        ($($matched:tt)*) $_match_body:tt}
         {$match:ident $paren_matched:tt  $match_body:tt}
     ) => {
-        $crate::__const_expr_resolve_match_body! {
+        $crate::__resolve_match_body! {
             {$match $paren_matched}
             {$($with)*}
             attrs $attrs
@@ -504,15 +495,15 @@ macro_rules! __const_expr_resolve_match {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_resolve_match_body {
+macro_rules! __resolve_match_body {
     (
         $match_and_matched:tt
         $with:tt
         attrs $attrs:tt
         { $this_pat:pat $(if $guard:expr)? => $($after_pat:tt)* }
     ) => {
-        $crate::const_expr_parse_one! {
-            {$crate::__const_expr_expect_match_branch_body!}
+        $crate::parse_one! {
+            {$crate::__expect_match_branch_body!}
             [{
                 match $match_and_matched
                 parsed_patterns {}
@@ -531,7 +522,7 @@ macro_rules! __const_expr_resolve_match_body {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_expect_match_branch_body {
+macro_rules! __expect_match_branch_body {
     (
         {
             match {$match:ident $paren_matched:tt}
@@ -564,7 +555,7 @@ macro_rules! __const_expr_expect_match_branch_body {
         $parsed:tt
         $rest:tt
     ) => {
-        $crate::__const_expr_expect_match_branch_comma! {
+        $crate::__expect_match_branch_comma! {
             $prepend
             $parsed
             $parsed
@@ -576,7 +567,7 @@ macro_rules! __const_expr_expect_match_branch_body {
 // This assumes rest is neither `{}` nor `{,}`
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_expect_match_branch_comma {
+macro_rules! __expect_match_branch_comma {
     // if rest starts with comma, consume it
     (
         $match:tt
@@ -584,7 +575,7 @@ macro_rules! __const_expr_expect_match_branch_comma {
         $parsed:tt
         {, $($rest:tt)*}
     ) => {
-        $crate::__const_expr_expect_match_branch_continue! {
+        $crate::__expect_match_branch_continue! {
             $match
             $parsed
             {$($rest)*}
@@ -598,7 +589,7 @@ macro_rules! __const_expr_expect_match_branch_comma {
         $parsed:tt
         $rest:tt
     ) => {
-        $crate::__const_expr_expect_match_branch_continue! {
+        $crate::__expect_match_branch_continue! {
             $match
             $parsed
             $rest
@@ -611,7 +602,7 @@ macro_rules! __const_expr_expect_match_branch_comma {
         $parsed:tt
         $rest:tt
     ) => {
-        $crate::__const_expr_expect_match_branch_continue! {
+        $crate::__expect_match_branch_continue! {
             $match
             $parsed
             $rest
@@ -624,7 +615,7 @@ macro_rules! __const_expr_expect_match_branch_comma {
         $parsed:tt
         $rest:tt
     ) => {
-        $crate::__const_expr_expect_match_branch_continue! {
+        $crate::__expect_match_branch_continue! {
             $match
             $parsed
             $rest
@@ -634,7 +625,7 @@ macro_rules! __const_expr_expect_match_branch_comma {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __const_expr_expect_match_branch_continue {
+macro_rules! __expect_match_branch_continue {
     (
         {
             match $match:tt
@@ -649,8 +640,8 @@ macro_rules! __const_expr_expect_match_branch_continue {
             $pat:pat $(if $guard:expr)? => $($after_pat:tt)*
         } // rest
     ) => {
-        $crate::const_expr_parse_one! {
-            {$crate::__const_expr_expect_match_branch_body!}
+        $crate::parse_one! {
+            {$crate::__expect_match_branch_body!}
             [{
                 match $match
                 parsed_patterns {
@@ -674,15 +665,14 @@ macro_rules! __const_expr_expect_match_branch_continue {
     };
 }
 
-#[doc(hidden)]
 #[macro_export]
-macro_rules! const_expr_resolve_either_paths {
+macro_rules! resolve_either_paths {
     (@{$($with:tt)*} {} {$($e:tt)*}) => {
         $($e)*
     };
     (@{$($with:tt)*} {$variant:tt $($vars:tt)*} $e:tt) => {
         $($with)*::Either::$variant(
-            $crate::const_expr::resolve_either_paths!(
+            $crate::resolve_either_paths!(
                 @{$($with)*}
                 {$($vars)*} $e
             )
@@ -692,30 +682,24 @@ macro_rules! const_expr_resolve_either_paths {
 
 #[doc(hidden)]
 pub mod __private {
-    pub use std::convert::identity;
+    pub use core::convert::identity;
 }
-
-#[doc(inline)]
-pub use {
-    const_expr_assert_expr as assert_expr, const_expr_expand_parsed as expand_parsed,
-    const_expr_parse_one as parse_one, const_expr_resolve_either_paths as resolve_either_paths,
-};
 
 pub mod syntax {
     pub use {None, Some};
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_empty {
-        ($(#$attr:tt)*) => {
+    macro_rules! syntax_empty {
+        (@{$($with:tt)*}$(#$attr:tt)*) => {
             $(#$attr)*
-            $crate::Empty
+            $($with)*::Empty
         };
     }
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_literal {
+    macro_rules! syntax_literal {
         (@{$($with:tt)*} $(#$attr:tt)+ $lit:literal $(as $($as_ty:tt)*)?) => {
             $($with)*::r#const! { $(#$attr)+ const { $lit } $(as $($as_ty)*)? }
         };
@@ -726,7 +710,7 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_const_block {
+    macro_rules! syntax_const_block {
         (@{$($with:tt)*} $($t:tt)*) => {
             $($with)*::r#const! { $($t)* }
         };
@@ -736,7 +720,7 @@ pub mod syntax {
     /// doesn't allow `as $ty`.
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_native_block {
+    macro_rules! syntax_native_block {
         // TODO: is this needed?
         (@{$($with:tt)*} $(#$attr:tt)* $e:block /* matching a block would prevent unused brace */) => {
             $(#$attr)*
@@ -750,15 +734,15 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_block {
+    macro_rules! syntax_block {
         // empty
         (@{$($with:tt)*} $(#$attr:tt)* {}) => {
-            $($with)*::empty! { $(#$attr)* }
+            $($with)*::empty! { @{$($with)*} $(#$attr)* }
         };
         // one
         (@{$($with:tt)*} $(#$attr:tt)* {$($t:tt)*}) => {
-            $crate::const_expr_parse_one! {
-                {$crate::__const_expr_expect_one_and_expand_with!} [{$($with)*}]
+            $crate::parse_one! {
+                {$crate::__expect_one_and_expand_with!} [{$($with)*}]
                     ($(#$attr)*)
                     {$($t)*}
                     {$($t)*}
@@ -772,7 +756,7 @@ pub mod syntax {
     /// `[..]` will be parsed as
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_array {
+    macro_rules! syntax_array {
         (@{$($with:tt)*} $(#$attr:tt)+ [$($array:tt)*] $(as $($as_ty:tt)*)?) => {
             $($with)*::r#const! {
                 $(#$attr)+
@@ -788,7 +772,7 @@ pub mod syntax {
 
     /// The default macro for `(..)` syntax.
     ///
-    /// `()` will be parsed as `$with::empty! {}`
+    /// `()` will be parsed as `$with::empty! { @{$with} }`
     ///
     /// `($a $(,)?)` will be parsed as `$with::one!($a)`
     ///
@@ -807,14 +791,14 @@ pub mod syntax {
     /// Attributes are propagated to each element.
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_paren {
+    macro_rules! syntax_paren {
         // empty
         (@{$($with:tt)*} $(#$attr:tt)* ()) => {
-            $($with)*::empty! { $(#$attr)* }
+            $($with)*::empty! { @{$($with)*} $(#$attr)* }
         };
         (@{$($with:tt)*} $(#$attr:tt)* ($($t:tt)*)) => {
-            $crate::const_expr_parse_one! {
-                {$crate::__const_expr_expect_comma_separated_and_chain_with!}
+            $crate::parse_one! {
+                {$crate::__expect_comma_separated_and_chain_with!}
                 [
                     {$($with)*}
                     attrs{$(#$attr)*}
@@ -829,7 +813,7 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_chain {
+    macro_rules! syntax_chain {
         (
             with {$($with:tt)*}
             attrs {$($attrs:tt)*}
@@ -837,7 +821,7 @@ pub mod syntax {
             rest {$($rest:tt)*}
         ) => {
             $($with)*::Chain(
-                $crate::__const_expr_expect_one_and_expand_with! {
+                $crate::__expect_one_and_expand_with! {
                     {$($with)*}
                     attrs {$($attrs)*}
                     $parsed
@@ -855,7 +839,7 @@ pub mod syntax {
     /// The default macro for `some_macro!(..)` syntax doesn't allow attributes.
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_macro {
+    macro_rules! syntax_macro {
         (@{$($with:tt)*} $macro_name:ident $bang:tt $macro_content:tt) => {
             $($with)*::macros::$macro_name $bang $macro_content
         };
@@ -863,7 +847,7 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_if {
+    macro_rules! syntax_if {
         (
             //  `if (predicate) {..}`
             //
@@ -880,7 +864,7 @@ pub mod syntax {
             $(#$attr:tt)*
             $if:ident $paren_predicate:tt $if_block:tt
         ) => {
-            $if $crate::const_expr_assert_expr!$paren_predicate {
+            $if $crate::assert_expr!$paren_predicate {
                 $($with)*::Some(
                     $($with)*::block! {
                         @{$($with)*}
@@ -909,7 +893,7 @@ pub mod syntax {
             $if:ident $paren_predicate:tt $if_block:tt
             $else:ident $($after_else:tt)*
         ) => {
-            $if $crate::const_expr_assert_expr!$paren_predicate {
+            $if $crate::assert_expr!$paren_predicate {
                 $($with)*::Either::A(
                     $($with)*::block!(
                         @{$($with)*}
@@ -931,9 +915,9 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_one {
+    macro_rules! syntax_one {
         (@{$($with:tt)*} $($t:tt)*) => {
-            $crate::const_expr_syntax_block! {
+            $crate::syntax_block! {
                 @{$($with)*}
                 {$($t)*}
             }
@@ -942,14 +926,14 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_match {
+    macro_rules! syntax_match {
         (
             @$with:tt
             $(#$attr:tt)*
             $match:ident
             $($match_clause:tt)*
         ) => {
-            $crate::__const_expr_resolve_match! {
+            $crate::__resolve_match! {
                 $with
                 attrs {$(#$attr)*}
                 {$match $($match_clause)*}
@@ -960,21 +944,21 @@ pub mod syntax {
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_never {
+    macro_rules! syntax_never {
         (@{$($with:tt)*} $e:expr) => {
             // (|| -> $($with)*::Never { $e })()
             // the above cannot be used in const
 
             {
                 #[allow(unreachable_code)]
-                $crate::const_expr::__private::identity::<$($with)*::Never>($e)
+                $crate::__private::identity::<$($with)*::Never>($e)
             }
         };
     }
 
     #[doc(hidden)]
     #[macro_export]
-    macro_rules! const_expr_syntax_match_non_empty {
+    macro_rules! syntax_match_non_empty {
         (
             with $with:tt
             attrs $attrs:tt
@@ -990,13 +974,13 @@ pub mod syntax {
                 )*
             }
         ) => {
-            $match $crate::const_expr_assert_expr!$paren_matched {
+            $match $crate::assert_expr!$paren_matched {
                 $(
-                    $($pat)* => $crate::const_expr::resolve_either_paths!(
+                    $($pat)* => $crate::resolve_either_paths!(
                         @$with
                         $either_paths
                         {
-                            $crate::const_expr::expand_parsed!(
+                            $crate::expand_parsed!(
                                 with $with
                                 attrs $attrs
                                 parsed $parsed
@@ -1010,22 +994,23 @@ pub mod syntax {
 
     #[doc(inline)]
     pub use {
-        const_expr_syntax_array as array, const_expr_syntax_block as block,
-        const_expr_syntax_chain as chain, const_expr_syntax_const_block as const_block,
-        const_expr_syntax_empty as empty, const_expr_syntax_if as r#if,
-        const_expr_syntax_literal as literal, const_expr_syntax_macro as r#macro,
-        const_expr_syntax_match as r#match, const_expr_syntax_match_non_empty as match_non_empty,
-        const_expr_syntax_native_block as native_block, const_expr_syntax_never as never,
-        const_expr_syntax_one as one, const_expr_syntax_paren as paren,
+        syntax_array as array, syntax_block as block, syntax_chain as chain,
+        syntax_const_block as const_block, syntax_empty as empty, syntax_if as r#if,
+        syntax_literal as literal, syntax_macro as r#macro, syntax_match as r#match,
+        syntax_match_non_empty as match_non_empty, syntax_native_block as native_block,
+        syntax_never as never, syntax_one as one, syntax_paren as paren,
     };
 }
 
-const _: () = {
-    enum Never {}
-    enum Never2 {}
+#[cfg(test)]
+mod tests {
+    const _: () = {
+        enum Never {}
+        enum Never2 {}
 
-    const fn test(x: Never2) -> Never {
-        #[allow(unreachable_code)]
-        crate::const_expr::__private::identity::<Never>(match x {});
-    }
-};
+        const fn test(x: Never2) -> Never {
+            #[allow(unreachable_code)]
+            crate::__private::identity::<Never>(match x {});
+        }
+    };
+}

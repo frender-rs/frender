@@ -324,13 +324,11 @@ pub mod dom_tokens {
     }
 
     pub mod syntax {
-        pub use frender_common::const_expr::syntax::*;
+        pub use frender_const_expr::syntax::*;
 
-        pub use crate::Chain;
+        pub use crate::{Chain, EitherDomTokens as Either, Empty};
 
         pub use super::r#const;
-
-        pub use crate::EitherDomTokens as Either;
 
         #[doc(hidden)]
         #[macro_export]
@@ -358,7 +356,7 @@ pub mod dom_tokens {
     }
 
     pub mod typed {
-        pub use frender_common::const_expr::{
+        pub use frender_const_expr::{
             assert_expr, expand_parsed, resolve_either_paths, syntax as default_syntax,
         };
 
@@ -378,14 +376,14 @@ pub mod dom_tokens {
             pub use dom_tokens_typed_const_markers_one as one;
 
             pub mod syntax {
-                pub use frender_common::const_expr::syntax::*;
+                pub use frender_const_expr::syntax::*;
 
                 pub use super::super::common_syntax::{chain, r#macro};
 
                 #[doc(hidden)]
                 #[macro_export]
                 macro_rules! dom_tokens_typed_const_markers_syntax_empty {
-                    () => {};
+                    (@$with:tt) => {};
                 }
 
                 #[doc(hidden)]
@@ -554,10 +552,10 @@ pub mod dom_tokens {
             pub use dom_tokens_typed_type_one as one;
 
             pub mod syntax {
-                pub use crate::EitherDomTokens as Either;
+                pub use crate::{EitherDomTokens as Either, Empty};
                 pub use Option;
 
-                pub use frender_common::const_expr::syntax::*;
+                pub use frender_const_expr::syntax::*;
 
                 pub use super::super::common_syntax::{chain, empty, r#macro};
 
@@ -743,9 +741,9 @@ pub mod dom_tokens {
             pub use dom_tokens_typed_expr_one as one;
 
             pub mod syntax {
-                pub use frender_common::const_expr::syntax::*;
+                pub use frender_const_expr::syntax::*;
 
-                pub use crate::EitherDomTokens as Either;
+                pub use crate::{EitherDomTokens as Either, Empty};
 
                 pub use super::super::common_syntax::{chain, empty, r#macro};
 
@@ -938,9 +936,10 @@ pub mod dom_tokens {
             #[macro_export]
             macro_rules! dom_tokens_typed_common_syntax_empty {
                 (
+                    @{$($with:tt)*}
                     #[__dom_tokens_typed_path($($p:tt)*)]
                 ) => {
-                    $crate::Empty
+                    $($with)*::Empty
                 };
             }
 

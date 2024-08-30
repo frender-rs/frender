@@ -906,6 +906,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-const-expr"
+version = "0.1.0"
+
+[[package]]
 name = "frender-context"
 version = "0.1.0"
 dependencies = [
@@ -984,6 +988,7 @@ dependencies = [
  "async-str-iter",
  "either",
  "frender-common",
+ "frender-const-expr",
  "frender-macro-rules",
  "futures-lite 2.3.0",
  "web-sys",
