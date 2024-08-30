@@ -13,6 +13,7 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-featur
 web-sys = { version = "0.3.69", optional = true, default-features = false, features = [
     "CssStyleDeclaration",
 ] }
+frender-const-expr = { version = "0.1.0", path = "../frender-const-expr" }
 
 [dev-dependencies]
 futures-lite = "2.0.1"

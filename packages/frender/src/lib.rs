@@ -77,15 +77,17 @@ pub use frender_html::dom::script::ScriptInnerTextWronglyEncoded;
 pub use frender_html::dom::special::DangerousInnerHtml;
 pub use frender_html::dom::string_element::StringElement;
 
-pub use frender_html_common::dom_tokens;
-pub use frender_html_common::dom_tokens::{
-    dom_tokens, impl_dom_tokens_for, proxy_chainable_dom_tokens, proxy_dom_tokens,
-    ChainableDomTokens, DomTokenList, DomTokens,
+pub mod dom_tokens {
+    pub use frender_dom_tokens::{dom_tokens::*, *};
+}
+pub use frender_dom_tokens::{
+    constness::HasConstKnownPossibleDomTokens, dom_tokens::comma_separated as dom_tokens,
+    impl_dom_tokens_for, impl_has_const_dom_tokens_for, ChainableDomTokens, DomTokenList,
+    DomTokens,
 };
 
 pub mod style {
-    pub use frender_style::style::*;
-    pub use frender_style::*;
+    pub use frender_style::{style::*, *};
 }
 pub use frender_style::style::comma_separated as style;
 
@@ -123,7 +125,7 @@ pub mod prelude {
     #[cfg(feature = "Elements")]
     pub use crate::{Elements, Keyed};
 
-    pub use frender_html_common::dom_tokens::{dom_tokens, ChainableDomTokens, DomTokens};
+    pub use crate::dom_tokens;
 
     pub use crate::style;
 

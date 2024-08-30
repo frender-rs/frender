@@ -236,7 +236,7 @@ macro_rules! DefaultSsrHaevoe {
 
 #[allow(non_snake_case)]
 pub mod DomTokens {
-    pub use frender_html_common::DomTokens as Bounds;
+    pub use frender_dom::dom_tokens::DomTokens as Bounds;
 
     #[macro_export]
     macro_rules! __csr_DomTokens {
@@ -294,7 +294,7 @@ pub mod DomTokens {
     pub use __csr_DomTokens as csr;
 
     pub mod csr {
-        use frender_html_common::DomTokens;
+        use frender_dom::dom_tokens::DomTokens;
 
         pub use crate::DefaultCsrState as State;
 
@@ -310,7 +310,7 @@ pub mod DomTokens {
     }
 
     pub mod ssr {
-        use frender_html_common::DomTokens;
+        use frender_dom::dom_tokens::DomTokens;
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 

@@ -1,5 +1,3 @@
-pub use frender_common::Empty;
-
 pub mod csr;
 pub mod ssr;
 

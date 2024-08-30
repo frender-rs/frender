@@ -108,9 +108,9 @@ macro_rules! style_chain {
 pub use {style_chain as chain, style_const as r#const, style_one as one};
 
 pub mod syntax {
-    pub use frender_common::const_expr::syntax::*;
+    pub use frender_const_expr::syntax::*;
 
-    pub use crate::styles::Never;
+    pub use crate::styles::{EitherStyle as Either, Empty, Never};
 
     pub use super::{chain, r#const};
 
@@ -122,31 +122,14 @@ pub mod syntax {
         };
     }
 
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! style_syntax_EitherA {
-        ($e:expr) => {
-            $crate::styles::EitherStyle::A($e)
-        };
-    }
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! style_syntax_EitherB {
-        ($e:expr) => {
-            $crate::styles::EitherStyle::B($e)
-        };
-    }
-
     #[doc(inline)]
-    pub use {
-        style_syntax_EitherA as EitherA, style_syntax_EitherB as EitherB,
-        style_syntax_array as array,
-    };
+    pub use style_syntax_array as array;
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::styles::Empty;
+
     use super::one;
 
     #[test]
@@ -155,7 +138,7 @@ mod tests {
 
         let _ = f as fn() -> crate::styles::Never;
 
-        let crate::Empty = one!(match (()) {
+        let Empty = one!(match (()) {
             _ => {}
         });
 
@@ -172,7 +155,7 @@ mod tests {
             }
         }) {
             crate::styles::EitherStyle::A(crate::constness::ConstDeclarationList { .. }) => {}
-            crate::styles::EitherStyle::B(crate::Empty) => panic!(),
+            crate::styles::EitherStyle::B(Empty) => unreachable!(),
         }
 
         match one!(match (1) {
@@ -180,18 +163,18 @@ mod tests {
             b if b < 0 => {}
             _ => {}
         }) {
-            crate::styles::EitherStyle::A(crate::Empty) => {}
+            crate::styles::EitherStyle::A(Empty) => {}
             crate::styles::EitherStyle::B(other) => match other {
-                crate::styles::EitherStyle::A(crate::Empty) => panic!(),
-                crate::styles::EitherStyle::B(crate::Empty) => panic!(),
+                crate::styles::EitherStyle::A(Empty) => panic!(),
+                crate::styles::EitherStyle::B(Empty) => panic!(),
             },
         }
     }
 
     #[test]
     fn array() {
-        let _: [crate::Empty; 0] = one!([]);
-        let _: [crate::Empty; 1] = one!([crate::Empty]);
-        let _: [crate::Empty; 2] = one!([crate::Empty, crate::Empty]);
+        let _: [Empty; 0] = one!([]);
+        let _: [Empty; 1] = one!([Empty]);
+        let _: [Empty; 2] = one!([Empty, Empty]);
     }
 }

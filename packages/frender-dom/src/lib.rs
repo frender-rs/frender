@@ -14,6 +14,10 @@ pub mod style {
     }
 }
 
+pub mod dom_tokens {
+    pub use frender_dom_tokens::{DomToken, DomTokenList, DomTokens};
+}
+
 pub mod render;
 
 pub mod csr;

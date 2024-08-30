@@ -1,3 +1,5 @@
+pub use frender_common::Empty;
+
 pub mod chain;
 pub mod constness;
 

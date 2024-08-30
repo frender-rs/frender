@@ -30,6 +30,7 @@ frender-elements = { version = "0.1.0", path = "../frender-elements", optional =
 frender-context = { version = "0.1.0", path = "../frender-context", default-features = false, optional = true }
 frender-element = { version = "0.1.0", path = "../frender-element" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
+frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 
 [dependencies.frender-hook-element]
 path = "../frender-hook-element"
