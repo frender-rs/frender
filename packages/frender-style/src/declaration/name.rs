@@ -6,6 +6,7 @@ use ssr::IntoSsrDeclarationName;
 /// A valid declaration name.
 ///
 /// See https://drafts.csswg.org/css-syntax-3/#consume-declaration.
+#[derive(Debug, Clone, Copy)]
 pub struct DeclarationName<N>(N);
 
 impl<'a> DeclarationName<&'a str> {
@@ -20,11 +21,11 @@ impl<'a> DeclarationName<&'a str> {
 }
 
 impl<N> DeclarationName<N> {
-    pub const fn inner(&self) -> &N {
+    pub const fn unparsed(&self) -> &N {
         &self.0
     }
 
-    pub fn into_inner(self) -> N {
+    pub fn into_unparsed(self) -> N {
         self.0
     }
 

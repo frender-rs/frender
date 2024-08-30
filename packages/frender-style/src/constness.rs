@@ -1,4 +1,5 @@
 use ccss::collections::array_vec::ArrayVec;
+use frender_common::const_utils::ArrayString;
 
 use crate::declaration::{
     important::IntoDeclarationImportant, Declaration, DeclarationName, DeclarationValue,
@@ -65,7 +66,7 @@ pub type Important<const ANY_HAS_IMPORTANT: bool> =
     <AnyHasImportant<ANY_HAS_IMPORTANT> as HasImportantType>::Important;
 
 /// Returns false for empty declaration list.
-pub const fn collect_info(input: &'static str) -> DeclarationListInfo {
+const fn collect_info(input: &str) -> DeclarationListInfo {
     let mut parse_list = ccss::parse::declaration::Declaration::<
         ccss::collections::collect_nothing::CollectNothing,
     >::parse_list_from_str(input);
@@ -107,87 +108,63 @@ pub type StaticStrDeclaration<const ANY_HAS_IMPORTANT: bool> = Declaration<
     Important<{ ANY_HAS_IMPORTANT }>,
 >;
 
-pub struct ParsedDeclarationArray<'a, const N: usize>(
+struct ParsedDeclarationArray<'a, const N: usize>(
     [ccss::parse::declaration::Declaration<'a, ccss::collections::collect_nothing::CollectNothing>;
         N],
 );
 
+const fn parse_as_array_vec<'a, const CAP: usize>(
+    input: &'a str,
+) -> ArrayVec<
+    ccss::parse::declaration::Declaration<ccss::collections::collect_nothing::CollectNothing>,
+    CAP,
+> {
+    let res = ccss::parse::declaration::Declaration::<
+        ccss::collections::collect_nothing::CollectNothing,
+    >::parse_list_from_str(input)
+    .try_collect_into_known::<ArrayVec<_, CAP>, CAP, 0>();
+    let list = unwrap_declaration_list_parse_result!(res);
+    *list.as_array_vec()
+}
+
 impl<'a, const N: usize> ParsedDeclarationArray<'a, N> {
-    pub const fn from_str(input: &'a str) -> Self {
-        let res = ccss::parse::declaration::Declaration::<
-            ccss::collections::collect_nothing::CollectNothing,
-        >::parse_list_from_str(input)
-        .try_collect_into_known::<ArrayVec<_, N>, N, 0>();
-
-        let list = unwrap_declaration_list_parse_result!(res);
-
-        let list = match list.as_array_vec().try_into_filled_array::<N>() {
+    const fn from_str(input: &'a str) -> Self {
+        let list = parse_as_array_vec::<N>(input);
+        let list = match list.try_into_filled_array::<N>() {
             Ok(v) => v,
             Err(_) => panic!("the const generic is not exactly the parsed length"),
         };
 
         Self(list)
     }
+}
 
-    pub const fn to_string_prefix_semicolon<const LEN: usize>(
-        &self,
-    ) -> DeclarationListStringPrefixSemicolon<LEN> {
-        let mut res = [0; LEN];
-        let mut cur = 0;
-
+impl<const N: usize> ParsedDeclarationArray<'static, N> {
+    const fn into_array(self) -> [StaticStrDeclaration<true>; N] {
+        let mut res = [DUMMY_DECLARATION; N];
         let mut i = 0;
 
         while i < N {
             let d = self.0[i];
-
-            {
-                res[cur] = b';';
-                cur += 1;
-            }
-
-            {
-                let v = d.name_as_original_str().as_bytes();
-                let mut j = 0;
-                while j < v.len() {
-                    res[cur] = v[j];
-                    j += 1;
-                    cur += 1;
+            res[i] = {
+                Declaration {
+                    name: DeclarationName::from_parsed(d.name()),
+                    value: DeclarationValue::from_parsed(d.value()),
+                    important: d.is_important(),
                 }
-            }
-
-            {
-                res[cur] = b':';
-                cur += 1;
-            }
-
-            {
-                let v = d.value_as_original_str().as_bytes();
-                let mut j = 0;
-                while j < v.len() {
-                    res[cur] = v[j];
-                    j += 1;
-                    cur += 1;
-                }
-            }
-
-            if d.is_important() {
-                let v = "!important".as_bytes();
-                let mut j = 0;
-                while j < v.len() {
-                    res[cur] = v[j];
-                    j += 1;
-                    cur += 1;
-                }
-            }
-
+            };
             i += 1;
         }
 
-        assert!(cur == LEN);
-
-        DeclarationListStringPrefixSemicolon { bytes: res }
+        res
     }
 }
+
+const DUMMY_DECLARATION: StaticStrDeclaration<true> = Declaration {
+    name: DeclarationName::new_const("_"),
+    value: DeclarationValue::new_const(""),
+    important: false,
+};
 
 pub struct DeclarationListStringPrefixSemicolon<const N: usize> {
     bytes: [u8; N],
@@ -221,7 +198,7 @@ impl<'a> DeclarationListPrefixSemicolonStr<'a> {
 
 impl AnyHasImportant<false> {
     pub const fn map_array<const N: usize>(
-        parsed: ParsedDeclarationArray<'static, N>,
+        parsed: DeclarationArray<N>,
     ) -> [StaticStrDeclaration<false>; N] {
         let list = parsed.0;
 
@@ -235,16 +212,16 @@ impl AnyHasImportant<false> {
         let mut i = 0;
         while i < N {
             res[i] = {
-                let d = list[i];
+                let d = &list[i];
 
                 assert!(
-                    !d.is_important(),
+                    !d.important,
                     "AnyHasImportant<false> can't collect declaration with !important flag"
                 );
 
                 Declaration {
-                    name: DeclarationName::from_parsed(d.name()),
-                    value: DeclarationValue::from_parsed(d.value()),
+                    name: d.name,
+                    value: d.value,
                     important: frender_common::Empty,
                 }
             };
@@ -258,33 +235,9 @@ impl AnyHasImportant<false> {
 
 impl AnyHasImportant<true> {
     pub const fn map_array<const N: usize>(
-        parsed: ParsedDeclarationArray<'static, N>,
+        parsed: DeclarationArray<N>,
     ) -> [StaticStrDeclaration<true>; N] {
-        let list = parsed.0;
-
-        const DUMMY: StaticStrDeclaration<true> = Declaration {
-            name: DeclarationName::new_const("_"),
-            value: DeclarationValue::new_const(""),
-            important: false,
-        };
-        let mut res = [DUMMY; N];
-
-        let mut i = 0;
-        while i < N {
-            res[i] = {
-                let d = list[i];
-
-                Declaration {
-                    name: DeclarationName::from_parsed(d.name()),
-                    value: DeclarationValue::from_parsed(d.value()),
-                    important: d.is_important(),
-                }
-            };
-
-            i += 1;
-        }
-
-        res
+        parsed.0
     }
 }
 
@@ -292,6 +245,22 @@ pub struct DeclarationListInfo {
     pub len: usize,
     pub any_has_important: bool,
     pub prefix_semicolon_str_len: usize,
+}
+
+impl DeclarationListInfo {
+    const EMPTY: Self = Self {
+        len: 0,
+        any_has_important: false,
+        prefix_semicolon_str_len: 0,
+    };
+    const fn add(self, other: Self) -> Self {
+        Self {
+            len: self.len + other.len,
+            any_has_important: self.any_has_important || other.any_has_important,
+            prefix_semicolon_str_len: self.prefix_semicolon_str_len
+                + other.prefix_semicolon_str_len,
+        }
+    }
 }
 
 #[macro_export]
@@ -318,7 +287,8 @@ macro_rules! impl_has_const_declaration_list_for {
         }
     ) => {
         const _: () = {
-            const DECLARATION_LIST_STR: $str_ty = $const_expr;
+            const DECLARATION_LIST_STR: $crate::constness::DeclarationListConstExpr<$str_ty> =
+                $crate::constness::DeclarationListConstExpr($const_expr);
 
             $crate::__expand_if_not_underscore! {
                 $NAME
@@ -328,14 +298,14 @@ macro_rules! impl_has_const_declaration_list_for {
             }
 
             const DECLARATION_LIST_INFO: $crate::constness::DeclarationListInfo =
-                $crate::constness::collect_info(DECLARATION_LIST_STR);
+                DECLARATION_LIST_STR.into_info();
 
-            const PARSED_DECLARATION_ARRAY: $crate::constness::ParsedDeclarationArray<{DECLARATION_LIST_INFO.len}> =
-                $crate::constness::ParsedDeclarationArray::from_str(DECLARATION_LIST_STR);
+            const DECLARATION_ARRAY: $crate::constness::DeclarationArray<{ DECLARATION_LIST_INFO.len }> =
+                DECLARATION_LIST_STR.into_array();
 
             impl $crate::constness::HasConstDeclarationList for $for_ty {
                 const DECLARATION_LIST_PREFIX_SEMICOLON: $crate::constness::DeclarationListPrefixSemicolonStr<'static> =
-                    PARSED_DECLARATION_ARRAY.to_string_prefix_semicolon::<{DECLARATION_LIST_INFO.prefix_semicolon_str_len}>().as_str();
+                    DECLARATION_ARRAY.to_string_prefix_semicolon::<{DECLARATION_LIST_INFO.prefix_semicolon_str_len}>().as_str();
 
                 type DeclarationNameStr = $str_ty;
                 type DeclarationValueStr = $str_ty;
@@ -348,10 +318,260 @@ macro_rules! impl_has_const_declaration_list_for {
                 const DECLARATION_LIST: Self::DeclarationList =
                     $crate::constness::AnyHasImportant::<
                         { DECLARATION_LIST_INFO.any_has_important },
-                    >::map_array(PARSED_DECLARATION_ARRAY);
+                    >::map_array(DECLARATION_ARRAY);
             }
         };
     };
+}
+
+pub struct DeclarationArray<const N: usize>(pub [StaticStrDeclaration<true>; N]);
+
+const BANG_IMPORTANT: &str = "!important";
+
+impl<const N: usize> DeclarationArray<N> {
+    pub const fn to_string_prefix_semicolon<const LEN: usize>(
+        &self,
+    ) -> DeclarationListStringPrefixSemicolon<LEN> {
+        let mut res = ArrayString::<LEN>::new();
+
+        let mut i = 0;
+
+        while i < N {
+            let d = &self.0[i];
+
+            res = res
+                .with_push_str(";")
+                .with_push_str(d.name.unparsed())
+                .with_push_str(":")
+                .with_push_str(d.value.unparsed());
+
+            if d.important {
+                res = res.with_push_str(BANG_IMPORTANT);
+            }
+
+            i += 1;
+        }
+
+        let bytes = match res.try_into_filled_bytes() {
+            Ok(bytes) => bytes,
+            Err(_) => panic!("const generic LEN is larger than the actual length"),
+        };
+
+        DeclarationListStringPrefixSemicolon { bytes }
+    }
+}
+
+pub struct DeclarationListConstExpr<T>(pub T);
+
+impl<'a> DeclarationListConstExpr<&'a str> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        collect_info(self.0)
+    }
+}
+impl DeclarationListConstExpr<&'static str> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        DeclarationArray(ParsedDeclarationArray::from_str(self.0).into_array())
+    }
+}
+
+impl<'a> DeclarationListConstExpr<&[&'a str]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        let this = self.0;
+        let mut i = 0;
+        let mut info = DeclarationListInfo::EMPTY;
+        while i < this.len() {
+            info = info.add(DeclarationListConstExpr(this[i]).into_info());
+            i += 1;
+        }
+
+        info
+    }
+}
+
+impl DeclarationListConstExpr<&[&'static str]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        let mut res = ArrayVec::<_, N>::EMPTY;
+
+        let mut i = 0;
+        while i < self.0.len() {
+            res = res.with_extend_from_slice(parse_as_array_vec::<N>(self.0[i]).as_slice());
+
+            i += 1;
+        }
+        DeclarationArray(
+            ParsedDeclarationArray(match res.try_into_filled_array() {
+                Ok(v) => v,
+                Err(_) => panic!("the const generic is not exactly the parsed length"),
+            })
+            .into_array(),
+        )
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[&str; M]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListConstExpr(self.0.as_slice()).into_info()
+    }
+}
+impl<const M: usize> DeclarationListConstExpr<[&'static str; M]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        DeclarationListConstExpr(self.0.as_slice()).into_array()
+    }
+}
+
+impl DeclarationListConstExpr<&[(&str, &str)]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListInfo {
+            len: self.0.len(),
+            any_has_important: false,
+            prefix_semicolon_str_len: {
+                let mut res = 0;
+                let mut i = 0;
+                while i < self.0.len() {
+                    let d = self.0[i];
+                    res += 2 + d.0.len() + d.1.len();
+                    i += 1;
+                }
+
+                res
+            },
+        }
+    }
+}
+
+impl DeclarationListConstExpr<&[(&'static str, &'static str)]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        assert!(self.0.len() == N);
+        let mut res = [("", "", false); N];
+        let mut i = 0;
+        while i < N {
+            let (name, value) = self.0[i];
+            res[i] = (name, value, false);
+            i += 1;
+        }
+
+        DeclarationListConstExpr(res).into_array()
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[(&str, &str); M]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListConstExpr(self.0.as_slice()).into_info()
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[(&'static str, &'static str); M]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        DeclarationListConstExpr(self.0.as_slice()).into_array()
+    }
+}
+
+impl DeclarationListConstExpr<&[(&str, &str, frender_common::Empty)]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListInfo {
+            len: self.0.len(),
+            any_has_important: false,
+            prefix_semicolon_str_len: {
+                let mut res = 0;
+                let mut i = 0;
+                while i < self.0.len() {
+                    let d = self.0[i];
+                    res += 2 + d.0.len() + d.1.len();
+                    i += 1;
+                }
+
+                res
+            },
+        }
+    }
+}
+
+impl DeclarationListConstExpr<&[(&'static str, &'static str, frender_common::Empty)]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        assert!(self.0.len() == N);
+        let mut res = [("", "", false); N];
+        let mut i = 0;
+        while i < N {
+            let (name, value, frender_common::Empty) = self.0[i];
+            res[i] = (name, value, false);
+            i += 1;
+        }
+
+        DeclarationListConstExpr(res).into_array()
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[(&str, &str, frender_common::Empty); M]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListConstExpr(self.0.as_slice()).into_info()
+    }
+}
+
+impl<const M: usize>
+    DeclarationListConstExpr<[(&'static str, &'static str, frender_common::Empty); M]>
+{
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        DeclarationListConstExpr(self.0.as_slice()).into_array()
+    }
+}
+
+impl DeclarationListConstExpr<&[(&str, &str, bool)]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        let mut any_has_important = false;
+        let mut prefix_semicolon_str_len = 0;
+        let mut i = 0;
+        while i < self.0.len() {
+            let d = self.0[i];
+            prefix_semicolon_str_len += 2 + d.0.len() + d.1.len();
+
+            if d.2 {
+                any_has_important = true;
+
+                const BANG_IMPORTANT_LEN: usize = "!important".len();
+                prefix_semicolon_str_len += BANG_IMPORTANT_LEN;
+            }
+
+            i += 1;
+        }
+
+        DeclarationListInfo {
+            len: self.0.len(),
+            any_has_important,
+            prefix_semicolon_str_len,
+        }
+    }
+}
+
+impl DeclarationListConstExpr<&[(&'static str, &'static str, bool)]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        assert!(self.0.len() == N);
+        let mut res = [DUMMY_DECLARATION; N];
+        let mut i = 0;
+
+        while i < self.0.len() {
+            let (name, value, important) = self.0[i];
+            res[i] = Declaration {
+                name: DeclarationName::new_const(name),
+                value: DeclarationValue::new_const(value),
+                important,
+            };
+            i += 1;
+        }
+
+        DeclarationArray(res)
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[(&str, &str, bool); M]> {
+    pub const fn into_info(self) -> DeclarationListInfo {
+        DeclarationListConstExpr(self.0.as_slice()).into_info()
+    }
+}
+
+impl<const M: usize> DeclarationListConstExpr<[(&'static str, &'static str, bool); M]> {
+    pub const fn into_array<const N: usize>(self) -> DeclarationArray<N> {
+        DeclarationListConstExpr(self.0.as_slice()).into_array()
+    }
 }
 
 pub type StaticStr = &'static str;

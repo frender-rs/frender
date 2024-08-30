@@ -37,7 +37,7 @@ impl Priority {
 pub trait CssStyleDeclaration {
     fn remove_property_str(&mut self, property: &str);
     fn remove_property(&mut self, property: DeclarationName<&str>) {
-        self.remove_property_str(property.inner())
+        self.remove_property_str(property.unparsed())
     }
 
     /// Note: value must not contain "!important" or will panic. That should be set using the priority parameter.
@@ -56,7 +56,7 @@ pub trait CssStyleDeclaration {
     ) {
         self.set_property_str_with_value_str_and_priority(
             property_name,
-            value.into_inner(),
+            value.into_unparsed(),
             priority,
         )
     }
@@ -67,7 +67,7 @@ pub trait CssStyleDeclaration {
     }
 
     fn set_property_str(&mut self, property_name: &str, value: DeclarationValue<&str>) {
-        self.set_property_str_with_value_str(property_name, value.into_inner())
+        self.set_property_str_with_value_str(property_name, value.into_unparsed())
     }
 
     /// Note: value must not contain "!important" or will panic. That should be set using the priority parameter.
@@ -78,7 +78,7 @@ pub trait CssStyleDeclaration {
         priority: Priority,
     ) {
         self.set_property_str_with_value_str_and_priority(
-            property_name.into_inner(),
+            property_name.into_unparsed(),
             value,
             priority,
         )
@@ -90,7 +90,7 @@ pub trait CssStyleDeclaration {
         value: DeclarationValue<&str>,
         priority: Priority,
     ) {
-        self.set_property_str_with_priority(property_name.into_inner(), value, priority)
+        self.set_property_str_with_priority(property_name.into_unparsed(), value, priority)
     }
 
     // Note: value must not contain "!important", that should be set using the priority parameter.
@@ -103,7 +103,7 @@ pub trait CssStyleDeclaration {
         property_name: DeclarationName<&str>,
         value: DeclarationValue<&str>,
     ) {
-        self.set_property_with_value_str(property_name, value.into_inner())
+        self.set_property_with_value_str(property_name, value.into_unparsed())
     }
 }
 

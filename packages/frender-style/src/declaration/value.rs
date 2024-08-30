@@ -8,6 +8,7 @@ use ccss::collections::{
 /// This might be empty.
 ///
 /// https://drafts.csswg.org/css-syntax-3/#consume-list-of-components
+#[derive(Debug, Clone, Copy)]
 pub struct DeclarationValue<V> {
     unparsed: V,
 }
@@ -60,7 +61,11 @@ impl<S> DeclarationValue<S> {
         Self { unparsed }
     }
 
-    pub fn into_inner(self) -> S {
+    pub const fn unparsed(&self) -> &S {
+        &self.unparsed
+    }
+
+    pub fn into_unparsed(self) -> S {
         self.unparsed
     }
 
@@ -163,7 +168,7 @@ pub mod csr {
         type StaticCache = S::StaticCache;
 
         fn into_cacheable(this: Self) -> Self::Cacheable {
-            CacheableDeclarationValue(this.into_inner().into_to_static_cache())
+            CacheableDeclarationValue(this.into_unparsed().into_to_static_cache())
         }
 
         fn update_style(this: &Self::Cacheable, style: impl UpdateStyleWithDeclarationValue) {
