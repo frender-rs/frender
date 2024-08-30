@@ -1,8 +1,6 @@
 pub mod csr;
 pub mod ssr;
 
-pub mod constness;
-
 mod declaration;
 
 pub mod styles;

@@ -277,7 +277,7 @@ macro_rules! impl_has_const_declaration_list_for {
     ) => {
         $crate::impl_has_const_declaration_list_for! {
             impl $for_ty {
-                const $NAME: $crate::constness::StaticStr = $const_expr;
+                const $NAME: $crate::styles::constness::StaticStr = $const_expr;
             }
         }
     };
@@ -287,8 +287,8 @@ macro_rules! impl_has_const_declaration_list_for {
         }
     ) => {
         const _: () = {
-            const DECLARATION_LIST_STR: $crate::constness::DeclarationListConstExpr<$str_ty> =
-                $crate::constness::DeclarationListConstExpr($const_expr);
+            const DECLARATION_LIST_STR: $crate::styles::constness::DeclarationListConstExpr<$str_ty> =
+                $crate::styles::constness::DeclarationListConstExpr($const_expr);
 
             $crate::__expand_if_not_underscore! {
                 $NAME
@@ -297,26 +297,26 @@ macro_rules! impl_has_const_declaration_list_for {
                 }
             }
 
-            const DECLARATION_LIST_INFO: $crate::constness::DeclarationListInfo =
+            const DECLARATION_LIST_INFO: $crate::styles::constness::DeclarationListInfo =
                 DECLARATION_LIST_STR.into_info();
 
-            const DECLARATION_ARRAY: $crate::constness::DeclarationArray<{ DECLARATION_LIST_INFO.len }> =
+            const DECLARATION_ARRAY: $crate::styles::constness::DeclarationArray<{ DECLARATION_LIST_INFO.len }> =
                 DECLARATION_LIST_STR.into_array();
 
-            impl $crate::constness::HasConstDeclarationList for $for_ty {
-                const DECLARATION_LIST_PREFIX_SEMICOLON: $crate::constness::DeclarationListPrefixSemicolonStr<'static> =
+            impl $crate::styles::constness::HasConstDeclarationList for $for_ty {
+                const DECLARATION_LIST_PREFIX_SEMICOLON: $crate::styles::constness::DeclarationListPrefixSemicolonStr<'static> =
                     DECLARATION_ARRAY.to_string_prefix_semicolon::<{DECLARATION_LIST_INFO.prefix_semicolon_str_len}>().as_str();
 
                 type DeclarationNameStr = $str_ty;
                 type DeclarationValueStr = $str_ty;
                 type DeclarationImportant =
-                    $crate::constness::Important<{ DECLARATION_LIST_INFO.any_has_important }>;
-                type DeclarationList = [$crate::constness::StaticStrDeclaration<
+                    $crate::styles::constness::Important<{ DECLARATION_LIST_INFO.any_has_important }>;
+                type DeclarationList = [$crate::styles::constness::StaticStrDeclaration<
                     { DECLARATION_LIST_INFO.any_has_important },
                 >; DECLARATION_LIST_INFO.len];
 
                 const DECLARATION_LIST: Self::DeclarationList =
-                    $crate::constness::AnyHasImportant::<
+                    $crate::styles::constness::AnyHasImportant::<
                         { DECLARATION_LIST_INFO.any_has_important },
                     >::map_array(DECLARATION_ARRAY);
             }
@@ -732,7 +732,7 @@ mod tests {
     use async_str_iter::ext::AsyncStrIteratorExt;
     use futures_lite::future::block_on;
 
-    use crate::{constness::HasConstDeclarationList, ssr::SsrDeclarationList};
+    use crate::{ssr::SsrDeclarationList, styles::constness::HasConstDeclarationList};
 
     enum Demo {}
 

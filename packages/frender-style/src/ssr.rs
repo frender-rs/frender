@@ -80,22 +80,23 @@ pub mod assert {
     {
     }
 
-    impl<T: ?Sized + crate::constness::HasConstDeclarationList> sealed::DeclarationList
-        for crate::constness::ssr::ConstDeclarationListIntoSsr<T>
+    impl<T: ?Sized + crate::styles::constness::HasConstDeclarationList> sealed::DeclarationList
+        for crate::styles::constness::ssr::ConstDeclarationListIntoSsr<T>
     {
     }
-    impl<T: ?Sized + crate::constness::HasConstDeclarationList> DeclarationList
-        for crate::constness::ssr::ConstDeclarationListIntoSsr<T>
+    impl<T: ?Sized + crate::styles::constness::HasConstDeclarationList> DeclarationList
+        for crate::styles::constness::ssr::ConstDeclarationListIntoSsr<T>
     {
     }
 
-    impl<T: ?Sized + crate::constness::HasConstDeclarationList>
+    impl<T: ?Sized + crate::styles::constness::HasConstDeclarationList>
         sealed::DeclarationListPrefixSemicolon
-        for crate::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
+        for crate::styles::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
     {
     }
-    impl<T: ?Sized + crate::constness::HasConstDeclarationList> DeclarationListPrefixSemicolon
-        for crate::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
+    impl<T: ?Sized + crate::styles::constness::HasConstDeclarationList>
+        DeclarationListPrefixSemicolon
+        for crate::styles::constness::ssr::ConstDeclarationListIntoSsrPrefixSemicolon<T>
     {
     }
 
@@ -253,8 +254,8 @@ mod imp {
         }
     }
 
-    impl<T: ?Sized + crate::constness::HasConstDeclarationList> sealed::SsrDeclarationList
-        for crate::constness::ConstDeclarationList<T>
+    impl<T: ?Sized + crate::styles::constness::HasConstDeclarationList> sealed::SsrDeclarationList
+        for crate::styles::constness::ConstDeclarationList<T>
     {
     }
 

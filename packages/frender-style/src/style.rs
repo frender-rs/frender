@@ -16,7 +16,7 @@ macro_rules! style {
 
 pub use style as comma_separated;
 
-/// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](crate::constness::ConstDeclarationList).
+/// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](crate::styles::constness::ConstDeclarationList).
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_const {
@@ -27,7 +27,7 @@ macro_rules! style_const {
                 const _: _ = $s;
             }
         }
-        $crate::constness::ConstDeclarationList::<HasConstDeclarationList>()
+        $crate::styles::constness::ConstDeclarationList::<HasConstDeclarationList>()
     }};
 }
 
@@ -142,7 +142,7 @@ mod tests {
             _ => {}
         });
 
-        let crate::constness::ConstDeclarationList { .. } = one!(match (()) {
+        let crate::styles::constness::ConstDeclarationList { .. } = one!(match (()) {
             _ => "",
         });
 
@@ -154,7 +154,9 @@ mod tests {
                 }
             }
         }) {
-            crate::styles::EitherStyle::A(crate::constness::ConstDeclarationList { .. }) => {}
+            crate::styles::EitherStyle::A(crate::styles::constness::ConstDeclarationList {
+                ..
+            }) => {}
             crate::styles::EitherStyle::B(Empty) => unreachable!(),
         }
 
