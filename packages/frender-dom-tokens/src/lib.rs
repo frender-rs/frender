@@ -298,26 +298,6 @@ pub mod dom_tokens {
 
         pub use super::r#const;
 
-        #[doc(hidden)]
-        #[macro_export]
-        macro_rules! dom_tokens_syntax_array {
-            (@{$($with:tt)*} $(#$attr:tt)* [$($array:tt)*] as [$item_ty:ty; _]) => {
-                $crate::dom_tokens::r#const! {
-                    $(#$attr)*
-                    const { [$($array)*] } as [$item_ty; $crate::__dom_tokens_array_len!([$($array)*])]
-                }
-            };
-            (@{$($with:tt)*} $(#$attr:tt)* [$($array:tt)*] as $as_ty:ty) => {
-                $crate::dom_tokens::r#const! {
-                    $(#$attr)*
-                    const { [$($array)*] } as $as_ty
-                }
-            };
-        }
-
-        #[doc(inline)]
-        pub use dom_tokens_syntax_array as array;
-
         pub mod macros {
             pub use dom_tokens;
         }
