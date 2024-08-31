@@ -206,6 +206,8 @@ where
 pub mod constness;
 
 pub mod dom_tokens {
+    pub use frender_const_expr::{array_len, const_marker};
+
     #[macro_export]
     macro_rules! dom_tokens {
         ($($t:tt)*) => {
@@ -229,20 +231,7 @@ pub mod dom_tokens {
         };
     }
 
-    pub mod const_marker {
-        #[doc(hidden)]
-        #[macro_export]
-        macro_rules! dom_tokens_const_marker_const_marker {
-            ($ty:ty) => {
-                $ty
-            };
-        }
-
-        #[doc(inline)]
-        pub use dom_tokens_const_marker_const_marker as const_marker;
-    }
-
-    /// An inline expr of [`ConstDeclarationList<impl HasConstDeclarationList>`](crate::constness::ConstDeclarationList).
+    /// An inline expr of [`ConstDomTokens<impl HasConstDomTokens>`](crate::constness::ConstDomTokens).
     #[doc(hidden)]
     #[macro_export]
     macro_rules! dom_tokens_const {
@@ -289,37 +278,16 @@ pub mod dom_tokens {
     #[macro_export]
     macro_rules! __dom_tokens_infer_const_type {
         ({ [$($array:tt)*] } _) => {
-            [$crate::constness::StaticStr; $crate::__dom_tokens_array_len!([$($array)*])]
+            [$crate::constness::StaticStr; $crate::dom_tokens::array_len!([$($array)*])]
         };
         ({ [$($array:tt)*] } [$item_ty:ty; _]) => {
-            [$item_ty; $crate::__dom_tokens_array_len!([$($array)*])]
+            [$item_ty; $crate::dom_tokens::array_len!([$($array)*])]
         };
         ($block:tt _) => {
             $crate::constness::StaticStr
         };
         ($block:tt $ty:ty) => {
             $ty
-        };
-    }
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! __dom_tokens_array_item_unit {
-        ($e:expr) => {
-            ()
-        };
-    }
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! __dom_tokens_array_len {
-        ([]) => {
-            0
-        };
-        ([$($e:expr),+ $(,)?]) => {
-            [$(
-                $crate::__dom_tokens_array_item_unit!($e)
-            ),+].len()
         };
     }
 

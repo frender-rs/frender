@@ -1002,6 +1002,39 @@ pub mod syntax {
     };
 }
 
+pub mod const_marker {
+    #[doc(hidden)]
+    #[macro_export]
+    macro_rules! const_marker_const_marker {
+        ($ty:ty) => {
+            $ty
+        };
+    }
+
+    #[doc(inline)]
+    pub use const_marker_const_marker as const_marker;
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __array_item_unit {
+    ($e:expr) => {
+        ()
+    };
+}
+
+#[macro_export]
+macro_rules! array_len {
+    ([]) => {
+        0
+    };
+    ([$($e:expr),+ $(,)?]) => {
+        [$(
+            $crate::__array_item_unit!($e)
+        ),+].len()
+    };
+}
+
 #[cfg(test)]
 mod tests {
     const _: () = {
