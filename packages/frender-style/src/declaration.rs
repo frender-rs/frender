@@ -11,6 +11,7 @@ pub mod name;
 pub mod value;
 
 /// https://drafts.csswg.org/css-syntax-3/#parse-declaration
+#[derive(Debug, Clone, Copy)]
 pub struct Declaration<
     N: IntoDeclarationName,
     V: IntoDeclarationValue,
