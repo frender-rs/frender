@@ -1,8 +1,9 @@
 use frender_common::Empty;
 
+use frender_const::ConstUsize;
+
 use crate::{
-    constness::{ConstUsize, HasConstKnownPossibleDomTokens},
-    dom_token::UniqueDomTokenArrayVec,
+    constness::HasConstKnownPossibleDomTokens, dom_token::UniqueDomTokenArrayVec,
     ChainableDomTokens, DomTokens,
 };
 

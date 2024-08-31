@@ -1,3 +1,5 @@
+pub use frender_const::ConstUsize;
+
 use frender_common::const_utils::put_at;
 
 use crate::{
@@ -5,58 +7,18 @@ use crate::{
 };
 
 mod sealed {
-    pub trait IsConstUsize {}
-    pub trait IsArray {}
     pub trait IsUniqueDomTokenArray<'a> {}
     pub trait IsUniqueDomTokenArrayVec<'a> {}
 }
 
-pub trait IsConstUsize: sealed::IsConstUsize + 'static {
-    type Array<T>: IsArray<Item = T, Len = Self>;
+pub trait IsConstUsize: frender_const::IsConstUsize {
     type UniqueDomTokenArray<'a>: IsUniqueDomTokenArray<'a, Len = Self>;
     type UniqueDomTokenArrayVec<'a>: IsUniqueDomTokenArrayVec<'a, Cap = Self>;
 }
 
-pub trait IsArray: sealed::IsArray + AsRef<[Self::Item]> {
-    type Len: IsConstUsize;
-    type Item;
-}
-
-pub trait KnownConstUsizeAdd<M: IsConstUsize>: IsConstUsize {
-    type Sum: IsConstUsize;
-}
-
-macro_rules! add {
-    (@__one $n:expr, {$($m:expr),* $(,)?}) => {
-        $(
-            impl KnownConstUsizeAdd<ConstUsize<$m>> for ConstUsize<$n> {
-                type Sum = ConstUsize<{ $n + $m }>;
-            }
-        )*
-    };
-    ($(@__main{ $($pre:expr),* })?) => {};
-    ($(@__main{ $($pre:expr),* })? $n:expr $(, $m:expr)* $(,)?) => {
-        add! {
-            @__one
-            $n,
-            {$($($pre,)*)? $n, $($m),*}
-        }
-        add! { @__main{ $($($pre,)*)? $n } $($m),*}
-    };
-}
-
-// node -e 'console.log(new Array(100).fill().map((_,i)=>i).join())'
-add!(
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-    26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-    50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
-    74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
-    98, 99
-);
-
 pub trait IsUniqueDomTokenArray<'a>:
     sealed::IsUniqueDomTokenArray<'a>
-    + std::ops::Deref<Target = <Self::Len as IsConstUsize>::Array<DomToken<'a>>>
+    + std::ops::Deref<Target = <Self::Len as frender_const::IsConstUsize>::Array<DomToken<'a>>>
 {
     type Len: IsConstUsize;
 }
@@ -71,19 +33,9 @@ pub trait IsUniqueDomTokenArrayVec<'a>:
     type Cap: IsConstUsize;
 }
 
-pub struct ConstUsize<const N: usize>;
-
-impl<const N: usize> sealed::IsConstUsize for ConstUsize<N> {}
 impl<const N: usize> IsConstUsize for ConstUsize<N> {
-    type Array<T> = [T; N];
     type UniqueDomTokenArray<'a> = UniqueDomTokenArray<'a, N>;
     type UniqueDomTokenArrayVec<'a> = UniqueDomTokenArrayVec<'a, N>;
-}
-
-impl<T, const N: usize> sealed::IsArray for [T; N] {}
-impl<T, const N: usize> IsArray for [T; N] {
-    type Len = ConstUsize<N>;
-    type Item = T;
 }
 
 impl<'a, const N: usize> sealed::IsUniqueDomTokenArray<'a> for UniqueDomTokenArray<'a, N> {}

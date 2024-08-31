@@ -1,0 +1,11 @@
+[package]
+name = "frender-const"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[features]
+KnownConstUsizeAdd = []
+# impl KnownConstUsizeAdd for ConstUsize<0..=99>
+"KnownConstUsizeAdd+99" = ["KnownConstUsizeAdd"]

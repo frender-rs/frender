@@ -1,5 +1,7 @@
+use frender_const::{ConstUsize, KnownConstUsizeAdd};
+
 use crate::{
-    constness::{ConstUsize, HasConstKnownPossibleDomTokens, IsConstUsize, KnownConstUsizeAdd},
+    constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
     dom_token::UniqueDomTokenArrayVec,
     ChainableDomTokens, DomTokens,
 };

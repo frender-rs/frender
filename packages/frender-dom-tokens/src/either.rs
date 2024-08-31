@@ -1,8 +1,9 @@
 use async_str_iter::either::IterEither;
 use frender_common::either::EitherState;
+use frender_const::{ConstUsize, KnownConstUsizeAdd};
 
 use crate::{
-    constness::{ConstUsize, HasConstKnownPossibleDomTokens, IsConstUsize, KnownConstUsizeAdd},
+    constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
     dom_token::UniqueDomTokenArrayVec,
     ChainableDomTokens, DomTokens,
 };
