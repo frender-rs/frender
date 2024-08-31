@@ -772,20 +772,20 @@ pub mod syntax {
 
     /// The default macro for `(..)` syntax.
     ///
-    /// `()` will be parsed as `$with::empty! { @{$with} }`
+    /// - `()` will be parsed as `$with::empty! { @{$with} }`
     ///
-    /// `($a $(,)?)` will be parsed as `$with::one!($a)`
+    /// - `($a $(,)?)` will be parsed as `$with::one!($a)`
     ///
-    /// `($a, $b, $c)` are recursively [chained](chain!).
+    /// - `($a, $b, $c)` are recursively [chained](chain!).
     ///
-    /// ```rust,no_compile
-    /// $with::chain!(
-    ///     $with::one!($a),
-    ///     $with::chain!(
-    ///         $with::one!($b),
-    ///         $with::one!($c)
-    ///     )
-    /// )
+    ///   ```rust,no_compile
+    ///   $with::Chain(
+    ///       $with::one!($a),
+    ///       $with::Chain(
+    ///           $with::one!($b),
+    ///           $with::one!($c)
+    ///       )
+    ///   )
     /// ```
     ///
     /// Attributes are propagated to each element.
