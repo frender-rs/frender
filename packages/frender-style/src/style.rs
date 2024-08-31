@@ -1,5 +1,7 @@
 //! See [style!].
 
+pub use frender_const_expr::{array_len, const_marker};
+
 /// Styles separated by comma.
 ///
 /// The macro input will be parsed as [style syntaxes](style::one) separated by comma.
@@ -20,15 +22,57 @@ pub use style as comma_separated;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! style_const {
-    (const $s:tt) => {{
+    (const $($rest:tt)*) => {{
         enum HasConstDeclarationList {}
-        $crate::impl_has_const_declaration_list_for! {
-            impl HasConstDeclarationList {
-                const _: _ = $s;
-            }
+        $crate::style::r#const! {
+            #[const_marker(HasConstDeclarationList)]
+            const $($rest)*
         }
-        $crate::styles::constness::ConstDeclarationList::<HasConstDeclarationList>()
     }};
+    (
+        #[$const_marker:ident $const_marker_body:tt]
+        const $s:tt
+    ) => {
+        $crate::style::r#const! {
+            #[$const_marker $const_marker_body]
+            const $s as _
+        }
+    };
+    (
+        #[$const_marker:ident $const_marker_body:tt]
+        const $s:tt as $($const_ty:tt)*
+    ) => {{
+        const CONST_EXPR: $crate::styles::constness::ConstDeclarationList::<
+            $crate::style::const_marker::$const_marker!$const_marker_body
+        > = {
+            $crate::impl_has_const_declaration_list_for! {
+                impl $crate::style::const_marker::$const_marker!$const_marker_body {
+                    const _: $crate::__style_infer_const_type![$s $($const_ty)*] = $s;
+                }
+            }
+
+            $crate::styles::constness::ConstDeclarationList()
+        };
+
+        CONST_EXPR
+    }};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __style_infer_const_type {
+    ({ [$($array:tt)*] } _) => {
+        [$crate::styles::constness::StaticStr; $crate::style::array_len!([$($array)*])]
+    };
+    ({ [$($array:tt)*] } [$item_ty:ty; _]) => {
+        [$item_ty; $crate::__dom_tokens_array_len!([$($array)*])]
+    };
+    ($block:tt _) => {
+        $crate::styles::constness::StaticStr
+    };
+    ($block:tt $ty:ty) => {
+        $ty
+    };
 }
 
 /// ### Supported style syntaxes
@@ -84,53 +128,47 @@ macro_rules! style_one {
     };
 }
 
-#[doc(hidden)]
-#[macro_export]
-macro_rules! style_chain {
-    () => {
-        $crate::Empty
-    };
-    ($e:expr $(,)?) => {
-        $e
-    };
-    ($a:expr, $b:expr $(,)?) => {
-        $crate::styles::chain::Chain($a, $b)
-    };
-    ($a:expr, $($rest:expr),+ $(,)? ) => {
-        $crate::styles::chain::Chain(
-            $a,
-            $crate::chain_styles!($($rest),+),
-        )
-    };
-}
-
 #[doc(inline)]
-pub use {style_chain as chain, style_const as r#const, style_one as one};
+pub use {style_const as r#const, style_one as one};
 
 pub mod syntax {
     pub use frender_const_expr::syntax::*;
 
-    pub use crate::styles::{EitherStyle as Either, Empty, Never};
+    pub use crate::styles::{Chain, EitherStyle as Either, Empty, Never};
 
-    pub use super::{chain, r#const};
-
-    #[doc(hidden)]
-    #[macro_export]
-    macro_rules! style_syntax_array {
-        (@{$($with:tt)*} $e:tt) => {
-            $e
-        };
-    }
-
-    #[doc(inline)]
-    pub use style_syntax_array as array;
+    pub use super::r#const;
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::styles::Empty;
+    use crate::{
+        declaration::Declaration,
+        styles::{
+            constness::{ConstDeclarationList, HasConstDeclarationList},
+            Empty,
+        },
+    };
 
     use super::one;
+
+    fn declaration_list_of_expr<T: ?Sized + HasConstDeclarationList>(
+        _: &ConstDeclarationList<T>,
+    ) -> Vec<(
+        T::DeclarationNameStr,
+        T::DeclarationValueStr,
+        T::DeclarationImportant,
+    )> {
+        T::DECLARATION_LIST
+            .into_iter()
+            .map(
+                |Declaration {
+                     name,
+                     value,
+                     important,
+                 }| { (name.into_unparsed(), value.into_unparsed(), important) },
+            )
+            .collect()
+    }
 
     #[test]
     fn match_clause() {
@@ -175,8 +213,15 @@ mod tests {
 
     #[test]
     fn array() {
-        let _: [Empty; 0] = one!([]);
-        let _: [Empty; 1] = one!([Empty]);
-        let _: [Empty; 2] = one!([Empty, Empty]);
+        assert_eq!(declaration_list_of_expr(&one!([])), vec![]);
+        assert_eq!(declaration_list_of_expr(&one!([""])), vec![]);
+        assert_eq!(
+            declaration_list_of_expr(&one!(["a:b;c:d", ""])),
+            vec![("a", "b", Empty), ("c", "d", Empty)]
+        );
+        assert_eq!(
+            declaration_list_of_expr(&one!(["a:b;c:d!important;", ";  e :  f"])),
+            vec![("a", "b", false), ("c", "d", true), ("e", "f", false)]
+        );
     }
 }

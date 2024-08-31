@@ -307,8 +307,8 @@ macro_rules! impl_has_const_declaration_list_for {
                 const DECLARATION_LIST_PREFIX_SEMICOLON: $crate::styles::constness::DeclarationListPrefixSemicolonStr<'static> =
                     DECLARATION_ARRAY.to_string_prefix_semicolon::<{DECLARATION_LIST_INFO.prefix_semicolon_str_len}>().as_str();
 
-                type DeclarationNameStr = $str_ty;
-                type DeclarationValueStr = $str_ty;
+                type DeclarationNameStr = $crate::styles::constness::StaticStr;
+                type DeclarationValueStr = $crate::styles::constness::StaticStr;
                 type DeclarationImportant =
                     $crate::styles::constness::Important<{ DECLARATION_LIST_INFO.any_has_important }>;
                 type DeclarationList = [$crate::styles::constness::StaticStrDeclaration<
