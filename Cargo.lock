@@ -899,6 +899,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-attr-value"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "either",
+ "frender-common",
+ "frender-ssr-html",
+]
+
+[[package]]
 name = "frender-common"
 version = "0.1.0"
 dependencies = [
@@ -1066,6 +1076,7 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "either",
+ "frender-attr-value",
  "frender-common",
  "frender-dom-tokens",
  "frender-ssr-html",

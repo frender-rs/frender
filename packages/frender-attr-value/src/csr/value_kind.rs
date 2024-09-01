@@ -18,6 +18,7 @@ frender_common::impl_many!(
     }
 );
 
+/*
 impl ValueKind for crate::content_editable::ContentEditable<'static> {
     type Value<'a> = crate::content_editable::ContentEditable<'a>;
 }
@@ -25,3 +26,4 @@ impl ValueKind for crate::content_editable::ContentEditable<'static> {
 impl ValueKind for crate::Spellcheck {
     type Value<'a> = crate::Spellcheck;
 }
+*/

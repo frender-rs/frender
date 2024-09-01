@@ -1,22 +1,17 @@
-use crate::{impl_many, StringValue, ValueKind};
+use frender_common::{impl_many, ToAsRefStr, ToStaticCache};
+
+use crate::string::KnownStaticStr;
+
+pub use self::value_kind::ValueKind;
+
+mod value_kind;
 
 pub trait ValueUpdater<VK: ?Sized + ValueKind> {
     fn update(self, value: VK::Value<'_>);
     fn remove(self);
 }
 
-impl<VK: ?Sized + ValueKind, U: for<'a> FnOnce(VK::Value<'_>), R: FnOnce()> ValueUpdater<VK>
-    for (U, R)
-{
-    fn update(self, value: VK::Value<'_>) {
-        self.0(value)
-    }
-
-    fn remove(self) {
-        self.1()
-    }
-}
-
+// Unlike CsrStyle and CsrDomTokens, MaybeValue doesn't have remove_with_state.
 pub trait MaybeValue<V: ?Sized + ValueKind> {
     type UpdateWithState: Default;
 
@@ -25,45 +20,8 @@ pub trait MaybeValue<V: ?Sized + ValueKind> {
         state: &mut Self::UpdateWithState,
         updater: impl ValueUpdater<V>,
     );
-}
 
-impl<S: StringValue> MaybeValue<str> for S {
-    type UpdateWithState = Option<S>;
-
-    fn update_with_state(
-        this: Self,
-        state: &mut Self::UpdateWithState,
-        updater: impl ValueUpdater<str>,
-    ) {
-        if let Some(state) = state {
-            if state.as_ref() == this.as_ref() {
-                return;
-            }
-        }
-
-        updater.update(this.as_ref());
-        *state = Some(this);
-    }
-}
-
-/// Temporary strings are cloned to cache
-impl<S: std::borrow::Borrow<str>> MaybeValue<str> for frender_common::TempStr<S> {
-    type UpdateWithState = Option<String>;
-
-    fn update_with_state(
-        this: Self,
-        state: &mut Self::UpdateWithState,
-        updater: impl ValueUpdater<str>,
-    ) {
-        let s = this.0.borrow();
-        if state.as_deref() == Some(s) {
-            return;
-        }
-
-        s.clone_into(state.get_or_insert_with(Default::default));
-
-        updater.update(s);
-    }
+    fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool;
 }
 
 impl<T: MaybeValue<V>, V: ?Sized + ValueKind> MaybeValue<V> for Option<T> {
@@ -76,10 +34,14 @@ impl<T: MaybeValue<V>, V: ?Sized + ValueKind> MaybeValue<V> for Option<T> {
     ) {
         if let Some(this) = this {
             T::update_with_state(this, state, updater)
-        } else {
+        } else if !Self::state_could_skip_remove(state) {
             updater.remove();
             *state = Default::default()
         }
+    }
+
+    fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
+        T::state_could_skip_remove(state)
     }
 }
 
@@ -103,6 +65,10 @@ impl_many!(
             updater.update(this);
             *state = Some(this);
         }
+
+        fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
+            state.is_none()
+        }
     }
 );
 
@@ -122,6 +88,10 @@ impl MaybeValue<bool> for bool {
 
         updater.update(this);
         *state = Some(this);
+    }
+
+    fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
+        state.is_none()
     }
 }
 

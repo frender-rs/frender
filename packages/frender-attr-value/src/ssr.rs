@@ -1,7 +1,7 @@
 use async_str_iter::IntoAsyncStrIterator;
 use frender_ssr_html::assert::HtmlAttributeEqValueOrEmpty;
 
-use crate::StringValue;
+use crate::string::KnownStaticStr;
 
 /// A *html attribute value* is `=value`, `="value"`, `='value'` or empty.
 pub trait MaybeIntoHtmlAttributeValue<AttributeType: ?Sized> {
@@ -9,27 +9,6 @@ pub trait MaybeIntoHtmlAttributeValue<AttributeType: ?Sized> {
 
     /// `None` indicates this attributes is not present
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue>;
-}
-
-impl<S: StringValue> MaybeIntoHtmlAttributeValue<str> for S {
-    type HtmlAttributeValue =
-        frender_ssr_html::attr_value::AttrEqValue<async_str_iter::any_str::IterAnyStr<S>>;
-
-    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-        Some(Self::HtmlAttributeValue::new(
-            async_str_iter::any_str::AnyStr(this).into_async_str_iterator(),
-        ))
-    }
-}
-
-impl<S: std::borrow::Borrow<str>> MaybeIntoHtmlAttributeValue<str> for frender_common::TempStr<S> {
-    type HtmlAttributeValue = <String as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
-
-    fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-        <String as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(
-            this.0.borrow().to_owned(),
-        )
-    }
 }
 
 impl<AttributeType: ?Sized, V: MaybeIntoHtmlAttributeValue<AttributeType>>
@@ -92,17 +71,4 @@ mod either {
             }
         }
     }
-}
-
-/// A trait alias.
-pub trait MaybeAttrValue<VK: ?Sized + crate::ValueKind>:
-    MaybeIntoHtmlAttributeValue<VK> + crate::MaybeValue<VK>
-{
-}
-
-impl<
-        T: ?Sized + MaybeIntoHtmlAttributeValue<VK> + crate::MaybeValue<VK>,
-        VK: ?Sized + crate::ValueKind,
-    > MaybeAttrValue<VK> for T
-{
 }
