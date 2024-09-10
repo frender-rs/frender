@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 pin-project-lite = "0.2.9"
-frender-html-common = { version = "0.1.0", path = "../frender-html-common" }
 frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
 # stack_dst = "0.8.1"
@@ -49,7 +48,6 @@ web = [
 ]
 either = [
     "dep:either",
-    "frender-html-common/either",
     "frender-ssr/either",
     "frender-csr/either",
     "frender-attr-value/either",

@@ -884,7 +884,6 @@ dependencies = [
  "frender-events",
  "frender-hook-element",
  "frender-html",
- "frender-html-common",
  "frender-macros",
  "frender-render-with",
  "frender-ssr",
@@ -988,7 +987,6 @@ dependencies = [
  "frender-csr",
  "frender-dom-tokens",
  "frender-events",
- "frender-html-common",
  "frender-ssr",
  "frender-style",
  "gloo-events 0.2.0",
@@ -1062,7 +1060,6 @@ dependencies = [
  "frender-common",
  "frender-dom",
  "frender-events",
- "frender-html-common",
  "frender-ssr",
  "frender-style",
  "gloo-events 0.2.0",
@@ -1070,18 +1067,6 @@ dependencies = [
  "pin-project-lite",
  "wasm-bindgen",
  "web-sys",
-]
-
-[[package]]
-name = "frender-html-common"
-version = "0.1.0"
-dependencies = [
- "async-str-iter",
- "either",
- "frender-attr-value",
- "frender-common",
- "frender-dom-tokens",
- "frender-ssr-html",
 ]
 
 [[package]]
