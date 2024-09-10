@@ -6,10 +6,9 @@ pub use provide::{
 
 use std::borrow::{Borrow, Cow};
 
-use frender_html_common::IntoOneStringOrEmpty;
-
 use crate::{
-    render_state::non_reactive::NonReactiveRenderState, RenderStateWithParentElementsHandle,
+    render_state::non_reactive::NonReactiveRenderState, special::textarea::SsrTextAreaValue,
+    RenderStateWithParentElementsHandle,
 };
 
 use super::element::FormControlElement;
@@ -99,15 +98,15 @@ impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for crate::Empty {
     }
 }
 
-/// This wrapper proxies [`IntoOneStringOrEmpty`] and [`SsrAttrValue`].
+/// This wrapper proxies [`SsrAttrValue`] and [`SsrTextAreaValue`].
 #[derive(Debug)]
 pub struct UncontrolledWithDefaultValue<V>(pub V);
 
-impl<V: IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultValue<V> {
-    type OneStringOrEmpty = V::OneStringOrEmpty;
+impl<V: SsrTextAreaValue> SsrTextAreaValue for UncontrolledWithDefaultValue<V> {
+    type IntoSsrTextAreaValue = V::IntoSsrTextAreaValue;
 
-    fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-        V::into_one_string_or_empty(this.0)
+    fn into_ssr_text_area_value(self) -> Self::IntoSsrTextAreaValue {
+        self.0.into_ssr_text_area_value()
     }
 }
 

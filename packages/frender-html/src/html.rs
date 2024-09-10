@@ -1,6 +1,7 @@
 use frender_attr_value::html::{ContentEditable, Spellcheck};
 use frender_dom::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
+    special::textarea::TextAreaValue,
     OnEvent,
 };
 
@@ -1873,7 +1874,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
 
-                                fn children(value: children![impl crate::form_control::value::FormControlValue<str> + frender_html_common::IntoOneStringOrEmpty]);
+                                fn children(value: children![impl TextAreaValue]);
 
                                 fn cols(value: maybe![u32]) {
                                     update_with!(set_cols);

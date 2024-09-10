@@ -1,7 +1,6 @@
 pub use frender_common::expand;
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
-pub use frender_html_common::IntoOneStringOrEmpty;
 
 pub use self::dom::Empty;
 

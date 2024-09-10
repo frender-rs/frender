@@ -1,12 +1,10 @@
 mod props_builder {
-    use frender_html_common::IntoOneStringOrEmpty;
-
-    use crate::form_control::value::FormControlValue;
+    use frender_dom::special::textarea::TextAreaValue;
 
     use crate::html::props::HtmlTextAreaElement;
     use crate::props_builder::PropsBuilderWithValue;
 
-    impl<V: FormControlValue<str> + IntoOneStringOrEmpty, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<crate::Empty, Attrs, EL> {
+    impl<V: TextAreaValue, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<crate::Empty, Attrs, EL> {
         type WithValue = HtmlTextAreaElement<V, Attrs, EL>;
 
         /// Alias for [`Self::children`]
@@ -19,43 +17,36 @@ mod props_builder {
 
 pub mod ssr {
     use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
-    use frender_html_common::IntoOneStringOrEmpty;
-    use frender_ssr::html::{encode::Encode, escape_safe, tag::AssertTagName};
+    use frender_dom::special::textarea::SsrTextAreaValue;
+    use frender_ssr::html::tag::AssertTagName;
 
-    use crate::form_control::value::FormControlValue;
     use crate::html::tags;
 
     type Element<Attrs, Children> = frender_ssr::html::element::NormalElement<
         //
         AssertTagName<&'static str>,
         Attrs,
-        Encode<escape_safe::Safe, Children>,
+        Children,
     >;
 
     impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children> SsrComponent<Attrs, Children> for tags::textarea
     where
-        Children: FormControlValue<str> + IntoOneStringOrEmpty,
+        Children: SsrTextAreaValue,
     {
         type OneElement = Element<
             //
             Attrs::SpaceAndHtmlAttributesOrEmpty,
-            Children::OneStringOrEmpty,
+            Children::IntoSsrTextAreaValue,
         >;
 
         fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
             use frender_dom::component::HasIntrinsicComponentTag;
-            frender_ssr::html::element::NormalElement::new(
-                Self::ASSERT_TAG_NAME,
-                attrs.into_space_and_html_attributes_or_empty(),
-                Encode::new(escape_safe::Safe, Children::into_one_string_or_empty(children)),
-            )
+            frender_ssr::html::element::NormalElement::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty(), Children::into_ssr_text_area_value(children))
         }
     }
 }
 
 pub mod csr {
-    use frender_html_common::IntoOneStringOrEmpty;
-
     use crate::element_types::RenderStateWithPehKind;
     use crate::form_control::value::FormControlValue;
     use crate::{html::tags, CsrComponent, RenderHtml};
@@ -70,7 +61,7 @@ pub mod csr {
 
     impl<Children> CsrComponent<Children> for tags::textarea
     where
-        Children: FormControlValue<str> + IntoOneStringOrEmpty,
+        Children: FormControlValue<str>,
     {
         type ChildrenRenderStateKind = Kind<Children>;
 

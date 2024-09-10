@@ -53,8 +53,7 @@ pub mod setter {
 pub mod form_control {
     use std::{borrow::Borrow, marker::PhantomData, pin::Pin};
 
-    use async_str_iter::IntoAsyncStrIterator;
-    use frender_common::PrimarilyBorrow;
+    use frender_common::{IntoStaticStr, PrimarilyBorrow, ToStaticStr};
     use frender_hook_element::state::{MaybeIntoPollNextUpdateWithPeh, MountState};
     use frender_html::{
         elements::non_reactive::NonReactiveRenderState,
@@ -115,15 +114,50 @@ pub mod form_control {
         }
     }
 
-    impl<S: ShareValue> frender_html::IntoOneStringOrEmpty for SignalIntoControlledValue<S>
-    where
-        S::Value: Clone + Borrow<str>,
-    {
-        type OneStringOrEmpty = async_str_iter::borrow_str::IterBorrowStr<S::Value>;
+    pub struct SignalIntoControlledValueToStaticStr<S>(pub S);
 
-        fn into_one_string_or_empty(this: Self) -> Self::OneStringOrEmpty {
-            let val = this.0.unwrap_or_get_cloned();
-            async_str_iter::borrow_str::BorrowStr(val).into_async_str_iterator()
+    impl<S> IntoStaticStr for SignalIntoControlledValueToStaticStr<S>
+    where
+        S: ShareValue,
+        S::Value: ToStaticStr,
+    {
+        type StaticStr = <S::Value as IntoStaticStr>::StaticStr;
+
+        fn into_static_str(self) -> Self::StaticStr {
+            self.to_static_str()
+        }
+    }
+
+    impl<S> ToStaticStr for SignalIntoControlledValueToStaticStr<S>
+    where
+        S: ShareValue,
+        S::Value: ToStaticStr,
+    {
+        fn to_static_str(&self) -> Self::StaticStr {
+            self.0.map(ToStaticStr::to_static_str)
+        }
+    }
+
+    mod textarea {
+        use std::borrow::Borrow;
+
+        use async_str_iter::borrow_str::IterBorrowStr;
+        use frender_html::dom::special::textarea::SsrTextAreaValue;
+        use frender_ssr::html::{encode::Encode, escape_safe::Safe};
+        use hooks::ShareValue;
+
+        use super::SignalIntoControlledValue;
+
+        impl<S> SsrTextAreaValue for SignalIntoControlledValue<S>
+        where
+            S: ShareValue,
+            S::Value: Borrow<str> + 'static + Clone,
+        {
+            type IntoSsrTextAreaValue = Encode<Safe, IterBorrowStr<S::Value>>;
+
+            fn into_ssr_text_area_value(self) -> Self::IntoSsrTextAreaValue {
+                Encode::new(Safe, IterBorrowStr::new(self.0.map(Clone::clone)))
+            }
         }
     }
 

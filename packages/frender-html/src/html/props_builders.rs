@@ -2578,9 +2578,7 @@ impl<C, A, ELS> HtmlElement for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Element for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<C, A, ELS> Node for super::props::HtmlTextAreaElement<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::HtmlTextAreaElement, Props: HtmlTextAreaElement> HtmlTextAreaElement for crate::dom::component::IntrinsicElement<Tag, Props> {}
-impl<A, ELS, C: crate::form_control::value::FormControlValue<str> + frender_html_common::IntoOneStringOrEmpty> crate::props_builder::PropsBuilderWithChildren<C>
-    for super::props::HtmlTextAreaElement<crate::Empty, A, ELS>
-{
+impl<A, ELS, C: TextAreaValue> crate::props_builder::PropsBuilderWithChildren<C> for super::props::HtmlTextAreaElement<crate::Empty, A, ELS> {
     type WithChildren = super::props::HtmlTextAreaElement<C, A, ELS>;
     fn children(self, children: C) -> Self::WithChildren {
         super::props::HtmlTextAreaElement { props: self.props.children(children) }

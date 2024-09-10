@@ -334,3 +334,59 @@ mod one_string {
 
     impl OneString for crate::char::IterCharStringEncodeSafe {}
 }
+
+pub trait SafeTextOrEmpty: safe_text_or_empty::Sealed + HtmlChildren {}
+
+mod safe_text_or_empty {
+    use async_str_iter::AsyncStrIterator;
+
+    use super::SafeTextOrEmpty;
+
+    pub trait Sealed {}
+
+    impl Sealed for async_str_iter::empty::Empty {}
+    impl SafeTextOrEmpty for async_str_iter::empty::Empty {}
+
+    impl<V: AsyncStrIterator> Sealed for crate::encode::Encode<crate::escape_safe::Safe, V> {}
+    impl<V: AsyncStrIterator> SafeTextOrEmpty for crate::encode::Encode<crate::escape_safe::Safe, V> {}
+
+    impl<T: SafeTextOrEmpty> Sealed for async_str_iter::option::IterOption<T> {}
+    impl<T: SafeTextOrEmpty> SafeTextOrEmpty for async_str_iter::option::IterOption<T> {}
+
+    impl<L: SafeTextOrEmpty, R: SafeTextOrEmpty> Sealed for async_str_iter::either::IterEither<L, R> {}
+    impl<L: SafeTextOrEmpty, R: SafeTextOrEmpty> SafeTextOrEmpty
+        for async_str_iter::either::IterEither<L, R>
+    {
+    }
+
+    impl<I: Iterator> Sealed for async_str_iter::flat::Flat<I> where I::Item: SafeTextOrEmpty {}
+    impl<I: Iterator> SafeTextOrEmpty for async_str_iter::flat::Flat<I> where I::Item: SafeTextOrEmpty {}
+
+    impl Sealed for crate::scalar::Scalar {}
+    impl SafeTextOrEmpty for crate::scalar::Scalar {}
+
+    impl Sealed for crate::char::IterCharStringEncodeSafe {}
+    impl SafeTextOrEmpty for crate::char::IterCharStringEncodeSafe {}
+
+    macro_rules! impl_for_tuple {
+        ($($iter:ident ($($field:ident),+) ,)+) => {$(
+                impl<$($field: SafeTextOrEmpty),+> Sealed for async_str_iter::concat::$iter<$($field),+> {}
+                impl<$($field: SafeTextOrEmpty),+> SafeTextOrEmpty for async_str_iter::concat::$iter<$($field),+> {}
+        )+};
+    }
+
+    impl_for_tuple!(
+        IterTuple2(R0, R1),
+        IterTuple3(R0, R1, R2),
+        IterTuple4(R0, R1, R2, R3),
+        IterTuple5(R0, R1, R2, R3, R4),
+        IterTuple6(R0, R1, R2, R3, R4, R5),
+        IterTuple7(R0, R1, R2, R3, R4, R5, R6),
+        IterTuple8(R0, R1, R2, R3, R4, R5, R6, R7),
+        IterTuple9(R0, R1, R2, R3, R4, R5, R6, R7, R8),
+        IterTuple10(R0, R1, R2, R3, R4, R5, R6, R7, R8, R9),
+        IterTuple11(R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10),
+        IterTuple12(R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11),
+        IterTuple13(R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12),
+    );
+}
