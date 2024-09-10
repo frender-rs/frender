@@ -249,9 +249,12 @@ frender_common::impl_many!(
     }
 );
 
-// stricter than impl SsrElement
-impl<S: frender_common::ToAsRefStr + frender_common::ToStaticCache> Element for frender_common::TempStr<S> {
-    type RenderStateKind = Kind<<S as frender_common::ToStaticCache>::StaticCache>;
+/// <code>where TempStr<S>: [CsrStr](frender_common::strings::CsrStr)</code>
+impl<S> Element for frender_common::TempStr<S>
+where
+    S: frender_common::IntoStaticStrCache,
+{
+    type RenderStateKind = Kind<S::StaticStrCache>;
 
     fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
         fn to_as_ref_str_and_borrow(v: &impl frender_common::ToAsRefStr) -> impl '_ + Borrow<str> {
@@ -268,15 +271,16 @@ impl<S: frender_common::ToAsRefStr + frender_common::ToStaticCache> Element for 
         }
 
         match render_state.get_mut() {
-            Some(render_state) => render_state.update_maybe_reposition(
-                self.0,
-                render_context,
-                force_reposition,
-                to_as_ref_str_and_borrow,
-                frender_common::ToStaticCache::not_match_cache,
-                frender_common::ToStaticCache::update_into_static_cache,
-            ),
-            render_state @ None => *render_state = Some(State::init(self.0, render_context, to_as_ref_str_and_borrow, frender_common::ToStaticCache::into_static_cache)),
+            Some(render_state) => {
+                if render_state.cache != self.0 {
+                    use frender_common::ToAsRefStr as _;
+                    self.0.update_into_static_str_cache(&mut render_state.cache);
+                    render_context.renderer_mut().update_text_from(&mut render_state.text_node.node, render_state.cache.to_as_ref_str().as_ref());
+                }
+
+                render_context.map_mut_render_context(|render_context| render_state.text_node.readd_self(render_context, force_reposition))
+            }
+            render_state @ None => *render_state = Some(State::init(self.0.into_static_str_cache(), render_context, to_as_ref_str_and_borrow, std::convert::identity)),
         }
     }
 

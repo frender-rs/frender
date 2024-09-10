@@ -1,22 +1,50 @@
-use async_str_iter::IntoAsyncStrIterator;
-use frender_html_common::MaybeValue;
-use frender_ssr::html::assert::{self, OneStringOrEmpty};
+use async_str_iter::{any_str::IterAnyStr, IntoAsyncStrIterator};
+use frender_attr_value::csr::CsrAttrValue;
+use frender_common::{
+    strings::{CsrStr, SsrStr},
+    IntoStaticStr, IntoStaticStrCache, ToAsRefStr,
+};
+use frender_ssr::html::assert;
 
 pub struct ScriptContentNoInnerText;
 
-impl MaybeValue<str> for ScriptContentNoInnerText {
-    // whether initialized
-    type UpdateWithState = bool;
+impl CsrAttrValue<str> for ScriptContentNoInnerText {
+    type State = ();
 
-    fn update_with_state(
+    fn update_absent_attribute_value_into_state(
         Self: Self,
-        state: &mut Self::UpdateWithState,
-        updater: impl frender_html_common::ValueUpdater<str>,
+        _: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
+    ) -> Self::State {
+    }
+
+    fn update_attribute_value_into_state(
+        Self: Self,
+        updater: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
+    ) -> Self::State {
+        updater.remove()
+    }
+
+    fn can_skip_update(Self: &Self, (): &Self::State) -> bool {
+        true
+    }
+
+    fn update_attribute_value_with_state(
+        Self: Self,
+        _: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
+        (): &mut Self::State,
     ) {
-        if !*state {
-            updater.remove();
-            *state = true;
-        }
+    }
+
+    fn force_update_attribute_value_with_state(
+        this: Self,
+        updater: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
+        (): &mut Self::State,
+    ) {
+        Self::update_attribute_value_into_state(this, updater)
+    }
+
+    fn attribute_is_known_as_absent((): &Self::State) -> bool {
+        true
     }
 }
 
@@ -24,7 +52,7 @@ pub trait IntoScriptContent {
     type IntoScriptContent: assert::ScriptContent;
     fn into_script_content(this: Self) -> Self::IntoScriptContent;
 
-    type IntoScriptInnerText: MaybeValue<str>;
+    type IntoScriptInnerText: CsrAttrValue<str>;
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText;
 }
 
@@ -76,24 +104,35 @@ impl<L: IntoScriptContent, R: IntoScriptContent> IntoScriptContent for either::E
     }
 }
 
-pub struct ScriptInnerTextWronglyEncoded<S: MaybeValue<str>>(pub S);
+pub struct ScriptInnerTextWronglyEncoded<S: SsrStr + CsrStr>(pub S);
 
-impl<S: MaybeValue<str> + IntoAsyncStrIterator> IntoScriptContent
-    for ScriptInnerTextWronglyEncoded<S>
-where
-    // multiple string chunks might be dangerous, so only one string is allowed
-    S::IntoAsyncStrIterator: OneStringOrEmpty,
-{
+impl<S: SsrStr + CsrStr> CsrAttrValue<str> for ScriptInnerTextWronglyEncoded<S> {
+    type State = S::StaticStrCache;
+
+    frender_attr_value::impl_csr_attr_value_with_cache!(
+        kind![str],
+        before_set = {
+            let cache = this.0.into_into_static_str_cache().into_static_str_cache();
+        },
+        set = |this| cache.to_as_ref_str().as_ref(),
+        into_cache = cache,
+        eq = |this, cache| *cache == this.0,
+    );
+}
+
+impl<S: SsrStr + CsrStr> IntoScriptContent for ScriptInnerTextWronglyEncoded<S> {
     type IntoScriptContent =
-        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<S::IntoAsyncStrIterator>;
+        frender_ssr::html::script::IterScriptInnerTextWronglyEncoded<IterAnyStr<S::StaticStr>>;
 
     fn into_script_content(this: Self) -> Self::IntoScriptContent {
-        Self::IntoScriptContent::new(S::into_async_str_iterator(this.0))
+        Self::IntoScriptContent::new(IterAnyStr::new(
+            this.0.into_into_static_str().into_static_str(),
+        ))
     }
 
-    type IntoScriptInnerText = S;
+    type IntoScriptInnerText = Self;
 
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText {
-        this.0
+        this
     }
 }

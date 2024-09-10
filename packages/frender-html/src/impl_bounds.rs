@@ -15,7 +15,7 @@ pub struct CsrInputWithUpdater<'a, V, E: ?Sized, RR: ?Sized, U, R> {
 }
 
 impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
-    fn into_value_and_updater(self) -> (V, updater::Updater<'a, E, RR, U, R>) {
+    fn into_value_and_updater<VK: ?Sized>(self) -> (V, updater::UpdaterOfKind<'a, VK, E, RR, U, R>) {
         let Self {
             this,
             element,
@@ -26,7 +26,8 @@ impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R>
         } = self;
         (
             this,
-            updater::Updater {
+            updater::UpdaterOfKind {
+                _kind: std::marker::PhantomData,
                 element,
                 renderer,
                 attr_name,
@@ -323,9 +324,12 @@ pub mod DomTokens {
 }
 
 mod updater {
-    use frender_html_common::ValueKind;
+    use std::marker::PhantomData;
 
-    pub(super) struct Updater<'a, E: ?Sized, RR: ?Sized, U, R> {
+    use frender_attr_value::csr::ValueKind;
+
+    pub(super) struct UpdaterOfKind<'a, VK: ?Sized, E: ?Sized, RR: ?Sized, U, R> {
+        pub(super) _kind: PhantomData<VK>,
         pub(super) element: &'a mut E,
         pub(super) renderer: &'a mut RR,
         pub(super) attr_name: &'static str,
@@ -341,9 +345,10 @@ mod updater {
             RR: ?Sized,
             U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
             R: FnOnce(&mut E, &mut RR, &'static str),
-        > frender_html_common::ValueUpdater<VT> for Updater<'a, E, RR, U, R>
+        > frender_attr_value::csr::UpdateAttrValue for UpdaterOfKind<'a, VT, E, RR, U, R>
     {
-        fn update(mut self, value: VT::Value<'_>) {
+        type Kind = VT;
+        fn set(mut self, value: VT::Value<'_>) {
             (self.update)(&mut self.element, &mut self.renderer, self.attr_name, value)
         }
 
@@ -355,23 +360,24 @@ mod updater {
 
 #[allow(non_snake_case)]
 pub mod MaybeValue {
-    pub use frender_html_common::attr::MaybeAttrValue as Bounds;
+    pub use frender_attr_value::AttrValue as Bounds;
 
     pub use crate::default_impl_csr as csr;
     pub use crate::default_impl_ssr as ssr;
 
     pub mod csr {
-        use frender_html_common::{MaybeValue, ValueKind};
+        use frender_attr_value::csr::{CsrAttrValue, ValueKind};
 
         pub use super::super::CsrInputWithUpdater as Input;
         pub use crate::DefaultCsrState as State;
 
-        pub type State<VT, V> = <V as MaybeValue<VT>>::UpdateWithState;
+        // TODO: redesign state for attributes
+        pub type State<VT, V> = Option<<V as CsrAttrValue<VT>>::State>;
 
         pub fn update_with_state<
             //
             VT: ?Sized + ValueKind,
-            V: MaybeValue<VT>,
+            V: CsrAttrValue<VT>,
             E,
             RR: ?Sized,
             U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
@@ -381,18 +387,18 @@ pub mod MaybeValue {
             state: &mut State<VT, V>,
         ) {
             let (this, updater) = input.into_value_and_updater();
-            V::update_with_state(this, state, updater)
+            V::update_attribute_value_with_option_state(this, updater, state)
         }
     }
 
     pub mod ssr {
-        use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, ValueKind};
+        use frender_attr_value::ssr::SsrAttrValue;
 
         pub use crate::DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<VT, V> = <V as MaybeIntoHtmlAttributeValue<VT>>::HtmlAttributeValue;
+        pub type Haevoe<VT, V> = <V as SsrAttrValue<VT>>::HtmlAttributeValue;
 
-        pub fn maybe_into_haevoe<VT: ?Sized + ValueKind, V: MaybeIntoHtmlAttributeValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub fn maybe_into_haevoe<VT: ?Sized, V: SsrAttrValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_value(this)
         }
     }

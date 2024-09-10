@@ -1,10 +1,10 @@
-use frender::prelude::*;
+use frender::{prelude::*, TempStr};
 
 component_fn!(
     fn Main(main_id: &str) -> impl SsrElement + '_ {
         cs::div
             .class("main")
-            .id(main_id)
+            .id(TempStr(main_id)) // In ssr, this &str is actually to_owned into a String.
             .style(style!(
                 r#"margin: auto;
 padding: 16px;

@@ -554,12 +554,21 @@ macro_rules! impl_attribute {
                         if ($($update_with)?) {
                                 crate::parse_update_with!(match $($update_with)? {
                                     simple => {
-                                        prepend(|el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: <$maybe_ty as frender_html_common::ValueKind>::Value<'_>| el.)
-                                        append( (renderer, v) )
+                                        prepend {
+                                            |v| el.
+                                        }
+                                        append {
+                                            (renderer, v), v
+                                        }
+                                        wrap ()
+                                        prepend {
+                                            |el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: <$maybe_ty as frender_attr_value::csr::ValueKind>::Value<'_>|
+                                                <$maybe_ty as crate::attr::SetAttributeWithDomApi>::set_attribute_with_dom_api
+                                        }
                                     }
                                     impl_with => {
                                         append( as update(
-                                            ValueType(<$maybe_ty as frender_html_common::ValueKind>::Value<'_>)
+                                            ValueType(<$maybe_ty as frender_attr_value::csr::ValueKind>::Value<'_>)
                                             value($value)
                                             element_type(ET::$trait_name<Renderer>)
                                         ))
@@ -568,7 +577,7 @@ macro_rules! impl_attribute {
                                     }
                                 })
                         } else {
-                            <$maybe_ty as crate::dom::attr::SetAsAttributeValue>::set_as_attribute_value
+                            <$maybe_ty as crate::attr::SetAttribute>::set_attribute
                         }
                     },
                     remove: ::frender_common::expand! {

@@ -1,47 +1,49 @@
-use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
-use frender_html_common::{IntoOneStringOrEmpty, MaybeValue};
+mod ssr {
+    use async_str_iter::any_str::IterAnyStr;
 
-use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, CsrComponent};
+    use frender_common::{strings::SsrStr, IntoStaticStr};
 
-impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: MaybeValue<str> + IntoOneStringOrEmpty> SsrComponent<Attrs, Children> for crate::html::tags::style {
-    type OneElement = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::OneStringOrEmpty>;
+    use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 
-    fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
-        Self::OneElement::new(attrs.into_space_and_html_attributes_or_empty(), Children::into_one_string_or_empty(children))
+    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrStr> SsrComponent<Attrs, Children> for crate::html::tags::style {
+        type OneElement = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, IterAnyStr<Children::StaticStr>>;
+
+        fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
+            Self::OneElement::new(attrs.into_space_and_html_attributes_or_empty(), IterAnyStr::new(children.into_into_static_str().into_static_str()))
+        }
     }
 }
 
-enum Never {}
-pub struct Kind<Cache: Default>(Never, std::marker::PhantomData<Cache>);
+mod csr {
+    use crate::element_types::RenderStateWithPehKind;
 
-impl<Cache: Default> RenderStateWithPehKind<crate::html::tags::style> for Kind<Cache> {
-    type RenderStateWithPeh<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<Cache>;
-    type RenderStateWithPehUnpinned<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<Cache>;
-}
+    use crate::kinds::KindOfNonReactive;
+    use crate::CsrComponent;
 
-impl<Children: MaybeValue<str> + IntoOneStringOrEmpty> CsrComponent<Children> for crate::html::tags::style {
-    type ChildrenRenderStateKind = Kind<<Children as MaybeValue<str>>::UpdateWithState>;
+    use frender_common::strings::csr::update_with_option_cache;
+    use frender_common::strings::CsrStr;
+    use frender_common::{IntoStaticStrCache, ToAsRefStr};
+    use frender_dom::behaviors::HtmlElement;
 
-    fn children_render_update<R: crate::RenderHtml + ?Sized>(
-        children: Children,
-        element: &mut Self::Element<R>,
-        renderer: &mut R,
-        children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
-    ) {
-        Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
-    }
+    impl<Children: CsrStr> CsrComponent<Children> for crate::html::tags::style {
+        type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children as CsrStr>::StaticStrCache>>;
 
-    fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
-        children: Children,
-        element: &mut Self::Element<R>,
-        renderer: &mut R,
-        children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
-    ) {
-        MaybeValue::<str>::update_with_state(
-            //
-            children,
-            &mut children_state.0,
-            super::utils::UpdateInnerText(element, renderer),
-        )
+        fn children_render_update<R: crate::RenderHtml + ?Sized>(
+            children: Children,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+        ) {
+            Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
+        }
+
+        fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
+            children: Children,
+            element: &mut Self::Element<R>,
+            renderer: &mut R,
+            children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+        ) {
+            _ = update_with_option_cache(children, &mut children_state.0, |value| element.set_inner_text(renderer, value))
+        }
     }
 }

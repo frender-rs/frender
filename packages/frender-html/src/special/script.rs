@@ -1,10 +1,11 @@
+use frender_attr_value::csr::CsrAttrValue;
+use frender_common::strings::CsrStr;
 use frender_dom::{
     component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent},
     script::IntoScriptContent,
 };
-use frender_html_common::MaybeValue;
 
-use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, CsrComponent};
+use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, kinds::KindOfNonReactive, CsrComponent};
 
 impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrComponent<Attrs, Children> for crate::html::tags::script {
     type OneElement = frender_ssr::html::element::ScriptElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::IntoScriptContent>;
@@ -14,16 +15,8 @@ impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrC
     }
 }
 
-enum Never {}
-pub struct Kind<Cache: Default>(Never, std::marker::PhantomData<Cache>);
-
-impl<Cache: Default> RenderStateWithPehKind<crate::html::tags::script> for Kind<Cache> {
-    type RenderStateWithPeh<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<Cache>;
-    type RenderStateWithPehUnpinned<R: crate::RenderHtml + ?Sized> = NonReactiveRenderState<Cache>;
-}
-
 impl<Children: IntoScriptContent> CsrComponent<Children> for crate::html::tags::script {
-    type ChildrenRenderStateKind = Kind<<Children::IntoScriptInnerText as MaybeValue<str>>::UpdateWithState>;
+    type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children::IntoScriptInnerText as CsrAttrValue<str>>::State>>;
 
     fn children_render_update<R: crate::RenderHtml + ?Sized>(
         children: Children,
@@ -38,13 +31,14 @@ impl<Children: IntoScriptContent> CsrComponent<Children> for crate::html::tags::
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,
-        children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+        NonReactiveRenderState(state): &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
     ) {
-        MaybeValue::<str>::update_with_state(
-            //
-            Children::into_script_inner_text(children),
-            &mut children_state.0,
-            super::utils::UpdateInnerText(element, renderer),
-        )
+        let children = Children::into_script_inner_text(children);
+        let updater = super::utils::UpdateInnerText(element, renderer);
+        if let Some(state) = state {
+            <_>::update_attribute_value_with_state(children, updater, state)
+        } else {
+            *state = Some(<_>::update_absent_attribute_value_into_state(children, updater))
+        }
     }
 }

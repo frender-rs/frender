@@ -19,6 +19,7 @@ either = { version = "1.9.0", default-features = false, optional = true }
 frender-csr = { version = "0.1.0", path = "../frender-csr" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
+frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -51,6 +52,7 @@ either = [
     "frender-html-common/either",
     "frender-ssr/either",
     "frender-csr/either",
+    "frender-attr-value/either",
     "frender-dom-tokens/either",
     "frender-style/either",
 ]

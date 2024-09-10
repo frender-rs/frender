@@ -1,3 +1,4 @@
+use frender_attr_value::ssr::SsrAttrValue;
 pub use provide::{
     BorrowToProvideFormControlValue, MaybeProvideFormControlValue, NeverProvideFormControlValue,
     ProvideFormControlValue,
@@ -5,7 +6,7 @@ pub use provide::{
 
 use std::borrow::{Borrow, Cow};
 
-use frender_html_common::{attr::MaybeIntoHtmlAttributeValue, IntoOneStringOrEmpty};
+use frender_html_common::IntoOneStringOrEmpty;
 
 use crate::{
     render_state::non_reactive::NonReactiveRenderState, RenderStateWithParentElementsHandle,
@@ -98,7 +99,7 @@ impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for crate::Empty {
     }
 }
 
-/// This wrapper proxies [`IntoOneStringOrEmpty`] and [`MaybeIntoHtmlAttributeValue`].
+/// This wrapper proxies [`IntoOneStringOrEmpty`] and [`SsrAttrValue`].
 #[derive(Debug)]
 pub struct UncontrolledWithDefaultValue<V>(pub V);
 
@@ -110,9 +111,7 @@ impl<V: IntoOneStringOrEmpty> IntoOneStringOrEmpty for UncontrolledWithDefaultVa
     }
 }
 
-impl<V: MaybeIntoHtmlAttributeValue<AT>, AT: ?Sized> MaybeIntoHtmlAttributeValue<AT>
-    for UncontrolledWithDefaultValue<V>
-{
+impl<V: SsrAttrValue<AT>, AT: ?Sized> SsrAttrValue<AT> for UncontrolledWithDefaultValue<V> {
     type HtmlAttributeValue = V::HtmlAttributeValue;
 
     fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {

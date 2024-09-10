@@ -1,8 +1,8 @@
+use frender_attr_value::html::{ContentEditable, Spellcheck};
 use frender_dom::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
     OnEvent,
 };
-use frender_html_common::{ContentEditable, Spellcheck};
 
 use crate::impl_bounds::{DomTokens, SetRef, Style};
 
@@ -803,13 +803,13 @@ crate::def_intrinsic_component_props!(
                         fn auto_focus(value: maybe![bool]) {
                             attr_name!("autofocus");
                         }
-                        fn content_editable(value: maybe![ContentEditable<'static>]) {
+                        fn content_editable(value: maybe![ContentEditable]) {
                             attr_name!("contenteditable");
                             update_with!(
                                 //
                                 set_content_editable,
                                 custom_type!(&str),
-                                impl_with!(update = |element, renderer| element.set_content_editable(renderer, value.0)),
+                                impl_with!(update = |element, renderer| element.set_content_editable(renderer, value)),
                             );
                         }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]

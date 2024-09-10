@@ -25,9 +25,10 @@ frender_common::impl_many!(
     }
 );
 
+/// <code>where TempStr<S>: [SsrStr](frender_common::strings::SsrStr)</code>
 impl<S> SsrElement for frender_common::TempStr<S>
 where
-    S: frender_common::ToStaticStr,
+    S: frender_common::IntoStaticStr,
 {
     type HtmlChildren = frender_ssr_html::encode::Encode<
         frender_ssr_html::escape_safe::Safe,

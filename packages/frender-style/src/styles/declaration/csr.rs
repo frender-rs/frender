@@ -1,4 +1,4 @@
-use frender_common::ToStaticCache as _;
+use frender_common::IntoStaticStrCache;
 
 use crate::{
     csr::{CsrStyle, CssStyleDeclaration, Priority},
@@ -40,52 +40,55 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             important,
         } = this.0.into_declaration();
 
-        let name = <D::Name>::into_cacheable(name);
-        let value = <D::Value>::into_cacheable(value);
-
         if let Some(cache) = state {
-            if !cache.removed && name.match_cache(&cache.name) {
-                if value.match_cache(&cache.value) {
+            if !cache.removed && <D::Name>::match_cache(&name, &cache.name) {
+                if <D::Value>::match_cache(&value, &cache.value) {
                     if important.match_cache(&cache.important) {
                         // all cache matched
                         // doesn't nothing
                     } else {
                         StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
                             style,
-                            name: &name,
-                            value: &value,
+                            name: &cache.name,
+                            value: &cache.value,
                             important: &important,
                         }
                         .update();
                         important.update_into_cache(&mut cache.important);
                     }
                 } else {
+                    <D::Value>::into_cacheable(value)
+                        .update_into_static_str_cache(&mut cache.value);
+
                     StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
                         style,
-                        name: &name,
-                        value: &value,
+                        name: &cache.name,
+                        value: &cache.value,
                         important: &important,
                     }
                     .update();
-                    value.update_into_static_cache(&mut cache.value);
                     important.update_into_cache(&mut cache.important);
                 }
             } else {
+                <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut cache.name);
+                <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut cache.value);
+
                 <D::Name>::update_style(
-                    &name,
+                    &cache.name,
                     StyleWithValueAndImportantReady::<_, D::Value, D::Important> {
                         style,
-                        value: &value,
+                        value: &cache.value,
                         important: &important,
                     },
                 );
 
                 cache.removed = false;
-                name.update_into_static_cache(&mut cache.name);
-                value.update_into_static_cache(&mut cache.value);
                 important.update_into_cache(&mut cache.important);
             }
         } else {
+            let name = <D::Name>::into_cacheable(name).into_static_str_cache();
+            let value = <D::Value>::into_cacheable(value).into_static_str_cache();
+
             StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
                 style,
                 name: &name,
@@ -95,8 +98,8 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             .update();
 
             *state = Some(State {
-                name: name.into_static_cache(),
-                value: value.into_static_cache(),
+                name,
+                value,
                 important: important.into_static_cache(),
                 removed: false,
             })
@@ -216,7 +219,7 @@ struct StyleWithValueAndImportantReady<
     I: CsrDeclarationImportant,
 > {
     style: &'a mut S,
-    value: &'a V::Cacheable,
+    value: &'a V::StaticCache,
     important: &'a I,
 }
 
@@ -258,8 +261,8 @@ struct StyleWithAllReady<
     I: CsrDeclarationImportant,
 > {
     style: &'a mut S,
-    name: &'a N::Cacheable,
-    value: &'a V::Cacheable,
+    name: &'a N::StaticCache,
+    value: &'a V::StaticCache,
     important: &'a I,
 }
 

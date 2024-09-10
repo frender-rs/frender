@@ -1,3 +1,5 @@
+/// ## impl [`AttrValue<ContentEditable>`](crate::AttrValue) for
+///
 /// - [`Empty`](frender_common::Empty)
 ///
 ///   As [documented](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#value),
@@ -21,9 +23,9 @@ mod empty {
     mod ssr {
         use frender_common::Empty;
 
-        use crate::{html::ContentEditable, ssr::MaybeIntoHtmlAttributeValue};
+        use crate::{html::ContentEditable, ssr::SsrAttrValue};
 
-        impl MaybeIntoHtmlAttributeValue<ContentEditable> for Empty {
+        impl SsrAttrValue<ContentEditable> for Empty {
             type HtmlAttributeValue = async_str_iter::empty::Empty;
 
             fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {
@@ -36,28 +38,11 @@ mod empty {
         use frender_common::Empty;
 
         use crate::{
-            csr::{MaybeValue, ValueUpdater},
-            html::ContentEditable,
+            csr::CsrAttrValue, html::ContentEditable, impl_csr_attr_value_for_unit_struct,
         };
 
-        impl MaybeValue<ContentEditable> for Empty {
-            // whether initialized
-            type UpdateWithState = bool;
-
-            fn update_with_state(
-                _: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<ContentEditable>,
-            ) {
-                if !*state {
-                    *state = true;
-                    updater.update("")
-                }
-            }
-
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                !*state
-            }
+        impl CsrAttrValue<ContentEditable> for Empty {
+            impl_csr_attr_value_for_unit_struct!(("") as ContentEditable);
         }
     }
 }
@@ -66,90 +51,68 @@ mod bool {
     mod ssr {
         use crate::{
             html::{bool_to_str, ContentEditable},
-            ssr::MaybeIntoHtmlAttributeValue,
+            ssr::SsrAttrValue,
         };
 
-        impl MaybeIntoHtmlAttributeValue<ContentEditable> for bool {
-            type HtmlAttributeValue =
-                <&'static str as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
+        impl SsrAttrValue<ContentEditable> for bool {
+            type HtmlAttributeValue = <&'static str as SsrAttrValue<str>>::HtmlAttributeValue;
 
             fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-                <&'static str as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(
-                    bool_to_str(this),
-                )
+                <&'static str as SsrAttrValue<str>>::maybe_into_html_attribute_value(bool_to_str(
+                    this,
+                ))
             }
         }
     }
 
     mod csr {
         use crate::{
-            csr::{MaybeValue, ValueUpdater},
+            csr::CsrAttrValue,
             html::{bool_to_str, ContentEditable},
+            impl_csr_attr_value_with_cache,
         };
 
-        impl MaybeValue<ContentEditable> for bool {
-            type UpdateWithState = Option<Self>;
+        impl CsrAttrValue<ContentEditable> for bool {
+            type State = Self;
 
-            fn update_with_state(
-                this: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<ContentEditable>,
-            ) {
-                if *state == Some(this) {
-                    return;
-                }
-                *state = Some(this);
-                updater.update(bool_to_str(this));
-            }
-
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                state.is_none()
-            }
+            impl_csr_attr_value_with_cache!(
+                kind![ContentEditable],
+                set = |this| bool_to_str(this),
+                eq = Self::eq,
+            );
         }
     }
 }
 
 mod string {
     mod ssr {
-        use frender_common::{TempStr, ToStaticStr};
+        use crate::{html::ContentEditable, ssr::SsrAttrValue, values::str::KnownSsrStr};
 
-        use crate::{
-            html::ContentEditable, ssr::MaybeIntoHtmlAttributeValue, string::KnownStaticStr,
-        };
-
-        impl<V: KnownStaticStr> MaybeIntoHtmlAttributeValue<ContentEditable> for V {
-            type HtmlAttributeValue =
-                <Self as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
+        impl<V: KnownSsrStr> SsrAttrValue<ContentEditable> for V {
+            type HtmlAttributeValue = <Self as SsrAttrValue<str>>::HtmlAttributeValue;
 
             fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-                <Self as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(this)
-            }
-        }
-
-        impl<S: ToStaticStr> MaybeIntoHtmlAttributeValue<ContentEditable> for TempStr<S> {
-            type HtmlAttributeValue =
-                <Self as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
-
-            fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-                <Self as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(this)
+                <Self as SsrAttrValue<str>>::maybe_into_html_attribute_value(this)
             }
         }
     }
 
     mod csr {
-        use frender_common::{ToAsRefStr, ToStaticCache};
+        use frender_common::{strings::CsrStr, ToAsRefStr};
 
         use crate::{
-            csr::{MaybeValue, ValueUpdater},
+            csr::{CsrAttrValue, UpdateAttrValue},
             html::ContentEditable,
-            string::KnownStaticStr,
+            values::str::KnownCsrStr,
         };
 
-        struct UpdateStr<U: ValueUpdater<ContentEditable>>(U);
+        struct UpdateStr<U: UpdateAttrValue<Kind = ContentEditable>>(U);
 
-        impl<U: ValueUpdater<ContentEditable>> ValueUpdater<str> for UpdateStr<U> {
-            fn update(self, value: &str) {
-                self.0.update(value)
+        impl<U: UpdateAttrValue<Kind = ContentEditable>> UpdateAttrValue for UpdateStr<U> {
+            type Kind = str;
+
+            fn set(self, value: &str) {
+                self.0.set(value)
             }
 
             fn remove(self) {
@@ -157,35 +120,45 @@ mod string {
             }
         }
 
-        impl<V: KnownStaticStr> MaybeValue<ContentEditable> for V {
-            type UpdateWithState = <Self as MaybeValue<str>>::UpdateWithState;
+        impl<V: KnownCsrStr> CsrAttrValue<ContentEditable> for V {
+            type State = <Self as CsrAttrValue<str>>::State;
 
-            fn update_with_state(
+            fn update_attribute_value_into_state(
                 this: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<ContentEditable>,
-            ) {
-                <Self as MaybeValue<str>>::update_with_state(this, state, UpdateStr(updater))
+                updater: impl UpdateAttrValue<Kind = ContentEditable>,
+            ) -> Self::State {
+                <Self as CsrAttrValue<str>>::update_attribute_value_into_state(
+                    this,
+                    UpdateStr(updater),
+                )
             }
 
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                <Self as MaybeValue<str>>::state_could_skip_remove(state)
+            fn can_skip_update(this: &Self, state: &Self::State) -> bool {
+                <Self as CsrAttrValue<str>>::can_skip_update(this, state)
             }
-        }
 
-        impl<S: ToStaticCache + ToAsRefStr> MaybeValue<ContentEditable> for frender_common::TempStr<S> {
-            type UpdateWithState = <Self as MaybeValue<str>>::UpdateWithState;
-
-            fn update_with_state(
+            fn update_attribute_value_with_state(
                 this: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<ContentEditable>,
+                updater: impl UpdateAttrValue<Kind = ContentEditable>,
+                state: &mut Self::State,
             ) {
-                <Self as MaybeValue<str>>::update_with_state(this, state, UpdateStr(updater))
+                <Self as CsrAttrValue<str>>::update_attribute_value_with_state(
+                    this,
+                    UpdateStr(updater),
+                    state,
+                )
             }
 
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                <Self as MaybeValue<str>>::state_could_skip_remove(state)
+            fn force_update_attribute_value_with_state(
+                this: Self,
+                updater: impl UpdateAttrValue<Kind = ContentEditable>,
+                state: &mut Self::State,
+            ) {
+                <Self as CsrAttrValue<str>>::force_update_attribute_value_with_state(
+                    this,
+                    UpdateStr(updater),
+                    state,
+                )
             }
         }
     }

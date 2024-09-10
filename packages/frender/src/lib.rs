@@ -17,11 +17,11 @@ pub use elements::synced_collection::{
     synced_collection_to_elements, synced_vec_to_elements, SyncedCollection, SyncedVec,
 };
 
-mod missing;
-pub use missing::Missing;
+mod absent;
+pub use absent::Absent;
 
 pub use frender_common::{
-    EventListenerOptions, HandleEventWithOptions, TempStr, ToAsRefStr, ToStaticCache, ToStaticStr,
+    EventListenerOptions, HandleEventWithOptions, TempStr, ToAsRefStr, ToStaticStr,
 };
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;

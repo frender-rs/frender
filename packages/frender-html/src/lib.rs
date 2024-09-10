@@ -48,3 +48,5 @@ pub mod __private {
 }
 
 mod special;
+
+mod attr;

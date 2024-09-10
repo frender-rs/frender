@@ -28,7 +28,7 @@ pub mod behaviors;
 
 pub mod script;
 
-pub mod attr;
+pub use frender_attr_value as attr_value;
 
 pub mod special;
 

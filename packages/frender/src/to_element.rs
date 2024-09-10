@@ -111,16 +111,32 @@ mod imps {
     );
 
     // acts like `TempStr<&'static str>`
+    impl ToElement for str {
+        type ToElementHtmlChildren = <TempStr<&'static str> as SsrElement>::HtmlChildren;
+
+        type ToElementRenderStateKind = <TempStr<&'static str> as CsrElement>::RenderStateKind;
+
+        type ToElement<'a> = TempStr<&'a str>
+        where
+            Self: 'a;
+
+        fn to_element(&self) -> Self::ToElement<'_> {
+            TempStr(self)
+        }
+    }
+
+    // acts like `TempStr<&'static String>`
     frender_common::impl_many!(
         impl<__> ToElement
             for each_of![
-                str, //
+                //
                 String,
                 std::borrow::Cow<'_, str>,
             ]
         {
-            type ToElementHtmlChildren = <TempStr<&'static str> as SsrElement>::HtmlChildren;
-            type ToElementRenderStateKind = <TempStr<&'static str> as CsrElement>::RenderStateKind;
+            type ToElementHtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren;
+            type ToElementRenderStateKind =
+                <TempStr<&'static String> as CsrElement>::RenderStateKind;
             type ToElement<'a> = TempStr<&'a Self>
             where
                 Self: 'a;

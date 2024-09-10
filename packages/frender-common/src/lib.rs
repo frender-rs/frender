@@ -4,7 +4,10 @@ mod primary_borrow;
 pub use primary_borrow::PrimarilyBorrow;
 
 mod temp_str;
-pub use temp_str::{TempStr, ToAsRefStr, ToStaticCache, ToStaticStr};
+pub use temp_str::{
+    IntoStaticStr, IntoStaticStrCache, RefToStaticStrCache, TempStr, ToAsRefStr, ToStaticStr,
+    ToStaticStrCache,
+};
 
 mod event;
 pub use event::*;

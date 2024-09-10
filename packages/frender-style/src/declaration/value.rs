@@ -1,5 +1,5 @@
 use ccss::collections::{
-    component_value_list::{IsKnownComponentValueList, KnownComponentValueList},
+    component_value_list::IsKnownComponentValueList,
     declaration_value_list::KnownDeclarationValueList,
 };
 
@@ -85,7 +85,7 @@ pub trait IntoDeclarationValue: ssr::IntoSsrDeclarationValue + csr::CsrDeclarati
 impl<T: ssr::IntoSsrDeclarationValue + csr::CsrDeclarationValue> IntoDeclarationValue for T {}
 
 pub mod ssr {
-    use frender_common::{strings::StrToStaticStr, ToStaticStr};
+    use frender_common::{strings::SsrStr, IntoStaticStr};
 
     use super::DeclarationValue;
 
@@ -97,17 +97,17 @@ pub mod ssr {
             -> DeclarationValue<Self::StaticDeclarationValueStr>;
     }
 
-    impl<S: StrToStaticStr> IntoSsrDeclarationValue for S {
+    impl<S: SsrStr> IntoSsrDeclarationValue for S {
         type StaticDeclarationValueStr = S::StaticStr;
 
         fn into_static_declaration_value(
             self,
         ) -> DeclarationValue<Self::StaticDeclarationValueStr> {
-            DeclarationValue::new(self.into_to_static_str().into_static_str())
+            DeclarationValue::new(self.into_into_static_str().into_static_str())
         }
     }
 
-    impl<S: StrToStaticStr> IntoSsrDeclarationValue for DeclarationValue<S> {
+    impl<S: SsrStr> IntoSsrDeclarationValue for DeclarationValue<S> {
         type StaticDeclarationValueStr = S::StaticStr;
 
         fn into_static_declaration_value(
@@ -115,17 +115,15 @@ pub mod ssr {
         ) -> DeclarationValue<Self::StaticDeclarationValueStr> {
             // This assumes StrToAsRefStr and ToStaticStr are implemented in the way that the string value doesn't change
             DeclarationValue {
-                unparsed: self.unparsed.into_to_static_str().into_static_str(),
+                unparsed: self.unparsed.into_into_static_str().into_static_str(),
             }
         }
     }
 }
 
 pub mod csr {
-    use frender_common::{
-        strings::{StrToAsRefStr, StrToStaticCache, StrToStaticStr},
-        ToAsRefStr, ToStaticCache,
-    };
+
+    use frender_common::{strings::CsrStr, IntoStaticStrCache, ToAsRefStr};
 
     use super::DeclarationValue;
 
@@ -135,43 +133,94 @@ pub mod csr {
     }
 
     pub trait CsrDeclarationValue {
-        type Cacheable: ToStaticCache<StaticCache = Self::StaticCache>;
+        type Cacheable: IntoStaticStrCache<StaticStrCache = Self::StaticCache>;
         type StaticCache: 'static;
+
+        fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool;
 
         fn into_cacheable(this: Self) -> Self::Cacheable;
 
-        fn update_style(this: &Self::Cacheable, style: impl UpdateStyleWithDeclarationValue);
+        fn update_style(this: &Self::StaticCache, style: impl UpdateStyleWithDeclarationValue);
     }
 
-    impl<S: StrToStaticStr + StrToStaticCache> CsrDeclarationValue for S {
-        type Cacheable = S::IntoToStaticCache;
-        type StaticCache = S::StaticCache;
+    impl<S: CsrStr> CsrDeclarationValue for S {
+        type Cacheable = S::IntoIntoStaticStrCache;
+        type StaticCache = S::StaticStrCache;
 
-        fn into_cacheable(this: Self) -> Self::Cacheable {
-            this.into_to_static_cache()
+        fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool {
+            cache == this
         }
 
-        fn update_style(this: &Self::Cacheable, style: impl UpdateStyleWithDeclarationValue) {
+        fn into_cacheable(this: Self) -> Self::Cacheable {
+            this.into_into_static_str_cache()
+        }
+
+        fn update_style(this: &Self::StaticCache, style: impl UpdateStyleWithDeclarationValue) {
             style.update_style_with_declaration_value_str(this.to_as_ref_str().as_ref())
         }
     }
 
-    pub struct CacheableDeclarationValue<S: ToStaticCache>(S);
+    pub struct CacheableDeclarationValue<S>(S);
 
-    impl<S: ToStaticCache> ToStaticCache for CacheableDeclarationValue<S> {
-        type StaticCache = S::StaticCache;
-        frender_common::proxy_to_static_cache!(|self| -> S { self.0 });
+    pub struct CacheableDeclarationValueIntoStaticStrCache<S>(S);
+
+    impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationValue<S> {
+        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        where
+            Self: 'a;
+
+        fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+            self.0.to_as_ref_str()
+        }
     }
 
-    impl<S: StrToStaticStr + StrToStaticCache> CsrDeclarationValue for DeclarationValue<S> {
-        type Cacheable = CacheableDeclarationValue<S::IntoToStaticCache>;
-        type StaticCache = S::StaticCache;
+    impl<S: IntoStaticStrCache> IntoStaticStrCache for CacheableDeclarationValue<S> {
+        type StaticStrCache = CacheableDeclarationValueIntoStaticStrCache<S::StaticStrCache>;
 
-        fn into_cacheable(this: Self) -> Self::Cacheable {
-            CacheableDeclarationValue(this.into_unparsed().into_to_static_cache())
+        fn into_static_str_cache(self) -> Self::StaticStrCache {
+            CacheableDeclarationValueIntoStaticStrCache(self.0.into_static_str_cache())
         }
 
-        fn update_style(this: &Self::Cacheable, style: impl UpdateStyleWithDeclarationValue) {
+        fn update_into_static_str_cache(self, cache: &mut Self::StaticStrCache) {
+            self.0.update_into_static_str_cache(&mut cache.0)
+        }
+    }
+
+    impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationValueIntoStaticStrCache<S> {
+        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        where
+            Self: 'a;
+
+        fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+            self.0.to_as_ref_str()
+        }
+    }
+
+    impl<S: PartialEq<T>, T> PartialEq<CacheableDeclarationValue<T>>
+        for CacheableDeclarationValueIntoStaticStrCache<S>
+    {
+        fn eq(&self, other: &CacheableDeclarationValue<T>) -> bool {
+            S::eq(&self.0, &other.0)
+        }
+
+        fn ne(&self, other: &CacheableDeclarationValue<T>) -> bool {
+            S::ne(&self.0, &other.0)
+        }
+    }
+
+    impl<S: CsrStr> CsrDeclarationValue for DeclarationValue<S> {
+        type Cacheable = CacheableDeclarationValue<S::IntoIntoStaticStrCache>;
+        type StaticCache = CacheableDeclarationValueIntoStaticStrCache<S::StaticStrCache>;
+
+        fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool {
+            cache.0 == this.unparsed
+        }
+
+        fn into_cacheable(this: Self) -> Self::Cacheable {
+            CacheableDeclarationValue(this.into_unparsed().into_into_static_str_cache())
+        }
+
+        fn update_style(this: &Self::StaticCache, style: impl UpdateStyleWithDeclarationValue) {
             style.update_style_with_declaration_value(DeclarationValue {
                 unparsed: this.0.to_as_ref_str().as_ref(),
             })

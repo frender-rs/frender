@@ -25,38 +25,29 @@ impl crate::csr::ValueKind for Spellcheck {
 
 mod impl_spellcheck {
     mod ssr {
-        use crate::{html::Spellcheck, ssr::MaybeIntoHtmlAttributeValue};
+        use crate::{html::Spellcheck, ssr::SsrAttrValue};
 
-        impl MaybeIntoHtmlAttributeValue<Spellcheck> for Spellcheck {
-            type HtmlAttributeValue =
-                <bool as MaybeIntoHtmlAttributeValue<Spellcheck>>::HtmlAttributeValue;
+        impl SsrAttrValue<Spellcheck> for Spellcheck {
+            type HtmlAttributeValue = <bool as SsrAttrValue<Spellcheck>>::HtmlAttributeValue;
 
             fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-                MaybeIntoHtmlAttributeValue::<Spellcheck>::maybe_into_html_attribute_value(this.0)
+                SsrAttrValue::<Spellcheck>::maybe_into_html_attribute_value(this.0)
             }
         }
     }
 
     mod csr {
-        use crate::{
-            csr::{MaybeValue, ValueUpdater},
-            html::Spellcheck,
-        };
+        use crate::{csr::CsrAttrValue, html::Spellcheck, impl_csr_attr_value_with_cache};
 
-        impl MaybeValue<Spellcheck> for Spellcheck {
-            type UpdateWithState = Option<bool>;
+        impl CsrAttrValue<Spellcheck> for Spellcheck {
+            type State = bool;
 
-            fn update_with_state(
-                this: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<Spellcheck>,
-            ) {
-                <bool>::update_with_state(this.0, state, updater)
-            }
-
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                <bool as MaybeValue<Spellcheck>>::state_could_skip_remove(state)
-            }
+            impl_csr_attr_value_with_cache!(
+                kind![Spellcheck],
+                set = |this| this,
+                into_cache = this.0,
+                eq = |this, cache| this.0 == *cache,
+            );
         }
     }
 }
@@ -65,45 +56,31 @@ mod bool {
     mod ssr {
         use crate::{
             html::{bool_to_str, Spellcheck},
-            ssr::MaybeIntoHtmlAttributeValue,
+            ssr::SsrAttrValue,
         };
 
-        impl MaybeIntoHtmlAttributeValue<Spellcheck> for bool {
-            type HtmlAttributeValue =
-                <&'static str as MaybeIntoHtmlAttributeValue<str>>::HtmlAttributeValue;
+        impl SsrAttrValue<Spellcheck> for bool {
+            type HtmlAttributeValue = <&'static str as SsrAttrValue<str>>::HtmlAttributeValue;
 
             fn maybe_into_html_attribute_value(this: Self) -> Option<Self::HtmlAttributeValue> {
-                <&'static str as MaybeIntoHtmlAttributeValue<str>>::maybe_into_html_attribute_value(
-                    bool_to_str(this),
-                )
+                <&'static str as SsrAttrValue<str>>::maybe_into_html_attribute_value(bool_to_str(
+                    this,
+                ))
             }
         }
     }
 
     mod csr {
-        use crate::{
-            csr::{MaybeValue, ValueUpdater},
-            html::Spellcheck,
-        };
+        use crate::{csr::CsrAttrValue, html::Spellcheck, impl_csr_attr_value_with_cache};
 
-        impl MaybeValue<Spellcheck> for bool {
-            type UpdateWithState = Option<Self>;
+        impl CsrAttrValue<Spellcheck> for bool {
+            type State = Self;
 
-            fn update_with_state(
-                this: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<Spellcheck>,
-            ) {
-                if *state == Some(this) {
-                    return;
-                }
-                *state = Some(this);
-                updater.update(Spellcheck(this));
-            }
-
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                state.is_none()
-            }
+            impl_csr_attr_value_with_cache!(
+                kind![Spellcheck],
+                set = |this| Spellcheck(this),
+                eq = Self::eq,
+            );
         }
     }
 }
@@ -112,9 +89,9 @@ mod empty {
     mod ssr {
         use frender_common::Empty;
 
-        use crate::{html::Spellcheck, ssr::MaybeIntoHtmlAttributeValue};
+        use crate::{html::Spellcheck, ssr::SsrAttrValue};
 
-        impl MaybeIntoHtmlAttributeValue<Spellcheck> for Empty {
+        impl SsrAttrValue<Spellcheck> for Empty {
             type HtmlAttributeValue = async_str_iter::empty::Empty;
 
             fn maybe_into_html_attribute_value(Self: Self) -> Option<Self::HtmlAttributeValue> {
@@ -126,29 +103,10 @@ mod empty {
     mod csr {
         use frender_common::Empty;
 
-        use crate::{
-            csr::{MaybeValue, ValueUpdater},
-            html::Spellcheck,
-        };
+        use crate::{csr::CsrAttrValue, html::Spellcheck, impl_csr_attr_value_for_unit_struct};
 
-        impl MaybeValue<Spellcheck> for Empty {
-            // whether initialized
-            type UpdateWithState = bool;
-
-            fn update_with_state(
-                _: Self,
-                state: &mut Self::UpdateWithState,
-                updater: impl ValueUpdater<Spellcheck>,
-            ) {
-                if !*state {
-                    *state = true;
-                    updater.update(Spellcheck::EMPTY)
-                }
-            }
-
-            fn state_could_skip_remove(state: &Self::UpdateWithState) -> bool {
-                !*state
-            }
+        impl CsrAttrValue<Spellcheck> for Empty {
+            impl_csr_attr_value_for_unit_struct!((Spellcheck::EMPTY) as Spellcheck);
         }
     }
 }

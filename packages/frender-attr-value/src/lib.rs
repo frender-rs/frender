@@ -3,20 +3,20 @@ pub mod ssr;
 
 mod kinds;
 
+pub mod values;
+
 #[cfg(feature = "html")]
 pub mod html;
 
-mod string;
-
 /// A trait alias.
-pub trait MaybeAttrValue<VK: ?Sized + crate::csr::ValueKind>:
-    ssr::MaybeIntoHtmlAttributeValue<VK> + crate::csr::MaybeValue<VK>
+pub trait AttrValue<VK: ?Sized + crate::csr::ValueKind>:
+    ssr::SsrAttrValue<VK> + crate::csr::CsrAttrValue<VK>
 {
 }
 
 impl<
-        T: ?Sized + ssr::MaybeIntoHtmlAttributeValue<VK> + crate::csr::MaybeValue<VK>,
+        T: ?Sized + ssr::SsrAttrValue<VK> + crate::csr::CsrAttrValue<VK>,
         VK: ?Sized + crate::csr::ValueKind,
-    > MaybeAttrValue<VK> for T
+    > AttrValue<VK> for T
 {
 }
