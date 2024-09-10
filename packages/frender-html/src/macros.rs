@@ -583,9 +583,23 @@ macro_rules! impl_attribute {
                     remove: ::frender_common::expand! {
                         if ($($update_with)?) {
                             crate::parse_update_with!(match $($update_with)? {
+                                // RemoveAttributeWithDomApi::remove_attribute_with_dom_api(DomApi {})
                                 simple => {
-                                    reset {}
-                                    {crate::dom::behaviors::Element::remove_attribute}
+                                    prepend {
+                                        element,
+                                        renderer,
+                                        attr_name,
+                                        api_set: <_>::
+                                    }
+                                    wrap {}
+                                    prepend {
+                                        crate::attr::DomApi
+                                    }
+                                    wrap ()
+                                    prepend {
+                                        |element: &mut ET::$trait_name<Renderer>, renderer: &mut _, attr_name: &_|
+                                            <$maybe_ty as crate::attr::RemoveAttributeWithDomApi>::remove_attribute_with_dom_api
+                                    }
                                 }
                                 impl_with => {
                                     append( as remove(element_type(ET::$trait_name<Renderer>)))
