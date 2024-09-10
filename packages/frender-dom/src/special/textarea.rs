@@ -12,21 +12,6 @@ pub trait TextAreaValue: FormControlValue<str> + SsrTextAreaValue {}
 
 impl<T: ?Sized + FormControlValue<str> + SsrTextAreaValue> TextAreaValue for T {}
 
-trait KnownStaticStr: 'static + AsRef<str> {}
-
-frender_common::impl_many!(
-    impl<__> KnownStaticStr
-        for each_of![
-            &'static str,
-            String,
-            std::borrow::Cow<'static, str>,
-            std::rc::Rc<str>,
-            std::sync::Arc<str>,
-        ]
-    {
-    }
-);
-
 mod ssr {
     use async_str_iter::any_str::IterAnyStr;
 
@@ -35,11 +20,11 @@ mod ssr {
 
     use frender_ssr::html::encode::Encode;
 
-    use frender_common::strings::SsrStr;
+    use frender_common::{Empty, IntoStaticStr};
 
-    use frender_common::{Empty, IntoStaticStr, TempStr};
+    use crate::known_str::KnownSsrStr;
 
-    use super::{KnownStaticStr, SsrTextAreaValue};
+    use super::SsrTextAreaValue;
 
     impl SsrTextAreaValue for Empty {
         type IntoSsrTextAreaValue = async_str_iter::empty::Empty;
@@ -48,11 +33,6 @@ mod ssr {
             async_str_iter::empty::Empty
         }
     }
-
-    pub(crate) trait KnownSsrStr: SsrStr {}
-
-    impl<S: KnownStaticStr> KnownSsrStr for S {}
-    impl<S: IntoStaticStr> KnownSsrStr for TempStr<S> {}
 
     impl<S: KnownSsrStr> SsrTextAreaValue for S {
         type IntoSsrTextAreaValue = Encode<Safe, IterAnyStr<S::StaticStr>>;

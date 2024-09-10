@@ -45,3 +45,5 @@ mod render_state_with_peh;
 
 #[cfg(feature = "web")]
 mod shims;
+
+mod known_str;

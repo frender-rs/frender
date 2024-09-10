@@ -1,5 +1,6 @@
 pub use input::{
-    InputChecked, InputDataModel, InputElement, InputValue, InputValueKind, IntoInputDataModel,
+    InputChecked, InputDataModel, InputElement, InputType, InputValue, InputValueKind,
+    IntoInputDataModel,
 };
 
 pub mod element;

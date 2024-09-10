@@ -1,5 +1,5 @@
 mod props_builder {
-    use frender_html_common::MaybeStringValue;
+    use frender_dom::form_control::InputType;
 
     use crate::form_control::InputChecked;
     use crate::html::props::HtmlInputElement;
@@ -9,7 +9,7 @@ mod props_builder {
         props_builder::{PropsBuilderWithChecked, PropsBuilderWithType, PropsBuilderWithValue},
     };
 
-    impl<DataModel: IntoInputDataModel<Type = Empty>, Attrs, EL, V: MaybeStringValue> PropsBuilderWithType<V> for HtmlInputElement<DataModel, Attrs, EL> {
+    impl<DataModel: IntoInputDataModel<Type = Empty>, Attrs, EL, V: InputType> PropsBuilderWithType<V> for HtmlInputElement<DataModel, Attrs, EL> {
         type WithType = HtmlInputElement<InputDataModel<V, DataModel::Value, DataModel::Checked>, Attrs, EL>;
 
         fn r#type(self, value: V) -> Self::WithType {
@@ -73,9 +73,11 @@ mod ssr {
 }
 
 mod csr {
-    use frender_common::convert::IntoMut;
-    use frender_dom::{form_control::InputChecked, render_state::compound::CompoundState};
-    use frender_html_common::MaybeStringValue;
+    use frender_common::{convert::IntoMut, strings::CsrStr};
+    use frender_dom::{
+        form_control::{InputChecked, InputType},
+        render_state::compound::CompoundState,
+    };
 
     use crate::{
         element_types::RenderStateWithPehKind,
@@ -141,7 +143,7 @@ mod csr {
     }
 
     impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for tags::input {
-        type ChildrenRenderStateKind = Kind<DataModel::Value, DataModel::Checked, <DataModel::Type as MaybeStringValue>::StringValue>;
+        type ChildrenRenderStateKind = Kind<DataModel::Value, DataModel::Checked, <<DataModel::Type as InputType>::InputTypeStr as CsrStr>::StaticStrCache>;
 
         fn children_render_update<R: RenderHtml + ?Sized>(
             children: DataModel,
@@ -167,21 +169,24 @@ mod csr {
 
             // type should be updated before value is updated
             {
-                let input_type = <DataModel::Type as MaybeStringValue>::maybe_string_value(r#type);
+                let input_type = <DataModel::Type>::maybe_into_input_type_str(r#type);
 
-                let input_type_str = input_type.as_ref().map(AsRef::as_ref);
-                if state_type.as_ref().map(AsRef::as_ref) != input_type_str {
-                    use frender_dom::behaviors::Element;
+                match (state_type, input_type) {
+                    (None, None) => {}
+                    (state_type, Some(input_type)) => {
+                        _ = frender_common::strings::csr::update_with_option_cache(input_type, state_type, |input_type_str| {
+                            use crate::html::behaviors::ElementWithTypeAttribute;
 
-                    use crate::html::behaviors::ElementWithTypeAttribute;
-
-                    if let Some(input_type_str) = input_type_str {
-                        element.set_type(renderer, input_type_str);
-                    } else {
-                        element.remove_attribute(renderer, "type");
+                            element.set_type(renderer, input_type_str);
+                        })
                     }
+                    (state_type, None) => {
+                        use frender_dom::behaviors::Element;
 
-                    *state_type = input_type;
+                        element.remove_attribute(renderer, "type");
+
+                        *state_type = None;
+                    }
                 }
             }
 

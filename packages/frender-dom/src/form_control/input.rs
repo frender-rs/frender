@@ -1,8 +1,10 @@
 pub use value_kind::InputValueKind;
 
 use async_str_iter::IntoAsyncStrIterator;
-use frender_common::PrimarilyBorrow;
-use frender_html_common::MaybeStringValue;
+use frender_common::{
+    strings::{CsrStr, SsrStr},
+    PrimarilyBorrow,
+};
 
 use crate::{
     form_control::value::{FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue},
@@ -232,6 +234,12 @@ fn convert_number_to_string(input_type: &str, value: f64) -> String {
     };
 }
 
+pub trait InputType {
+    type InputTypeStr: CsrStr + SsrStr;
+
+    fn maybe_into_input_type_str(this: Self) -> Option<Self::InputTypeStr>;
+}
+
 pub trait InputValue:
     FormControlValue<Self::ValueKind> + MaybeProvideFormControlValue<Self::ValueKind>
 {
@@ -240,6 +248,58 @@ pub trait InputValue:
 
 /// A trait alias for [`FormControlValue<bool>`] + [`MaybeProvideFormControlValue<bool>`].
 pub trait InputChecked: FormControlValue<bool> + MaybeProvideFormControlValue<bool> {}
+
+mod input_types {
+    use frender_common::Empty;
+
+    use crate::known_str::{KnownCsrStr, KnownSsrStr};
+
+    use super::InputType;
+
+    // TODO: export
+    #[derive(PartialEq, Eq)]
+    pub enum NeverStr {}
+
+    impl AsRef<str> for NeverStr {
+        fn as_ref(&self) -> &str {
+            match *self {}
+        }
+    }
+
+    impl InputType for Empty {
+        type InputTypeStr = NeverStr;
+
+        fn maybe_into_input_type_str(Self: Self) -> Option<Self::InputTypeStr> {
+            None
+        }
+    }
+
+    impl<S: KnownSsrStr + KnownCsrStr> InputType for S {
+        type InputTypeStr = S;
+
+        fn maybe_into_input_type_str(this: Self) -> Option<Self::InputTypeStr> {
+            Some(this)
+        }
+    }
+
+    impl<S: InputType> InputType for Option<S> {
+        type InputTypeStr = S::InputTypeStr;
+
+        fn maybe_into_input_type_str(this: Self) -> Option<Self::InputTypeStr> {
+            this.and_then(S::maybe_into_input_type_str)
+        }
+    }
+
+    // TODO: Either
+    // #[cfg(feature = "either")]
+    // impl<L: InputType, R: InputType> InputType for either::Either<L, R> {
+    //     type InputTypeStr;
+
+    //     fn maybe_into_input_type_str(this: Self) -> Option<Self::InputTypeStr> {
+    //         todo!()
+    //     }
+    // }
+}
 
 impl<T: FormControlValue<bool> + MaybeProvideFormControlValue<bool>> InputChecked for T {}
 
@@ -282,16 +342,16 @@ impl<L: InputValue, R: InputValue<ValueKind = L::ValueKind>> InputValue for eith
     type ValueKind = L::ValueKind;
 }
 
-pub struct InputDataModel<Type: MaybeStringValue, Value: InputValue, Checked: InputChecked> {
+pub struct InputDataModel<Type: InputType, Value: InputValue, Checked: InputChecked> {
     pub r#type: Type,
     pub value: Value,
     pub checked: Checked,
 }
 
-impl<Type: MaybeStringValue, Value: InputValue, Checked: InputChecked>
+impl<Type: InputType, Value: InputValue, Checked: InputChecked>
     InputDataModel<Type, Value, Checked>
 {
-    pub fn map_type<V: MaybeStringValue>(
+    pub fn map_type<V: InputType>(
         self,
         f: impl FnOnce(Type) -> V,
     ) -> InputDataModel<V, Value, Checked> {
@@ -341,7 +401,7 @@ impl<Type: MaybeStringValue, Value: InputValue, Checked: InputChecked>
 }
 
 pub trait IntoInputDataModel {
-    type Type: MaybeStringValue;
+    type Type: InputType;
     type Value: InputValue;
     type Checked: InputChecked;
 
@@ -364,7 +424,7 @@ impl IntoInputDataModel for Empty {
 
 impl<
         //
-        Type: MaybeStringValue,
+        Type: InputType,
         Value: InputValue,
         Checked: InputChecked,
     > IntoInputDataModel for InputDataModel<Type, Value, Checked>
@@ -379,8 +439,8 @@ impl<
 }
 
 mod ssr {
-    use async_str_iter::{chain::Chain, option::IterOption};
-    use frender_html_common::StringValue;
+    use async_str_iter::{any_str::IterAnyStr, chain::Chain, option::IterOption};
+    use frender_common::IntoStaticStr;
     use frender_ssr::html::{
         attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute},
         attr_value::AttrEqValue,
@@ -392,7 +452,7 @@ mod ssr {
 
     impl<
             //
-            Type: MaybeStringValue,
+            Type: InputType,
             Value: InputValue,
             Checked: InputChecked,
         > IntoSpaceAndHtmlAttributesOrEmpty for InputDataModel<Type, Value, Checked>
@@ -403,7 +463,9 @@ mod ssr {
                 SpaceAndHtmlAttribute<
                     //
                     AssertSpaceAndHtmlAttributeName<&'static str>,
-                    AttrEqValue<<<Type as MaybeStringValue>::StringValue as StringValue>::OneString>,
+                    AttrEqValue<IterAnyStr<
+                        <<Type as InputType>::InputTypeStr as SsrStr>::StaticStr
+                    >>,
                 >,
             >,
             Chain<
@@ -437,7 +499,8 @@ mod ssr {
                 checked,
             } = self;
 
-            let input_type = Type::maybe_string_value(input_type);
+            let input_type = Type::maybe_into_input_type_str(input_type)
+                .map(|v| v.into_into_static_str().into_static_str());
 
             let value_attr = Value::maybe_into_provide_form_control_value(value)
                 .map(|value| {
@@ -455,7 +518,7 @@ mod ssr {
             Chain::new(
                 input_type
                     .map(|input_type| {
-                        let value = input_type.into_async_str_iterator();
+                        let value = IterAnyStr::new(input_type);
                         let value = AttrEqValue(value);
                         SpaceAndHtmlAttribute(TYPE, value)
                     })
