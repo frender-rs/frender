@@ -366,10 +366,11 @@ const fn slice_range<T>(s: &[T], std::ops::Range { start, end }: std::ops::Range
     s.split_at(end).0.split_at(start).1
 }
 
-pub mod separate {
+pub(crate) mod separate {
     use super::*;
 
-    pub const fn separate_dom_tokens_count(s: &str) -> usize {
+    #[cfg(test)]
+    const fn separate_dom_tokens_count(s: &str) -> usize {
         assert_ascii(s);
 
         let s = s.as_bytes();
@@ -394,7 +395,7 @@ pub mod separate {
         count
     }
 
-    pub const fn separate_dom_tokens<const N: usize>(s: &str) -> [DomToken<'_>; N] {
+    pub(crate) const fn separate_dom_tokens<const N: usize>(s: &str) -> [DomToken<'_>; N] {
         assert_ascii(s);
 
         let bytes = s.as_bytes();
@@ -493,6 +494,7 @@ pub mod separate {
     }
 }
 
+#[cfg(test)]
 const fn str_from_utf8(s: &[u8]) -> &str {
     if let Ok(s) = std::str::from_utf8(s) {
         s
@@ -501,8 +503,9 @@ const fn str_from_utf8(s: &[u8]) -> &str {
     }
 }
 
+#[cfg(test)]
 // `(space_and_dom_tokens, dom_tokens)` is returned.
-pub const fn make_dom_tokens_strings(spaces_and_dom_tokens: &str) -> (&str, &str) {
+const fn make_dom_tokens_strings(spaces_and_dom_tokens: &str) -> (&str, &str) {
     assert_ascii(spaces_and_dom_tokens);
 
     let bytes = spaces_and_dom_tokens.as_bytes();
