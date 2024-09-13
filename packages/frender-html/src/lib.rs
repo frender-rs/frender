@@ -15,7 +15,6 @@ pub use element_types::{CsrComponent, CsrComponentNormalElement};
 pub use frender_dom::{form_control, render_state, RenderState, RenderStateWithParentElementsHandle};
 
 pub mod html;
-pub mod impl_bounds;
 pub mod props_builder;
 
 pub use html::{components as cs, prelude_props_builders};
@@ -49,3 +48,6 @@ pub mod __private {
 mod special;
 
 mod attr;
+
+mod impl_bounds;
+use impl_bounds::impl_bounds;

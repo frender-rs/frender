@@ -1,17 +1,17 @@
-pub struct CsrInput<'a, V, E: ?Sized, R: ?Sized> {
-    pub this: V,
-    pub element: &'a mut E,
-    pub renderer: &'a mut R,
-    pub attr_name: &'static str,
+pub(crate) struct CsrInput<'a, V, E: ?Sized, R: ?Sized> {
+    pub(crate) this: V,
+    pub(crate) element: &'a mut E,
+    pub(crate) renderer: &'a mut R,
+    pub(crate) attr_name: &'static str,
 }
 
-pub struct CsrInputWithUpdater<'a, V, E: ?Sized, RR: ?Sized, U, R> {
-    pub this: V,
-    pub element: &'a mut E,
-    pub renderer: &'a mut RR,
-    pub attr_name: &'static str,
-    pub update: U,
-    pub remove: R,
+pub(crate) struct CsrInputWithUpdater<'a, V, E: ?Sized, RR: ?Sized, U, R> {
+    pub(crate) this: V,
+    pub(crate) element: &'a mut E,
+    pub(crate) renderer: &'a mut RR,
+    pub(crate) attr_name: &'static str,
+    pub(crate) update: U,
+    pub(crate) remove: R,
 }
 
 impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
@@ -38,7 +38,6 @@ impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R>
     }
 }
 
-#[macro_export]
 macro_rules! impl_bounds {
     (
         $($wrapper_path_start:ident)? $(:: $wrapper_path:ident)* (
@@ -130,7 +129,6 @@ macro_rules! impl_bounds {
     };
 }
 
-#[macro_export]
 macro_rules! default_impl_csr {
     (
         meta! {
@@ -176,7 +174,6 @@ macro_rules! default_impl_csr {
     };
 }
 
-#[macro_export]
 macro_rules! default_impl_ssr {
     (
         meta! {
@@ -214,32 +211,30 @@ macro_rules! default_impl_ssr {
     };
 }
 
-#[macro_export]
 macro_rules! DefaultCsrState {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
         $($mod_path)* ::csr::State::<$($($t0)*,)? $($t1)*>
     };
 }
 
-#[macro_export]
 macro_rules! DefaultSsrAttrs {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
         $($mod_path)* ::ssr::Attrs::<$($($t0)*,)? $($t1)*>
     };
 }
 
-#[macro_export]
 macro_rules! DefaultSsrHaevoe {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
         $($mod_path)* ::ssr::Haevoe::<$($($t0)*,)? $($t1)*>
     };
 }
 
-#[allow(non_snake_case)]
-pub mod DomTokens {
-    pub use frender_dom::dom_tokens::DomTokens as Bounds;
+pub(crate) use {default_impl_csr, default_impl_ssr, impl_bounds, DefaultCsrState, DefaultSsrAttrs, DefaultSsrHaevoe};
 
-    #[macro_export]
+#[allow(non_snake_case)]
+pub(crate) mod DomTokens {
+    pub(crate) use frender_dom::dom_tokens::DomTokens as Bounds;
+
     macro_rules! __csr_DomTokens {
         (
             meta! {
@@ -291,33 +286,33 @@ pub mod DomTokens {
         };
     }
 
-    pub use crate::default_impl_ssr as ssr;
-    pub use __csr_DomTokens as csr;
+    pub(crate) use super::default_impl_ssr as ssr;
+    pub(crate) use __csr_DomTokens as csr;
 
-    pub mod csr {
+    pub(crate) mod csr {
         use frender_dom::dom_tokens::DomTokens;
 
-        pub use crate::DefaultCsrState as State;
+        pub(crate) use DefaultCsrState as State;
 
-        pub type State<V> = <V as DomTokens>::UpdateWithState;
+        pub(crate) type State<V> = <V as DomTokens>::UpdateWithState;
 
-        pub struct Input<'a, V, E: ?Sized, RR: ?Sized, F> {
-            pub this: V,
-            pub element: &'a mut E,
-            pub renderer: &'a mut RR,
-            pub attr_name: &'static str,
-            pub get_mut_dom_token_list: F,
+        pub(crate) struct Input<'a, V, E: ?Sized, RR: ?Sized, F> {
+            pub(crate) this: V,
+            pub(crate) element: &'a mut E,
+            pub(crate) renderer: &'a mut RR,
+            pub(crate) attr_name: &'static str,
+            pub(crate) get_mut_dom_token_list: F,
         }
     }
 
-    pub mod ssr {
+    pub(crate) mod ssr {
         use frender_dom::dom_tokens::DomTokens;
 
-        pub use crate::DefaultSsrHaevoe as Haevoe;
+        pub(crate) use DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
+        pub(crate) type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
 
-        pub fn maybe_into_haevoe<V: DomTokens>(this: V) -> Option<Haevoe<V>> {
+        pub(crate) fn maybe_into_haevoe<V: DomTokens>(this: V) -> Option<Haevoe<V>> {
             Some(Haevoe::<V>::new(V::dom_tokens_into_async_str_iter(this)))
         }
     }
@@ -359,22 +354,22 @@ mod updater {
 }
 
 #[allow(non_snake_case)]
-pub mod AttrValue {
-    pub use frender_attr_value::AttrValue as Bounds;
+pub(crate) mod AttrValue {
+    pub(crate) use frender_attr_value::AttrValue as Bounds;
 
-    pub use crate::default_impl_csr as csr;
-    pub use crate::default_impl_ssr as ssr;
+    pub(crate) use default_impl_csr as csr;
+    pub(crate) use default_impl_ssr as ssr;
 
-    pub mod csr {
+    pub(crate) mod csr {
         use frender_attr_value::csr::{CsrAttrValue, ValueKind};
 
-        pub use super::super::CsrInputWithUpdater as Input;
-        pub use crate::DefaultCsrState as State;
+        pub(crate) use super::super::CsrInputWithUpdater as Input;
+        pub(crate) use DefaultCsrState as State;
 
         // TODO: redesign state for attributes
-        pub type State<VT, V> = Option<<V as CsrAttrValue<VT>>::State>;
+        pub(crate) type State<VT, V> = Option<<V as CsrAttrValue<VT>>::State>;
 
-        pub fn update_with_state<
+        pub(crate) fn update_with_state<
             //
             VT: ?Sized + ValueKind,
             V: CsrAttrValue<VT>,
@@ -391,22 +386,21 @@ pub mod AttrValue {
         }
     }
 
-    pub mod ssr {
+    pub(crate) mod ssr {
         use frender_attr_value::ssr::SsrAttrValue;
 
-        pub use crate::DefaultSsrHaevoe as Haevoe;
+        pub(crate) use DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<VT, V> = <V as SsrAttrValue<VT>>::HtmlAttributeValue;
+        pub(crate) type Haevoe<VT, V> = <V as SsrAttrValue<VT>>::HtmlAttributeValue;
 
-        pub fn maybe_into_haevoe<VT: ?Sized, V: SsrAttrValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
+        pub(crate) fn maybe_into_haevoe<VT: ?Sized, V: SsrAttrValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
             V::maybe_into_html_attribute_value(this)
         }
     }
 }
 
 #[allow(non_snake_case)]
-pub mod MaybeHandleEvent {
-    #[macro_export]
+pub(crate) mod MaybeHandleEvent {
     macro_rules! __impl_csr_MaybeHandleEvent {
         (
             meta! {
@@ -502,9 +496,8 @@ pub mod MaybeHandleEvent {
         };
     }
 
-    pub use __impl_csr_MaybeHandleEvent as csr;
+    pub(crate) use __impl_csr_MaybeHandleEvent as csr;
 
-    #[macro_export]
     macro_rules! __impl_ssr_MaybeHandleEvent {
         (
             meta! {
@@ -532,19 +525,18 @@ pub mod MaybeHandleEvent {
         };
     }
 
-    pub use __impl_ssr_MaybeHandleEvent as ssr;
+    pub(crate) use __impl_ssr_MaybeHandleEvent as ssr;
 }
 
 #[allow(non_snake_case)]
-pub mod SetRef {
-    pub use FnOnceSetRef as Bounds;
+pub(crate) mod SetRef {
+    pub(crate) use FnOnceSetRef as Bounds;
 
     /// A trait alias for `FnOnce(&dyn frender_dom::node_ref::traits::_)`
-    pub trait FnOnceSetRef<N: ?Sized + frender_dom::node_ref::traits::Node>: FnOnce(&N) {}
+    pub(crate) trait FnOnceSetRef<N: ?Sized + frender_dom::node_ref::traits::Node>: FnOnce(&N) {}
 
     impl<N: ?Sized + frender_dom::node_ref::traits::Node, F: FnOnce(&N)> FnOnceSetRef<N> for F {}
 
-    #[macro_export]
     macro_rules! __Ref_csr {
         (
             meta! {
@@ -581,7 +573,6 @@ pub mod SetRef {
         };
     }
 
-    #[macro_export]
     macro_rules! __Ref_ssr {
         (
             meta! {
@@ -608,26 +599,26 @@ pub mod SetRef {
         };
     }
 
-    pub use __Ref_csr as csr;
-    pub use __Ref_ssr as ssr;
+    pub(crate) use __Ref_csr as csr;
+    pub(crate) use __Ref_ssr as ssr;
 }
 
 #[allow(non_snake_case)]
-pub mod Style {
-    pub use frender_style::Style as Bounds;
+pub(crate) mod Style {
+    pub(crate) use frender_style::Style as Bounds;
 
-    pub use crate::default_impl_csr as csr;
-    pub use crate::default_impl_ssr as ssr;
+    pub(crate) use default_impl_csr as csr;
+    pub(crate) use default_impl_ssr as ssr;
 
-    pub mod csr {
+    pub(crate) mod csr {
         use frender_style::csr::CsrStyle;
 
-        pub use super::super::CsrInput as Input;
-        pub use crate::DefaultCsrState as State;
+        pub(crate) use super::super::CsrInput as Input;
+        pub(crate) use DefaultCsrState as State;
 
-        pub type State<V> = <V as CsrStyle>::UpdateWithState;
+        pub(crate) type State<V> = <V as CsrStyle>::UpdateWithState;
 
-        pub fn update_with_state<
+        pub(crate) fn update_with_state<
             //
             V: CsrStyle,
             E: frender_dom::behaviors::ElementWithStyle<RR>,
@@ -640,14 +631,14 @@ pub mod Style {
         }
     }
 
-    pub mod ssr {
+    pub(crate) mod ssr {
         use frender_style::ssr::{SsrDeclarationList, SsrStyle};
 
-        pub use crate::DefaultSsrHaevoe as Haevoe;
+        pub(crate) use DefaultSsrHaevoe as Haevoe;
 
-        pub type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<<V as SsrStyle>::IntoSsrDeclarationList as SsrDeclarationList>::IntoDeclarationList>;
+        pub(crate) type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<<V as SsrStyle>::IntoSsrDeclarationList as SsrDeclarationList>::IntoDeclarationList>;
 
-        pub fn maybe_into_haevoe<V: SsrStyle>(this: V) -> Option<Haevoe<V>> {
+        pub(crate) fn maybe_into_haevoe<V: SsrStyle>(this: V) -> Option<Haevoe<V>> {
             Some(Haevoe::<V>::new(SsrDeclarationList::into_declaration_list(V::into_ssr_declaration_list(this))))
         }
     }
