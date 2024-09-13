@@ -546,7 +546,7 @@ macro_rules! impl_attribute {
         crate::impl_bounds! {
             super::attributes::$fn_name(
                 csr_state_wrapper(super::states::$fn_name),
-                bounds as crate::impl_bounds::MaybeValue<$maybe_ty>,
+                bounds as crate::impl_bounds::AttrValue<$maybe_ty>,
                 element as $trait_name,
                 attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
                 csr {
@@ -1322,13 +1322,13 @@ macro_rules! parse_fn_args_as_bounds {
     };
     (($value:ident : maybe![&$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
-            { $crate::impl_bounds::MaybeValue::Bounds::<$maybe_ty> }
+            { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
             do $commands
         }
     };
     (($value:ident : maybe![$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
-            { $crate::impl_bounds::MaybeValue::Bounds::<$maybe_ty> }
+            { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
             do $commands
         }
     };

@@ -9,10 +9,10 @@ pub trait Element: Node {
     fn class<V: DomTokens::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::class<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::class(value))
     }
-    fn id<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::id<V>> {
+    fn id<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::id<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::id(value))
     }
-    fn part<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::part<V>> {
+    fn part<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::part<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::part(value))
     }
     /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)
@@ -248,7 +248,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithHrefAttribute: Element {
-    fn href<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHrefAttribute::attributes::href<V>> {
+    fn href<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHrefAttribute::attributes::href<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHrefAttribute::attributes::href(value))
     }
 }
@@ -263,7 +263,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithTargetAttribute: Element {
-    fn target<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTargetAttribute::attributes::target<V>> {
+    fn target<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTargetAttribute::attributes::target<V>> {
         Self::append_attributes(self, super::attributes::ElementWithTargetAttribute::attributes::target(value))
     }
 }
@@ -278,10 +278,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithTypeAttribute: Element {
-    fn r#type<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTypeAttribute::attributes::r#type<V>> {
+    fn r#type<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTypeAttribute::attributes::r#type<V>> {
         Self::append_attributes(self, super::attributes::ElementWithTypeAttribute::attributes::r#type(value))
     }
-    fn type_<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTypeAttribute::attributes::r#type<V>> {
+    fn type_<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithTypeAttribute::attributes::r#type<V>> {
         Self::append_attributes(self, super::attributes::ElementWithTypeAttribute::attributes::r#type(value))
     }
 }
@@ -296,7 +296,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithCiteAttribute: Element {
-    fn cite<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithCiteAttribute::attributes::cite<V>> {
+    fn cite<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithCiteAttribute::attributes::cite<V>> {
         Self::append_attributes(self, super::attributes::ElementWithCiteAttribute::attributes::cite(value))
     }
 }
@@ -311,7 +311,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithPlaceHolderAttribute: Element {
-    fn placeholder<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithPlaceHolderAttribute::attributes::placeholder<V>> {
+    fn placeholder<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithPlaceHolderAttribute::attributes::placeholder<V>> {
         Self::append_attributes(self, super::attributes::ElementWithPlaceHolderAttribute::attributes::placeholder(value))
     }
 }
@@ -326,10 +326,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithMaxMinLengthAttributes: Element {
-    fn max_length<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxMinLengthAttributes::attributes::max_length<V>> {
+    fn max_length<V: crate::impl_bounds::AttrValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxMinLengthAttributes::attributes::max_length<V>> {
         Self::append_attributes(self, super::attributes::ElementWithMaxMinLengthAttributes::attributes::max_length(value))
     }
-    fn min_length<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxMinLengthAttributes::attributes::min_length<V>> {
+    fn min_length<V: crate::impl_bounds::AttrValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxMinLengthAttributes::attributes::min_length<V>> {
         Self::append_attributes(self, super::attributes::ElementWithMaxMinLengthAttributes::attributes::min_length(value))
     }
 }
@@ -344,10 +344,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithHeightWidthStrAttributes: Element {
-    fn height<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthStrAttributes::attributes::height<V>> {
+    fn height<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthStrAttributes::attributes::height<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthStrAttributes::attributes::height(value))
     }
-    fn width<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthStrAttributes::attributes::width<V>> {
+    fn width<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthStrAttributes::attributes::width<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthStrAttributes::attributes::width(value))
     }
 }
@@ -362,10 +362,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithHeightWidthU32Attributes: Element {
-    fn height<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthU32Attributes::attributes::height<V>> {
+    fn height<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthU32Attributes::attributes::height<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthU32Attributes::attributes::height(value))
     }
-    fn width<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthU32Attributes::attributes::width<V>> {
+    fn width<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHeightWidthU32Attributes::attributes::width<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHeightWidthU32Attributes::attributes::width(value))
     }
 }
@@ -380,7 +380,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithMaxF64Attribute: Element {
-    fn max<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxF64Attribute::attributes::max<V>> {
+    fn max<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMaxF64Attribute::attributes::max<V>> {
         Self::append_attributes(self, super::attributes::ElementWithMaxF64Attribute::attributes::max(value))
     }
 }
@@ -395,7 +395,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithValueF64Attribute: Element {
-    fn value<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithValueF64Attribute::attributes::value<V>> {
+    fn value<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithValueF64Attribute::attributes::value<V>> {
         Self::append_attributes(self, super::attributes::ElementWithValueF64Attribute::attributes::value(value))
     }
 }
@@ -410,7 +410,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithValueStrAttribute: Element {
-    fn value<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithValueStrAttribute::attributes::value<V>> {
+    fn value<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithValueStrAttribute::attributes::value<V>> {
         Self::append_attributes(self, super::attributes::ElementWithValueStrAttribute::attributes::value(value))
     }
 }
@@ -425,7 +425,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithOpenAttribute: Element {
-    fn open<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithOpenAttribute::attributes::open<V>> {
+    fn open<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithOpenAttribute::attributes::open<V>> {
         Self::append_attributes(self, super::attributes::ElementWithOpenAttribute::attributes::open(value))
     }
 }
@@ -440,7 +440,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithNameAttribute: Element {
-    fn name<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithNameAttribute::attributes::name<V>> {
+    fn name<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithNameAttribute::attributes::name<V>> {
         Self::append_attributes(self, super::attributes::ElementWithNameAttribute::attributes::name(value))
     }
 }
@@ -455,7 +455,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithDisabledAttribute: Element {
-    fn disabled<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithDisabledAttribute::attributes::disabled<V>> {
+    fn disabled<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithDisabledAttribute::attributes::disabled<V>> {
         Self::append_attributes(self, super::attributes::ElementWithDisabledAttribute::attributes::disabled(value))
     }
 }
@@ -470,7 +470,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithCrossOriginAttribute: Element {
-    fn cross_origin<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithCrossOriginAttribute::attributes::cross_origin<V>> {
+    fn cross_origin<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithCrossOriginAttribute::attributes::cross_origin<V>> {
         Self::append_attributes(self, super::attributes::ElementWithCrossOriginAttribute::attributes::cross_origin(value))
     }
 }
@@ -500,7 +500,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithReferrerPolicyAttribute: Element {
-    fn referrer_policy<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithReferrerPolicyAttribute::attributes::referrer_policy<V>> {
+    fn referrer_policy<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithReferrerPolicyAttribute::attributes::referrer_policy<V>> {
         Self::append_attributes(self, super::attributes::ElementWithReferrerPolicyAttribute::attributes::referrer_policy(value))
     }
 }
@@ -515,7 +515,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithAltAttribute: Element {
-    fn alt<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAltAttribute::attributes::alt<V>> {
+    fn alt<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAltAttribute::attributes::alt<V>> {
         Self::append_attributes(self, super::attributes::ElementWithAltAttribute::attributes::alt(value))
     }
 }
@@ -530,7 +530,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithLoadingAttribute: Element {
-    fn loading<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithLoadingAttribute::attributes::loading<V>> {
+    fn loading<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithLoadingAttribute::attributes::loading<V>> {
         Self::append_attributes(self, super::attributes::ElementWithLoadingAttribute::attributes::loading(value))
     }
 }
@@ -545,7 +545,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithAcceptAttribute: Element {
-    fn accept<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAcceptAttribute::attributes::accept<V>> {
+    fn accept<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAcceptAttribute::attributes::accept<V>> {
         Self::append_attributes(self, super::attributes::ElementWithAcceptAttribute::attributes::accept(value))
     }
 }
@@ -560,7 +560,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithAutoCompleteAttribute: Element {
-    fn auto_complete<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAutoCompleteAttribute::attributes::auto_complete<V>> {
+    fn auto_complete<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAutoCompleteAttribute::attributes::auto_complete<V>> {
         Self::append_attributes(self, super::attributes::ElementWithAutoCompleteAttribute::attributes::auto_complete(value))
     }
 }
@@ -575,7 +575,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithAutoCorrectAttribute: Element {
-    fn auto_correct<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAutoCorrectAttribute::attributes::auto_correct<V>> {
+    fn auto_correct<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAutoCorrectAttribute::attributes::auto_correct<V>> {
         Self::append_attributes(self, super::attributes::ElementWithAutoCorrectAttribute::attributes::auto_correct(value))
     }
 }
@@ -590,7 +590,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithFormAttribute: Element {
-    fn form<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttribute::attributes::form<V>> {
+    fn form<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttribute::attributes::form<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttribute::attributes::form(value))
     }
 }
@@ -605,19 +605,19 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithFormAttributes: Element + ElementWithFormAttribute {
-    fn form_action<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_action<V>> {
+    fn form_action<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_action<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_action(value))
     }
-    fn form_enc_type<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_enc_type<V>> {
+    fn form_enc_type<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_enc_type<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_enc_type(value))
     }
-    fn form_method<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_method<V>> {
+    fn form_method<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_method<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_method(value))
     }
-    fn form_no_validate<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_no_validate<V>> {
+    fn form_no_validate<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_no_validate<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_no_validate(value))
     }
-    fn form_target<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_target<V>> {
+    fn form_target<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFormAttributes::attributes::form_target<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFormAttributes::attributes::form_target(value))
     }
 }
@@ -633,7 +633,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithFetchPriorityAttribute: Element {
-    fn fetch_priority<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFetchPriorityAttribute::attributes::fetch_priority<V>> {
+    fn fetch_priority<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithFetchPriorityAttribute::attributes::fetch_priority<V>> {
         Self::append_attributes(self, super::attributes::ElementWithFetchPriorityAttribute::attributes::fetch_priority(value))
     }
 }
@@ -648,7 +648,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithHrefLangAttribute: Element + ElementWithHrefAttribute {
-    fn href_lang<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHrefLangAttribute::attributes::href_lang<V>> {
+    fn href_lang<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithHrefLangAttribute::attributes::href_lang<V>> {
         Self::append_attributes(self, super::attributes::ElementWithHrefLangAttribute::attributes::href_lang(value))
     }
 }
@@ -664,7 +664,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithSizesAttribute: Element {
-    fn sizes<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSizesAttribute::attributes::sizes<V>> {
+    fn sizes<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSizesAttribute::attributes::sizes<V>> {
         Self::append_attributes(self, super::attributes::ElementWithSizesAttribute::attributes::sizes(value))
     }
 }
@@ -679,7 +679,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithUseMapAttribute: Element {
-    fn use_map<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithUseMapAttribute::attributes::use_map<V>> {
+    fn use_map<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithUseMapAttribute::attributes::use_map<V>> {
         Self::append_attributes(self, super::attributes::ElementWithUseMapAttribute::attributes::use_map(value))
     }
 }
@@ -694,7 +694,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithLabelAttribute: Element {
-    fn label<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithLabelAttribute::attributes::label<V>> {
+    fn label<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithLabelAttribute::attributes::label<V>> {
         Self::append_attributes(self, super::attributes::ElementWithLabelAttribute::attributes::label(value))
     }
 }
@@ -709,10 +709,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithForAttribute: Element {
-    fn r#for<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithForAttribute::attributes::r#for<V>> {
+    fn r#for<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithForAttribute::attributes::r#for<V>> {
         Self::append_attributes(self, super::attributes::ElementWithForAttribute::attributes::r#for(value))
     }
-    fn html_for<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithForAttribute::attributes::r#for<V>> {
+    fn html_for<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithForAttribute::attributes::r#for<V>> {
         Self::append_attributes(self, super::attributes::ElementWithForAttribute::attributes::r#for(value))
     }
 }
@@ -727,7 +727,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithIntegrityAttribute: Element {
-    fn integrity<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithIntegrityAttribute::attributes::integrity<V>> {
+    fn integrity<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithIntegrityAttribute::attributes::integrity<V>> {
         Self::append_attributes(self, super::attributes::ElementWithIntegrityAttribute::attributes::integrity(value))
     }
 }
@@ -742,7 +742,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithBlockingAttribute: Element {
-    fn blocking<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithBlockingAttribute::attributes::blocking<V>> {
+    fn blocking<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithBlockingAttribute::attributes::blocking<V>> {
         Self::append_attributes(self, super::attributes::ElementWithBlockingAttribute::attributes::blocking(value))
     }
 }
@@ -757,7 +757,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithMultipleAttribute: Element {
-    fn multiple<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMultipleAttribute::attributes::multiple<V>> {
+    fn multiple<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMultipleAttribute::attributes::multiple<V>> {
         Self::append_attributes(self, super::attributes::ElementWithMultipleAttribute::attributes::multiple(value))
     }
 }
@@ -772,7 +772,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithRequiredAttribute: Element {
-    fn required<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithRequiredAttribute::attributes::required<V>> {
+    fn required<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithRequiredAttribute::attributes::required<V>> {
         Self::append_attributes(self, super::attributes::ElementWithRequiredAttribute::attributes::required(value))
     }
 }
@@ -787,7 +787,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithSizeU32Attribute: Element {
-    fn size<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSizeU32Attribute::attributes::size<V>> {
+    fn size<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSizeU32Attribute::attributes::size<V>> {
         Self::append_attributes(self, super::attributes::ElementWithSizeU32Attribute::attributes::size(value))
     }
 }
@@ -802,7 +802,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithSrcAttribute: Element {
-    fn src<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSrcAttribute::attributes::src<V>> {
+    fn src<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSrcAttribute::attributes::src<V>> {
         Self::append_attributes(self, super::attributes::ElementWithSrcAttribute::attributes::src(value))
     }
 }
@@ -817,7 +817,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithSrcsetAttribute: Element + ElementWithSrcAttribute {
-    fn srcset<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSrcsetAttribute::attributes::srcset<V>> {
+    fn srcset<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithSrcsetAttribute::attributes::srcset<V>> {
         Self::append_attributes(self, super::attributes::ElementWithSrcsetAttribute::attributes::srcset(value))
     }
 }
@@ -833,7 +833,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithBgColorAttribute: Element {
-    fn bg_color<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithBgColorAttribute::attributes::bg_color<V>> {
+    fn bg_color<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithBgColorAttribute::attributes::bg_color<V>> {
         Self::append_attributes(self, super::attributes::ElementWithBgColorAttribute::attributes::bg_color(value))
     }
 }
@@ -848,7 +848,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithAlignAttribute: Element {
-    fn align<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAlignAttribute::attributes::align<V>> {
+    fn align<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithAlignAttribute::attributes::align<V>> {
         Self::append_attributes(self, super::attributes::ElementWithAlignAttribute::attributes::align(value))
     }
 }
@@ -863,7 +863,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithMediaAttribute: Element {
-    fn media<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMediaAttribute::attributes::media<V>> {
+    fn media<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithMediaAttribute::attributes::media<V>> {
         Self::append_attributes(self, super::attributes::ElementWithMediaAttribute::attributes::media(value))
     }
 }
@@ -878,7 +878,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithReadOnlyAttribute: Element {
-    fn read_only<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithReadOnlyAttribute::attributes::read_only<V>> {
+    fn read_only<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithReadOnlyAttribute::attributes::read_only<V>> {
         Self::append_attributes(self, super::attributes::ElementWithReadOnlyAttribute::attributes::read_only(value))
     }
 }
@@ -893,7 +893,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait ElementWithDateTimeAttribute: Element {
-    fn date_time<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithDateTimeAttribute::attributes::date_time<V>> {
+    fn date_time<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::ElementWithDateTimeAttribute::attributes::date_time<V>> {
         Self::append_attributes(self, super::attributes::ElementWithDateTimeAttribute::attributes::date_time(value))
     }
 }
@@ -911,86 +911,86 @@ pub trait HtmlElement: Element {
     fn ref_html_element<V: SetRef::Bounds<frender_dom::node_ref::HtmlElement>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::ref_html_element<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::ref_html_element(value))
     }
-    fn access_key<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::access_key<V>> {
+    fn access_key<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::access_key<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::access_key(value))
     }
-    fn auto_capitalize<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::auto_capitalize<V>> {
+    fn auto_capitalize<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::auto_capitalize<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::auto_capitalize(value))
     }
-    fn auto_focus<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::auto_focus<V>> {
+    fn auto_focus<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::auto_focus<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::auto_focus(value))
     }
-    fn content_editable<V: crate::impl_bounds::MaybeValue::Bounds<ContentEditable>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::content_editable<V>> {
+    fn content_editable<V: crate::impl_bounds::AttrValue::Bounds<ContentEditable>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::content_editable<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::content_editable(value))
     }
     #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
-    fn context_menu<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::context_menu<V>> {
+    fn context_menu<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::context_menu<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::context_menu(value))
     }
-    fn dir<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::dir<V>> {
+    fn dir<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::dir<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::dir(value))
     }
-    fn draggable<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::draggable<V>> {
+    fn draggable<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::draggable<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::draggable(value))
     }
-    fn enter_key_hint<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::enter_key_hint<V>> {
+    fn enter_key_hint<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::enter_key_hint<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::enter_key_hint(value))
     }
-    fn hidden<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::hidden<V>> {
+    fn hidden<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::hidden<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::hidden(value))
     }
-    fn inert<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::inert<V>> {
+    fn inert<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::inert<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::inert(value))
     }
-    fn input_mode<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::input_mode<V>> {
+    fn input_mode<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::input_mode<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::input_mode(value))
     }
-    fn is<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::is<V>> {
+    fn is<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::is<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::is(value))
     }
-    fn item_id<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_id<V>> {
+    fn item_id<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_id<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::item_id(value))
     }
-    fn item_prop<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_prop<V>> {
+    fn item_prop<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_prop<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::item_prop(value))
     }
-    fn item_ref<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_ref<V>> {
+    fn item_ref<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_ref<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::item_ref(value))
     }
-    fn item_scope<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_scope<V>> {
+    fn item_scope<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_scope<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::item_scope(value))
     }
-    fn item_type<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_type<V>> {
+    fn item_type<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::item_type<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::item_type(value))
     }
-    fn lang<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::lang<V>> {
+    fn lang<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::lang<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::lang(value))
     }
-    fn nonce<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::nonce<V>> {
+    fn nonce<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::nonce<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::nonce(value))
     }
-    fn role<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::role<V>> {
+    fn role<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::role<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::role(value))
     }
-    fn slot<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::slot<V>> {
+    fn slot<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::slot<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::slot(value))
     }
-    fn spellcheck<V: crate::impl_bounds::MaybeValue::Bounds<Spellcheck>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::spellcheck<V>> {
+    fn spellcheck<V: crate::impl_bounds::AttrValue::Bounds<Spellcheck>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::spellcheck<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::spellcheck(value))
     }
     fn style<V: Style::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::style<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::style(value))
     }
-    fn tab_index<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::tab_index<V>> {
+    fn tab_index<V: crate::impl_bounds::AttrValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::tab_index<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::tab_index(value))
     }
-    fn title<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::title<V>> {
+    fn title<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::title<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::title(value))
     }
-    fn translate<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::translate<V>> {
+    fn translate<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::translate<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::translate(value))
     }
-    fn virtual_keyboard_policy<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::virtual_keyboard_policy<V>> {
+    fn virtual_keyboard_policy<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::virtual_keyboard_policy<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::virtual_keyboard_policy(value))
     }
     /// Event [`invalid`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
@@ -1374,10 +1374,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlElementWithHref: HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute + ElementWithReferrerPolicyAttribute + ElementWithRelAttribute {
-    fn download<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElementWithHref::attributes::download<V>> {
+    fn download<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElementWithHref::attributes::download<V>> {
         Self::append_attributes(self, super::attributes::HtmlElementWithHref::attributes::download(value))
     }
-    fn ping<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElementWithHref::attributes::ping<V>> {
+    fn ping<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElementWithHref::attributes::ping<V>> {
         Self::append_attributes(self, super::attributes::HtmlElementWithHref::attributes::ping(value))
     }
 }
@@ -1419,10 +1419,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlAreaElement: HtmlElement + HtmlElementWithHref + ElementWithAltAttribute + ElementWithHrefAttribute + ElementWithTargetAttribute + ElementWithReferrerPolicyAttribute + ElementWithRelAttribute {
-    fn coords<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlAreaElement::attributes::coords<V>> {
+    fn coords<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlAreaElement::attributes::coords<V>> {
         Self::append_attributes(self, super::attributes::HtmlAreaElement::attributes::coords(value))
     }
-    fn shape<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlAreaElement::attributes::shape<V>> {
+    fn shape<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlAreaElement::attributes::shape<V>> {
         Self::append_attributes(self, super::attributes::HtmlAreaElement::attributes::shape(value))
     }
 }
@@ -1444,22 +1444,22 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlMediaElement: HtmlElement + ElementWithSrcAttribute + ElementWithCrossOriginAttribute {
-    fn auto_play<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::auto_play<V>> {
+    fn auto_play<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::auto_play<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::auto_play(value))
     }
-    fn controls<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::controls<V>> {
+    fn controls<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::controls<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::controls(value))
     }
-    fn r#loop<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::r#loop<V>> {
+    fn r#loop<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::r#loop<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::r#loop(value))
     }
-    fn loop_<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::r#loop<V>> {
+    fn loop_<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::r#loop<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::r#loop(value))
     }
-    fn muted<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::muted<V>> {
+    fn muted<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::muted<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::muted(value))
     }
-    fn preload<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::preload<V>> {
+    fn preload<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMediaElement::attributes::preload<V>> {
         Self::append_attributes(self, super::attributes::HtmlMediaElement::attributes::preload(value))
     }
     /// Event [`abort`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/abort_event)
@@ -1640,7 +1640,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlBodyElement: HtmlElement {
     #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
-    fn alink<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlBodyElement::attributes::alink<V>> {
+    fn alink<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlBodyElement::attributes::alink<V>> {
         Self::append_attributes(self, super::attributes::HtmlBodyElement::attributes::alink(value))
     }
 }
@@ -1657,7 +1657,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlBrElement: HtmlElement {
     #[deprecated]
-    fn clear<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlBrElement::attributes::clear<V>> {
+    fn clear<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlBrElement::attributes::clear<V>> {
         Self::append_attributes(self, super::attributes::HtmlBrElement::attributes::clear(value))
     }
 }
@@ -1803,19 +1803,19 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlFormElement: HtmlElement + ElementWithTargetAttribute + ElementWithAutoCompleteAttribute + ElementWithAcceptAttribute + ElementWithRelAttribute + ElementWithNameAttribute {
-    fn accept_charset<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::accept_charset<V>> {
+    fn accept_charset<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::accept_charset<V>> {
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::accept_charset(value))
     }
-    fn action<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::action<V>> {
+    fn action<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::action<V>> {
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::action(value))
     }
-    fn enc_type<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::enc_type<V>> {
+    fn enc_type<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::enc_type<V>> {
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::enc_type(value))
     }
-    fn method<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::method<V>> {
+    fn method<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::method<V>> {
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::method(value))
     }
-    fn no_validate<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::no_validate<V>> {
+    fn no_validate<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlFormElement::attributes::no_validate<V>> {
         Self::append_attributes(self, super::attributes::HtmlFormElement::attributes::no_validate(value))
     }
     /// Event [`formdata`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/formdata_event)
@@ -1854,7 +1854,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlHtmlElement: HtmlElement {
-    fn xmlns<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlHtmlElement::attributes::xmlns<V>> {
+    fn xmlns<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlHtmlElement::attributes::xmlns<V>> {
         Self::append_attributes(self, super::attributes::HtmlHtmlElement::attributes::xmlns(value))
     }
 }
@@ -1872,22 +1872,22 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 pub trait HtmlIFrameElement:
     HtmlElement + ElementWithSrcAttribute + ElementWithFetchPriorityAttribute + ElementWithLoadingAttribute + ElementWithReferrerPolicyAttribute + ElementWithNameAttribute + ElementWithHeightWidthStrAttributes
 {
-    fn allow<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow<V>> {
+    fn allow<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::allow(value))
     }
-    fn allow_fullscreen<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow_fullscreen<V>> {
+    fn allow_fullscreen<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow_fullscreen<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::allow_fullscreen(value))
     }
-    fn allow_payment_request<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow_payment_request<V>> {
+    fn allow_payment_request<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::allow_payment_request<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::allow_payment_request(value))
     }
-    fn csp<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::csp<V>> {
+    fn csp<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::csp<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::csp(value))
     }
-    fn sandbox<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::sandbox<V>> {
+    fn sandbox<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::sandbox<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::sandbox(value))
     }
-    fn src_doc<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::src_doc<V>> {
+    fn src_doc<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlIFrameElement::attributes::src_doc<V>> {
         Self::append_attributes(self, super::attributes::HtmlIFrameElement::attributes::src_doc(value))
     }
 }
@@ -1920,13 +1920,13 @@ pub trait HtmlImageElement:
     + ElementWithHeightWidthU32Attributes
     + ElementWithSrcAttribute
 {
-    fn decoding<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::decoding<V>> {
+    fn decoding<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::decoding<V>> {
         Self::append_attributes(self, super::attributes::HtmlImageElement::attributes::decoding(value))
     }
-    fn element_timing<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::element_timing<V>> {
+    fn element_timing<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::element_timing<V>> {
         Self::append_attributes(self, super::attributes::HtmlImageElement::attributes::element_timing(value))
     }
-    fn is_map<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::is_map<V>> {
+    fn is_map<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlImageElement::attributes::is_map<V>> {
         Self::append_attributes(self, super::attributes::HtmlImageElement::attributes::is_map(value))
     }
 }
@@ -1969,25 +1969,25 @@ pub trait HtmlInputElement:
     + ElementWithHeightWidthU32Attributes
     + ElementWithFormAttribute
 {
-    fn capture<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::capture<V>> {
+    fn capture<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::capture<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::capture(value))
     }
-    fn dirname<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::dirname<V>> {
+    fn dirname<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::dirname<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::dirname(value))
     }
-    fn list<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::list<V>> {
+    fn list<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::list<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::list(value))
     }
-    fn max<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::max<V>> {
+    fn max<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::max<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::max(value))
     }
-    fn min<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::min<V>> {
+    fn min<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::min<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::min(value))
     }
-    fn pattern<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::pattern<V>> {
+    fn pattern<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::pattern<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::pattern(value))
     }
-    fn step<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::step<V>> {
+    fn step<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlInputElement::attributes::step<V>> {
         Self::append_attributes(self, super::attributes::HtmlInputElement::attributes::step(value))
     }
 }
@@ -2032,7 +2032,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlLiElement: HtmlElement {
-    fn value<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLiElement::attributes::value<V>> {
+    fn value<V: crate::impl_bounds::AttrValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLiElement::attributes::value<V>> {
         Self::append_attributes(self, super::attributes::HtmlLiElement::attributes::value(value))
     }
 }
@@ -2061,19 +2061,19 @@ pub trait HtmlLinkElement:
     + ElementWithRelAttribute
     + ElementWithCrossOriginAttribute
 {
-    fn r#as<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::r#as<V>> {
+    fn r#as<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::r#as<V>> {
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::r#as(value))
     }
-    fn as_<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::r#as<V>> {
+    fn as_<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::r#as<V>> {
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::r#as(value))
     }
-    fn image_sizes<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::image_sizes<V>> {
+    fn image_sizes<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::image_sizes<V>> {
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::image_sizes(value))
     }
-    fn image_src_set<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::image_src_set<V>> {
+    fn image_src_set<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::image_src_set<V>> {
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::image_src_set(value))
     }
-    fn prefetch<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::prefetch<V>> {
+    fn prefetch<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlLinkElement::attributes::prefetch<V>> {
         Self::append_attributes(self, super::attributes::HtmlLinkElement::attributes::prefetch(value))
     }
 }
@@ -2113,13 +2113,13 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlMetaElement: HtmlElement + ElementWithNameAttribute {
-    fn charset<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::charset<V>> {
+    fn charset<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::charset<V>> {
         Self::append_attributes(self, super::attributes::HtmlMetaElement::attributes::charset(value))
     }
-    fn content<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::content<V>> {
+    fn content<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::content<V>> {
         Self::append_attributes(self, super::attributes::HtmlMetaElement::attributes::content(value))
     }
-    fn http_equiv<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::http_equiv<V>> {
+    fn http_equiv<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMetaElement::attributes::http_equiv<V>> {
         Self::append_attributes(self, super::attributes::HtmlMetaElement::attributes::http_equiv(value))
     }
 }
@@ -2136,16 +2136,16 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlMeterElement: HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
-    fn min<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::min<V>> {
+    fn min<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::min<V>> {
         Self::append_attributes(self, super::attributes::HtmlMeterElement::attributes::min(value))
     }
-    fn low<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::low<V>> {
+    fn low<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::low<V>> {
         Self::append_attributes(self, super::attributes::HtmlMeterElement::attributes::low(value))
     }
-    fn high<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::high<V>> {
+    fn high<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::high<V>> {
         Self::append_attributes(self, super::attributes::HtmlMeterElement::attributes::high(value))
     }
-    fn optimum<V: crate::impl_bounds::MaybeValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::optimum<V>> {
+    fn optimum<V: crate::impl_bounds::AttrValue::Bounds<f64>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlMeterElement::attributes::optimum<V>> {
         Self::append_attributes(self, super::attributes::HtmlMeterElement::attributes::optimum(value))
     }
 }
@@ -2163,7 +2163,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlObjectElement: HtmlElement + ElementWithTypeAttribute + ElementWithUseMapAttribute + ElementWithFormAttribute + ElementWithNameAttribute + ElementWithHeightWidthStrAttributes {
-    fn data<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlObjectElement::attributes::data<V>> {
+    fn data<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlObjectElement::attributes::data<V>> {
         Self::append_attributes(self, super::attributes::HtmlObjectElement::attributes::data(value))
     }
 }
@@ -2184,10 +2184,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlOListElement: HtmlElement + ElementWithTypeAttribute {
-    fn reversed<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOListElement::attributes::reversed<V>> {
+    fn reversed<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOListElement::attributes::reversed<V>> {
         Self::append_attributes(self, super::attributes::HtmlOListElement::attributes::reversed(value))
     }
-    fn start<V: crate::impl_bounds::MaybeValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOListElement::attributes::start<V>> {
+    fn start<V: crate::impl_bounds::AttrValue::Bounds<i32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOListElement::attributes::start<V>> {
         Self::append_attributes(self, super::attributes::HtmlOListElement::attributes::start(value))
     }
 }
@@ -2218,7 +2218,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlOptionElement: HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute + ElementWithValueStrAttribute {
-    fn selected<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOptionElement::attributes::selected<V>> {
+    fn selected<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlOptionElement::attributes::selected<V>> {
         Self::append_attributes(self, super::attributes::HtmlOptionElement::attributes::selected(value))
     }
 }
@@ -2275,13 +2275,13 @@ pub trait HtmlScriptElement:
     + ElementWithReferrerPolicyAttribute
     + ElementWithCrossOriginAttribute
 {
-    fn r#async<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::r#async<V>> {
+    fn r#async<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::r#async<V>> {
         Self::append_attributes(self, super::attributes::HtmlScriptElement::attributes::r#async(value))
     }
-    fn defer<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::defer<V>> {
+    fn defer<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::defer<V>> {
         Self::append_attributes(self, super::attributes::HtmlScriptElement::attributes::defer(value))
     }
-    fn no_module<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::no_module<V>> {
+    fn no_module<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlScriptElement::attributes::no_module<V>> {
         Self::append_attributes(self, super::attributes::HtmlScriptElement::attributes::no_module(value))
     }
 }
@@ -2383,31 +2383,31 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlTableElement: HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
     #[deprecated]
-    fn border<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::border<V>> {
+    fn border<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::border<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::border(value))
     }
     #[deprecated]
-    fn cell_padding<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::cell_padding<V>> {
+    fn cell_padding<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::cell_padding<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::cell_padding(value))
     }
     #[deprecated]
-    fn cell_spacing<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::cell_spacing<V>> {
+    fn cell_spacing<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::cell_spacing<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::cell_spacing(value))
     }
     #[deprecated]
-    fn frame<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::frame<V>> {
+    fn frame<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::frame<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::frame(value))
     }
     #[deprecated]
-    fn rules<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::rules<V>> {
+    fn rules<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::rules<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::rules(value))
     }
     #[deprecated]
-    fn summary<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::summary<V>> {
+    fn summary<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::summary<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::summary(value))
     }
     #[deprecated]
-    fn width<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::width<V>> {
+    fn width<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableElement::attributes::width<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableElement::attributes::width(value))
     }
 }
@@ -2426,15 +2426,15 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlTableChildElement: HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
     #[deprecated]
-    fn char<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::char<V>> {
+    fn char<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::char<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableChildElement::attributes::char(value))
     }
     #[deprecated]
-    fn char_off<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::char_off<V>> {
+    fn char_off<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::char_off<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableChildElement::attributes::char_off(value))
     }
     #[deprecated]
-    fn v_align<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::v_align<V>> {
+    fn v_align<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableChildElement::attributes::v_align<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableChildElement::attributes::v_align(value))
     }
 }
@@ -2482,11 +2482,11 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlTableColElement: HtmlElement + HtmlTableChildElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
-    fn span<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableColElement::attributes::span<V>> {
+    fn span<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableColElement::attributes::span<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableColElement::attributes::span(value))
     }
     #[deprecated]
-    fn width<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableColElement::attributes::width<V>> {
+    fn width<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableColElement::attributes::width<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableColElement::attributes::width(value))
     }
 }
@@ -2505,25 +2505,25 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlTableCellElement: HtmlElement + ElementWithHeightWidthStrAttributes + HtmlTableChildElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
-    fn col_span<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::col_span<V>> {
+    fn col_span<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::col_span<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::col_span(value))
     }
-    fn headers<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::headers<V>> {
+    fn headers<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::headers<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::headers(value))
     }
-    fn row_span<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::row_span<V>> {
+    fn row_span<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::row_span<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::row_span(value))
     }
     #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
-    fn abbr<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::abbr<V>> {
+    fn abbr<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::abbr<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::abbr(value))
     }
     #[deprecated]
-    fn axis<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::axis<V>> {
+    fn axis<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::axis<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::axis(value))
     }
     #[deprecated]
-    fn scope<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::scope<V>> {
+    fn scope<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTableCellElement::attributes::scope<V>> {
         Self::append_attributes(self, super::attributes::HtmlTableCellElement::attributes::scope(value))
     }
 }
@@ -2554,13 +2554,13 @@ pub trait HtmlTextAreaElement:
     + ElementWithDisabledAttribute
     + ElementWithNameAttribute
 {
-    fn cols<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::cols<V>> {
+    fn cols<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::cols<V>> {
         Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::cols(value))
     }
-    fn rows<V: crate::impl_bounds::MaybeValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::rows<V>> {
+    fn rows<V: crate::impl_bounds::AttrValue::Bounds<u32>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::rows<V>> {
         Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::rows(value))
     }
-    fn wrap<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::wrap<V>> {
+    fn wrap<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTextAreaElement::attributes::wrap<V>> {
         Self::append_attributes(self, super::attributes::HtmlTextAreaElement::attributes::wrap(value))
     }
 }
@@ -2598,13 +2598,13 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlTrackElement: HtmlElement + ElementWithSrcAttribute + ElementWithLabelAttribute {
-    fn default<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::default<V>> {
+    fn default<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::default<V>> {
         Self::append_attributes(self, super::attributes::HtmlTrackElement::attributes::default(value))
     }
-    fn kind<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::kind<V>> {
+    fn kind<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::kind<V>> {
         Self::append_attributes(self, super::attributes::HtmlTrackElement::attributes::kind(value))
     }
-    fn src_lang<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::src_lang<V>> {
+    fn src_lang<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlTrackElement::attributes::src_lang<V>> {
         Self::append_attributes(self, super::attributes::HtmlTrackElement::attributes::src_lang(value))
     }
 }
@@ -2623,7 +2623,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
 }
 pub trait HtmlUListElement: HtmlElement + ElementWithTypeAttribute {
     #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
-    fn compact<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlUListElement::attributes::compact<V>> {
+    fn compact<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlUListElement::attributes::compact<V>> {
         Self::append_attributes(self, super::attributes::HtmlUListElement::attributes::compact(value))
     }
 }
@@ -2655,10 +2655,10 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlVideoElement: HtmlMediaElement + ElementWithHeightWidthU32Attributes {
-    fn plays_inline<V: crate::impl_bounds::MaybeValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlVideoElement::attributes::plays_inline<V>> {
+    fn plays_inline<V: crate::impl_bounds::AttrValue::Bounds<bool>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlVideoElement::attributes::plays_inline<V>> {
         Self::append_attributes(self, super::attributes::HtmlVideoElement::attributes::plays_inline(value))
     }
-    fn poster<V: crate::impl_bounds::MaybeValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlVideoElement::attributes::poster<V>> {
+    fn poster<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlVideoElement::attributes::poster<V>> {
         Self::append_attributes(self, super::attributes::HtmlVideoElement::attributes::poster(value))
     }
 }

@@ -359,7 +359,7 @@ mod updater {
 }
 
 #[allow(non_snake_case)]
-pub mod MaybeValue {
+pub mod AttrValue {
     pub use frender_attr_value::AttrValue as Bounds;
 
     pub use crate::default_impl_csr as csr;
