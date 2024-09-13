@@ -647,6 +647,20 @@ macro_rules! impl_attribute {
             }
         };
     };
+    ($fn_name:ident ($value:ident : set_ref![$ty:ty]) $(;)? $({
+        $(attr_name!($attr_name:expr);)?
+        $(impl_with!($($impl_with:tt)*);)?
+    })? $trait_name:ident) => {
+        crate::impl_bounds! {
+            super::attributes::$fn_name(
+                csr_state_wrapper(super::states::$fn_name),
+                bounds as crate::impl_bounds::SetRef<$ty>,
+                element as $trait_name,
+                attr_name = ::frender_common::expand!({$($($attr_name)?)?} or (stringify!($fn_name))),
+                $($($($impl_with)*)?)?
+            )
+        }
+    };
 }
 
 #[macro_export]
@@ -1353,6 +1367,12 @@ macro_rules! parse_fn_args_as_bounds {
     (($value:ident : custom_with_bounds![impl $($bounds:tt)+]) do $commands:tt) => {
         $crate::expand! {
             { $($bounds)+ }
+            do $commands
+        }
+    };
+    (($value:ident : set_ref![ $ty:ty ]) do $commands:tt) => {
+        $crate::expand! {
+            { FnOnce(&$ty) }
             do $commands
         }
     };

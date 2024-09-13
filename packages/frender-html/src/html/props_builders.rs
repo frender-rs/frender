@@ -3,7 +3,7 @@ pub trait Node: crate::props_builder::PropsBuilder + crate::props_builder::Props
 impl<C, A, ELS> Node for super::props::Node<C, A, ELS> {}
 impl<Tag: super::behavior_type_traits::Node, Props: Node> Node for crate::dom::component::IntrinsicElement<Tag, Props> {}
 pub trait Element: Node {
-    fn ref_element<V: SetRef::Bounds<frender_dom::node_ref::Element>>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::ref_element<V>> {
+    fn ref_element<V: FnOnce(&frender_dom::node_ref::Element)>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::ref_element<V>> {
         Self::append_attributes(self, super::attributes::Element::attributes::ref_element(value))
     }
     fn class<V: DomTokens::Bounds>(self, value: V) -> Self::AppendAttributes<super::attributes::Element::attributes::class<V>> {
@@ -908,7 +908,7 @@ impl<A, ELS, C: frender_ssr::SsrElement> crate::props_builder::PropsBuilderWithC
     }
 }
 pub trait HtmlElement: Element {
-    fn ref_html_element<V: SetRef::Bounds<frender_dom::node_ref::HtmlElement>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::ref_html_element<V>> {
+    fn ref_html_element<V: FnOnce(&frender_dom::node_ref::HtmlElement)>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::ref_html_element<V>> {
         Self::append_attributes(self, super::attributes::HtmlElement::attributes::ref_html_element(value))
     }
     fn access_key<V: crate::impl_bounds::AttrValue::Bounds<str>>(self, value: V) -> Self::AppendAttributes<super::attributes::HtmlElement::attributes::access_key<V>> {

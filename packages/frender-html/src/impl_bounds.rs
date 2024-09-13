@@ -1,43 +1,3 @@
-pub(crate) struct CsrInput<'a, V, E: ?Sized, R: ?Sized> {
-    pub(crate) this: V,
-    pub(crate) element: &'a mut E,
-    pub(crate) renderer: &'a mut R,
-    pub(crate) attr_name: &'static str,
-}
-
-pub(crate) struct CsrInputWithUpdater<'a, V, E: ?Sized, RR: ?Sized, U, R> {
-    pub(crate) this: V,
-    pub(crate) element: &'a mut E,
-    pub(crate) renderer: &'a mut RR,
-    pub(crate) attr_name: &'static str,
-    pub(crate) update: U,
-    pub(crate) remove: R,
-}
-
-impl<'a, V, E: ?Sized, RR: ?Sized, U, R> CsrInputWithUpdater<'a, V, E, RR, U, R> {
-    fn into_value_and_updater<VK: ?Sized>(self) -> (V, updater::UpdaterOfKind<'a, VK, E, RR, U, R>) {
-        let Self {
-            this,
-            element,
-            renderer,
-            attr_name,
-            update,
-            remove,
-        } = self;
-        (
-            this,
-            updater::UpdaterOfKind {
-                _kind: std::marker::PhantomData,
-                element,
-                renderer,
-                attr_name,
-                update,
-                remove,
-            },
-        )
-    }
-}
-
 macro_rules! impl_bounds {
     (
         $($wrapper_path_start:ident)? $(:: $wrapper_path:ident)* (
@@ -47,7 +7,7 @@ macro_rules! impl_bounds {
                 $(:: $mod_path:ident)*
                 $($(::)? <$($ty:ty),* $(,)?>)?,
             element as $csr_element_ty:ident,
-            $attr_name_ident:ident = $attr_name:expr
+            attr_name = $attr_name:expr
             $(, $name:ident $fields:tt)*
             $(,)?
         )
@@ -59,7 +19,7 @@ macro_rules! impl_bounds {
             bounds!  { $($mod_path_start)? $(:: $mod_path)* }
             bounds_tps! { $($($ty,)*)? }
             csr_element_ty! { $csr_element_ty }
-            attr_name! { $attr_name_ident = $attr_name }
+            attr_name! { attr_name = $attr_name }
         }{
             $($name :: $name $fields)*
         }}
@@ -174,6 +134,31 @@ macro_rules! default_impl_csr {
     };
 }
 
+macro_rules! default_impl_csr_without_attr_name {
+    (
+        meta! {
+            wrapper! {$($wrapper:tt)*}
+            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+            bounds!  {$($bounds:tt)*}
+            bounds_tps!  {$($bounds_tp:ty,)*}
+            csr_element_ty! { $csr_element_ty:ident }
+            $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
+        }
+        $csr:ident ! $csr_body:tt
+    ) => {
+        crate::impl_bounds::default_impl_csr! {
+            meta! {
+                wrapper! {$($wrapper)*}
+                csr_state_wrapper! {$($csr_state_wrapper)*}
+                bounds!  {$($bounds)*}
+                bounds_tps!  {$($bounds_tp,)*}
+                csr_element_ty! { $csr_element_ty }
+            }
+            $csr ! $csr_body
+        }
+    };
+}
+
 macro_rules! default_impl_ssr {
     (
         meta! {
@@ -217,19 +202,13 @@ macro_rules! DefaultCsrState {
     };
 }
 
-macro_rules! DefaultSsrAttrs {
-    ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
-        $($mod_path)* ::ssr::Attrs::<$($($t0)*,)? $($t1)*>
-    };
-}
-
 macro_rules! DefaultSsrHaevoe {
     ({$($mod_path:tt)*}[$($($t0:tt)+)?][$($t1:tt)*]) => {
         $($mod_path)* ::ssr::Haevoe::<$($($t0)*,)? $($t1)*>
     };
 }
 
-pub(crate) use {default_impl_csr, default_impl_ssr, impl_bounds, DefaultCsrState, DefaultSsrAttrs, DefaultSsrHaevoe};
+pub(crate) use {default_impl_csr, default_impl_ssr, impl_bounds};
 
 #[allow(non_snake_case)]
 pub(crate) mod DomTokens {
@@ -273,7 +252,7 @@ pub(crate) mod DomTokens {
                         this,
                         element,
                         renderer,
-                        $($attr_name_ident: $attr_name,)?
+                        // $($attr_name_ident: $attr_name,)?
                         $($csr_fields)*
                     };
 
@@ -300,7 +279,6 @@ pub(crate) mod DomTokens {
             pub(crate) this: V,
             pub(crate) element: &'a mut E,
             pub(crate) renderer: &'a mut RR,
-            pub(crate) attr_name: &'static str,
             pub(crate) get_mut_dom_token_list: F,
         }
     }
@@ -363,8 +341,42 @@ pub(crate) mod AttrValue {
     pub(crate) mod csr {
         use frender_attr_value::csr::{CsrAttrValue, ValueKind};
 
-        pub(crate) use super::super::CsrInputWithUpdater as Input;
         pub(crate) use DefaultCsrState as State;
+
+        use super::super::updater;
+
+        pub(crate) struct Input<'a, V, E: ?Sized, RR: ?Sized, U, R> {
+            pub(crate) this: V,
+            pub(crate) element: &'a mut E,
+            pub(crate) renderer: &'a mut RR,
+            pub(crate) attr_name: &'static str,
+            pub(crate) update: U,
+            pub(crate) remove: R,
+        }
+
+        impl<'a, V, E: ?Sized, RR: ?Sized, U, R> Input<'a, V, E, RR, U, R> {
+            fn into_value_and_updater<VK: ?Sized>(self) -> (V, updater::UpdaterOfKind<'a, VK, E, RR, U, R>) {
+                let Self {
+                    this,
+                    element,
+                    renderer,
+                    attr_name,
+                    update,
+                    remove,
+                } = self;
+                (
+                    this,
+                    updater::UpdaterOfKind {
+                        _kind: std::marker::PhantomData,
+                        element,
+                        renderer,
+                        attr_name,
+                        update,
+                        remove,
+                    },
+                )
+            }
+        }
 
         // TODO: redesign state for attributes
         pub(crate) type State<VT, V> = Option<<V as CsrAttrValue<VT>>::State>;
@@ -530,13 +542,6 @@ pub(crate) mod MaybeHandleEvent {
 
 #[allow(non_snake_case)]
 pub(crate) mod SetRef {
-    pub(crate) use FnOnceSetRef as Bounds;
-
-    /// A trait alias for `FnOnce(&dyn frender_dom::node_ref::traits::_)`
-    pub(crate) trait FnOnceSetRef<N: ?Sized + frender_dom::node_ref::traits::Node>: FnOnce(&N) {}
-
-    impl<N: ?Sized + frender_dom::node_ref::traits::Node, F: FnOnce(&N)> FnOnceSetRef<N> for F {}
-
     macro_rules! __Ref_csr {
         (
             meta! {
@@ -607,13 +612,18 @@ pub(crate) mod SetRef {
 pub(crate) mod Style {
     pub(crate) use frender_style::Style as Bounds;
 
-    pub(crate) use default_impl_csr as csr;
+    pub(crate) use default_impl_csr_without_attr_name as csr;
     pub(crate) use default_impl_ssr as ssr;
 
     pub(crate) mod csr {
         use frender_style::csr::CsrStyle;
 
-        pub(crate) use super::super::CsrInput as Input;
+        pub(crate) struct Input<'a, V, E: ?Sized, R: ?Sized> {
+            pub(crate) this: V,
+            pub(crate) element: &'a mut E,
+            pub(crate) renderer: &'a mut R,
+        }
+
         pub(crate) use DefaultCsrState as State;
 
         pub(crate) type State<V> = <V as CsrStyle>::UpdateWithState;
@@ -624,7 +634,7 @@ pub(crate) mod Style {
             E: frender_dom::behaviors::ElementWithStyle<RR>,
             RR: ?Sized,
         >(
-            Input { this, element, renderer, attr_name }: Input<V, E, RR>,
+            Input { this, element, renderer }: Input<V, E, RR>,
             state: &mut State<V>,
         ) {
             V::update_with_state(this, state, &mut element.style(renderer))

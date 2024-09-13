@@ -5,7 +5,7 @@ use frender_dom::{
     OnEvent,
 };
 
-use crate::impl_bounds::{DomTokens, SetRef, Style};
+use crate::impl_bounds::{DomTokens, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
 pub mod props_builders;
@@ -116,7 +116,7 @@ crate::def_intrinsic_component_props!(
 
                 fn children(value: children![impl frender_ssr::SsrElement]);
 
-                fn ref_element(value: bounds![SetRef<frender_dom::node_ref::Element>]);
+                fn ref_element(value: set_ref![frender_dom::node_ref::Element]);
 
                 fn class(value: bounds![DomTokens]) {
                     impl_with!(csr {
@@ -792,7 +792,7 @@ crate::def_intrinsic_component_props!(
 
                         impl_for_web!();
 
-                        fn ref_html_element(value: bounds![SetRef<frender_dom::node_ref::HtmlElement>]);
+                        fn ref_html_element(value: set_ref![frender_dom::node_ref::HtmlElement]);
 
                         fn access_key(value: maybe![&str]) {
                             attr_name!("accesskey");
