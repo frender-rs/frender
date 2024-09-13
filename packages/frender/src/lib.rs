@@ -52,9 +52,6 @@ pub use frender_hook_element::component_fn;
 pub use event::*;
 pub use frender_events::event;
 
-#[cfg(feature = "bg")]
-pub use bg;
-
 #[cfg(feature = "RenderWith")]
 pub use frender_render_with::{
     CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
@@ -106,9 +103,6 @@ pub mod main {
 }
 
 pub mod prelude {
-    #[cfg(feature = "bg")]
-    pub use bg::{Maybe as _, MaybeBorrow as _};
-
     // #[cfg(all(feature = "csr", feature = "ssr"))]
     // pub use crate::Element;
 
