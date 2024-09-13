@@ -112,7 +112,7 @@ macro_rules! define_behavior_fn {
         $event_type_listener_ident:ident $(,)?
     ]);) => {
     };
-    ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
+    ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name! $attr_name:tt;)?
         $(update_with! $update_with:tt;)?
@@ -137,7 +137,7 @@ macro_rules! impl_behavior_fn {
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
     };
-    ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
+    ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name! $attr_name:tt;)?
         $(update_with! $update_with:tt;)?
@@ -531,14 +531,14 @@ macro_rules! impl_attribute {
             )
         }
     };
-    ($fn_name:ident ($value:ident : maybe![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
-        crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) {} $trait_name }
+    ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
+        crate::impl_attribute! {$fn_name ($value : attr_value![$($maybe_ty)*]) {} $trait_name }
     };
     // TODO: remove
-    ($fn_name:ident ($value:ident : maybe![&$($maybe_ty:tt)*]) $maybe:tt $trait_name:ident) => {
-        crate::impl_attribute! {$fn_name ($value : maybe![$($maybe_ty)*]) $maybe $trait_name }
+    ($fn_name:ident ($value:ident : attr_value![&$($maybe_ty:tt)*]) $maybe:tt $trait_name:ident) => {
+        crate::impl_attribute! {$fn_name ($value : attr_value![$($maybe_ty)*]) $maybe $trait_name }
     };
-    ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
+    ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
         $(alias! $alias:tt;)?
         $(attr_name!($attr_name:expr);)?
         $(update_with! $update_with:tt;)?
@@ -1334,13 +1334,13 @@ macro_rules! parse_fn_args_as_bounds {
             do $commands
         }
     };
-    (($value:ident : maybe![&$maybe_ty:ty]) do $commands:tt) => {
+    (($value:ident : attr_value![&$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
             { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
             do $commands
         }
     };
-    (($value:ident : maybe![$maybe_ty:ty]) do $commands:tt) => {
+    (($value:ident : attr_value![$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
             { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
             do $commands

@@ -222,7 +222,7 @@ pub(crate) mod macros {
             $event_type_listener_ident:ident $(,)?
         ]); $trait_name:tt) => {
         };
-        ($fn_name:ident ($value:ident : maybe![$maybe_ty:ty]) {
+        ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
             $(alias! $alias:tt;)?
             $(attr_name! $attr_name:tt;)?
             $(update_with! $update_with:tt;)?

@@ -124,10 +124,10 @@ crate::def_intrinsic_component_props!(
                     });
                 }
 
-                fn id(value: maybe![&str]) {
+                fn id(value: attr_value![&str]) {
                     update_with!(set_id);
                 }
-                fn part(value: maybe![&str]);
+                fn part(value: attr_value![&str]);
                 /// Event [`cancel`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/cancel_event)
                 ///
                 /// Fires on a [`<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) when the user instructs the browser that they wish to dismiss the currently open modal dialog. The browser fires this event when the user presses the <kbd>Esc</kbd> key to close the modal dialog.
@@ -286,7 +286,7 @@ crate::def_intrinsic_component_props!(
                 sub_traits!(
                     pub trait ElementWithHrefAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlLinkElement, web_sys::HtmlBaseElement,););
-                        fn href(value: maybe![&str]) {
+                        fn href(value: attr_value![&str]) {
                             update_with!(set_href);
                         }
                     }
@@ -294,7 +294,7 @@ crate::def_intrinsic_component_props!(
                     pub trait ElementWithTargetAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlBaseElement, web_sys::HtmlFormElement,););
 
-                        fn target(value: maybe![&str]) {
+                        fn target(value: attr_value![&str]) {
                             update_with!(set_target);
                         }
                     }
@@ -314,7 +314,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlUListElement,
                         ););
 
-                        fn r#type(value: maybe![&str]) {
+                        fn r#type(value: attr_value![&str]) {
                             alias!(type_);
                             attr_name!("type");
                             update_with!(set_type);
@@ -324,25 +324,25 @@ crate::def_intrinsic_component_props!(
                     pub trait ElementWithCiteAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlQuoteElement, web_sys::HtmlModElement,););
 
-                        fn cite(value: maybe![&str]) {
+                        fn cite(value: attr_value![&str]) {
                             update_with!(set_cite);
                         }
                     }
 
                     pub trait ElementWithPlaceHolderAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
-                        fn placeholder(value: maybe![&str]) {
+                        fn placeholder(value: attr_value![&str]) {
                             update_with!(set_placeholder);
                         }
                     }
 
                     pub trait ElementWithMaxMinLengthAttributes {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
-                        fn max_length(value: maybe![i32]) {
+                        fn max_length(value: attr_value![i32]) {
                             attr_name!("maxlength");
                             update_with!(set_max_length);
                         }
-                        fn min_length(value: maybe![i32]) {
+                        fn min_length(value: attr_value![i32]) {
                             attr_name!("minlength");
                             update_with!(set_min_length);
                         }
@@ -350,10 +350,10 @@ crate::def_intrinsic_component_props!(
 
                     pub trait ElementWithHeightWidthStrAttributes {
                         impl_for_web!(only_for_types!(web_sys::HtmlEmbedElement, web_sys::HtmlIFrameElement, web_sys::HtmlObjectElement, web_sys::HtmlTableCellElement,););
-                        fn height(value: maybe![&str]) {
+                        fn height(value: attr_value![&str]) {
                             update_with!(set_height);
                         }
-                        fn width(value: maybe![&str]) {
+                        fn width(value: attr_value![&str]) {
                             update_with!(set_width);
                         }
                     }
@@ -366,35 +366,35 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlSourceElement,
                         ););
 
-                        fn height(value: maybe![u32]) {
+                        fn height(value: attr_value![u32]) {
                             update_with!(set_height);
                         }
-                        fn width(value: maybe![u32]) {
+                        fn width(value: attr_value![u32]) {
                             update_with!(set_width);
                         }
                     }
                     pub trait ElementWithMaxF64Attribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlMeterElement, web_sys::HtmlProgressElement,););
-                        fn max(value: maybe![f64]) {
+                        fn max(value: attr_value![f64]) {
                             update_with!(set_max);
                         }
                     }
                     pub trait ElementWithValueF64Attribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlMeterElement, web_sys::HtmlProgressElement,););
-                        fn value(value: maybe![f64]) {
+                        fn value(value: attr_value![f64]) {
                             update_with!(set_value);
                         }
                     }
                     pub trait ElementWithValueStrAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlButtonElement, web_sys::HtmlDataElement, web_sys::HtmlInputElement, web_sys::HtmlOptionElement,););
 
-                        fn value(value: maybe![&str]) {
+                        fn value(value: attr_value![&str]) {
                             update_with!(set_value);
                         }
                     }
                     pub trait ElementWithOpenAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlDetailsElement, web_sys::HtmlDialogElement,););
-                        fn open(value: maybe![bool]) {
+                        fn open(value: attr_value![bool]) {
                             update_with!(set_open);
                         }
                     }
@@ -414,7 +414,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTextAreaElement,
                         ););
 
-                        fn name(value: maybe![&str]) {
+                        fn name(value: attr_value![&str]) {
                             update_with!(set_name);
                         }
                     }
@@ -429,7 +429,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTextAreaElement,
                         ););
 
-                        fn disabled(value: maybe![bool]) {
+                        fn disabled(value: attr_value![bool]) {
                             update_with!(set_disabled);
                         }
                     }
@@ -443,7 +443,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlScriptElement,
                         ););
 
-                        fn cross_origin(value: maybe![&str]) {
+                        fn cross_origin(value: attr_value![&str]) {
                             attr_name!("crossorigin");
                             update_with!(
                                 set_cross_origin,
@@ -477,7 +477,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlScriptElement,
                         ););
 
-                        fn referrer_policy(value: maybe![&str]) {
+                        fn referrer_policy(value: attr_value![&str]) {
                             attr_name!("referrerpolicy");
                             update_with!(set_referrer_policy);
                         }
@@ -485,23 +485,23 @@ crate::def_intrinsic_component_props!(
                     pub trait ElementWithAltAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlAreaElement, web_sys::HtmlImageElement, web_sys::HtmlInputElement,););
 
-                        fn alt(value: maybe![&str]) {
+                        fn alt(value: attr_value![&str]) {
                             update_with!(set_alt);
                         }
                     }
                     pub trait ElementWithLoadingAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlIFrameElement, web_sys::HtmlImageElement,););
-                        fn loading(value: maybe![&str]);
+                        fn loading(value: attr_value![&str]);
                     }
                     pub trait ElementWithAcceptAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlFormElement, web_sys::HtmlInputElement,););
-                        fn accept(value: maybe![&str]) {
+                        fn accept(value: attr_value![&str]) {
                             update_with!(set_accept);
                         }
                     }
                     pub trait ElementWithAutoCompleteAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlFormElement, web_sys::HtmlInputElement, web_sys::HtmlSelectElement, web_sys::HtmlTextAreaElement,););
-                        fn auto_complete(value: maybe![&str]) {
+                        fn auto_complete(value: attr_value![&str]) {
                             attr_name!("autocomplete");
                             update_with!(set_auto_complete, web_sys_name = set_autocomplete);
                         }
@@ -510,7 +510,7 @@ crate::def_intrinsic_component_props!(
                     pub trait ElementWithAutoCorrectAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement););
 
-                        fn auto_correct(value: maybe![&str]) {
+                        fn auto_correct(value: attr_value![&str]) {
                             attr_name!("autocorrect");
                         }
                     }
@@ -526,36 +526,36 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTextAreaElement,
                         ););
 
-                        fn form(value: maybe![&str]);
+                        fn form(value: attr_value![&str]);
                     }
                     pub trait ElementWithFormAttributes {
                         special_super_traits!(ElementWithFormAttribute);
                         impl_for_web!(only_for_types!(web_sys::HtmlButtonElement, web_sys::HtmlInputElement,););
 
-                        fn form_action(value: maybe![&str]) {
+                        fn form_action(value: attr_value![&str]) {
                             attr_name!("formaction");
                             update_with!(set_form_action);
                         }
-                        fn form_enc_type(value: maybe![&str]) {
+                        fn form_enc_type(value: attr_value![&str]) {
                             attr_name!("formenctype");
                             update_with!(set_form_enctype);
                         }
-                        fn form_method(value: maybe![&str]) {
+                        fn form_method(value: attr_value![&str]) {
                             attr_name!("formmethod");
                             update_with!(set_form_method);
                         }
-                        fn form_no_validate(value: maybe![bool]) {
+                        fn form_no_validate(value: attr_value![bool]) {
                             attr_name!("formnovalidate");
                             update_with!(set_form_no_validate);
                         }
-                        fn form_target(value: maybe![&str]) {
+                        fn form_target(value: attr_value![&str]) {
                             attr_name!("formtarget");
                             update_with!(set_form_target);
                         }
                     }
                     pub trait ElementWithFetchPriorityAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlIFrameElement, web_sys::HtmlLinkElement, web_sys::HtmlScriptElement,););
-                        fn fetch_priority(value: maybe![&str]) {
+                        fn fetch_priority(value: attr_value![&str]) {
                             attr_name!("fetchpriority");
                         }
                     }
@@ -563,7 +563,7 @@ crate::def_intrinsic_component_props!(
                         special_super_traits!(ElementWithHrefAttribute);
                         impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlLinkElement););
 
-                        fn href_lang(value: maybe![&str]) {
+                        fn href_lang(value: attr_value![&str]) {
                             attr_name!("hreflang");
                             update_with!(set_href_lang, web_sys_name = set_hreflang);
                         }
@@ -571,28 +571,28 @@ crate::def_intrinsic_component_props!(
 
                     pub trait ElementWithSizesAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlLinkElement, web_sys::HtmlSourceElement,););
-                        fn sizes(value: maybe![&str]) {
+                        fn sizes(value: attr_value![&str]) {
                             update_with!(set_sizes);
                         }
                     }
 
                     pub trait ElementWithUseMapAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlObjectElement,););
-                        fn use_map(value: maybe![&str]) {
+                        fn use_map(value: attr_value![&str]) {
                             attr_name!("usemap");
                             update_with!(set_use_map);
                         }
                     }
                     pub trait ElementWithLabelAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlOptGroupElement, web_sys::HtmlOptionElement, web_sys::HtmlTrackElement,););
-                        fn label(value: maybe![&str]) {
+                        fn label(value: attr_value![&str]) {
                             update_with!(set_label);
                         }
                     }
 
                     pub trait ElementWithForAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlLabelElement, web_sys::HtmlOutputElement,););
-                        fn r#for(value: maybe![&str]) {
+                        fn r#for(value: attr_value![&str]) {
                             alias!(html_for);
                             attr_name!("for");
                             update_with!(set_html_for, web_sys_name = set_html_for);
@@ -600,31 +600,31 @@ crate::def_intrinsic_component_props!(
                     }
                     pub trait ElementWithIntegrityAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlScriptElement,););
-                        fn integrity(value: maybe![&str]) {
+                        fn integrity(value: attr_value![&str]) {
                             update_with!(set_integrity);
                         }
                     }
                     pub trait ElementWithBlockingAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlScriptElement, web_sys::HtmlStyleElement,););
-                        fn blocking(value: maybe![&str]);
+                        fn blocking(value: attr_value![&str]);
                     }
 
                     pub trait ElementWithMultipleAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement,););
-                        fn multiple(value: maybe![bool]) {
+                        fn multiple(value: attr_value![bool]) {
                             update_with!(set_multiple);
                         }
                     }
                     pub trait ElementWithRequiredAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement, web_sys::HtmlTextAreaElement,););
-                        fn required(value: maybe![bool]) {
+                        fn required(value: attr_value![bool]) {
                             update_with!(set_required);
                         }
                     }
 
                     pub trait ElementWithSizeU32Attribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlSelectElement,););
-                        fn size(value: maybe![u32]) {
+                        fn size(value: attr_value![u32]) {
                             update_with!(set_size);
                         }
                     }
@@ -643,7 +643,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTrackElement,
                         ););
 
-                        fn src(value: maybe![&str]) {
+                        fn src(value: attr_value![&str]) {
                             update_with!(set_src);
                         }
                     }
@@ -652,7 +652,7 @@ crate::def_intrinsic_component_props!(
                         special_super_traits!(ElementWithSrcAttribute);
                         impl_for_web!(only_for_types!(web_sys::HtmlImageElement, web_sys::HtmlSourceElement,););
 
-                        fn srcset(value: maybe![&str]) {
+                        fn srcset(value: attr_value![&str]) {
                             update_with!(set_srcset);
                         }
                     }
@@ -665,7 +665,7 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTableColElement,
                             web_sys::HtmlTableCellElement,
                         ););
-                        fn bg_color(value: maybe![&str]) {
+                        fn bg_color(value: attr_value![&str]) {
                             attr_name!("bgcolor");
                             update_with!(set_bg_color);
                         }
@@ -680,21 +680,21 @@ crate::def_intrinsic_component_props!(
                             web_sys::HtmlTableColElement,
                             web_sys::HtmlTableCellElement,
                         ););
-                        fn align(value: maybe![&str]) {
+                        fn align(value: attr_value![&str]) {
                             update_with!(set_align);
                         }
                     }
 
                     pub trait ElementWithMediaAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlLinkElement, web_sys::HtmlSourceElement, web_sys::HtmlStyleElement,););
-                        fn media(value: maybe![&str]) {
+                        fn media(value: attr_value![&str]) {
                             update_with!(set_media);
                         }
                     }
 
                     pub trait ElementWithReadOnlyAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlInputElement, web_sys::HtmlTextAreaElement,););
-                        fn read_only(value: maybe![bool]) {
+                        fn read_only(value: attr_value![bool]) {
                             attr_name!("readonly");
                             update_with!(set_read_only);
                         }
@@ -702,7 +702,7 @@ crate::def_intrinsic_component_props!(
 
                     pub trait ElementWithDateTimeAttribute {
                         impl_for_web!(only_for_types!(web_sys::HtmlModElement, web_sys::HtmlTimeElement,););
-                        fn date_time(value: maybe![&str]) {
+                        fn date_time(value: attr_value![&str]) {
                             attr_name!("datetime");
                             update_with!(set_date_time);
                         }
@@ -794,17 +794,17 @@ crate::def_intrinsic_component_props!(
 
                         fn ref_html_element(value: set_ref![frender_dom::node_ref::HtmlElement]);
 
-                        fn access_key(value: maybe![&str]) {
+                        fn access_key(value: attr_value![&str]) {
                             attr_name!("accesskey");
                             update_with!(set_access_key);
                         }
-                        fn auto_capitalize(value: maybe![&str]) {
+                        fn auto_capitalize(value: attr_value![&str]) {
                             attr_name!("autocapitalize");
                         }
-                        fn auto_focus(value: maybe![bool]) {
+                        fn auto_focus(value: attr_value![bool]) {
                             attr_name!("autofocus");
                         }
-                        fn content_editable(value: maybe![ContentEditable]) {
+                        fn content_editable(value: attr_value![ContentEditable]) {
                             attr_name!("contenteditable");
                             update_with!(
                                 //
@@ -814,51 +814,51 @@ crate::def_intrinsic_component_props!(
                             );
                         }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
-                        fn context_menu(value: maybe![&str]) {
+                        fn context_menu(value: attr_value![&str]) {
                             attr_name!("contextmenu");
                         }
-                        fn dir(value: maybe![&str]) {
+                        fn dir(value: attr_value![&str]) {
                             update_with!(set_dir);
                         }
-                        fn draggable(value: maybe![bool]) {
+                        fn draggable(value: attr_value![bool]) {
                             update_with!(set_draggable);
                         }
-                        fn enter_key_hint(value: maybe![&str]) {
+                        fn enter_key_hint(value: attr_value![&str]) {
                             attr_name!("enterkeyhint");
                         }
-                        fn hidden(value: maybe![bool]) {
+                        fn hidden(value: attr_value![bool]) {
                             // TODO: "until-found"
                             update_with!(set_hidden);
                         }
-                        fn inert(value: maybe![bool]);
-                        fn input_mode(value: maybe![&str]) {
+                        fn inert(value: attr_value![bool]);
+                        fn input_mode(value: attr_value![&str]) {
                             attr_name!("inputmode");
                         }
-                        fn is(value: maybe![&str]);
+                        fn is(value: attr_value![&str]);
 
-                        fn item_id(value: maybe![&str]) {
+                        fn item_id(value: attr_value![&str]) {
                             attr_name!("itemid");
                         }
-                        fn item_prop(value: maybe![&str]) {
+                        fn item_prop(value: attr_value![&str]) {
                             attr_name!("itemprop");
                         }
-                        fn item_ref(value: maybe![&str]) {
+                        fn item_ref(value: attr_value![&str]) {
                             attr_name!("itemref");
                         }
-                        fn item_scope(value: maybe![&str]) {
+                        fn item_scope(value: attr_value![&str]) {
                             attr_name!("itemscope");
                         }
-                        fn item_type(value: maybe![&str]) {
+                        fn item_type(value: attr_value![&str]) {
                             attr_name!("itemtype");
                         }
 
-                        fn lang(value: maybe![&str]) {
+                        fn lang(value: attr_value![&str]) {
                             update_with!(set_lang);
                         }
-                        fn nonce(value: maybe![&str]);
-                        fn role(value: maybe![&str]);
-                        fn slot(value: maybe![&str]);
-                        fn spellcheck(value: maybe![Spellcheck]) {
+                        fn nonce(value: attr_value![&str]);
+                        fn role(value: attr_value![&str]);
+                        fn slot(value: attr_value![&str]);
+                        fn spellcheck(value: attr_value![Spellcheck]) {
                             update_with!(
                                 //
                                 set_spellcheck,
@@ -867,15 +867,15 @@ crate::def_intrinsic_component_props!(
                             );
                         }
                         fn style(value: bounds![Style]);
-                        fn tab_index(value: maybe![i32]) {
+                        fn tab_index(value: attr_value![i32]) {
                             attr_name!("tabindex");
                             update_with!(set_tab_index);
                         }
-                        fn title(value: maybe![&str]) {
+                        fn title(value: attr_value![&str]) {
                             update_with!(set_title);
                         }
-                        fn translate(value: maybe![&str]);
-                        fn virtual_keyboard_policy(value: maybe![&str]) {
+                        fn translate(value: attr_value![&str]);
+                        fn virtual_keyboard_policy(value: attr_value![&str]) {
                             attr_name!("virtualkeyboardpolicy");
                         }
 
@@ -1073,10 +1073,10 @@ crate::def_intrinsic_component_props!(
 
                                 impl_for_web!(only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement););
 
-                                fn download(value: maybe![&str]) {
+                                fn download(value: attr_value![&str]) {
                                     update_with!(set_download);
                                 }
-                                fn ping(value: maybe![&str]) {
+                                fn ping(value: attr_value![&str]) {
                                     update_with!(set_ping);
                                 }
                             }
@@ -1093,10 +1093,10 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (area { custom_content_model },));
                                 impl_for_web!();
 
-                                fn coords(value: maybe![&str]) {
+                                fn coords(value: attr_value![&str]) {
                                     update_with!(set_coords);
                                 }
-                                fn shape(value: maybe![&str]) {
+                                fn shape(value: attr_value![&str]) {
                                     update_with!(set_shape);
                                 }
                             }
@@ -1131,22 +1131,22 @@ crate::def_intrinsic_component_props!(
 
                                 impl_for_web!();
 
-                                fn auto_play(value: maybe![bool]) {
+                                fn auto_play(value: attr_value![bool]) {
                                     attr_name!("autoplay");
                                     update_with!(set_auto_play, web_sys_name = set_autoplay);
                                 }
-                                fn controls(value: maybe![bool]) {
+                                fn controls(value: attr_value![bool]) {
                                     update_with!(set_controls);
                                 }
-                                fn r#loop(value: maybe![bool]) {
+                                fn r#loop(value: attr_value![bool]) {
                                     alias!(loop_);
                                     attr_name!("loop");
                                     update_with!(set_loop);
                                 }
-                                fn muted(value: maybe![bool]) {
+                                fn muted(value: attr_value![bool]) {
                                     update_with!(set_muted);
                                 }
-                                fn preload(value: maybe![&str]) {
+                                fn preload(value: attr_value![&str]) {
                                     update_with!(set_preload);
                                 }
 
@@ -1252,10 +1252,10 @@ crate::def_intrinsic_component_props!(
                                         define!(tags = (video,));
                                         impl_for_web!();
 
-                                        fn plays_inline(value: maybe![bool]) {
+                                        fn plays_inline(value: attr_value![bool]) {
                                             attr_name!("playsinline");
                                         }
-                                        fn poster(value: maybe![&str]) {
+                                        fn poster(value: attr_value![&str]) {
                                             update_with!(set_poster);
                                         }
                                     }
@@ -1284,14 +1284,14 @@ crate::def_intrinsic_component_props!(
                                 // TODO:
                                 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
                                 #[deprecated = "Use the CSS color property in conjunction with the :active pseudo-class instead."]
-                                fn alink(value: maybe![&str]);
+                                fn alink(value: attr_value![&str]);
                             }
 
                             pub trait HtmlBrElement {
                                 define!(tags = (br { custom_content_model },));
                                 impl_for_web!();
                                 #[deprecated]
-                                fn clear(value: maybe![&str]) {
+                                fn clear(value: attr_value![&str]) {
                                     update_with!(set_clear);
                                 }
                             }
@@ -1376,21 +1376,21 @@ crate::def_intrinsic_component_props!(
                                 impl_for_web!();
                                 // TODO: mark HtmlFormElement.accept as deprecated
                                 // #[deprecated = "This attribute has been deprecated and should not be used. Instead, use the accept attribute on <input type=file> elements."]
-                                fn accept_charset(value: maybe![&str]) {
+                                fn accept_charset(value: attr_value![&str]) {
                                     attr_name!("accept-charset");
                                     update_with!(set_accept_charset);
                                 }
-                                fn action(value: maybe![&str]) {
+                                fn action(value: attr_value![&str]) {
                                     update_with!(set_action);
                                 }
-                                fn enc_type(value: maybe![&str]) {
+                                fn enc_type(value: attr_value![&str]) {
                                     attr_name!("enctype");
                                     update_with!(set_enctype);
                                 }
-                                fn method(value: maybe![&str]) {
+                                fn method(value: attr_value![&str]) {
                                     update_with!(set_method);
                                 }
-                                fn no_validate(value: maybe![bool]) {
+                                fn no_validate(value: attr_value![bool]) {
                                     attr_name!("novalidate");
                                     update_with!(set_no_validate);
                                 }
@@ -1414,7 +1414,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlHtmlElement {
                                 define!(tags = (html,));
                                 impl_for_web!();
-                                fn xmlns(value: maybe![&str]);
+                                fn xmlns(value: attr_value![&str]);
                             }
 
                             pub trait HtmlIFrameElement {
@@ -1428,18 +1428,18 @@ crate::def_intrinsic_component_props!(
                                 );
                                 define!(tags = (iframe,));
                                 impl_for_web!();
-                                fn allow(value: maybe![&str]);
-                                fn allow_fullscreen(value: maybe![bool]) {
+                                fn allow(value: attr_value![&str]);
+                                fn allow_fullscreen(value: attr_value![bool]) {
                                     attr_name!("allowfullscreen");
                                     update_with!(set_allow_fullscreen);
                                 }
-                                fn allow_payment_request(value: maybe![bool]) {
+                                fn allow_payment_request(value: attr_value![bool]) {
                                     attr_name!("allowpaymentrequest");
                                     update_with!(set_allow_payment_request);
                                 }
-                                fn csp(value: maybe![&str]);
-                                fn sandbox(value: maybe![&str]);
-                                fn src_doc(value: maybe![&str]) {
+                                fn csp(value: attr_value![&str]);
+                                fn sandbox(value: attr_value![&str]);
+                                fn src_doc(value: attr_value![&str]) {
                                     attr_name!("srcdoc");
                                     update_with!(set_srcdoc);
                                 }
@@ -1463,13 +1463,13 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (img { custom_content_model },));
                                 impl_for_web!();
 
-                                fn decoding(value: maybe![&str]) {
+                                fn decoding(value: attr_value![&str]) {
                                     update_with!(set_decoding);
                                 }
-                                fn element_timing(value: maybe![&str]) {
+                                fn element_timing(value: attr_value![&str]) {
                                     attr_name!("elementtiming");
                                 }
-                                fn is_map(value: maybe![bool]) {
+                                fn is_map(value: attr_value![bool]) {
                                     attr_name!("ismap");
                                     update_with!(set_is_map);
                                 }
@@ -1498,19 +1498,19 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
 
-                                fn capture(value: maybe![&str]);
-                                fn dirname(value: maybe![&str]);
-                                fn list(value: maybe![&str]);
-                                fn max(value: maybe![&str]) {
+                                fn capture(value: attr_value![&str]);
+                                fn dirname(value: attr_value![&str]);
+                                fn list(value: attr_value![&str]);
+                                fn max(value: attr_value![&str]) {
                                     update_with!(set_max);
                                 }
-                                fn min(value: maybe![&str]) {
+                                fn min(value: attr_value![&str]) {
                                     update_with!(set_min);
                                 }
-                                fn pattern(value: maybe![&str]) {
+                                fn pattern(value: attr_value![&str]) {
                                     update_with!(set_pattern);
                                 }
-                                fn step(value: maybe![&str]) {
+                                fn step(value: attr_value![&str]) {
                                     update_with!(set_step);
                                 }
                             }
@@ -1524,7 +1524,7 @@ crate::def_intrinsic_component_props!(
                             pub trait HtmlLiElement {
                                 define!(tags = (li,));
                                 impl_for_web!();
-                                fn value(value: maybe![i32]) {
+                                fn value(value: attr_value![i32]) {
                                     update_with!(set_value);
                                 }
                             }
@@ -1545,18 +1545,18 @@ crate::def_intrinsic_component_props!(
                                 );
                                 define!(tags = (link { custom_content_model },));
                                 impl_for_web!();
-                                fn r#as(value: maybe![&str]) {
+                                fn r#as(value: attr_value![&str]) {
                                     alias!(as_);
                                     attr_name!("as");
                                     update_with!(set_as);
                                 }
-                                fn image_sizes(value: maybe![&str]) {
+                                fn image_sizes(value: attr_value![&str]) {
                                     attr_name!("imagesizes");
                                 }
-                                fn image_src_set(value: maybe![&str]) {
+                                fn image_src_set(value: attr_value![&str]) {
                                     attr_name!("imagesrcset");
                                 }
-                                fn prefetch(value: maybe![&str]);
+                                fn prefetch(value: attr_value![&str]);
 
                                 // TODO: no set_sizes
                             }
@@ -1571,11 +1571,11 @@ crate::def_intrinsic_component_props!(
                                 special_super_traits!(ElementWithNameAttribute);
                                 define!(tags = (meta { custom_content_model },));
                                 impl_for_web!();
-                                fn charset(value: maybe![&str]);
-                                fn content(value: maybe![&str]) {
+                                fn charset(value: attr_value![&str]);
+                                fn content(value: attr_value![&str]) {
                                     update_with!(set_content);
                                 }
-                                fn http_equiv(value: maybe![&str]) {
+                                fn http_equiv(value: attr_value![&str]) {
                                     attr_name!("http-equiv");
                                     update_with!(set_http_equiv);
                                 }
@@ -1586,16 +1586,16 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (meter,));
                                 impl_for_web!();
 
-                                fn min(value: maybe![f64]) {
+                                fn min(value: attr_value![f64]) {
                                     update_with!(set_min);
                                 }
-                                fn low(value: maybe![f64]) {
+                                fn low(value: attr_value![f64]) {
                                     update_with!(set_low);
                                 }
-                                fn high(value: maybe![f64]) {
+                                fn high(value: attr_value![f64]) {
                                     update_with!(set_high);
                                 }
-                                fn optimum(value: maybe![f64]) {
+                                fn optimum(value: attr_value![f64]) {
                                     update_with!(set_optimum);
                                 }
                             }
@@ -1610,7 +1610,7 @@ crate::def_intrinsic_component_props!(
                                 );
                                 define!(tags = (object,));
                                 impl_for_web!();
-                                fn data(value: maybe![&str]) {
+                                fn data(value: attr_value![&str]) {
                                     update_with!(set_data);
                                 }
                             }
@@ -1619,10 +1619,10 @@ crate::def_intrinsic_component_props!(
                                 special_super_traits!(ElementWithTypeAttribute);
                                 define!(tags = (ol,));
                                 impl_for_web!();
-                                fn reversed(value: maybe![bool]) {
+                                fn reversed(value: attr_value![bool]) {
                                     update_with!(set_reversed);
                                 }
-                                fn start(value: maybe![i32]) {
+                                fn start(value: attr_value![i32]) {
                                     update_with!(set_start);
                                 }
                             }
@@ -1638,7 +1638,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (option,));
                                 impl_for_web!();
 
-                                fn selected(value: maybe![bool]) {
+                                fn selected(value: attr_value![bool]) {
                                     update_with!(set_selected);
                                 }
                             }
@@ -1672,14 +1672,14 @@ crate::def_intrinsic_component_props!(
 
                                 fn children(value: children![impl frender_dom::script::IntoScriptContent]);
 
-                                fn r#async(value: maybe![bool]) {
+                                fn r#async(value: attr_value![bool]) {
                                     attr_name!("async");
                                     update_with!(set_async);
                                 }
-                                fn defer(value: maybe![bool]) {
+                                fn defer(value: attr_value![bool]) {
                                     update_with!(set_defer);
                                 }
-                                fn no_module(value: maybe![bool]) {
+                                fn no_module(value: attr_value![bool]) {
                                     attr_name!("nomodule");
                                     update_with!(set_no_module);
                                 }
@@ -1739,33 +1739,33 @@ crate::def_intrinsic_component_props!(
                                 // TODO: #[deprecated] bg_color
 
                                 #[deprecated]
-                                fn border(value: maybe![&str]) {
+                                fn border(value: attr_value![&str]) {
                                     update_with!(set_border);
                                 }
                                 #[deprecated]
-                                fn cell_padding(value: maybe![&str]) {
+                                fn cell_padding(value: attr_value![&str]) {
                                     attr_name!("cellpadding");
                                     update_with!(set_cell_padding);
                                 }
                                 #[deprecated]
-                                fn cell_spacing(value: maybe![&str]) {
+                                fn cell_spacing(value: attr_value![&str]) {
                                     attr_name!("cellspacing");
                                     update_with!(set_cell_spacing);
                                 }
                                 #[deprecated]
-                                fn frame(value: maybe![&str]) {
+                                fn frame(value: attr_value![&str]) {
                                     update_with!(set_frame);
                                 }
                                 #[deprecated]
-                                fn rules(value: maybe![&str]) {
+                                fn rules(value: attr_value![&str]) {
                                     update_with!(set_rules);
                                 }
                                 #[deprecated]
-                                fn summary(value: maybe![&str]) {
+                                fn summary(value: attr_value![&str]) {
                                     update_with!(set_summary);
                                 }
                                 #[deprecated]
-                                fn width(value: maybe![&str]) {
+                                fn width(value: attr_value![&str]) {
                                     update_with!(set_width);
                                 }
                             }
@@ -1782,16 +1782,16 @@ crate::def_intrinsic_component_props!(
                                 // TODO: #[deprecated] bg_color
 
                                 #[deprecated]
-                                fn char(value: maybe![&str]) {
+                                fn char(value: attr_value![&str]) {
                                     update_with!(set_ch);
                                 }
                                 #[deprecated]
-                                fn char_off(value: maybe![&str]) {
+                                fn char_off(value: attr_value![&str]) {
                                     attr_name!("charoff");
                                     update_with!(set_ch_off);
                                 }
                                 #[deprecated]
-                                fn v_align(value: maybe![&str]) {
+                                fn v_align(value: attr_value![&str]) {
                                     attr_name!("valign");
                                     update_with!(set_v_align);
                                 }
@@ -1816,11 +1816,11 @@ crate::def_intrinsic_component_props!(
                                 special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(tags = (col { custom_content_model }, colgroup,));
                                 impl_for_web!();
-                                fn span(value: maybe![u32]) {
+                                fn span(value: attr_value![u32]) {
                                     update_with!(set_span);
                                 }
                                 #[deprecated]
-                                fn width(value: maybe![&str]) {
+                                fn width(value: attr_value![&str]) {
                                     update_with!(set_width);
                                 }
                             }
@@ -1831,21 +1831,21 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (td, th,));
                                 impl_for_web!();
 
-                                fn col_span(value: maybe![u32]) {
+                                fn col_span(value: attr_value![u32]) {
                                     attr_name!("colspan");
                                     update_with!(set_col_span);
                                 }
-                                fn headers(value: maybe![&str]) {
+                                fn headers(value: attr_value![&str]) {
                                     update_with!(set_headers);
                                 }
-                                fn row_span(value: maybe![u32]) {
+                                fn row_span(value: attr_value![u32]) {
                                     attr_name!("rowspan");
                                     update_with!(set_row_span);
                                 }
                                 #[deprecated = "Do not use this attribute as it is obsolete in the latest standard. Alternatively, you can put the abbreviated description inside the cell and place the long content in the title attribute."]
-                                fn abbr(value: maybe![&str]);
+                                fn abbr(value: attr_value![&str]);
                                 #[deprecated]
-                                fn axis(value: maybe![&str]) {
+                                fn axis(value: attr_value![&str]) {
                                     update_with!(set_axis);
                                 }
 
@@ -1854,7 +1854,7 @@ crate::def_intrinsic_component_props!(
                                 // TODO: mark HtmlTableCellElement.width as deprecated
 
                                 #[deprecated]
-                                fn scope(value: maybe![&str]);
+                                fn scope(value: attr_value![&str]);
                             }
 
                             pub trait HtmlTextAreaElement {
@@ -1876,13 +1876,13 @@ crate::def_intrinsic_component_props!(
 
                                 fn children(value: children![impl TextAreaValue]);
 
-                                fn cols(value: maybe![u32]) {
+                                fn cols(value: attr_value![u32]) {
                                     update_with!(set_cols);
                                 }
-                                fn rows(value: maybe![u32]) {
+                                fn rows(value: attr_value![u32]) {
                                     update_with!(set_rows);
                                 }
-                                fn wrap(value: maybe![&str]) {
+                                fn wrap(value: attr_value![&str]) {
                                     update_with!(set_wrap);
                                 }
                             }
@@ -1899,13 +1899,13 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (track { custom_content_model },));
                                 impl_for_web!();
 
-                                fn default(value: maybe![bool]) {
+                                fn default(value: attr_value![bool]) {
                                     update_with!(set_default);
                                 }
-                                fn kind(value: maybe![&str]) {
+                                fn kind(value: attr_value![&str]) {
                                     update_with!(set_kind);
                                 }
-                                fn src_lang(value: maybe![&str]) {
+                                fn src_lang(value: attr_value![&str]) {
                                     attr_name!("srclang");
                                     update_with!(set_src_lang, web_sys_name = set_srclang);
                                 }
@@ -1916,7 +1916,7 @@ crate::def_intrinsic_component_props!(
                                 define!(tags = (ul,));
                                 impl_for_web!();
                                 #[deprecated = "Do not use this attribute, as it has been deprecated: use CSS instead. To give a similar effect as the compact attribute, the CSS property line-height can be used with a value of 80%."]
-                                fn compact(value: maybe![bool]) {
+                                fn compact(value: attr_value![bool]) {
                                     update_with!(set_compact);
                                 }
                                 // TODO: type attribute should be marked as deprecated
