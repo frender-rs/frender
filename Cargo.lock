@@ -339,6 +339,8 @@ checksum = "50d30906286121d95be3d479533b458f87493b30a4b5f79a607db8f5d11aa91f"
 [[package]]
 name = "ccss"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd9d9d42c0bd65d3cd1bab59c1578a72b396c34beb58986877dfb32d44f46770"
 dependencies = [
  "konst",
 ]
@@ -2191,7 +2193,6 @@ checksum = "50a0ba6de5f7af397afff922f22c149ff605c766cd3269cf6c1cd5e466dbe3b9"
 dependencies = [
  "const_panic",
  "konst_kernel",
- "konst_proc_macros",
  "typewit",
 ]
 
@@ -2203,12 +2204,6 @@ checksum = "be0a455a1719220fd6adf756088e1c69a85bf14b6a9e24537a5cc04f503edb2b"
 dependencies = [
  "typewit",
 ]
-
-[[package]]
-name = "konst_proc_macros"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e28ab1dc35e09d60c2b8c90d12a9a8d9666c876c10a3739a3196db0103b6043"
 
 [[package]]
 name = "kuchikiki"

@@ -8,7 +8,7 @@ frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules", feat
     "define_phantom_wrapper",
 ] }
 frender-common = { version = "0.1.0", path = "../frender-common" }
-ccss = { version = "0.1.0", path = "../../../ccss" }
+ccss = { version = "0.1.0" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
 web-sys = { version = "0.3.69", optional = true, default-features = false, features = [
     "CssStyleDeclaration",
