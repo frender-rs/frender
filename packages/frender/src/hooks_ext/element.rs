@@ -171,9 +171,6 @@ where
     >;
 }
 
-#[derive(Debug, Default)]
-struct ToElementWithHookData<T>(T);
-
 #[derive(Debug)]
 pub struct SignalHookToElement<U>(std::marker::PhantomData<U>);
 
