@@ -140,7 +140,7 @@ macro_rules! parse_one {
         $($finish)* {
             $($prepend)*
             { native_block!($($pre_expr)* $native_block $as $as_ty) }
-            { $($($rest)*)? }
+            { $(, $($rest)*)? }
             $($append)*
         }
     };
@@ -230,7 +230,7 @@ macro_rules! parse_one {
         $($finish)* {
             $($prepend)*
             { array!($($pre_expr)* $array $as $as_ty) }
-            { $($rest)* }
+            { $(, $($rest)*)? }
             $($append)*
         }
     };
