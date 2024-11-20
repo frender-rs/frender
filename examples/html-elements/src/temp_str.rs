@@ -1,3 +1,5 @@
+use std::pin::Pin;
+
 use frender::prelude::*;
 
 fn use_effect_every_second(
@@ -28,11 +30,43 @@ hooks::hook_fn!(
     }
 );
 
+/// equivalent to [`temp_str_with_hook_closure`]
 #[cfg(todo)]
-#[component]
-fn temp_str() {
-    let s = h![use_time_string()];
-    frender::TempStr(s)
+fn temp_str_with_element_macro() -> impl Element {
+    element!(move || -> TempStr<&'hook str> {
+        let s = h![use_time_string()];
+        frender::TempStr(s)
+    })
+}
+
+#[cfg(todo)]
+fn temp_str_with_hook_closure() -> impl Element {
+    frender::new_fn_hook_element(hook_closure!(move || -> TempStr<&'hook str> {
+        let s = h![use_time_string()];
+        frender::TempStr(s)
+    }))
+}
+
+fn temp_str_macro_expanded() -> impl ::frender::Element {
+    #[inline(always)]
+    fn identity_fn<
+        HookData,
+        F: for<'hook> FnMut(Pin<&'hook mut HookData>) -> frender::TempStr<&'hook str>,
+    >(
+        v: F,
+    ) -> F {
+        v
+    }
+
+    ::frender::new_fn_hook_element(identity_fn(
+        move |__hooks_hook_0: ::core::pin::Pin<&mut _>| {
+            let s = ::frender::__private::hooks_core::UpdateHookUninitialized::h(
+                use_time_string(),
+                __hooks_hook_0,
+            );
+            frender::TempStr(s)
+        },
+    ))
 }
 
 fn temp_str_with_inline_component_fn() -> impl Element {
@@ -57,6 +91,7 @@ fn temp_str_with_inline_component_fn_with_generics<E: Element + Copy>(el: E) -> 
 
 pub fn main() -> impl Element {
     (
+        temp_str_macro_expanded(),
         temp_str_with_inline_component_fn(),
         temp_str_with_inline_component_fn_with_generics("This is an example with generics:"),
     )
