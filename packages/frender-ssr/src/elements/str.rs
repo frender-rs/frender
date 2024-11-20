@@ -25,7 +25,7 @@ frender_common::impl_many!(
     }
 );
 
-/// <code>where TempStr<S>: [SsrStr](frender_common::strings::SsrStr)</code>
+/// <code>where TempStr\<S>: [SsrStr](frender_common::strings::SsrStr)</code>
 impl<S> SsrElement for frender_common::TempStr<S>
 where
     S: frender_common::IntoStaticStr,
