@@ -21,7 +21,8 @@ mod absent;
 pub use absent::Absent;
 
 pub use frender_common::{
-    EventListenerOptions, HandleEventWithOptions, TempStr, ToAsRefStr, ToStaticStr,
+    EventListenerOptions, HandleEventWithOptions, IntoStaticStrCache, TempStr, ToAsRefStr,
+    ToStaticStr,
 };
 pub use frender_hook_element::new_fn_hook_element;
 pub use frender_html as html;
