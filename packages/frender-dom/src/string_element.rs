@@ -16,6 +16,10 @@ mod imp {
     pub(super) fn into_static_owned_string(repr: Repr) -> StaticOwnedStr {
         repr.into()
     }
+
+    pub(super) fn from_js_string(v: Repr) -> Repr {
+        v
+    }
 }
 
 #[cfg(not(all(feature = "web", target_arch = "wasm32")))]
@@ -25,6 +29,11 @@ mod imp {
 
     pub(super) use super::imp_not_wasm::*;
     pub(super) use std::convert::identity as into_static_owned_string;
+
+    #[cfg(feature = "web")]
+    pub(super) fn from_js_string(v: web_sys::js_sys::JsString) -> Repr {
+        Repr::from(String::from(v))
+    }
 }
 
 /// If compiling on `wasm` and crate feature `web` is enabled,
@@ -45,6 +54,16 @@ pub struct StringElement {
 
 #[cfg(feature = "web")]
 impl StringElement {
+    /// This method requires crate feature `web`.
+    ///
+    /// If compiling on `target_arch = "wasm32"`, this method is a zero cost cast.
+    pub fn from_js_string(v: web_sys::js_sys::JsString) -> Self {
+        Self {
+            repr: imp::from_js_string(v),
+            _marker: PhantomData,
+        }
+    }
+
     pub fn as_js_string(&self) -> Result<&web_sys::js_sys::JsString, &std::rc::Rc<str>> {
         imp::ResultJsString(&self.repr)
     }
