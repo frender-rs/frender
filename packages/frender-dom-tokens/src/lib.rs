@@ -1,4 +1,5 @@
 pub use self::either::EitherDomTokens;
+pub use self::erase_const_known::EraseConstKnownPossibleDomTokens;
 pub use chain::Chain;
 use constness::HasConstKnownPossibleDomTokens;
 pub use dom_token::{DomToken, UniqueDomTokenArray, UniqueDomTokenArrayVec, UniqueDomTokens};
@@ -10,6 +11,7 @@ mod chain;
 mod dom_token;
 mod either;
 mod empty;
+mod erase_const_known;
 mod option;
 mod string;
 
@@ -38,6 +40,13 @@ pub trait DomTokens {
     type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
     fn dom_tokens_into_async_str_iter(this: Self) -> Self::DomTokensIntoAsyncStrIter;
+
+    fn erase_const_known_possible_dom_tokens(self) -> EraseConstKnownPossibleDomTokens<Self>
+    where
+        Self: Sized,
+    {
+        EraseConstKnownPossibleDomTokens(self)
+    }
 }
 
 pub mod ssr {
@@ -121,6 +130,9 @@ mod sealed {
 
     // chain
     impl<A: ChainableDomTokens, B: ChainableDomTokens> ChainableDomTokens for crate::Chain<A, B> {}
+
+    // EraseConstKnownPossibleDomTokens
+    impl<T: ChainableDomTokens> ChainableDomTokens for crate::EraseConstKnownPossibleDomTokens<T> {}
 
     // IntoDomTokens
     impl<T: crate::IntoDomTokens> ChainableDomTokens for T where T::IntoDomTokens: ChainableDomTokens {}
