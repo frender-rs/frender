@@ -1,15 +1,18 @@
 mod props_builder {
     use frender_dom::special::textarea::TextAreaValue;
 
-    use crate::html::props::HtmlTextAreaElement;
-    use crate::props_builder::PropsBuilderWithValue;
+    use crate::html::components::{textarea, HtmlTextAreaElement};
 
-    impl<V: TextAreaValue, Attrs, EL> PropsBuilderWithValue<V> for HtmlTextAreaElement<crate::Empty, Attrs, EL> {
-        type WithValue = HtmlTextAreaElement<V, Attrs, EL>;
-
+    impl<Attrs, EL> HtmlTextAreaElement::Props<crate::Empty, Attrs, EL> {
         /// Alias for [`Self::children`]
-        fn value(self, value: V) -> HtmlTextAreaElement<V, Attrs, EL> {
-            use crate::props_builder::PropsBuilderWithChildren;
+        pub fn value<V: TextAreaValue>(self, value: V) -> HtmlTextAreaElement::Props<V, Attrs, EL> {
+            self.children(value)
+        }
+    }
+
+    impl<Attrs, EL> textarea::Element<crate::Empty, Attrs, EL> {
+        /// Alias for [`Self::children`]
+        pub fn value<V: TextAreaValue>(self, value: V) -> textarea::Element<V, Attrs, EL> {
             self.children(value)
         }
     }
@@ -20,7 +23,7 @@ pub mod ssr {
     use frender_dom::special::textarea::SsrTextAreaValue;
     use frender_ssr::html::tag::AssertTagName;
 
-    use crate::html::tags;
+    use crate::cs::textarea;
 
     type Element<Attrs, Children> = frender_ssr::html::element::NormalElement<
         //
@@ -29,7 +32,7 @@ pub mod ssr {
         Children,
     >;
 
-    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children> SsrComponent<Attrs, Children> for tags::textarea
+    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children> SsrComponent<Attrs, Children> for textarea::Marker
     where
         Children: SsrTextAreaValue,
     {
@@ -47,19 +50,20 @@ pub mod ssr {
 }
 
 pub mod csr {
+    use crate::cs::textarea;
     use crate::element_types::RenderStateWithPehKind;
     use crate::form_control::value::FormControlValue;
-    use crate::{html::tags, CsrComponent, RenderHtml};
+    use crate::{CsrComponent, RenderHtml};
 
     enum Never {}
     pub struct Kind<V>(Never, std::marker::PhantomData<V>);
 
-    impl<V: FormControlValue<str>> RenderStateWithPehKind<tags::textarea> for Kind<V> {
+    impl<V: FormControlValue<str>> RenderStateWithPehKind<textarea::Marker> for Kind<V> {
         type RenderStateWithPeh<R: RenderHtml + ?Sized> = V::State<R::textarea, R>;
         type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = V::State<R::textarea, R>;
     }
 
-    impl<Children> CsrComponent<Children> for tags::textarea
+    impl<Children> CsrComponent<Children> for textarea::Marker
     where
         Children: FormControlValue<str>,
     {

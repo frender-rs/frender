@@ -209,7 +209,7 @@ macro_rules! html_elements {
         $(
             type $name = $Element;
             fn $name(&mut self) -> Self::$name {
-                let $tag = <frender_html::html::tags::$name as frender_html::dom::component::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG;
+                let $tag = <frender_html::cs::$name::Marker as frender_html::dom::component::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG;
                 $e
             }
         )*

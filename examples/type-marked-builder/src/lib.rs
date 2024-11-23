@@ -129,43 +129,47 @@ pub mod type_markers {
     pub struct canvas;
 }
 
-pub mod HtmlDivElement {
-    use crate::TypeMarked;
-
-    pub use super::type_markers::HtmlDivElement as Marker;
-
-    pub type Props<C, A, P> = TypeMarked<super::type_markers::HtmlDivElement, C, A, P>;
-    pub const PROPS: Props<crate::Empty, (), ()> = TypeMarked::new_empty(Marker);
-
-    pub mod tags {
-        pub use super::super::div;
-    }
-}
-
-macro_rules! define_component_fn {
-    ($($name:ident),* $(,)?) => {
+macro_rules! define_mod_Props {
+    ($($Props:ident ($($tag:ident),* $(,)?)),* $(,)?) => {
         $(
-            // The returned type is zero-sized, so it's likely to be optimized.
-            pub const fn $name() -> $name::Element<Empty, (), ()> {
-                $name::ELEMENT
-            }
-
-            pub mod $name {
+            pub mod $Props {
                 use crate::TypeMarked;
 
-                // use super::type_markers::$name;
+                pub use super::type_markers::$Props as Marker;
 
-                pub use super::type_markers::$name as Marker;
-                pub type Element<C, A, P> = TypeMarked<super::type_markers::$name, C, A, P>;
-                pub const ELEMENT: Element<crate::Empty, (), ()> = TypeMarked::new_empty(Marker);
+                pub type Props<C, A, P> = TypeMarked<super::type_markers::$Props, C, A, P>;
+                pub const PROPS: Props<crate::Empty, (), ()> = TypeMarked::new_empty(Marker);
 
-                pub use super::HtmlDivElement::{self as props, Props, PROPS};
+                pub mod tags {
+                    $(pub use super::super::$tag;)*
+                }
             }
+
+            $(
+                // The returned type is zero-sized, so it's likely to be optimized.
+                pub const fn $tag() -> $tag::Element<Empty, (), ()> {
+                    $tag::ELEMENT
+                }
+
+                pub mod $tag {
+                    use crate::TypeMarked;
+
+                    pub use super::type_markers::$tag as Marker;
+                    pub type Element<C, A, P> = TypeMarked<super::type_markers::$tag, C, A, P>;
+                    pub const ELEMENT: Element<crate::Empty, (), ()> = TypeMarked::new_empty(Marker);
+
+                    pub use super::$Props::{self as props, Props, PROPS};
+                }
+            )*
         )*
     };
 }
 
-define_component_fn!(div, canvas, td, th);
+define_mod_Props!(
+    HtmlDivElement(div),
+    HtmlCanvasElement(canvas),
+    HtmlTableCellElement(td, th),
+);
 
 pub trait TagMarker {
     type PropsMarker: PropsMarker;

@@ -5,12 +5,14 @@ pub mod array;
 pub mod boxed;
 #[cfg(feature = "either")]
 pub mod either;
-pub mod intrinsic;
 pub mod option;
 pub mod str;
 pub mod tuple;
 
+pub use crate::intrinsic::csr as intrinsic;
+
 mod empty;
 
 enum Never {}
-struct Kind<K>(std::marker::PhantomData<K>, Never);
+
+pub(crate) struct Kind<K>(std::marker::PhantomData<K>, Never);

@@ -2,7 +2,7 @@ use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttribute
 use frender_dom::Empty;
 use frender_ssr::html::tag::AssertTagName;
 
-use crate::{html::tags, CsrComponent, RenderHtml};
+use crate::{html::markers as tags, CsrComponent, RenderHtml};
 
 frender_common::impl_many!(
     impl<__>

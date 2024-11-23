@@ -4,9 +4,9 @@ use frender_dom::{
     script::IntoScriptContent,
 };
 
-use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, kinds::KindOfNonReactive, CsrComponent};
+use crate::{element_types::RenderStateWithPehKind, elements::non_reactive::NonReactiveRenderState, html::components::script, kinds::KindOfNonReactive, CsrComponent};
 
-impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrComponent<Attrs, Children> for crate::html::tags::script {
+impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrComponent<Attrs, Children> for script::Marker {
     type OneElement = frender_ssr::html::element::ScriptElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, Children::IntoScriptContent>;
 
     fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
@@ -14,7 +14,7 @@ impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: IntoScriptContent> SsrC
     }
 }
 
-impl<Children: IntoScriptContent> CsrComponent<Children> for crate::html::tags::script {
+impl<Children: IntoScriptContent> CsrComponent<Children> for script::Marker {
     type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children::IntoScriptInnerText as CsrAttrValue<str>>::State>>;
 
     fn children_render_update<R: crate::RenderHtml + ?Sized>(

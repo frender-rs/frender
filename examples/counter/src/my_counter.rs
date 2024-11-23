@@ -12,10 +12,14 @@ impl MyCounter {
     }
 }
 
-#[allow(non_upper_case_globals)]
-pub const MyCounter: MyCounter = MyCounter {
+const MY_COUNTER: MyCounter = MyCounter {
     initial_value: None,
 };
+
+#[allow(non_snake_case)]
+pub const fn MyCounter() -> MyCounter {
+    MY_COUNTER
+}
 
 impl MyCounter {
     #[component]

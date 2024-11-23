@@ -1,3 +1,4 @@
+#![recursion_limit = "2048"]
 pub use frender_common::expand;
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
@@ -15,9 +16,8 @@ pub use element_types::{CsrComponent, CsrComponentNormalElement};
 pub use frender_dom::{form_control, render_state, RenderState, RenderStateWithParentElementsHandle};
 
 pub mod html;
-pub mod props_builder;
 
-pub use html::{components as cs, prelude_props_builders};
+pub use html::components as cs;
 
 #[cfg(feature = "ElementProxyAttrs")]
 pub mod element_proxy_attrs;
@@ -51,3 +51,5 @@ mod attr;
 
 mod impl_bounds;
 use impl_bounds::impl_bounds;
+
+pub mod intrinsic;

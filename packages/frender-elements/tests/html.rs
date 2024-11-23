@@ -1,7 +1,7 @@
 #![cfg(feature = "csr")]
 
 use frender_elements::{Elements, Keyed};
-use frender_html::{cs, prelude_props_builders::*};
+use frender_html::cs;
 use frender_test::{element::Node, renderer::RendererWithRoot};
 
 fn dom_nodes_div_i32(dom: &RendererWithRoot) -> Vec<i32> {
@@ -35,19 +35,19 @@ fn prepend() {
     assert!(dom.nodes().is_empty());
 
     {
-        let elements = (0..5).map(|n| Keyed(n, cs::div.children(n)));
+        let elements = (0..5).map(|n| Keyed(n, cs::div().children(n)));
         dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_div_i32(&dom), [0, 1, 2, 3, 4]);
     }
 
     {
-        let elements = [9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div.children(n)));
+        let elements = [9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div().children(n)));
         dom.unpinned_render_update(Elements(elements), &mut render_state);
         assert_eq!(dom_nodes_div_i32(&dom), [9, 0, 1, 2, 3, 4]);
     }
 
     {
-        let elements = [10, 11, 12, 9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div.children(n)));
+        let elements = [10, 11, 12, 9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div().children(n)));
         dom.unpinned_render_update(Elements(elements), &mut render_state);
 
         assert_eq!(dom_nodes_div_i32(&dom), [10, 11, 12, 9, 0, 1, 2, 3, 4]);

@@ -1,7 +1,7 @@
 macro_rules! impl_bounds {
     (
         $($wrapper_path_start:ident)? $(:: $wrapper_path:ident)* (
-            csr_state_wrapper($($csr_state_wrapper:tt)+),
+            prop_marker($($prop_marker:tt)+),
             $($(#$bounds_attrs:tt)+)?
             bounds as $($mod_path_start:ident)?
                 $(:: $mod_path:ident)*
@@ -14,7 +14,7 @@ macro_rules! impl_bounds {
     ) => {
         $crate::impl_bounds! {@impl { $($mod_path_start)? $(:: $mod_path)* } {
             wrapper! { $($wrapper_path_start)? $(:: $wrapper_path)* }
-            csr_state_wrapper! { $($csr_state_wrapper)+ }
+            prop_marker! { $($prop_marker)+ }
             $(bounds_attrs! { $(#$bounds_attrs)+ })?
             bounds!  { $($mod_path_start)? $(:: $mod_path)* }
             bounds_tps! { $($($ty,)*)? }
@@ -93,7 +93,7 @@ macro_rules! default_impl_csr {
     (
         meta! {
             wrapper! {$($wrapper:tt)*}
-            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+            prop_marker! {$($prop_marker:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ident }
@@ -110,7 +110,10 @@ macro_rules! default_impl_csr {
             >
         for $($wrapper)*::<V> {
             type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
-                $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
+                crate::intrinsic::AttributeState<
+                    ::core::marker::PhantomData<$($prop_marker)*>,
+                    $($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]],
+                >;
 
             fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                 Self(this): Self,
@@ -128,7 +131,7 @@ macro_rules! default_impl_csr {
                     renderer,
                     $($attr_name_ident: $attr_name,)?
                     $($csr_fields)*
-                }, &mut state.0)
+                }, &mut state.1)
             }
         }
     };
@@ -138,7 +141,7 @@ macro_rules! default_impl_csr_without_attr_name {
     (
         meta! {
             wrapper! {$($wrapper:tt)*}
-            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+            prop_marker! {$($prop_marker:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ident }
@@ -149,7 +152,7 @@ macro_rules! default_impl_csr_without_attr_name {
         crate::impl_bounds::default_impl_csr! {
             meta! {
                 wrapper! {$($wrapper)*}
-                csr_state_wrapper! {$($csr_state_wrapper)*}
+                prop_marker! {$($prop_marker)*}
                 bounds!  {$($bounds)*}
                 bounds_tps!  {$($bounds_tp,)*}
                 csr_element_ty! { $csr_element_ty }
@@ -163,7 +166,7 @@ macro_rules! default_impl_ssr {
     (
         meta! {
             wrapper! {$($wrapper:tt)*}
-            csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+            prop_marker! {$($prop_marker:tt)*}
             bounds!  {$($bounds:tt)*}
             bounds_tps!  {$($bounds_tp:ty,)*}
             csr_element_ty! { $csr_element_ty:ty }
@@ -218,7 +221,7 @@ pub(crate) mod DomTokens {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
-                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                prop_marker! {$($prop_marker:tt)*}
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {$($bounds_tp:ty,)*}
                 csr_element_ty! { $csr_element_ty:ident }
@@ -235,13 +238,19 @@ pub(crate) mod DomTokens {
                 >
             for $($wrapper)*::<V> {
                 type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
-                    $($csr_state_wrapper)*::<$($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]]>;
+                    crate::intrinsic::AttributeState<
+                        ::core::marker::PhantomData<$($prop_marker)*>,
+                        $($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]],
+                    >;
 
                 fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
                     element: &mut ET::NodeOfBehaviorType<Renderer>,
-                    state: &mut Self::State<Renderer>,
+                    crate::intrinsic::AttributeState(
+                        ::core::marker::PhantomData,
+                        state,
+                    ): &mut Self::State<Renderer>,
                 ) {
                     #[allow(unused_imports)]
                     use $crate::html::behaviors_prelude::$csr_element_ty::*;
@@ -255,8 +264,6 @@ pub(crate) mod DomTokens {
                         // $($attr_name_ident: $attr_name,)?
                         $($csr_fields)*
                     };
-
-                    let state = &mut state.0;
 
                     let mut dom_token_list = (input.get_mut_dom_token_list)(input.element, input.renderer);
                     V::update_with_state(input.this, &mut dom_token_list, state)
@@ -417,7 +424,7 @@ pub(crate) mod MaybeHandleEvent {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
-                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                prop_marker! {$($prop_marker:tt)*}
                 bounds_attrs! { #[event($($bounds_tp:tt)*)] }
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {}
@@ -514,7 +521,7 @@ pub(crate) mod MaybeHandleEvent {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
-                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                prop_marker! {$($prop_marker:tt)*}
                 bounds_attrs! { #[event($($bounds_tp:tt)*)] }
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {}
@@ -546,7 +553,7 @@ pub(crate) mod SetRef {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
-                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                prop_marker! {$($prop_marker:tt)*}
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {$($bounds_tps:ty),* $(,)?}
                 csr_element_ty! { $csr_element_ty:ident }
@@ -582,7 +589,7 @@ pub(crate) mod SetRef {
         (
             meta! {
                 wrapper! {$($wrapper:tt)*}
-                csr_state_wrapper! {$($csr_state_wrapper:tt)*}
+                prop_marker! {$($prop_marker:tt)*}
                 bounds!  {$($bounds:tt)*}
                 bounds_tps!  {$($bounds_tps:ty),* $(,)?}
                 csr_element_ty! { $csr_element_ty:ident }

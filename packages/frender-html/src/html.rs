@@ -8,10 +8,20 @@ use frender_dom::{
 use crate::impl_bounds::{DomTokens, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
-pub mod props_builders;
+#[cfg(feature = "components")]
+pub mod markers;
 
 #[cfg(not(feature = "macros_not_expanded"))]
-pub mod prelude_props_builders;
+#[cfg(feature = "components")]
+pub mod prop_markers;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "components")]
+pub mod components;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "components")]
+mod props_builders;
 
 crate::def_intrinsic_component_props!(
     mod items {
@@ -26,14 +36,8 @@ crate::def_intrinsic_component_props!(
         #[behaviors_prelude]
         pub mod behaviors_prelude {}
 
-        #[attributes]
-        pub mod attributes {}
-
         #[behavior_type_traits]
         pub mod behavior_type_traits {}
-
-        #[tags]
-        pub mod tags {}
 
         #[event_types]
         pub mod event_types {}
@@ -41,21 +45,51 @@ crate::def_intrinsic_component_props!(
         #[event_type_helpers]
         pub mod event_type_helpers {}
 
-        #[props_without_builders]
-        pub mod props;
+        #[tag_and_props_markers]
+        #[cfg(feature = "components")]
+        #[cfg(feature = "macros_not_expanded")]
+        pub mod markers {
+            //! A module of tag markers and Props markers.
+            //!
+            //! It defines many unit structs:
+            //! - `pub struct $tag;` defines a tag marker.
+            //! - `pub struct $Props;` defines a Props marker.
+        }
+
+        #[prop_markers]
+        #[cfg(feature = "components")]
+        #[cfg(feature = "macros_not_expanded")]
+        pub mod prop_markers {
+            pub mod conflicted_names {
+                pub enum value {}
+
+                pub enum height {}
+                pub enum width {}
+
+                pub enum max {}
+                pub enum min {}
+            }
+        }
+
+        #[props]
+        #[cfg(feature = "components")]
+        #[cfg(feature = "macros_not_expanded")]
+        pub mod props {}
+
+        #[props_implementations]
+        expand_without_submodule! {}
 
         #[components]
-        pub mod components;
+        #[cfg(feature = "components")]
+        #[cfg(feature = "macros_not_expanded")]
+        pub mod components {
+            use frender_common::Empty;
+        }
 
         #[props_builders]
+        #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
-        pub mod props_builders;
-
-        #[prelude_props_builders]
-        #[cfg(feature = "macros_not_expanded")]
-        pub mod prelude_props_builders {
-            pub use crate::props_builder::prelude::*;
-        }
+        mod props_builders;
 
         #[RenderHtml]
         pub trait RenderHtml {
@@ -114,7 +148,7 @@ crate::def_intrinsic_component_props!(
 
                 impl_for_web!();
 
-                fn children(value: children![impl frender_ssr::SsrElement]);
+                fn children(value: children![]);
 
                 fn ref_element(value: set_ref![frender_dom::node_ref::Element]);
 

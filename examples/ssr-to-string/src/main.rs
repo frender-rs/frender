@@ -2,7 +2,7 @@ use frender::{prelude::*, TempStr};
 
 component_fn!(
     fn Main(main_id: &str) -> impl SsrElement + '_ {
-        cs::div
+        cs::div()
             .class("main")
             .id(TempStr(main_id)) // In ssr, this &str is actually to_owned into a String.
             .style(style!(
@@ -12,13 +12,13 @@ max-width: 768px;
 "#
             ))
             .children(
-                cs::h1.children((
+                cs::h1().children((
                     "Ssr to String - ",
-                    cs::i.children(
-                        cs::a
+                    cs::i().children(
+                        cs::a()
                             .href("https://github.com/frender-rs/frender")
                             .target("_blank")
-                            .children((cs::b.children("f"), "render")),
+                            .children((cs::b().children("f"), "render")),
                     ),
                 )),
             )

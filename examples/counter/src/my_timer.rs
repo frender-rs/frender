@@ -11,10 +11,14 @@ impl MyTimer {
     }
 }
 
-#[allow(non_upper_case_globals)]
-pub const MyTimer: MyTimer = MyTimer {
+const MY_TIMER: MyTimer = MyTimer {
     initial_interval: 0,
 };
+
+#[allow(non_snake_case)]
+pub const fn MyTimer() -> MyTimer {
+    MY_TIMER
+}
 
 impl MyTimer {
     #[component]

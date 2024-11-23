@@ -1,44 +1,4 @@
-mod props_builder {
-    use frender_dom::form_control::InputType;
-
-    use crate::form_control::InputChecked;
-    use crate::html::props::HtmlInputElement;
-    use crate::Empty;
-    use crate::{
-        form_control::{InputDataModel, InputValue, IntoInputDataModel},
-        props_builder::{PropsBuilderWithChecked, PropsBuilderWithType, PropsBuilderWithValue},
-    };
-
-    impl<DataModel: IntoInputDataModel<Type = Empty>, Attrs, EL, V: InputType> PropsBuilderWithType<V> for HtmlInputElement<DataModel, Attrs, EL> {
-        type WithType = HtmlInputElement<InputDataModel<V, DataModel::Value, DataModel::Checked>, Attrs, EL>;
-
-        fn r#type(self, value: V) -> Self::WithType {
-            HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_type(|Empty| value)),
-            }
-        }
-    }
-
-    impl<DataModel: IntoInputDataModel<Checked = Empty>, Attrs, EL, V: InputChecked> PropsBuilderWithChecked<V> for HtmlInputElement<DataModel, Attrs, EL> {
-        type WithChecked = HtmlInputElement<InputDataModel<DataModel::Type, DataModel::Value, V>, Attrs, EL>;
-
-        fn checked(self, value: V) -> Self::WithChecked {
-            HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_checked(|Empty| value)),
-            }
-        }
-    }
-
-    impl<DataModel: IntoInputDataModel<Value = Empty>, V: InputValue, Attrs, EL> PropsBuilderWithValue<V> for HtmlInputElement<DataModel, Attrs, EL> {
-        type WithValue = HtmlInputElement<InputDataModel<DataModel::Type, V, DataModel::Checked>, Attrs, EL>;
-
-        fn value(self, value: V) -> Self::WithValue {
-            HtmlInputElement {
-                props: self.props.map_children(|data| data.into_input_data_model().map_value(|Empty| value)),
-            }
-        }
-    }
-}
+mod props_builder;
 
 mod ssr {
     use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
@@ -46,14 +6,14 @@ mod ssr {
 
     use crate::{
         form_control::{InputDataModel, IntoInputDataModel},
-        html::tags,
+        html::components::input,
     };
 
     impl<
             //
             Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
             DataModel: IntoInputDataModel,
-        > SsrComponent<Attrs, DataModel> for tags::input
+        > SsrComponent<Attrs, DataModel> for input::Marker
     {
         type OneElement = frender_ssr::html::element::VoidElement<
             //
@@ -82,7 +42,7 @@ mod csr {
     use crate::{
         element_types::RenderStateWithPehKind,
         form_control::{value::FormControlValue, InputDataModel, InputValue, InputValueKind, IntoInputDataModel},
-        html::tags,
+        html::components::input,
         CsrComponent, RenderHtml,
     };
 
@@ -137,12 +97,12 @@ mod csr {
         Option<TypeCache>,
     >;
 
-    impl<Value: InputValue, Checked: InputChecked, TypeCache> RenderStateWithPehKind<tags::input> for Kind<Value, Checked, TypeCache> {
+    impl<Value: InputValue, Checked: InputChecked, TypeCache> RenderStateWithPehKind<input::Marker> for Kind<Value, Checked, TypeCache> {
         type RenderStateWithPeh<R: RenderHtml + ?Sized> = Self::RenderStateWithPehUnpinned<R>;
         type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = State<R, Value, Checked, TypeCache>;
     }
 
-    impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for tags::input {
+    impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         type ChildrenRenderStateKind = Kind<DataModel::Value, DataModel::Checked, <<DataModel::Type as InputType>::InputTypeStr as CsrStr>::StaticStrCache>;
 
         fn children_render_update<R: RenderHtml + ?Sized>(

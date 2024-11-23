@@ -18,7 +18,7 @@ impl IntoFnOnceRenderWithContext for Test {
     ) -> impl FnOnceRenderWithContext<Ctx> {
         move |ctx| {
             ctx.render((
-                cs::button
+                cs::button()
                     .children(TempStr(&*String::new()))
                     .on_click(|_: &_| {}),
                 Elements(self.numbers.iter().map(|i| Keyed(*i, *i))),

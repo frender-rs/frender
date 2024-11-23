@@ -5,7 +5,9 @@ mod ssr {
 
     use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 
-    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrStr> SsrComponent<Attrs, Children> for crate::html::tags::style {
+    use crate::html::components::style;
+
+    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrStr> SsrComponent<Attrs, Children> for style::Marker {
         type OneElement = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, IterAnyStr<Children::StaticStr>>;
 
         fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
@@ -16,16 +18,17 @@ mod ssr {
 
 mod csr {
     use crate::element_types::RenderStateWithPehKind;
+    use crate::html::components::style;
 
     use crate::kinds::KindOfNonReactive;
     use crate::CsrComponent;
 
     use frender_common::strings::csr::update_with_option_cache;
     use frender_common::strings::CsrStr;
-    
+
     use frender_dom::behaviors::HtmlElement;
 
-    impl<Children: CsrStr> CsrComponent<Children> for crate::html::tags::style {
+    impl<Children: CsrStr> CsrComponent<Children> for style::Marker {
         type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children as CsrStr>::StaticStrCache>>;
 
         fn children_render_update<R: crate::RenderHtml + ?Sized>(

@@ -77,29 +77,29 @@ fn Main() {
     // let data = hooks::use_gen_signal_with(Data::new); // data's updates are reactive here
 
     (
-        cs::div.children((
-            cs::button
+        cs::div().children((
+            cs::button()
                 .on_click(move |_: &_| data.map_mut(Data::prepend))
                 .children("Prepend"),
-            cs::button
+            cs::button()
                 .on_click(move |_: &_| data.map_mut(Data::append))
                 .children("Append"),
-            cs::button
+            cs::button()
                 .on_click(move |_: &_| data.map_mut(Data::clear))
                 .children("Clear"),
-            cs::button
+            cs::button()
                 .on_click(move |_: &_| data.map_mut(Data::swap))
                 .children("Swap"),
         )),
-        cs::pre.children(component_fn!(move || {
+        cs::pre().children(component_fn!(move || {
             h![data.use_signal()];
 
             (
-                cs::code.children(("Item count = ", { data.map(|data| data.items.len()) })),
+                cs::code().children(("Item count = ", { data.map(|data| data.items.len()) })),
                 "\n",
-                cs::code.children(("Next Index = ", { data.map(|data| data.cur) })),
+                cs::code().children(("Next Index = ", { data.map(|data| data.cur) })),
                 "\n",
-                cs::code.children({
+                cs::code().children({
                     data.map(|data| {
                         data.selected_index
                             .map_or(Either::Left("No Selection"), |idx| {
@@ -115,11 +115,11 @@ fn Main() {
                 }),
             )
         })),
-        cs::table.children(cs::tbody.children((
-            cs::tr.children((
-                cs::th.children("Index"),
-                cs::th.children("Value"),
-                cs::th.children("Actions"),
+        cs::table().children(cs::tbody().children((
+            cs::tr().children((
+                cs::th().children("Index"),
+                cs::th().children("Value"),
+                cs::th().children("Actions"),
             )),
             component_fn!(move || {
                 h![data.use_signal()];
@@ -138,17 +138,17 @@ fn Main() {
 
                                     Keyed(
                                         value,
-                                        cs::tr
+                                        cs::tr()
                                             .style(if selected {
                                                 Some(style!("outline: outset 1px orange"))
                                             } else {
                                                 None
                                             })
                                             .children((
-                                                cs::td.children(idx),
-                                                cs::td.children(value),
-                                                cs::td.children((
-                                                    cs::button
+                                                cs::td().children(idx),
+                                                cs::td().children(value),
+                                                cs::td().children((
+                                                    cs::button()
                                                         .on_click(move |_: &_| {
                                                             data.map_mut(|data| {
                                                                 if data.selected_index == Some(idx)
@@ -164,7 +164,7 @@ fn Main() {
                                                         } else {
                                                             "Select"
                                                         }),
-                                                    cs::button
+                                                    cs::button()
                                                         .on_click(move |_: &_| {
                                                             data.map_mut(|data: &mut Data| {
                                                                 data.remove(idx)

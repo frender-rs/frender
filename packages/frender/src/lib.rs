@@ -129,7 +129,7 @@ pub mod prelude {
     pub use frender_macros::component;
 
     #[cfg(feature = "html-components")]
-    pub use frender_html::{cs, cs as intrinsic_components, prelude_props_builders::*};
+    pub use frender_html::{cs, cs as intrinsic_components};
 
     #[cfg(feature = "hooks")]
     pub use crate::hooks_ext::ShareValueExt;

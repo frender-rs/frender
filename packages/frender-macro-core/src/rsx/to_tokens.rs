@@ -154,7 +154,7 @@ impl PureRsxElement {
 
         quote_spanned! { start_lt.span =>
             // TODO: prelude props builders?
-            #component_path
+            #component_path()
                 #props_chain
                 #props_children
         }

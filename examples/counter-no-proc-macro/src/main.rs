@@ -18,15 +18,15 @@ component_fn!(
 
         let state = state.get();
 
-        cs::div.children((
-            cs::button
+        cs::div().children((
+            cs::button()
                 .on_click(decrement)
                 .disabled(state == 0)
                 .children("-"),
             " ",
             state,
             " ",
-            cs::button
+            cs::button()
                 .on_click(increment)
                 .disabled(state == u32::MAX)
                 .children("+"),
@@ -79,13 +79,13 @@ component_fn!(
             move |_: &_| stopped_setter.toggle()
         };
 
-        cs::div.children((
+        cs::div().children((
             "Timer(initial_interval=",
             initial_interval,
             "): ",
             state,
             " ",
-            cs::button.on_click(toggle_stopped).children(if stopped {
+            cs::button().on_click(toggle_stopped).children(if stopped {
                 " RESUME "
             } else {
                 "  STOP  "
@@ -96,13 +96,13 @@ component_fn!(
 
 #[allow(non_snake_case)]
 fn DivCode(code: impl Element, children: impl Element) -> impl Element {
-    cs::div.children((cs::code.children(code), { children }))
+    cs::div().children((cs::code().children(code), { children }))
 }
 
 component_fn!(
     #[component(main)]
     fn Main() {
-        cs::div
+        cs::div()
             .id("a")
             .style(style!(
                 r#"margin: auto;
@@ -111,20 +111,20 @@ max-width: 768px;
 "#
             ))
             .children((
-                cs::h1.children((
+                cs::h1().children((
                     "Counter & Timer (without proc-macro) - ",
-                    cs::div.children(
-                        cs::a
+                    cs::div().children(
+                        cs::a()
                             .href("https://github.com/frender-rs/frender")
                             .target("_blank")
                             .children((
                                 //
-                                cs::b.children("f"),
+                                cs::b().children("f"),
                                 "render",
                             )),
                     ),
                 )),
-                cs::main.children((
+                cs::main().children((
                     DivCode("Counter(0)", Counter(0)),
                     DivCode("Counter(3)", Counter(3)),
                     DivCode("MyTimer(1000)", MyTimer(1000)),
