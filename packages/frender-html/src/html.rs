@@ -23,8 +23,8 @@ pub mod components;
 #[cfg(feature = "components")]
 mod props_builders;
 
-crate::def_intrinsic_component_props!(
-    mod items {
+crate::macros::def_intrinsic_component_props!(
+    mod __ {
         #[behaviors]
         pub mod behaviors {
             #[cfg(feature = "web")]

@@ -223,8 +223,7 @@ macro_rules! define {
                                         wrap {}
                                         prepend( {$fn_name $fn_body_or_semi} do )
                                         // $crate::extract_attr_builder_fn_names! { ... }
-                                        wrap {}
-                                        prepend( $crate::extract_attr_builder_fn_names! )
+                                        wrap {} prepend( crate::macros::extract_attr_builder_fn_names! )
                                     }
                                 }
                             }
