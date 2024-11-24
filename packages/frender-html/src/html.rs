@@ -1119,13 +1119,11 @@ crate::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlAnchorElement {
                                 special_super_traits!(HtmlElementWithHref, ElementWithTypeAttribute, ElementWithHrefLangAttribute);
-                                special_inter_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute);
                                 define!(tags = (a,));
                                 impl_for_web!();
                             }
                             pub trait HtmlAreaElement {
                                 special_super_traits!(HtmlElementWithHref, ElementWithAltAttribute);
-                                special_inter_traits!(ElementWithHrefAttribute, ElementWithTargetAttribute, ElementWithReferrerPolicyAttribute, ElementWithRelAttribute);
                                 define!(tags = (area { custom_content_model },));
                                 impl_for_web!();
 
@@ -1340,7 +1338,6 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithValueStrAttribute,
                                 );
-                                special_inter_traits!(ElementWithFormAttribute);
                                 define!(tags = (button,));
                                 impl_for_web!();
                             }
@@ -1494,7 +1491,6 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithCrossOriginAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
-                                special_inter_traits!(ElementWithSrcAttribute);
 
                                 define!(tags = (img { custom_content_model },));
                                 impl_for_web!();
@@ -1529,7 +1525,6 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
-                                special_inter_traits!(ElementWithFormAttribute);
                                 trait_bounds!(crate::form_control::InputElement<Renderer> + ElementWithTypeAttribute<Renderer>);
                                 define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
@@ -1750,7 +1745,6 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithSizesAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
-                                special_inter_traits!(ElementWithSrcAttribute);
                                 define!(tags = (source { custom_content_model },));
                                 impl_for_web!();
 
@@ -1835,21 +1829,18 @@ crate::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlTableSectionElement {
                                 special_super_traits!(HtmlTableChildElement);
-                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(tags = (tbody, tfoot, thead,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTableRowElement {
                                 special_super_traits!(HtmlTableChildElement);
-                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(tags = (tr,));
                                 impl_for_web!();
                             }
 
                             pub trait HtmlTableColElement {
                                 special_super_traits!(HtmlTableChildElement);
-                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(tags = (col { custom_content_model }, colgroup,));
                                 impl_for_web!();
                                 fn span(value: attr_value![u32]) {
@@ -1863,7 +1854,6 @@ crate::macros::def_intrinsic_component_props!(
 
                             pub trait HtmlTableCellElement {
                                 special_super_traits!(ElementWithHeightWidthStrAttributes, HtmlTableChildElement);
-                                special_inter_traits!(ElementWithAlignAttribute, ElementWithBgColorAttribute);
                                 define!(tags = (td, th,));
                                 impl_for_web!();
 

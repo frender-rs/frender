@@ -110,6 +110,8 @@ macro_rules! define {
             }
         }
 
+        pub(crate) use $trait_name;
+
         // allow children
         crate::macros::extract_only_children_or! {
             {$(

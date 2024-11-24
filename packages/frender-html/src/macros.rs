@@ -323,7 +323,18 @@ macro_rules! tag_custom_content_model {
 }
 
 macro_rules! tag_and_props_markers {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use ::frender_ssr::html::tag::AssertTagName;
+                use crate::{
+                    dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
+                    BehaviorType, CreateNode, CsrComponentNormalElement, RenderHtml,
+                };
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($special_super_traits:ident),* $(,)?))?
@@ -347,36 +358,42 @@ macro_rules! tag_and_props_markers {
     ) => {
         pub struct $trait_name;
 
-        #[allow(unused)]
-        macro_rules! $trait_name {
-            (for_each_extends $commands:tt) => {
-                frender_common::expand! {
-                    while (
-                        $({$extends})*
-                        $($({$special_super_traits})*)?
-                        $($({$special_inter_traits})*)?
-                    ) $commands
-                }
 
-                $($extends! { for_each_extends $commands })*
-            };
-            (for_each_trait_name $commands:tt) => {
-                $trait_name! { for_each_extends $commands }
+        $($($(
+            #[allow(non_camel_case_types)]
+            pub struct $tags;
+        )*)?)?
 
-                frender_common::expand! {
-                    { $trait_name }
-                    do $commands
+        $($($(
+            impl BehaviorType for $tags {
+                type NodeOfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+            }
+
+            impl HasIntrinsicComponentTag for $tags {
+                const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
+                const ASSERT_TAG_NAME: AssertTagName<&'static str> =
+                    AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
+            }
+            impl CreateNode for $tags {
+                fn create_node<R: super::RenderHtml + ?::core::marker::Sized>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
+                    renderer.$tags()
                 }
-            };
-            (impl_for_tag $tag:ident) => {
-                $trait_name! { for_each_trait_name {
+            }
+            crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
+                impl SsrComponentNormalElement for $tags {}
+                impl CsrComponentNormalElement for $tags {}
+            }}
+
+            crate::html::props_builders::$trait_name! { for_all_ancestors {
+                prepend { {$trait_name} }
+                for_each {
                     duplex_concat (
                         {
                             prepend {
                                 impl super::behavior_type_traits::
                             }
                             append {
-                                for $tag
+                                for $tags
                             }
                         }
                         {
@@ -384,39 +401,13 @@ macro_rules! tag_and_props_markers {
                                 type
                             }
                             append {
-                                <Renderer: ?Sized + super::RenderHtml> = Renderer::$tag;
+                                <Renderer: ?Sized + RenderHtml> = Renderer::$tags;
                             }
                             wrap {}
                         }
                     )
-                }}
-            };
-        }
-
-        $($($(
-            #[allow(non_camel_case_types)]
-            pub struct $tags;
-
-            impl crate::BehaviorType for $tags {
-                type NodeOfBehaviorType<Renderer: ?Sized + crate::RenderHtml> = Renderer::$tags;
-            }
-
-            impl crate::dom::component::HasIntrinsicComponentTag for $tags {
-                const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
-                const ASSERT_TAG_NAME: ::frender_ssr::html::tag::AssertTagName<&'static str> =
-                    ::frender_ssr::html::tag::AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
-            }
-            impl crate::CreateNode for $tags {
-                fn create_node<R: super::RenderHtml + ?::core::marker::Sized>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
-                    renderer.$tags()
                 }
-            }
-            crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
-                impl crate::dom::component::SsrComponentNormalElement for $tags {}
-                impl crate::CsrComponentNormalElement for $tags {}
             }}
-
-            $trait_name! { impl_for_tag $tags }
         )*)?)?
     };
 }
