@@ -17,6 +17,7 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
     type ChildrenRenderStateKind: RenderStateWithPehKind<Self>;
 
     fn children_render_update<R: RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,
@@ -24,6 +25,7 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
     );
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,
@@ -43,6 +45,7 @@ impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for
     type ChildrenRenderStateKind = KindRenderStateWithAnyParent<Children::RenderStateKind>;
 
     fn children_render_update<R: RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,
@@ -52,6 +55,7 @@ impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for
     }
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,

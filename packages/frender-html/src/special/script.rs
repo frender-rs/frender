@@ -18,15 +18,17 @@ impl<Children: IntoScriptContent> CsrComponent<Children> for script::Marker {
     type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children::IntoScriptInnerText as CsrAttrValue<str>>::State>>;
 
     fn children_render_update<R: crate::RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,
         children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
     ) {
-        Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
+        self.children_unpinned_render_update(children, element, renderer, children_state.get_mut())
     }
 
     fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
+        self,
         children: Children,
         element: &mut Self::Element<R>,
         renderer: &mut R,

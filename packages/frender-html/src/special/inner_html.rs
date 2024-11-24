@@ -8,15 +8,17 @@ mod csr {
         type ChildrenRenderStateKind = KindOfNonReactive<Option<S::StaticStrCache>>;
 
         fn children_render_update<R: crate::RenderHtml + ?Sized>(
+            self,
             children: DangerousInnerHtml<S>,
             element: &mut Self::Element<R>,
             renderer: &mut R,
             children_state: std::pin::Pin<&mut NonReactiveRenderState<Option<S::StaticStrCache>>>,
         ) {
-            Self::children_unpinned_render_update(children, element, renderer, children_state.get_mut())
+            self.children_unpinned_render_update(children, element, renderer, children_state.get_mut())
         }
 
         fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
+            self,
             DangerousInnerHtml(inner_html): DangerousInnerHtml<S>,
             element: &mut Self::Element<R>,
             renderer: &mut R,

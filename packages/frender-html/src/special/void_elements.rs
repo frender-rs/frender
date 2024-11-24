@@ -56,7 +56,7 @@ frender_common::impl_many!(
         )
     {
         type ChildrenRenderStateKind = crate::kinds::KindOfNoState;
-        fn children_render_update<R: RenderHtml + ?Sized>(Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
+        fn children_render_update<R: RenderHtml + ?Sized>(self, Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(self, Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
     }
 );

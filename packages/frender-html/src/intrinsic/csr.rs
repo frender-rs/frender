@@ -216,7 +216,7 @@ where
                         let node = frender_common::convert::IntoMut::into_mut(element);
                         Attrs::update_node_non_reactive(attributes, renderer, node, props_state.attrs_state);
                         AttrsWithPinnedState::update_node_non_reactive_pinned(attributes_with_pinned_state, renderer, node, props_state.event_listeners);
-                        <C as CsrComponent<Children>>::children_render_update(children, element, renderer, props_state.children_render_state)
+                        type_marker.children_render_update(children, element, renderer, props_state.children_render_state)
                     },
                     force_reposition,
                 )
@@ -254,7 +254,7 @@ where
                     let node = frender_common::convert::IntoMut::into_mut(element);
                     Attrs::update_node_non_reactive(attributes, renderer, node, attrs_state);
                     AttrsWithPinnedState::update_node_non_reactive(attributes_with_pinned_state, renderer, node, event_listeners_state);
-                    <C as CsrComponent<Children>>::children_unpinned_render_update(children, element, renderer, &mut props_state.children_render_state)
+                    type_marker.children_unpinned_render_update(children, element, renderer, &mut props_state.children_render_state)
                 },
                 force_reposition,
             )
