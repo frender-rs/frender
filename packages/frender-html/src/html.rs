@@ -43,7 +43,7 @@ crate::def_intrinsic_component_props!(
         pub mod event_types {}
 
         #[event_type_helpers]
-        pub mod event_type_helpers {}
+        mod event_type_helpers {}
 
         #[tag_and_props_markers]
         #[cfg(feature = "components")]
