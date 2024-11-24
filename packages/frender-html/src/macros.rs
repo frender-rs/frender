@@ -484,7 +484,7 @@ macro_rules! props {
             }
 
             $(
-                $crate::parse_fn_args_as_bounds! { $fn_args do {
+                crate::macros::parse_fn_args_as_bounds! { $fn_args do {
                     duplex_concat(
                         {
                             prepend(
@@ -559,6 +559,23 @@ macro_rules! props_implementations {
             };
 
             $(
+                self::prop_markers::expand_if_conflicted_name_or_else! { $fn_name {
+                    crate::macros::parse_fn_args_as_bounds! { $fn_args do {
+                        prepend { impl<V: }
+                        append {
+                            > crate::intrinsic::PropertyValue<prop_markers::$fn_name> for V {
+                                type Property = props::$fn_name<V>;
+
+                                fn wrapped_into_property(this: V) -> Self::Property {
+                                    props::$fn_name(this)
+                                }
+                            }
+                        }
+                    }}
+                }{}}
+            )*
+
+            $(
                 crate::impl_attribute!{ $fn_name $fn_args $fn_body_or_semi $trait_name }
             )*
         };
@@ -574,9 +591,11 @@ macro_rules! prop_markers {
         $crate::expand_item_simple! {
             $expand_item
             {
+                use crate::intrinsic::{AllowAttributeName, Intrinsic, PropertyValue};
+
                 $($item_body_expanded)*
 
-                crate::define_macro_expand_if_conflicted_name_or_else! { $expand_item }
+                crate::macros::define_conflicted_names! { $expand_item }
             }
         }
     };
@@ -622,18 +641,30 @@ macro_rules! prop_markers {
     };
 }
 
-#[macro_export]
-macro_rules! define_macro_expand_if_conflicted_name_or_else {
+macro_rules! define_conflicted_names {
     ((
         $(#$item_attrs:tt)*
         $item_vis:vis mod $item_name:ident {
             $mod_vis:vis mod $conflicted_names:ident {
+                $(#!$mod_attrs:tt)*
+
                 $(
                     $vis:vis enum $conflicted_name:ident {}
                 )*
             }
         }
     )) => {
+        $(
+            impl<M: AllowAttributeName<self::$conflicted_names::$conflicted_name>, C, A, P> Intrinsic<M, C, A, P> {
+                $vis fn $conflicted_name<T: PropertyValue<M::AttributeMarker>>(
+                    self,
+                    value: T,
+                ) -> Intrinsic<M, C, (A, T::Property), P> {
+                    Self::with_attribute_appended(self, T::wrapped_into_property(value))
+                }
+            }
+        )*
+
         macro_rules! expand_if_conflicted_name_or_else {
             $(
                 ($conflicted_name $if:tt $else:tt) => {
@@ -1238,7 +1269,6 @@ macro_rules! extract_attr_builder_fn_names {
     };
 }
 
-#[macro_export]
 macro_rules! parse_fn_args_as_bounds {
     (($value:ident : event![
         $event_trait_name:ident,
@@ -1463,7 +1493,7 @@ macro_rules! expand_item_and_prepend_expanded {
     };
 }
 
-pub(crate) use {expand_item_and_prepend_expanded, extract_only_children_or, parse_fn_args_as_whether_pinned_state, unwrap_brace_concat};
+pub(crate) use {define_conflicted_names, expand_item_and_prepend_expanded, extract_only_children_or, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, unwrap_brace_concat};
 
 #[cfg(test)]
 mod tests;

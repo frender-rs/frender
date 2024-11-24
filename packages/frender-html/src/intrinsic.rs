@@ -32,6 +32,11 @@ pub trait AllowAttributeName<N>: AllowAttribute<Self::AttributeMarker> {
     type AttributeMarker;
 }
 
+pub trait PropertyValue<AttrMarker> {
+    type Property: Property<PropertyMarker = AttrMarker>;
+    fn wrapped_into_property(this: Self) -> Self::Property;
+}
+
 /// [`TagMarker`] allows all children allowed by its [`PropsMarker`](TagMarker::PropsMarker).
 impl<TagM: TagMarker, C> AllowChildren<C> for TagM
 where

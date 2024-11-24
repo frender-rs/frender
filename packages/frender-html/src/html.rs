@@ -61,6 +61,8 @@ crate::def_intrinsic_component_props!(
         #[cfg(feature = "macros_not_expanded")]
         pub mod prop_markers {
             pub mod conflicted_names {
+                #![allow(non_camel_case_types)]
+
                 pub enum value {}
 
                 pub enum height {}

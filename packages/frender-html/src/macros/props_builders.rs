@@ -188,7 +188,7 @@ macro_rules! define {
                         }
                         append {
                             <prop_markers::$fn_name>, C, A, P> Intrinsic<M, C, A, P> {
-                                $crate::parse_fn_args_as_bounds! {
+                                crate::macros::parse_fn_args_as_bounds! {
                                     $fn_args
                                     do {
                                         prepend( <V: )
