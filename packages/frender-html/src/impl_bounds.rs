@@ -483,7 +483,7 @@ pub(crate) mod MaybeHandleEvent {
                 >
             for $($wrapper)*::<V> {
                 type StatePinned<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
-                    $($bounds_tp)*::UnpinnedEventListenerOf<
+                    $($bounds_tp)*::EventListenerOf<
                         ET::$csr_element_ty<Renderer>,
                         Renderer,
                         H,
