@@ -179,7 +179,7 @@ where
     // ssr bounds
     // TODO: remove ssr bounds from csr implementations
     Attrs: crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty,
-    C: crate::dom::component::SsrComponent<Attrs, Children>,
+    C: crate::dom::component::SsrComponent<Children>,
 {
     type RenderStateKind = Kind<C, C::ChildrenRenderStateKind, Attrs, AttrsWithPinnedState>; // TODO: shouldn't be generic over P
 

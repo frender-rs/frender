@@ -3,20 +3,20 @@ use frender_ssr::SsrElement;
 
 impl<TM, Children, Attrs, AttrsWithPinnedState> SsrElement for super::Intrinsic<TM, Children, Attrs, AttrsWithPinnedState>
 where
-    TM: SsrComponent<Attrs, Children>,
+    TM: SsrComponent<Children>,
     Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
     // AttrsWithPinnedState are considered csr only
 {
-    type HtmlChildren = TM::OneElement;
+    type HtmlChildren = TM::OneElement<Attrs>;
 
     fn into_html_children(self) -> Self::HtmlChildren {
         let Self {
-            type_marker: _,
+            type_marker,
             attributes,
             attributes_with_pinned_state: _,
             children,
         } = self;
 
-        TM::ssr_component(attributes, children)
+        type_marker.ssr_component(attributes, children)
     }
 }

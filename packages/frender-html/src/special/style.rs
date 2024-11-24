@@ -7,11 +7,11 @@ mod ssr {
 
     use crate::html::components::style;
 
-    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrStr> SsrComponent<Attrs, Children> for style::Marker {
-        type OneElement = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, IterAnyStr<Children::StaticStr>>;
+    impl<Children: SsrStr> SsrComponent<Children> for style::Marker {
+        type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = frender_ssr::html::element::StyleElement<<Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty, IterAnyStr<Children::StaticStr>>;
 
-        fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
-            Self::OneElement::new(attrs.into_space_and_html_attributes_or_empty(), IterAnyStr::new(children.into_into_static_str().into_static_str()))
+        fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(self, attrs: Attrs, children: Children) -> Self::OneElement<Attrs> {
+            Self::OneElement::<Attrs>::new(attrs.into_space_and_html_attributes_or_empty(), IterAnyStr::new(children.into_into_static_str().into_static_str()))
         }
     }
 }

@@ -32,17 +32,17 @@ pub mod ssr {
         Children,
     >;
 
-    impl<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children> SsrComponent<Attrs, Children> for textarea::Marker
+    impl<Children> SsrComponent<Children> for textarea::Marker
     where
         Children: SsrTextAreaValue,
     {
-        type OneElement = Element<
+        type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = Element<
             //
             Attrs::SpaceAndHtmlAttributesOrEmpty,
             Children::IntoSsrTextAreaValue,
         >;
 
-        fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
+        fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(self, attrs: Attrs, children: Children) -> Self::OneElement<Attrs> {
             use frender_dom::component::HasIntrinsicComponentTag;
             frender_ssr::html::element::NormalElement::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty(), Children::into_ssr_text_area_value(children))
         }

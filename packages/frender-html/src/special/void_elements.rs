@@ -5,55 +5,48 @@ use frender_ssr::html::tag::AssertTagName;
 use crate::{html::markers as tags, CsrComponent, RenderHtml};
 
 frender_common::impl_many!(
-    impl<__>
-        (
-            Generics![Attrs: IntoSpaceAndHtmlAttributesOrEmpty],
-            Trait![SsrComponent<Attrs, Empty>],
-            each_of![
-                tags::area,
-                tags::base,
-                tags::br,
-                tags::col,
-                tags::embed,
-                tags::hr,
-                tags::img,
-                // tags::input, // input is special
-                tags::link,
-                tags::meta,
-                tags::source,
-                tags::track,
-                tags::wbr,
-            ],
-        )
+    impl<__> SsrComponent<Empty>
+        for each_of![
+            tags::area,
+            tags::base,
+            tags::br,
+            tags::col,
+            tags::embed,
+            tags::hr,
+            tags::img,
+            // tags::input, // input is special
+            tags::link,
+            tags::meta,
+            tags::source,
+            tags::track,
+            tags::wbr,
+        ]
     {
-        type OneElement = frender_ssr::html::element::VoidElement<AssertTagName<&'static str>, <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty>;
+        type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = frender_ssr::html::element::VoidElement<AssertTagName<&'static str>, <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty>;
 
-        fn ssr_component(attrs: Attrs, Empty: Empty) -> Self::OneElement {
-            Self::OneElement::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty())
+        fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(self, attrs: Attrs, Empty: Empty) -> Self::OneElement<Attrs> {
+            Self::OneElement::<Attrs>::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty())
         }
     }
 );
 
 frender_common::impl_many!(
-    impl<__>
-        (
-            Trait![CsrComponent<Empty>],
-            each_of![
-                tags::area,
-                tags::base,
-                tags::br,
-                tags::col,
-                tags::embed,
-                tags::hr,
-                tags::img,
-                // tags::input, // input is special
-                tags::link,
-                tags::meta,
-                tags::source,
-                tags::track,
-                tags::wbr,
-            ],
-        )
+    impl<__> CsrComponent<Empty>
+        for each_of![
+            tags::area,
+            tags::base,
+            tags::br,
+            tags::col,
+            tags::embed,
+            tags::hr,
+            tags::img,
+            // tags::input, // input is special
+            tags::link,
+            tags::meta,
+            tags::source,
+            tags::track,
+            tags::wbr,
+        ]
     {
         type ChildrenRenderStateKind = crate::kinds::KindOfNoState;
         fn children_render_update<R: RenderHtml + ?Sized>(self, Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}

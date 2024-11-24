@@ -9,13 +9,8 @@ mod ssr {
         html::components::input,
     };
 
-    impl<
-            //
-            Attrs: IntoSpaceAndHtmlAttributesOrEmpty,
-            DataModel: IntoInputDataModel,
-        > SsrComponent<Attrs, DataModel> for input::Marker
-    {
-        type OneElement = frender_ssr::html::element::VoidElement<
+    impl<DataModel: IntoInputDataModel> SsrComponent<DataModel> for input::Marker {
+        type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = frender_ssr::html::element::VoidElement<
             //
             AssertTagName<&'static str>,
             <(
@@ -25,9 +20,9 @@ mod ssr {
             ) as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
         >;
 
-        fn ssr_component(attrs: Attrs, data_model: DataModel) -> Self::OneElement {
+        fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(self, attrs: Attrs, data_model: DataModel) -> Self::OneElement<Attrs> {
             let data_model = data_model.into_input_data_model();
-            Self::OneElement::new(Self::ASSERT_TAG_NAME, (attrs, data_model).into_space_and_html_attributes_or_empty())
+            Self::OneElement::<Attrs>::new(Self::ASSERT_TAG_NAME, (attrs, data_model).into_space_and_html_attributes_or_empty())
         }
     }
 }

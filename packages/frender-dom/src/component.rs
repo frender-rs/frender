@@ -10,25 +10,31 @@ pub trait HasIntrinsicComponentTag {
 
 pub trait SsrComponentNormalElement: HasIntrinsicComponentTag {}
 
-pub trait SsrComponent<Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children>:
-    HasIntrinsicComponentTag
-{
-    type OneElement: frender_ssr::html::assert::OneElement;
-    fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement;
+pub trait SsrComponent<Children>: HasIntrinsicComponentTag {
+    type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>: frender_ssr::html::assert::OneElement;
+    fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(
+        self,
+        attrs: Attrs,
+        children: Children,
+    ) -> Self::OneElement<Attrs>;
 }
 
-impl<C, Attrs: IntoSpaceAndHtmlAttributesOrEmpty, Children: SsrElement>
-    SsrComponent<Attrs, Children> for C
+impl<C, Children: SsrElement> SsrComponent<Children> for C
 where
     C: SsrComponentNormalElement,
 {
-    type OneElement = frender_ssr::html::element::NormalElement<
-        AssertTagName<&'static str>,
-        <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
-        Children::HtmlChildren,
-    >;
+    type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> =
+        frender_ssr::html::element::NormalElement<
+            AssertTagName<&'static str>,
+            <Attrs as IntoSpaceAndHtmlAttributesOrEmpty>::SpaceAndHtmlAttributesOrEmpty,
+            Children::HtmlChildren,
+        >;
 
-    fn ssr_component(attrs: Attrs, children: Children) -> Self::OneElement {
+    fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(
+        self,
+        attrs: Attrs,
+        children: Children,
+    ) -> Self::OneElement<Attrs> {
         frender_ssr::html::element::NormalElement::new(
             C::ASSERT_TAG_NAME,
             attrs.into_space_and_html_attributes_or_empty(),
