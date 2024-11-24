@@ -34,7 +34,7 @@ crate::def_intrinsic_component_props!(
         }
 
         #[behaviors_prelude]
-        pub mod behaviors_prelude {}
+        mod behaviors_prelude {}
 
         #[behavior_type_traits]
         pub mod behavior_type_traits {}
