@@ -153,7 +153,6 @@ macro_rules! behaviors {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds($($trait_bounds:tt)*))?
@@ -242,7 +241,6 @@ macro_rules! behaviors_prelude {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -281,7 +279,6 @@ macro_rules! behavior_type_traits {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -338,7 +335,6 @@ macro_rules! tag_and_props_markers {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($special_super_traits:ident),* $(,)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -417,7 +413,6 @@ macro_rules! props {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?    ))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -452,7 +447,6 @@ macro_rules! props {
                 while (
                     $({$extends})*
                     $($($({$special_super_traits})+)?)?
-                    $($({$special_inter_traits})*)?
                 ) {
                     prepend(
                         #[allow(unused_imports)]
@@ -497,7 +491,6 @@ macro_rules! props_implementations {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?    ))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -579,7 +572,6 @@ macro_rules! prop_markers {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?    ))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -605,7 +597,6 @@ macro_rules! prop_markers {
                 while (
                     $({$extends})*
                     $($($({$special_super_traits})+)?)?
-                    $($({$special_inter_traits})*)?
                 ) {
                     prepend { pub use super:: }
                     append { ::*; }
@@ -828,7 +819,6 @@ macro_rules! RenderHtml {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -866,7 +856,6 @@ macro_rules! expand_nested_traits {
             ($(
                 $vis:vis trait $trait_name:ident {
                     $(special_super_traits! $special_super_traits:tt;)?
-                    $(special_inter_traits! $special_inter_traits:tt;)?
                     $(trait_bounds! $trait_bounds:tt;)?
                     $(define! $define:tt;)?
 
@@ -891,7 +880,6 @@ macro_rules! expand_nested_traits {
                 $($({
                     extends $extends
                     $(special_super_traits $special_super_traits)?
-                    $(special_inter_traits $special_inter_traits)?
                     vis($vis)
                     trait_name($trait_name)
                     $(trait_bounds $trait_bounds)?
@@ -972,7 +960,6 @@ macro_rules! event_types {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -1041,7 +1028,6 @@ macro_rules! event_type_helpers {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -1103,7 +1089,6 @@ macro_rules! macro_props_builders {
     (
         extends $extends:tt
         $(special_super_traits $special_super_traits:tt)?
-        $(special_inter_traits $special_inter_traits:tt)?
         vis $vis:tt
         trait_name($trait_name:ident)
         $($rest:ident $rest_paren:tt)*
@@ -1111,7 +1096,6 @@ macro_rules! macro_props_builders {
         crate::macros::props_builders::define! {
             extends $extends
             $(special_super_traits $special_super_traits)?
-            $(special_inter_traits $special_inter_traits)?
             vis $vis
             trait_name($trait_name)
             $($rest $rest_paren)*
@@ -1143,7 +1127,6 @@ macro_rules! components {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($Props:ident)
         $(trait_bounds $trait_bounds:tt)?

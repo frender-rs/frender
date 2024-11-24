@@ -69,7 +69,6 @@ macro_rules! define {
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        $(special_inter_traits($($special_inter_traits:ident),* $(,)?))?
         vis($vis:vis)
         trait_name($trait_name:ident)
         $(trait_bounds $trait_bounds:tt)?
@@ -94,7 +93,6 @@ macro_rules! define {
             main_ancestors($($extends)*)
             other_ancestors(
                 $($($($special_super_traits)+)?)?
-                $($($special_inter_traits)*)?
             )
             {
                 (for_each_prop_name_of_self $commands:tt) => {
