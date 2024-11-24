@@ -84,9 +84,7 @@ crate::macros::def_intrinsic_component_props!(
         #[components]
         #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
-        pub mod components {
-            use frender_common::Empty;
-        }
+        pub mod components;
 
         #[props_builders]
         #[cfg(feature = "components")]

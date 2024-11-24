@@ -154,6 +154,7 @@ macro_rules! define {
         )*
 
         const _: () = {
+            #[allow(unused_imports)]
             use super::{props::$trait_name as props, prop_markers::$trait_name as prop_markers};
 
             // allow attributes from self ($trait_name)

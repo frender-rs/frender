@@ -237,7 +237,15 @@ macro_rules! behaviors {
 }
 
 macro_rules! behaviors_prelude {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                #![allow(non_snake_case)]
+                #![allow(unused_imports)]
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -260,7 +268,6 @@ macro_rules! behaviors_prelude {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        #[allow(non_snake_case)]
         $vis mod $trait_name {
             $vis use super::super::behaviors::$trait_name as _;
 
@@ -409,7 +416,15 @@ macro_rules! tag_and_props_markers {
 }
 
 macro_rules! props {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                #![allow(non_snake_case)]
+                #![allow(non_camel_case_types)]
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -432,16 +447,15 @@ macro_rules! props {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        #[allow(non_snake_case)]
         $vis mod $trait_name {
-            #![allow(non_camel_case_types)]
 
             #[allow(unused_imports)]
             use super::super::*;
 
-            use crate::intrinsic::Property;
-
-            use super::super::prop_markers::$trait_name as _prop_markers;
+            ::frender_common::expand! { if ($($fn_name)*) {
+                use crate::intrinsic::Property;
+                use super::super::prop_markers::$trait_name as _prop_markers;
+            }}
 
             ::frender_common::expand! {
                 while (
@@ -509,10 +523,14 @@ macro_rules! props_implementations {
         )*)
     ) => {
         const _: () = {
+            #[allow(unused_imports)]
             use self::{props::$trait_name as props, prop_markers::$trait_name as prop_markers};
 
             const _: () = {
-                use crate::intrinsic::{TagOrPropsMarker, PropsMarker, TagMarker};
+                use crate::intrinsic::{TagOrPropsMarker, PropsMarker};
+                #[allow(unused_imports)]
+                use crate::intrinsic::TagMarker;
+
                 use self::markers::{
                     $trait_name,
                     $($($($tag,)*)?)?
@@ -561,6 +579,10 @@ macro_rules! prop_markers {
         crate::macros::expand_item_simple! {
             $expand_item
             {
+                #![allow(non_snake_case)]
+                #![allow(non_camel_case_types)]
+                #![allow(unused_imports)]
+
                 use crate::intrinsic::{AllowAttributeName, Intrinsic, PropertyValue};
 
                 $($item_body_expanded)*
@@ -591,7 +613,6 @@ macro_rules! prop_markers {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        #[allow(non_snake_case)]
         $vis mod $trait_name {
             ::frender_common::expand! {
                 while (
@@ -661,7 +682,7 @@ macro_rules! impl_attribute {
                 #[event(self::event_type_helpers::$fn_name)]
                 bounds as crate::impl_bounds::MaybeHandleEvent,
                 element as $trait_name,
-                attr_name = $event_type_name,
+                attr_name = __,
             )
         }
     };
@@ -1068,7 +1089,7 @@ macro_rules! event_type_helper {
             pub type EventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListener<F>;
             pub type UnpinnedEventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListenerUnpinned<F>;
 
-            pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
+            // pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
         }
     };
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};
@@ -1123,7 +1144,16 @@ pub(crate) mod define_props_macro;
 pub(crate) mod props_builders;
 
 macro_rules! components {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                #![allow(non_snake_case)]
+
+                use frender_common::Empty;
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -1362,6 +1392,30 @@ macro_rules! expand_item_simple {
         $(#$item_attrs)*
         $vis $item_type $item_name
         $item_body_expanded
+    };
+    (
+        (
+            $(#$item_attrs:tt)*
+            $vis:vis $item_type:ident $item_name:ident
+            { $($item_body:tt)* }
+        )
+        {
+            #!$inner_attr:tt
+            $($item_body_expanded:tt)*
+        }
+    ) => {
+        crate::macros::expand_item_simple! {
+            (
+                $(#$item_attrs)*
+                $vis $item_type $item_name
+                {
+                    #!$inner_attr
+
+                    $($item_body)*
+                }
+            )
+            { $($item_body_expanded)* }
+        }
     };
     (
         (
