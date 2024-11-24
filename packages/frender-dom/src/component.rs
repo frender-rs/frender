@@ -2,9 +2,6 @@ use frender_ssr::{
     html::{assert::SpaceAndHtmlAttributesOrEmpty, tag::AssertTagName},
     SsrElement,
 };
-pub use props::{ElementProps, IntoElementProps};
-
-mod props;
 
 pub trait HasIntrinsicComponentTag {
     const INTRINSIC_COMPONENT_TAG: &'static str;
@@ -40,8 +37,6 @@ where
     }
 }
 
-pub struct IntrinsicElement<C, P>(pub C, pub P);
-
 pub trait IntoSpaceAndHtmlAttributesOrEmpty {
     type SpaceAndHtmlAttributesOrEmpty: SpaceAndHtmlAttributesOrEmpty;
     fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty;
@@ -68,29 +63,5 @@ impl<A: IntoSpaceAndHtmlAttributesOrEmpty, B: IntoSpaceAndHtmlAttributesOrEmpty>
             self.0.into_space_and_html_attributes_or_empty(),
             self.1.into_space_and_html_attributes_or_empty(),
         )
-    }
-}
-
-mod ssr {
-    use frender_ssr::SsrElement;
-
-    use super::{ElementProps, IntoElementProps, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
-
-    impl<C, P: IntoElementProps> SsrElement for super::IntrinsicElement<C, P>
-    where
-        P::Attributes: IntoSpaceAndHtmlAttributesOrEmpty,
-        C: SsrComponent<P::Attributes, P::Children>,
-    {
-        type HtmlChildren = C::OneElement;
-
-        fn into_html_children(self) -> Self::HtmlChildren {
-            let ElementProps {
-                children,
-                attributes,
-                event_listeners: _,
-            } = P::into_element_props(self.1);
-
-            C::ssr_component(attributes, children)
-        }
     }
 }

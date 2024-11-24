@@ -1098,19 +1098,14 @@ macro_rules! event_type_helper {
 }
 
 macro_rules! macro_props_builders {
-    (expand_item {
-        $expand_item:tt
-        {$($item_body_expanded:tt)*}
-    }) => {
-        crate::macros::expand_item_simple! {
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
                 use super::*;
                 use super::prop_markers::conflicted_names;
 
                 use crate::intrinsic::{Intrinsic, AllowAttribute, AllowAttributeWithPinnedState, AllowAttributeName, AllowChildren};
-
-                $($item_body_expanded)*
             }
         }
     };
@@ -1151,20 +1146,6 @@ pub(crate) mod define_props_macro;
 
 #[cfg(feature = "macros_not_expanded")]
 pub(crate) mod props_builders;
-
-macro_rules! prelude_props_builders {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
-    (
-        extends $extends:tt
-        $(special_super_traits $special_super_traits:tt)?
-        $(special_inter_traits $special_inter_traits:tt)?
-        vis($vis:vis)
-        trait_name($trait_name:ident)
-        $($rest:ident $rest_paren:tt)*
-    ) => {
-        $vis use super::props_builders::$trait_name as _;
-    };
-}
 
 macro_rules! components {
     (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
@@ -1379,28 +1360,6 @@ macro_rules! extract_only_children_or {
     };
 }
 
-macro_rules! define_component {
-    (
-        $Props:ident
-        $vis:vis
-        $tag:ident
-        // $component_options_or_semi:tt
-    ) => {
-        #[allow(non_camel_case_types)]
-        $vis type $component_name<Children, Props, EventListeners> = $crate::dom::component::IntrinsicElement<
-            super::tags::$component_name,
-            super::props::$props_name<Children, Props, EventListeners>,
-        >;
-
-        #[allow(non_upper_case_globals)]
-        $vis const $component_name: $component_name<crate::Empty, (), ()> = $crate::dom::component::IntrinsicElement(
-            super::tags::$component_name,
-            super::props::$props_name,
-        );
-    };
-}
-
-#[macro_export]
 macro_rules! expand_item_simple {
     (
         ($vis:vis expand_without_submodule ! {})
@@ -1454,7 +1413,7 @@ macro_rules! expand_item_and_prepend_expanded {
         }
         { $($prepend:tt)* }
     ) => {
-        crate::expand_item_simple! {
+        crate::macros::expand_item_simple! {
             $expand_item
             {
                 $($prepend)*
@@ -1465,10 +1424,10 @@ macro_rules! expand_item_and_prepend_expanded {
 }
 
 pub(crate) use {
-    behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_component, define_conflicted_names,
-    define_item_and_traverse_traits, event_type, event_type_helper, event_type_helpers, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names,
-    extract_only_children_or, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, parse_impl_with,
-    parse_update_with, prelude_props_builders, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
+    behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
+    event_type, event_type_helper, event_type_helpers, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_attribute,
+    impl_behavior_fn, impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, parse_impl_with, parse_update_with, prop_markers, props,
+    props_implementations, tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
 };
 
 #[cfg(test)]
