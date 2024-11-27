@@ -20,6 +20,7 @@ impl<Text> TextNode<Text> {
         Text: Node<R>,
     {
         self.node.readd_self(render_context, force_reposition || self.unmounted);
+        self.unmounted = false;
     }
 
     pub fn unmount<R: ?Sized>(&mut self, renderer: &mut R)
