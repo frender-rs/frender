@@ -1,5 +1,6 @@
 use crate::render::RenderWithContext;
 
+// TODO: replace RenderHtml::$tag() with NodeRenderSelf
 pub trait NodeRenderSelf<Renderer: ?Sized + RenderWithContext> {
     /// Should create the node,
     /// add the node to dom at the cursor,
@@ -15,6 +16,7 @@ pub trait NodeWithRenderContextAfterSelf<Renderer: ?Sized + RenderWithContext> {
     ) -> Res;
 }
 
+// TODO: use UiHandle
 pub trait Node<Renderer: ?Sized> {
     fn log_self(&self, renderer: &mut Renderer);
 

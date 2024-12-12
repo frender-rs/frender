@@ -1,7 +1,21 @@
-use crate::{CsrElement, HtmlRenderContext};
+use either::Either;
+use frender_common::either::EitherElement;
 
-impl<E: CsrElement> CsrElement for Box<E> {
-    type RenderStateKind = E::RenderStateKind;
+use crate::{element::CsrElement, HtmlRenderContext};
+
+fn into_either_element<L, R>(this: Either<L, R>) -> EitherElement<L, R> {
+    match this {
+        Either::Left(this) => EitherElement::A(this),
+        Either::Right(this) => EitherElement::B(this),
+    }
+}
+
+impl<L, R> CsrElement for Either<L, R>
+where
+    L: CsrElement,
+    R: CsrElement,
+{
+    type RenderStateKind = super::Kind<L::RenderStateKind, R::RenderStateKind>;
 
     fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
@@ -9,7 +23,7 @@ impl<E: CsrElement> CsrElement for Box<E> {
         render_context: &mut Ctx,
         states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        E::pinned_render_init(*self, render_context, states)
+        into_either_element(self).pinned_render_init(render_context, states)
     }
 
     fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
@@ -18,7 +32,7 @@ impl<E: CsrElement> CsrElement for Box<E> {
         render_context: &mut Ctx,
         states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     ) {
-        E::pinned_render_update(*self, render_context, states)
+        into_either_element(self).pinned_render_update(render_context, states)
     }
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
@@ -26,7 +40,7 @@ impl<E: CsrElement> CsrElement for Box<E> {
         self,
         render_context: &mut Ctx,
     ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        E::unpinned_render_init(*self, render_context)
+        into_either_element(self).unpinned_render_init(render_context)
     }
 
     fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
@@ -35,6 +49,6 @@ impl<E: CsrElement> CsrElement for Box<E> {
         render_context: &mut Ctx,
         states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     ) {
-        E::unpinned_render_update(*self, render_context, states)
+        into_either_element(self).unpinned_render_update(render_context, states)
     }
 }

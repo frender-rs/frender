@@ -7,13 +7,14 @@ pub use self::dom::Empty;
 
 pub use create_node::CreateNode;
 pub use html::RenderHtml;
-pub use update_element::{BehaviorType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
+pub use update_element::{BehaviorType, UiHandleType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
 use element::CsrElement as Element; // TODO: remove
 
-pub use element::{CsrElement, HtmlRenderContext, RenderStateKind, RenderStateKindPinned, RenderStateKindUnpinned, RenderStateOfContext, UnpinnedRenderStateOfContext};
+// TODO: some apis are unstable and should be sealed
+pub use element::{CsrElement, HtmlRenderContext};
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
-pub use frender_dom::{form_control, render_state, RenderState, RenderStateWithParentElementsHandle};
+pub use frender_dom::{form_control, render_state, RenderStateWithParentElementsHandle, StateUnmount};
 
 pub mod html;
 
@@ -33,6 +34,7 @@ mod element;
 mod element_types;
 
 pub mod kinds;
+pub mod ui_handles;
 
 pub mod elements;
 
@@ -45,6 +47,7 @@ pub mod __private {
     pub use crate::RenderHtml;
 }
 
+#[cfg(todo)]
 mod special;
 
 mod attr;
@@ -53,3 +56,6 @@ mod impl_bounds;
 use impl_bounds::impl_bounds;
 
 pub mod intrinsic;
+
+// TODO: feature
+pub mod experimental;

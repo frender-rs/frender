@@ -1,8 +1,11 @@
 use std::pin::Pin;
 
-use frender_common::utils::pin_project_map_array;
+use frender_common::utils::{
+    pin_project_for_each_array, pin_project_iter_mut_array, pin_project_map_array,
+};
+use pin_project_lite::pin_project;
 
-use crate::RenderState;
+use crate::{RenderState, StateUnmount};
 
 impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for [S; N] {
     fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
@@ -49,35 +52,23 @@ impl<S, const N: usize> ArrayRenderState<S, N> {
         // SAFETY: pin_projection
         unsafe { Pin::new_unchecked(&mut self.get_unchecked_mut().0) }
     }
+
+    pub fn iter_pin_mut(
+        self: Pin<&mut Self>,
+    ) -> impl Iterator<Item = Pin<&mut S>> + ExactSizeIterator {
+        pin_project_iter_mut_array(self.project_inner())
+    }
 }
 
+/// This is not always optimized as documented by `<[_; N]>::map()`.
 impl<S: Default, const N: usize> Default for ArrayRenderState<S, N> {
     fn default() -> Self {
-        Self([(); N].map(|()| Default::default()))
+        Self(::core::array::from_fn(|_| Default::default()))
     }
 }
 
-impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for ArrayRenderState<S, N> {
-    fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
-        self.project_inner().unmount(renderer)
-    }
-
+impl<S: StateUnmount, const N: usize> StateUnmount for ArrayRenderState<S, N> {
     fn state_unmount(self: Pin<&mut Self>) {
-        self.project_inner().state_unmount()
-    }
-
-    fn poll_render(
-        self: Pin<&mut Self>,
-        renderer: &mut R,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        self.project_inner().poll_render(renderer, cx)
-    }
-
-    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-    where
-        R: crate::render::RenderWithContext,
-    {
-        self.0.check_and_move_cursor(render_context)
+        pin_project_for_each_array(self.project_inner(), S::state_unmount)
     }
 }

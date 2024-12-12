@@ -306,12 +306,13 @@ macro_rules! behavior_type_traits {
         )*)
     ) => {
         $vis trait $trait_name:
-            crate::BehaviorType +
+            crate::UiHandleType +
             $($extends +)*
             $($($($special_super_traits +)+)?)?
         {
             type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
-                + ::frender_common::convert::IdentityAs<Self::NodeOfBehaviorType<Renderer>>
+                + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
+                + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>
             ;
         }
     };
@@ -332,9 +333,10 @@ macro_rules! tag_and_props_markers {
             $expand_item
             {
                 use ::frender_ssr::html::tag::AssertTagName;
+                use frender_dom::ui_handle::UnmountedUiHandle;
                 use crate::{
                     dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
-                    BehaviorType, CreateNode, CsrComponentNormalElement, RenderHtml,
+                    BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType,
                 };
             }
         }
@@ -369,7 +371,16 @@ macro_rules! tag_and_props_markers {
 
         $($($(
             impl BehaviorType for $tags {
-                type NodeOfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+                type OfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+            }
+
+            impl UiHandleType for $tags {
+                type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+
+                fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
+                    let unmounted = render_context.renderer_mut().$tags();
+                    render_context.map_mut_render_context(|render_context| unmounted.mount(render_context))
+                }
             }
 
             impl HasIntrinsicComponentTag for $tags {
@@ -377,11 +388,7 @@ macro_rules! tag_and_props_markers {
                 const ASSERT_TAG_NAME: AssertTagName<&'static str> =
                     AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
             }
-            impl CreateNode for $tags {
-                fn create_node<R: super::RenderHtml + ?::core::marker::Sized>(renderer: &mut R) -> <Self as super::behavior_type_traits::Node>::Node<R> {
-                    renderer.$tags()
-                }
-            }
+
             crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
                 impl SsrComponentNormalElement for $tags {}
                 impl CsrComponentNormalElement for $tags {}
@@ -859,8 +866,8 @@ macro_rules! RenderHtml {
     ) => {
         $($($(
             #[allow(non_camel_case_types)]
-            type $tags: self::behaviors::$trait_name<Self> + 'static;
-            fn $tags(&mut self) -> Self::$tags;
+            type $tags: self::behaviors::$trait_name<Self> + UiHandle<Self> + 'static;
+            fn $tags(&mut self) -> <Self::$tags as UiHandle<Self>>::Unmounted;
         )*)?)?
     };
 }

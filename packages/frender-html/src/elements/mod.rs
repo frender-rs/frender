@@ -1,9 +1,5 @@
-// TODO: refactor
-pub use crate::render_state::non_reactive;
-
 pub mod array;
 pub mod boxed;
-#[cfg(feature = "either")]
 pub mod either;
 pub mod option;
 pub mod str;

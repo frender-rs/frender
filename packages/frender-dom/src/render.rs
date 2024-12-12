@@ -1,15 +1,14 @@
 pub use frender_csr::render::{RenderContext, RenderWithContext};
 
-use crate::string_element::StringElement;
+use crate::{string_element::StringElement, ui_handle::UiHandle};
 
-pub trait RenderTextFrom<Text, V: ?Sized> {
-    /// should not move cursor
-    fn render_text_from(&mut self, v: &V) -> Text;
+pub trait RenderTextFrom<Text: UiHandle<Self>, V: ?Sized> {
+    fn render_text_from(&mut self, v: &V) -> Text::Unmounted;
     fn update_text_from(&mut self, text: &mut Text, v: &V);
 }
 
 /// Trait alias for [`RenderTextFrom`] with all known primitive types.
-pub trait RenderTextFromKnown<Text>:
+pub trait RenderTextFromKnown<Text: UiHandle<Self>>:
     RenderTextFrom<Text, str>
     + RenderTextFrom<Text, i8>
     + RenderTextFrom<Text, u8>
@@ -30,7 +29,7 @@ pub trait RenderTextFromKnown<Text>:
 {
 }
 
-impl<R: ?Sized, Text> RenderTextFromKnown<Text> for R where
+impl<R: ?Sized, Text: UiHandle<Self>> RenderTextFromKnown<Text> for R where
     R: RenderTextFrom<Text, str>
         + RenderTextFrom<Text, i8>
         + RenderTextFrom<Text, u8>
@@ -55,6 +54,7 @@ pub trait Render: RenderWithContext {
     fn log(&mut self, v: &str);
 
     type CursorPlaceholder: 'static
+        + UiHandle<Self>
         + crate::behaviors::NodeRenderSelf<Self>
         + crate::behaviors::NodeWithRenderContextAfterSelf<Self>
         + crate::behaviors::Node<Self>;

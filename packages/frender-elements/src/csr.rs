@@ -1,554 +1,83 @@
-use std::pin::Pin;
-
 use frender_html::{
-    impl_unpinned_render_for_unpin, CsrElement, RenderHtml, RenderState, RenderStateKindPinned,
-    RenderStateKindUnpinned,
+    experimental::{
+        PinMutRenderInitStatesOfKind, PinnedUiHandleOfKind, RenderStates,
+        UnpinnedMutRenderStatesOfKind, UnpinnedRenderStateKindPollRender,
+        UnpinnedRenderStatesOfKind,
+    },
+    kinds::{KindUnpinned, UiHandleWithNonReactiveState},
+    CsrElement, HtmlRenderContext,
 };
 
 use crate::{Elements, Keyed};
 
-pub trait ElementsAlgorithm<K, E> {
-    type CsrState<R: RenderHtml + ?Sized>: RenderState<R> + Unpin + Default;
+pub trait KeyedElementsAlgorithm<K, E> {
+    type KeyedElementsRenderStateKind: UnpinnedRenderStateKindPollRender;
 
-    fn keyed_elements_update_csr_state<
+    fn keyed_elements_render_init<
         I: IntoIterator<Item = Keyed<K, E>>,
-        R: RenderHtml + ?Sized,
+        Ctx: ?Sized + HtmlRenderContext,
     >(
         self,
-        keyed_elements: I,
-        render_context: &mut R::RenderContext<'_>,
-        state: Pin<&mut Self::CsrState<R>>,
+        elements: I,
+        render_context: &mut Ctx,
+    ) -> UnpinnedRenderStatesOfKind<Self::KeyedElementsRenderStateKind, Ctx::Renderer>;
+
+    fn keyed_elements_render_update<
+        I: IntoIterator<Item = Keyed<K, E>>,
+        Ctx: ?Sized + HtmlRenderContext,
+    >(
+        self,
+        elements: I,
+        render_context: &mut Ctx,
+        states: UnpinnedMutRenderStatesOfKind<Self::KeyedElementsRenderStateKind, Ctx::Renderer>,
     );
+}
 
-    /// The element needs to be repositioned (re-add to the ctx)
-    fn keyed_elements_update_csr_state_force_reposition<
-        I: IntoIterator<Item = Keyed<K, E>>,
-        R: RenderHtml + ?Sized,
-    >(
+pub trait ElementsAlgorithm<E> {
+    type ElementsRenderStateKind: UnpinnedRenderStateKindPollRender;
+
+    fn elements_render_init<I: IntoIterator<Item = E>, Ctx: ?Sized + HtmlRenderContext>(
         self,
-        keyed_elements: I,
-        render_context: &mut R::RenderContext<'_>,
-        state: Pin<&mut Self::CsrState<R>>,
+        elements: I,
+        render_context: &mut Ctx,
+    ) -> UnpinnedRenderStatesOfKind<Self::ElementsRenderStateKind, Ctx::Renderer>;
+
+    fn elements_render_update<I: IntoIterator<Item = E>, Ctx: ?Sized + HtmlRenderContext>(
+        self,
+        elements: I,
+        render_context: &mut Ctx,
+        states: UnpinnedMutRenderStatesOfKind<Self::ElementsRenderStateKind, Ctx::Renderer>,
     );
+}
 
-    fn keyed_elements_update_csr_state_maybe_reposition<
+impl<A: KeyedElementsAlgorithm<K, E>, K, E> ElementsAlgorithm<Keyed<K, E>> for A {
+    type ElementsRenderStateKind = A::KeyedElementsRenderStateKind;
+
+    fn elements_render_init<
         I: IntoIterator<Item = Keyed<K, E>>,
-        R: RenderHtml + ?Sized,
+        Ctx: ?Sized + HtmlRenderContext,
     >(
         self,
-        keyed_elements: I,
-        render_context: &mut R::RenderContext<'_>,
-        state: Pin<&mut Self::CsrState<R>>,
-        force_reposition: bool,
-    ) where
-        Self: Sized,
-    {
-        if force_reposition {
-            self.keyed_elements_update_csr_state_force_reposition(
-                keyed_elements,
-                render_context,
-                state,
-            )
-        } else {
-            self.keyed_elements_update_csr_state(keyed_elements, render_context, state)
-        }
+        elements: I,
+        render_context: &mut Ctx,
+    ) -> UnpinnedRenderStatesOfKind<Self::ElementsRenderStateKind, Ctx::Renderer> {
+        self.keyed_elements_render_init(elements, render_context)
+    }
+
+    fn elements_render_update<
+        I: IntoIterator<Item = Keyed<K, E>>,
+        Ctx: ?Sized + HtmlRenderContext,
+    >(
+        self,
+        elements: I,
+        render_context: &mut Ctx,
+        states: UnpinnedMutRenderStatesOfKind<Self::ElementsRenderStateKind, Ctx::Renderer>,
+    ) {
+        self.keyed_elements_render_update(elements, render_context, states);
     }
 }
 
-/// The problem is how to deal with the following two cases with one algorithm:
-///
-/// - Case I : `1 2 3 4 5 6 7        => 1 *4* 2 3 4 5 6 7`
-/// - Case II: `1 2 3 4 5 6 7 8 9... => 1  4  5 6 7 8 9 ... *2 3*`
-///
-/// In case I, it's more performant to just move *4* to after 2
-/// (force_reposition *4* and go on as normal).
-///
-/// In case II, it's more performant to move *2 3* to the end.
-/// (mark *2 3* as MightUnmount and go on as normal.
-/// When *2* is met, force_reposition *2*.
-/// When *3* is met, force_reposition *3*.).
-///
-/// The problem is: while iterating elements, we meet *1* followed by *4*.
-/// We can't decide this is case I or case II.
-///
-/// The current algorithm is: If there were more elements between 1 and 4 than the elements after 4,
-/// we assume this is case I. Otherwise, we assume it's case II.
-/// With this algorithm, the above case I will be assumed as case II.
-/// But we just force_positioned one more element which is ok.
-///
-/// # Implementation details
-///
-/// The render state `Element::UnpinnedRenderState` might NOT get dropped when unmounted.
-/// [`RenderState::unmount`] will always run when unmounted.
-pub mod default {
-    use std::{cmp::Ordering, hash::Hash, pin::Pin};
-
-    use indexmap::IndexMap;
-
-    use frender_html::{dom::render::RenderContext, CsrElement, RenderHtml, RenderState};
-
-    use crate::{DefaultElementsAlgorithm, Keyed};
-
-    use super::ElementsAlgorithm;
-
-    #[derive(Default)]
-    struct State<S> {
-        render_state: S,
-        // The following fields could have a smaller representation like `usize`.
-        order: usize,
-        state_unmounted: bool,
-        cache: bool,
-    }
-
-    enum MountState {
-        Mounted,
-        StateUnmounted,
-        AllStatesUnmounted,
-    }
-
-    pub struct States<K, S, C> {
-        // the first `key_to_index.len()` states are mounted.
-        states: Vec<State<S>>,
-        key_to_index: IndexMap<K, ()>,
-        mount_state: MountState,
-        // elements are surrounded by two cursor placeholders.
-        cursor_placeholders: Option<(C, C)>,
-    }
-
-    fn insert_at_index<'s, K: Hash + Eq, S: Default>(
-        states: &'s mut Vec<State<S>>,
-        key_to_index: &mut IndexMap<K, ()>,
-        key: K,
-        index: usize,
-    ) -> &'s mut State<S> {
-        debug_assert!(index <= key_to_index.len());
-        let old_index = match key_to_index.entry(key) {
-            indexmap::map::Entry::Occupied(entry) => entry.index(),
-            indexmap::map::Entry::Vacant(entry) => {
-                let real_len = entry.index();
-                entry.insert(());
-                push_state_with_real_len(states, real_len);
-                real_len
-            }
-        };
-
-        if old_index != index {
-            key_to_index.swap_indices(old_index, index);
-            states.swap(old_index, index);
-        }
-
-        &mut states[index]
-    }
-
-    fn push_state_with_real_len<T: Default>(states: &mut Vec<T>, real_len: usize) {
-        debug_assert!(states.len() >= real_len);
-
-        if states.len() == real_len {
-            states.push(Default::default());
-        }
-    }
-
-    impl<K, S, C> Default for States<K, S, C> {
-        fn default() -> Self {
-            Self {
-                states: Vec::new(),
-                key_to_index: Default::default(),
-                mount_state: MountState::AllStatesUnmounted,
-                cursor_placeholders: None,
-            }
-        }
-    }
-
-    impl<K, S, C> Unpin for States<K, S, C> {}
-
-    impl<K, S: RenderState<R> + Unpin, R: ?Sized, C> RenderState<R> for States<K, S, C>
-    where
-        C: frender_html::dom::behaviors::Node<R>,
-    {
-        fn unmount(self: Pin<&mut Self>, renderer: &mut R) {
-            let this = self.get_mut();
-
-            let (a, b) = match this.mount_state {
-                MountState::AllStatesUnmounted => return,
-                _ => this.cursor_placeholders.as_mut().unwrap(),
-            };
-
-            let real_len = this.key_to_index.len();
-
-            this.key_to_index.clear();
-
-            a.remove_self(renderer);
-
-            this.states
-                .iter_mut()
-                .take(real_len)
-                .for_each(|State { render_state, .. }| {
-                    S::unmount(Pin::new(render_state), renderer);
-                });
-
-            b.remove_self(renderer);
-
-            this.mount_state = MountState::AllStatesUnmounted;
-
-            // TODO(perf): should we free the memory or reuse it in case mounted again? Currently States<K, S> keeps the allocated memory.
-            // We could keep the allocated memory in implementations,
-            // and have a wrapper type `DropOnUnmount` which drop the old value and set it to default.
-        }
-
-        fn state_unmount(self: Pin<&mut Self>) {
-            let this = self.get_mut();
-            if !matches!(this.mount_state, MountState::Mounted) {
-                return;
-            }
-            let real_len = this.key_to_index.len();
-
-            this.states.iter_mut().take(real_len).for_each(
-                |State {
-                     render_state,
-                     state_unmounted,
-                     ..
-                 }| {
-                    if !*state_unmounted {
-                        S::state_unmount(Pin::new(render_state));
-                        *state_unmounted = true;
-                    }
-                },
-            );
-
-            this.mount_state = MountState::StateUnmounted;
-        }
-
-        fn poll_render(
-            self: Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> std::task::Poll<()> {
-            let this = self.get_mut();
-
-            if !matches!(this.mount_state, MountState::Mounted) {
-                return std::task::Poll::Ready(());
-            }
-
-            let real_len = this.key_to_index.len();
-
-            let mut res = std::task::Poll::Ready(());
-
-            this.states.iter_mut().take(real_len).for_each(
-                |State {
-                     render_state,
-                     state_unmounted,
-                     ..
-                 }| {
-                    if !*state_unmounted {
-                        match S::poll_render(std::pin::Pin::new(render_state), renderer, cx) {
-                            std::task::Poll::Ready(()) => {}
-                            v @ std::task::Poll::Pending => {
-                                res = v;
-                            }
-                        }
-                    }
-                },
-            );
-
-            res
-        }
-
-        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-        where
-            R: frender_html::dom::render::RenderWithContext,
-        {
-            if matches!(self.mount_state, MountState::AllStatesUnmounted) {
-                return;
-            }
-            // check even if state_unmounted
-            // only check the surrounding placeholders
-            if let Some((a, b)) = &self.cursor_placeholders {
-                a.check_and_move_cursor_after_self(render_context);
-                if self.key_to_index.len() > 0 {
-                    // skip surrounded elements
-                    render_context.mark_cursor_skipped();
-                }
-                b.check_and_move_cursor_after_self(render_context);
-            }
-        }
-    }
-
-    impl<K: Hash + Eq, E: CsrElement> ElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
-        type CsrState<R: RenderHtml + ?Sized> = States<
-            K,
-            <E::RenderStateKind as frender_html::RenderStateKindUnpinned>::UnpinnedRenderState<R>,
-            R::CursorPlaceholder,
-        >;
-
-        fn keyed_elements_update_csr_state<
-            I: IntoIterator<Item = Keyed<K, E>>,
-            R: RenderHtml + ?Sized,
-        >(
-            self,
-            keyed_elements: I,
-            render_context: &mut R::RenderContext<'_>,
-            state: Pin<&mut Self::CsrState<R>>,
-        ) {
-            use frender_html::dom::behaviors::{Node as _, NodeRenderSelf};
-
-            let States {
-                states,
-                key_to_index,
-                mount_state,
-                cursor_placeholders,
-            } = state.get_mut();
-
-            let cursor_placeholder_force_reposition =
-                matches!(mount_state, MountState::AllStatesUnmounted);
-
-            *mount_state = MountState::Mounted;
-
-            // Ok(&mut cpb) or Err(new_cpa)
-            let cpb_or_new_cpa = if let Some((cpa, cpb)) = cursor_placeholders {
-                cpa.readd_self(render_context, cursor_placeholder_force_reposition);
-                Ok(cpb)
-            } else {
-                Err(NodeRenderSelf::render_self(render_context))
-            };
-
-            let elements = keyed_elements.into_iter();
-
-            // TODO: specialize for ExactSizeIterator
-            // if elements.len() == 0 {
-            // }
-
-            let mut cur = 0;
-            let mut old_cur = 0;
-
-            let old_mounted_count = key_to_index.len();
-
-            states.iter_mut().take(old_mounted_count).for_each(|state| {
-                state.state_unmounted = true;
-                state.cache = false;
-            });
-
-            for Keyed(key, element) in elements {
-                match key_to_index.entry(key) {
-                    indexmap::map::Entry::Occupied(entry) => {
-                        // old element old state, possible new position
-
-                        let index = entry.index();
-                        let State {
-                            render_state,
-                            order,
-                            state_unmounted,
-                            ..
-                        } = &mut states[index];
-
-                        enum Strategy {
-                            // force_position = false
-                            NoMove,
-                            // force_position = false
-                            Skip,
-                            // force_position = true
-                            MoveLeft { old_order: usize },
-                            // force_position = true
-                            MoveRight,
-                        }
-
-                        let strategy = match old_cur.cmp(order) {
-                            Ordering::Equal => Strategy::NoMove,
-                            Ordering::Less => {
-                                let old_order = *order;
-                                // order = 4, old_cur = 2
-                                // *4* is moved left or *2 3* is moved right
-                                // 1 2 3 4 => 1 4 2 3
-                                // 1 2 3 4 5 6 7 8 => 1 4 2 3 5 6 7 8
-                                // 1 2 3 4 5 6 7 8 => 1 4 5 6 7 8 2 3
-                                let before = old_order - old_cur;
-                                let after = old_mounted_count - old_order;
-
-                                if before < after {
-                                    // *2 3* were marked as MightUnmount (state_unmounted=true) at the start
-                                    // They will be removed or mounted later.
-                                    render_context.mark_cursor_skipped();
-                                    Strategy::Skip
-                                } else {
-                                    // move *4* left
-                                    Strategy::MoveLeft { old_order }
-                                }
-                            }
-                            Ordering::Greater => {
-                                // this state were skipped before
-                                Strategy::MoveRight
-                            }
-                        };
-
-                        let force_reposition =
-                            matches!(strategy, Strategy::MoveLeft { .. } | Strategy::MoveRight);
-                        element.unpinned_render_update_maybe_reposition(
-                            render_context,
-                            render_state,
-                            force_reposition,
-                        );
-
-                        *state_unmounted = false;
-                        let ord_order = *order;
-                        *order = cur;
-
-                        match strategy {
-                            Strategy::NoMove | Strategy::Skip => {
-                                old_cur = ord_order + 1;
-                                while states
-                                    .get_mut(old_cur)
-                                    .map(|state| std::mem::take(&mut state.cache))
-                                    .unwrap_or(false)
-                                {
-                                    old_cur += 1;
-                                }
-                            }
-                            Strategy::MoveLeft { old_order } => {
-                                debug_assert!(old_order > old_cur);
-                                debug_assert!(old_order < old_mounted_count);
-                                // mark state at old order `old_order` as moved left
-                                states[old_order].cache = true;
-                                // old_cur doesn't change
-                            }
-                            Strategy::MoveRight => {
-                                // old_cur doesn't change
-                            }
-                        }
-                    }
-                    indexmap::map::Entry::Vacant(entry) => {
-                        let index = entry.index();
-                        debug_assert!(states.len() >= index);
-                        // TODO: swap with the first MightUnmount state
-
-                        let render_state = if states.len() == index {
-                            states.push(State {
-                                render_state: Default::default(),
-                                order: cur,
-                                state_unmounted: false,
-                                cache: false,
-                            });
-
-                            &mut states[index].render_state
-                        } else {
-                            let State {
-                                render_state,
-                                order,
-                                state_unmounted,
-                                cache,
-                            } = &mut states[index];
-                            *order = cur;
-                            *state_unmounted = false;
-                            *cache = false;
-                            render_state
-                        };
-
-                        element
-                            .unpinned_render_update_force_reposition(render_context, render_state);
-
-                        entry.insert(());
-                    }
-                };
-
-                cur += 1;
-            }
-
-            let real_len = key_to_index.len();
-            let mut mounted_count = 0;
-            while mounted_count < key_to_index.len() {
-                if states[mounted_count].state_unmounted {
-                    key_to_index.swap_remove_index(mounted_count);
-                    states.swap(
-                        mounted_count,
-                        // this has been decremented
-                        key_to_index.len(),
-                    );
-                } else {
-                    mounted_count += 1;
-                }
-            }
-
-            let renderer = render_context.renderer_mut();
-            states[mounted_count..real_len]
-                .iter_mut()
-                .for_each(|state| {
-                    debug_assert!(state.state_unmounted);
-                    Pin::new(&mut state.render_state).unmount(renderer);
-                });
-
-            match cpb_or_new_cpa {
-                Ok(cpb) => cpb.readd_self(render_context, cursor_placeholder_force_reposition),
-                Err(new_cpa) => {
-                    let new_cpb = NodeRenderSelf::render_self(render_context);
-                    *cursor_placeholders = Some((new_cpa, new_cpb));
-                }
-            }
-        }
-
-        fn keyed_elements_update_csr_state_force_reposition<
-            I: IntoIterator<Item = Keyed<K, E>>,
-            R: RenderHtml + ?Sized,
-        >(
-            self,
-            keyed_elements: I,
-            render_context: &mut R::RenderContext<'_>,
-            state: Pin<&mut Self::CsrState<R>>,
-        ) {
-            use frender_html::dom::behaviors::{Node as _, NodeRenderSelf};
-
-            let States {
-                states,
-                key_to_index,
-                mount_state,
-                cursor_placeholders,
-            } = state.get_mut();
-
-            *mount_state = MountState::Mounted;
-
-            // Ok(&mut cpb) or Err(new_cpa)
-            let cpb_or_new_cpa = if let Some((cpa, cpb)) = cursor_placeholders {
-                cpa.readd_self(render_context, true);
-                Ok(cpb)
-            } else {
-                Err(NodeRenderSelf::render_self(render_context))
-            };
-
-            let elements = keyed_elements.into_iter();
-
-            let mut index = 0;
-
-            for Keyed(key, element) in elements {
-                let state = insert_at_index(states, key_to_index, key, index);
-
-                state.state_unmounted = false;
-                state.order = index;
-
-                element.unpinned_render_update_force_reposition(
-                    render_context,
-                    &mut state.render_state,
-                );
-
-                index += 1;
-            }
-
-            // states that should be unmounted
-            let real_len = key_to_index.len();
-            let renderer = render_context.renderer_mut();
-            states[index..real_len].iter_mut().for_each(|state| {
-                Pin::new(&mut state.render_state).unmount(renderer);
-                state.state_unmounted = false;
-            });
-
-            match cpb_or_new_cpa {
-                Ok(cpb) => cpb.readd_self(render_context, true),
-                Err(new_cpa) => {
-                    let new_cpb = NodeRenderSelf::render_self(render_context);
-                    *cursor_placeholders = Some((new_cpa, new_cpb));
-                }
-            }
-
-            debug_assert!(states.iter().all(|state| !state.state_unmounted));
-        }
-    }
-}
+pub mod default;
 
 #[cfg(not_working_yet)]
 pub mod linked_vec {
@@ -1590,80 +1119,80 @@ pub mod linked_vec {
     }
 }
 
-enum Never {}
-pub struct Kind<A, K, E>(Never, std::marker::PhantomData<(A, K, E)>);
-
-impl<A, K, E> RenderStateKindPinned for Kind<A, K, E>
+impl<I, A, E> CsrElement for Elements<I, A>
 where
-    A: ElementsAlgorithm<K, E>,
+    I: IntoIterator<Item = E>,
+    A: ElementsAlgorithm<E>,
 {
-    type RenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
-}
-impl<A, K, E> RenderStateKindUnpinned for Kind<A, K, E>
-where
-    A: ElementsAlgorithm<K, E>,
-{
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = A::CsrState<R>;
-}
+    // TODO: refactor with impl_pinned_with_unpinned
+    type RenderStateKind = KindUnpinned<A::ElementsRenderStateKind>;
 
-impl<I, A, K, E> CsrElement for Elements<I, A>
-where
-    I: IntoIterator<Item = Keyed<K, E>>,
-    K: std::hash::Hash + Eq,
-    E: CsrElement,
-    A: ElementsAlgorithm<K, E>,
-{
-    type RenderStateKind = Kind<A, K, E>; // TODO: should not be generic over E but E::RenderStateKind
-
-    fn render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        self,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    ) {
-        render_context.map_mut_render_context(|render_context| {
-            A::keyed_elements_update_csr_state(
-                self.algorithm,
-                self.iter,
-                render_context,
-                render_state,
-            )
-        })
-    }
-
-    fn render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        self,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    ) {
-        render_context.map_mut_render_context(|render_context| {
-            A::keyed_elements_update_csr_state_force_reposition(
-                self.algorithm,
-                self.iter,
-                render_context,
-                render_state,
-            )
-        })
-    }
-
-    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        force_reposition: bool,
-    ) {
-        render_context.map_mut_render_context(|render_context| {
-            A::keyed_elements_update_csr_state_maybe_reposition(
-                self.algorithm,
-                self.iter,
-                render_context,
-                render_state,
-                force_reposition,
-            )
-        })
+        states: PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let RenderStates {
+            ui_handle,
+            non_reactive_state,
+            reactive_state,
+        } = self.unpinned_render_init(render_context);
+
+        *states.reactive_state.get_mut() = reactive_state;
+
+        UiHandleWithNonReactiveState {
+            ui_handle,
+            non_reactive_state,
+        }
     }
 
-    impl_unpinned_render_for_unpin! {}
+    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: frender_html::experimental::PinnedMutRenderStatesOfKind<
+            Self::RenderStateKind,
+            Ctx::Renderer,
+        >,
+    ) {
+        let RenderStates {
+            ui_handle:
+                frender_html::kinds::UiHandleWithNonReactiveState {
+                    ui_handle,
+                    non_reactive_state,
+                },
+            non_reactive_state: _,
+            reactive_state,
+        } = states;
+        self.unpinned_render_update(
+            render_context,
+            RenderStates {
+                ui_handle,
+                non_reactive_state,
+                reactive_state: reactive_state.get_mut(),
+            },
+        );
+    }
+
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+        self.algorithm
+            .elements_render_init(self.iter, render_context)
+    }
+
+    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        self.algorithm
+            .elements_render_update(self.iter, render_context, states);
+    }
 }
 
 #[cfg(not_working_yet)]

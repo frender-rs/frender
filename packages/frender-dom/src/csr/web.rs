@@ -6,7 +6,10 @@ pub use self::cursor_place_holder::CursorPlaceholder;
 
 use wasm_bindgen::UnwrapThrowExt as _;
 
-use crate::render::RenderWithContext;
+use crate::{
+    render::RenderWithContext,
+    ui_handle::{UiHandle, UnmountedUiHandle},
+};
 
 pub mod event_listener;
 
@@ -14,6 +17,55 @@ mod cursor_place_holder;
 
 #[derive(Debug)]
 pub struct Node<N>(pub N);
+
+// #[derive(Debug)]
+// pub struct UnmountedNode<N>(pub N);
+
+// region: UiHandle
+
+impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UnmountedUiHandle<R> for Node<N> {
+    type Mounted = Node<N>;
+
+    fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
+    where
+        R: crate::render::RenderWithContext,
+    {
+        R::mount_node(render_context, self.0.as_ref());
+        self
+    }
+}
+
+impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UiHandle<R> for Node<N> {
+    type Unmounted = Node<N>;
+
+    fn unmount(self, renderer: &mut R) -> Self::Unmounted {
+        renderer.remove_node(self.0.as_ref());
+        self
+    }
+
+    fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        R::reposition_node(render_context, self.0.as_ref())
+    }
+
+    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        R::check_and_move_cursor_after_node(render_context, self.0.as_ref());
+    }
+
+    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    where
+        R: crate::render::RenderWithContext,
+    {
+        R::assert_cursor_if_at_node(render_context, self.0.as_ref());
+    }
+}
+
+// endregion
 
 pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<'a, Self>> {
     fn document(&self) -> Cow<web_sys::Document>;
@@ -28,6 +80,10 @@ pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<
     ) where
         Self: RenderWithContext;
 
+    fn assert_cursor_if_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
+    where
+        Self: RenderWithContext;
+
     /// See [`crate::behaviors::Node::readd_self`].
     fn readd_node(
         render_context: &mut Self::RenderContext<'_>,
@@ -35,6 +91,14 @@ pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<
         force_reposition: bool,
     ) where
         Self: RenderWithContext;
+
+    /// See also [`crate::ui_handle::UiHandle::reposition`].
+    fn reposition_node(render_context: &mut Self::RenderContext<'_>, node: &web_sys::Node)
+    where
+        Self: RenderWithContext;
+
+    /// See also [`crate::ui_handle::UnmountedUiHandle::mount`].
+    fn mount_node(render_context: &mut Self::RenderContext<'_>, node: &web_sys::Node);
 
     fn remove_node(&mut self, node: &web_sys::Node);
 

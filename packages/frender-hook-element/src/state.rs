@@ -1,3 +1,4 @@
+#[cfg(remove)]
 pub use self::cursor_placeholder::{
     CursorPlaceholderWithRenderState, CursorPlaceholderWithRenderStatePinProject,
 };
@@ -93,10 +94,11 @@ pub trait MaybeIntoPollNextUpdateWithPeh<PEH: ?Sized, R: ?Sized, HookData, S> {
     ) -> Option<Self::IntoPollNextUpdate<'a>>;
 }
 
+#[cfg(remove)]
 mod imp {
     use std::task::Poll;
 
-    use frender_html::{RenderState, RenderStateWithParentElementsHandle};
+    use frender_html::RenderStateWithParentElementsHandle;
     use hooks_core::{HookPollNextUpdate as _, HookUnmount};
 
     use super::{MaybeIntoPollNextUpdate, MaybeIntoPollNextUpdateWithPeh, MountState, State};
@@ -262,6 +264,7 @@ mod imp {
     }
 }
 
+#[cfg(remove)]
 mod cursor_placeholder {
     use std::pin::Pin;
 

@@ -2,7 +2,7 @@ pub use event_listener::OnEvent;
 pub use frender_common::Empty;
 pub use frender_csr::{
     event_listener::{EventListenerState, HandleEvent, MaybeHandleEvent, RegisterOrUpdate},
-    render_state, RenderState,
+    render_state, RenderState, StateUnmount,
 };
 pub use frender_events::{event, event_types, HasEventTypeName};
 pub use provide_render_context::ProvideRenderContext;
@@ -25,6 +25,8 @@ pub mod csr;
 pub mod component;
 
 pub mod behaviors;
+
+pub mod ui_handle;
 
 pub mod script;
 

@@ -118,7 +118,7 @@ macro_rules! default_impl_csr {
             fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                 Self(this): Self,
                 renderer: &mut Renderer,
-                element: &mut ET::NodeOfBehaviorType<Renderer>,
+                element: &mut ET::OfBehaviorType<Renderer>,
                 state: &mut Self::State<Renderer>,
             ) {
                 #[allow(unused_imports)]
@@ -246,7 +246,7 @@ pub(crate) mod DomTokens {
                 fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    element: &mut ET::OfBehaviorType<Renderer>,
                     crate::intrinsic::AttributeState(
                         ::core::marker::PhantomData,
                         state,
@@ -452,7 +452,7 @@ pub(crate) mod MaybeHandleEvent {
                 fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    element: &mut ET::OfBehaviorType<Renderer>,
                     state: &mut Self::State<Renderer>,
                 ) {
                     #[allow(unused_imports)]
@@ -492,7 +492,7 @@ pub(crate) mod MaybeHandleEvent {
                 fn update_node_non_reactive_pinned<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     renderer: &mut Renderer,
-                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    element: &mut ET::OfBehaviorType<Renderer>,
                     mut state: std::pin::Pin<&mut Self::StatePinned<Renderer>>,
                 ) {
                     #[allow(unused_imports)]
@@ -574,7 +574,7 @@ pub(crate) mod SetRef {
                 fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
                     Self(this): Self,
                     _: &mut Renderer,
-                    element: &mut ET::NodeOfBehaviorType<Renderer>,
+                    element: &mut ET::OfBehaviorType<Renderer>,
                     (): &mut Self::State<Renderer>,
                 ) {
                     let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty::<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);

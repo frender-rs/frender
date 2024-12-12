@@ -1,3 +1,6 @@
+mod element;
+pub use element::EitherElement;
+
 pub enum EitherState<L, R> {
     Left { inner: L },
     Right { inner: R },

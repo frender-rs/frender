@@ -1,130 +1,192 @@
 #![allow(non_snake_case)]
 
-use std::pin::Pin;
+use std::{pin::Pin, task::Poll};
 
-use crate::{Element, HtmlRenderContext, RenderHtml, RenderStateKind, RenderStateOfContext, UnpinnedRenderStateOfContext};
+use crate::{
+    element::{
+        PinMutRenderInitStates, PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind, RenderStates, UnpinnedMutRenderStatesOfKind,
+        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedRenderStatesOfKind,
+    },
+    CsrElement, HtmlRenderContext, RenderHtml,
+};
 
-impl<E0: Element> Element for (E0,) {
+impl<E0: CsrElement> CsrElement for (E0,) {
     type RenderStateKind = E0::RenderStateKind;
 
-    fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
-        self.0.render_update_maybe_reposition(render_context, render_state, force_reposition)
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        self.0.pinned_render_init(render_context, states)
     }
 
-    fn render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
-        self.0.render_update(render_context, render_state)
+    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        self.0.pinned_render_update(render_context, states)
     }
 
-    fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
-        self.0.render_update_force_reposition(render_context, render_state)
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+        self.0.unpinned_render_init(render_context)
     }
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
-        self.0.unpinned_render_update(render_context, render_state)
-    }
-
-    fn unpinned_render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
-        self.0.unpinned_render_update_force_reposition(render_context, render_state)
-    }
-
-    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>, force_reposition: bool) {
-        self.0.unpinned_render_update_maybe_reposition(render_context, render_state, force_reposition)
+    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        self.0.unpinned_render_update(render_context, states)
     }
 }
 
 pub struct KindOfStates<TupleOfKinds>(super::Kind<TupleOfKinds>);
 
 macro_rules! impl_render_for_tuple {
-    ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
+    ($($name:ident ($($field_idx:tt as $field:ident),+) ,)+) => {
         $(
-            impl<$($field: RenderStateKind),+> crate::RenderStateKindPinned for KindOfStates<($($field,)+)> {
-                type RenderState< R: RenderHtml+?Sized> = ($($field::RenderState<R>,)+);
-            }
-            impl<$($field: RenderStateKind),+> crate::RenderStateKindUnpinned for KindOfStates<($($field,)+)> {
-                type UnpinnedRenderState< R: RenderHtml+?Sized> = ($($field::UnpinnedRenderState<R>,)+);
+            impl<$($field: PinnedRenderStateKind),+> PinnedRenderStateKind for KindOfStates<($($field,)+)> {
+                type PinnedUiHandle<R: RenderHtml + ?Sized> = ($($field::PinnedUiHandle<R>,)+);
+                type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ($($field::PinnedNonReactiveState<R>,)+);
+                type PinnedReactiveState = ($($field::PinnedReactiveState,)+);
             }
 
-            impl<$($field: Element),+> Element for ($($field,)+) {
+            impl<$($field: UnpinnedRenderStateKind),+> UnpinnedRenderStateKind for KindOfStates<($($field,)+)> {
+                type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ($($field::UnpinnedUiHandle<R>,)+);
+                type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ($($field::UnpinnedNonReactiveState<R>,)+);
+                type UnpinnedReactiveState = ($($field::UnpinnedReactiveState,)+);
+            }
+
+            impl<$($field: PinnedRenderStateKindPollRender),+> PinnedRenderStateKindPollRender for KindOfStates<($($field,)+)> {
+                fn pinned_poll_render<R: RenderHtml + ?Sized>(
+                    //
+                    renderer: &mut R,
+                    states: PinnedMutRenderStatesOfKind<Self, R>,
+                    cx: &mut std::task::Context<'_>,
+                ) -> Poll<()> {
+                    let ui_handle = states.ui_handle;
+                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
+                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
+
+                    match ($(
+                        $field::pinned_poll_render(renderer, RenderStates {
+                            ui_handle: &mut ui_handle.$field_idx,
+                            non_reactive_state: non_reactive_state.$field_idx,
+                            reactive_state: reactive_state.$field_idx,
+                        }, cx)
+                    ,)+) {
+                        #[allow(unused_variables)]
+                        ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
+                        _ => std::task::Poll::Pending,
+                    }
+                }
+            }
+
+            impl<$($field: UnpinnedRenderStateKindPollRender),+> UnpinnedRenderStateKindPollRender for KindOfStates<($($field,)+)> {
+                fn unpinned_poll_render<R: RenderHtml + ?Sized>(
+                    //
+                    renderer: &mut R,
+                    states: UnpinnedMutRenderStatesOfKind<Self, R>,
+                    cx: &mut std::task::Context<'_>,
+                ) -> Poll<()> {
+                    match ($(
+                        $field::unpinned_poll_render(renderer, RenderStates {
+                            ui_handle: &mut states.ui_handle.$field_idx,
+                            non_reactive_state: &mut states.non_reactive_state.$field_idx,
+                            reactive_state: &mut states.reactive_state.$field_idx,
+                        }, cx)
+                    ,)+) {
+                        #[allow(unused_variables)]
+                        ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
+                        _ => std::task::Poll::Pending,
+                    }
+                }
+            }
+
+            impl<$($field: CsrElement),+> CsrElement for ($($field,)+) {
                 type RenderStateKind = KindOfStates<($($field::RenderStateKind,)+)>;
 
-                fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
+                fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+                    //
                     self,
                     render_context: &mut Ctx,
-                    render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-                    force_reposition: bool,
-                ) {
-                    let ($($field,)+) = self;
-                    let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update_maybe_reposition($field, render_context, $field_var, force_reposition);)+
+                    states: PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+                ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
+                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
+
+                    ($(
+                        self.$field_idx.pinned_render_init(
+                            render_context,
+                            PinMutRenderInitStates {
+                                non_reactive_state: non_reactive_state.$field_idx,
+                                reactive_state: reactive_state.$field_idx,
+                            },
+                        )
+                    ,)+)
                 }
 
-                fn render_update<Ctx: ?Sized + HtmlRenderContext>(
+                fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+                    //
                     self,
                     render_context: &mut Ctx,
-                    render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
+                    states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
                 ) {
-                    let ($($field,)+) = self;
-                    let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update($field, render_context, $field_var);)+
+                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
+                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
+                    $(
+                        self.$field_idx.pinned_render_update(
+                            render_context,
+                            RenderStates {
+                                ui_handle: &mut states.ui_handle.$field_idx,
+                                non_reactive_state: non_reactive_state.$field_idx,
+                                reactive_state: reactive_state.$field_idx,
+                            },
+                        );
+                    )+
                 }
 
-                fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(
+                fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+                    //
                     self,
                     render_context: &mut Ctx,
-                    render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-                ) {
-                    let ($($field,)+) = self;
-                    let ($($field_var,)+) = frender_common::utils::pin_project::$name(render_state);
-                    $($field::render_update_force_reposition($field, render_context, $field_var);)+
+                ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+                    let states = ($(
+                        self.$field_idx.unpinned_render_init(render_context),
+                    )+);
+
+                    RenderStates {
+                        ui_handle: ($(states.$field_idx.ui_handle,)+),
+                        non_reactive_state: ($(states.$field_idx.non_reactive_state,)+),
+                        reactive_state: ($(states.$field_idx.reactive_state,)+),
+                    }
                 }
 
                 fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+                    //
                     self,
                     render_context: &mut Ctx,
-                    render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
+                    states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
                 ) {
-                    match self {
-                        ($($field,)+) => {
-                            match render_state {
-                                ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update($field,  render_context, $field_var);
-                                )+}
-                            }
-                        }
-                    }
-                }
-
-                fn unpinned_render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(
-                    self,
-                    render_context: &mut Ctx,
-                    render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-                ) {
-                    match self {
-                        ($($field,)+) => {
-                            match render_state {
-                                ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update_force_reposition($field,  render_context, $field_var);
-                                )+}
-                            }
-                        }
-                    }
-                }
-
-                fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
-                    self,
-                    render_context: &mut Ctx,
-                    render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-                    force_reposition: bool,
-                ) {
-                    match self {
-                        ($($field,)+) => {
-                            match render_state {
-                                ($($field_var,)+) => {$(
-                                    $field::unpinned_render_update_maybe_reposition($field,  render_context, $field_var, force_reposition);
-                                )+}
-                            }
-                        }
-                    }
+                    $(
+                        self.$field_idx.unpinned_render_update(
+                            render_context,
+                            RenderStates {
+                                ui_handle: &mut states.ui_handle.$field_idx,
+                                non_reactive_state: &mut states.non_reactive_state.$field_idx,
+                                reactive_state: &mut states.reactive_state.$field_idx,
+                            },
+                        );
+                    )+
                 }
             }
         )+
@@ -132,16 +194,16 @@ macro_rules! impl_render_for_tuple {
 }
 
 impl_render_for_tuple! {
-    tuple_2 (r0 as R0, r1 as R1),
-    tuple_3 (r0 as R0, r1 as R1, r2 as R2),
-    tuple_4 (r0 as R0, r1 as R1, r2 as R2, r3 as R3),
-    tuple_5 (r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4),
-    tuple_6 (r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5),
-    tuple_7 (r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6),
-    tuple_8 (r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7),
-    tuple_9 (r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7, r8 as R8),
-    tuple_10(r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7, r8 as R8, r9 as R9),
-    tuple_11(r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7, r8 as R8, r9 as R9, r10 as R10),
-    tuple_12(r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7, r8 as R8, r9 as R9, r10 as R10, r11 as R11),
-    // tuple_13(r0 as R0, r1 as R1, r2 as R2, r3 as R3, r4 as R4, r5 as R5, r6 as R6, r7 as R7, r8 as R8, r9 as R9, r10 as R10, r11 as R11, r12 as R12),
+    tuple_2 (0 as R0, 1 as R1),
+    tuple_3 (0 as R0, 1 as R1, 2 as R2),
+    tuple_4 (0 as R0, 1 as R1, 2 as R2, 3 as R3),
+    tuple_5 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4),
+    tuple_6 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5),
+    tuple_7 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6),
+    tuple_8 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7),
+    tuple_9 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8),
+    tuple_10(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9),
+    tuple_11(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10),
+    tuple_12(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10, 11 as R11),
+    // tuple_13(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10, 11 as R11, 12 as R12),
 }

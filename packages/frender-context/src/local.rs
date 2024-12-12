@@ -95,7 +95,19 @@ impl<T> crate::ContextKeyInner for LocalKeyUnprovided<T> {
         Ok(value)
     }
 
-    type MaybeContextKeyAndValue = crate::MaybeContextKeyAndValueUnprovided<Self>;
+    fn update_swap_value_lazily(
+        swap_value: &mut Self::SwapValue,
+        into_value: impl crate::element::IntoContextValue<ContextValue = Self::Value>,
+    ) {
+        match swap_value {
+            Ok(value) => {
+                into_value.update_context_value_lazily(value);
+            }
+            Err(ContextValueNotProvided) => {
+                *swap_value = Ok(into_value.into_context_value());
+            }
+        }
+    }
 }
 
 #[doc(hidden)]

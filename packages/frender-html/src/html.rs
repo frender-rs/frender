@@ -2,6 +2,7 @@ use frender_attr_value::html::{ContentEditable, Spellcheck};
 use frender_dom::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
     special::textarea::TextAreaValue,
+    ui_handle::UiHandle,
     OnEvent,
 };
 
@@ -100,7 +101,7 @@ crate::macros::def_intrinsic_component_props!(
     }
 
     pub trait Node {
-        trait_bounds!(frender_dom::behaviors::Node<Renderer>);
+        trait_bounds!(frender_dom::behaviors::Node<Renderer> + UiHandle<Renderer>);
         impl_for_web!();
 
         sub_traits!(

@@ -1,20 +1,8 @@
-use std::pin::Pin;
+use std::{pin::Pin, task::Poll};
 
-use frender_dom::render::RenderContext;
+use frender_dom::{render::RenderContext, ui_handle::UiHandle, StateUnmount};
 
-use crate::{RenderHtml, RenderState};
-
-pub trait RenderStateKindPinned {
-    type RenderState<R: RenderHtml + ?Sized>: RenderState<R> + Default;
-}
-
-pub trait RenderStateKindUnpinned {
-    type UnpinnedRenderState<R: RenderHtml + ?Sized>: RenderState<R> + Default + Unpin;
-}
-
-pub trait RenderStateKind: RenderStateKindPinned + RenderStateKindUnpinned {}
-
-impl<K: ?Sized + RenderStateKindPinned + RenderStateKindUnpinned> RenderStateKind for K {}
+use crate::RenderHtml;
 
 pub trait HtmlRenderContext: RenderContext<Renderer = Self::HtmlRenderer> {
     type HtmlRenderer: RenderHtml + ?Sized;
@@ -27,148 +15,138 @@ where
     type HtmlRenderer = Ctx::Renderer;
 }
 
-pub type RenderStateOfContext<K, Ctx> = <K as RenderStateKindPinned>::RenderState<<Ctx as RenderContext>::Renderer>;
-pub type UnpinnedRenderStateOfContext<K, Ctx> = <K as RenderStateKindUnpinned>::UnpinnedRenderState<<Ctx as RenderContext>::Renderer>;
+// pub trait StatePollRender<U: ?Sized, R: ?Sized> {
+//     fn state_poll_render(self: Pin<&mut Self>, ui_handle: &mut U, renderer: &mut R) -> Poll<()>;
+// }
+
+// + StatePollRender<Self, R>
+/// A synonymous trait for [`StatePollRender`] with ui handle as Self.
+
+// impl<UH: ?Sized, S: ?Sized + StatePollRender<Self, R>, R: ?Sized> UiHandlePollRender<S, R> for UH {
+//     #[inline(always)]
+//     fn ui_handle_poll_render(&mut self, state: &mut S, renderer: &mut R) -> Poll<()> {
+//         state.state_poll_render(self, renderer)
+//     }
+// }
+
+pub trait PinnedRenderStateKind {
+    /// Ui handles that are renderer-specific and **NOT** pinned in pinned environment.
+    type PinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
+
+    // TODO: should `*NonReactiveState` and `*ReactiveState` be merged as one `*State`?
+    /// Renderer-specific non-reactive state in pinned environment.
+    type PinnedNonReactiveState<R: RenderHtml + ?Sized>: Default;
+    /// Renderer-agnostic reactive state in pinned environment.
+    ///
+    /// [`Default`] is required so that the state can be constructed and then pinned before [`CsrElement::pinned_render_init`].
+    /// Note that [`UnpinnedRenderStateKind::UnpinnedReactiveState`] requires `Default` for a different reason.
+    type PinnedReactiveState: StateUnmount + Default;
+}
+
+pub trait PinnedRenderStateKindPollRender: PinnedRenderStateKind {
+    fn pinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        states: PinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()>;
+}
+
+pub trait UnpinnedRenderStateKind {
+    /// Ui handles that are renderer-specific and not pinned in unpinned environment.
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
+    /// Renderer-specific non-reactive state in unpinned environment.
+    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized>;
+    /// Renderer-agnostic reactive state in unpinned environment.
+    ///
+    /// [`Default`] is required so that [`RenderStateKind`](CsrElement::RenderStateKind) of `Option<impl CsrElement>`
+    /// don't need to wrap `UnpinnedReactiveState` with `Option`.
+    /// Note that [`PinnedRenderStateKind::PinnedReactiveState`] requires `Default` for a different reason.
+    ///
+    /// [`Unpin`] is required so that [`StateUnmount`] can be used
+    /// (caller can safely create a `Pin<&mut _>` from unpinned places
+    /// and then call [`StateUnmount::state_unmount`]).
+    ///
+    /// Another solution is to split trait [`StateUnmount`] into pinned and unpinned variants,
+    /// then we don't need the `Unpin` bound.
+    type UnpinnedReactiveState: StateUnmount + Default + Unpin;
+}
+
+pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
+    fn unpinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        states: UnpinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()>;
+}
+
+pub type PinnedMutRenderStatesOfKind<'a, Kind, Renderer> = RenderStates<
+    //
+    &'a mut <Kind as PinnedRenderStateKind>::PinnedUiHandle<Renderer>,
+    Pin<&'a mut <Kind as PinnedRenderStateKind>::PinnedNonReactiveState<Renderer>>,
+    Pin<&'a mut <Kind as PinnedRenderStateKind>::PinnedReactiveState>,
+>;
+
+pub type UnpinnedMutRenderStatesOfKind<'a, Kind, Renderer> = RenderStates<
+    //
+    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedUiHandle<Renderer>,
+    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<Renderer>,
+    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedReactiveState,
+>;
+
+pub type UnpinnedRenderStatesOfKind<Kind, Renderer> = RenderStates<
+    //
+    <Kind as UnpinnedRenderStateKind>::UnpinnedUiHandle<Renderer>,
+    <Kind as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<Renderer>,
+    <Kind as UnpinnedRenderStateKind>::UnpinnedReactiveState,
+>;
+
+pub struct RenderStates<UH, NRS, RS> {
+    pub ui_handle: UH,
+    pub non_reactive_state: NRS,
+    pub reactive_state: RS,
+}
+
+pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
+pub type UnpinnedUiHandleOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>;
+
+pub struct PinMutRenderInitStates<'a, NRS, RS> {
+    pub non_reactive_state: Pin<&'a mut NRS>,
+    pub reactive_state: Pin<&'a mut RS>,
+}
+
+pub type PinMutRenderInitStatesOfKind<'a, Kind, Renderer> = PinMutRenderInitStates<'a, <Kind as PinnedRenderStateKind>::PinnedNonReactiveState<Renderer>, <Kind as PinnedRenderStateKind>::PinnedReactiveState>;
 
 pub trait CsrElement {
-    type RenderStateKind: RenderStateKind;
+    type RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender;
 
-    fn render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    ) where
-        Self: Sized,
-    {
-        self.render_update_maybe_reposition(render_context, render_state, false)
-    }
+        states: PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>;
 
-    /// The element needs to be repositioned (re-add to the ctx)
-    fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-    ) where
-        Self: Sized,
-    {
-        self.render_update_maybe_reposition(render_context, render_state, true)
-    }
-
-    fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        force_reposition: bool,
+        states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     );
+
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>;
 
     fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) where
-        Self: Sized,
-    {
-        self.unpinned_render_update_maybe_reposition(render_context, render_state, false)
-    }
-
-    /// The element needs to be repositioned (re-add to the ctx)
-    fn unpinned_render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) where
-        Self: Sized,
-    {
-        self.unpinned_render_update_maybe_reposition(render_context, render_state, true)
-    }
-
-    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        force_reposition: bool,
+        states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     );
-}
-
-#[macro_export]
-macro_rules! impl_unpinned_render_for_unpin {
-    () => {
-        fn unpinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: &mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-        ) where
-            Self: Sized,
-        {
-            self.render_update(render_context, ::core::pin::Pin::new(render_state))
-        }
-
-        /// The element needs to be repositioned (re-add to the ctx)
-        fn unpinned_render_update_force_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: &mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-        ) where
-            Self: Sized,
-        {
-            self.render_update_force_reposition(render_context, ::core::pin::Pin::new(render_state))
-        }
-
-        fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: &mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-            force_reposition: ::core::primitive::bool,
-        ) {
-            self.render_update_maybe_reposition(render_context, ::core::pin::Pin::new(render_state), force_reposition)
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! impl_render_for_unpin {
-    () => {
-        fn render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        ) where
-            Self: Sized,
-        {
-            self.unpinned_render_update(render_context, render_state.get_mut())
-        }
-
-        fn render_update_force_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        ) where
-            Self: Sized,
-        {
-            self.unpinned_render_update_force_reposition(render_context, render_state.get_mut())
-        }
-
-        fn render_update_maybe_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-            force_reposition: ::core::primitive::bool,
-        ) {
-            self.unpinned_render_update_maybe_reposition(render_context, render_state.get_mut(), force_reposition)
-        }
-    };
 }
 
 #[macro_export]

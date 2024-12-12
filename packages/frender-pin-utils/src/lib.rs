@@ -1,3 +1,5 @@
+#![deny(clippy::missing_safety_doc)]
+
 use std::pin::Pin;
 
 pub fn pin_project_index_slice<T>(this: Pin<&mut [T]>, idx: usize) -> Pin<&mut T> {
@@ -22,6 +24,7 @@ where
     unsafe { this.get_unchecked_mut() }.as_mut()
 }
 
+// TODO: remove
 pub fn pin_project_map_array<T, const N: usize>(
     this: Pin<&mut [T; N]>,
     mut f: impl FnMut(Pin<&mut T>),
@@ -30,6 +33,26 @@ pub fn pin_project_map_array<T, const N: usize>(
     for item in unsafe { this.get_unchecked_mut() }.iter_mut() {
         f(unsafe { Pin::new_unchecked(item) })
     }
+}
+
+pub fn pin_project_for_each_array<T, const N: usize>(
+    this: Pin<&mut [T; N]>,
+    mut f: impl FnMut(Pin<&mut T>),
+) {
+    // SAFETY: pin projection of array
+    for item in unsafe { this.get_unchecked_mut() }.iter_mut() {
+        f(unsafe { Pin::new_unchecked(item) })
+    }
+}
+
+pub fn pin_project_iter_mut_array<T, const N: usize>(
+    this: Pin<&mut [T; N]>,
+) -> impl Iterator<Item = Pin<&mut T>> + ExactSizeIterator {
+    // SAFETY: pin projection of array
+    unsafe { this.get_unchecked_mut() }.iter_mut().map(|item| {
+        // SAFETY: pin projection of array
+        unsafe { Pin::new_unchecked(item) }
+    })
 }
 
 pub mod pin_project {

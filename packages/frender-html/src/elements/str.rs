@@ -1,141 +1,58 @@
 use std::borrow::Cow;
 
 use frender_common::ToAsRefStr;
-use frender_dom::render::{RenderContext, RenderTextFromKnown, RenderWithContext};
 use frender_dom::string_element::StringElement;
+use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
 
+use crate::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
+use crate::kinds::UiHandleWithNonReactiveState;
 use crate::{dom::behaviors::Node, RenderHtml};
 
-use crate::{Element, HtmlRenderContext, RenderState};
+use crate::{CsrElement, HtmlRenderContext};
 
-/// `Text` node with a field recording whether it is unmounted.
-pub struct TextNode<Text> {
-    pub node: Text,
-    pub unmounted: bool,
-}
+// region: kind
 
-impl<Text> TextNode<Text> {
-    pub fn readd_self<R: ?Sized + RenderWithContext>(&mut self, render_context: &mut R::RenderContext<'_>, force_reposition: bool)
-    where
-        Text: Node<R>,
-    {
-        self.node.readd_self(render_context, force_reposition || self.unmounted);
-        self.unmounted = false;
-    }
-
-    pub fn unmount<R: ?Sized>(&mut self, renderer: &mut R)
-    where
-        Text: Node<R>,
-    {
-        self.unmounted = true;
-        self.node.remove_self(renderer);
-    }
-
-    pub fn mount<Ctx: ?Sized + RenderContext>(render_context: &mut Ctx, mut node: Text) -> Self
-    where
-        Text: Node<Ctx::Renderer>,
-    {
-        render_context.map_mut_render_context(|render_context| node.readd_self(render_context, true));
-        Self { node, unmounted: false }
-    }
-}
-
-pub struct State<Cache, Text> {
-    text_node: TextNode<Text>,
-    cache: Cache,
-}
-
-impl<Cache, Text> State<Cache, Text> {
-    pub fn init_with<S: RenderAsTextWithCache<Cache = Cache>, Ctx: ?Sized + RenderContext>(
-        //
-        data: S,
-        render_context: &mut Ctx,
-    ) -> Self
-    where
-        Ctx::Renderer: RenderHtml<Text = Text>,
-        Text: Node<Ctx::Renderer>,
-    {
-        let (text, cache) = data.render_as_text_with_cache(render_context.renderer_mut());
-        State {
-            text_node: {
-                let text_node = TextNode::mount(render_context, text);
-                text_node
-            },
-            cache,
-        }
-    }
-
-    pub fn update_maybe_reposition_with<S: RenderAsTextWithCache<Cache = Cache>, Ctx: ?Sized + RenderContext>(
-        //
-        &mut self,
-        data: S,
-        render_context: &mut Ctx,
-        force_reposition: bool,
-    ) where
-        Ctx::Renderer: RenderHtml<Text = Text>,
-        Text: Node<Ctx::Renderer>,
-    {
-        if S::not_match_cache(&data, &self.cache) {
-            data.render_update_as_text_with_cache(
-                //
-                render_context.renderer_mut(),
-                &mut self.text_node.node,
-                &mut self.cache,
-            )
-        }
-
-        render_context.map_mut_render_context(|render_context| self.text_node.readd_self(render_context, force_reposition))
-    }
-}
-
-impl<Cache, Text> Unpin for State<Cache, Text> {}
-
-impl<Cache, Text: Node<R>, R: ?Sized> RenderState<R> for State<Cache, Text> {
-    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-        let this = self.get_mut();
-        this.text_node.unmount(renderer);
-    }
-
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {}
-
-    fn poll_render(self: std::pin::Pin<&mut Self>, _: &mut R, _: &mut std::task::Context<'_>) -> std::task::Poll<()> {
-        std::task::Poll::Ready(())
-    }
-
-    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-    where
-        R: frender_dom::render::RenderWithContext,
-    {
-        match &self.text_node {
-            TextNode { node, unmounted: false } => node.check_and_move_cursor_after_self(render_context),
-            _ => {}
-        }
-    }
-}
-
-pub fn unpinned_render_update_maybe_reposition<E: RenderAsTextWithCache, Ctx: ?Sized + HtmlRenderContext>(
-    el: E,
-    render_context: &mut Ctx,
-    render_state: &mut Option<State<E::Cache, <Ctx::Renderer as RenderHtml>::Text>>,
-    force_reposition: bool,
-) {
-    match render_state {
-        Some(render_state) => render_state.update_maybe_reposition_with::<E, Ctx>(el, render_context, force_reposition),
-        render_state @ None => *render_state = Some(State::init_with::<E, Ctx>(el, render_context)),
-    }
-}
 pub struct Kind<Cache: 'static>(super::Kind<Cache>);
 
-impl<Cache: 'static> crate::RenderStateKindPinned for Kind<Cache> {
-    type RenderState<R: RenderHtml + ?Sized> = Option<State<Cache, R::Text>>;
+impl<Cache: 'static> PinnedRenderStateKind for Kind<Cache> {
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleWithNonReactiveState<R::Text, Cache>;
+    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
+    type PinnedReactiveState = ();
 }
-impl<Cache: 'static> crate::RenderStateKindUnpinned for Kind<Cache> {
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = Option<State<Cache, R::Text>>;
+
+impl<Cache: 'static> PinnedRenderStateKindPollRender for Kind<Cache> {
+    fn pinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        states: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        std::task::Poll::Ready(())
+    }
 }
+
+impl<Cache: 'static> UnpinnedRenderStateKind for Kind<Cache> {
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = R::Text;
+    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = Cache;
+    type UnpinnedReactiveState = ();
+}
+
+impl<Cache: 'static> UnpinnedRenderStateKindPollRender for Kind<Cache> {
+    fn unpinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        states: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<()> {
+        std::task::Poll::Ready(())
+    }
+}
+
+// endregion
 
 // impl<T: known RenderAsTextWithSelfAsCache> Element for T {}
 frender_common::impl_many!(
-    impl<__> Element
+    impl<__> CsrElement
         for each_of![
             // known static strings: impl KnownStaticStr -> impl RenderAsTextWithSelfAsCache
             Cow<'static, str>,
@@ -165,46 +82,108 @@ frender_common::impl_many!(
     {
         type RenderStateKind = Kind<Self>;
 
-        fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
+        fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
             //
             self,
             render_context: &mut Ctx,
-            render_state: &mut crate::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-            force_reposition: bool,
-        ) {
-            unpinned_render_update_maybe_reposition(
-                //
-                self,
-                render_context,
-                render_state,
-                force_reposition,
-            )
+            _: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+            self.render_init_as_text_with_cache(render_context)
         }
 
-        crate::impl_render_for_unpin! {}
+        fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ) {
+            let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = states.ui_handle;
+            self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+        }
+
+        fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+        ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+            let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = self.render_init_as_text_with_cache(render_context);
+            RenderStates {
+                ui_handle,
+                non_reactive_state,
+                reactive_state: (),
+            }
+        }
+
+        fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ) {
+            let RenderStates {
+                ui_handle,
+                non_reactive_state,
+                reactive_state: (),
+            } = states;
+            self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+        }
     }
 );
 
 /// <code>where TempStr\<S>: [CsrStr](frender_common::strings::CsrStr)</code>
 ///
 /// `impl CsrStr` -> `impl RenderAsTextWithCache` -> `impl Element`
-impl<S> Element for frender_common::TempStr<S>
+impl<S> CsrElement for frender_common::TempStr<S>
 where
     S: frender_common::IntoStaticStrCache,
 {
     type RenderStateKind = Kind<S::StaticStrCache>;
 
-    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        render_state: &mut crate::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        force_reposition: bool,
-    ) {
-        unpinned_render_update_maybe_reposition(self, render_context, render_state, force_reposition)
+        _: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        self.render_init_as_text_with_cache(render_context)
     }
 
-    crate::impl_render_for_unpin! {}
+    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = states.ui_handle;
+        self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+    }
+
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+        let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = self.render_init_as_text_with_cache(render_context);
+        RenderStates {
+            ui_handle,
+            non_reactive_state,
+            reactive_state: (),
+        }
+    }
+
+    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        let RenderStates {
+            ui_handle,
+            non_reactive_state,
+            reactive_state: (),
+        } = states;
+        self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+    }
 }
 
 pub trait RenderAsTextWithCache {
@@ -217,7 +196,7 @@ pub trait RenderAsTextWithCache {
         //
         self,
         renderer: &mut Renderer,
-    ) -> (Renderer::Text, Self::Cache);
+    ) -> (<Renderer::Text as UiHandle<Renderer>>::Unmounted, Self::Cache);
 
     /// This method will only be called on [cache mismatch](RenderAsTextWithCache::not_match_cache).
     /// The argument `cache` is stale and the implementation should update it.
@@ -228,6 +207,27 @@ pub trait RenderAsTextWithCache {
         text_handle: &mut Renderer::Text,
         cache: &mut Self::Cache,
     );
+
+    fn render_init_as_text_with_cache<Ctx: ?Sized + HtmlRenderContext>(
+        self,
+        render_context: &mut Ctx,
+    ) -> UiHandleWithNonReactiveState<
+        //
+        <Ctx::Renderer as RenderHtml>::Text,
+        Self::Cache,
+    >
+    where
+        Self: Sized,
+    {
+        let (text, cache) = self.render_as_text_with_cache(render_context.renderer_mut());
+
+        let text = render_context.map_mut_render_context(|render_context| text.mount(render_context));
+
+        UiHandleWithNonReactiveState {
+            ui_handle: text,
+            non_reactive_state: cache,
+        }
+    }
 }
 
 impl<T: RenderAsTextWithSelfAsCache> RenderAsTextWithCache for T {
@@ -241,7 +241,7 @@ impl<T: RenderAsTextWithSelfAsCache> RenderAsTextWithCache for T {
         //
         self,
         renderer: &mut Renderer,
-    ) -> (Renderer::Text, Self::Cache) {
+    ) -> (<Renderer::Text as UiHandle<Renderer>>::Unmounted, Self::Cache) {
         (self.render_as_text(renderer), self)
     }
 
@@ -272,7 +272,7 @@ where
         //
         self,
         renderer: &mut Renderer,
-    ) -> (Renderer::Text, Self::Cache) {
+    ) -> (<Renderer::Text as UiHandle<Renderer>>::Unmounted, Self::Cache) {
         let cache = self.0.into_static_str_cache();
 
         let text = {
@@ -297,16 +297,16 @@ where
 }
 
 trait RenderAsTextWithSelfAsCache: 'static + PartialEq {
-    fn render_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R) -> Text;
-    fn render_update_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R, text_handle: &mut Text);
+    fn render_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R) -> <R::Text as UiHandle<R>>::Unmounted;
+    fn render_update_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R, text_handle: &mut R::Text);
 }
 
 impl<S: KnownStaticStr> RenderAsTextWithSelfAsCache for S {
-    fn render_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R) -> Text {
+    fn render_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R) -> <R::Text as UiHandle<R>>::Unmounted {
         renderer.render_text_from(self.as_ref())
     }
 
-    fn render_update_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R, text_handle: &mut Text) {
+    fn render_update_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R, text_handle: &mut R::Text) {
         renderer.update_text_from(text_handle, self.as_ref())
     }
 }
@@ -333,12 +333,12 @@ frender_common::impl_many!(
             char,
         ]
     {
-        fn render_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R) -> Text {
+        fn render_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R) -> <R::Text as UiHandle<R>>::Unmounted {
             renderer.render_text_from(self)
         }
 
-        fn render_update_as_text<Text, R: ?Sized + RenderTextFromKnown<Text>>(&self, renderer: &mut R, text_handle: &mut Text) {
-            renderer.update_text_from(text_handle, self);
+        fn render_update_as_text<R: ?Sized + RenderHtml>(&self, renderer: &mut R, text_handle: &mut R::Text) {
+            renderer.update_text_from(text_handle, self)
         }
     }
 );

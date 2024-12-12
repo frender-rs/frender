@@ -1,5 +1,9 @@
 use std::{pin::Pin, task::Poll};
 
+pub trait StateUnmount {
+    fn state_unmount(self: Pin<&mut Self>);
+}
+
 pub trait RenderState<R: ?Sized> {
     fn unmount(self: Pin<&mut Self>, renderer: &mut R);
 

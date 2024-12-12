@@ -1,6 +1,6 @@
-#![allow(non_snake_case)]
+use std::pin::Pin;
 
-use crate::RenderState;
+use crate::{RenderState, StateUnmount};
 
 impl<R: ?Sized> RenderState<R> for () {
     #[inline]
@@ -25,44 +25,17 @@ impl<R: ?Sized> RenderState<R> for () {
     }
 }
 
+impl StateUnmount for () {
+    fn state_unmount(self: Pin<&mut Self>) {}
+}
+
 macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
         $(
-            impl<R: ?Sized, $($field: RenderState<R>),+> RenderState<R> for ($($field,)+) {
-                fn unmount(
-                    self: ::core::pin::Pin<&mut Self>,
-                    renderer: &mut R,
-                ) {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-                    $( $field.unmount( renderer); )+
-                }
-
-                fn state_unmount(self: std::pin::Pin<&mut Self>) {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-                    $( $field.state_unmount(); )+
-                }
-
-                fn poll_render(
-                    self: std::pin::Pin<&mut Self>,
-                    renderer: &mut R,
-                    cx: &mut std::task::Context<'_>,
-                ) -> std::task::Poll<()> {
-                    let ($($field,)+) = frender_common::utils::pin_project::$name(self);
-
-                    match ($($field::poll_render($field,  renderer, cx) ,)+) {
-                        #[allow(unused_variables)]
-                        ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
-                        _ => std::task::Poll::Pending,
-                    }
-                }
-
-                fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-                where
-                    R: crate::render::RenderWithContext,
-                {
-                    let ($($field,)+) = self;
-
-                    $( $field.check_and_move_cursor(render_context); )+
+            impl<$($field: StateUnmount),+> StateUnmount for ($($field,)+) {
+                fn state_unmount(self: Pin<&mut Self>) {
+                    let ($($field_var,)+) = frender_common::utils::pin_project::$name(self);
+                    $( $field_var.state_unmount(); )+
                 }
             }
         )+

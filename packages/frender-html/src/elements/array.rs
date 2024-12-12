@@ -1,80 +1,193 @@
-use frender_common::utils::pin_project_map_array;
+use std::{pin::Pin, task::Poll};
 
-use crate::{render_state::array::ArrayRenderState, Element, HtmlRenderContext, RenderHtml, RenderStateKind, RenderStateOfContext, UnpinnedRenderStateOfContext};
+use frender_dom::render_state::array::ArrayRenderState;
 
-pub struct Kind<K: RenderStateKind, const N: usize>(super::Kind<K>);
+use crate::{
+    element::{PinMutRenderInitStates, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    kinds::UiHandleWithNonReactiveState,
+    CsrElement, HtmlRenderContext, RenderHtml, StateUnmount,
+};
 
-impl<K: RenderStateKind, const N: usize> crate::RenderStateKindPinned for Kind<K, N> {
-    type RenderState<R: RenderHtml + ?Sized> = ArrayRenderState<K::RenderState<R>, N>;
+// region: kind
+
+pub struct Kind<K, const N: usize>(super::Kind<K>);
+
+impl<K: UnpinnedRenderStateKind, const N: usize> UnpinnedRenderStateKind for Kind<K, N> {
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = [UiHandleWithNonReactiveState<K::UnpinnedUiHandle<R>, K::UnpinnedNonReactiveState<R>>; N];
+    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
+    type UnpinnedReactiveState = ArrayRenderState<K::UnpinnedReactiveState, N>;
 }
 
-impl<K: RenderStateKind, const N: usize> crate::RenderStateKindUnpinned for Kind<K, N> {
-    type UnpinnedRenderState<R: RenderHtml + ?Sized> = ArrayRenderState<K::UnpinnedRenderState<R>, N>;
+impl<K: UnpinnedRenderStateKindPollRender, const N: usize> UnpinnedRenderStateKindPollRender for Kind<K, N> {
+    fn unpinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        RenderStates {
+            ui_handle,
+            non_reactive_state: (),
+            reactive_state,
+        }: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        let mut res = Poll::Ready(());
+
+        for (
+            //
+            UiHandleWithNonReactiveState { ui_handle, non_reactive_state },
+            reactive_state,
+        ) in ui_handle.iter_mut().zip(reactive_state.0.iter_mut())
+        {
+            if let Poll::Pending = K::unpinned_poll_render(
+                renderer,
+                RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                },
+                cx,
+            ) {
+                res = Poll::Pending
+            }
+        }
+
+        res
+    }
 }
 
-impl<E: Element, const N: usize> Element for [E; N] {
+impl<K: PinnedRenderStateKind, const N: usize> PinnedRenderStateKind for Kind<K, N> {
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = [K::PinnedUiHandle<R>; N];
+    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ArrayRenderState<K::PinnedNonReactiveState<R>, N>;
+    type PinnedReactiveState = ArrayRenderState<K::PinnedReactiveState, N>;
+}
+
+impl<K: PinnedRenderStateKindPollRender, const N: usize> PinnedRenderStateKindPollRender for Kind<K, N> {
+    fn pinned_poll_render<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        RenderStates {
+            ui_handle,
+            non_reactive_state,
+            reactive_state,
+        }: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        let mut res = Poll::Ready(());
+
+        for (
+            //
+            ui_handle,
+            (non_reactive_state, reactive_state),
+        ) in ui_handle.iter_mut().zip(non_reactive_state.iter_pin_mut().zip(reactive_state.iter_pin_mut()))
+        {
+            if let Poll::Pending = K::pinned_poll_render(
+                renderer,
+                RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                },
+                cx,
+            ) {
+                res = Poll::Pending
+            }
+        }
+
+        res
+    }
+}
+
+// endregion
+
+impl<E: CsrElement, const N: usize> CsrElement for [E; N] {
     type RenderStateKind = Kind<E::RenderStateKind, N>;
 
-    fn render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
-        let render_state = render_state.project_inner();
-        let mut this = self.into_iter();
-        pin_project_map_array(render_state, |state| this.next().unwrap().render_update(render_context, state));
-        debug_assert!(this.next().is_none());
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        PinMutRenderInitStates { non_reactive_state, reactive_state }: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let mut states = non_reactive_state.iter_pin_mut().zip(reactive_state.iter_pin_mut());
+
+        // This relies on a documented feature of <[_; N]>::map():
+        // > ..., with function f applied to each element in order
+        self.map(|this| {
+            let (non_reactive_state, reactive_state) = states.next().unwrap();
+            this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state })
+        })
     }
 
-    fn render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>) {
-        let render_state = render_state.project_inner();
-        let mut this = self.into_iter();
-        pin_project_map_array(render_state, |state| this.next().unwrap().render_update_force_reposition(render_context, state));
-        debug_assert!(this.next().is_none());
+    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        RenderStates {
+            ui_handle,
+            non_reactive_state,
+            reactive_state,
+        }: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        self.into_iter()
+            .zip(ui_handle.iter_mut().zip(non_reactive_state.iter_pin_mut().zip(reactive_state.iter_pin_mut())))
+            .for_each(|(this, (ui_handle, (non_reactive_state, reactive_state)))| {
+                this.pinned_render_update(
+                    render_context,
+                    RenderStates {
+                        ui_handle,
+                        non_reactive_state,
+                        reactive_state,
+                    },
+                )
+            })
     }
 
-    fn render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: std::pin::Pin<&mut RenderStateOfContext<Self::RenderStateKind, Ctx>>, force_reposition: bool) {
-        let render_state = render_state.project_inner();
-        let mut this = self.into_iter();
-        pin_project_map_array(render_state, |state| this.next().unwrap().render_update_maybe_reposition(render_context, state, force_reposition));
-        debug_assert!(this.next().is_none());
-    }
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+        let mut reactive_states = ArrayRenderState::default();
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
-        let render_state = &mut render_state.0;
-
-        let mut this = self.into_iter();
-        let mut i = 0;
-
-        while i < N {
-            this.next().unwrap().unpinned_render_update(render_context, &mut render_state[i]);
-            i += 1;
+        let ui_handle = {
+            let mut reactive_states = reactive_states.0.iter_mut();
+            self.map(|this| {
+                let RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                } = this.unpinned_render_init(render_context);
+                *reactive_states.next().unwrap() = reactive_state;
+                UiHandleWithNonReactiveState { ui_handle, non_reactive_state }
+            })
+        };
+        RenderStates {
+            ui_handle,
+            non_reactive_state: (),
+            reactive_state: reactive_states,
         }
-
-        debug_assert!(this.next().is_none());
     }
 
-    fn unpinned_render_update_force_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>) {
-        let render_state = &mut render_state.0;
-
-        let mut this = self.into_iter();
-        let mut i = 0;
-
-        while i < N {
-            this.next().unwrap().unpinned_render_update_force_reposition(render_context, &mut render_state[i]);
-            i += 1;
-        }
-
-        debug_assert!(this.next().is_none());
-    }
-
-    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + HtmlRenderContext>(self, render_context: &mut Ctx, render_state: &mut UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>, force_reposition: bool) {
-        let render_state = &mut render_state.0;
-
-        let mut this = self.into_iter();
-        let mut i = 0;
-
-        while i < N {
-            this.next().unwrap().unpinned_render_update_maybe_reposition(render_context, &mut render_state[i], force_reposition);
-            i += 1;
-        }
-
-        debug_assert!(this.next().is_none());
+    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+        RenderStates {
+            ui_handle,
+            non_reactive_state: (),
+            reactive_state: ArrayRenderState(reactive_state),
+        }: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+    ) {
+        self.into_iter()
+            .zip(ui_handle.iter_mut().zip(reactive_state.iter_mut()))
+            .for_each(|(this, (UiHandleWithNonReactiveState { ui_handle, non_reactive_state }, reactive_state))| {
+                this.unpinned_render_update(
+                    render_context,
+                    RenderStates {
+                        ui_handle,
+                        non_reactive_state,
+                        reactive_state,
+                    },
+                )
+            })
     }
 }

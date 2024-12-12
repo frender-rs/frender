@@ -1,8 +1,10 @@
 pub mod state;
 
-mod html;
+// mod html;
 
-pub use self::html::{new_fn_hook_element, FnHookElement, FnMutOutputElementOfSameKind};
+// pub use self::html::{new_fn_hook_element, FnHookElement, FnMutOutputElementOfSameKind};
+
+mod hook_element;
 
 pub mod component_fn_options {
     pub use frender_element::Element;

@@ -1,4 +1,4 @@
-pub use render_state_trait::RenderState;
+pub use render_state_trait::{RenderState, StateUnmount};
 
 pub mod render;
 pub mod render_state;

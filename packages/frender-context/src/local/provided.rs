@@ -68,7 +68,12 @@ impl<T: 'static> ContextKeyInner for LocalKeyProvided<T> {
         value
     }
 
-    type MaybeContextKeyAndValue = Option<(&'static ContextKey<Self>, T)>;
+    fn update_swap_value_lazily(
+        swap_value: &mut Self::SwapValue,
+        into_value: impl crate::element::IntoContextValue<ContextValue = Self::Value>,
+    ) {
+        into_value.update_context_value_lazily(swap_value)
+    }
 }
 
 #[cfg(test)]
