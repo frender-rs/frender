@@ -3,101 +3,40 @@
 use std::{any::Any, marker::PhantomData, pin::Pin};
 
 use frender_html::{
-    impl_unpinned_render_for_unpin, CsrElement as Element, HtmlRenderContext, RenderHtml,
-    RenderState, RenderStateKind, RenderStateKindUnpinned,
+    dom::{
+        render::RenderWithContext,
+        ui_handle::{UiHandle, UnmountedUiHandle},
+    },
+    experimental::{UnpinnedRenderStateKind, UnpinnedRenderStatesOfKind},
+    CsrElement, HtmlRenderContext, RenderHtml,
 };
 use frender_ssr::SsrElement;
 
-pub trait AnyRenderState<Renderer: ?Sized>: RenderState<Renderer> + Unpin {
-    fn upcast_mut_dyn_any(&mut self) -> &mut (dyn 'static + Any);
-}
-
-impl<S, Renderer: ?Sized> AnyRenderState<Renderer> for S
-where
-    S: RenderState<Renderer> + Unpin + 'static,
-{
-    fn upcast_mut_dyn_any(&mut self) -> &mut dyn Any {
-        self
-    }
-}
-
-pub struct PinBoxDynRenderState<Renderer: ?Sized> {
-    render_state: Pin<Box<dyn 'static + AnyRenderState<Renderer>>>,
-}
-
-impl<Renderer: ?Sized> PinBoxDynRenderState<Renderer> {
-    // fn as_pin_mut_render_state(&mut self) -> Pin<&mut dyn RenderState<Renderer>> {
-    //     let render_state = self.render_state.as_mut();
-    //     // render_state.upcast_pin_mut_dyn_render_state()
-    // }
-
-    fn pin_project(self: std::pin::Pin<&mut Self>) -> Pin<&mut dyn AnyRenderState<Renderer>> {
-        // self.get_mut().as_pin_mut_render_state()
-        self.get_mut().render_state.as_mut()
-    }
-}
-
-impl<Renderer: ?Sized> Unpin for PinBoxDynRenderState<Renderer> {}
-
-impl<R: ?Sized> RenderState<R> for PinBoxDynRenderState<R> {
-    fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-        self.pin_project().unmount(renderer)
-    }
-
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {
-        self.pin_project().state_unmount()
-    }
-
-    fn poll_render(
-        self: std::pin::Pin<&mut Self>,
-        renderer: &mut R,
-        cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        self.pin_project().poll_render(renderer, cx)
-    }
-
-    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-    where
-        R: frender_html::dom::render::RenderWithContext,
-    {
-        self.render_state.check_and_move_cursor(render_context)
-    }
-}
-
-pub struct CsrRenderContext<'a, Ctx: ?Sized + HtmlRenderContext, S: ?Sized = dyn Any> {
+/// This struct is a wrapper for render context so that it can only be used with
+/// [`ctx.render(element)`](CsrRenderContext::render).
+pub struct CsrRenderContext<'a, Ctx: ?Sized + HtmlRenderContext> {
     render_context: &'a mut Ctx,
-    render_state: &'a mut S,
-    force_reposition: bool,
 }
 
 impl<'a, Ctx: ?Sized + HtmlRenderContext> CsrRenderContext<'a, Ctx> {
-    pub fn render<E: Element>(self, element: E) -> Rendered<'a, E::RenderStateKind>
-    where
-        E::RenderStateKind: 'static,
-        // <E::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<Ctx::Renderer>:
-        //     'static,
-    {
-        let render_state = self
-            .render_state
-            .downcast_mut::<<E::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<Ctx::Renderer>>()
-            .expect("Element State type mismatch");
-
-        element.unpinned_render_update_maybe_reposition(
-            self.render_context,
-            render_state,
-            self.force_reposition,
-        );
-        Rendered(PhantomData, PhantomData)
+    pub fn render<E: CsrElement>(self, element: E) -> Rendered<'a, E::RenderStateKind, Ctx> {
+        Rendered(
+            element.unpinned_render_init(self.render_context),
+            PhantomData,
+        )
     }
 }
 
 /// A marker returned by [`CsrRenderContext::render`].
-pub struct Rendered<'a, S>(PhantomData<&'a mut ()>, PhantomData<S>);
+pub struct Rendered<'a, K: UnpinnedRenderStateKind, Ctx: ?Sized + HtmlRenderContext>(
+    UnpinnedRenderStatesOfKind<K, Ctx::Renderer>,
+    PhantomData<&'a mut ()>,
+);
 
-#[cfg(not(feature = "nightly"))]
-impl<S> Rendered<'_, S> {
-    fn type_check(self, _: PhantomData<S>) {}
-}
+// #[cfg(not(feature = "nightly"))]
+// impl<S> Rendered<'_, S> {
+//     fn type_check(self, _: PhantomData<S>) {}
+// }
 
 pub struct RenderWith<F>(pub F);
 
@@ -108,16 +47,6 @@ impl<F> SsrElement for RenderWith<F> {
     fn into_html_children(self) -> Self::HtmlChildren {
         async_str_iter::empty::Empty
     }
-}
-
-pub trait DefaultAnyRenderState<Renderer: ?Sized>:
-    'static + Default + AnyRenderState<Renderer>
-{
-}
-
-impl<Renderer: ?Sized, S> DefaultAnyRenderState<Renderer> for S where
-    S: 'static + Default + AnyRenderState<Renderer>
-{
 }
 
 /// This might be just
@@ -137,15 +66,15 @@ pub trait IntoFnOnceRenderWithContext {
 // TODO: RenderWith(Test::default())
 
 pub trait FnOnceRenderWithContext<Ctx: ?Sized + HtmlRenderContext>:
-    for<'r> FnOnce(CsrRenderContext<'r, Ctx>) -> Rendered<'r, Self::OutputRenderStateKind>
+    for<'r> FnOnce(CsrRenderContext<'r, Ctx>) -> Rendered<'r, Self::OutputRenderStateKind, Ctx>
 {
-    type OutputRenderStateKind: RenderStateKind + 'static;
+    type OutputRenderStateKind: UnpinnedRenderStateKind + 'static;
 }
 
 impl<F, Ctx: ?Sized + HtmlRenderContext, K> FnOnceRenderWithContext<Ctx> for F
 where
-    F: for<'r> FnOnce(CsrRenderContext<'r, Ctx>) -> Rendered<'r, K>,
-    K: RenderStateKind + 'static,
+    F: for<'r> FnOnce(CsrRenderContext<'r, Ctx>) -> Rendered<'r, K, Ctx>,
+    K: UnpinnedRenderStateKind + 'static,
 {
     type OutputRenderStateKind = K;
 }
@@ -219,65 +148,4 @@ mod nightly_impl {
 }
 
 #[cfg(not(feature = "nightly"))]
-mod not_nightly_impl {
-    use frender_html::RenderStateKindPinned;
-
-    use super::*;
-
-    enum Never {}
-    pub struct Kind(Never);
-
-    impl RenderStateKindPinned for Kind {
-        // TODO: State should be statically typed and stacked allocated without Pin<Box<dyn __>> with [impl Trait in type aliases](https://github.com/rust-lang/rust/issues/63063)
-        type RenderState<R: frender_html::RenderHtml + ?Sized> = Option<PinBoxDynRenderState<R>>;
-    }
-    impl RenderStateKindUnpinned for Kind {
-        type UnpinnedRenderState<R: RenderHtml + ?Sized> = Option<PinBoxDynRenderState<R>>;
-    }
-
-    impl<F: IntoFnOnceRenderWithContext> Element for RenderWith<F> {
-        type RenderStateKind = Kind;
-
-        fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-            force_reposition: bool,
-        ) {
-            let state = render_state.get_mut();
-
-            let phantom_state = PhantomData;
-
-            fn default_pin_box_dyn_render_state_with_phantom_hint<
-                Renderer: ?Sized + RenderHtml,
-                K: RenderStateKindUnpinned + 'static,
-            >(
-                _: PhantomData<K>,
-            ) -> Pin<Box<dyn 'static + AnyRenderState<Renderer>>> {
-                Box::pin(<K::UnpinnedRenderState<Renderer> as Default>::default())
-            }
-
-            let state =
-                state.get_or_insert_with(|| PinBoxDynRenderState {
-                    render_state: default_pin_box_dyn_render_state_with_phantom_hint::<
-                        Ctx::Renderer,
-                        _,
-                    >(phantom_state),
-                });
-
-            let render_state = state.render_state.as_mut().get_mut();
-            let render_state = render_state.upcast_mut_dyn_any();
-
-            let f = self.0.into_fn_once_render_with_context::<Ctx>();
-            let rendered: Rendered<_> = f(CsrRenderContext {
-                render_context,
-                render_state,
-                force_reposition,
-            });
-            rendered.type_check(phantom_state);
-        }
-
-        impl_unpinned_render_for_unpin! {}
-    }
-}
+mod not_nightly_impl;

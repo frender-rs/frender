@@ -177,6 +177,23 @@ impl<'a> Cursor<'a> {
         .map_or(false, |c| *node == c)
     }
 
+    pub fn force_add_node(&mut self, node: &web_sys::Node) {
+        match &self.position {
+            CursorPosition::FirstChildOf(parent) => {
+                parent.prepend_with_node_1(node).unwrap_throw();
+            }
+            CursorPosition::After(pre) => {
+                pre.parent_node()
+                    .expect_throw("the previous node should have a parent node")
+                    .insert_before(node, pre.next_sibling().as_ref())
+                    .unwrap_throw();
+            }
+        }
+
+        self.position = CursorPosition::After(Cow::Owned(node.clone()));
+        self.skipped = false;
+    }
+
     pub fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
         if force_reposition {
             // #[cfg(debug_assertions)]

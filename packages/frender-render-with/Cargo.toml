@@ -8,5 +8,15 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-featur
 frender-html = { version = "0.1.0", path = "../frender-html" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 
+[dev-dependencies]
+frender-html = { version = "0.1.0", path = "../frender-html", features = [
+    "web",
+] }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-elements = { version = "0.1.0", path = "../frender-elements" }
+hooks = { version = "3.0.0-alpha", default-features = false, features = [
+    "Signal",
+] }
+
 [features]
 nightly = []

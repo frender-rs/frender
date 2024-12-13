@@ -243,4 +243,22 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
 
         node.unchecked_ref::<Removable>().remove()
     }
+
+    fn assert_cursor_if_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
+    where
+        Self: RenderWithContext,
+    {
+        debug_assert!(render_context.cursor.cursor_is_at_node(node))
+    }
+
+    fn reposition_node(render_context: &mut Self::RenderContext<'_>, node: &web_sys::Node)
+    where
+        Self: RenderWithContext,
+    {
+        render_context.cursor.force_add_node(node)
+    }
+
+    fn mount_node(render_context: &mut Self::RenderContext<'_>, node: &web_sys::Node) {
+        render_context.cursor.force_add_node(node)
+    }
 }
