@@ -6,7 +6,7 @@ pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
 pub use self::dom::Empty;
 
 pub use html::RenderHtml;
-pub use update_element::{BehaviorType, UiHandleType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
+pub use update_element::{BehaviorType, UiHandleType};
 
 use element::CsrElement as Element; // TODO: remove
 
@@ -49,6 +49,7 @@ pub mod __private {
 mod special;
 
 mod attr;
+mod event_listener;
 
 mod impl_bounds;
 use impl_bounds::impl_bounds;

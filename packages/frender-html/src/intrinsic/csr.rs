@@ -8,7 +8,7 @@ use crate::element::{PinMutRenderInitStates, PinnedRenderStateKind, PinnedRender
 use crate::element_types::RenderStateKindPollRenderWithParent;
 use crate::html::{behavior_type_traits, behaviors};
 use crate::intrinsic::Intrinsic;
-use crate::update_element::{PinnedNonReactiveRenderStateKind, RenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
+use crate::update_element::{PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
 use crate::{CsrComponent, HtmlRenderContext, RenderHtml};
 
 use crate::CsrElement;
@@ -18,8 +18,9 @@ pub struct Kind<
     BT: behavior_type_traits::Element,
     ChildrenKind: RenderStateKindPollRenderWithParent<BT>,
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
-    AttrsPinnedKind: UnpinnedNonReactiveRenderStateKind + PinnedNonReactiveRenderStateKind,
->(crate::elements::Kind<(BT, ChildrenKind, AttrsKind, AttrsPinnedKind)>);
+    AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
+>(crate::elements::Kind<(BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned)>);
 
 // region: ui handle
 
@@ -98,12 +99,13 @@ pin_project!(
     }
 );
 
-impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKind> PinnedRenderStateKind for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKind>
+impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> PinnedRenderStateKind for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
 where
     BT: behavior_type_traits::Element,
     ChildrenKind: RenderStateKindPollRenderWithParent<BT>,
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
-    AttrsPinnedKind: UnpinnedNonReactiveRenderStateKind + PinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
 {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = ParentWithChildren<
         //
@@ -114,17 +116,18 @@ where
     type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
         //
         ChildrenKind::PinnedNonReactiveState<R>,
-        AttrsPinnedKind::PinnedNonReactiveState<R>,
+        AttrsPinnedKindPinned::PinnedNonReactiveState<R>,
     >;
     type PinnedReactiveState = ChildrenKind::PinnedReactiveState;
 }
 
-impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKind> PinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKind>
+impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> PinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
 where
     BT: behavior_type_traits::Element,
     ChildrenKind: RenderStateKindPollRenderWithParent<BT>,
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
-    AttrsPinnedKind: UnpinnedNonReactiveRenderStateKind + PinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
 {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
@@ -154,12 +157,13 @@ where
 
 // region: unpinned
 
-impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKind> UnpinnedRenderStateKind for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKind>
+impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> UnpinnedRenderStateKind for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
 where
     BT: behavior_type_traits::Element,
     ChildrenKind: RenderStateKindPollRenderWithParent<BT>,
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
-    AttrsPinnedKind: UnpinnedNonReactiveRenderStateKind + PinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
 {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ParentWithChildren<
         //
@@ -170,17 +174,18 @@ where
     type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
         //
         ChildrenKind::UnpinnedNonReactiveState<R>,
-        (AttrsKind::UnpinnedNonReactiveState<R>, AttrsPinnedKind::UnpinnedNonReactiveState<R>),
+        (AttrsKind::UnpinnedNonReactiveState<R>, AttrsPinnedKindUnpinned::UnpinnedNonReactiveState<R>),
     >;
     type UnpinnedReactiveState = ChildrenKind::UnpinnedReactiveState;
 }
 
-impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKind> UnpinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKind>
+impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> UnpinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
 where
     BT: behavior_type_traits::Element,
     ChildrenKind: RenderStateKindPollRenderWithParent<BT>,
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
-    AttrsPinnedKind: UnpinnedNonReactiveRenderStateKind + PinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
+    AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
 {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
@@ -222,14 +227,15 @@ where
     BT: HasIntrinsicComponentTag + behavior_type_traits::Element,
     BT: CsrComponent<Children>,
     Attrs: UnpinnedRenderWithBehavior<BT>,
-    AttrsWithPinnedState: RenderWithBehavior<BT>,
+    AttrsWithPinnedState: UnpinnedRenderWithBehavior<BT> + PinnedRenderWithBehavior<BT>,
 {
     type RenderStateKind = Kind<
         //
         BT,
         BT::ChildrenRenderStateKind,
         Attrs::UnpinnedRenderStateKind,
-        AttrsWithPinnedState::RenderStateKind,
+        AttrsWithPinnedState::UnpinnedRenderStateKind,
+        AttrsWithPinnedState::PinnedRenderStateKind,
     >;
 
     fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(

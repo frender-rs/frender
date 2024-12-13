@@ -172,31 +172,49 @@ macro_rules! behaviors {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        $vis trait $trait_name<Renderer: ?Sized> :
-            $($extends<Renderer> +)*
-            $($($($special_super_traits<Renderer> +)+)?)?
-            $($($trait_bounds)*)?
-        {
-            $($($verbatim_trait_items)*)?
+        super::event_types::$trait_name! {
+            args { OnEvent Renderer }
+            do {
+                prepend {
+                    $vis trait $trait_name<Renderer: ?Sized> :
+                    $($extends<Renderer> +)*
+                    $($($($special_super_traits<Renderer> +)+)?)?
+                }
+                append {
+                    $($($trait_bounds)*)?
+                    {
+                        $($($verbatim_trait_items)*)?
 
-            $(crate::macros::define_behavior_fn!{
-                $fn_name $fn_args $fn_body_or_semi
-            })*
+                        $(crate::macros::define_behavior_fn!{
+                            $fn_name $fn_args $fn_body_or_semi
+                        })*
+                    }
+                }
+            }
         }
 
-        #[cfg(feature="ElementProxyAttrs")]
-        impl<
-            Renderer: ?Sized,
-            E: ?Sized + frender_dom::behaviors::Element<Renderer>,
-        > $trait_name<Renderer> for crate::ElementProxyAttrs<E>
-        where Self:
-            $($extends<Renderer> +)*
-            $($($($special_super_traits<Renderer> + )+ )?)?
-            $($($trait_bounds)*)?
-        {
-            $(crate::element_proxy_attrs::macros::impl_behavior_fn! {
-                $fn_name $fn_args $fn_body_or_semi ($trait_name)
-            })*
+        super::event_types::$trait_name! {
+            args { OnEvent Renderer }
+            do {
+                prepend {
+                    #[cfg(feature="ElementProxyAttrs")]
+                    impl<
+                        Renderer: ?Sized,
+                        E: ?Sized + frender_dom::behaviors::Element<Renderer>,
+                    > $trait_name<Renderer> for crate::ElementProxyAttrs<E>
+                    where Self:
+                        $($extends<Renderer> +)*
+                        $($($($special_super_traits<Renderer> + )+ )?)?
+                }
+                append {
+                    $($($trait_bounds)*)?
+                    {
+                        $(crate::element_proxy_attrs::macros::impl_behavior_fn! {
+                            $fn_name $fn_args $fn_body_or_semi ($trait_name)
+                        })*
+                    }
+                }
+            }
         }
 
         // if `impl_for_web`
@@ -282,7 +300,14 @@ macro_rules! behaviors_prelude {
 }
 
 macro_rules! behavior_type_traits {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use crate::update_element::OnEventType;
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -305,15 +330,24 @@ macro_rules! behavior_type_traits {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        $vis trait $trait_name:
-            crate::UiHandleType +
-            $($extends +)*
-            $($($($special_super_traits +)+)?)?
-        {
-            type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
-                + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-                + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>
-            ;
+        super::event_types::$trait_name! {
+            args { OnEventType }
+            do {
+                prepend {
+                    $vis trait $trait_name:
+                    crate::UiHandleType +
+                    $($extends +)*
+                    $($($($special_super_traits +)+)?)?
+                }
+                append {
+                    {
+                        type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
+                            + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
+                            + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>
+                        ;
+                    }
+                }
+            }
         }
     };
 }
@@ -335,6 +369,7 @@ macro_rules! tag_and_props_markers {
                 use ::frender_ssr::html::tag::AssertTagName;
                 use frender_dom::ui_handle::UnmountedUiHandle;
                 use crate::{
+                    update_element::OnEventType,
                     dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
                     BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType,
                 };
@@ -407,13 +442,29 @@ macro_rules! tag_and_props_markers {
                             }
                         }
                         {
-                            prepend {
-                                type
-                            }
-                            append {
-                                <Renderer: ?Sized + RenderHtml> = Renderer::$tags;
-                            }
-                            wrap {}
+                            duplex_concat (
+                                {
+                                    prepend {
+                                        type
+                                    }
+                                    append {
+                                        <Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+                                    }
+                                    wrap {}
+                                }
+                                {
+                                    prepend {
+                                        super::event_types::
+                                    }
+                                    append {
+                                        ! {{
+                                            wrap {}
+                                            append { $tags }
+                                            wrap {} prepend { crate::macros::event_names::impl_OnEventType! }
+                                        }}
+                                    }
+                                }
+                            )
                         }
                     )
                 }
@@ -686,7 +737,7 @@ macro_rules! impl_attribute {
         crate::impl_bounds! {
             props::$fn_name(
                 prop_marker(prop_markers::$fn_name),
-                #[event(self::event_type_helpers::$fn_name)]
+                #[event($fn_name::$event_trait_name)]
                 bounds as crate::impl_bounds::MaybeHandleEvent,
                 element as $trait_name,
                 attr_name = __,
@@ -1007,8 +1058,14 @@ macro_rules! event_types {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        #[allow(unused_imports)]
-        use super::behaviors::$trait_name;
+        crate::macros::event_names::expand_macro! {
+            {$(
+                { $fn_name $fn_args $fn_body_or_semi }
+            )*}
+            $trait_name
+        }
+
+        pub(crate) use $trait_name;
 
         $(
             crate::macros::event_type! {
@@ -1049,57 +1106,6 @@ macro_rules! event_type {
         }
     };
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
-}
-
-macro_rules! event_type_helpers {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
-    (
-        extends($($extends:ident)*)
-        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
-        vis($vis:vis)
-        trait_name($trait_name:ident)
-        $(trait_bounds $trait_bounds:tt)?
-        $(define $define:tt)?
-        // $(define(
-        //     Props: $Props:ident
-        //     $(, components: ($($components:ident),* $(,)?))?
-        //     $(,)?
-        // ))?
-        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
-        $(impl_for_web(
-            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
-            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
-        ))?
-        fns($(
-            $(#$fn_attr:tt)*
-            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
-        )*)
-    ) => {
-        $(
-            crate::macros::event_type_helper! {
-                $fn_name $fn_args $fn_body_or_semi $trait_name { super::super::behaviors }
-            }
-        )*
-    };
-}
-
-macro_rules! event_type_helper {
-    ($fn_name:ident ($value:ident : event![
-        $event_trait_name:ident,
-        $event_type_name:literal,
-        $event_type_ident:ident,
-        $event_type_listener_ident:ident $(,)?
-    ]); $trait_name:ident {$($path_to_mod_behaviors:tt)+}) => {
-        pub mod $fn_name {
-            pub use ::frender_dom::event::$event_trait_name as Event;
-
-            pub type EventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListener<F>;
-            pub type UnpinnedEventListenerOf<E, R, F> = <E as ::frender_dom::OnEvent<R, super::super::event_types::$fn_name>>::EventListenerUnpinned<F>;
-
-            // pub const EVENT_TYPE_NAME: &'static str = <super::super::event_types::$fn_name as ::frender_dom::HasEventTypeName>::EVENT_TYPE_NAME;
-        }
-    };
-    ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt $path:tt) => {};
 }
 
 macro_rules! macro_props_builders {
@@ -1460,10 +1466,12 @@ macro_rules! expand_item_and_prepend_expanded {
 
 pub(crate) use {
     behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
-    event_type, event_type_helper, event_type_helpers, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_attribute,
-    impl_behavior_fn, impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, parse_impl_with, parse_update_with, prop_markers, props,
-    props_implementations, tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
+    event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_attribute, impl_behavior_fn,
+    impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, parse_impl_with, parse_update_with, prop_markers, props, props_implementations,
+    tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
 };
+
+pub(crate) mod event_names;
 
 #[cfg(test)]
 mod tests;
