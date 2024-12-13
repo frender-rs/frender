@@ -257,16 +257,16 @@ where
 
         let renderer = render_context.renderer_mut();
         let parent_attributes;
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
         {
-            let parent: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
-            parent_attributes = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent);
-            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent, parent_attributes_pinned_state);
+            parent_attributes = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
+            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned_state);
         }
 
         let children_ui_handle = type_marker.children_pinned_render_init(
             children,
             renderer,
-            &mut parent,
+            parent_b,
             PinMutRenderInitStates {
                 non_reactive_state: children_non_reactive_state,
                 reactive_state,
@@ -309,17 +309,17 @@ where
         let parent_attributes_pinned_state = non_reactive_state.parent_attributes;
 
         let renderer = render_context.renderer_mut();
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
 
         {
-            let parent: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
-            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent, parent_attributes);
-            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent, parent_attributes_pinned_state);
+            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, parent_attributes);
+            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned_state);
         }
 
         type_marker.children_pinned_render_update(
             children,
             renderer,
-            parent,
+            parent_b,
             RenderStates {
                 ui_handle: children_ui_handle,
                 non_reactive_state: children_non_reactive_state,
@@ -344,15 +344,16 @@ where
         let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
 
         let renderer = render_context.renderer_mut();
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+
         let parent_attributes = {
-            let parent: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
             (
-                Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent),
-                AttrsWithPinnedState::unpinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent),
+                Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b),
+                AttrsWithPinnedState::unpinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b),
             )
         };
 
-        let children_states = type_marker.children_unpinned_render_init(children, renderer, &mut parent);
+        let children_states = type_marker.children_unpinned_render_init(children, renderer, parent_b);
 
         RenderStates {
             ui_handle: ParentWithChildren {
@@ -395,17 +396,17 @@ where
         } = states;
 
         let renderer = render_context.renderer_mut();
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
 
         {
-            let parent: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
-            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent, parent_attributes);
-            AttrsWithPinnedState::unpinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent, parent_attributes_pinned);
+            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, parent_attributes);
+            AttrsWithPinnedState::unpinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned);
         }
 
         type_marker.children_unpinned_render_update(
             children,
             renderer,
-            parent,
+            parent_b,
             RenderStates {
                 ui_handle: children_ui_handle,
                 non_reactive_state: children_non_reactive_state,

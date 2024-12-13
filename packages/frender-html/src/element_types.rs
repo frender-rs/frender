@@ -1,11 +1,13 @@
 use std::pin::Pin;
 use std::task::Poll;
 
+use frender_common::convert::FromMut as _;
 use frender_dom::behaviors::ElementWithChildren;
-use frender_dom::ui_handle::UiHandle;
-use frender_dom::{RenderStateWithAnyParent, RenderStateWithParentElementsHandle, StateUnmount};
 
-use crate::element::{PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedUiHandleOfKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStateKind, UnpinnedRenderStatesOfKind};
+use crate::element::{
+    PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStateKind,
+    UnpinnedRenderStateKindPollRender, UnpinnedRenderStatesOfKind,
+};
 use crate::{BehaviorType, RenderHtml};
 
 use crate::html::behavior_type_traits;
@@ -31,7 +33,7 @@ pub trait RenderStateKindPollRenderWithParent<ParentType: ?Sized + BehaviorType>
     ) -> Poll<()>;
 }
 
-pub trait CsrComponent<Children>: behavior_type_traits::Element {
+pub trait CsrComponent<Children>: BehaviorType {
     type ChildrenRenderStateKind: RenderStateKindPollRenderWithParent<Self>;
 
     fn children_pinned_render_init<R: RenderHtml + ?Sized>(
@@ -39,7 +41,7 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::Element<R>,
+        parent: &mut Self::OfBehaviorType<R>,
         children_states: PinMutRenderInitStatesOfKind<Self::ChildrenRenderStateKind, R>,
     ) -> PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>;
 
@@ -48,7 +50,7 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::Element<R>,
+        parent: &mut Self::OfBehaviorType<R>,
         children_states: PinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
     );
 
@@ -57,7 +59,7 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::Element<R>,
+        parent: &mut Self::OfBehaviorType<R>,
     ) -> UnpinnedRenderStatesOfKind<Self::ChildrenRenderStateKind, R>;
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
@@ -65,44 +67,91 @@ pub trait CsrComponent<Children>: behavior_type_traits::Element {
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::Element<R>,
+        parent: &mut Self::OfBehaviorType<R>,
         children_states: UnpinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
     );
 }
 
-#[cfg(todo)]
 enum Never {}
 
-#[cfg(todo)]
-pub struct KindRenderStateWithAnyParent<K: crate::RenderStateKind>(Never, std::marker::PhantomData<K>);
+pub struct KindRenderStateWithAnyParent<CK: UnpinnedRenderStateKind + PinnedRenderStateKind>(Never, std::marker::PhantomData<CK>);
 
-#[cfg(todo)]
-impl<K: crate::RenderStateKind, ElType: ?Sized + behavior_type_traits::Element> RenderStateWithPehKind<ElType> for KindRenderStateWithAnyParent<K> {
-    type RenderStateWithPeh<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<K as crate::RenderStateKind>::RenderStatePinned<R>>;
-    type RenderStateWithPehUnpinned<R: RenderHtml + ?Sized> = RenderStateWithAnyParent<<K as crate::RenderStateKind>::RenderStateUnpinned<R>>;
+impl<CK: UnpinnedRenderStateKind + PinnedRenderStateKind> UnpinnedRenderStateKind for KindRenderStateWithAnyParent<CK> {
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = CK::UnpinnedUiHandle<R>;
+    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = CK::UnpinnedNonReactiveState<R>;
+    type UnpinnedReactiveState = CK::UnpinnedReactiveState;
 }
 
-#[cfg(todo)]
+impl<CK: UnpinnedRenderStateKind + PinnedRenderStateKind> PinnedRenderStateKind for KindRenderStateWithAnyParent<CK> {
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = CK::PinnedUiHandle<R>;
+    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = CK::PinnedNonReactiveState<R>;
+    type PinnedReactiveState = CK::PinnedReactiveState;
+}
+
+impl<CK: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender, ElType: ?Sized + behavior_type_traits::Element> RenderStateKindPollRenderWithParent<ElType> for KindRenderStateWithAnyParent<CK> {
+    fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        _: &mut <ElType as BehaviorType>::OfBehaviorType<R>,
+        states: PinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        CK::pinned_poll_render(renderer, states, cx)
+    }
+    fn unpinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
+        //
+        renderer: &mut R,
+        _: &mut <ElType as BehaviorType>::OfBehaviorType<R>,
+        states: UnpinnedMutRenderStatesOfKind<Self, R>,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        CK::unpinned_poll_render(renderer, states, cx)
+    }
+}
+
 impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for C {
     type ChildrenRenderStateKind = KindRenderStateWithAnyParent<Children::RenderStateKind>;
 
-    fn children_render_update<R: RenderHtml + ?Sized>(
+    fn children_pinned_render_init<R: RenderHtml + ?Sized>(
+        //
         self,
         children: Children,
-        element: &mut Self::Element<R>,
         renderer: &mut R,
-        children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
+        parent: &mut Self::OfBehaviorType<R>,
+        children_states: PinMutRenderInitStatesOfKind<Self::ChildrenRenderStateKind, R>,
+    ) -> PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        <C::Element<R>>::from_mut(parent).with_render_context_at_first_child_of_self(renderer, |render_context| children.pinned_render_init(render_context, children_states))
+    }
+
+    fn children_pinned_render_update<R: RenderHtml + ?Sized>(
+        //
+        self,
+        children: Children,
+        renderer: &mut R,
+        parent: &mut Self::OfBehaviorType<R>,
+        children_states: PinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
     ) {
-        element.with_render_context_at_first_child_of_self(renderer, |renderer| Children::render_update(children, renderer, children_state.as_pin_mut()))
+        <C::Element<R>>::from_mut(parent).with_render_context_at_first_child_of_self(renderer, |render_context| children.pinned_render_update(render_context, children_states))
+    }
+
+    fn children_unpinned_render_init<R: RenderHtml + ?Sized>(
+        //
+        self,
+        children: Children,
+        renderer: &mut R,
+        parent: &mut Self::OfBehaviorType<R>,
+    ) -> UnpinnedRenderStatesOfKind<Self::ChildrenRenderStateKind, R> {
+        <C::Element<R>>::from_mut(parent).with_render_context_at_first_child_of_self(renderer, |render_context| children.unpinned_render_init(render_context))
     }
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+        //
         self,
         children: Children,
-        element: &mut Self::Element<R>,
         renderer: &mut R,
-        children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
+        parent: &mut Self::OfBehaviorType<R>,
+        children_states: UnpinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
     ) {
-        element.with_render_context_at_first_child_of_self(renderer, |renderer| Children::unpinned_render_update(children, renderer, &mut children_state.render_state))
+        <C::Element<R>>::from_mut(parent).with_render_context_at_first_child_of_self(renderer, |render_context| children.unpinned_render_update(render_context, children_states))
     }
 }
