@@ -5,7 +5,6 @@ pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
 
 pub use self::dom::Empty;
 
-pub use create_node::CreateNode;
 pub use html::RenderHtml;
 pub use update_element::{BehaviorType, UiHandleType, UpdateNodeNonReactive, UpdateNodeNonReactivePinned};
 
@@ -26,7 +25,6 @@ pub mod element_proxy_attrs;
 #[cfg(feature = "ElementProxyAttrs")]
 pub use element_proxy_attrs::ElementProxyAttrs;
 
-mod create_node;
 mod update_element;
 
 mod element;

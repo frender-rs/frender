@@ -9,7 +9,7 @@ use crate::element_types::RenderStateKindPollRenderWithParent;
 use crate::html::{behavior_type_traits, behaviors};
 use crate::intrinsic::Intrinsic;
 use crate::update_element::{PinnedNonReactiveRenderStateKind, RenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
-use crate::{CreateNode, CsrComponent, HtmlRenderContext, RenderHtml};
+use crate::{CsrComponent, HtmlRenderContext, RenderHtml};
 
 use crate::CsrElement;
 
@@ -219,7 +219,7 @@ impl<
         AttrsWithPinnedState,
     > CsrElement for Intrinsic<BT, Children, Attrs, AttrsWithPinnedState>
 where
-    BT: HasIntrinsicComponentTag + behavior_type_traits::Element + CreateNode,
+    BT: HasIntrinsicComponentTag + behavior_type_traits::Element,
     BT: CsrComponent<Children>,
     Attrs: UnpinnedRenderWithBehavior<BT>,
     AttrsWithPinnedState: RenderWithBehavior<BT>,
