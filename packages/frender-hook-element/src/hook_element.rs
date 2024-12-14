@@ -5,6 +5,17 @@ pub mod ssr;
 
 pub struct HookElement<F>(pub F);
 
+/// For the returned `HookElement` to impl CsrElement, HookData needs to impl `HookPollNextUpdate + HookUnmount`.
+pub const fn new_fn_hook_element<
+    //
+    HookData: Default,
+    F: for<'hook> FnMut1<Pin<&'hook mut HookData>>,
+>(
+    f: F,
+) -> HookElement<F> {
+    HookElement(f)
+}
+
 // region: FnMut1
 /// Trait alias for `FnMut(Arg) -> Self::_Output`
 pub trait FnMut1<Arg>: FnMut(Arg) -> Self::_Output {

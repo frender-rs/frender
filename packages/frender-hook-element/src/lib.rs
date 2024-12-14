@@ -1,8 +1,4 @@
-pub mod state;
-
-// mod html;
-
-// pub use self::html::{new_fn_hook_element, FnHookElement, FnMutOutputElementOfSameKind};
+pub use self::hook_element::{new_fn_hook_element, HookElement};
 
 mod hook_element;
 
