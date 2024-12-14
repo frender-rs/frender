@@ -137,6 +137,8 @@ mod imps {
 
 #[cfg(test)]
 mod tests {
+    use std::{borrow::Cow, rc::Rc, sync::Arc};
+
     use super::ToElement;
     use frender_common::TempStr;
     use frender_element::Element;
@@ -157,26 +159,50 @@ mod tests {
                 RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
             >,
         >,
-        for<'c, 'a> std::borrow::Cow<'c, str>: ToElement<
+        Cow<'static, str>: for<'a> ToElement<
             ToElement<'a>: Element<
                 HtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren,
                 RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
             >,
         >,
-        std::rc::Rc<str>: for<'a> ToElement<
+        for<'c> Cow<'c, str>: TypeAssertCow,
+        Rc<str>: for<'a> ToElement<
             ToElement<'a>: Element<
-                HtmlChildren = <std::rc::Rc<str> as SsrElement>::HtmlChildren,
-                RenderStateKind = <std::rc::Rc<str> as CsrElement>::RenderStateKind,
+                HtmlChildren = <Rc<str> as SsrElement>::HtmlChildren,
+                RenderStateKind = <Rc<str> as CsrElement>::RenderStateKind,
             >,
         >, //
-        std::sync::Arc<str>: for<'a> ToElement<
+        Arc<str>: for<'a> ToElement<
             ToElement<'a>: Element<
-                HtmlChildren = <std::sync::Arc<str> as SsrElement>::HtmlChildren,
-                RenderStateKind = <std::sync::Arc<str> as CsrElement>::RenderStateKind,
+                HtmlChildren = <Arc<str> as SsrElement>::HtmlChildren,
+                RenderStateKind = <Arc<str> as CsrElement>::RenderStateKind,
             >,
         >,
     {
     }
 
+    trait TypeAssertCow {
+        type Expected<'a>: ToElement<
+            ToElement<'a>: Element<
+                HtmlChildren = <TempStr<&'static String> as SsrElement>::HtmlChildren,
+                RenderStateKind = <TempStr<&'static String> as CsrElement>::RenderStateKind,
+            >,
+        >
+        where
+            Self: 'a;
+    }
+
+    impl<'c> TypeAssertCow for Cow<'c, str> {
+        type Expected<'a> = Cow<'c, str>
+        where
+            'c: 'a;
+    }
+
     const _: () = type_assert();
+
+    // use the above code
+    #[test]
+    const fn compile_only() {
+        type_assert()
+    }
 }
