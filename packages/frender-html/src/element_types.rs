@@ -5,7 +5,7 @@ use frender_common::convert::FromMut as _;
 use frender_dom::behaviors::ElementWithChildren;
 
 use crate::element::{
-    PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStateKind,
+    PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind, RenderStateKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStateKind,
     UnpinnedRenderStateKindPollRender, UnpinnedRenderStatesOfKind,
 };
 use crate::{BehaviorType, RenderHtml};
@@ -88,7 +88,7 @@ impl<CK: UnpinnedRenderStateKind + PinnedRenderStateKind> PinnedRenderStateKind 
     type PinnedReactiveState = CK::PinnedReactiveState;
 }
 
-impl<CK: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender, ElType: ?Sized + behavior_type_traits::Element> RenderStateKindPollRenderWithParent<ElType> for KindRenderStateWithAnyParent<CK> {
+impl<CK: RenderStateKind, ElType: ?Sized + behavior_type_traits::Element> RenderStateKindPollRenderWithParent<ElType> for KindRenderStateWithAnyParent<CK> {
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,

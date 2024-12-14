@@ -11,7 +11,7 @@ pub use update_element::{BehaviorType, UiHandleType};
 use element::CsrElement as Element; // TODO: remove
 
 // TODO: some apis are unstable and should be sealed
-pub use element::{CsrElement, HtmlRenderContext};
+pub use element::{CsrElement, HtmlRenderContext, RenderStateKind};
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
 pub use frender_dom::{form_control, render_state, RenderStateWithParentElementsHandle, StateUnmount};
 
@@ -40,9 +40,11 @@ mod macros;
 #[cfg(feature = "web")]
 mod shims;
 
-// TODO(refactor)
+#[doc(hidden)]
+/// This is not public api.
+/// See also mod [`experimental`](crate::experimental) for experimental api under a feature.
 pub mod __private {
-    pub use crate::RenderHtml;
+    pub use crate::element::{PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedUiHandleOfKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStatesOfKind};
 }
 
 #[cfg(todo)]

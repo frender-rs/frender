@@ -81,6 +81,10 @@ pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
     ) -> Poll<()>;
 }
 
+/// Trait alias for experimental traits [`UnpinnedRenderStateKindPollRender`] + [`PinnedRenderStateKindPollRender`].
+pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender {}
+impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender> RenderStateKind for K {}
+
 pub type PinnedMutRenderStatesOfKind<'a, Kind, Renderer> = RenderStates<
     //
     &'a mut <Kind as PinnedRenderStateKind>::PinnedUiHandle<Renderer>,
@@ -119,7 +123,7 @@ pub struct PinMutRenderInitStates<'a, NRS, RS> {
 pub type PinMutRenderInitStatesOfKind<'a, Kind, Renderer> = PinMutRenderInitStates<'a, <Kind as PinnedRenderStateKind>::PinnedNonReactiveState<Renderer>, <Kind as PinnedRenderStateKind>::PinnedReactiveState>;
 
 pub trait CsrElement {
-    type RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender;
+    type RenderStateKind: RenderStateKind;
 
     fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
@@ -152,75 +156,43 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
+        fn pinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            states: $crate::__private::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ) -> $crate::__private::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+            let $this = self;
+            $expr.pinned_render_init(render_context, states)
+        }
+
+        fn pinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+            states: $crate::__private::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ) {
+            let $this = self;
+            $expr.pinned_render_update(render_context, states)
+        }
+
+        fn unpinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+        ) -> $crate::__private::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+            let $this = self;
+            $expr.unpinned_render_init(render_context)
+        }
+
         fn unpinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
             //
             self,
             render_context: &mut Ctx,
-            render_state: &mut $crate::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        ) where
-            Self: Sized,
-        {
-            let $this = self;
-            $expr.unpinned_render_update(render_context, render_state);
-        }
-
-        /// The element needs to be repositioned (re-add to the ctx)
-        fn unpinned_render_update_force_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: &mut $crate::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        ) where
-            Self: Sized,
-        {
-            let $this = self;
-            $expr.unpinned_render_update_force_reposition(render_context, render_state);
-        }
-
-        fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: &mut $crate::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-            force_reposition: ::core::primitive::bool,
+            states: $crate::__private::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
         ) {
             let $this = self;
-            $expr.unpinned_render_update_maybe_reposition(render_context, render_state, force_reposition);
-        }
-
-        fn render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        ) where
-            Self: Sized,
-        {
-            let $this = self;
-            $expr.render_update(render_context, render_state);
-        }
-
-        fn render_update_force_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        ) where
-            Self: Sized,
-        {
-            let $this = self;
-            $expr.render_update_force_reposition(render_context, render_state);
-        }
-
-        fn render_update_maybe_reposition<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-            render_state: ::core::pin::Pin<&mut $crate::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-            force_reposition: ::core::primitive::bool,
-        ) {
-            let $this = self;
-            $expr.render_update_maybe_reposition(render_context, render_state, force_reposition);
+            $expr.unpinned_render_update(render_context, states)
         }
     };
 }

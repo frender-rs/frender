@@ -9,7 +9,7 @@ use frender_html::{
     },
     kinds::UiHandleWithNonReactiveState,
     ui_handles::CursorPlaceholdersSurrounded,
-    CsrElement, StateUnmount,
+    CsrElement, RenderStateKind, StateUnmount,
 };
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 use pin_project_lite::pin_project;
@@ -317,7 +317,7 @@ where
 // This might be postponed in poll_render().
 impl<EK, HookData, F> CsrElement for HookElement<F>
 where
-    EK: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender,
+    EK: RenderStateKind,
     HookData: Default + HookUnmount + HookPollNextUpdate,
     // Note: HookData must be Unpin so that it works in the unpinned version.
     HookData: Unpin,
