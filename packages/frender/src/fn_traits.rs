@@ -1,4 +1,7 @@
-use frender_html::{CsrElement, RenderStateKind};
+use frender_html::{
+    experimental::{PinnedRenderStateKind, UnpinnedRenderStateKind},
+    CsrElement,
+};
 use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
 use crate::Element;
@@ -15,7 +18,7 @@ impl<Arg, F: ?Sized + FnOnce(Arg) -> Out, Out: SsrElement> FnOnceOutputSsrElemen
 
 pub trait FnOnceOutputCsrElement<Arg>: FnOnce(Arg) -> Self::OutputCsrElement {
     type OutputCsrElement: CsrElement<RenderStateKind = Self::OutputElementRenderStateKind>;
-    type OutputElementRenderStateKind: RenderStateKind;
+    type OutputElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
 }
 
 impl<Arg, F: ?Sized + FnOnce(Arg) -> Out, Out: CsrElement> FnOnceOutputCsrElement<Arg> for F {
@@ -70,7 +73,7 @@ impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out: SsrElement> FnOnce2OutputSs
 
 pub trait FnOnce2OutputCsrElement<A1, A2>: FnOnce(A1, A2) -> Self::OutputCsrElement {
     type OutputCsrElement: CsrElement<RenderStateKind = Self::OutputElementRenderStateKind>;
-    type OutputElementRenderStateKind: RenderStateKind;
+    type OutputElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
 }
 
 impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out: CsrElement> FnOnce2OutputCsrElement<A1, A2>
@@ -117,7 +120,7 @@ pub trait FnMapRefToElement<E: ?Sized>:
 >
 {
     type RefToElementHtmlChildren: HtmlChildren;
-    type RefToElementRenderStateKind: RenderStateKind;
+    type RefToElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
 }
 
 impl<F, E: ?Sized, C, K> FnMapRefToElement<E> for F
@@ -128,7 +131,7 @@ where
         OutputElementRenderStateKind = K,
     >,
     C: HtmlChildren,
-    K: RenderStateKind,
+    K: PinnedRenderStateKind + UnpinnedRenderStateKind,
 {
     type RefToElementHtmlChildren = C;
     type RefToElementRenderStateKind = K;
@@ -143,7 +146,7 @@ pub trait FnMutMap2RefsToElement<A1: ?Sized, A2: ?Sized>:
 >
 {
     type Refs2ToElementHtmlChildren: HtmlChildren;
-    type Refs2ToElementRenderStateKind: RenderStateKind;
+    type Refs2ToElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
 }
 
 impl<F, A1: ?Sized, A2: ?Sized, C, K> FnMutMap2RefsToElement<A1, A2> for F
@@ -155,7 +158,7 @@ where
         OutputElementRenderStateKind = K,
     >,
     C: HtmlChildren,
-    K: RenderStateKind,
+    K: PinnedRenderStateKind + UnpinnedRenderStateKind,
 {
     type Refs2ToElementHtmlChildren = C;
     type Refs2ToElementRenderStateKind = K;
@@ -169,7 +172,7 @@ pub trait FnMutMapRefToElement<E: ?Sized>:
 >
 {
     type RefToElementHtmlChildren: HtmlChildren;
-    type RefToElementRenderStateKind: RenderStateKind;
+    type RefToElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
 }
 
 impl<F, E: ?Sized, C, K> FnMutMapRefToElement<E> for F
@@ -180,7 +183,7 @@ where
         OutputElementRenderStateKind = K,
     >,
     C: HtmlChildren,
-    K: RenderStateKind,
+    K: PinnedRenderStateKind + UnpinnedRenderStateKind,
 {
     type RefToElementHtmlChildren = C;
     type RefToElementRenderStateKind = K;
