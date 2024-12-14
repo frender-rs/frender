@@ -1,10 +1,24 @@
 use frender_html::{
     experimental::{PinnedRenderStateKind, UnpinnedRenderStateKind},
-    CsrElement,
+    CsrElement, RenderStateKind,
 };
 use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 
 use crate::Element;
+
+pub trait FnOnce1<Arg>: FnOnce(Arg) -> Self::Output_ {
+    type Output_;
+}
+
+impl<F: ?Sized + FnOnce(Arg) -> Out, Arg, Out> FnOnce1<Arg> for F {
+    type Output_ = Out;
+}
+
+pub trait FnMut1<Arg>: FnOnce1<Arg> + FnMut(Arg) -> Self::Output_ {}
+impl<F: ?Sized + FnMut(Arg) -> Out, Arg, Out> FnMut1<Arg> for F {}
+
+pub trait Fn1<Arg>: FnMut1<Arg> + Fn(Arg) -> Self::Output_ {}
+impl<F: ?Sized + Fn(Arg) -> Out, Arg, Out> Fn1<Arg> for F {}
 
 pub trait FnOnceOutputSsrElement<Arg>: FnOnce(Arg) -> Self::OutputSsrElement {
     type OutputSsrElement: SsrElement<HtmlChildren = Self::OutputElementHtmlChildren>;
@@ -120,7 +134,7 @@ pub trait FnMapRefToElement<E: ?Sized>:
 >
 {
     type RefToElementHtmlChildren: HtmlChildren;
-    type RefToElementRenderStateKind: PinnedRenderStateKind + UnpinnedRenderStateKind;
+    type RefToElementRenderStateKind: RenderStateKind;
 }
 
 impl<F, E: ?Sized, C, K> FnMapRefToElement<E> for F
@@ -131,7 +145,7 @@ where
         OutputElementRenderStateKind = K,
     >,
     C: HtmlChildren,
-    K: PinnedRenderStateKind + UnpinnedRenderStateKind,
+    K: RenderStateKind,
 {
     type RefToElementHtmlChildren = C;
     type RefToElementRenderStateKind = K;
