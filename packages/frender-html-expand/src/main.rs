@@ -5,28 +5,104 @@ use std::{
 };
 
 use quote::ToTokens;
+use syn::parse_quote;
 
 mod utils;
 
-fn expand_and_write(src_root: &Path, mod_name: &str) -> io::Result<()> {
-    let items = utils::cargo_expand_html("frender-html", &format!("html::{mod_name}"))?;
+thread_local!(
+    static SPECIAL_ATTR_META: syn::Meta = parse_quote!(cfg(feature = "macros_not_expanded"));
+);
 
-    write_mod_content_into_dir(
-        //
-        &src_root.join("html"),
-        mod_name,
-        vec![],
-        items,
-        0,
-    )
+/// Returns true if the attribute is `cfg(feature = "macros_not_expanded")`
+fn is_special_attribute(attr: &syn::Attribute) -> bool {
+    SPECIAL_ATTR_META.with(|meta| attr.meta == *meta)
+}
+
+#[test]
+fn test_is_special_attribute() {
+    use syn::parse::Parser as _;
+
+    let tests: &[&[syn::Attribute]] = &[
+        &[parse_quote!(#[cfg(feature = "macros_not_expanded")])],
+        &syn::Attribute::parse_outer
+            .parse_str(r#"#[cfg(feature = "macros_not_expanded")]"#)
+            .unwrap(),
+        &syn::Attribute::parse_outer
+            .parse_str(r#"#[cfg(feature="macros_not_expanded")]"#)
+            .unwrap(),
+    ];
+
+    for test in tests {
+        let [attr] = test else { unreachable!() };
+        SPECIAL_ATTR_META.with(|meta| assert_eq!(attr.meta, *meta));
+        assert!(is_special_attribute(attr));
+    }
+}
+
+fn expand_and_write(src_root: &Path) -> io::Result<()> {
+    let items = utils::cargo_expand_html("frender-html", "html")?;
+
+    let parent_folder = src_root.join("html");
+
+    for item in items {
+        let syn::Item::Mod(item) = item else {
+            continue;
+        };
+
+        let syn::ItemMod {
+            mut attrs,
+            vis: _,
+            unsafety,
+            mod_token: _,
+            ident,
+            content,
+            semi,
+        } = item;
+
+        let mut has_special_attribute = false;
+
+        attrs.retain(|attr| {
+            // remove the special attribute
+            if is_special_attribute(attr) {
+                has_special_attribute = true;
+                return false;
+            }
+
+            // only keeps inner attributes
+            matches!(attr.style, syn::AttrStyle::Inner(_))
+        });
+
+        if !has_special_attribute {
+            continue;
+        }
+
+        assert!(unsafety.is_none());
+        assert!(semi.is_none());
+
+        let Some((_, content)) = content else {
+            unreachable!()
+        };
+
+        let mod_name = ident.to_string();
+
+        write_mod_content_into_dir(
+            //
+            &parent_folder,
+            &mod_name,
+            attrs,
+            content,
+            0,
+        )?;
+    }
+
+    return Ok(());
 }
 
 fn main() -> io::Result<()> {
     let workspace_root = utils::locate_cargo_workspace_root()?;
     let src_root = workspace_root.join("packages/frender-html/src");
 
-    expand_and_write(&src_root, "props_builders")?;
-    expand_and_write(&src_root, "prelude_props_builders")?;
+    expand_and_write(&src_root)?;
 
     // Ok(())
     // run twice
@@ -34,7 +110,7 @@ fn main() -> io::Result<()> {
     utils::cargo_fmt_package("frender-html")
 }
 
-pub fn write_mod_content_into_dir(
+fn write_mod_content_into_dir(
     mod_root_dir: &Path,
     mod_name: &str,
     inner_attrs: Vec<syn::Attribute>,

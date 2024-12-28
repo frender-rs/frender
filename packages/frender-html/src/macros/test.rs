@@ -80,6 +80,7 @@ macro_rules! test {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
+                #![allow(non_camel_case_types)]
                 // #![allow(non_snake_case)]
                 // #![allow(unused_imports)]
                 use crate::update_element::{UnpinnedRenderWithBehavior, PinnedRenderWithBehavior};

@@ -99,7 +99,8 @@ features = [
 ]
 
 [features]
-default = ["components", "macros_not_expanded"] # TODO: remove
+# default = ["components", "macros_not_expanded"] # TODO: remove
+default = ["components"] # TODO: remove
 web = [
     "frender-style/web",
     "frender-dom/web",

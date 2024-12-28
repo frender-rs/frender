@@ -1,3 +1,8 @@
+#[cfg(not(feature = "macros_not_expanded"))]
+macro_rules! define_nothing {
+    ($($t:tt)*) => {};
+}
+
 macro_rules! define_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -322,13 +327,7 @@ macro_rules! tag_and_props_markers {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
-                use ::frender_ssr::html::tag::AssertTagName;
-                use frender_dom::ui_handle::UnmountedUiHandle;
-                use crate::{
-                    update_element::OnEventType,
-                    dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
-                    BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType,
-                };
+                #![allow(non_camel_case_types)]
             }
         }
     };
@@ -354,77 +353,8 @@ macro_rules! tag_and_props_markers {
     ) => {
         pub struct $trait_name;
 
-
         $($($(
-            #[allow(non_camel_case_types)]
             pub struct $tags;
-        )*)?)?
-
-        $($($(
-            impl BehaviorType for $tags {
-                type OfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
-            }
-
-            impl UiHandleType for $tags {
-                type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
-
-                fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
-                    let unmounted = render_context.renderer_mut().$tags();
-                    render_context.map_mut_render_context(|render_context| unmounted.mount(render_context))
-                }
-            }
-
-            impl HasIntrinsicComponentTag for $tags {
-                const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
-                const ASSERT_TAG_NAME: AssertTagName<&'static str> =
-                    AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
-            }
-
-            crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
-                impl SsrComponentNormalElement for $tags {}
-                impl CsrComponentNormalElement for $tags {}
-            }}
-
-            crate::html::props_builders::$trait_name! { for_all_ancestors {
-                prepend { {$trait_name} }
-                for_each {
-                    duplex_concat (
-                        {
-                            prepend {
-                                impl super::behavior_type_traits::
-                            }
-                            append {
-                                for $tags
-                            }
-                        }
-                        {
-                            duplex_concat (
-                                {
-                                    prepend {
-                                        type
-                                    }
-                                    append {
-                                        <Renderer: ?Sized + RenderHtml> = Renderer::$tags;
-                                    }
-                                    wrap {}
-                                }
-                                {
-                                    prepend {
-                                        super::event_types::
-                                    }
-                                    append {
-                                        ! {{
-                                            wrap {}
-                                            append { $tags }
-                                            wrap {} prepend { crate::macros::event_names::impl_OnEventType! }
-                                        }}
-                                    }
-                                }
-                            )
-                        }
-                    )
-                }
-            }}
         )*)?)?
     };
 }
@@ -462,11 +392,10 @@ macro_rules! props {
         )*)
     ) => {
         $vis mod $trait_name {
-
-            #[allow(unused_imports)]
-            use super::super::*;
-
             ::frender_common::expand! { if ($($fn_name)*) {
+                #[allow(unused_imports)]
+                use super::super::*;
+
                 use crate::intrinsic::Property;
                 use super::super::prop_markers::$trait_name as _prop_markers;
             }}
@@ -489,7 +418,7 @@ macro_rules! props {
                     duplex_concat(
                         {
                             prepend(
-                                #[derive(Debug)]
+                                // #[derive(Debug)]
                                 pub struct $fn_name<V:
                             )
                             append(
@@ -588,6 +517,138 @@ macro_rules! props_implementations {
     };
 }
 
+macro_rules! tag_implementations {
+    (expand_item $expand_item:tt) => {
+        const _: () = {
+            use ::frender_ssr::html::tag::AssertTagName;
+            use frender_dom::ui_handle::UnmountedUiHandle;
+            use crate::{
+                dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
+                BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType,
+            };
+
+            use self::behavior_type_traits::*;
+
+            crate::macros::expand_item_simple! $expand_item
+        };
+    };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($special_super_traits:ident),* $(,)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
+        $(define(
+            $(tags = ($($tags:ident $({$($tag_info:tt)*})?),* $(,)?))?
+            $(,)?
+        ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        $($($(
+            use self::markers::$tags;
+
+            impl BehaviorType for $tags {
+                type OfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+            }
+
+            impl UiHandleType for $tags {
+                type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+
+                fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
+                    let unmounted = <Ctx::Renderer as RenderHtml>::$tags(render_context.renderer_mut());
+                    render_context.map_mut_render_context(|render_context| unmounted.mount(render_context))
+                }
+            }
+
+            impl HasIntrinsicComponentTag for $tags {
+                const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
+                const ASSERT_TAG_NAME: AssertTagName<&'static str> =
+                    AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
+            }
+
+            crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
+                impl SsrComponentNormalElement for $tags {}
+                impl CsrComponentNormalElement for $tags {}
+            }}
+
+            crate::macros::impl_BehaviorTypeTrait! {
+                $tags {$trait_name}
+            }
+
+            crate::html::for_all_ancestors_macros::$trait_name! {
+                [crate::macros::impl_BehaviorTypeTrait!]
+                {$tags} // prepend
+                {} // append
+            }
+        )*)?)?
+    };
+}
+
+macro_rules! impl_BehaviorTypeTrait {
+    ($tag:ident {$($BehaviorTypeTrait:ident)*}) => {$(
+        impl $BehaviorTypeTrait for $tag {
+            type $BehaviorTypeTrait<Renderer: ?Sized + RenderHtml> = Renderer::$tag;
+        }
+    )*};
+}
+
+macro_rules! on_event_implementations {
+    (expand_item $expand_item:tt) => {
+        const _: () = {
+            use crate::update_element::OnEventType;
+
+            use self::{behavior_type_traits::*, event_types::*, RenderHtml};
+
+            crate::macros::expand_item_simple! $expand_item
+        };
+    };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
+        $(define(
+            $(tags = ($($tag:ident $({$($tag_info:tt)*})?),* $(,)?))?
+            $(,)?
+        ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        $(
+            crate::macros::impl_OnEventType! {
+                $fn_name
+                $fn_args
+                $trait_name
+            }
+        )*
+    };
+}
+
+macro_rules! impl_OnEventType {
+    ($fn_name:ident ($value:ident : event! $event:tt) $trait_name:ident) => {
+        impl<BT: $trait_name> OnEventType<$fn_name> for BT {
+            type OnEvent<Renderer: ?Sized + RenderHtml> = <Self as $trait_name>::$trait_name<Renderer>;
+        }
+    };
+    ($fn_name:ident $($fn_rest:tt)*) => {};
+}
+
 macro_rules! prop_markers {
     (expand_item {
         $expand_item:tt
@@ -673,12 +734,12 @@ macro_rules! define_conflicted_names {
 
         macro_rules! expand_if_conflicted_name_or_else {
             $(
-                ($conflicted_name $if:tt $else:tt) => {
-                    frender_common::expand! {$if}
+                ($conflicted_name $_if:tt $_else:tt) => {
+                    frender_common::expand! {$_if}
                 };
             )*
-            ($not_conflicted_name:ident $if:tt $else:tt) => {
-                frender_common::expand! {$else}
+            ($not_conflicted_name:ident $_if:tt $_else:tt) => {
+                frender_common::expand! {$_else}
             };
         }
 
@@ -1264,35 +1325,6 @@ macro_rules! event_type {
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
 }
 
-macro_rules! macro_props_builders {
-    (expand_item $expand_item:tt) => {
-        crate::macros::expand_item_and_prepend_expanded! {
-            $expand_item
-            {
-                use super::*;
-                use super::prop_markers::conflicted_names;
-
-                use crate::intrinsic::{Intrinsic, AllowAttribute, AllowAttributeWithPinnedState, AllowAttributeName, AllowChildren};
-            }
-        }
-    };
-    (
-        extends $extends:tt
-        $(special_super_traits $special_super_traits:tt)?
-        vis $vis:tt
-        trait_name($trait_name:ident)
-        $($rest:ident $rest_paren:tt)*
-    ) => {
-        crate::macros::props_builders::define! {
-            extends $extends
-            $(special_super_traits $special_super_traits)?
-            vis $vis
-            trait_name($trait_name)
-            $($rest $rest_paren)*
-        }
-    };
-}
-
 macro_rules! unwrap_brace_concat {
     (
         {
@@ -1306,11 +1338,29 @@ macro_rules! unwrap_brace_concat {
     };
 }
 
-#[cfg(feature = "macros_not_expanded")]
+#[cfg(any(feature = "macros_not_expanded", test))]
 pub(crate) mod define_props_macro;
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) use define_props_macro::props_macros;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+pub(crate) use define_nothing as props_macros;
 
 #[cfg(feature = "macros_not_expanded")]
 pub(crate) mod props_builders;
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) use props_builders::props_builders;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+pub(crate) use define_nothing as props_builders;
+
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) mod for_all_ancestors_macros;
+#[cfg(feature = "macros_not_expanded")]
+pub(crate) use for_all_ancestors_macros::for_all_ancestors_macros;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+pub(crate) use define_nothing as for_all_ancestors_macros;
 
 macro_rules! components {
     (expand_item $expand_item:tt) => {
@@ -1622,9 +1672,9 @@ macro_rules! expand_item_and_prepend_expanded {
 
 pub(crate) use {
     behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
-    dom_api_value_from_value, event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_HasConstAttrName,
-    impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds,
-    parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
+    dom_api_value_from_value, event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_BehaviorTypeTrait,
+    impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, on_event_implementations,
+    parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations, unwrap_brace_concat, RenderHtml,
 };
 
 pub(crate) mod event_names;

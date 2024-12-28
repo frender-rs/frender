@@ -11,14 +11,14 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::Item>> {
+pub fn cargo_expand_html(pkg_name: &str, mod_name: &str) -> io::Result<Vec<syn::Item>> {
     let output = std::process::Command::new("cargo")
         .arg("expand")
         .arg("-p")
         .arg(pkg_name)
-        .arg(mod_path)
         .arg("--features")
         .arg("macros_not_expanded")
+        .arg("--ugly")
         .output()?;
 
     if !output.status.success() {
@@ -34,6 +34,20 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::
 
     let output = output.stdout;
     let code = string_from_utf8(output)?;
+    let syn::File {
+        shebang: _,
+        attrs: _,
+        items,
+    } = syn::parse_str(&code).unwrap();
+
+    let item = items
+        .into_iter()
+        .find_map(|item| match item {
+            syn::Item::Mod(item) if item.ident == mod_name => Some(item),
+            _ => None,
+        })
+        .expect(&format!("doesn't found mod {mod_name}"));
+
     let syn::ItemMod {
         attrs: _,
         vis: _,
@@ -42,7 +56,7 @@ pub fn cargo_expand_html(pkg_name: &str, mod_path: &str) -> io::Result<Vec<syn::
         ident: _,
         content,
         semi,
-    } = syn::parse_str(&code).map_err(io_error_other)?;
+    } = item;
 
     assert!(semi.is_none());
     let (_, items) = content.unwrap();

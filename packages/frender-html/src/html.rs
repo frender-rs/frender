@@ -21,7 +21,15 @@ pub mod components;
 
 #[cfg(not(feature = "macros_not_expanded"))]
 #[cfg(feature = "components")]
+pub mod props;
+
+#[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "components")]
 mod props_builders;
+
+#[cfg(feature = "components")]
+#[cfg(not(feature = "macros_not_expanded"))]
+mod for_all_ancestors_macros;
 
 crate::macros::def_intrinsic_component_props!(
     mod __ {
@@ -80,6 +88,17 @@ crate::macros::def_intrinsic_component_props!(
         #[props_implementations]
         expand_without_submodule! {}
 
+        #[tag_implementations]
+        expand_without_submodule! {}
+
+        #[on_event_implementations]
+        expand_without_submodule! {}
+
+        #[for_all_ancestors_macros]
+        #[cfg(feature = "components")]
+        #[cfg(feature = "macros_not_expanded")]
+        mod for_all_ancestors_macros;
+
         #[test]
         #[cfg(test)]
         mod tests {}
@@ -93,6 +112,11 @@ crate::macros::def_intrinsic_component_props!(
         #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
         mod props_builders;
+
+        #[props_macros]
+        #[cfg(feature = "components")]
+        #[cfg(all(feature = "macros_not_expanded"))] // wrap any to prevent auto expanding by frender-html-expand
+        mod props_macros;
 
         #[RenderHtml]
         pub trait RenderHtml {

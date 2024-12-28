@@ -55,7 +55,7 @@ macro_rules! allow_props_of_ancestor_ignoring_children_if_not_ancestor_of {
             $ancestor
             {{}}
             {{
-                $ancestor! { for_each_prop_of_self_without_fn_attrs {
+                props_macros::$ancestor! { for_each_prop_of_self_without_fn_attrs {
                     prepend { for_marker! $for_marker }
                     wrap {}
                     prepend { crate::macros::props_builders::allow_prop_ignoring_children! }
@@ -65,7 +65,18 @@ macro_rules! allow_props_of_ancestor_ignoring_children_if_not_ancestor_of {
     };
 }
 
-macro_rules! define {
+macro_rules! props_builders {
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use super::*;
+                use super::prop_markers::conflicted_names;
+
+                use crate::intrinsic::{Intrinsic, AllowAttribute, AllowAttributeWithPinnedState, AllowAttributeName, AllowChildren};
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -88,28 +99,6 @@ macro_rules! define {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        crate::macros::define_props_macro::define! {
-            $trait_name
-            main_ancestors($($extends)*)
-            other_ancestors(
-                $($($($special_super_traits)+)?)?
-            )
-            {
-                (for_each_prop_name_of_self $commands:tt) => {
-                    ::frender_common::expand! {
-                        while ($({$fn_name})*) $commands
-                    }
-                };
-                (for_each_prop_of_self_without_fn_attrs $commands:tt) => {
-                    ::frender_common::expand! {
-                        while ($({fn $fn_name $fn_args $fn_body_or_semi})*) $commands
-                    }
-                };
-            }
-        }
-
-        pub(crate) use $trait_name;
-
         // allow children
         crate::macros::extract_only_children_or! {
             {$(
@@ -165,7 +154,7 @@ macro_rules! define {
             }
 
             // allow attributes from other ancestors ($special_super_traits) excluding those are ancestors of main ancestors ($extends)
-            $trait_name! { for_each_other_ancestor {
+            super::props_macros::$trait_name! { for_each_other_ancestor {
                 prepend {
                     for_marker! { super::markers::$trait_name }
                 }
@@ -236,4 +225,4 @@ macro_rules! define {
     };
 }
 
-pub(crate) use {allow_children, allow_prop_ignoring_children, allow_props_of_ancestor_ignoring_children_if_not_ancestor_of, define};
+pub(crate) use {allow_children, allow_prop_ignoring_children, allow_props_of_ancestor_ignoring_children_if_not_ancestor_of, props_builders};

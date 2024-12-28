@@ -31,7 +31,7 @@ macro_rules! check_is_ancestor_of_any {
         $expand_if_yes:tt
         $expand_if_no:tt
     ) => {
-        $any! {
+        props_macros::$any! {
             check_is_ancestor $check_is_ancestor
             $expand_if_yes
             {{
@@ -378,4 +378,52 @@ macro_rules! define {
     };
 }
 
-pub(crate) use {after_initial_define_unfinished, check_is_ancestor_of_any, define, define_unfinished, for_all_main_and_other_ancestors, record, run_command_unbraced};
+macro_rules! props_macros {
+    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        crate::macros::define_props_macro::define! {
+            $trait_name
+            main_ancestors($($extends)*)
+            other_ancestors(
+                $($($($special_super_traits)+)?)?
+            )
+            {
+                (for_each_prop_name_of_self $commands:tt) => {
+                    ::frender_common::expand! {
+                        while ($({$fn_name})*) $commands
+                    }
+                };
+                (for_each_prop_of_self_without_fn_attrs $commands:tt) => {
+                    ::frender_common::expand! {
+                        while ($({fn $fn_name $fn_args $fn_body_or_semi})*) $commands
+                    }
+                };
+            }
+        }
+
+        pub(crate) use $trait_name;
+    };
+}
+
+pub(crate) use {after_initial_define_unfinished, check_is_ancestor_of_any, define, define_unfinished, for_all_main_and_other_ancestors, props_macros, record, run_command_unbraced};
