@@ -43,11 +43,11 @@ impl<R: ?Sized + Renderer> UiHandle<R> for CursorPlaceholder {
         R::check_and_move_cursor_after_node(render_context, &self.0)
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: crate::render::RenderWithContext,
     {
-        R::assert_cursor_if_at_node(render_context, &self.0)
+        R::assert_cursor_is_at_node(render_context, &self.0)
     }
 }
 

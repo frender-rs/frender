@@ -23,7 +23,7 @@ pub trait UiHandle<Renderer: ?Sized> {
     /// skip this method or just emits a warning.
     /// On debug builds, it's recommended to panic if the assertion fails so that
     /// developers could know the implementation might be wrong.
-    fn assert_cursor_if_at_self(&self, render_context: &Renderer::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>)
     where
         Renderer: crate::render::RenderWithContext;
 }
@@ -55,7 +55,7 @@ impl<Renderer: ?Sized> UiHandle<Renderer> for () {
     {
     }
 
-    fn assert_cursor_if_at_self(&self, _: &<Renderer>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, _: &<Renderer>::RenderContext<'_>)
     where
         Renderer: crate::render::RenderWithContext,
     {
@@ -103,12 +103,12 @@ macro_rules! impl_for_tuple {
                     $($v.check_and_move_cursor(render_context);)*
                 }
 
-                fn assert_cursor_if_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
+                fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
                 where
                     Renderer: crate::render::RenderWithContext,
                 {
                     // just assert cursor at the first ui handle
-                    self.0.assert_cursor_if_at_self(render_context)
+                    self.0.assert_cursor_is_at_self(render_context)
                 }
             }
         )*
@@ -168,13 +168,13 @@ impl<Renderer: ?Sized, UH: UiHandle<Renderer>, const N: usize> UiHandle<Renderer
             .for_each(|this| this.check_and_move_cursor(render_context));
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
     where
         Renderer: crate::render::RenderWithContext,
     {
         // just assert cursor at the first ui handle
         if let Some(first) = self.first() {
-            first.assert_cursor_if_at_self(render_context);
+            first.assert_cursor_is_at_self(render_context);
         }
     }
 }

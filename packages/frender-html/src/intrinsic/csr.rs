@@ -77,11 +77,11 @@ impl<P: behaviors::Element<R>, C, PA, R: ?Sized> UiHandle<R> for ParentWithChild
         self.parent.check_and_move_cursor(render_context)
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: frender_dom::render::RenderWithContext,
     {
-        self.parent.assert_cursor_if_at_self(render_context)
+        self.parent.assert_cursor_is_at_self(render_context)
     }
 }
 

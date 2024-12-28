@@ -244,7 +244,7 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
         node.unchecked_ref::<Removable>().remove()
     }
 
-    fn assert_cursor_if_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
+    fn assert_cursor_is_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
     where
         Self: RenderWithContext,
     {

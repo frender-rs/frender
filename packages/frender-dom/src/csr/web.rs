@@ -57,11 +57,11 @@ impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UiHandle<R> for Node<N> {
         R::check_and_move_cursor_after_node(render_context, self.0.as_ref());
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: crate::render::RenderWithContext,
     {
-        R::assert_cursor_if_at_node(render_context, self.0.as_ref());
+        R::assert_cursor_is_at_node(render_context, self.0.as_ref());
     }
 }
 
@@ -80,7 +80,7 @@ pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<
     ) where
         Self: RenderWithContext;
 
-    fn assert_cursor_if_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
+    fn assert_cursor_is_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
     where
         Self: RenderWithContext;
 

@@ -166,12 +166,12 @@ impl<M: UiHandle<R>, S, R: ?Sized> UiHandle<R>
         }
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: frender_html::dom::render::RenderWithContext,
     {
         if let Some(first) = self.0.first() {
-            first.ui_handle.assert_cursor_if_at_self(render_context);
+            first.ui_handle.assert_cursor_is_at_self(render_context);
         }
     }
 }

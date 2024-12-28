@@ -65,7 +65,7 @@ trait DynSafeUiHandle<Renderer: ?Sized>: PollRender<Renderer> {
     where
         Renderer: RenderWithContext;
 
-    fn assert_cursor_if_at_self(&self, render_context: &Renderer::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>)
     where
         Renderer: RenderWithContext;
 }
@@ -100,11 +100,11 @@ impl<R: ?Sized, T: UiHandle<R> + PollRender<R>> DynSafeUiHandle<R> for T {
         T::check_and_move_cursor(self, render_context)
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: RenderWithContext,
     {
-        T::assert_cursor_if_at_self(self, render_context)
+        T::assert_cursor_is_at_self(self, render_context)
     }
 }
 
@@ -146,11 +146,11 @@ impl<'a, R: 'a + ?Sized> UiHandle<R> for BoxDynUiHandle<'a, R> {
         self.0.check_and_move_cursor(render_context)
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: RenderWithContext,
     {
-        self.0.assert_cursor_if_at_self(render_context)
+        self.0.assert_cursor_is_at_self(render_context)
     }
 }
 

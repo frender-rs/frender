@@ -84,7 +84,7 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
 
         let out = a.with_render_context_after_self(renderer, |render_context| {
             let out = f(ui_handle, render_context);
-            b.check_and_move_cursor(render_context);
+            b.assert_cursor_is_at_self(render_context);
             out
         });
 
@@ -163,10 +163,10 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlacehold
         end.check_and_move_cursor(render_context);
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: frender_dom::render::RenderWithContext,
     {
-        self.cursor_placeholders[0].assert_cursor_if_at_self(render_context)
+        self.cursor_placeholders[0].assert_cursor_is_at_self(render_context)
     }
 }

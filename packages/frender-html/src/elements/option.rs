@@ -126,12 +126,12 @@ where
         }
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: frender_dom::render::RenderWithContext,
     {
         if let UiHandleMaybe::Mounted(m) = self {
-            m.assert_cursor_if_at_self(render_context);
+            m.assert_cursor_is_at_self(render_context);
         }
     }
 }

@@ -49,13 +49,13 @@ impl<A: UiHandle<R>, B: UiHandle<R>, R: ?Sized> UiHandle<R> for EitherUiHandle<A
         }
     }
 
-    fn assert_cursor_if_at_self(&self, render_context: &<R>::RenderContext<'_>)
+    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
         R: frender_dom::render::RenderWithContext,
     {
         match self {
-            EitherUiHandle::A(this) => this.assert_cursor_if_at_self(render_context),
-            EitherUiHandle::B(this) => this.assert_cursor_if_at_self(render_context),
+            EitherUiHandle::A(this) => this.assert_cursor_is_at_self(render_context),
+            EitherUiHandle::B(this) => this.assert_cursor_is_at_self(render_context),
         }
     }
 }
