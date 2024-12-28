@@ -74,4 +74,8 @@ impl<'a> AssertSpaceAndHtmlAttributeName<&'a str> {
             // panic!("invalid AssertSpaceAndHtmlAttributeName")
         }
     }
+
+    pub const fn as_inner_str(&self) -> &'a str {
+        self.v
+    }
 }
