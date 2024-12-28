@@ -332,6 +332,8 @@ where
                 reactive_state,
             },
         );
+
+        render_context.map_mut_render_context(|render_context| parent.check_and_move_cursor(render_context));
     }
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
@@ -419,5 +421,7 @@ where
                 reactive_state,
             },
         );
+
+        render_context.map_mut_render_context(|render_context| parent.check_and_move_cursor(render_context));
     }
 }
