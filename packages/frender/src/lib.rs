@@ -1,18 +1,19 @@
 // pub use frender_element::Element;
 
 #[cfg(feature = "hooks")]
+#[cfg(feature = "ToElement")]
 pub mod hooks_ext;
 
 pub mod elements;
 
 mod fn_traits;
-pub use fn_traits::*;
 
 #[cfg(feature = "ToElement")]
 mod to_element;
 #[cfg(feature = "ToElement")]
 pub use to_element::{RefToElementWithFn, ToElement, ToElementWithFn};
 
+#[cfg(todo)]
 pub use elements::synced_collection::{
     synced_collection_to_elements, synced_vec_to_elements, SyncedCollection, SyncedVec,
 };
@@ -132,6 +133,7 @@ pub mod prelude {
     pub use frender_html::{cs, cs as intrinsic_components};
 
     #[cfg(feature = "hooks")]
+    #[cfg(feature = "ToElement")]
     pub use crate::hooks_ext::ShareValueExt;
 
     // #[cfg(feature = "csr")]

@@ -15,50 +15,6 @@ macro_rules! define_behavior_fn_update_with {
     };
 }
 
-macro_rules! parse_update_with {
-    (match ($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)?) {
-        simple => $do_simple:tt
-        impl_with => $do_impl_with:tt
-    }) => {
-        ::frender_common::expand! { { $set_attribute_ident } do $do_simple }
-    };
-    (match ($set_attribute_ident:ident, custom_type!($custom_type:ty), impl_with! $impl_with:tt $(,)?) {
-        simple => $do_simple:tt
-        impl_with => $do_impl_with:tt
-    }) => {
-        ::frender_common::expand! { { $set_attribute_ident $impl_with } do $do_impl_with }
-    };
-}
-
-macro_rules! parse_impl_with {
-    ($set_attribute_ident:ident (
-        update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr
-        $(, remove = $($t:tt)*)?
-    ) as update(
-        ValueType($ValueType:ty)
-        value($value:pat_param)
-        element_type($element_type:ty)
-    )) => {
-        |$element: &mut $element_type, $renderer: &mut _, _, $value: $ValueType| $update
-    };
-    ($set_attribute_ident:ident (
-        update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr
-        $(,)?
-    ) as remove(
-        element_type($element_type:ty)
-    )) => {
-        crate::dom::behaviors::Element::remove_attribute
-    };
-    ($set_attribute_ident:ident (
-        update = |$_element:pat_param, $_renderer:pat_param $(,)?| $update:expr,
-        remove = |$element:pat_param, $renderer:pat_param $(,)?| $remove:expr $(,)?
-    ) as remove(
-        element_type($element_type:ty)
-    )) => {
-        |$element: &mut $element_type, $renderer: &mut _, _| $remove
-    };
-}
-
 macro_rules! impl_behavior_fn_update_with {
     (
         update_with($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)? )
@@ -582,7 +538,10 @@ macro_rules! props_implementations {
     ) => {
         const _: () = {
             #[allow(unused_imports)]
-            use self::{props::$trait_name as props, prop_markers::$trait_name as prop_markers};
+            use frender_common::convert::FromMut as _;
+
+            #[allow(unused_imports)]
+            use self::{props::$trait_name as props, prop_markers::$trait_name as prop_markers, behaviors_prelude::$trait_name::*};
 
             const _: () = {
                 use crate::intrinsic::{TagOrPropsMarker, PropsMarker};
@@ -727,6 +686,22 @@ macro_rules! define_conflicted_names {
     };
 }
 
+macro_rules! impl_HasConstAttrName {
+    (
+        fn_name($fn_name:ident)
+        $(attr_name($attr_name:expr))?
+    ) => {
+        impl crate::property_common::HasConstAttrName for prop_markers::$fn_name {
+            const ATTR_NAME: &str = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name)));
+            const ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME: frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName<&'static str>
+                = frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName::new_from_str(::core::concat!(
+                    " ",
+                    ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name)))
+                ));
+        }
+    };
+}
+
 macro_rules! impl_attribute {
     ($fn_name:ident ($value:ident : event![
         $event_trait_name:ident,
@@ -747,102 +722,96 @@ macro_rules! impl_attribute {
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
         crate::macros::impl_attribute! {$fn_name ($value : attr_value![$($maybe_ty)*]) {} $trait_name }
     };
-    // TODO: remove
     ($fn_name:ident ($value:ident : attr_value![&$($maybe_ty:tt)*]) $maybe:tt $trait_name:ident) => {
-        crate::macros::impl_attribute! {$fn_name ($value : attr_value![$($maybe_ty)*]) $maybe $trait_name }
+        crate::macros::impl_attribute! {
+            $fn_name ($value : attr_value![$($maybe_ty)*]) $maybe $trait_name
+            ref_value_kind(&)
+        }
     };
-    ($fn_name:ident ($value:ident : attr_value![$maybe_ty:ty]) {
+    ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) {
         $(alias! $alias:tt;)?
         $(attr_name!($attr_name:expr);)?
         $(update_with! $update_with:tt;)?
-    } $trait_name:ident) => {
-        crate::impl_bounds! {
-            props::$fn_name(
-                prop_marker(prop_markers::$fn_name),
-                bounds as crate::impl_bounds::AttrValue<$maybe_ty>,
-                element as $trait_name,
-                attr_name = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name))),
-                csr {
-                    update: ::frender_common::expand! {
-                        if ($($update_with)?) {
-                                crate::macros::parse_update_with!(match $($update_with)? {
-                                    simple => {
-                                        prepend {
-                                            |v| el.
-                                        }
-                                        append {
-                                            (renderer, v), v
-                                        }
-                                        wrap ()
-                                        prepend {
-                                            |el: &mut ET::$trait_name<Renderer>, renderer: &mut _, _, v: <$maybe_ty as frender_attr_value::csr::ValueKind>::Value<'_>|
-                                                <$maybe_ty as crate::attr::SetAttributeWithDomApi>::set_attribute_with_dom_api
-                                        }
-                                    }
-                                    impl_with => {
-                                        append( as update(
-                                            ValueType(<$maybe_ty as frender_attr_value::csr::ValueKind>::Value<'_>)
-                                            value($value)
-                                            element_type(ET::$trait_name<Renderer>)
-                                        ))
-                                        wrap {}
-                                        prepend( crate::macros::parse_impl_with! )
-                                    }
-                                })
-                        } else {
-                            <$maybe_ty as crate::attr::SetAttribute>::set_attribute
-                        }
-                    },
-                    remove: ::frender_common::expand! {
-                        if ($($update_with)?) {
-                            crate::macros::parse_update_with!(match $($update_with)? {
-                                // RemoveAttributeWithDomApi::remove_attribute_with_dom_api(DomApi {})
-                                simple => {
-                                    prepend {
-                                        element,
-                                        renderer,
-                                        attr_name,
-                                        api_set: <_>::
-                                    }
-                                    wrap {}
-                                    prepend {
-                                        crate::attr::DomApi
-                                    }
-                                    wrap ()
-                                    prepend {
-                                        |element: &mut ET::$trait_name<Renderer>, renderer: &mut _, attr_name: &_|
-                                            <$maybe_ty as crate::attr::RemoveAttributeWithDomApi>::remove_attribute_with_dom_api
-                                    }
-                                }
-                                impl_with => {
-                                    append( as remove(element_type(ET::$trait_name<Renderer>)))
-                                    wrap {}
-                                    prepend( crate::macros::parse_impl_with! )
-                                }
-                            })
-                        } else {
-                            crate::dom::behaviors::Element::remove_attribute
-                        }
-                    },
-                },
-            )
+    } $trait_name:ident $(ref_value_kind($ref_value_kind:tt))?) => {
+        impl<
+            V: frender_attr_value::AttrValue<$($maybe_ty)*>,
+        > crate::update_element::IntoProperty
+            for props::$fn_name<V>
+        {
+            type IntoProperty = crate::attr_value::Property<prop_markers::$fn_name, V>;
+            fn into_property(Self(this): Self) -> Self::IntoProperty {
+                crate::attr_value::Property::new(this)
+            }
         }
+
+        crate::macros::impl_HasConstAttrName! {
+            fn_name($fn_name)
+            $(attr_name($attr_name))?
+        }
+
+        impl crate::attr_value::HasAttrValueKind for prop_markers::$fn_name {
+            type AttrValueKind = $($maybe_ty)*;
+        }
+
+        crate::macros::impl_attr_value_for_prop_marker! {
+            update_with($($update_with)?)
+            prop_marker(prop_markers::$fn_name)
+            trait_name($trait_name)
+            value($value)
+            ref_value_kind($($ref_value_kind)?)
+            value_kind($($maybe_ty)*)
+        }
+
+        impl<
+            V: frender_attr_value::AttrValue<$($maybe_ty)*>,
+        > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+            for props::$fn_name<V>
+        {
+            type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
+
+            fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
+                crate::attr_value::into_space_and_html_attributes_or_empty::<prop_markers::$fn_name, V>(self.0)
+            }
+        }
+
     };
     ($fn_name:ident ($value:ident : children! $children:tt) $fn_body_or_semi:tt $trait_name:ident) => {
         // children is not an attribute
     };
-    ($fn_name:ident ($value:ident : bounds![$($bounds:tt)+]) $(;)? $({
+    ($fn_name:ident ($value:ident : bounds![$bounds:ident]) $(;)? $({
         $(attr_name!($attr_name:expr);)?
         $(impl_with!($($impl_with:tt)*);)?
     })? $trait_name:ident) => {
-        crate::impl_bounds! {
-            props::$fn_name(
-                prop_marker(prop_markers::$fn_name),
-                bounds as $($bounds)+,
-                element as $trait_name,
-                attr_name = ::frender_common::expand!({$($($attr_name)?)?} or (stringify!($fn_name))),
-                $($($($impl_with)*)?)?
-            )
+        crate::macros::impl_HasConstAttrName! {
+            fn_name($fn_name)
+            $($(attr_name($attr_name))?)?
+        }
+
+        impl<
+            V: crate::impl_bounds::$bounds::Bounds,
+        > crate::update_element::IntoProperty
+            for props::$fn_name<V>
+        {
+            type IntoProperty = crate::impl_bounds::$bounds::Property<prop_markers::$fn_name, V>;
+            fn into_property(Self(this): Self) -> Self::IntoProperty {
+                Self::IntoProperty::new(this)
+            }
+        }
+
+        impl<
+            V: crate::impl_bounds::$bounds::Bounds,
+        > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+            for props::$fn_name<V>
+        {
+            type SpaceAndHtmlAttributesOrEmpty = crate::impl_bounds::$bounds::ssr::Output<V>;
+
+            fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
+                crate::impl_bounds::$bounds::ssr::output::<prop_markers::$fn_name, _>(
+                    crate::impl_bounds::$bounds::ssr::into_haevoe(
+                        self.0
+                    )
+                )
+            }
         }
     };
     // custom impl
@@ -872,6 +841,193 @@ macro_rules! impl_attribute {
                 attr_name = ::frender_common::expand!({$($($attr_name)?)?} or (stringify!($fn_name))),
                 $($($($impl_with)*)?)?
             )
+        }
+    };
+}
+
+macro_rules! dom_api_value_from_value {
+    (
+        value_kind(bool)
+        value($value:expr)
+    ) => {
+        () = $value;
+        true
+    };
+    (
+        value_kind($value_kind:ty)
+        value($value:expr)
+    ) => {
+        $value
+    };
+}
+
+macro_rules! impl_attr_value_dom_api_for_prop_marker {
+    (
+        $(custom_type($custom_type:ty))?
+        $(DomApiValue($DomApiValue:ty))?
+        $(dom_api_value_from_value(|$dom_api_value_from_value:pat_param| $dom_api_value:expr))?
+        update(|$element:pat_param, $renderer:pat_param $(,)?| $update:expr)
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        ref_value_kind($($ref_value_kind:tt)?)
+        value_kind($($value_kind:tt)*)
+    ) => {
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasDomApi<BT> for $prop_marker {
+            type DomApiValue<'a> = frender_common::expand![
+                {$($DomApiValue)?}
+                or ($($custom_type)?)
+                or (
+                    $($ref_value_kind 'a)?
+                    $($value_kind)*
+                )
+            ];
+
+            frender_common::expand! {
+                {$(
+                    fn dom_api_value_from_value($dom_api_value_from_value: <Self::AttrValueKind as frender_attr_value::csr::ValueKind>::Value<'_>) -> Self::DomApiValue<'_> {
+                        $dom_api_value
+                    }
+                )?} or (
+                    fn dom_api_value_from_value(value: <Self::AttrValueKind as frender_attr_value::csr::ValueKind>::Value<'_>) -> Self::DomApiValue<'_> {
+                        crate::macros::dom_api_value_from_value! {
+                            value_kind($($value_kind)*)
+                            value(value)
+                        }
+                    }
+                )
+            }
+
+            fn set_attribute_value<R: ?Sized + RenderHtml>(b: &mut BT::OfBehaviorType<R>, $renderer: &mut R, $value: Self::DomApiValue<'_>) {
+                let $element = <BT::$trait_name<R>>::from_mut(b);
+                $update
+            }
+        }
+    };
+}
+
+macro_rules! impl_attr_value_for_prop_marker {
+    (
+        update_with()
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        ref_value_kind($($ref_value_kind:tt)?)
+        value_kind($($value_kind:tt)*)
+    ) => {
+        impl crate::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
+            type SpecRemoveAttrOfBehaviorType = crate::property_common::SpecRemoveAttrOfElementTypeWithAttrName<Self>;
+        }
+
+        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrValueOfElementWithAttrName<Self>;
+        }
+    };
+    (
+        update_with(($set_attribute_ident:ident $(, $(web_sys_name = $web_sys_name:ident $(,)?)?)?))
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        ref_value_kind($($ref_value_kind:tt)?)
+        value_kind($($value_kind:tt)*)
+    ) => {
+        crate::macros::impl_attr_value_for_prop_marker! {
+            update_with((
+                $set_attribute_ident,
+                impl_with!(
+                    update = |element, renderer| element.$set_attribute_ident(renderer, $value)
+                ),
+            ))
+            prop_marker($prop_marker)
+            trait_name($trait_name)
+            value($value)
+            ref_value_kind($($ref_value_kind)?)
+            value_kind($($value_kind)*)
+        }
+    };
+    (
+        update_with((
+            $set_attribute_ident:ident,
+            $(
+                custom_type!($custom_type:ty),
+            )?
+            impl_with!(
+                $(DomApiValue![$DomApiValue:ty],)?
+                $(dom_api_value_from_value = |$dom_api_value_from_value:pat_param| $dom_api_value:expr,)?
+                update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr $(,)?
+            ) $(,)?
+        ))
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        ref_value_kind($($ref_value_kind:tt)?)
+        value_kind($($value_kind:tt)*)
+    ) => {
+        impl crate::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
+            type SpecRemoveAttrOfBehaviorType = crate::attr_value::SpecRemoveAttrWithDomApi<Self>;
+        }
+        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrWithDomApi<Self>;
+        }
+
+        crate::macros::impl_attr_value_dom_api_for_prop_marker! {
+            $(custom_type($custom_type))?
+            $(DomApiValue($DomApiValue))?
+            $(dom_api_value_from_value(|$dom_api_value_from_value| $dom_api_value))?
+            update(|$element, $renderer| $update)
+            prop_marker($prop_marker)
+            trait_name($trait_name)
+            value($value)
+            ref_value_kind($($ref_value_kind)?)
+            value_kind($($value_kind)*)
+        }
+    };
+    (
+        update_with((
+            $set_attribute_ident:ident,
+            $(custom_type!($custom_type:ty),)?
+            impl_with!(
+                $(DomApiValue![$DomApiValue:ty],)?
+                $(dom_api_value_from_value = |$dom_api_value_from_value:pat_param| $dom_api_value:expr,)?
+                update = |$element:pat_param, $renderer:pat_param $(,)?| $update:expr
+                , remove = |$element_remove:pat_param, $renderer_remove:pat_param $(,)?| $remove:expr
+            ) $(,)?
+        ))
+        prop_marker($prop_marker:ty)
+        trait_name($trait_name:ident)
+        value($value:ident)
+        ref_value_kind($($ref_value_kind:tt)?)
+        value_kind($value_kind:ty)
+    ) => {
+        impl<BT: behavior_type_traits::$trait_name> crate::property_common::RemoveAttrOfBehaviorType<BT> for $prop_marker {
+            fn remove_attr_of_behavior_type<R: ?Sized + RenderHtml>(
+                //
+                b: &mut BT::OfBehaviorType<R>,
+                $renderer_remove: &mut R,
+            ) {
+                let $element_remove = <BT::$trait_name<R>>::from_mut(b);
+                $remove
+            }
+        }
+        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrWithDomApi<Self>;
+        }
+
+        crate::macros::impl_attr_value_dom_api_for_prop_marker! {
+            $(custom_type($custom_type))?
+            $(DomApiValue($DomApiValue))?
+            $(dom_api_value_from_value(|$dom_api_value_from_value| $dom_api_value))?
+            update(|$element, $renderer| $update)
+            prop_marker($prop_marker)
+            trait_name($trait_name)
+            value($value)
+            ref_value_kind($($ref_value_kind)?)
+            value_kind($value_kind)
         }
     };
 }
@@ -1253,13 +1409,13 @@ macro_rules! parse_fn_args_as_bounds {
     };
     (($value:ident : attr_value![&$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
-            { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
+            { frender_attr_value::AttrValue::<$maybe_ty> }
             do $commands
         }
     };
     (($value:ident : attr_value![$maybe_ty:ty]) do $commands:tt) => {
         $crate::expand! {
-            { $crate::impl_bounds::AttrValue::Bounds::<$maybe_ty> }
+            { frender_attr_value::AttrValue::<$maybe_ty> }
             do $commands
         }
     };
@@ -1466,12 +1622,15 @@ macro_rules! expand_item_and_prepend_expanded {
 
 pub(crate) use {
     behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
-    event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_attribute, impl_behavior_fn,
-    impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, parse_impl_with, parse_update_with, prop_markers, props, props_implementations,
-    tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
+    dom_api_value_from_value, event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_HasConstAttrName,
+    impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, macro_props_builders as props_builders, parse_fn_args_as_bounds,
+    parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, unwrap_brace_concat, RenderHtml,
 };
 
 pub(crate) mod event_names;
+
+pub(crate) mod test;
+pub(crate) use test::test;
 
 #[cfg(test)]
 mod tests;

@@ -80,6 +80,10 @@ crate::macros::def_intrinsic_component_props!(
         #[props_implementations]
         expand_without_submodule! {}
 
+        #[test]
+        #[cfg(test)]
+        mod tests {}
+
         #[components]
         #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
@@ -448,6 +452,7 @@ crate::macros::def_intrinsic_component_props!(
                                 set_cross_origin,
                                 custom_type!(Option<&str>),
                                 impl_with!(
+                                    DomApiValue![&'a str],
                                     update = |element, renderer| element.set_cross_origin(renderer, Some(value)),
                                     remove = |element, renderer| element.set_cross_origin(renderer, None)
                                 ),
@@ -781,7 +786,11 @@ crate::macros::def_intrinsic_component_props!(
                                 //
                                 set_content_editable,
                                 custom_type!(&str),
-                                impl_with!(update = |element, renderer| element.set_content_editable(renderer, value)),
+                                impl_with!(
+                                    //
+                                    DomApiValue![&'a str],
+                                    update = |element, renderer| element.set_content_editable(renderer, value),
+                                ),
                             );
                         }
                         #[deprecated = "See https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contextMenu"]
@@ -834,7 +843,11 @@ crate::macros::def_intrinsic_component_props!(
                                 //
                                 set_spellcheck,
                                 custom_type!(bool),
-                                impl_with!(update = |element, renderer| element.set_spellcheck(renderer, value.0)),
+                                impl_with!(
+                                    //
+                                    dom_api_value_from_value = |Spellcheck(v)| v,
+                                    update = |element, renderer| element.set_spellcheck(renderer, value),
+                                ),
                             );
                         }
                         fn style(value: bounds![Style]);

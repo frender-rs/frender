@@ -159,6 +159,8 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlacehold
 
         #[cfg(debug_assertions)]
         ui_handle.check_and_move_cursor(render_context);
+        #[cfg(not(debug_assertions))]
+        render_context.mark_cursor_skipped();
 
         end.check_and_move_cursor(render_context);
     }

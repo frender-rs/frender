@@ -106,6 +106,41 @@ macro_rules! default_impl_csr {
             V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
             ET: $crate::html::behavior_type_traits::$csr_element_ty,
         >
+            $crate::update_element::UnpinnedRenderWithBehavior<
+                ET
+            >
+        for $($wrapper)*::<V> {
+            type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
+                crate::intrinsic::AttributeState<
+                    ::core::marker::PhantomData<$($prop_marker)*>,
+                    $($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]],
+                >;
+
+            fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
+                Self(this): Self,
+                renderer: &mut Renderer,
+                element: &mut ET::OfBehaviorType<Renderer>,
+                state: &mut Self::State<Renderer>,
+            ) {
+                #[allow(unused_imports)]
+                use $crate::html::behaviors_prelude::$csr_element_ty::*;
+
+                let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
+                $($bounds)*::$csr::update_with_state($($bounds)*::$csr::Input {
+                    this,
+                    element,
+                    renderer,
+                    $($attr_name_ident: $attr_name,)?
+                    $($csr_fields)*
+                }, &mut state.1)
+            }
+        }
+
+        #[cfg(todo)]
+        impl<
+            V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
+            ET: $crate::html::behavior_type_traits::$csr_element_ty,
+        >
             $crate::UpdateNodeNonReactive<
                 ET
             >
@@ -214,97 +249,6 @@ macro_rules! DefaultSsrHaevoe {
 
 pub(crate) use {default_impl_csr, default_impl_ssr, impl_bounds};
 
-#[allow(non_snake_case)]
-pub(crate) mod DomTokens {
-    pub(crate) use frender_dom::dom_tokens::DomTokens as Bounds;
-
-    macro_rules! __csr_DomTokens {
-        (
-            meta! {
-                wrapper! {$($wrapper:tt)*}
-                prop_marker! {$($prop_marker:tt)*}
-                bounds!  {$($bounds:tt)*}
-                bounds_tps!  {$($bounds_tp:ty,)*}
-                csr_element_ty! { $csr_element_ty:ident }
-                $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
-            }
-            $csr:ident !{ $($csr_fields:tt)* }
-        ) => {
-            #[cfg(todo)]
-            impl<
-                V: $($bounds)*::Bounds::<$($bounds_tp,)*>,
-                ET: $crate::html::behavior_type_traits::$csr_element_ty,
-            >
-                $crate::UpdateNodeNonReactive<
-                    ET
-                >
-            for $($wrapper)*::<V> {
-                type State<Renderer: $crate::RenderHtml + ?::core::marker::Sized> =
-                    crate::intrinsic::AttributeState<
-                        ::core::marker::PhantomData<$($prop_marker)*>,
-                        $($bounds)*::$csr::State![{$($bounds)*}[$($bounds_tp),*][V]],
-                    >;
-
-                fn update_node_non_reactive<Renderer: $crate::RenderHtml + ?::core::marker::Sized>(
-                    Self(this): Self,
-                    renderer: &mut Renderer,
-                    element: &mut ET::OfBehaviorType<Renderer>,
-                    crate::intrinsic::AttributeState(
-                        ::core::marker::PhantomData,
-                        state,
-                    ): &mut Self::State<Renderer>,
-                ) {
-                    #[allow(unused_imports)]
-                    use $crate::html::behaviors_prelude::$csr_element_ty::*;
-
-                    let element = <<ET as $crate::html::behavior_type_traits::$csr_element_ty>::$csr_element_ty<Renderer> as frender_common::convert::FromMut<_>>::from_mut(element);
-
-                    let input = $($bounds)*::$csr::Input {
-                        this,
-                        element,
-                        renderer,
-                        // $($attr_name_ident: $attr_name,)?
-                        $($csr_fields)*
-                    };
-
-                    let mut dom_token_list = (input.get_mut_dom_token_list)(input.element, input.renderer);
-                    V::update_with_state(input.this, &mut dom_token_list, state)
-                }
-            }
-        };
-    }
-
-    pub(crate) use super::default_impl_ssr as ssr;
-    pub(crate) use __csr_DomTokens as csr;
-
-    pub(crate) mod csr {
-        use frender_dom::dom_tokens::DomTokens;
-
-        pub(crate) use DefaultCsrState as State;
-
-        pub(crate) type State<V> = <V as DomTokens>::UpdateWithState;
-
-        pub(crate) struct Input<'a, V, E: ?Sized, RR: ?Sized, F> {
-            pub(crate) this: V,
-            pub(crate) element: &'a mut E,
-            pub(crate) renderer: &'a mut RR,
-            pub(crate) get_mut_dom_token_list: F,
-        }
-    }
-
-    pub(crate) mod ssr {
-        use frender_dom::dom_tokens::DomTokens;
-
-        pub(crate) use DefaultSsrHaevoe as Haevoe;
-
-        pub(crate) type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<V as DomTokens>::DomTokensIntoAsyncStrIter>;
-
-        pub(crate) fn maybe_into_haevoe<V: DomTokens>(this: V) -> Option<Haevoe<V>> {
-            Some(Haevoe::<V>::new(V::dom_tokens_into_async_str_iter(this)))
-        }
-    }
-}
-
 mod updater {
     use std::marker::PhantomData;
 
@@ -336,86 +280,6 @@ mod updater {
 
         fn remove(mut self) {
             (self.remove)(&mut self.element, &mut self.renderer, self.attr_name)
-        }
-    }
-}
-
-#[allow(non_snake_case)]
-pub(crate) mod AttrValue {
-    pub(crate) use frender_attr_value::AttrValue as Bounds;
-
-    pub(crate) use default_impl_csr as csr;
-    pub(crate) use default_impl_ssr as ssr;
-
-    pub(crate) mod csr {
-        use frender_attr_value::csr::{CsrAttrValue, ValueKind};
-
-        pub(crate) use DefaultCsrState as State;
-
-        use super::super::updater;
-
-        pub(crate) struct Input<'a, V, E: ?Sized, RR: ?Sized, U, R> {
-            pub(crate) this: V,
-            pub(crate) element: &'a mut E,
-            pub(crate) renderer: &'a mut RR,
-            pub(crate) attr_name: &'static str,
-            pub(crate) update: U,
-            pub(crate) remove: R,
-        }
-
-        impl<'a, V, E: ?Sized, RR: ?Sized, U, R> Input<'a, V, E, RR, U, R> {
-            fn into_value_and_updater<VK: ?Sized>(self) -> (V, updater::UpdaterOfKind<'a, VK, E, RR, U, R>) {
-                let Self {
-                    this,
-                    element,
-                    renderer,
-                    attr_name,
-                    update,
-                    remove,
-                } = self;
-                (
-                    this,
-                    updater::UpdaterOfKind {
-                        _kind: std::marker::PhantomData,
-                        element,
-                        renderer,
-                        attr_name,
-                        update,
-                        remove,
-                    },
-                )
-            }
-        }
-
-        // TODO: redesign state for attributes
-        pub(crate) type State<VT, V> = Option<<V as CsrAttrValue<VT>>::State>;
-
-        pub(crate) fn update_with_state<
-            //
-            VT: ?Sized + ValueKind,
-            V: CsrAttrValue<VT>,
-            E,
-            RR: ?Sized,
-            U: FnOnce(&mut E, &mut RR, &'static str, VT::Value<'_>),
-            R: FnOnce(&mut E, &mut RR, &'static str),
-        >(
-            input: Input<V, E, RR, U, R>,
-            state: &mut State<VT, V>,
-        ) {
-            let (this, updater) = input.into_value_and_updater();
-            V::update_attribute_value_with_option_state(this, updater, state)
-        }
-    }
-
-    pub(crate) mod ssr {
-        use frender_attr_value::ssr::SsrAttrValue;
-
-        pub(crate) use DefaultSsrHaevoe as Haevoe;
-
-        pub(crate) type Haevoe<VT, V> = <V as SsrAttrValue<VT>>::HtmlAttributeValue;
-
-        pub(crate) fn maybe_into_haevoe<VT: ?Sized, V: SsrAttrValue<VT>>(this: V) -> Option<Haevoe<VT, V>> {
-            V::maybe_into_html_attribute_value(this)
         }
     }
 }
@@ -551,48 +415,7 @@ pub(crate) mod SetRef {
     pub(crate) use __Ref_ssr as ssr;
 }
 
-#[allow(non_snake_case)]
-pub(crate) mod Style {
-    pub(crate) use frender_style::Style as Bounds;
+pub(crate) use crate::dom_tokens::impl_bounds as DomTokens;
+pub(crate) use crate::style::impl_bounds as Style;
 
-    pub(crate) use default_impl_csr_without_attr_name as csr;
-    pub(crate) use default_impl_ssr as ssr;
-
-    pub(crate) mod csr {
-        use frender_style::csr::CsrStyle;
-
-        pub(crate) struct Input<'a, V, E: ?Sized, R: ?Sized> {
-            pub(crate) this: V,
-            pub(crate) element: &'a mut E,
-            pub(crate) renderer: &'a mut R,
-        }
-
-        pub(crate) use DefaultCsrState as State;
-
-        pub(crate) type State<V> = <V as CsrStyle>::UpdateWithState;
-
-        pub(crate) fn update_with_state<
-            //
-            V: CsrStyle,
-            E: frender_dom::behaviors::ElementWithStyle<RR>,
-            RR: ?Sized,
-        >(
-            Input { this, element, renderer }: Input<V, E, RR>,
-            state: &mut State<V>,
-        ) {
-            V::update_with_state(this, state, &mut element.style(renderer))
-        }
-    }
-
-    pub(crate) mod ssr {
-        use frender_style::ssr::{SsrDeclarationList, SsrStyle};
-
-        pub(crate) use DefaultSsrHaevoe as Haevoe;
-
-        pub(crate) type Haevoe<V> = frender_ssr::html::attr_value::AttrEqValue<<<V as SsrStyle>::IntoSsrDeclarationList as SsrDeclarationList>::IntoDeclarationList>;
-
-        pub(crate) fn maybe_into_haevoe<V: SsrStyle>(this: V) -> Option<Haevoe<V>> {
-            Some(Haevoe::<V>::new(SsrDeclarationList::into_declaration_list(V::into_ssr_declaration_list(this))))
-        }
-    }
-}
+pub(crate) mod ssr;

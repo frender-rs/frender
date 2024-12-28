@@ -51,7 +51,12 @@ pub mod __private {
 mod special;
 
 mod attr;
+
+mod attr_value;
+mod dom_tokens;
 mod event_listener;
+mod property_common;
+mod style;
 
 mod impl_bounds;
 use impl_bounds::impl_bounds;

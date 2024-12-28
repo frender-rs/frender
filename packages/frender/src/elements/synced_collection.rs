@@ -4,24 +4,21 @@ use weak_vec1::RcWithKey;
 use std::{
     cell::RefCell,
     ops::{Deref, Index, IndexMut},
-    rc::Weak,
+    rc::{Rc, Weak},
 };
+
+use crate::fn_traits::FnMut1;
 
 mod weak_vec1 {
     use std::rc::{Rc, Weak};
 
-    #[derive(Clone, Copy)]
+    use super::weak_is_of_rc;
+
+    #[derive(Clone, Copy, PartialEq, Eq)]
     pub(super) struct Key(usize);
 
     impl Key {
         pub(super) const STACK: Self = Self(usize::MAX);
-    }
-
-    impl Key {
-        fn into_index(self) -> Option<usize> {
-            let Self(n) = self;
-            (n != usize::MAX).then_some(n)
-        }
     }
 
     pub(super) struct RcWithKey<T: ?Sized> {
@@ -65,10 +62,6 @@ mod weak_vec1 {
         }
     }
 
-    fn weak_is_of_rc<T: ?Sized, U: ?Sized>(weak: &Weak<T>, rc: &Rc<U>) -> bool {
-        std::ptr::addr_eq(Weak::as_ptr(weak), Rc::as_ptr(rc))
-    }
-
     fn is_empty_weak<T: ?Sized>(v: &Option<Weak<T>>) -> bool {
         if let Some(v) = v {
             v.strong_count() == 0
@@ -77,49 +70,75 @@ mod weak_vec1 {
         }
     }
 
+    fn weak_is_empty<T: ?Sized>(v: &Weak<T>) -> bool {
+        v.strong_count() == 0
+    }
+
+    /// Returns `true` if `v` is available.
+    fn put_into_available_weak<T: ?Sized, R: ?Sized>(
+        v: &mut Option<Weak<T>>,
+        rc: &R,
+        weak_has_same_addr_of: impl FnOnce(&Weak<T>, &R) -> bool,
+        to_weak: impl FnOnce(&R) -> Weak<T>,
+    ) -> bool {
+        match v {
+            None => {}
+            Some(v) if weak_is_empty(v) => {}
+            Some(v) if weak_has_same_addr_of(v, rc) => {
+                // the weak matched the rc so it doesn't need to be updated
+                return true;
+            }
+            _ => {
+                // the weak is alive and doesn't match the rc
+                return false;
+            }
+        }
+
+        *v = Some(to_weak(rc));
+
+        true
+    }
+
     impl<T: ?Sized> WeakVec1<T> {
         pub(super) const DEFAULT: Self = Self(None, Vec::new());
         pub(super) fn contains<U: ?Sized>(&self, v: &RcWithKey<U>) -> bool {
-            let weak = match v.key.into_index() {
-                None => self.0.as_ref(),
-                Some(i) => self.1.get(i).and_then(Option::as_ref),
+            let weak = match v.key {
+                Key::STACK => self.0.as_ref(),
+                Key(i) => self.1.get(i).and_then(Option::as_ref),
             };
             weak.map_or(false, |weak| weak_is_of_rc(weak, &v.rc))
         }
 
-        pub(super) fn push_to_empty(&mut self, old_key: Key, v: Weak<T>) -> Key {
+        pub(crate) fn put_into_old_available_or_append<R: ?Sized>(
+            &mut self,
+            old_key: Key,
+            rc: &R,
+            // We require Copy because we can.
+            weak_has_same_addr_of: impl Copy + FnOnce(&Weak<T>, &R) -> bool,
+            to_weak: impl Copy + FnOnce(&R) -> Weak<T>,
+        ) -> Key {
             let stack = &mut self.0;
 
-            match old_key.into_index() {
-                None => {
-                    if is_empty_weak(stack) {
-                        *stack = Some(v);
-                        Key::STACK
-                    } else {
-                        let i = self.1.len();
-                        self.1.push(None);
-                        self.1[i] = Some(v);
-                        Key(i)
-                    }
-                }
-                Some(index) => match self.1.get_mut(index) {
-                    Some(weak) if is_empty_weak(weak) => {
-                        *weak = Some(v);
-                        old_key
-                    }
-                    _ => {
-                        if is_empty_weak(stack) {
-                            *stack = Some(v);
-                            Key::STACK
-                        } else {
-                            let i = self.1.len();
-                            self.1.push(None);
-                            self.1[i] = Some(v);
-                            Key(i)
+            match old_key {
+                Key::STACK => {}
+                Key(index) => match self.1.get_mut(index) {
+                    Some(weak) => {
+                        if put_into_available_weak(weak, rc, weak_has_same_addr_of, to_weak) {
+                            return old_key;
                         }
                     }
+                    None => {}
                 },
             }
+
+            if put_into_available_weak(stack, rc, weak_has_same_addr_of, to_weak) {
+                return Key::STACK;
+            }
+
+            let i = self.1.len();
+            assert_ne!(i, Key::STACK.0);
+            self.1.push(Some(to_weak(rc)));
+            Key(i)
         }
 
         pub(super) fn for_each_alive(&mut self, mut f: impl FnMut(Rc<T>)) {
@@ -172,16 +191,20 @@ impl StatesCommon for AllStates {
     }
 }
 
+fn weak_is_of_rc<T: ?Sized, U: ?Sized>(weak: &Weak<T>, rc: &Rc<U>) -> bool {
+    std::ptr::addr_eq(Weak::as_ptr(weak), Rc::as_ptr(rc))
+}
+
 impl AllStates {
-    fn make_rc_states_with_old_key_hint<S: States + 'static>(
+    fn put_rc_states_with_old_key_hint<S: States + 'static>(
         &mut self,
         old_key_hint: weak_vec1::Key,
-        weak: Weak<RefCell<S>>,
+        rc: &Rc<RefCell<S>>,
     ) -> weak_vec1::Key {
-        let key = self
-            .0
-            .push_to_empty(old_key_hint, weak as Weak<RefCell<dyn States>>);
-        key
+        self.0
+            .put_into_old_available_or_append(old_key_hint, rc, weak_is_of_rc, |rc| {
+                Rc::downgrade(rc) as _
+            })
     }
 
     fn for_each_alive_mut(&mut self, mut f: impl FnMut(&mut dyn States)) {
@@ -214,6 +237,22 @@ impl<S: ?Sized + StatesCommon + StatesLikeVec> States for S {}
 ///   `elements[i] = new_element` or even just `&mut elements[i]` is a update mutation at `i`.
 #[derive(Debug, Default)]
 pub struct SyncedCollection<ES> {
+    /// SyncedCollection maintains weak references of
+    /// all the states (ui handles and states) which it has been rendered with.
+    /// When the collection's items move/swap/remove/insert, the states do the same to keep positions synced.
+    /// When the collection's item `items[i]` update, all the corresponding states get marked as outdated,
+    /// so that it gets re-rendered on next render_update().
+    ///
+    /// ```no_compile
+    /// self.all_states.for_each( |states| states[i].mark_as_outdated() )
+    /// ```
+    ///
+    /// That's why this collection is *synced* with its rendering states.
+    ///
+    /// - ToElement only has &self, so [`RefCell`] is required.
+    /// - The collection itself doesn't know how the items will be rendered, so [`dyn States`] is required.
+    ///
+    /// [`dyn States`]: States
     all_states: RefCell<AllStates>,
     items: ES,
 }
@@ -495,16 +534,16 @@ mod render_states {
     impl MountState {
         // caller should mark the next one as previous_was_skipped
         // There might be a UpdateToDateButMoved variant so this method is different from mark_as_outdated_and_moved
-        fn mark_as_moved(&mut self) {
+        pub(crate) fn mark_as_moved(&mut self) {
             *self = Self::OutdatedAndMoved
         }
 
         // caller should mark the next one as previous_was_skipped
-        fn mark_as_outdated_and_moved(&mut self) {
+        pub(crate) fn mark_as_outdated_and_moved(&mut self) {
             *self = Self::OutdatedAndMoved
         }
 
-        fn mark_as_outdated(&mut self) {
+        pub(crate) fn mark_as_outdated(&mut self) {
             *self = match self {
                 MountState::MountedAndUpToDate => Self::Outdated,
                 MountState::Outdated => Self::Outdated,
@@ -518,7 +557,7 @@ mod render_states {
             }
         }
 
-        fn mark_previous_was_skipped(&mut self) {
+        pub(crate) fn mark_previous_was_skipped(&mut self) {
             match self {
                 MountState::MountedAndUpToDate => {
                     *self = MountState::MountedAndUpToDateButPreviousWasSkipped
@@ -527,53 +566,670 @@ mod render_states {
                 _ => {}
             }
         }
+
+        pub(crate) fn needs_reposition(&self) -> NeedsReposition {
+            match self {
+                MountState::MountedAndUpToDate => NeedsReposition::No {
+                    previous_skipped: false,
+                },
+                MountState::MountedAndUpToDateButPreviousWasSkipped => NeedsReposition::No {
+                    previous_skipped: true,
+                },
+                MountState::Outdated => NeedsReposition::No {
+                    previous_skipped: false,
+                },
+                MountState::OutdatedAndPreviousWasSkipped => NeedsReposition::No {
+                    previous_skipped: true,
+                },
+                MountState::OutdatedAndMoved => NeedsReposition::Yes,
+            }
+        }
     }
+
+    pub(crate) enum NeedsReposition {
+        Yes,
+        No { previous_skipped: bool },
+    }
+
+    const _: () = assert!(std::mem::size_of::<NeedsReposition>() == 1);
 
     pub(super) struct Stated<S> {
         pub(super) render_state: S,
         pub(super) mount_state: MountState,
     }
+}
 
-    pub(super) struct RenderStates<S> {
-        pub(super) states: Vec<Stated<S>>,
+mod state {
+    use std::{
+        any::Any,
+        cell::RefCell,
+        pin::Pin,
+        rc::{Rc, Weak},
+        task::Poll,
+    };
+
+    use frender_csr::{
+        render::{RenderContext, RenderWithContext},
+        RenderState, StateUnmount,
+    };
+    use frender_html::{
+        dom::ui_handle::{UiHandle, UnmountedUiHandle},
+        experimental::{
+            self, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+        },
+        CsrElement, HtmlRenderContext, RenderHtml,
+    };
+
+    use super::{
+        render_states::{MountState, NeedsReposition},
+        RcWithKey, StatesCommon, StatesLikeVec,
+    };
+
+    pub(crate) enum State<M, U, NRS, RS> {
+        /// The SyncedCollection has inserted an item, but its ui handle hasn't been rendered for real.
+        BeforeMounted,
+        Mounted {
+            non_reactive_state: NRS,
+            reactive_state: RS,
+            ui_handle: M,
+            mount_state: MountState,
+        },
+        Unmounted {
+            non_reactive_state: NRS,
+            reactive_state: RS,
+            ui_handle: U,
+        },
+    }
+
+    impl<M, U, NRS, RS> State<M, U, NRS, RS> {
+        // region: fn mark
+        fn mark_as_moved(&mut self) {
+            if let Self::Mounted { mount_state, .. } = self {
+                mount_state.mark_as_moved()
+            }
+        }
+        fn mark_as_outdated_and_moved(&mut self) {
+            if let Self::Mounted { mount_state, .. } = self {
+                mount_state.mark_as_outdated_and_moved()
+            }
+        }
+        fn mark_as_outdated(&mut self) {
+            if let Self::Mounted { mount_state, .. } = self {
+                mount_state.mark_as_outdated()
+            }
+        }
+        fn mark_previous_was_skipped(&mut self) {
+            if let Self::Mounted { mount_state, .. } = self {
+                mount_state.mark_previous_was_skipped()
+            }
+        }
+        // endregion
+
+        pub(crate) fn from_render_states(
+            experimental::RenderStates {
+                non_reactive_state,
+                reactive_state,
+                ui_handle,
+            }: experimental::RenderStates<M, NRS, RS>,
+        ) -> Self {
+            Self::Mounted {
+                non_reactive_state,
+                reactive_state,
+                ui_handle,
+                mount_state: MountState::MountedAndUpToDate,
+            }
+        }
+
+        /// Doesn't trust mount_state.
+        /// `update` should reposition if needed
+        pub(crate) fn force_render_init_or_update_with<
+            E: CsrElement,
+            Ctx: ?Sized + HtmlRenderContext,
+        >(
+            &mut self,
+            element: E,
+            render_context: &mut Ctx,
+            reposition: impl FnOnce(
+                &mut M,
+                &MountState,
+                &mut <Ctx::Renderer as RenderWithContext>::RenderContext<'_>,
+            ),
+        ) where
+            M: UiHandle<Ctx::Renderer, Unmounted = U>,
+            U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
+            E::RenderStateKind: UnpinnedRenderStateKind<
+                UnpinnedUiHandle<Ctx::Renderer> = M,
+                UnpinnedNonReactiveState<Ctx::Renderer> = NRS,
+                UnpinnedReactiveState = RS,
+            >,
+        {
+            self.render_init_or_update_with(
+                || element,
+                render_context,
+                |get_element, states, mount_state, render_context| {
+                    reposition(states.ui_handle, mount_state, render_context);
+
+                    // render_update
+                    get_element().unpinned_render_update(render_context, states);
+
+                    *mount_state = MountState::MountedAndUpToDate;
+                },
+            )
+        }
+
+        pub(crate) fn render_init_or_update_with<
+            //
+            E: CsrElement,
+            Ctx: ?Sized + HtmlRenderContext,
+            G: FnOnce() -> E,
+        >(
+            &mut self,
+            get_element: G,
+            render_context: &mut Ctx,
+            process_mounted: impl for<'s> FnOnce(
+                G,
+                experimental::RenderStates<&'s mut M, &'s mut NRS, &'s mut RS>,
+                &mut MountState,
+                &mut <Ctx::Renderer as RenderWithContext>::RenderContext<'_>,
+            ),
+        ) where
+            M: UiHandle<Ctx::Renderer, Unmounted = U>,
+            U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
+            E::RenderStateKind: UnpinnedRenderStateKind<
+                UnpinnedUiHandle<Ctx::Renderer> = M,
+                UnpinnedNonReactiveState<Ctx::Renderer> = NRS,
+                UnpinnedReactiveState = RS,
+            >,
+        {
+            match self {
+                State::BeforeMounted => {
+                    *self = {
+                        let RenderStates {
+                            ui_handle,
+                            non_reactive_state,
+                            reactive_state,
+                        } = get_element().unpinned_render_init(render_context);
+                        Self::Mounted {
+                            non_reactive_state,
+                            reactive_state,
+                            ui_handle,
+                            mount_state: MountState::MountedAndUpToDate,
+                        }
+                    }
+                }
+                State::Mounted {
+                    non_reactive_state,
+                    reactive_state,
+                    ui_handle,
+                    mount_state,
+                } => render_context.map_mut_render_context(|render_context| {
+                    process_mounted(
+                        get_element,
+                        experimental::RenderStates {
+                            ui_handle,
+                            non_reactive_state,
+                            reactive_state,
+                        },
+                        mount_state,
+                        render_context,
+                    )
+                }),
+                State::Unmounted { .. } => {
+                    let State::Unmounted {
+                        mut non_reactive_state,
+                        mut reactive_state,
+                        ui_handle,
+                    } = self.take()
+                    else {
+                        unreachable!()
+                    };
+
+                    let mut ui_handle = render_context
+                        .map_mut_render_context(|render_context| ui_handle.mount(render_context));
+
+                    // render_update
+                    get_element().unpinned_render_update(
+                        render_context,
+                        RenderStates {
+                            ui_handle: &mut ui_handle,
+                            non_reactive_state: &mut non_reactive_state,
+                            reactive_state: &mut reactive_state,
+                        },
+                    );
+
+                    *self = Self::Mounted {
+                        non_reactive_state,
+                        reactive_state,
+                        ui_handle,
+                        mount_state: MountState::MountedAndUpToDate,
+                    };
+                }
+            }
+        }
+
+        /// Doesn't trust mount_state
+        pub(crate) fn force_render_with<E: CsrElement, Ctx: ?Sized + HtmlRenderContext>(
+            &mut self,
+            element: E,
+            render_context: &mut Ctx,
+        ) where
+            M: UiHandle<Ctx::Renderer, Unmounted = U>,
+            U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
+            E::RenderStateKind: UnpinnedRenderStateKind<
+                UnpinnedUiHandle<Ctx::Renderer> = M,
+                UnpinnedNonReactiveState<Ctx::Renderer> = NRS,
+                UnpinnedReactiveState = RS,
+            >,
+        {
+            self.force_render_init_or_update_with(
+                element,
+                render_context,
+                |ui_handle, _, render_context| ui_handle.reposition(render_context),
+            )
+        }
+
+        /// Trusts only position info of mount_state
+        pub(crate) fn force_render_with_but_trust_position<
+            E: CsrElement,
+            Ctx: ?Sized + HtmlRenderContext,
+        >(
+            &mut self,
+            element: E,
+            render_context: &mut Ctx,
+        ) where
+            M: UiHandle<Ctx::Renderer, Unmounted = U>,
+            U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
+            E::RenderStateKind: UnpinnedRenderStateKind<
+                UnpinnedUiHandle<Ctx::Renderer> = M,
+                UnpinnedNonReactiveState<Ctx::Renderer> = NRS,
+                UnpinnedReactiveState = RS,
+            >,
+        {
+            self.force_render_init_or_update_with(
+                element,
+                render_context,
+                |ui_handle, mount_state, render_context| {
+                    // reposition or check_and_move_cursor
+                    match mount_state.needs_reposition() {
+                        NeedsReposition::Yes => ui_handle.reposition(render_context),
+                        NeedsReposition::No { previous_skipped } => {
+                            if previous_skipped {
+                                render_context.mark_cursor_skipped();
+                            }
+
+                            ui_handle.check_and_move_cursor(render_context)
+                        }
+                    }
+                },
+            )
+        }
+
+        fn take(&mut self) -> Self {
+            std::mem::replace(self, Self::BeforeMounted)
+        }
+        fn mount_in_place<R: ?Sized + RenderWithContext>(
+            &mut self,
+            render_context: &mut R::RenderContext<'_>,
+        ) where
+            U: UnmountedUiHandle<R, Mounted = M>,
+        {
+            match self.take() {
+                State::BeforeMounted => {}
+                State::Mounted { .. } => unreachable!(),
+                State::Unmounted {
+                    non_reactive_state,
+                    reactive_state,
+                    ui_handle,
+                } => {
+                    *self = Self::Mounted {
+                        non_reactive_state,
+                        reactive_state,
+                        ui_handle: ui_handle.mount(render_context),
+                        mount_state: MountState::Outdated, // mounted at the correct position but still outdated
+                    }
+                }
+            }
+        }
+
+        fn unmount_in_place<R: ?Sized>(&mut self, renderer: &mut R)
+        where
+            M: UiHandle<R, Unmounted = U>,
+        {
+            match self.take() {
+                State::BeforeMounted => {}
+                State::Mounted {
+                    non_reactive_state,
+                    reactive_state,
+                    ui_handle,
+                    mount_state: _,
+                } => {
+                    *self = Self::Unmounted {
+                        non_reactive_state,
+                        reactive_state,
+                        ui_handle: ui_handle.unmount(renderer),
+                    }
+                }
+                State::Unmounted { .. } => unreachable!(),
+            }
+        }
+    }
+
+    pub(crate) struct States<M, U, NRS, RS> {
+        pub(super) states: Vec<State<M, U, NRS, RS>>,
         // last `ready_to_unmount_count` states should be unmounted on next render_update
         pub(super) ready_to_unmount_count: usize,
         pub(super) all_outdated: bool,
     }
 
-    impl<S> RenderStates<S> {
-        pub(super) fn real_len(&self) -> usize {
+    impl<M, U, NRS, RS> States<M, U, NRS, RS> {
+        pub(crate) const fn new() -> Self {
+            Self {
+                states: Vec::new(),
+                ready_to_unmount_count: 0,
+                all_outdated: false,
+            }
+        }
+
+        pub(crate) fn real_len(&self) -> usize {
             self.states.len() - self.ready_to_unmount_count
         }
-        fn states_mut(&mut self) -> &mut [Stated<S>] {
+        fn states_mut(&mut self) -> &mut [State<M, U, NRS, RS>] {
             let real_len = self.real_len();
             &mut self.states[..real_len]
         }
-        pub(super) fn clean<R: ?Sized>(&mut self, renderer: &mut R) -> &mut Vec<Stated<S>>
+
+        fn insert_many_at(&mut self, at: usize, len: usize) {
+            self.extend(len);
+            self.states_mut()[at..].rotate_right(len);
+        }
+
+        pub(crate) fn clean<R: ?Sized>(
+            &mut self,
+            renderer: &mut R,
+        ) -> &mut Vec<State<M, U, NRS, RS>>
         where
-            S: RenderState<R> + Unpin,
+            M: UiHandle<R>,
+            RS: StateUnmount + Unpin,
         {
             if self.ready_to_unmount_count > 0 {
                 let real_len = self.real_len();
-                self.states[real_len..]
-                    .iter_mut()
-                    .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
-                self.states.truncate(real_len);
+                self.states.drain(real_len..).for_each(|state| match state {
+                    State::BeforeMounted => {}
+                    State::Mounted {
+                        non_reactive_state: _,
+                        mut reactive_state,
+                        ui_handle,
+                        mount_state: _,
+                    } => {
+                        Pin::new(&mut reactive_state).state_unmount();
+                        _ = ui_handle.unmount(renderer);
+                    }
+                    State::Unmounted { .. } => {
+                        // just drop
+                    }
+                });
                 self.ready_to_unmount_count = 0;
             }
             &mut self.states
         }
+    }
 
-        fn insert_many_at(&mut self, at: usize, len: usize)
+    pub(crate) type StatesOfKind<K, R> = States<
+        <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>,
+        <<K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted,
+        <K as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<R>,
+        <K as UnpinnedRenderStateKind>::UnpinnedReactiveState,
+    >;
+
+    // No item is State::Unmounted
+    pub struct UiHandles<C, M, U, NRS, RS> {
+        pub(crate) ui_handles: Rc<RefCell<States<M, U, NRS, RS>>>,
+        pub(crate) cursor_placeholders: [C; 2],
+    }
+
+    impl<C, M, U, NRS, RS> UiHandles<C, M, U, NRS, RS> {
+        pub(crate) fn poll_render<K, R>(
+            &mut self,
+            renderer: &mut R,
+            cx: &mut std::task::Context<'_>,
+        ) -> Poll<()>
         where
-            S: Default,
+            K: UnpinnedRenderStateKindPollRender<
+                UnpinnedUiHandle<R> = M,
+                UnpinnedNonReactiveState<R> = NRS,
+                UnpinnedReactiveState = RS,
+            >,
+            R: ?Sized + RenderHtml,
         {
-            self.extend(len);
-            self.states_mut()[at..].rotate_right(len);
+            let mut this = self.ui_handles.borrow_mut();
+            let mut res = Poll::Ready(());
+            let mounted_len = this.states.len() - this.ready_to_unmount_count;
+            for state in &mut this.states[..mounted_len] {
+                let State::Mounted {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                    mount_state: _,
+                } = state
+                else {
+                    unreachable!()
+                };
+                if let Poll::Pending = K::unpinned_poll_render(
+                    renderer,
+                    RenderStates {
+                        ui_handle,
+                        non_reactive_state,
+                        reactive_state,
+                    },
+                    cx,
+                ) {
+                    res = Poll::Pending;
+                }
+            }
+            res
         }
     }
 
-    impl<S> StatesLikeVec for RenderStates<S> {
+    // No item is State::Mounted
+    pub struct UnmountedUiHandles<C, M, U, NRS, RS> {
+        ui_handles: Rc<RefCell<States<M, U, NRS, RS>>>,
+        cursor_placeholders: [C; 2],
+    }
+
+    impl<C: UnmountedUiHandle<R>, U: UnmountedUiHandle<R>, NRS, RS, R: ?Sized> UnmountedUiHandle<R>
+        for UnmountedUiHandles<C, U::Mounted, U, NRS, RS>
+    {
+        type Mounted = UiHandles<C::Mounted, U::Mounted, U, NRS, RS>;
+
+        fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            let Self {
+                ui_handles,
+                cursor_placeholders: [cpa, cpb],
+            } = self;
+
+            let cpa = cpa.mount(render_context);
+
+            {
+                let this = &mut *ui_handles.borrow_mut();
+
+                let states = &mut this.states;
+                let valid_len = states.len() - this.ready_to_unmount_count;
+
+                // remove the ready_to_unmount items
+                if cfg!(debug_assertions) {
+                    states[valid_len..].iter().for_each(|state| match state {
+                        State::BeforeMounted => {}
+                        State::Mounted { .. } => {
+                            unreachable!(
+                                "UnmountedUiHandles shouldn't contain any Mounted ui handles"
+                            )
+                        }
+                        State::Unmounted { .. } => {}
+                    });
+                }
+                states.truncate(valid_len);
+                this.ready_to_unmount_count = 0;
+
+                // mount
+                states
+                    .iter_mut()
+                    .for_each(|state| state.mount_in_place(render_context));
+            }
+
+            let cpb = cpb.mount(render_context);
+
+            UiHandles {
+                ui_handles,
+                cursor_placeholders: [cpa, cpb],
+            }
+        }
+    }
+
+    impl<C: UiHandle<R>, UH: UiHandle<R>, NRS, RS, R: ?Sized> UiHandle<R>
+        for UiHandles<C, UH, UH::Unmounted, NRS, RS>
+    {
+        type Unmounted = UnmountedUiHandles<C::Unmounted, UH, UH::Unmounted, NRS, RS>;
+
+        fn unmount(self, renderer: &mut R) -> Self::Unmounted {
+            let Self {
+                ui_handles,
+                cursor_placeholders: [cpa, cpb],
+            } = self;
+            let cpa = cpa.unmount(renderer);
+            {
+                let this = &mut *ui_handles.borrow_mut();
+                this.states
+                    .iter_mut()
+                    .for_each(|state| state.unmount_in_place(renderer));
+            }
+            let cpb = cpb.unmount(renderer);
+            UnmountedUiHandles {
+                ui_handles,
+                cursor_placeholders: [cpa, cpb],
+            }
+        }
+
+        fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            let Self {
+                ui_handles,
+                cursor_placeholders: [cpa, cpb],
+            } = self;
+
+            cpa.reposition(render_context);
+
+            let States {
+                states,
+                ready_to_unmount_count: _, // the ready_to_unmount ui handles also get repositioned,
+                all_outdated: _,
+            } = &mut *ui_handles.borrow_mut();
+            states.iter_mut().for_each(|state| match state {
+                State::BeforeMounted => {}
+                State::Mounted {
+                    ui_handle,
+                    mount_state,
+                    ..
+                } => {
+                    ui_handle.reposition(render_context);
+                    *mount_state = match mount_state {
+                        MountState::MountedAndUpToDate => MountState::MountedAndUpToDate,
+                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
+                            MountState::MountedAndUpToDate
+                        }
+                        MountState::Outdated => MountState::Outdated,
+                        MountState::OutdatedAndPreviousWasSkipped => MountState::Outdated,
+                        MountState::OutdatedAndMoved => MountState::Outdated,
+                    };
+                }
+                State::Unmounted { .. } => unreachable!(),
+            });
+
+            cpb.reposition(render_context);
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            let [cpa, cpb] = &self.cursor_placeholders;
+
+            cpa.check_and_move_cursor(render_context);
+            render_context.mark_cursor_skipped();
+            cpb.check_and_move_cursor(render_context);
+        }
+
+        fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
+        where
+            R: frender_html::dom::render::RenderWithContext,
+        {
+            self.cursor_placeholders[0].assert_cursor_is_at_self(render_context)
+        }
+    }
+
+    pub(crate) trait StateUnmountWithRef {
+        type ItemReactiveState;
+
+        fn upcast_rc(self: Rc<Self>) -> Rc<dyn Any>
+        where
+            Self: 'static;
+
+        fn state_unmount_with_ref(&self);
+    }
+
+    impl<M, U, NRS, RS: StateUnmount + Unpin> States<M, U, NRS, RS> {
+        fn state_unmount_all(&mut self) {
+            self.all_outdated = true; // TODO: is this needed?
+            self.states.iter_mut().for_each(|state| {
+                Pin::new(match state {
+                    State::Mounted { reactive_state, .. } => reactive_state,
+                    State::BeforeMounted => return,
+                    State::Unmounted { reactive_state, .. } => reactive_state,
+                })
+                .state_unmount()
+            });
+        }
+    }
+
+    impl<M, U, NRS, RS: StateUnmount + Unpin> StateUnmountWithRef for RefCell<States<M, U, NRS, RS>> {
+        type ItemReactiveState = RS;
+
+        fn upcast_rc(self: Rc<Self>) -> Rc<dyn Any>
+        where
+            Self: 'static,
+        {
+            self
+        }
+
+        fn state_unmount_with_ref(&self) {
+            self.borrow_mut().state_unmount_all()
+        }
+    }
+
+    pub struct ReactiveStates<RS>(
+        pub(crate) Option<RcWithKey<dyn StateUnmountWithRef<ItemReactiveState = RS>>>,
+    );
+
+    impl<RS> Default for ReactiveStates<RS> {
+        fn default() -> Self {
+            Self(None)
+        }
+    }
+
+    impl<RS: StateUnmount + Unpin> StateUnmount for ReactiveStates<RS> {
+        fn state_unmount(self: Pin<&mut Self>) {
+            let Some(this) = &self.0 else {
+                return;
+            };
+            this.rc.state_unmount_with_ref();
+        }
+    }
+
+    impl<M, U, NRS, RS> StatesLikeVec for States<M, U, NRS, RS> {
         fn clear(&mut self) {
             self.ready_to_unmount_count = self.states.len();
         }
@@ -584,12 +1240,12 @@ mod render_states {
             states.swap(a, b);
 
             if a != b {
-                states[a].mount_state.mark_as_moved();
-                states[b].mount_state.mark_as_moved();
+                states[a].mark_as_moved();
+                states[b].mark_as_moved();
 
                 // a,x,b -> b,x,a
                 if a.abs_diff(b) > 1 {
-                    states[a.min(b) + 1].mount_state.mark_previous_was_skipped()
+                    states[a.min(b) + 1].mark_previous_was_skipped()
                 }
             }
         }
@@ -597,9 +1253,9 @@ mod render_states {
         fn remove(&mut self, index: usize) {
             // not real remove
             let states = &mut self.states_mut()[index..];
-            states[0].mount_state.mark_as_outdated_and_moved();
+            states[0].mark_as_outdated_and_moved();
             if states.len() > 1 {
-                states[1].mount_state.mark_previous_was_skipped();
+                states[1].mark_previous_was_skipped();
                 states.rotate_left(1);
             }
             self.ready_to_unmount_count += 1;
@@ -611,38 +1267,33 @@ mod render_states {
             let to_swap = states.len() - 1;
             if index < to_swap {
                 states.swap(index, to_swap);
-                states[index + 1].mount_state.mark_previous_was_skipped();
+                states[index + 1].mark_previous_was_skipped();
             }
-            states[index].mount_state.mark_as_outdated_and_moved();
+            states[index].mark_as_outdated_and_moved();
 
-            states[index + 1].mount_state.mark_as_moved();
+            states[index + 1].mark_as_moved();
             self.ready_to_unmount_count += 1;
         }
     }
 
-    impl<S: Default> StatesCommon for RenderStates<S> {
+    impl<M, U, NRS, RS> StatesCommon for States<M, U, NRS, RS> {
         fn mark_index_as_updated(&mut self, i: usize) {
-            self.states_mut()[i].mount_state.mark_as_outdated()
+            self.states_mut()[i].mark_as_outdated()
         }
 
         fn extend(&mut self, len: usize) {
             if len > self.ready_to_unmount_count {
                 self.ready_to_unmount_count = 0;
                 let new_count = len - self.ready_to_unmount_count;
-                self.states.extend(
-                    std::iter::repeat_with(|| Stated {
-                        render_state: S::default(),
-                        mount_state: MountState::Outdated,
-                    })
-                    .take(new_count),
-                );
+                self.states
+                    .extend(std::iter::repeat_with(|| State::BeforeMounted).take(new_count));
             } else {
-                // the items should already be marked as outdated
+                // the items should have already been marked as outdated
                 //
                 // let from = self.real_len();
                 // self.states[from..(from + len)]
                 //     .iter_mut()
-                //     .for_each(|s| s.mount_state.mark_as_outdated());
+                //     .for_each(|s| s.mark_as_outdated());
 
                 self.ready_to_unmount_count -= len;
             }
@@ -659,14 +1310,14 @@ mod render_states {
                 let drain_start = range.start + new_len;
                 self.states[(range.start)..drain_start]
                     .iter_mut()
-                    .for_each(|state| state.mount_state.mark_as_outdated());
+                    .for_each(|state| state.mark_as_outdated());
 
                 self.drain(drain_start..(range.end))
             } else {
                 let end = range.end;
                 self.states[range]
                     .iter_mut()
-                    .for_each(|state| state.mount_state.mark_as_outdated());
+                    .for_each(|state| state.mark_as_outdated());
 
                 self.insert_many_at(end, new_len - removed_len);
             }
@@ -683,13 +1334,11 @@ mod render_states {
             if removed_len < states.len() {
                 states[..removed_len]
                     .iter_mut()
-                    .for_each(|state| state.mount_state.mark_as_outdated_and_moved());
+                    .for_each(|state| state.mark_as_outdated_and_moved());
                 states.rotate_left(removed_len);
-                states[0].mount_state.mark_previous_was_skipped();
+                states[0].mark_previous_was_skipped();
             } else {
-                states
-                    .iter_mut()
-                    .for_each(|state| state.mount_state.mark_as_outdated());
+                states.iter_mut().for_each(|state| state.mark_as_outdated());
             }
             self.ready_to_unmount_count += removed_len;
         }
@@ -707,141 +1356,18 @@ mod render_states {
             } else {
                 self.states_mut()[range.clone()]
                     .iter_mut()
-                    .for_each(|state| state.mount_state.mark_as_outdated())
+                    .for_each(|state| state.mark_as_outdated())
             }
         }
     }
 
-    impl<S> Default for RenderStates<S> {
+    #[cfg(todo)]
+    impl<S> Default for States<S> {
         fn default() -> Self {
             Self {
                 states: Vec::new(),
                 ready_to_unmount_count: 0,
                 all_outdated: false,
-            }
-        }
-    }
-}
-
-mod state {
-    use std::{cell::RefCell, pin::Pin, task::Poll};
-
-    use frender_csr::{render::RenderContext, RenderState};
-
-    use super::{render_states::RenderStates, RcWithKey};
-
-    pub struct State<S, C> {
-        // None means unmounted
-        pub(super) render_states: Option<RcWithKey<RefCell<RenderStates<S>>>>,
-        pub(super) state_unmounted: bool,
-        pub(super) cursor_placeholders: Option<(C, C)>,
-    }
-
-    impl<S, C> State<S, C> {
-        fn set_to_init(&mut self) {
-            self.render_states = None;
-            self.state_unmounted = false;
-        }
-    }
-
-    impl<S, C> Unpin for State<S, C> {}
-
-    impl<S, C> Default for State<S, C> {
-        fn default() -> Self {
-            Self {
-                render_states: None,
-                state_unmounted: false,
-                cursor_placeholders: None,
-            }
-        }
-    }
-
-    impl<S: RenderState<R> + Unpin, R: ?Sized, C: frender_html::dom::behaviors::Node<R>>
-        RenderState<R> for State<S, C>
-    {
-        fn unmount(self: std::pin::Pin<&mut Self>, renderer: &mut R) {
-            let this = self.get_mut();
-            if let Some(render_states) = &mut this.render_states {
-                let (cpa, cpb) = this.cursor_placeholders.as_mut().unwrap();
-
-                cpa.remove_self(renderer);
-
-                render_states
-                    .borrow_mut()
-                    .states
-                    .iter_mut()
-                    .for_each(|state| S::unmount(Pin::new(&mut state.render_state), renderer));
-
-                cpb.remove_self(renderer);
-            }
-
-            this.set_to_init();
-        }
-
-        fn state_unmount(self: std::pin::Pin<&mut Self>) {
-            let this = self.get_mut();
-
-            if this.state_unmounted {
-                return;
-            }
-
-            if let Some(render_states) = &mut this.render_states {
-                render_states
-                    .borrow_mut()
-                    .states
-                    .iter_mut()
-                    .for_each(|state| S::state_unmount(Pin::new(&mut state.render_state)));
-                this.state_unmounted = true;
-            }
-        }
-
-        fn poll_render(
-            self: std::pin::Pin<&mut Self>,
-            renderer: &mut R,
-            cx: &mut std::task::Context<'_>,
-        ) -> Poll<()> {
-            match self.get_mut() {
-                Self {
-                    render_states: Some(render_states),
-                    state_unmounted: false,
-                    cursor_placeholders: _,
-                } => render_states
-                    .borrow_mut()
-                    // on poll_render, if !state_unmounted, ready_to_unmount states are unmounted
-                    .clean(renderer)
-                    .iter_mut()
-                    .fold(Poll::Ready(()), |res, state| {
-                        match S::poll_render(Pin::new(&mut state.render_state), renderer, cx) {
-                            Poll::Ready(()) => res,
-                            Poll::Pending => Poll::Pending,
-                        }
-                    }),
-                _ => Poll::Ready(()),
-            }
-        }
-
-        fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-        where
-            R: frender_csr::render::RenderWithContext,
-        {
-            match self {
-                Self {
-                    render_states: Some(render_states), // not unmounted
-                    state_unmounted: _, // check_and_move_cursor even if state_unmounted
-                    cursor_placeholders: Some((cpa, cpb)),
-                } => {
-                    cpa.check_and_move_cursor_after_self(render_context);
-                    {
-                        let render_states = render_states.rc.borrow();
-                        if !(render_states.real_len() == 0
-                            && render_states.ready_to_unmount_count == 0)
-                        {
-                            render_context.mark_cursor_skipped();
-                        }
-                    }
-                    cpb.check_and_move_cursor_after_self(render_context);
-                }
-                _ => {}
             }
         }
     }
@@ -857,11 +1383,11 @@ mod to_element {
     use super::AllStates;
 
     pub trait MapItemToElement<Item> {
-        type ItemToElement: Element;
+        type ItemToElement;
         fn map_item_to_element(&mut self, item: Item) -> Self::ItemToElement;
     }
 
-    impl<F, Item, E: Element> MapItemToElement<Item> for F
+    impl<F, Item, E> MapItemToElement<Item> for F
     where
         F: FnMut(Item) -> E,
     {
@@ -900,6 +1426,8 @@ mod to_element {
 
         impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SsrElement
             for SyncedCollectionToElement<'a, ES, F>
+        where
+            F::ItemToElement: SsrElement,
         {
             type HtmlChildren = async_str_iter::flat::Flat<
                 std::vec::IntoIter<<F::ItemToElement as SsrElement>::HtmlChildren>,
@@ -916,45 +1444,105 @@ mod to_element {
     }
 
     pub(crate) mod csr {
-        use std::{cell::RefCell, pin::Pin, rc::Rc};
+        use std::{cell::RefCell, marker::PhantomData, pin::Pin, rc::Rc};
 
         use frender_html::{
-            dom::behaviors::{Node as _, NodeRenderSelf},
-            CsrElement as Element, RenderStateKindPinned, RenderStateKindUnpinned,
-            UnpinnedRenderStateOfContext,
+            dom::{
+                behaviors::{Node as _, NodeRenderSelf},
+                ui_handle::UiHandle,
+            },
+            experimental::{
+                self, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
+                UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+            },
+            CsrElement,
         };
 
-        use crate::elements::synced_collection::weak_vec1::{self, RcWithKey};
+        use crate::elements::synced_collection::{
+            state::{ReactiveStates, UiHandles},
+            weak_vec1::{self, Key, RcWithKey},
+        };
 
         use super::{
             super::{
-                render_states::{MountState, RenderStates, Stated},
-                state::State,
+                render_states::{MountState, Stated},
+                state::{State, StatesOfKind},
             },
             MapItemToElement, SyncedCollectionToElement,
         };
 
         enum Never {}
-        pub struct Kind<K>(Never, std::marker::PhantomData<K>);
+        pub struct Kind<K>(Never, PhantomData<K>);
 
-        impl<K: RenderStateKindUnpinned> RenderStateKindPinned for Kind<K> {
-            type RenderState<R: frender_html::RenderHtml + ?Sized> =
-                State<K::UnpinnedRenderState<R>, R::CursorPlaceholder>;
+        impl<K: UnpinnedRenderStateKind> UnpinnedRenderStateKind for Kind<K> {
+            type UnpinnedUiHandle<R: frender_html::RenderHtml + ?Sized> = UiHandles<
+                R::CursorPlaceholder,
+                K::UnpinnedUiHandle<R>,
+                <K::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted,
+                K::UnpinnedNonReactiveState<R>,
+                K::UnpinnedReactiveState,
+            >;
+
+            type UnpinnedNonReactiveState<R: frender_html::RenderHtml + ?Sized> = ();
+
+            type UnpinnedReactiveState = ReactiveStates<K::UnpinnedReactiveState>;
         }
 
-        impl<K: RenderStateKindUnpinned> RenderStateKindUnpinned for Kind<K> {
-            type UnpinnedRenderState<R: frender_html::RenderHtml + ?Sized> =
-                State<K::UnpinnedRenderState<R>, R::CursorPlaceholder>;
+        impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for Kind<K> {
+            fn unpinned_poll_render<R: frender_html::RenderHtml + ?Sized>(
+                //
+                renderer: &mut R,
+                experimental::RenderStates {
+                    ui_handle,
+                    non_reactive_state: (),
+                    reactive_state: _,
+                }: experimental::UnpinnedMutRenderStatesOfKind<Self, R>,
+                cx: &mut std::task::Context<'_>,
+            ) -> std::task::Poll<()> {
+                ui_handle.poll_render::<K, R>(renderer, cx)
+            }
         }
 
-        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> Element
+        impl<K: UnpinnedRenderStateKind> PinnedRenderStateKind for Kind<K> {
+            type PinnedUiHandle<R: frender_html::RenderHtml + ?Sized> =
+                <Self as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>;
+            type PinnedNonReactiveState<R: frender_html::RenderHtml + ?Sized> = ();
+            type PinnedReactiveState = ReactiveStates<K::UnpinnedReactiveState>;
+        }
+
+        impl<K: UnpinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kind<K> {
+            fn pinned_poll_render<R: frender_html::RenderHtml + ?Sized>(
+                //
+                renderer: &mut R,
+                experimental::RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                }: experimental::PinnedMutRenderStatesOfKind<Self, R>,
+                cx: &mut std::task::Context<'_>,
+            ) -> std::task::Poll<()> {
+                Self::unpinned_poll_render(
+                    renderer,
+                    experimental::RenderStates {
+                        ui_handle,
+                        non_reactive_state: non_reactive_state.get_mut(),
+                        reactive_state: reactive_state.get_mut(),
+                    },
+                    cx,
+                )
+            }
+        }
+
+        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> CsrElement
             for SyncedCollectionToElement<'a, ES, F>
         where
+            F::ItemToElement: CsrElement,
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            <F::ItemToElement as Element>::RenderStateKind: 'static,
+            <F::ItemToElement as CsrElement>::RenderStateKind: 'static,
         {
-            type RenderStateKind = Kind<<F::ItemToElement as Element>::RenderStateKind>;
+            type RenderStateKind = Kind<<F::ItemToElement as CsrElement>::RenderStateKind>;
 
+            #[cfg(todo)]
             fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
                 //
                 self,
@@ -971,6 +1559,7 @@ mod to_element {
                 )
             }
 
+            #[cfg(todo)]
             fn unpinned_render_update_maybe_reposition<
                 Ctx: ?Sized + frender_html::HtmlRenderContext,
             >(
@@ -1021,12 +1610,353 @@ mod to_element {
                     }
                 };
             }
+
+            fn pinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+                experimental::PinMutRenderInitStates {
+                    non_reactive_state: _,
+                    reactive_state,
+                }: experimental::PinMutRenderInitStatesOfKind<
+                    Self::RenderStateKind,
+                    Ctx::Renderer,
+                >,
+            ) -> experimental::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>
+            {
+                let reactive_states = reactive_state.get_mut();
+                let Self {
+                    all_states,
+                    items,
+                    mut f,
+                } = self;
+                let all_states = &mut *all_states.borrow_mut();
+
+                let old_key_hint;
+
+                let ui_handle = if let Some(RcWithKey { rc, key }) = reactive_states.0.take() {
+                    old_key_hint = key;
+                    // The ui handle got dropped (and should have been unmounted before getting dropped)
+                    // but the reactive state didn't get dropped (might have state_unmounted).
+                    // This case is rare and unexpected but we could make use of it.
+                    match rc.upcast_rc().downcast::<RefCell<
+                        StatesOfKind<
+                            <F::ItemToElement as CsrElement>::RenderStateKind,
+                            Ctx::Renderer,
+                        >,
+                    >>() {
+                        Ok(rc) => Ok(rc),
+                        Err(_ /* drop the wrong rc */) => Err(()),
+                    }
+                } else {
+                    old_key_hint = Key::STACK;
+                    Err(())
+                };
+
+                let cpa = render_context.map_mut_render_context(|render_context| {
+                    NodeRenderSelf::render_self(render_context)
+                });
+
+                let mut ui_handle = ui_handle.or(const {
+                    Err(<StatesOfKind<
+                        <F::ItemToElement as CsrElement>::RenderStateKind,
+                        Ctx::Renderer,
+                    >>::new())
+                });
+
+                {
+                    let ui_handle = match &mut ui_handle {
+                        Ok(rc) => &mut *rc.borrow_mut(),
+                        Err(v) => v,
+                    };
+                    ui_handle.ready_to_unmount_count = 0;
+                    ui_handle.all_outdated = false;
+
+                    let states = &mut ui_handle.states;
+
+                    let mut unprocessed = 0usize;
+                    let mut items = items;
+                    for state in states.iter_mut() {
+                        if let Some(item) = items.next() {
+                            let element = f.map_item_to_element(item);
+                            state.force_render_with(element, render_context);
+                        } else {
+                            unprocessed = states.len() + 1;
+                            break;
+                        }
+                    }
+
+                    if unprocessed == 0 {
+                        // there might be remaining items
+                        states.extend(items.map(|item| {
+                            let element = f.map_item_to_element(item);
+                            State::from_render_states(element.unpinned_render_init(render_context))
+                        }));
+                    } else {
+                        // items are empty
+                        let drain = states.drain((states.len() - unprocessed)..);
+                        if cfg!(debug_assertions) {
+                            for state in drain {
+                                match state {
+                                    State::Mounted { .. } => {
+                                        unreachable!(
+                                            "old states of SyncedCollectionToElement should have been unmounted earlier"
+                                        )
+                                    }
+                                    _ => {}
+                                }
+                            }
+                        } else {
+                            drop(drain);
+                        }
+                    }
+                }
+
+                let ui_handle = ui_handle.unwrap_or_else(|states| Rc::new(RefCell::new(states)));
+
+                let cpb = render_context.map_mut_render_context(|render_context| {
+                    NodeRenderSelf::render_self(render_context)
+                });
+
+                let key = all_states.put_rc_states_with_old_key_hint(old_key_hint, &ui_handle);
+
+                reactive_states.0 = Some(RcWithKey {
+                    rc: ui_handle.clone(),
+                    key,
+                });
+                UiHandles {
+                    ui_handles: ui_handle,
+                    cursor_placeholders: [cpa, cpb],
+                }
+            }
+
+            fn pinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+                experimental::RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                }: experimental::PinnedMutRenderStatesOfKind<
+                    Self::RenderStateKind,
+                    Ctx::Renderer,
+                >,
+            ) {
+                self.unpinned_render_update(
+                    render_context,
+                    experimental::RenderStates {
+                        ui_handle,
+                        non_reactive_state: non_reactive_state.get_mut(),
+                        reactive_state: reactive_state.get_mut(),
+                    },
+                )
+            }
+
+            fn unpinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+            ) -> experimental::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>
+            {
+                let mut reactive_state = Default::default();
+                let ui_handle = self.pinned_render_init(
+                    render_context,
+                    experimental::PinMutRenderInitStates {
+                        non_reactive_state: Pin::new(&mut ()),
+                        reactive_state: Pin::new(&mut reactive_state),
+                    },
+                );
+
+                experimental::RenderStates {
+                    ui_handle,
+                    non_reactive_state: (),
+                    reactive_state,
+                }
+            }
+
+            fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+                //
+                self,
+                render_context: &mut Ctx,
+                experimental::RenderStates {
+                    ui_handle:
+                        UiHandles {
+                            ui_handles,
+                            cursor_placeholders: [cpa, cpb],
+                        },
+                    non_reactive_state: (),
+                    reactive_state,
+                }: experimental::UnpinnedMutRenderStatesOfKind<
+                    Self::RenderStateKind,
+                    Ctx::Renderer,
+                >,
+            ) {
+                let ReactiveStates(Some(rc_with_key)) = reactive_state else {
+                    panic!("ReactiveState of SyncedCollectionToElement have been dropped with the UiHandle not dropped");
+                };
+
+                assert!(std::ptr::addr_eq(
+                    Rc::as_ptr(&rc_with_key.rc),
+                    Rc::as_ptr(ui_handles)
+                ));
+
+                if self.all_states.borrow().0.contains(rc_with_key) {
+                    // render_states has been properly synced
+                    let states = &mut *ui_handles.borrow_mut();
+
+                    let all_outdated = std::mem::take(&mut states.all_outdated);
+
+                    let render_states = states.clean(render_context.renderer_mut());
+
+                    let mut render_states = render_states.iter_mut();
+                    let mut elements = self.items;
+                    let mut f = self.f;
+
+                    let zip = render_states.by_ref().zip(elements.by_ref());
+
+                    if all_outdated {
+                        zip.for_each(|(state, el)| {
+                            state.force_render_with_but_trust_position(
+                                f.map_item_to_element(el),
+                                render_context,
+                            )
+                        });
+                    } else {
+                        // only update outdated elements
+                        zip.for_each(|(state, el): (&mut _, _)| {
+                            state.render_init_or_update_with(
+                                || f.map_item_to_element(el),
+                                render_context,
+                                |get_element, states, mount_state, render_context| {
+                                    enum SimpleMountState {
+                                        UpToDate,
+                                        Outdated,
+                                        OutdatedAndMoved,
+                                    }
+
+                                    let (simple_mount_state, cursor_should_skip) = match mount_state
+                                    {
+                                        MountState::MountedAndUpToDate => {
+                                            (SimpleMountState::UpToDate, false)
+                                        }
+                                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
+                                            (SimpleMountState::UpToDate, true)
+                                        }
+                                        MountState::Outdated => (SimpleMountState::Outdated, false),
+                                        MountState::OutdatedAndPreviousWasSkipped => {
+                                            (SimpleMountState::Outdated, true)
+                                        }
+                                        MountState::OutdatedAndMoved => {
+                                            (SimpleMountState::OutdatedAndMoved, false)
+                                        }
+                                    };
+
+                                    *mount_state = MountState::MountedAndUpToDate;
+
+                                    if cursor_should_skip {
+                                        use frender_csr::render::RenderContext;
+                                        render_context.mark_cursor_skipped()
+                                    }
+
+                                    match simple_mount_state {
+                                        SimpleMountState::UpToDate => {
+                                            states.ui_handle.check_and_move_cursor(render_context);
+                                            return;
+                                        }
+                                        SimpleMountState::Outdated => {}
+                                        SimpleMountState::OutdatedAndMoved => {
+                                            states.ui_handle.reposition(render_context);
+                                        }
+                                    }
+
+                                    get_element().unpinned_render_update(render_context, states);
+                                },
+                            )
+                        })
+                    }
+
+                    assert_eq!(render_states.len(), 0, "too many render states");
+                    assert!(elements.next().is_none(), "too many elements");
+                } else {
+                    // let RcWithKey { rc: _, key } = rc_with_key;
+
+                    // the states are outdated
+                    let states = &mut *ui_handles.borrow_mut();
+
+                    // It should be set to false when finished.
+                    // We can assume all_outdated=true in this branch so we set it earlier.
+                    states.all_outdated = false;
+
+                    let real_len = states.real_len();
+                    let (mounted, unmounted) = states.states.split_at_mut(real_len);
+
+                    let mut elements = self.items;
+                    let mut f = self.f;
+
+                    let mut unprocessed_mounted = 0;
+                    for mounted_state in mounted.iter_mut() {
+                        if let Some(item) = elements.next() {
+                            let element = f.map_item_to_element(item);
+
+                            mounted_state
+                                .force_render_with_but_trust_position(element, render_context);
+                        } else {
+                            unprocessed_mounted = mounted.len() + 1;
+                            break;
+                        }
+                    }
+
+                    if unprocessed_mounted == 0 {
+                        // there might be remaining items
+
+                        // shadow
+                        let unprocessed_mounted = ();
+                        let mounted = ();
+
+                        let mut unprocessed_unmounted = 0;
+                        for unmounted_state in unmounted.iter_mut() {
+                            if let Some(item) = elements.next() {
+                                let element = f.map_item_to_element(item);
+
+                                // the position info should be correct but
+                                // it should be marked as moved.
+                                // So we just reposition the ui handle.
+                                unmounted_state.force_render_with(element, render_context);
+                            } else {
+                                unprocessed_unmounted = unmounted.len() + 1;
+                                break;
+                            }
+                        }
+
+                        if unprocessed_unmounted == 0 {
+                            // there might be remaining items
+                            states.ready_to_unmount_count = 0;
+                            states.states.extend(elements.map(|el| {
+                                State::from_render_states(
+                                    f.map_item_to_element(el)
+                                        .unpinned_render_init(render_context),
+                                )
+                            }))
+                        } else {
+                            // items are drained
+                            states.ready_to_unmount_count = unprocessed_unmounted;
+                        }
+                    } else {
+                        // items are drained
+                        states.ready_to_unmount_count += unprocessed_mounted;
+                    }
+
+                    states.clean(render_context.renderer_mut());
+                }
+            }
         }
 
+        #[cfg(todo)]
         impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SyncedCollectionToElement<'a, ES, F>
         where
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            <F::ItemToElement as Element>::RenderStateKind: 'static,
+            <F::ItemToElement as CsrElement>::RenderStateKind: 'static,
         {
             // without caring about cursor placeholders
             fn unpinned_impl<Ctx: ?Sized + frender_html::HtmlRenderContext>(
@@ -1266,77 +2196,19 @@ mod to_element {
                     );
             }
         }
-
-        fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext, E: Element>(
-            el: E,
-            render_context: &mut Ctx,
-            Stated {
-                render_state,
-                mount_state,
-            }: &mut Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>>,
-        ) {
-            let (force_reposition, cursor_should_skip) = match mount_state {
-                MountState::MountedAndUpToDate => (false, false), // TODO: just move cursor and return
-                MountState::MountedAndUpToDateButPreviousWasSkipped => (false, true),
-                MountState::Outdated => (false, false),
-                MountState::OutdatedAndPreviousWasSkipped => (false, true),
-                MountState::OutdatedAndMoved => (true, false),
-            };
-
-            if cursor_should_skip {
-                render_context.mark_cursor_skipped()
-            }
-
-            el.unpinned_render_update_maybe_reposition(
-                render_context,
-                render_state,
-                force_reposition,
-            );
-            *mount_state = MountState::MountedAndUpToDate;
-        }
-
-        fn unpinned_render_update_force_reposition<
-            Ctx: ?Sized + frender_html::HtmlRenderContext,
-            E: Element,
-        >(
-            el: E,
-            render_context: &mut Ctx,
-            Stated {
-                render_state,
-                mount_state,
-            }: &mut Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>>,
-        ) {
-            el.unpinned_render_update_force_reposition(render_context, render_state);
-            *mount_state = MountState::MountedAndUpToDate;
-        }
-
-        fn new_unpinned_render_state<Ctx: ?Sized + frender_html::HtmlRenderContext, E: Element>(
-            el: E,
-            render_context: &mut Ctx,
-        ) -> Stated<UnpinnedRenderStateOfContext<E::RenderStateKind, Ctx>> {
-            let mut state = Stated {
-                render_state: Default::default(),
-                mount_state: MountState::MountedAndUpToDate,
-            };
-            el.unpinned_render_update(render_context, &mut state.render_state);
-
-            state
-        }
     }
 
     #[cfg(feature = "ToElement")]
     mod with_to_element {
         use crate::ToElement;
 
-        use super::{
-            super::SyncedCollection, csr::Kind, MapItemWithToElement, SyncedCollectionToElement,
-        };
+        use super::{super::SyncedCollection, MapItemWithToElement, SyncedCollectionToElement};
 
         impl<ES, E: ToElement> ToElement for SyncedCollection<ES>
         where
             for<'a> &'a ES: IntoIterator<Item = &'a E>,
             // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            E::ToElementRenderStateKind: 'static,
+            // E::ToElementRenderStateKind: 'static,
         {
             type ToElement<'a> = SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, MapItemWithToElement>
             where
@@ -1345,11 +2217,6 @@ mod to_element {
             fn to_element(&self) -> Self::ToElement<'_> {
                 self.to_element_with(MapItemWithToElement)
             }
-
-            type ToElementHtmlChildren =
-                async_str_iter::flat::Flat<std::vec::IntoIter<E::ToElementHtmlChildren>>;
-
-            type ToElementRenderStateKind = Kind<E::ToElementRenderStateKind>;
         }
     }
 }
@@ -1379,7 +2246,7 @@ where
 
     pub fn to_element_with_fn<
         'a,
-        F: for<'e> crate::FnMutOutputElement<<&'e ES as IntoIterator>::Item>,
+        F: for<'e> FnMut1<<&'e ES as IntoIterator>::Item>,
         // `F` is more restricted than the following bounds but is more developer friendly
         // E: crate::Element,
         // F: FnMut(<&'a ES as IntoIterator>::Item) -> E,
@@ -1391,13 +2258,14 @@ where
     }
 }
 
+// TODO: rename to make_*
 /// An identity fn
 #[inline(always)]
-pub fn synced_collection_to_elements<
+pub const fn synced_collection_to_elements<
     ES,
     V: ?Sized,
     F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F2>,
-    F2: for<'a> crate::FnMutOutputElement<<&'a ES as IntoIterator>::Item>,
+    F2: for<'a> FnMut1<<&'a ES as IntoIterator>::Item>,
 >(
     f: F,
 ) -> F
@@ -1407,15 +2275,16 @@ where
     f
 }
 
+// TODO: rename to make_*
 /// An identity fn
 #[inline(always)]
-pub fn synced_vec_to_elements<
+pub const fn synced_vec_to_elements<
     T,
     V: ?Sized,
     F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, std::slice::Iter<'a, T>, F2>,
-    F2: crate::FnMutMapRefToElement<T>,
+    F2: for<'a> FnMut1<&'a T>,
 >(
     f: F,
 ) -> F {
-    f
+    synced_collection_to_elements::<Vec<T>, V, F, F2>(f)
 }

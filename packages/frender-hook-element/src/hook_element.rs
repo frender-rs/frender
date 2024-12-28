@@ -12,8 +12,8 @@ pub const fn new_fn_hook_element<
     F: for<'hook> FnMut1<Pin<&'hook mut HookData>>,
 >(
     f: F,
-) -> HookElement<F> {
-    HookElement(f)
+) -> HookElement<FnMutUseHookData<F, HookData>> {
+    HookElement(FnMutUseHookData(f, PhantomData))
 }
 
 // region: FnMut1
@@ -48,7 +48,7 @@ pub trait UseHookData {
     ) -> Self::Value<'hook>;
 }
 
-pub struct FnMutUseHookData<F, HookData: ?Sized>(F, PhantomData<HookData>);
+pub struct FnMutUseHookData<F, HookData: ?Sized>(pub F, pub PhantomData<HookData>);
 
 impl<F, HookData> UseHookData for FnMutUseHookData<F, HookData>
 where
