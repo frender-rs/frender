@@ -200,7 +200,7 @@ impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlVal
     FormControlValue<V> for either::Either<A, B>
 {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> =
-        crate::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
+        frender_dom::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
         this: Self,
