@@ -111,5 +111,6 @@ pub(crate) mod ssr {
 
     pub(crate) type Output<V> = SpaceAndHtmlAttributes<Haevoe<V>>;
 
+    // DomTokens attributes are always present if specified
     pub(crate) use crate::impl_bounds::ssr::into_space_and_html_attributes as output;
 }

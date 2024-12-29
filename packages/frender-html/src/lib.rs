@@ -13,7 +13,9 @@ use element::CsrElement as Element; // TODO: remove
 // TODO: some apis are unstable and should be sealed
 pub use element::{CsrElement, HtmlRenderContext, RenderStateKind};
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
-pub use frender_dom::{form_control, render_state, RenderStateWithParentElementsHandle, StateUnmount};
+pub use frender_dom::{render_state, RenderStateWithParentElementsHandle, StateUnmount};
+
+pub use frender_form_control as form_control;
 
 pub mod html;
 

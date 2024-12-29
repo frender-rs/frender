@@ -4,10 +4,9 @@ mod ssr {
     use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
     use frender_ssr::html::tag::AssertTagName;
 
-    use crate::{
-        form_control::{InputDataModel, IntoInputDataModel},
-        html::components::input,
-    };
+    use frender_form_control::input::{InputDataModel, IntoInputDataModel};
+
+    use crate::html::components::input;
 
     impl<DataModel: IntoInputDataModel> SsrComponent<DataModel> for input::Marker {
         type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = frender_ssr::html::element::VoidElement<
@@ -29,18 +28,13 @@ mod ssr {
 
 mod csr {
     use frender_common::{convert::IntoMut, strings::CsrStr};
-    use frender_dom::{
-        form_control::{InputChecked, InputType},
-        render_state::compound::CompoundState,
+    use frender_dom::render_state::compound::CompoundState;
+    use frender_form_control::{
+        input::{InputChecked, InputDataModel, InputType, InputValue, InputValueKind, IntoInputDataModel},
+        value::FormControlValue,
     };
 
-    use crate::{
-        element::UnpinnedRenderStateKind,
-        element_types::RenderStateKindPollRenderWithParent,
-        form_control::{value::FormControlValue, InputDataModel, InputValue, InputValueKind, IntoInputDataModel},
-        html::components::input,
-        CsrComponent, RenderHtml,
-    };
+    use crate::{element::UnpinnedRenderStateKind, element_types::RenderStateKindPollRenderWithParent, html::components::input, CsrComponent, RenderHtml};
 
     pin_project_lite::pin_project!(
         #[derive(Debug)]

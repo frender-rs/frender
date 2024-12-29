@@ -1,7 +1,5 @@
-use frender_dom::form_control::InputType;
+use frender_form_control::input::{InputChecked, InputDataModel, InputType, InputValue, IntoInputDataModel};
 
-use crate::form_control::InputChecked;
-use crate::form_control::{InputDataModel, InputValue, IntoInputDataModel};
 use crate::html::components::{input, HtmlInputElement};
 use crate::intrinsic::Intrinsic;
 use crate::Empty;

@@ -181,9 +181,9 @@ mod dom {
 }
 
 mod form_control {
-    use frender_dom::form_control::value::FormControlValueKind;
+    use frender_form_control::value::FormControlValueKind;
 
-    use crate::form_control::element::FormControlElement;
+    use frender_form_control::element::FormControlElement;
 
     use super::ElementProxyAttrs;
     impl<
@@ -205,9 +205,9 @@ mod form_control {
             self.0.remove_value(renderer)
         }
 
-        type OnValueChangeEventListener<F: frender_dom::form_control::value::HandleFormControlValue<V> + 'static> = E::OnValueChangeEventListener<F>;
+        type OnValueChangeEventListener<F: frender_form_control::value::HandleFormControlValue<V> + 'static> = E::OnValueChangeEventListener<F>;
 
-        fn on_value_change<F: frender_dom::form_control::value::HandleFormControlValue<V> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, f: F) {
+        fn on_value_change<F: frender_form_control::value::HandleFormControlValue<V> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, f: F) {
             self.0.on_value_change(renderer, state, f)
         }
     }

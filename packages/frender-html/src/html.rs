@@ -1,9 +1,9 @@
 use frender_attr_value::html::{ContentEditable, Spellcheck};
 use frender_dom::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
-    special::textarea::TextAreaValue,
     ui_handle::UiHandle,
 };
+use frender_form_control::textarea::TextAreaValue;
 
 use crate::impl_bounds::{DomTokens, Style};
 
@@ -1467,7 +1467,7 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
-                                trait_bounds!(crate::form_control::InputElement<Renderer> + ElementWithTypeAttribute<Renderer>);
+                                trait_bounds!(frender_form_control::input::InputElement<Renderer> + ElementWithTypeAttribute<Renderer>);
                                 define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
 
@@ -1837,7 +1837,7 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                trait_bounds!(crate::form_control::element::FormControlElement<str, Renderer>);
+                                trait_bounds!(frender_form_control::element::FormControlElement<str, Renderer>);
 
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();
