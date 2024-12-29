@@ -14,6 +14,5 @@ frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 
 [features]
-default = ["ssr"]
 either = ["dep:either"]
 ssr = ["dep:frender-ssr"]
