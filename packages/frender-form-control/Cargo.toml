@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+chrono = { version = "0.4.39", default-features = false, optional = true }
 either = { version = "1.13.0", optional = true }
 frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
 frender-common = { version = "0.1.0", path = "../frender-common" }
@@ -29,3 +30,4 @@ features = [
 either = ["dep:either"]
 ssr = ["dep:frender-ssr"]
 web = ["frender-events/web", "frender-dom/web", "dep:web-sys"]
+chrono = ["dep:chrono"]
