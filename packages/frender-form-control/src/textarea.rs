@@ -1,6 +1,6 @@
 use frender_ssr::html::assert::SafeTextOrEmpty;
 
-use crate::form_control::value::FormControlValue;
+use crate::value::FormControlValue;
 
 pub trait SsrTextAreaValue {
     type IntoSsrTextAreaValue: SafeTextOrEmpty;

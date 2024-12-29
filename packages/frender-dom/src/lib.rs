@@ -38,8 +38,6 @@ pub mod node_ref;
 
 pub mod event_listener;
 
-pub mod form_control;
-
 pub mod string_element;
 
 mod provide_render_context;
@@ -47,5 +45,3 @@ mod render_state_with_peh;
 
 #[cfg(feature = "web")]
 mod shims;
-
-mod known_str;

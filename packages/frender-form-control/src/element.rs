@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use frender_events::event::Event;
 
-use crate::behaviors;
+use frender_dom::{behaviors, HandleEvent};
 
 use super::value::{FormControlValueKind, HandleFormControlValue};
 
@@ -67,7 +67,7 @@ impl HandleFormControlValueKind for f64 {
 }
 
 impl<VK: ?Sized + HandleFormControlValueKind, F: HandleFormControlValue<VK>, E: ?Sized + Event>
-    crate::HandleEvent<E> for HandleFormControlValueChange<VK, F>
+    HandleEvent<E> for HandleFormControlValueChange<VK, F>
 {
     fn handle_event(&mut self, e: &E) {
         if let Some(v) = VK::event_form_control_value(e) {

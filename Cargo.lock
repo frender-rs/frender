@@ -1040,6 +1040,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-form-control"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "either",
+ "frender-attr-value",
+ "frender-common",
+ "frender-dom",
+ "frender-events",
+ "frender-macro-rules",
+ "frender-ssr",
+]
+
+[[package]]
 name = "frender-hook-element"
 version = "0.1.0"
 dependencies = [

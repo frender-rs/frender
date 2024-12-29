@@ -1,0 +1,19 @@
+[package]
+name = "frender-form-control"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
+either = { version = "1.13.0", optional = true }
+frender-attr-value = { version = "0.1.0", path = "../frender-attr-value" }
+frender-common = { version = "0.1.0", path = "../frender-common" }
+frender-dom = { version = "0.1.0", path = "../frender-dom" }
+frender-events = { version = "0.1.0", path = "../frender-events" }
+frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
+
+[features]
+default = ["ssr"]
+either = ["dep:either"]
+ssr = ["dep:frender-ssr"]

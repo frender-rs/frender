@@ -6,7 +6,7 @@ pub use provide::{
 
 use std::borrow::{Borrow, Cow};
 
-use crate::{
+use frender_dom::{
     render_state::non_reactive::NonReactiveRenderState, special::textarea::SsrTextAreaValue,
     RenderStateWithParentElementsHandle,
 };
@@ -86,7 +86,7 @@ pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
 }
 
 /// Uncontrolled form control value (no default value).
-impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for crate::Empty {
+impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for frender_dom::Empty {
     type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
 
     fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(

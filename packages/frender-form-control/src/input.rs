@@ -3,17 +3,15 @@ pub use value_kind::InputValueKind;
 use async_str_iter::IntoAsyncStrIterator;
 use frender_common::{
     strings::{CsrStr, SsrStr},
-    PrimarilyBorrow,
-};
-
-use crate::{
-    form_control::value::{FormControlValue, FormControlValueKind, UncontrolledWithDefaultValue},
-    Empty,
+    Empty, PrimarilyBorrow,
 };
 
 use super::{
     element::FormControlElement,
-    value::{MaybeProvideFormControlValue, ProvideFormControlValue},
+    value::{
+        FormControlValue, FormControlValueKind, MaybeProvideFormControlValue,
+        ProvideFormControlValue, UncontrolledWithDefaultValue,
+    },
 };
 
 /// A trait alias
@@ -34,7 +32,7 @@ impl<E, Renderer: ?Sized> InputElement<Renderer> for E where
 mod value_kind {
     use frender_common::convert::{FromMut, IntoMut};
 
-    use crate::form_control::{
+    use crate::{
         element::FormControlElement,
         value::{FormControlValueKind, ProvideFormControlValue},
     };
@@ -446,7 +444,7 @@ mod ssr {
         attr_value::AttrEqValue,
     };
 
-    use crate::component::IntoSpaceAndHtmlAttributesOrEmpty;
+    use frender_dom::component::IntoSpaceAndHtmlAttributesOrEmpty;
 
     use super::*;
 
