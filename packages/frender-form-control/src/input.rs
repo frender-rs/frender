@@ -110,7 +110,7 @@ mod value_kind {
 
 #[cfg(feature = "web")]
 pub(crate) mod web {
-    use wasm_bindgen::prelude::*;
+    use web_sys::wasm_bindgen::{self, prelude::*};
 
     // https://html.spec.whatwg.org/multipage/input.html#concept-input-value-number-string
     #[wasm_bindgen(module = "/js/input.js")]

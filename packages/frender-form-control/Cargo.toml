@@ -13,6 +13,19 @@ frender-events = { version = "0.1.0", path = "../frender-events" }
 frender-macro-rules = { version = "0.1.0", path = "../frender-macro-rules" }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 
+
+[dependencies.web-sys]
+version = "0.3.60"
+optional = true
+features = [
+    #
+    "Event",
+    "EventTarget",
+    "HtmlInputElement",
+    "HtmlTextAreaElement",
+]
+
 [features]
 either = ["dep:either"]
 ssr = ["dep:frender-ssr"]
+web = ["frender-events/web", "frender-dom/web", "dep:web-sys"]
