@@ -7,11 +7,10 @@ pub use provide::{
 use std::borrow::{Borrow, Cow};
 
 use frender_dom::{
-    render_state::non_reactive::NonReactiveRenderState, special::textarea::SsrTextAreaValue,
-    RenderStateWithParentElementsHandle,
+    render_state::non_reactive::NonReactiveRenderState, RenderStateWithParentElementsHandle,
 };
 
-use super::element::FormControlElement;
+use super::{element::FormControlElement, textarea::SsrTextAreaValue};
 
 mod provide;
 
