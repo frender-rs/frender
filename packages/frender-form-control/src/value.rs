@@ -4,15 +4,19 @@ pub use provide::{
     ProvideFormControlValue,
 };
 
-use std::borrow::{Borrow, Cow};
-
-use frender_dom::{
-    render_state::non_reactive::NonReactiveRenderState, RenderStateWithParentElementsHandle,
+use std::{
+    borrow::{Borrow, Cow},
+    marker::PhantomData,
+    task::Poll,
 };
+
+use frender_dom::StateUnmount;
 
 use super::{element::FormControlElement, textarea::SsrTextAreaValue};
 
 mod provide;
+
+mod either;
 
 pub trait FormControlValueKind {
     /// The value, reference, or `Cow` passed on change.
@@ -71,28 +75,82 @@ impl<VK: Copy> FromFormControlValue<VK> for VK {
     }
 }
 
-pub trait FormControlValue<V: ?Sized + FormControlValueKind> {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized>: Default
-        + RenderStateWithParentElementsHandle<E, R>
-        + Unpin;
+pub trait FormControlValueStateKind<VK: ?Sized + FormControlValueKind> {
+    type UnpinnedNonReactiveState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>;
+    type UnpinnedReactiveState: StateUnmount + Default + Unpin;
 
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
-        this: Self,
-        state: &mut Self::State<E, R>,
-        element: &mut E,
+    fn unpinned_poll_render_form_control_value_state<
+        E: FormControlElement<VK, R> + ?Sized,
+        R: ?Sized,
+    >(
         renderer: &mut R,
+        element: &mut E,
+        non_reactive_state: &mut Self::UnpinnedNonReactiveState<E, R>,
+        reactive_state: &mut Self::UnpinnedReactiveState,
+        cx: &mut std::task::Context<'_>,
+    ) -> Poll<()>;
+}
+
+pub trait FormControlValue<VK: ?Sized + FormControlValueKind> {
+    type StateKind: FormControlValueStateKind<VK>;
+
+    fn render_init<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        this: Self,
+        renderer: &mut R,
+        element: &mut E,
+    ) -> (
+        <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
+        <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedReactiveState,
     );
+
+    fn render_update<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        this: Self,
+        renderer: &mut R,
+        element: &mut E,
+        non_reactive_state: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
+        reactive_state: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedReactiveState,
+    );
+}
+
+pub enum KindOfEmpty {}
+
+impl<VK: ?Sized + FormControlValueKind> FormControlValueStateKind<VK> for KindOfEmpty {
+    type UnpinnedNonReactiveState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> = ();
+
+    type UnpinnedReactiveState = ();
+
+    fn unpinned_poll_render_form_control_value_state<
+        E: FormControlElement<VK, R> + ?Sized,
+        R: ?Sized,
+    >(
+        _: &mut R,
+        _: &mut E,
+        (): &mut Self::UnpinnedNonReactiveState<E, R>,
+        (): &mut Self::UnpinnedReactiveState,
+        _: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        Poll::Ready(())
+    }
 }
 
 /// Uncontrolled form control value (no default value).
 impl<V: ?Sized + FormControlValueKind> FormControlValue<V> for frender_dom::Empty {
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> = ();
+    type StateKind = KindOfEmpty;
 
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
+    fn render_init<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
         Self: Self,
-        (): &mut Self::State<E, R>,
-        _: &mut E,
         _: &mut R,
+        _: &mut E,
+    ) -> ((), ()) {
+        ((), ())
+    }
+
+    fn render_update<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
+        Self: Self,
+        _: &mut R,
+        _: &mut E,
+        (): &mut <Self::StateKind as FormControlValueStateKind<V>>::UnpinnedNonReactiveState<E, R>,
+        (): &mut <Self::StateKind as FormControlValueStateKind<V>>::UnpinnedReactiveState,
     ) {
     }
 }
@@ -117,29 +175,59 @@ impl<V: SsrAttrValue<AT>, AT: ?Sized> SsrAttrValue<AT> for UncontrolledWithDefau
     }
 }
 
+enum Never {}
+pub struct KindOfUncontrolledWithDefaultValue<V>(Never, PhantomData<V>);
+
+impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlValueStateKind<VK>
+    for KindOfUncontrolledWithDefaultValue<V>
+{
+    type UnpinnedNonReactiveState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> = V;
+    type UnpinnedReactiveState = ();
+
+    fn unpinned_poll_render_form_control_value_state<
+        E: FormControlElement<VK, R> + ?Sized,
+        R: ?Sized,
+    >(
+        _: &mut R,
+        _: &mut E,
+        _: &mut Self::UnpinnedNonReactiveState<E, R>,
+        (): &mut Self::UnpinnedReactiveState,
+        _: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        Poll::Ready(())
+    }
+}
+
 impl<V: PartialEq + Borrow<VK>, VK: FormControlValueKind + ?Sized> FormControlValue<VK>
     for UncontrolledWithDefaultValue<V>
 {
-    type State<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
-        NonReactiveRenderState<Option<V>>;
+    type StateKind = KindOfUncontrolledWithDefaultValue<V>;
 
-    fn update_with_state<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+    fn render_init<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
         Self(this): Self,
-        state: &mut Self::State<E, R>,
-        element: &mut E,
         renderer: &mut R,
+        element: &mut E,
+    ) -> (
+        <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
+        (),
     ) {
-        let state = &mut state.0;
-
-        if let Some(state) = state {
-            if *state == this {
-                return;
-            }
-        }
-
         let value = this.borrow();
         element.set_default_value(renderer, value);
-        *state = Some(this);
+        (this, ())
+    }
+
+    fn render_update<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        this: Self,
+        renderer: &mut R,
+        element: &mut E,
+        non_reactive_state: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
+        (): &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedReactiveState,
+    ) {
+        if *non_reactive_state == this.0 {
+            return;
+        }
+
+        (*non_reactive_state, ()) = Self::render_init(this, renderer, element);
     }
 }
 
@@ -155,20 +243,36 @@ impl<V: Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlVa
 
 macro_rules! impl_uncontrolled_with_default_value {
     ($VK:ty) => {
-        type State<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized> =
-            <UncontrolledWithDefaultValue<Self> as FormControlValue<$VK>>::State<E, R>;
+        type StateKind = <UncontrolledWithDefaultValue<Self> as FormControlValue<$VK>>::StateKind;
 
-        fn update_with_state<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(
+        fn render_init<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(
             this: Self,
-            state: &mut Self::State<E, R>,
-            element: &mut E,
             renderer: &mut R,
+            element: &mut E,
+        ) -> (
+            <Self::StateKind as FormControlValueStateKind<$VK>>::UnpinnedNonReactiveState<E, R>,
+            (),
         ) {
-            UncontrolledWithDefaultValue::update_with_state(
+            UncontrolledWithDefaultValue::render_init(
                 UncontrolledWithDefaultValue(this),
-                state,
-                element,
                 renderer,
+                element,
+            )
+        }
+
+        fn render_update<E: FormControlElement<$VK, R> + ?Sized, R: ?Sized>(
+            this: Self,
+            renderer: &mut R,
+            element: &mut E,
+            non_reactive_state: &mut <Self::StateKind as FormControlValueStateKind<$VK>>::UnpinnedNonReactiveState<E, R>,
+            reactive_state: &mut (),
+        ) {
+            UncontrolledWithDefaultValue::render_update(
+                UncontrolledWithDefaultValue(this),
+                renderer,
+                element,
+                non_reactive_state,
+                reactive_state,
             )
         }
     };
@@ -194,54 +298,3 @@ frender_common::impl_many!(
         impl_uncontrolled_with_default_value! {str}
     }
 );
-
-#[cfg(feature = "either")]
-impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlValue<V>>
-    FormControlValue<V> for either::Either<A, B>
-{
-    type State<E: FormControlElement<V, R> + ?Sized, R: ?Sized> =
-        frender_dom::render_state::either::EitherRenderState<A::State<E, R>, B::State<E, R>>;
-
-    fn update_with_state<E: FormControlElement<V, R> + ?Sized, R: ?Sized>(
-        this: Self,
-        state: &mut Self::State<E, R>,
-        element: &mut E,
-        renderer: &mut R,
-    ) {
-        use either::Either::{Left, Right};
-        let state = state.inner_mut();
-
-        match this {
-            Left(this) => {
-                let state = match state {
-                    Left(state) => state,
-                    Right(old_state) => {
-                        std::pin::Pin::new(old_state).unmount_with_peh(element, renderer);
-                        *state = Left(Default::default());
-                        match state {
-                            Left(state) => state,
-                            Right(_) => unreachable!(),
-                        }
-                    }
-                };
-
-                A::update_with_state(this, state, element, renderer)
-            }
-            Right(this) => {
-                let state = match state {
-                    Right(state) => state,
-                    Left(old_state) => {
-                        std::pin::Pin::new(old_state).unmount_with_peh(element, renderer);
-                        *state = Right(Default::default());
-                        match state {
-                            Right(state) => state,
-                            Left(_) => unreachable!(),
-                        }
-                    }
-                };
-
-                B::update_with_state(this, state, element, renderer)
-            }
-        }
-    }
-}

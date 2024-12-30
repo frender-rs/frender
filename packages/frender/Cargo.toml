@@ -53,7 +53,7 @@ default = [
     #
     "html-components",
     "either",
-    # "hooks",
+    "hooks",
     # "RenderWith",
     # "Elements",
     "ToElement",

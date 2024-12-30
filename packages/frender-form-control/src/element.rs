@@ -16,6 +16,7 @@ pub trait FormControlElement<V: ?Sized + FormControlValueKind, Renderer: ?Sized>
 
     type OnValueChangeEventListener<F: HandleFormControlValue<V> + 'static>: Default;
 
+    // TODO: split into init and update
     fn on_value_change<F: HandleFormControlValue<V> + 'static>(
         &mut self,
         renderer: &mut Renderer,

@@ -20,6 +20,20 @@ impl<F: ?Sized + FnMut(Arg) -> Out, Arg, Out> FnMut1<Arg> for F {}
 pub trait Fn1<Arg>: FnMut1<Arg> + Fn(Arg) -> Self::Output_ {}
 impl<F: ?Sized + Fn(Arg) -> Out, Arg, Out> Fn1<Arg> for F {}
 
+pub trait FnOnce2<Arg0, Arg1>: FnOnce(Arg0, Arg1) -> Self::Output_ {
+    type Output_;
+}
+
+impl<F: ?Sized + FnOnce(Arg0, Arg1) -> Out, Arg0, Arg1, Out> FnOnce2<Arg0, Arg1> for F {
+    type Output_ = Out;
+}
+
+pub trait FnMut2<Arg0, Arg1>: FnOnce2<Arg0, Arg1> + FnMut(Arg0, Arg1) -> Self::Output_ {}
+impl<F: ?Sized + FnMut(Arg0, Arg1) -> Out, Arg0, Arg1, Out> FnMut2<Arg0, Arg1> for F {}
+
+pub trait Fn2<Arg0, Arg1>: FnMut2<Arg0, Arg1> + Fn(Arg0, Arg1) -> Self::Output_ {}
+impl<F: ?Sized + Fn(Arg0, Arg1) -> Out, Arg0, Arg1, Out> Fn2<Arg0, Arg1> for F {}
+
 pub trait FnOnceOutputSsrElement<Arg>: FnOnce(Arg) -> Self::OutputSsrElement {
     type OutputSsrElement: SsrElement<HtmlChildren = Self::OutputElementHtmlChildren>;
     type OutputElementHtmlChildren: HtmlChildren;
@@ -65,13 +79,6 @@ impl<Arg, F: ?Sized + FnMut(Arg) -> E, E: Element> FnMutOutputElement<Arg> for F
 pub trait FnOutputElement<Arg>: FnMutOutputElement<Arg> + Fn(Arg) -> Self::OutputElement {}
 
 impl<Arg, F: ?Sized + Fn(Arg) -> E, E: Element> FnOutputElement<Arg> for F {}
-
-pub trait FnOnce2<A1, A2>: FnOnce(A1, A2) -> Self::Output_ {
-    type Output_;
-}
-impl<A1, A2, F: ?Sized + FnOnce(A1, A2) -> Out, Out> FnOnce2<A1, A2> for F {
-    type Output_ = Out;
-}
 
 pub trait FnOnce2OutputSsrElement<A1, A2>: FnOnce(A1, A2) -> Self::OutputSsrElement {
     type OutputSsrElement: SsrElement<HtmlChildren = Self::OutputElementHtmlChildren>;
