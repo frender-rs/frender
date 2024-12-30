@@ -125,4 +125,15 @@ pub mod csr {
 
         Some(update(cache.to_as_ref_str().as_ref()))
     }
+
+    pub fn init_cache<S: CsrStr, R>(
+        //
+        s: S,
+        update: impl FnOnce(&str) -> R,
+    ) -> (S::StaticStrCache, R) {
+        let cache = s.into_into_static_str_cache().into_static_str_cache();
+
+        let res = update(cache.to_as_ref_str().as_ref());
+        (cache, res)
+    }
 }
