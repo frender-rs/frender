@@ -83,6 +83,10 @@ mod dom {
             self.0.log_self(renderer)
         }
 
+        fn warn_self_with_message(&self, renderer: &mut R, message: &str) {
+            self.0.warn_self_with_message(renderer, message)
+        }
+
         fn cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>) -> bool
         where
             R: frender_dom::render::RenderWithContext,

@@ -382,6 +382,10 @@ mod cursor_placeholder {
             eprintln!("{:?}", self)
         }
 
+        fn warn_self_with_message(&self, _: &mut Renderer, message: &str) {
+            eprintln!("WARNING: {:?} {}", self, message)
+        }
+
         fn readd_self(&mut self, render_context: &mut RenderContext, force_reposition: bool) {
             render_context.readd_node(
                 Cow::Owned(Node::CursorPlaceholder(self.clone())),
@@ -448,6 +452,10 @@ mod dom {
     impl behaviors::Node<Renderer> for Element {
         fn log_self(&self, _: &mut Renderer) {
             eprintln!("{:?}", self)
+        }
+
+        fn warn_self_with_message(&self, renderer: &mut Renderer, message: &str) {
+            eprintln!("WARNING: {:?} {}", self, message)
         }
 
         fn cursor_is_at_self(&self, render_context: &crate::renderer::RenderContext<'_>) -> bool {

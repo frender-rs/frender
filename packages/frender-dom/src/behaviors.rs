@@ -20,6 +20,8 @@ pub trait NodeWithRenderContextAfterSelf<Renderer: ?Sized + RenderWithContext> {
 pub trait Node<Renderer: ?Sized> {
     fn log_self(&self, renderer: &mut Renderer);
 
+    fn warn_self_with_message(&self, renderer: &mut Renderer, message: &str);
+
     /// Should move the node if `force_reposition`,
     /// and move cursor after the node.
     fn readd_self(
@@ -98,6 +100,10 @@ impl<N: AsRef<web_sys::Node>, Renderer: ?Sized + crate::csr::web::Renderer> Node
 {
     fn log_self(&self, _: &mut Renderer) {
         web_sys::console::log_1(self.0.as_ref());
+    }
+
+    fn warn_self_with_message(&self, _: &mut Renderer, message: &str) {
+        web_sys::console::warn_2(self.0.as_ref(), &message.into());
     }
 
     fn cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>) -> bool

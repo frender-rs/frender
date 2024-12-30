@@ -53,7 +53,11 @@ impl<R: ?Sized + Renderer> UiHandle<R> for CursorPlaceholder {
 
 impl<R: ?Sized + Renderer> behaviors::Node<R> for CursorPlaceholder {
     fn log_self(&self, _: &mut R) {
-        web_sys::console::log_2(&"CursorPlaceholder".into(), &self.0);
+        web_sys::console::log_3(&"CursorPlaceholder".into(), &self.0, &self.0);
+    }
+
+    fn warn_self_with_message(&self, _: &mut R, message: &str) {
+        web_sys::console::warn_3(&"CursorPlaceholder".into(), &self.0, &message.into());
     }
 
     fn readd_self(&mut self, render_context: &mut <R>::RenderContext<'_>, force_reposition: bool)

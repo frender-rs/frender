@@ -51,6 +51,10 @@ impl frender_html::dom::behaviors::Node<Renderer> for Text {
         eprintln!("{:?}", self)
     }
 
+    fn warn_self_with_message(&self, _: &mut Renderer, message: &str) {
+        eprintln!("WARNING: {:?} {}", self, message)
+    }
+
     fn cursor_is_at_self(&self, renderer: &crate::renderer::RenderContext) -> bool {
         renderer.cursor_is_at(|node| matches!(node, Node::Text(t) if t.is_same_text(self)))
     }
