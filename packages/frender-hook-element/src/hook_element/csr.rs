@@ -43,6 +43,7 @@ fn increment_update_times(
     const MAX_MINUS_1: UpdateTimes = UpdateTimes::MAX - 1;
     match *update_times {
         MAX_MINUS_1 => {
+            *update_times = UpdateTimes::MAX;
             // TODO: warn instead of log
             renderer.log(&format!(
             r##"WARNING: HookElementUpdateStateTooManyTimes.
