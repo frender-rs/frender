@@ -1,20 +1,21 @@
 use std::marker::PhantomData;
 
-use frender_csr::{render_state::compound::CompoundState, RenderState};
 use frender_html::dom::ui_handle::UiHandle as _;
 use frender_html::RenderStateKind;
 use frender_html::{
     experimental::{
-        self, PinMutRenderInitStates, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
-        RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+        self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates,
+        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
     },
     kinds::UiHandleWithNonReactiveState,
     CsrElement, RenderHtml,
 };
 
-use crate::fn_traits::{FnOnce1, FnOnce2, FnOnce2OutputCsrElement};
+use crate::fn_traits::{FnOnce1, FnOnce2};
 
-use super::{Memo, MemoAndProvideFirstArgument, MemoPhantom, MemoPhantomAndProvideFirstArgument};
+use super::{Memo, MemoAndProvideFirstArgument};
+
+mod render_update;
 
 enum Never {}
 pub struct Kind<K, Dep>(Never, PhantomData<(K, Dep)>);
@@ -209,195 +210,4 @@ impl<
 {
     type RenderStateKind = Kind<K, Dep>;
     frender_html::proxy_csr_element!(|this| this.into_memo());
-}
-
-fn skip_or_panic<const SKIP: bool>() {
-    struct ConstBool<const V: bool>;
-
-    trait ConstNot {
-        const NOT: bool;
-    }
-
-    impl<const V: bool> ConstNot for ConstBool<V> {
-        const NOT: bool = !V;
-    }
-
-    if ConstBool::<SKIP>::NOT {
-        panic!("memoed dependency has not been initialized by Memo* but accessed by MemoPhantom*")
-    }
-}
-
-#[cfg(todo)]
-impl<F, Dep, K: RenderStateKind, const SKIP_IF_DEP_IS_NONE: bool> CsrElement
-    for MemoPhantom<F, Dep, SKIP_IF_DEP_IS_NONE>
-where
-    F: for<'a> FnOnce1<&'a Dep, Output: CsrElement<RenderStateKind = K>>,
-{
-    type RenderStateKind = Kind<K, Dep>;
-
-    fn pinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        states: experimental::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) -> experimental::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        (self.f)(dep).unpinned_render_update(render_context, render_state)
-    }
-
-    fn pinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        states: experimental::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) {
-        todo!()
-    }
-
-    fn unpinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-    ) -> experimental::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        todo!()
-    }
-
-    fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) where
-        Self: Sized,
-    {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state;
-
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).unpinned_render_update(render_context, render_state)
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-
-    fn render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: std::pin::Pin<
-            &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-        >,
-    ) where
-        Self: Sized,
-    {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state.pin_project();
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).render_update(render_context, render_state)
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-
-    fn render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: std::pin::Pin<
-            &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-        >,
-    ) where
-        Self: Sized,
-    {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state.pin_project();
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).render_update_force_reposition(render_context, render_state)
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-
-    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: std::pin::Pin<
-            &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-        >,
-        force_reposition: bool,
-    ) {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state.pin_project();
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).render_update_maybe_reposition(
-                render_context,
-                render_state,
-                force_reposition,
-            )
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-
-    fn unpinned_render_update_force_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-    ) where
-        Self: Sized,
-    {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state;
-
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).unpinned_render_update_force_reposition(render_context, render_state)
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-
-    fn unpinned_render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: &mut frender_html::UnpinnedRenderStateOfContext<Self::RenderStateKind, Ctx>,
-        force_reposition: bool,
-    ) {
-        let CompoundState {
-            reactive: render_state,
-            non_reactive: dep,
-        } = render_state;
-
-        if let Some(dep) = dep.as_ref() {
-            (self.f)(dep).unpinned_render_update_maybe_reposition(
-                render_context,
-                render_state,
-                force_reposition,
-            )
-        } else {
-            skip_or_panic::<SKIP_IF_DEP_IS_NONE>()
-        }
-    }
-}
-
-#[cfg(todo)]
-impl<F, V, Dep, K: RenderStateKind, const SKIP_IF_DEP_IS_NONE: bool> CsrElement
-    for MemoPhantomAndProvideFirstArgument<F, V, Dep, SKIP_IF_DEP_IS_NONE>
-where
-    F: for<'a> FnOnce2OutputCsrElement<V, &'a Dep, OutputElementRenderStateKind = K>,
-{
-    type RenderStateKind = crate::memoed::Kind<K, Dep>;
-
-    frender_html::proxy_csr_element!(|this| this.into_memo_phantom());
 }

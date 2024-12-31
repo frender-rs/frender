@@ -41,6 +41,7 @@ fn increment_update_times(
     const MAX_MINUS_1: UpdateTimes = UpdateTimes::MAX - 1;
     match *update_times {
         MAX_MINUS_1 => {
+            *update_times = UpdateTimes::MAX;
             warn(&format!(
                 r##"WARNING: SignalIntoControlledValueUpdateStateTooManyTimes.
 The signal hook of `{}` has been emitting next update too many times in one time of calling poll_render(),

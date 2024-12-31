@@ -1,4 +1,4 @@
-use crate::fn_traits::{FnOnce1, FnOnce2, FnOnce2OutputCsrElement, FnOnceOutputCsrElement};
+use crate::fn_traits::{FnOnce1, FnOnce2};
 
 pub use self::Memo as memo;
 
@@ -35,14 +35,12 @@ impl<F, Dep> Memo<F, Dep> {
 /// [`RenderStateKind`](crate::CsrElement::RenderStateKind) as [`Memo<F, Dep>`].
 ///
 /// It will always try to update render state with the element returned by `F` without the memoed dep updated.
-pub struct MemoPhantom<F: for<'a> FnOnce1<&'a Dep>, Dep, const SKIP_IF_DEP_IS_NONE: bool> {
+pub struct MemoPhantom<F: for<'a> FnOnce1<&'a Dep>, Dep> {
     pub f: F,
     _dep: std::marker::PhantomData<Dep>,
 }
 
-impl<F: for<'a> FnOnceOutputCsrElement<&'a Dep>, Dep, const SKIP_IF_DEP_IS_NONE: bool>
-    MemoPhantom<F, Dep, SKIP_IF_DEP_IS_NONE>
-{
+impl<F: for<'a> FnOnce1<&'a Dep>, Dep> MemoPhantom<F, Dep> {
     pub const fn new(f: F) -> Self {
         Self {
             f,
@@ -74,20 +72,13 @@ where
 }
 
 /// Works like [`MemoPhantom`]
-pub struct MemoPhantomAndProvideFirstArgument<
-    F: for<'a> FnOnce2OutputCsrElement<A, &'a Dep>,
-    A,
-    Dep,
-    const SKIP_IF_DEP_IS_NONE: bool,
-> {
+pub struct MemoPhantomAndProvideFirstArgument<F: for<'a> FnOnce2<A, &'a Dep>, A, Dep> {
     pub f: F,
     pub first_argument: A,
     _dep: std::marker::PhantomData<Dep>,
 }
 
-impl<F: for<'a> FnOnce2OutputCsrElement<V, &'a Dep>, V, Dep, const SKIP_IF_DEP_IS_NONE: bool>
-    MemoPhantomAndProvideFirstArgument<F, V, Dep, SKIP_IF_DEP_IS_NONE>
-{
+impl<F: for<'a> FnOnce2<V, &'a Dep>, V, Dep> MemoPhantomAndProvideFirstArgument<F, V, Dep> {
     pub const fn new(f: F, first_argument: V) -> Self {
         Self {
             f,
@@ -96,19 +87,13 @@ impl<F: for<'a> FnOnce2OutputCsrElement<V, &'a Dep>, V, Dep, const SKIP_IF_DEP_I
         }
     }
 
-    fn into_f(
-        self,
-    ) -> impl FnOnce(&Dep) -> <F as FnOnce2OutputCsrElement<V, &Dep>>::OutputCsrElement {
+    fn into_f(self) -> impl FnOnce(&Dep) -> <F as FnOnce2<V, &Dep>>::Output_ {
         move |dep: &_| (self.f)(self.first_argument, dep)
     }
 
     pub fn into_memo_phantom(
         self,
-    ) -> MemoPhantom<
-        impl FnOnce(&Dep) -> <F as FnOnce2OutputCsrElement<V, &Dep>>::OutputCsrElement,
-        Dep,
-        SKIP_IF_DEP_IS_NONE,
-    > {
+    ) -> MemoPhantom<impl FnOnce(&Dep) -> <F as FnOnce2<V, &Dep>>::Output_, Dep> {
         MemoPhantom::new(self.into_f())
     }
 }

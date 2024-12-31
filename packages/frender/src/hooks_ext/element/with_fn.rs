@@ -1,38 +1,56 @@
-use crate::{FnMutMapRefToElement, FnOnceOutputElement};
-
-use super::{AsMutCsrElementWithValue, IntoHtmlChildrenWithValue, SelfAsMutCsrElementWithValue};
-
 #[derive(Debug, Clone, Copy)]
 pub struct WithFn<F>(pub F);
 
-impl<F> SelfAsMutCsrElementWithValue for WithFn<F> {}
+mod csr {
+    use frender_html::{CsrElement, RenderStateKind};
 
-impl<V, F> AsMutCsrElementWithValue<V> for WithFn<F>
-where
-    V: ?Sized,
-    F: FnMutMapRefToElement<V>,
-{
-    type ElementWithValue<'a> = <F as FnOnceOutputElement<&'a V>>::OutputElement
+    use crate::fn_traits::{FnMut1, FnOnce1};
+
+    use super::{
+        super::{AsMutCsrElementWithValue, SelfAsMutCsrElementWithValue},
+        WithFn,
+    };
+    impl<F> SelfAsMutCsrElementWithValue for WithFn<F> {}
+
+    impl<V, F, K> AsMutCsrElementWithValue<V> for WithFn<F>
     where
-        Self: 'a,
-        V: 'a;
+        V: ?Sized,
+        F: for<'a> FnMut1<&'a V, Output: CsrElement<RenderStateKind = K>>,
+        K: RenderStateKind,
+    {
+        type ElementWithValue<'a> = <F as FnOnce1<&'a V>>::Output_
+        where
+            Self: 'a,
+            V: 'a;
 
-    type ElementWithValueRenderStateKind = F::RefToElementRenderStateKind;
+        type ElementWithValueRenderStateKind = K;
 
-    fn as_mut_csr_element_with_value<'a>(&'a mut self, value: &'a V) -> Self::ElementWithValue<'a> {
-        (self.0)(value)
+        fn as_mut_csr_element_with_value<'a>(
+            &'a mut self,
+            value: &'a V,
+        ) -> Self::ElementWithValue<'a> {
+            (self.0)(value)
+        }
     }
 }
 
-impl<V, F> IntoHtmlChildrenWithValue<V> for WithFn<F>
-where
-    V: ?Sized,
-    F: FnMutMapRefToElement<V>,
-{
-    type HtmlChildrenWithValue = F::RefToElementHtmlChildren;
+mod ssr {
+    use frender_ssr::html::assert::HtmlChildren;
 
-    fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildrenWithValue {
-        use crate::SsrElement as _;
-        (self.0)(value).into_html_children()
+    use crate::{fn_traits::FnMut1, SsrElement};
+
+    use super::{super::IntoHtmlChildrenWithValue, WithFn};
+
+    impl<V, F, HC> IntoHtmlChildrenWithValue<V> for WithFn<F>
+    where
+        V: ?Sized,
+        F: for<'a> FnMut1<&'a V, Output: SsrElement<HtmlChildren = HC>>,
+        HC: HtmlChildren,
+    {
+        type HtmlChildrenWithValue = HC;
+
+        fn into_html_children_with_value(mut self, value: &V) -> Self::HtmlChildrenWithValue {
+            (self.0)(value).into_html_children()
+        }
     }
 }

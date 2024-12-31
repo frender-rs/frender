@@ -3,7 +3,6 @@ use hooks::{ShareValue, ToOwnedShareValue};
 use crate::fn_traits::{FnMut1, FnMut2};
 
 pub mod callback;
-#[cfg(todo)]
 pub mod element;
 pub mod form_control;
 pub mod setter;
@@ -47,7 +46,6 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_set_form_control_value()
     }
 
-    #[cfg(todo)]
     fn into_element(self) -> element::SignalIntoElement<Self, element::WithToElement>
     where
         Self: Sized,
@@ -56,7 +54,6 @@ pub trait ShareValueExt: ShareValue {
         element::SignalIntoElement(self, element::WithToElement)
     }
 
-    #[cfg(todo)]
     fn to_element(
         &self,
     ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithToElement>
@@ -67,7 +64,6 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_element()
     }
 
-    #[cfg(todo)]
     fn into_element_with_fn<F>(self, f: F) -> element::SignalIntoElement<Self, element::WithFn<F>>
     where
         Self: Sized,
@@ -76,7 +72,6 @@ pub trait ShareValueExt: ShareValue {
         element::SignalIntoElement(self, element::WithFn(f))
     }
 
-    #[cfg(todo)]
     fn to_element_with_fn<F>(
         &self,
         f: F,
@@ -88,7 +83,6 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_element_with_fn(f)
     }
 
-    #[cfg(todo)]
     fn into_element_with_memo<F, Dep>(
         self,
         f: F,
@@ -102,7 +96,6 @@ pub trait ShareValueExt: ShareValue {
         element::SignalIntoElement(self, crate::Memo(f, dep))
     }
 
-    #[cfg(todo)]
     fn to_element_with_memo<F, Dep>(
         &self,
         f: F,
