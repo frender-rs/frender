@@ -166,6 +166,22 @@ macro_rules! proxy_csr_element {
             $expr.pinned_render_init(render_context, states)
         }
 
+        fn unpinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            //
+            self,
+            render_context: &mut Ctx,
+        ) -> $crate::__private::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+            let $this = self;
+            $expr.unpinned_render_init(render_context)
+        }
+
+        $crate::proxy_csr_element_render_update!(|$this| $expr);
+    };
+}
+
+#[macro_export]
+macro_rules! proxy_csr_element_render_update {
+    (|$this:pat_param| $expr:expr) => {
         fn pinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
             //
             self,
@@ -174,15 +190,6 @@ macro_rules! proxy_csr_element {
         ) {
             let $this = self;
             $expr.pinned_render_update(render_context, states)
-        }
-
-        fn unpinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-        ) -> $crate::__private::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-            let $this = self;
-            $expr.unpinned_render_init(render_context)
         }
 
         fn unpinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
