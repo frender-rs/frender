@@ -50,7 +50,7 @@ crate::macros::def_intrinsic_component_props!(
         pub mod behavior_type_traits {}
 
         #[event_types]
-        pub mod event_types {}
+        mod event_types {}
 
         #[tag_and_props_markers]
         #[cfg(feature = "components")]

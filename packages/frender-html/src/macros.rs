@@ -1299,8 +1299,7 @@ macro_rules! event_type {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:ident) => {
-        #[allow(non_camel_case_types)]
-        pub enum $fn_name {}
+        pub use super::prop_markers::$trait_name::$fn_name;
 
         impl ::frender_dom::HasEventTypeName for $fn_name {
             const EVENT_TYPE_NAME: &'static str = $event_type_name;
