@@ -8,6 +8,9 @@ use frender_form_control::textarea::TextAreaValue;
 use crate::impl_bounds::{DomTokens, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
+pub mod behavior_type_traits;
+
+#[cfg(not(feature = "macros_not_expanded"))]
 #[cfg(feature = "components")]
 pub mod markers;
 
@@ -47,6 +50,7 @@ crate::macros::def_intrinsic_component_props!(
         mod behaviors_prelude {}
 
         #[behavior_type_traits]
+        #[cfg(feature = "macros_not_expanded")]
         pub mod behavior_type_traits {}
 
         #[event_types]
