@@ -1,4 +1,5 @@
-#![recursion_limit = "2048"]
+#![cfg_attr(feature = "macros_not_expanded", recursion_limit = "2048")]
+
 pub use frender_common::expand;
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
