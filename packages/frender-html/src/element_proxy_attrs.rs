@@ -46,7 +46,7 @@ pub(crate) mod proxy_attr {
 }
 
 mod event_listener {
-    use frender_dom::RegisterOrUpdate;
+    use frender_dom::{RegisterOrUpdate, RegisterUpdate};
 
     use super::ElementProxyAttrs;
 
@@ -64,6 +64,21 @@ mod event_listener {
     {
         fn register_or_update(self: std::pin::Pin<&mut Self>, node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) {
             self.project().inner.register_or_update(&mut node.0, renderer, f)
+        }
+    }
+
+    impl<EL, E: ?Sized, R: ?Sized, F> RegisterUpdate<ElementProxyAttrs<E>, R, F> for EventListener<EL>
+    where
+        EL: RegisterUpdate<E, R, F>,
+    {
+        fn register(node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) -> Self {
+            Self {
+                inner: EL::register(&mut node.0, renderer, f),
+            }
+        }
+
+        fn update(&mut self, node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) {
+            self.inner.update(&mut node.0, renderer, f)
         }
     }
 
@@ -209,11 +224,15 @@ mod form_control {
             self.0.remove_value(renderer)
         }
 
-        type OnValueChangeEventListener<F: frender_form_control::value::HandleFormControlValue<V> + 'static> = E::OnValueChangeEventListener<F>;
+        type OnValueChangeEventListenerUnpinned<F: frender_form_control::value::HandleFormControlValue<V> + 'static> = E::OnValueChangeEventListenerUnpinned<F>;
 
-        fn on_value_change<F: frender_form_control::value::HandleFormControlValue<V> + 'static>(&mut self, renderer: &mut Renderer, state: &mut Self::OnValueChangeEventListener<F>, f: F) {
-            self.0.on_value_change(renderer, state, f)
+        type OnValueChangeElementUnpinned = E::OnValueChangeElementUnpinned;
+
+        fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+            E::on_value_change_element_unpinned(&mut self.0)
         }
+
+        type OnValueChangeFUnpinned<F: frender_form_control::value::HandleFormControlValue<V> + 'static> = E::OnValueChangeFUnpinned<F>;
     }
 }
 

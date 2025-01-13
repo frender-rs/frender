@@ -1,7 +1,7 @@
-use std::{marker::PhantomData, pin::Pin};
+use std::marker::PhantomData;
 
 use frender_common::convert::FromMut;
-use frender_dom::{event_types::EventType, HandleEvent, MaybeHandleEvent};
+use frender_dom::{event_types::EventType, HandleEvent, MaybeHandleEvent, RegisterUpdate};
 
 use crate::{
     update_element::{OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
@@ -15,7 +15,7 @@ enum Never {}
 pub struct Kind<EVT, ET, H>(Never, PhantomData<(EVT, ET, H)>);
 
 impl<EVT: EventType, ET: OnEventType<EVT>, H: HandleEvent<EVT::Event> + 'static> UnpinnedNonReactiveRenderStateKind for Kind<EVT, ET, H> {
-    type UnpinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = UnpinnedEventListenerOf<EVT, ET::OnEvent<R>, R, H>;
+    type UnpinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = Option<UnpinnedEventListenerOf<EVT, ET::OnEvent<R>, R, H>>;
 }
 
 impl<EVT: EventType, ET: OnEventType<EVT>, F: HandleEvent<EVT::Event> + 'static> PinnedNonReactiveRenderStateKind for Kind<EVT, ET, F> {
@@ -86,10 +86,12 @@ impl<
         renderer: &mut R,
         b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
     ) -> <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
-        // TODO: refactor without default
-        let mut state = Default::default();
-        <Self as UnpinnedRenderWithBehavior<BT>>::unpinned_render_update_with_behavior(this, renderer, b, &mut state);
-        state
+        let node = <BT::OnEvent<R>>::from_mut(b);
+        if let Some(f) = this.f.into() {
+            Some(RegisterUpdate::register(node, renderer, f))
+        } else {
+            None
+        }
     }
 
     fn unpinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -99,13 +101,17 @@ impl<
         b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
         state: &mut <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
-        let element = <BT::OnEvent<R>>::from_mut(b);
-        let mut state = Pin::new(state);
+        let node = <BT::OnEvent<R>>::from_mut(b);
 
-        if let Some(this) = this.f.into() {
-            frender_dom::RegisterOrUpdate::register_or_update(state, element, renderer, this)
+        if let Some(f) = this.f.into() {
+            if let Some(state) = state {
+                RegisterUpdate::update(state, node, renderer, f)
+            } else {
+                *state = Some(RegisterUpdate::register(node, renderer, f))
+            }
         } else {
-            state.set(Default::default())
+            // drop the event listener if there was some
+            *state = None
         }
     }
 }

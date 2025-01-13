@@ -1,8 +1,8 @@
 use frender_events::web::JsCastEventType;
 
-use std::{borrow::Cow, marker::PhantomPinned, pin::Pin};
+use std::marker::PhantomPinned;
 
-use frender_csr::event_listener::{EventListenerState, HandleEvent, RegisterOrUpdate};
+use frender_csr::event_listener::{HandleEvent, RegisterOrUpdate};
 
 mod handle_js_cast_event {
     use frender_common::HandleEvent;
@@ -41,14 +41,15 @@ mod handle_js_cast_event {
 pub mod unpinned {
     use std::{borrow::Cow, cell::RefCell, rc::Rc};
 
-    use frender_csr::event_listener::HandleEvent;
+    use frender_csr::event_listener::{HandleEvent, RegisterUpdate};
     use frender_events::web::JsCastEventType;
+
+    use super::handle_js_cast_event::HandleJsCastEvent;
 
     /// An updatable EventListener.
     #[derive(Debug)]
     pub struct EventListener<F: ?Sized> {
         _event_listener: gloo_events::EventListener,
-        // TODO: maybe this can be implemented with self-referential structs without Rc. See https://doc.rust-lang.org/nightly/std/pin/index.html#a-self-referential-struct
         f: Rc<RefCell<F>>,
     }
 
@@ -99,42 +100,29 @@ pub mod unpinned {
     }
 
     #[derive(Debug)]
-    pub struct MaybeEventListener<F: ?Sized>(pub Option<EventListener<F>>);
-
-    impl<F: ?Sized> Default for MaybeEventListener<F> {
-        fn default() -> Self {
-            Self(None)
-        }
+    pub struct EventListenerOfType<F, ET: ?Sized + JsCastEventType> {
+        pub(super) inner: EventListener<super::handle_js_cast_event::HandleJsCastEvent<ET, F>>,
     }
 
-    impl<F: HandleEvent<web_sys::Event> + 'static> MaybeEventListener<F> {
-        pub(super) fn register_or_update<S: Into<Cow<'static, str>>>(
-            &mut self,
-            target: &web_sys::EventTarget,
-            event_type: S,
-            f: F,
-        ) {
-            if let Some(this) = &self.0 {
-                // TODO: what if the event target is not the same
-                this.update(f)
-            } else {
-                self.0 = Some(EventListener::new(target, event_type, f))
-            }
-        }
-    }
-
-    #[derive(Debug)]
-    pub struct MaybeEventListenerOfType<F, ET: ?Sized + JsCastEventType> {
-        pub(super) inner: MaybeEventListener<super::handle_js_cast_event::HandleJsCastEvent<ET, F>>,
-    }
-
-    impl<F, ET: ?Sized + JsCastEventType> Unpin for MaybeEventListenerOfType<F, ET> {}
-
-    impl<F, ET: ?Sized + JsCastEventType> Default for MaybeEventListenerOfType<F, ET> {
-        fn default() -> Self {
+    impl<
+            N: AsRef<web_sys::EventTarget>,
+            R: ?Sized,
+            F: HandleEvent<ET::Event> + 'static,
+            ET: ?Sized + JsCastEventType + 'static,
+        > RegisterUpdate<super::super::Node<N>, R, F> for EventListenerOfType<F, ET>
+    {
+        fn register(node: &mut super::super::Node<N>, _: &mut R, f: F) -> Self {
+            let target: &web_sys::EventTarget = node.0.as_ref();
+            let f = HandleJsCastEvent::new(f);
             Self {
-                inner: Default::default(),
+                inner: EventListener::new(target, ET::EVENT_TYPE_NAME, f),
             }
+        }
+
+        fn update(&mut self, _: &mut super::super::Node<N>, _: &mut R, f: F) {
+            let f = HandleJsCastEvent::new(f);
+            // TODO: what if the event target is not the same
+            self.inner.update(f)
         }
     }
 }
@@ -147,7 +135,7 @@ pin_project_lite::pin_project!(
         #[pin]
         _pin: PhantomPinned,
         // TODO: maybe this can be implemented with self-referential structs without Rc. See https://doc.rust-lang.org/nightly/std/pin/index.html#a-self-referential-struct
-        inner: unpinned::MaybeEventListener<F>,
+        inner: Option<unpinned::EventListener<F>>,
     }
 );
 
@@ -157,19 +145,6 @@ impl<F: ?Sized> Default for MaybeEventListener<F> {
             _pin: PhantomPinned,
             inner: Default::default(),
         }
-    }
-}
-
-impl<F: HandleEvent<web_sys::Event> + 'static> MaybeEventListener<F> {
-    fn register_or_update<S: Into<Cow<'static, str>>>(
-        self: Pin<&mut Self>,
-        target: &web_sys::EventTarget,
-        event_type: S,
-        f: F,
-    ) {
-        self.project()
-            .inner
-            .register_or_update(target, event_type, f)
     }
 }
 
@@ -194,38 +169,6 @@ impl<
         R: ?Sized,
         F: HandleEvent<ET::Event> + 'static,
         ET: ?Sized + JsCastEventType + 'static,
-    > EventListenerState<super::Node<N>, R, F> for MaybeEventListenerOfType<F, ET>
-{
-    type EventListenerStateUnpinned = unpinned::MaybeEventListenerOfType<F, ET>;
-}
-
-impl<
-        N: AsRef<web_sys::EventTarget>,
-        R: ?Sized,
-        F: HandleEvent<ET::Event> + 'static,
-        ET: ?Sized + JsCastEventType + 'static,
-    > RegisterOrUpdate<super::Node<N>, R, F> for unpinned::MaybeEventListenerOfType<F, ET>
-{
-    fn register_or_update(
-        self: std::pin::Pin<&mut Self>,
-        element: &mut super::Node<N>,
-        _: &mut R,
-        f: F,
-    ) {
-        let target: &web_sys::EventTarget = element.0.as_ref();
-        self.get_mut().inner.register_or_update(
-            target,
-            ET::EVENT_TYPE_NAME,
-            handle_js_cast_event::HandleJsCastEvent::new(f),
-        )
-    }
-}
-
-impl<
-        N: AsRef<web_sys::EventTarget>,
-        R: ?Sized,
-        F: HandleEvent<ET::Event> + 'static,
-        ET: ?Sized + JsCastEventType + 'static,
     > RegisterOrUpdate<super::Node<N>, R, F> for MaybeEventListenerOfType<F, ET>
 {
     fn register_or_update(
@@ -234,12 +177,17 @@ impl<
         _: &mut R,
         f: F,
     ) {
-        let target: &web_sys::EventTarget = element.0.as_ref();
-        MaybeEventListener::register_or_update(
-            self.project().inner,
-            target,
-            ET::EVENT_TYPE_NAME,
-            handle_js_cast_event::HandleJsCastEvent::new(f),
-        )
+        {
+            let this = self.project().inner.project().inner;
+            let f = handle_js_cast_event::HandleJsCastEvent::new(f);
+
+            if let Some(this) = this {
+                this.update(f)
+            } else {
+                let target: &web_sys::EventTarget = element.0.as_ref();
+
+                *this = Some(unpinned::EventListener::new(target, ET::EVENT_TYPE_NAME, f))
+            }
+        }
     }
 }

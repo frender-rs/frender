@@ -2,15 +2,19 @@ use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_common::{IntoStaticStr, PrimarilyBorrow, ToStaticStr};
 use frender_csr::StateUnmount;
-use frender_html::form_control::{
-    element::FormControlElement,
-    input::{InputValue, InputValueKind},
-    value::{
-        FormControlValue, FormControlValueKind, FormControlValueStateKind, FromFormControlValue,
-        HandleFormControlValue, MaybeProvideFormControlValue, ProvideFormControlValue,
+use frender_html::{
+    dom::RegisterUpdate,
+    form_control::{
+        element::FormControlElement,
+        input::{InputValue, InputValueKind},
+        value::{
+            FormControlValue, FormControlValueKind, FormControlValueStateKind,
+            FromFormControlValue, HandleFormControlValue, MaybeProvideFormControlValue,
+            ProvideFormControlValue,
+        },
     },
 };
-use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal, SignalHook};
+use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal};
 
 mod textarea;
 
@@ -182,7 +186,7 @@ where
     Val: FromFormControlValue<VK> + Borrow<VK>,
 {
     type UnpinnedNonReactiveState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
-        E::OnValueChangeEventListener<SignalIntoControlledValue<S>>;
+        E::OnValueChangeEventListenerUnpinned<SignalIntoControlledValue<S>>;
 
     type UnpinnedReactiveState = OptionSignalHook<S::SignalHook>;
 
@@ -264,15 +268,15 @@ where
             element.set_value(renderer, value);
         });
 
-        let mut res = (
-            Default::default(),
-            OptionSignalHook::new(this.0.to_signal_hook()),
-        );
-
-        let event_listener = &mut res.0;
-        element.on_value_change(renderer, event_listener, this);
-
-        res
+        let signal_hook = this.0.to_signal_hook();
+        (
+            RegisterUpdate::register(
+                element.on_value_change_element_unpinned(),
+                renderer,
+                From::from(this),
+            ),
+            OptionSignalHook::new(signal_hook),
+        )
     }
 
     fn render_update<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
@@ -295,6 +299,11 @@ where
         });
 
         reactive_state.inner = Some(this.0.to_signal_hook());
-        element.on_value_change(renderer, event_listener, this);
+
+        event_listener.update(
+            E::on_value_change_element_unpinned(element),
+            renderer,
+            From::from(this),
+        );
     }
 }

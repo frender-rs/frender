@@ -4,7 +4,7 @@ use frender_events::{
 
 use frender_dom::{
     csr::{self, web::event_listener::unpinned},
-    RegisterOrUpdate,
+    RegisterOrUpdate, RegisterUpdate,
 };
 
 use super::{
@@ -72,22 +72,17 @@ impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<str, Renderer>
         self.set_value(renderer, "");
     }
 
-    type OnValueChangeEventListener<F: HandleFormControlValue<str> + 'static> =
-        unpinned::MaybeEventListenerOfType<HandleFormControlValueChange<str, F>, Input>;
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<str> + 'static> =
+        unpinned::EventListenerOfType<HandleFormControlValueChange<str, F>, Input>;
 
-    fn on_value_change<F: HandleFormControlValue<str> + 'static>(
-        &mut self,
-        renderer: &mut Renderer,
-        state: &mut Self::OnValueChangeEventListener<F>,
-        f: F,
-    ) {
-        RegisterOrUpdate::register_or_update(
-            std::pin::Pin::new(state),
-            self,
-            renderer,
-            HandleFormControlValueChange::new(f),
-        )
+    type OnValueChangeElementUnpinned = Self;
+
+    fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+        self
     }
+
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<str> + 'static> =
+        HandleFormControlValueChange<str, F>;
 }
 
 impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<str, Renderer>
@@ -109,22 +104,17 @@ impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<str, Renderer>
         self.set_value(renderer, "");
     }
 
-    type OnValueChangeEventListener<F: HandleFormControlValue<str> + 'static> =
-        unpinned::MaybeEventListenerOfType<HandleFormControlValueChange<str, F>, Input>;
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<str> + 'static> =
+        unpinned::EventListenerOfType<HandleFormControlValueChange<str, F>, Input>;
 
-    fn on_value_change<F: HandleFormControlValue<str> + 'static>(
-        &mut self,
-        renderer: &mut Renderer,
-        state: &mut Self::OnValueChangeEventListener<F>,
-        f: F,
-    ) {
-        RegisterOrUpdate::register_or_update(
-            std::pin::Pin::new(state),
-            self,
-            renderer,
-            HandleFormControlValueChange::new(f),
-        )
+    type OnValueChangeElementUnpinned = Self;
+
+    fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+        self
     }
+
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<str> + 'static> =
+        HandleFormControlValueChange<str, F>;
 }
 
 impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<bool, Renderer>
@@ -146,22 +136,17 @@ impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<bool, Renderer>
         self.set_value(renderer, &false);
     }
 
-    type OnValueChangeEventListener<F: HandleFormControlValue<bool> + 'static> =
-        unpinned::MaybeEventListenerOfType<HandleFormControlValueChange<bool, F>, Change>;
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<bool> + 'static> =
+        unpinned::EventListenerOfType<HandleFormControlValueChange<bool, F>, Change>;
 
-    fn on_value_change<F: HandleFormControlValue<bool> + 'static>(
-        &mut self,
-        renderer: &mut Renderer,
-        state: &mut Self::OnValueChangeEventListener<F>,
-        f: F,
-    ) {
-        RegisterOrUpdate::register_or_update(
-            std::pin::Pin::new(state),
-            self,
-            renderer,
-            HandleFormControlValueChange::new(f),
-        )
+    type OnValueChangeElementUnpinned = Self;
+
+    fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+        self
     }
+
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<bool> + 'static> =
+        HandleFormControlValueChange<bool, F>;
 }
 
 impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<f64, Renderer>
@@ -183,20 +168,15 @@ impl<Renderer: ?Sized + csr::web::Renderer> FormControlElement<f64, Renderer>
         self.set_value(renderer, &f64::NAN);
     }
 
-    type OnValueChangeEventListener<F: HandleFormControlValue<f64> + 'static> =
-        unpinned::MaybeEventListenerOfType<HandleFormControlValueChange<f64, F>, Input>;
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<f64> + 'static> =
+        unpinned::EventListenerOfType<HandleFormControlValueChange<f64, F>, Input>;
 
-    fn on_value_change<F: HandleFormControlValue<f64> + 'static>(
-        &mut self,
-        renderer: &mut Renderer,
-        state: &mut Self::OnValueChangeEventListener<F>,
-        f: F,
-    ) {
-        RegisterOrUpdate::register_or_update(
-            std::pin::Pin::new(state),
-            self,
-            renderer,
-            HandleFormControlValueChange::new(f),
-        )
+    type OnValueChangeElementUnpinned = Self;
+
+    fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+        self
     }
+
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<f64> + 'static> =
+        HandleFormControlValueChange<f64, F>;
 }

@@ -279,5 +279,5 @@ impl<
         event_listener::MaybeEventListenerOfType<F, ET>;
 
     type EventListenerUnpinned<F: frender_common::HandleEvent<ET::Event> + 'static> =
-        event_listener::unpinned::MaybeEventListenerOfType<F, ET>;
+        event_listener::unpinned::EventListenerOfType<F, ET>;
 }

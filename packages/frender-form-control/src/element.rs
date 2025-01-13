@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use frender_events::event::Event;
 
-use frender_dom::{behaviors, HandleEvent};
+use frender_dom::{behaviors, HandleEvent, RegisterUpdate};
 
 use super::value::{FormControlValueKind, HandleFormControlValue};
 
@@ -14,15 +14,17 @@ pub trait FormControlElement<V: ?Sized + FormControlValueKind, Renderer: ?Sized>
 
     fn remove_value(&mut self, renderer: &mut Renderer);
 
-    type OnValueChangeEventListener<F: HandleFormControlValue<V> + 'static>: Default;
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<V> + 'static>: RegisterUpdate<
+        Self::OnValueChangeElementUnpinned,
+        Renderer,
+        Self::OnValueChangeFUnpinned<F>,
+    >;
 
-    // TODO: split into init and update
-    fn on_value_change<F: HandleFormControlValue<V> + 'static>(
-        &mut self,
-        renderer: &mut Renderer,
-        state: &mut Self::OnValueChangeEventListener<F>,
-        f: F,
-    );
+    type OnValueChangeElementUnpinned;
+
+    fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned;
+
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<V> + 'static>: From<F>;
 }
 
 #[derive(Debug)]
@@ -32,6 +34,14 @@ pub struct HandleFormControlValueChange<
 > {
     f: F,
     _value_kind: PhantomData<VK>,
+}
+
+impl<VK: ?Sized + FormControlValueKind, F: HandleFormControlValue<VK>> From<F>
+    for HandleFormControlValueChange<VK, F>
+{
+    fn from(value: F) -> Self {
+        Self::new(value)
+    }
 }
 
 impl<VK: ?Sized + FormControlValueKind, F: HandleFormControlValue<VK>>

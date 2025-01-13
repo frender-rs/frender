@@ -1,5 +1,5 @@
 use frender_common::HandleEvent;
-use frender_csr::event_listener::RegisterOrUpdate;
+use frender_csr::event_listener::{RegisterOrUpdate, RegisterUpdate};
 
 use crate::event_types::EventType;
 
@@ -8,8 +8,6 @@ pub trait OnEvent<Renderer: ?Sized, ET: EventType> {
         + 'static
         + RegisterOrUpdate<Self, Renderer, F>;
 
-    type EventListenerUnpinned<F: HandleEvent<ET::Event> + 'static>: Default
-        + Unpin
-        + 'static
-        + RegisterOrUpdate<Self, Renderer, F>;
+    type EventListenerUnpinned<F: HandleEvent<ET::Event> + 'static>: 'static
+        + RegisterUpdate<Self, Renderer, F>;
 }

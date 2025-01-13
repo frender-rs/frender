@@ -1,7 +1,7 @@
 pub use event_listener::OnEvent;
 pub use frender_common::Empty;
 pub use frender_csr::{
-    event_listener::{EventListenerState, HandleEvent, MaybeHandleEvent, RegisterOrUpdate},
+    event_listener::{HandleEvent, MaybeHandleEvent, RegisterOrUpdate, RegisterUpdate},
     render_state, RenderState, StateUnmount,
 };
 pub use frender_events::{event, event_types, HasEventTypeName};
