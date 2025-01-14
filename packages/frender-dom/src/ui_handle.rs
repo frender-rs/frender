@@ -180,3 +180,49 @@ impl<Renderer: ?Sized, UH: UiHandle<Renderer>, const N: usize> UiHandle<Renderer
 }
 
 // endregion
+// region: option
+impl<T: UnmountedUiHandle<Renderer>, Renderer: ?Sized> UnmountedUiHandle<Renderer> for Option<T> {
+    type Mounted = Option<T::Mounted>;
+
+    fn mount(self, render_context: &mut Renderer::RenderContext<'_>) -> Self::Mounted
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        self.map(|this| this.mount(render_context))
+    }
+}
+impl<T: UiHandle<Renderer>, Renderer: ?Sized> UiHandle<Renderer> for Option<T> {
+    type Unmounted = Option<T::Unmounted>;
+
+    fn unmount(self, renderer: &mut Renderer) -> Self::Unmounted {
+        self.map(|this| this.unmount(renderer))
+    }
+
+    fn reposition(&mut self, render_context: &mut <Renderer>::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        if let Some(this) = self {
+            this.reposition(render_context);
+        }
+    }
+
+    fn check_and_move_cursor(&self, render_context: &mut <Renderer>::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        if let Some(this) = self {
+            this.check_and_move_cursor(render_context);
+        }
+    }
+
+    fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
+    where
+        Renderer: crate::render::RenderWithContext,
+    {
+        if let Some(this) = self {
+            this.assert_cursor_is_at_self(render_context);
+        }
+    }
+}
+// endregion
