@@ -683,23 +683,29 @@ pub mod ssr {
 }
 
 pub mod csr {
-    use crate::csr::CsrStyle;
+    use std::marker::PhantomData;
+
+    use crate::csr::{CsrStyle, CsrStyleStateUnmount};
 
     use super::{ConstDeclarationList, HasConstDeclarationList};
 
+    pub struct State<T: ?Sized + HasConstDeclarationList>(PhantomData<T>);
+
+    impl<T: ?Sized + HasConstDeclarationList> CsrStyleStateUnmount for State<T> {
+        fn csr_style_state_unmount(_: &mut Self, style: &mut impl crate::csr::CssStyleDeclaration) {
+            T::DECLARATION_LIST
+                .into_iter()
+                .for_each(|d| style.remove_property(d.name.as_ref_str()));
+        }
+    }
+
     impl<T: ?Sized + HasConstDeclarationList> CsrStyle for ConstDeclarationList<T> {
-        type UpdateWithState = bool; // whether updated
+        type State = State<T>;
 
-        fn update_with_state(
+        fn csr_style_render_init(
             _: Self,
-            state: &mut Self::UpdateWithState,
             style: &mut impl crate::csr::CssStyleDeclaration,
-        ) {
-            if *state {
-                return;
-            }
-            *state = true;
-
+        ) -> Self::State {
             T::DECLARATION_LIST.into_iter().for_each(|d| {
                 let name = d.name;
                 let value = d.value;
@@ -709,20 +715,16 @@ pub mod csr {
                     value.as_ref_str(),
                     d.important,
                 );
-            })
+            });
+            State(PhantomData)
         }
 
-        fn remove_with_state(
-            state: &mut Self::UpdateWithState,
-            style: &mut impl crate::csr::CssStyleDeclaration,
+        fn csr_style_render_update(
+            _: Self,
+            _: &mut impl crate::csr::CssStyleDeclaration,
+            _: &mut Self::State,
         ) {
-            if !*state {
-                return;
-            }
-            *state = false;
-            T::DECLARATION_LIST
-                .into_iter()
-                .for_each(|d| style.remove_property(d.name.as_ref_str()));
+            return;
         }
     }
 }

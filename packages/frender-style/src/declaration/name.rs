@@ -83,7 +83,7 @@ pub mod ssr {
 pub mod csr {
     use frender_common::{strings::CsrStr, IntoStaticStrCache, ToAsRefStr};
 
-    use crate::csr::CssStyleDeclaration;
+    use crate::csr::{CsrStyleStateUnmount, CssStyleDeclaration};
 
     use super::DeclarationName;
 
@@ -94,41 +94,83 @@ pub mod csr {
 
     pub trait CsrDeclarationName {
         type Cacheable: IntoStaticStrCache<StaticStrCache = Self::StaticCache>;
-        type StaticCache: 'static;
+
+        /// The [`CsrStyleStateUnmount`] allows to remove this style by name.
+        type StaticCache: 'static + CsrStyleStateUnmount;
 
         fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool;
 
         fn into_cacheable(this: Self) -> Self::Cacheable;
 
         fn update_style(this: &Self::StaticCache, style: impl UpdateStyleWithDeclarationName);
+    }
 
-        fn remove_style(this: &Self::StaticCache, style: &mut impl CssStyleDeclaration);
+    pub struct DeclarationNameStrCacheable<S>(pub S);
+
+    pub struct DeclarationNameStrStaticCache<S>(pub S);
+
+    impl<S: IntoStaticStrCache> IntoStaticStrCache for DeclarationNameStrCacheable<S> {
+        type StaticStrCache = DeclarationNameStrStaticCache<S::StaticStrCache>;
+
+        fn into_static_str_cache(self) -> Self::StaticStrCache {
+            DeclarationNameStrStaticCache(self.0.into_static_str_cache())
+        }
+
+        fn update_into_static_str_cache(self, cache: &mut Self::StaticStrCache) {
+            self.0.update_into_static_str_cache(&mut cache.0)
+        }
+    }
+
+    impl<S: PartialEq<T>, T> PartialEq<DeclarationNameStrCacheable<T>>
+        for DeclarationNameStrStaticCache<S>
+    {
+        fn eq(&self, other: &DeclarationNameStrCacheable<T>) -> bool {
+            self.0 == other.0
+        }
+    }
+
+    impl<S: ToAsRefStr> ToAsRefStr for DeclarationNameStrStaticCache<S> {
+        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        where
+            Self: 'a;
+
+        fn to_as_ref_str(&self) -> Self::ToAsRefStr<'_> {
+            self.0.to_as_ref_str()
+        }
+    }
+
+    /// This relies on StrToAsRefStr::to_as_ref_str and StrToStaticCache::IntoToStaticCache would AsRef the same string
+    impl<S: ToAsRefStr> CsrStyleStateUnmount for DeclarationNameStrStaticCache<S> {
+        fn csr_style_state_unmount(this: &mut Self, style: &mut impl CssStyleDeclaration) {
+            style.remove_property_str(this.0.to_as_ref_str().as_ref())
+        }
     }
 
     impl<S: CsrStr> CsrDeclarationName for S {
-        type Cacheable = S::IntoIntoStaticStrCache;
-        type StaticCache = S::StaticStrCache;
+        type Cacheable = DeclarationNameStrCacheable<S::IntoIntoStaticStrCache>;
+        type StaticCache = DeclarationNameStrStaticCache<S::StaticStrCache>;
 
         fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool {
-            cache == this
+            cache.0 == *this
         }
 
         fn into_cacheable(this: Self) -> Self::Cacheable {
-            this.into_into_static_str_cache()
+            DeclarationNameStrCacheable(this.into_into_static_str_cache())
         }
 
         fn update_style(this: &Self::StaticCache, style: impl UpdateStyleWithDeclarationName) {
             style.update_style_with_declaration_name_str(this.to_as_ref_str().as_ref())
         }
-
-        /// This relies on StrToAsRefStr::to_as_ref_str and StrToStaticCache::IntoToStaticCache would AsRef the same string
-        fn remove_style(this: &Self::StaticCache, style: &mut impl CssStyleDeclaration) {
-            style.remove_property_str(this.to_as_ref_str().as_ref())
-        }
     }
 
     pub struct CacheableDeclarationName<S>(S);
     pub struct CacheableDeclarationNameIntoStaticStrCache<S>(S);
+
+    impl<S: ToAsRefStr> CsrStyleStateUnmount for CacheableDeclarationNameIntoStaticStrCache<S> {
+        fn csr_style_state_unmount(this: &mut Self, style: &mut impl CssStyleDeclaration) {
+            style.remove_property(DeclarationName(this.0.to_as_ref_str().as_ref()))
+        }
+    }
 
     impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationName<S> {
         type ToAsRefStr<'a> = S::ToAsRefStr<'a>
@@ -191,10 +233,6 @@ pub mod csr {
             style.update_style_with_declaration_name(DeclarationName(
                 this.0.to_as_ref_str().as_ref(),
             ))
-        }
-
-        fn remove_style(this: &Self::StaticCache, style: &mut impl CssStyleDeclaration) {
-            style.remove_property(DeclarationName(this.0.to_as_ref_str().as_ref()))
         }
     }
 }

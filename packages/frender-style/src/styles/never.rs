@@ -37,25 +37,40 @@ mod ssr {
 }
 
 mod csr {
-    use crate::csr::CsrStyle;
+    use crate::csr::{CsrStyle, CsrStyleStateUnmount};
 
     use super::Never;
 
-    impl CsrStyle for Never {
-        type UpdateWithState = ();
+    impl CsrStyleStateUnmount for Never {
+        fn csr_style_state_unmount(state: &mut Self, _: &mut impl crate::csr::CssStyleDeclaration) {
+            match *state {}
+        }
+    }
 
-        fn update_with_state(
+    impl CsrStyle for Never {
+        type State = Never;
+
+        fn csr_style_render_init(
             this: Self,
-            _: &mut Self::UpdateWithState,
             _: &mut impl crate::csr::CssStyleDeclaration,
+        ) -> Self::State {
+            match this {}
+        }
+
+        fn csr_style_render_init_with_old_state(
+            this: Self,
+            _: &mut impl crate::csr::CssStyleDeclaration,
+            _: &mut Self::State,
         ) {
             match this {}
         }
 
-        fn remove_with_state(
-            _: &mut Self::UpdateWithState,
+        fn csr_style_render_update(
+            this: Self,
             _: &mut impl crate::csr::CssStyleDeclaration,
+            _: &mut Self::State,
         ) {
+            match this {}
         }
     }
 }

@@ -52,7 +52,7 @@ impl<PM, S> UnpinnedNonReactiveRenderStateKind for Kind<PM, S> {
 }
 
 impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBehavior<BT> for Property<PM, V> {
-    type UnpinnedRenderStateKind = Kind<PM, V::UpdateWithState>;
+    type UnpinnedRenderStateKind = Kind<PM, V::State>;
 
     fn unpinned_render_init_with_behavior<R: ?Sized + crate::RenderHtml>(
         //
@@ -60,9 +60,7 @@ impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBe
         renderer: &mut R,
         b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
     ) -> <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
-        let mut state = Default::default();
-        V::update_with_state(value, &mut state, &mut PM::style_dom_api(b, renderer));
-        state
+        V::csr_style_render_init(value, &mut PM::style_dom_api(b, renderer))
     }
 
     fn unpinned_render_update_with_behavior<R: ?Sized + crate::RenderHtml>(
@@ -72,7 +70,7 @@ impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBe
         b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
         state: &mut <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
-        V::update_with_state(value, state, &mut PM::style_dom_api(b, renderer));
+        V::csr_style_render_update(value, &mut PM::style_dom_api(b, renderer), state)
     }
 }
 

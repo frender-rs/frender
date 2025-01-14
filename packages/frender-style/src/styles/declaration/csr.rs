@@ -1,7 +1,7 @@
 use frender_common::IntoStaticStrCache;
 
 use crate::{
-    csr::{CsrStyle, CssStyleDeclaration, Priority},
+    csr::{CsrStyle, CsrStyleStateUnmount, CssStyleDeclaration, Priority},
     declaration::{
         important::{
             csr::{CsrDeclarationImportant, UpdateStyleWithDeclarationImportant},
@@ -17,22 +17,50 @@ pub struct State<N, V, I> {
     name: N,
     value: V,
     important: I,
-    removed: bool,
+}
+
+impl<N: CsrStyleStateUnmount, V, I> CsrStyleStateUnmount for State<N, V, I> {
+    fn csr_style_state_unmount(state: &mut Self, style: &mut impl CssStyleDeclaration) {
+        N::csr_style_state_unmount(&mut state.name, style);
+    }
 }
 
 impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
-    type UpdateWithState = Option<
-        State<
-            <D::Name as CsrDeclarationName>::StaticCache,
-            <D::Value as CsrDeclarationValue>::StaticCache,
-            <D::Important as CsrDeclarationImportant>::StaticCache,
-        >,
+    type State = State<
+        <D::Name as CsrDeclarationName>::StaticCache,
+        <D::Value as CsrDeclarationValue>::StaticCache,
+        <D::Important as CsrDeclarationImportant>::StaticCache,
     >;
 
-    fn update_with_state(
+    fn csr_style_render_init(this: Self, style: &mut impl CssStyleDeclaration) -> Self::State {
+        let Declaration {
+            name,
+            value,
+            important,
+        } = this.0.into_declaration();
+
+        let name = <D::Name>::into_cacheable(name).into_static_str_cache();
+        let value = <D::Value>::into_cacheable(value).into_static_str_cache();
+
+        StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
+            style,
+            name: &name,
+            value: &value,
+            important: &important,
+        }
+        .update();
+
+        State {
+            name,
+            value,
+            important: important.into_static_cache(),
+        }
+    }
+
+    fn csr_style_render_init_with_old_state(
         this: Self,
-        state: &mut Self::UpdateWithState,
         style: &mut impl CssStyleDeclaration,
+        old_state: &mut Self::State,
     ) {
         let Declaration {
             name,
@@ -40,26 +68,37 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
             important,
         } = this.0.into_declaration();
 
-        if let Some(cache) = state {
-            if !cache.removed && <D::Name>::match_cache(&name, &cache.name) {
-                if <D::Value>::match_cache(&value, &cache.value) {
-                    if important.match_cache(&cache.important) {
-                        // all cache matched
-                        // doesn't nothing
-                    } else {
-                        StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-                            style,
-                            name: &cache.name,
-                            value: &cache.value,
-                            important: &important,
-                        }
-                        .update();
-                        important.update_into_cache(&mut cache.important);
-                    }
-                } else {
-                    <D::Value>::into_cacheable(value)
-                        .update_into_static_str_cache(&mut cache.value);
+        <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut old_state.name);
+        <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut old_state.value);
 
+        StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
+            style,
+            name: &old_state.name,
+            value: &old_state.value,
+            important: &important,
+        }
+        .update();
+
+        important.update_into_cache(&mut old_state.important);
+    }
+
+    fn csr_style_render_update(
+        this: Self,
+        style: &mut impl CssStyleDeclaration,
+        cache: &mut Self::State,
+    ) {
+        let Declaration {
+            name,
+            value,
+            important,
+        } = this.0.into_declaration();
+
+        if <D::Name>::match_cache(&name, &cache.name) {
+            if <D::Value>::match_cache(&value, &cache.value) {
+                if important.match_cache(&cache.important) {
+                    // all cache matched
+                    // doesn't nothing
+                } else {
                     StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
                         style,
                         name: &cache.name,
@@ -70,48 +109,31 @@ impl<D: IntoDeclaration> CsrStyle for IntoDeclarationAsStyle<D> {
                     important.update_into_cache(&mut cache.important);
                 }
             } else {
-                <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut cache.name);
                 <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut cache.value);
 
-                <D::Name>::update_style(
-                    &cache.name,
-                    StyleWithValueAndImportantReady::<_, D::Value, D::Important> {
-                        style,
-                        value: &cache.value,
-                        important: &important,
-                    },
-                );
-
-                cache.removed = false;
+                StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
+                    style,
+                    name: &cache.name,
+                    value: &cache.value,
+                    important: &important,
+                }
+                .update();
                 important.update_into_cache(&mut cache.important);
             }
         } else {
-            let name = <D::Name>::into_cacheable(name).into_static_str_cache();
-            let value = <D::Value>::into_cacheable(value).into_static_str_cache();
+            <D::Name>::into_cacheable(name).update_into_static_str_cache(&mut cache.name);
+            <D::Value>::into_cacheable(value).update_into_static_str_cache(&mut cache.value);
 
-            StyleWithAllReady::<_, D::Name, D::Value, D::Important> {
-                style,
-                name: &name,
-                value: &value,
-                important: &important,
-            }
-            .update();
+            <D::Name>::update_style(
+                &cache.name,
+                StyleWithValueAndImportantReady::<_, D::Value, D::Important> {
+                    style,
+                    value: &cache.value,
+                    important: &important,
+                },
+            );
 
-            *state = Some(State {
-                name,
-                value,
-                important: important.into_static_cache(),
-                removed: false,
-            })
-        }
-    }
-
-    fn remove_with_state(state: &mut Self::UpdateWithState, style: &mut impl CssStyleDeclaration) {
-        if let Some(state) = state {
-            if !state.removed {
-                <D::Name>::remove_style(&state.name, style);
-                state.removed = true;
-            }
+            important.update_into_cache(&mut cache.important);
         }
     }
 }

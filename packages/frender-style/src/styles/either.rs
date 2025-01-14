@@ -33,53 +33,90 @@ pub mod ssr {
 }
 
 mod csr {
-    use frender_common::either::EitherState;
-
-    use crate::csr::CsrStyle;
+    use crate::csr::{CsrStyle, CsrStyleStateUnmount};
 
     use super::EitherStyle;
 
-    impl<L: CsrStyle, R: CsrStyle> CsrStyle for EitherStyle<L, R> {
-        type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
+    pub enum State<A, B> {
+        A(A),
+        B(B),
+    }
 
-        fn update_with_state(
-            this: Self,
-            state: &mut Self::UpdateWithState,
-            style: &mut impl crate::csr::CssStyleDeclaration,
-        ) {
-            match this {
-                EitherStyle::A(this) => {
-                    let state = match state {
-                        EitherState::Left { inner: state } => state,
-                        EitherState::Right { inner: old_state } => {
-                            R::remove_with_state(old_state, style);
-                            state.get_left_or_insert_default()
-                        }
-                    };
-
-                    L::update_with_state(this, state, style)
-                }
-                EitherStyle::B(this) => {
-                    let state = match state {
-                        EitherState::Right { inner: state } => state,
-                        EitherState::Left { inner: old_state } => {
-                            L::remove_with_state(old_state, style);
-                            state.get_right_or_insert_default()
-                        }
-                    };
-
-                    R::update_with_state(this, state, style)
-                }
-            }
-        }
-
-        fn remove_with_state(
-            state: &mut Self::UpdateWithState,
+    impl<A: CsrStyleStateUnmount, B: CsrStyleStateUnmount> CsrStyleStateUnmount for State<A, B> {
+        fn csr_style_state_unmount(
+            state: &mut Self,
             style: &mut impl crate::csr::CssStyleDeclaration,
         ) {
             match state {
-                EitherState::Left { inner: state } => L::remove_with_state(state, style),
-                EitherState::Right { inner: state } => R::remove_with_state(state, style),
+                State::A(state) => A::csr_style_state_unmount(state, style),
+                State::B(state) => B::csr_style_state_unmount(state, style),
+            }
+        }
+    }
+
+    impl<L: CsrStyle, R: CsrStyle> CsrStyle for EitherStyle<L, R> {
+        type State = State<L::State, R::State>;
+
+        fn csr_style_render_init(
+            this: Self,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+        ) -> Self::State {
+            match this {
+                EitherStyle::A(this) => State::A(L::csr_style_render_init(this, style)),
+                EitherStyle::B(this) => State::B(R::csr_style_render_init(this, style)),
+            }
+        }
+
+        fn csr_style_render_init_with_old_state(
+            this: Self,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+            old_state: &mut Self::State,
+        ) {
+            match this {
+                EitherStyle::A(this) => match old_state {
+                    State::A(old_state) => {
+                        L::csr_style_render_init_with_old_state(this, style, old_state)
+                    }
+                    State::B(_) => {
+                        // already unmounted
+                        *old_state = State::A(L::csr_style_render_init(this, style))
+                    }
+                },
+                EitherStyle::B(this) => match old_state {
+                    State::B(old_state) => {
+                        R::csr_style_render_init_with_old_state(this, style, old_state)
+                    }
+                    State::A(_) => {
+                        // already unmounted
+                        *old_state = State::B(R::csr_style_render_init(this, style))
+                    }
+                },
+            }
+        }
+
+        fn csr_style_render_update(
+            this: Self,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+            state: &mut Self::State,
+        ) {
+            match this {
+                EitherStyle::A(this) => match state {
+                    State::A(state) => L::csr_style_render_update(this, style, state),
+                    State::B(old_state) => {
+                        <R::State>::csr_style_state_unmount(old_state, style);
+
+                        *state = State::A(L::csr_style_render_init(this, style))
+                    }
+                },
+                EitherStyle::B(this) => {
+                    match state {
+                        State::B(state) => R::csr_style_render_update(this, style, state),
+                        State::A(old_state) => {
+                            <L::State>::csr_style_state_unmount(old_state, style);
+                            *state = State::B(R::csr_style_render_init(this, style))
+                        }
+                    };
+                }
             }
         }
     }

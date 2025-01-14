@@ -19,28 +19,49 @@ mod ssr {
 }
 
 mod csr {
-    use crate::csr::CsrStyle;
+    use crate::csr::{CsrStyle, CsrStyleStateUnmount};
 
     use super::Chain;
 
-    impl<A: CsrStyle, B: CsrStyle> CsrStyle for Chain<A, B> {
-        type UpdateWithState = (A::UpdateWithState, B::UpdateWithState);
-
-        fn update_with_state(
-            Self(a, b): Self,
-            (state_a, state_b): &mut Self::UpdateWithState,
+    impl<A: CsrStyleStateUnmount, B: CsrStyleStateUnmount> CsrStyleStateUnmount for (A, B) {
+        fn csr_style_state_unmount(
+            (state_a, state_b): &mut Self,
             style: &mut impl crate::csr::CssStyleDeclaration,
         ) {
-            A::update_with_state(a, state_a, style);
-            B::update_with_state(b, state_b, style);
+            A::csr_style_state_unmount(state_a, style);
+            B::csr_style_state_unmount(state_b, style);
+        }
+    }
+
+    impl<A: CsrStyle, B: CsrStyle> CsrStyle for Chain<A, B> {
+        type State = (A::State, B::State);
+
+        fn csr_style_render_init(
+            Self(a, b): Self,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+        ) -> Self::State {
+            (
+                A::csr_style_render_init(a, style),
+                B::csr_style_render_init(b, style),
+            )
         }
 
-        fn remove_with_state(
-            (state_a, state_b): &mut Self::UpdateWithState,
+        fn csr_style_render_init_with_old_state(
+            Self(a, b): Self,
             style: &mut impl crate::csr::CssStyleDeclaration,
+            (old_state_a, old_state_b): &mut Self::State,
         ) {
-            A::remove_with_state(state_a, style);
-            B::remove_with_state(state_b, style);
+            A::csr_style_render_init_with_old_state(a, style, old_state_a);
+            B::csr_style_render_init_with_old_state(b, style, old_state_b);
+        }
+
+        fn csr_style_render_update(
+            Self(a, b): Self,
+            style: &mut impl crate::csr::CssStyleDeclaration,
+            (state_a, state_b): &mut Self::State,
+        ) {
+            A::csr_style_render_update(a, style, state_a);
+            B::csr_style_render_update(b, style, state_b);
         }
     }
 }
