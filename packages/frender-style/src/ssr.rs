@@ -19,6 +19,12 @@ pub mod assert {
     {
     }
 
+    impl sealed::DeclarationList for async_str_iter::empty::Empty {}
+    impl DeclarationList for async_str_iter::empty::Empty {}
+
+    impl sealed::DeclarationListPrefixSemicolon for async_str_iter::empty::Empty {}
+    impl DeclarationListPrefixSemicolon for async_str_iter::empty::Empty {}
+
     impl sealed::DeclarationList for async_str_iter::never::Never {}
     impl DeclarationList for async_str_iter::never::Never {}
 
@@ -160,6 +166,22 @@ mod imp {
     use async_str_iter::IntoAsyncStrIterator;
 
     use super::{sealed, SsrDeclarationList};
+
+    impl sealed::SsrDeclarationList for frender_common::Empty {}
+    impl SsrDeclarationList for frender_common::Empty {
+        type IntoDeclarationList = async_str_iter::empty::Empty;
+        type IntoDeclarationListPrefixSemicolon = async_str_iter::empty::Empty;
+
+        fn into_declaration_list(Self: Self) -> Self::IntoDeclarationList {
+            async_str_iter::empty::Empty
+        }
+
+        fn into_declaration_list_prefix_semicolon(
+            Self: Self,
+        ) -> Self::IntoDeclarationListPrefixSemicolon {
+            async_str_iter::empty::Empty
+        }
+    }
 
     impl<T: SsrDeclarationList> sealed::SsrDeclarationList for Option<T> {}
 
