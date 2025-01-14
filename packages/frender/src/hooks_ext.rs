@@ -49,7 +49,7 @@ pub trait ShareValueExt: ShareValue {
     fn into_element(self) -> element::SignalIntoElement<Self, element::WithToElement>
     where
         Self: Sized,
-        Self::Value: crate::ToElement, // TODO: relax to ToSsrElement
+        Self::Value: crate::ToElement,
     {
         element::SignalIntoElement(self, element::WithToElement)
     }
@@ -59,7 +59,7 @@ pub trait ShareValueExt: ShareValue {
     ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithToElement>
     where
         Self: Sized + ToOwnedShareValue,
-        Self::Value: crate::ToElement, // TODO: relax to ToSsrElement
+        Self::Value: crate::ToElement,
     {
         self.to_owned_share_value().into_element()
     }
