@@ -143,10 +143,7 @@ where
 pub struct Kind<K>(super::Kind<K>);
 
 impl<K: UnpinnedRenderStateKind> UnpinnedRenderStateKind for Kind<K> {
-    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleMaybe<
-        UiHandleWithNonReactiveState<K::UnpinnedUiHandle<R>, K::UnpinnedNonReactiveState<R>>,
-        UiHandleWithNonReactiveState<<K::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted, K::UnpinnedNonReactiveState<R>>,
-    >;
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = Option<UiHandleWithNonReactiveState<K::UnpinnedUiHandle<R>, K::UnpinnedNonReactiveState<R>>>;
     type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
     type UnpinnedReactiveState = K::UnpinnedReactiveState;
 }
@@ -164,8 +161,8 @@ impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for
             reactive_state,
         } = states;
 
-        match ui_handle {
-            UiHandleMaybe::Mounted(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) => K::unpinned_poll_render(
+        if let Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) = ui_handle {
+            K::unpinned_poll_render(
                 renderer,
                 RenderStates {
                     ui_handle,
@@ -173,14 +170,15 @@ impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for
                     reactive_state,
                 },
                 cx,
-            ),
-            _ => Poll::Ready(()),
+            )
+        } else {
+            Poll::Ready(())
         }
     }
 }
 
 impl<K: PinnedRenderStateKind> PinnedRenderStateKind for Kind<K> {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleMaybeMounted<K::PinnedUiHandle<R>, R>;
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = Option<K::PinnedUiHandle<R>>;
     type PinnedNonReactiveState<R: RenderHtml + ?Sized> = K::PinnedNonReactiveState<R>;
     type PinnedReactiveState = K::PinnedReactiveState;
 }
@@ -198,8 +196,8 @@ impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kin
             reactive_state,
         } = states;
 
-        match ui_handle {
-            UiHandleMaybe::Mounted(ui_handle) => K::pinned_poll_render(
+        if let Some(ui_handle) = ui_handle {
+            K::pinned_poll_render(
                 renderer,
                 RenderStates {
                     ui_handle,
@@ -207,8 +205,9 @@ impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kin
                     reactive_state,
                 },
                 cx,
-            ),
-            _ => Poll::Ready(()),
+            )
+        } else {
+            Poll::Ready(())
         }
     }
 }
@@ -225,8 +224,8 @@ impl<E: CsrElement> CsrElement for Option<E> {
         states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         match self {
-            Some(this) => UiHandleMaybe::Mounted(this.pinned_render_init(render_context, states)),
-            None => UiHandleMaybe::BeforeMounted,
+            Some(this) => Some(this.pinned_render_init(render_context, states)),
+            None => None,
         }
     }
 
@@ -236,38 +235,34 @@ impl<E: CsrElement> CsrElement for Option<E> {
         render_context: &mut Ctx,
         RenderStates {
             ui_handle,
-            non_reactive_state,
+            mut non_reactive_state,
             reactive_state,
         }: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
     ) {
-        match self {
-            Some(this) => {
-                let ui_handle = match ui_handle {
-                    ui_handle @ UiHandleMaybe::BeforeMounted => {
-                        *ui_handle = UiHandleMaybe::Mounted(this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state }));
-                        return;
-                    }
-                    UiHandleMaybe::Mounted(ui_handle) => ui_handle,
-                    ui_handle @ UiHandleMaybe::Unmounted(_) => ui_handle.mount_unmounted(render_context),
-                };
+        match (self, ui_handle) {
+            (None, ui_handle) => {
+                if let Some(ui_handle) = ui_handle.take() {
+                    // NonReactiveState is dropped and set to default
+                    non_reactive_state.set(Default::default());
 
-                this.pinned_render_update(
-                    render_context,
-                    RenderStates {
-                        ui_handle,
-                        non_reactive_state,
-                        reactive_state,
-                    },
-                );
-            }
-            None => {
-                // states are not set to default
-                // just ui handle gets unmounted
-                // and ReactiveState got state_unmounted
-                if ui_handle.unmount_in_place(render_context.renderer_mut()) {
-                    reactive_state.state_unmount()
+                    // ReactiveState is state_unmounted but not set to default
+                    reactive_state.state_unmount();
+
+                    // ui handle is unmounted and dropped
+                    _ = ui_handle.unmount(render_context.renderer_mut());
                 }
             }
+            (Some(this), ui_handle @ None) => {
+                *ui_handle = Some(this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state }));
+            }
+            (Some(this), Some(ui_handle)) => this.pinned_render_update(
+                render_context,
+                RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                },
+            ),
         }
     }
 
@@ -284,13 +279,13 @@ impl<E: CsrElement> CsrElement for Option<E> {
                     reactive_state,
                 } = this.unpinned_render_init(render_context);
                 RenderStates {
-                    ui_handle: UiHandleMaybe::Mounted(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }),
+                    ui_handle: Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }),
                     non_reactive_state: (),
                     reactive_state,
                 }
             }
             None => RenderStates {
-                ui_handle: UiHandleMaybe::BeforeMounted,
+                ui_handle: None,
                 non_reactive_state: (),
                 reactive_state: Default::default(), // Note default reactive state is used when None.render_init()
             },
@@ -308,39 +303,36 @@ impl<E: CsrElement> CsrElement for Option<E> {
             non_reactive_state: (),
             reactive_state,
         } = states;
-        match self {
-            Some(this) => {
-                let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = match ui_handle {
-                    ui_handle @ UiHandleMaybe::BeforeMounted => {
-                        let states = this.unpinned_render_init(render_context);
-                        *reactive_state = states.reactive_state;
-                        *ui_handle = UiHandleMaybe::Mounted(UiHandleWithNonReactiveState {
-                            ui_handle: states.ui_handle,
-                            non_reactive_state: states.non_reactive_state,
-                        });
-                        return;
-                    }
-                    UiHandleMaybe::Mounted(mounted) => mounted,
-                    unmounted @ UiHandleMaybe::Unmounted(_) => unmounted.mount_unmounted(render_context),
-                };
 
-                this.unpinned_render_update(
-                    render_context,
-                    RenderStates {
-                        ui_handle,
-                        non_reactive_state,
-                        reactive_state,
-                    },
-                );
-            }
-            None => {
-                // states are not set to default
-                // just ui handle gets unmounted
-                // and ReactiveState got state_unmounted
-                if ui_handle.unmount_in_place(render_context.renderer_mut()) {
-                    Pin::new(reactive_state).state_unmount()
+        match (self, ui_handle) {
+            (None, ui_handle) => {
+                if let Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) = ui_handle.take() {
+                    // NonReactiveState is dropped
+                    drop(non_reactive_state);
+
+                    // ReactiveState is state_unmounted but not set to default
+                    Pin::new(reactive_state).state_unmount();
+
+                    // ui handle is unmounted and dropped
+                    _ = ui_handle.unmount(render_context.renderer_mut());
                 }
             }
+            (Some(this), ui_handle @ None) => {
+                let states = this.unpinned_render_init(render_context);
+                *reactive_state = states.reactive_state;
+                *ui_handle = Some(UiHandleWithNonReactiveState {
+                    ui_handle: states.ui_handle,
+                    non_reactive_state: states.non_reactive_state,
+                });
+            }
+            (Some(this), Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state })) => this.unpinned_render_update(
+                render_context,
+                RenderStates {
+                    ui_handle,
+                    non_reactive_state,
+                    reactive_state,
+                },
+            ),
         }
     }
 }
