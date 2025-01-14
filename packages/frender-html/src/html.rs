@@ -8,6 +8,9 @@ use frender_form_control::textarea::TextAreaValue;
 use crate::impl_bounds::{DomTokens, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
+pub mod behaviors;
+
+#[cfg(not(feature = "macros_not_expanded"))]
 pub mod behavior_type_traits;
 
 #[cfg(not(feature = "macros_not_expanded"))]
@@ -37,6 +40,7 @@ mod for_all_ancestors_macros;
 crate::macros::def_intrinsic_component_props!(
     mod __ {
         #[behaviors]
+        #[cfg(feature = "macros_not_expanded")]
         pub mod behaviors {
             #[cfg(feature = "web")]
             use crate::shims::prelude::*;

@@ -1275,6 +1275,7 @@ macro_rules! event_types {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
+        #[cfg(feature = "macros_not_expanded")]
         crate::macros::event_names::expand_macro! {
             {$(
                 { $fn_name $fn_args $fn_body_or_semi }
@@ -1282,6 +1283,7 @@ macro_rules! event_types {
             $trait_name
         }
 
+        #[cfg(feature = "macros_not_expanded")]
         pub(crate) use $trait_name;
 
         $(
@@ -1676,6 +1678,7 @@ pub(crate) use {
     parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations, unwrap_brace_concat, RenderHtml,
 };
 
+#[cfg(feature = "macros_not_expanded")]
 pub(crate) mod event_names;
 
 pub(crate) mod test;
