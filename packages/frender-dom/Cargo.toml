@@ -26,6 +26,7 @@ optional = true
 features = [
     #
     "console",
+    "Comment",
     "DomTokenList",
     "Event",
     "EventTarget",
