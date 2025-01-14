@@ -23,10 +23,9 @@ fn ssr() {
 #[test]
 fn csr() {
     let dom_token_list = &mut DomTokenListNever;
-    let state = &mut Default::default();
 
-    DomTokens::update_with_state(empty(), dom_token_list, state);
-    DomTokens::update_with_state(empty(), dom_token_list, state);
+    let mut state = DomTokens::dom_tokens_render_init(empty(), dom_token_list);
+    DomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
 }
 
 mod impl_dom_tokens {
@@ -56,9 +55,8 @@ mod impl_dom_tokens {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListNever;
-        let state = &mut Default::default();
 
-        DomTokens::update_with_state(empty(), dom_token_list, state);
-        DomTokens::update_with_state(empty(), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(empty(), dom_token_list);
+        DomTokens::dom_tokens_render_update(empty(), dom_token_list, &mut state);
     }
 }

@@ -1,8 +1,17 @@
 use async_str_iter::IntoAsyncStrIterator;
 
-use crate::DomTokens;
+use crate::{DomTokens, DomTokensStateUnmount};
 
 // TODO: TempStr
+
+pub struct State<S>(S);
+
+// TODO: figure out a better design for non-chainable dom tokens
+impl<S> DomTokensStateUnmount for State<S> {
+    fn dom_tokens_state_unmount(_: &mut Self, dom_token_list: &mut impl crate::DomTokenList) {
+        dom_token_list.set_value("");
+    }
+}
 
 frender_common::impl_many!(
     impl<__> DomTokens
@@ -14,32 +23,29 @@ frender_common::impl_many!(
             std::sync::Arc<str>,
         ]
     {
-        type UpdateWithState = Option<Self>;
+        type State = State<Self>;
 
-        fn update_with_state(
+        fn dom_tokens_render_init(
             this: Self,
             dom_token_list: &mut impl crate::DomTokenList,
-            state: &mut Self::UpdateWithState,
-        ) {
-            if let Some(state) = state {
-                if *state == this {
-                    return;
-                }
-            }
-
+        ) -> Self::State {
             let value = this.as_ref();
 
             dom_token_list.set_value(value);
 
-            *state = Some(this);
+            State(this)
         }
 
-        fn remove_with_state(
+        fn dom_tokens_render_update(
+            this: Self,
             dom_token_list: &mut impl crate::DomTokenList,
-            state: &mut Self::UpdateWithState,
+            state: &mut Self::State,
         ) {
-            dom_token_list.set_value("");
-            *state = None;
+            if state.0 == this {
+                return;
+            }
+
+            *state = Self::dom_tokens_render_init(this, dom_token_list)
         }
 
         type DomTokensIntoAsyncStrIter = async_str_iter::any_str::IterAnyStr<Self>;

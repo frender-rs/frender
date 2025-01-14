@@ -2,29 +2,50 @@ use async_str_iter::{option::IterOption, IntoAsyncStrIterator};
 
 use crate::{
     constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
-    ChainableDomTokens, DomTokens,
+    ChainableDomTokens, DomTokens, DomTokensStateUnmount,
 };
 
-impl<T: DomTokens> DomTokens for Option<T> {
-    type UpdateWithState = T::UpdateWithState;
+impl<T: DomTokensStateUnmount> DomTokensStateUnmount for Option<T> {
+    fn dom_tokens_state_unmount(state: &mut Self, dom_token_list: &mut impl crate::DomTokenList) {
+        if let Some(state) = state {
+            T::dom_tokens_state_unmount(state, dom_token_list);
+        }
+        *state = None; // drop the old state
+    }
+}
 
-    fn update_with_state(
+impl<T: DomTokens> DomTokens for Option<T> {
+    type State = Option<T::State>;
+
+    fn dom_tokens_render_init(
         this: Self,
         dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
+    ) -> Self::State {
         if let Some(this) = this {
-            T::update_with_state(this, dom_token_list, state)
+            Some(T::dom_tokens_render_init(this, dom_token_list))
         } else {
-            T::remove_with_state(dom_token_list, state)
+            None
         }
     }
 
-    fn remove_with_state(
+    // old_state must have been set to None in its dom_tokens_state_unmount.
+    // So we can just use the default implementation for
+    // fn dom_tokens_render_init_with_old_state
+
+    fn dom_tokens_render_update(
+        this: Self,
         dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
+        state: &mut Self::State,
     ) {
-        T::remove_with_state(dom_token_list, state)
+        if let Some(this) = this {
+            if let Some(state) = state {
+                T::dom_tokens_render_update(this, dom_token_list, state)
+            } else {
+                *state = Some(T::dom_tokens_render_init(this, dom_token_list))
+            }
+        } else {
+            Self::State::dom_tokens_state_unmount(state, dom_token_list)
+        }
     }
 
     type DomTokensIntoAsyncStrIter = IterOption<T::DomTokensIntoAsyncStrIter>;

@@ -4,20 +4,31 @@ use frender_const::ConstUsize;
 
 use crate::{
     constness::HasConstKnownPossibleDomTokens, dom_token::UniqueDomTokenArrayVec,
-    ChainableDomTokens, DomTokens,
+    ChainableDomTokens, DomTokens, DomTokensStateUnmount,
 };
 
-impl DomTokens for Empty {
-    type UpdateWithState = ();
+impl DomTokensStateUnmount for () {
+    fn dom_tokens_state_unmount((): &mut Self, _: &mut impl crate::DomTokenList) {}
+}
 
-    fn update_with_state(
+impl DomTokens for Empty {
+    type State = ();
+
+    fn dom_tokens_render_init(Self: Self, _: &mut impl crate::DomTokenList) -> Self::State {}
+
+    fn dom_tokens_render_init_with_old_state(
         Self: Self,
         _: &mut impl crate::DomTokenList,
-        (): &mut Self::UpdateWithState,
+        (): &mut Self::State,
     ) {
     }
 
-    fn remove_with_state(_: &mut impl crate::DomTokenList, (): &mut Self::UpdateWithState) {}
+    fn dom_tokens_render_update(
+        Self: Self,
+        _: &mut impl crate::DomTokenList,
+        (): &mut Self::State,
+    ) {
+    }
 
     type DomTokensIntoAsyncStrIter = async_str_iter::empty::Empty;
 

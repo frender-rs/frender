@@ -12,21 +12,29 @@ use crate::{
 pub struct EraseConstKnownPossibleDomTokens<T>(pub T);
 
 impl<T: DomTokens> DomTokens for EraseConstKnownPossibleDomTokens<T> {
-    type UpdateWithState = T::UpdateWithState;
+    type State = T::State;
 
-    fn update_with_state(
-        this: Self,
+    fn dom_tokens_render_init(
+        Self(this): Self,
         dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
-        T::update_with_state(this.0, dom_token_list, state);
+    ) -> Self::State {
+        T::dom_tokens_render_init(this, dom_token_list)
     }
 
-    fn remove_with_state(
+    fn dom_tokens_render_init_with_old_state(
+        Self(this): Self,
         dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
+        old_state: &mut Self::State,
     ) {
-        T::remove_with_state(dom_token_list, state);
+        T::dom_tokens_render_init_with_old_state(this, dom_token_list, old_state)
+    }
+
+    fn dom_tokens_render_update(
+        Self(this): Self,
+        dom_token_list: &mut impl crate::DomTokenList,
+        state: &mut Self::State,
+    ) {
+        T::dom_tokens_render_update(this, dom_token_list, state)
     }
 
     type DomTokensIntoAsyncStrIter = T::DomTokensIntoAsyncStrIter;

@@ -26,16 +26,29 @@ pub trait DomTokenList {
     fn replace(&mut self, old_token: DomToken, new_token: DomToken);
 }
 
-pub trait DomTokens {
-    type UpdateWithState: Default;
+pub trait DomTokensStateUnmount {
+    fn dom_tokens_state_unmount(state: &mut Self, dom_token_list: &mut impl DomTokenList);
+}
 
-    fn update_with_state(
+pub trait DomTokens {
+    type State: DomTokensStateUnmount;
+
+    fn dom_tokens_render_init(this: Self, dom_token_list: &mut impl DomTokenList) -> Self::State;
+    fn dom_tokens_render_init_with_old_state(
         this: Self,
         dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::UpdateWithState,
-    );
+        old_state: &mut Self::State,
+    ) where
+        Self: Sized,
+    {
+        *old_state = Self::dom_tokens_render_init(this, dom_token_list)
+    }
 
-    fn remove_with_state(dom_token_list: &mut impl DomTokenList, state: &mut Self::UpdateWithState);
+    fn dom_tokens_render_update(
+        this: Self,
+        dom_token_list: &mut impl DomTokenList,
+        state: &mut Self::State,
+    );
 
     type DomTokensIntoAsyncStrIter: AsyncStrIterator;
 
@@ -161,21 +174,30 @@ pub trait IntoDomTokens {
 // So we can't `impl<T: DomTokens> IntoDomTokens for T`
 // because `fn into_dom_tokens` can't be const fn in stable rust.
 impl<T: IntoDomTokens> DomTokens for T {
-    type UpdateWithState = <T::IntoDomTokens as DomTokens>::UpdateWithState;
+    type State = <T::IntoDomTokens as DomTokens>::State;
 
-    fn update_with_state(
-        this: Self,
-        dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
-        <T::IntoDomTokens>::update_with_state(this.into_dom_tokens(), dom_token_list, state)
+    fn dom_tokens_render_init(this: Self, dom_token_list: &mut impl DomTokenList) -> Self::State {
+        <T::IntoDomTokens>::dom_tokens_render_init(this.into_dom_tokens(), dom_token_list)
     }
 
-    fn remove_with_state(
+    fn dom_tokens_render_init_with_old_state(
+        this: Self,
         dom_token_list: &mut impl DomTokenList,
-        state: &mut Self::UpdateWithState,
+        old_state: &mut Self::State,
     ) {
-        <T::IntoDomTokens>::remove_with_state(dom_token_list, state)
+        <T::IntoDomTokens>::dom_tokens_render_init_with_old_state(
+            this.into_dom_tokens(),
+            dom_token_list,
+            old_state,
+        )
+    }
+
+    fn dom_tokens_render_update(
+        this: Self,
+        dom_token_list: &mut impl DomTokenList,
+        state: &mut Self::State,
+    ) {
+        <T::IntoDomTokens>::dom_tokens_render_update(this.into_dom_tokens(), dom_token_list, state)
     }
 
     type DomTokensIntoAsyncStrIter = <T::IntoDomTokens as DomTokens>::DomTokensIntoAsyncStrIter;

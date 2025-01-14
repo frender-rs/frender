@@ -1,11 +1,11 @@
 use async_str_iter::either::IterEither;
-use frender_common::either::EitherState;
+use csr::State;
 use frender_const::{ConstUsize, KnownConstUsizeAdd};
 
 use crate::{
     constness::{HasConstKnownPossibleDomTokens, IsConstUsize},
     dom_token::UniqueDomTokenArrayVec,
-    ChainableDomTokens, DomTokens,
+    ChainableDomTokens, DomTokens, DomTokensStateUnmount,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -14,47 +14,87 @@ pub enum EitherDomTokens<A, B> {
     B(B),
 }
 
-impl<L: DomTokens, R: DomTokens> DomTokens for EitherDomTokens<L, R> {
-    type UpdateWithState = EitherState<L::UpdateWithState, R::UpdateWithState>;
+pub mod csr {
+    use crate::DomTokensStateUnmount;
 
-    fn update_with_state(
-        this: Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
-        match this {
-            EitherDomTokens::A(this) => {
-                let state = match state {
-                    EitherState::Left { inner: state } => state,
-                    EitherState::Right { inner: old_state } => {
-                        R::remove_with_state(dom_token_list, old_state);
-                        state.get_left_or_insert_default()
-                    }
-                };
+    pub enum State<A, B> {
+        A(A),
+        B(B),
+    }
 
-                L::update_with_state(this, dom_token_list, state)
-            }
-            EitherDomTokens::B(this) => {
-                let state = match state {
-                    EitherState::Right { inner: state } => state,
-                    EitherState::Left { inner: old_state } => {
-                        L::remove_with_state(dom_token_list, old_state);
-                        state.get_right_or_insert_default()
-                    }
-                };
-
-                R::update_with_state(this, dom_token_list, state)
+    impl<A: DomTokensStateUnmount, B: DomTokensStateUnmount> DomTokensStateUnmount for State<A, B> {
+        fn dom_tokens_state_unmount(
+            state: &mut Self,
+            dom_token_list: &mut impl crate::DomTokenList,
+        ) {
+            match state {
+                State::A(state) => A::dom_tokens_state_unmount(state, dom_token_list),
+                State::B(state) => B::dom_tokens_state_unmount(state, dom_token_list),
             }
         }
     }
+}
 
-    fn remove_with_state(
+impl<L: DomTokens, R: DomTokens> DomTokens for EitherDomTokens<L, R> {
+    type State = State<L::State, R::State>;
+
+    fn dom_tokens_render_init(
+        this: Self,
         dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
+    ) -> Self::State {
+        match this {
+            EitherDomTokens::A(this) => State::A(L::dom_tokens_render_init(this, dom_token_list)),
+            EitherDomTokens::B(this) => State::B(R::dom_tokens_render_init(this, dom_token_list)),
+        }
+    }
+
+    fn dom_tokens_render_init_with_old_state(
+        this: Self,
+        dom_token_list: &mut impl crate::DomTokenList,
+        old_state: &mut Self::State,
     ) {
-        match state {
-            EitherState::Left { inner: state } => L::remove_with_state(dom_token_list, state),
-            EitherState::Right { inner: state } => R::remove_with_state(dom_token_list, state),
+        match this {
+            EitherDomTokens::A(this) => match old_state {
+                State::A(old_state) => {
+                    L::dom_tokens_render_init_with_old_state(this, dom_token_list, old_state)
+                }
+                State::B(_) => {
+                    // Already unmounted
+                    *old_state = State::A(L::dom_tokens_render_init(this, dom_token_list))
+                }
+            },
+            EitherDomTokens::B(this) => match old_state {
+                State::B(old_state) => {
+                    R::dom_tokens_render_init_with_old_state(this, dom_token_list, old_state)
+                }
+                State::A(_) => {
+                    // Already unmounted
+                    *old_state = State::B(R::dom_tokens_render_init(this, dom_token_list))
+                }
+            },
+        }
+    }
+
+    fn dom_tokens_render_update(
+        this: Self,
+        dom_token_list: &mut impl crate::DomTokenList,
+        state: &mut Self::State,
+    ) {
+        match this {
+            EitherDomTokens::A(this) => match state {
+                State::A(state) => L::dom_tokens_render_update(this, dom_token_list, state),
+                State::B(old_state) => {
+                    <R::State>::dom_tokens_state_unmount(old_state, dom_token_list);
+                    *state = State::A(L::dom_tokens_render_init(this, dom_token_list))
+                }
+            },
+            EitherDomTokens::B(this) => match state {
+                State::B(state) => R::dom_tokens_render_update(this, dom_token_list, state),
+                State::A(old_state) => {
+                    <L::State>::dom_tokens_state_unmount(old_state, dom_token_list);
+                    *state = State::B(R::dom_tokens_render_init(this, dom_token_list))
+                }
+            },
         }
     }
 

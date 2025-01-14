@@ -1,9 +1,13 @@
+use std::marker::PhantomData;
+
+use csr::State;
 pub use frender_const::ConstUsize;
 
 use frender_common::const_utils::put_at;
 
 use crate::{
-    dom_token::UniqueDomTokenArrayVec, ChainableDomTokens, DomToken, DomTokens, UniqueDomTokenArray,
+    dom_token::UniqueDomTokenArrayVec, ChainableDomTokens, DomToken, DomTokens,
+    DomTokensStateUnmount, UniqueDomTokenArray,
 };
 
 mod sealed {
@@ -192,35 +196,42 @@ pub mod ssr {
     }
 }
 
-impl<T: ?Sized + HasConstDomTokens> DomTokens for ConstDomTokens<T> {
-    type UpdateWithState = bool; // whether updated
+pub mod csr {
+    use std::marker::PhantomData;
 
-    fn update_with_state(
-        _: Self,
-        dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
-        if *state {
-            return;
-        }
-        *state = true;
-        T::DOM_TOKENS
-            .as_ref()
-            .iter()
-            .for_each(|t| dom_token_list.add_1(*t))
-    }
+    use crate::DomTokensStateUnmount;
 
-    fn remove_with_state(
-        dom_token_list: &mut impl crate::DomTokenList,
-        state: &mut Self::UpdateWithState,
-    ) {
-        if *state {
-            *state = false;
+    use super::HasConstDomTokens;
+
+    pub struct State<T: ?Sized + HasConstDomTokens>(pub(super) PhantomData<T>);
+
+    impl<T: ?Sized + HasConstDomTokens> DomTokensStateUnmount for State<T> {
+        fn dom_tokens_state_unmount(_: &mut Self, dom_token_list: &mut impl crate::DomTokenList) {
             T::DOM_TOKENS
                 .as_ref()
                 .iter()
                 .for_each(|t| dom_token_list.remove_1(*t))
         }
+    }
+}
+
+impl<T: ?Sized + HasConstDomTokens> DomTokens for ConstDomTokens<T> {
+    type State = State<T>;
+
+    fn dom_tokens_render_init(
+        _: Self,
+        dom_token_list: &mut impl crate::DomTokenList,
+    ) -> Self::State {
+        T::DOM_TOKENS
+            .as_ref()
+            .iter()
+            .for_each(|t| dom_token_list.add_1(*t));
+
+        State(PhantomData)
+    }
+
+    fn dom_tokens_render_update(_: Self, _: &mut impl crate::DomTokenList, _: &mut Self::State) {
+        // Does nothing
     }
 
     type DomTokensIntoAsyncStrIter = ssr::ConstDomTokensIntoAsyncStrIter<T>;

@@ -25,11 +25,10 @@ mod literal {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
         assert_eq!(dom_token_list.tokens, ["literal"]);
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(), dom_token_list, &mut state);
         assert_eq!(dom_token_list.tokens, ["literal"]);
     }
 }
@@ -61,14 +60,14 @@ mod array_of_literals {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
+        let state = &mut state;
         assert_eq!(
             dom_token_list.tokens,
             ["literal-0", "literal-1", "literal-2"]
         );
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(), dom_token_list, state);
         assert_eq!(
             dom_token_list.tokens,
             ["literal-0", "literal-1", "literal-2"]
@@ -106,18 +105,19 @@ mod r#if {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
+
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(true), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(value(true), dom_token_list);
+        let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["a"]);
-        DomTokens::update_with_state(value(true), &mut DomTokenListNever, state);
-        DomTokens::update_with_state(value(true), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["a"]);
 
-        DomTokens::update_with_state(value(false), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
         assert!(dom_token_list.tokens.is_empty());
 
-        DomTokens::update_with_state(value(false), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
     }
 }
 
@@ -144,18 +144,19 @@ mod if_else {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(true), dom_token_list, state);
+
+        let mut state = DomTokens::dom_tokens_render_init(value(true), dom_token_list);
+        let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["a"]);
-        DomTokens::update_with_state(value(true), &mut DomTokenListNever, state);
-        DomTokens::update_with_state(value(true), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(true), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(true), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["a"]);
 
-        DomTokens::update_with_state(value(false), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(false), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["b", "c"]);
 
-        DomTokens::update_with_state(value(false), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(false), &mut DomTokenListNever, state);
     }
 }
 
@@ -219,31 +220,31 @@ mod r#match {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(Theme::Dark), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(value(Theme::Dark), dom_token_list);
+        let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["dark"]);
-        DomTokens::update_with_state(value(Theme::Dark), &mut DomTokenListNever, state);
-        DomTokens::update_with_state(value(Theme::Dark), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(Theme::Dark), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(Theme::Dark), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["dark"]);
 
-        DomTokens::update_with_state(value(Theme::Light), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(Theme::Light), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["light"]);
 
-        DomTokens::update_with_state(
+        DomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: true }),
             dom_token_list,
             state,
         );
         assert_eq!(dom_token_list.tokens, ["contrast", "colorful"]);
 
-        DomTokens::update_with_state(
+        DomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: true }),
             &mut DomTokenListNever,
             state,
         );
 
-        DomTokens::update_with_state(
+        DomTokens::dom_tokens_render_update(
             value(Theme::Contrast { colorful: false }),
             dom_token_list,
             state,
@@ -281,12 +282,12 @@ mod r#as {
     #[test]
     fn csr() {
         let dom_token_list = &mut DomTokenListAddRemove::default();
-        let state = &mut Default::default();
         assert!(dom_token_list.tokens.is_empty());
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        let mut state = DomTokens::dom_tokens_render_init(value(), dom_token_list);
+        let state = &mut state;
         assert_eq!(dom_token_list.tokens, ["light"]);
-        DomTokens::update_with_state(value(), &mut DomTokenListNever, state);
-        DomTokens::update_with_state(value(), dom_token_list, state);
+        DomTokens::dom_tokens_render_update(value(), &mut DomTokenListNever, state);
+        DomTokens::dom_tokens_render_update(value(), dom_token_list, state);
         assert_eq!(dom_token_list.tokens, ["light"]);
     }
 }
