@@ -40,22 +40,9 @@ mod csr {
             }
         }
 
-        fn csr_style_render_init_with_old_state(
-            this: Self,
-            style: &mut impl crate::csr::CssStyleDeclaration,
-            old_state: &mut Self::State,
-        ) {
-            if let Some(this) = this {
-                if let Some(old_state) = old_state {
-                    T::csr_style_render_init_with_old_state(this, style, old_state);
-                } else {
-                    *old_state = Some(T::csr_style_render_init(this, style))
-                }
-            } else {
-                // old_state had been unmounted, so just drop it
-                *old_state = None;
-            }
-        }
+        // old_state must have been set to None in its csr_style_state_unmount.
+        // So we can just use the default implementation for
+        // fn csr_style_render_init_with_old_state
 
         fn csr_style_render_update(
             this: Self,
