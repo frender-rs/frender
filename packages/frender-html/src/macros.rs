@@ -110,7 +110,16 @@ macro_rules! impl_behavior_fn {
 }
 
 macro_rules! behaviors {
-    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use frender_dom::OnEvent;
+
+                use super::{*, event_types};
+            }
+        }
+    };
     (
         extends($($extends:ident)*)
         $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
@@ -133,7 +142,7 @@ macro_rules! behaviors {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        super::event_types::$trait_name! {
+        super::event_types_macros::$trait_name! {
             args { OnEvent Renderer }
             do {
                 prepend {
@@ -153,19 +162,51 @@ macro_rules! behaviors {
                 }
             }
         }
+    };
+}
 
-        super::event_types::$trait_name! {
+macro_rules! imp_element_proxy_attrs {
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use frender_dom::OnEvent;
+            }
+        }
+    };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds($($trait_bounds:tt)*))?
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        self::event_types_macros::$trait_name! {
             args { OnEvent Renderer }
             do {
                 prepend {
-                    #[cfg(feature="ElementProxyAttrs")]
                     impl<
                         Renderer: ?Sized,
                         E: ?Sized + frender_dom::behaviors::Element<Renderer>,
-                    > $trait_name<Renderer> for crate::ElementProxyAttrs<E>
+                    > self::behaviors::$trait_name<Renderer> for crate::ElementProxyAttrs<E>
                     where Self:
-                        $($extends<Renderer> +)*
-                        $($($($special_super_traits<Renderer> + )+ )?)?
+                        $(self::behaviors::$extends<Renderer> +)*
+                        $($($(self::behaviors::$special_super_traits<Renderer> + )+ )?)?
                 }
                 append {
                     $($($trait_bounds)*)?
@@ -177,14 +218,48 @@ macro_rules! behaviors {
                 }
             }
         }
+    };
+}
 
+pub(crate) use imp_element_proxy_attrs;
+
+macro_rules! imp_web {
+    (expand_item $expand_item:tt) => {
+        crate::macros::expand_item_and_prepend_expanded! {
+            $expand_item
+            {
+                use crate::shims::prelude::*;
+            }
+        }
+    };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds($($trait_bounds:tt)*))?
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
         // if `impl_for_web`
-        #[cfg(feature = "web")]
         ::frender_common::expand! { if ($( ! $($($verbatim_trait_items_impl_web)*)?)?) {
             ::frender_common::expand! { if ($($( ! $($impl_for_web_only_for_types)*)?)?) {
                 ::frender_common::expand! { while ($($($({$impl_for_web_only_for_types})*)?)?) {
-                    prepend(impl<Renderer: ?Sized + ::frender_dom::csr::web::Renderer> $trait_name<Renderer> for ::frender_dom::csr::web::Node<)
-                    append( > $($(where Self: $($special_super_traits<Renderer> + )+ )?)? {
+                    prepend(impl<Renderer: ?Sized + ::frender_dom::csr::web::Renderer> self::behaviors::$trait_name<Renderer> for ::frender_dom::csr::web::Node<)
+                    append( > $($(where Self: $(self::behaviors::$special_super_traits<Renderer> + )+ )?)? {
                         $($($($verbatim_trait_items_impl_web)*)?)?
 
                         ::frender_common::expand! { while ($({$fn_name $fn_args $fn_body_or_semi})*) {
@@ -198,10 +273,10 @@ macro_rules! behaviors {
                 impl<
                     Renderer: ?Sized + ::frender_dom::csr::web::Renderer,
                     E: AsRef<::web_sys::$trait_name> + AsRef<::web_sys::EventTarget>
-                > $trait_name<Renderer> for ::frender_dom::csr::web::Node<E>
+                > self::behaviors::$trait_name<Renderer> for ::frender_dom::csr::web::Node<E>
                 where Self:
-                    $($extends<Renderer> +)*
-                    $($($($special_super_traits<Renderer> + )+ )?)?
+                    $(self::behaviors::$extends<Renderer> +)*
+                    $($($(self::behaviors::$special_super_traits<Renderer> + )+ )?)?
                     $($($trait_bounds)*)?
                 {
                     $($($($verbatim_trait_items_impl_web)*)?)?
@@ -214,6 +289,8 @@ macro_rules! behaviors {
         }}
     };
 }
+
+pub(crate) use imp_web;
 
 macro_rules! behaviors_prelude {
     (expand_item $expand_item:tt) => {
@@ -266,6 +343,8 @@ macro_rules! behavior_type_traits {
             $expand_item
             {
                 use crate::update_element::OnEventType;
+
+                use super::event_types;
             }
         }
     };
@@ -291,7 +370,7 @@ macro_rules! behavior_type_traits {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        super::event_types::$trait_name! {
+        super::event_types_macros::$trait_name! {
             args { OnEventType }
             do {
                 prepend {
@@ -1275,17 +1354,6 @@ macro_rules! event_types {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
-        #[cfg(feature = "macros_not_expanded")]
-        crate::macros::event_names::expand_macro! {
-            {$(
-                { $fn_name $fn_args $fn_body_or_semi }
-            )*}
-            $trait_name
-        }
-
-        #[cfg(feature = "macros_not_expanded")]
-        pub(crate) use $trait_name;
-
         $(
             crate::macros::event_type! {
                 $fn_name $fn_args $fn_body_or_semi $trait_name
@@ -1324,6 +1392,41 @@ macro_rules! event_type {
         }
     };
     ($fn_name:ident $fn_args:tt $fn_body_or_semi:tt $trait_name:tt) => {};
+}
+
+macro_rules! event_types_macros {
+    (expand_item $expand_item:tt) => { crate::macros::expand_item_simple! $expand_item };
+    (
+        extends($($extends:ident)*)
+        $(special_super_traits($($($special_super_traits:ident),+ $(,)?)?))?
+        vis($vis:vis)
+        trait_name($trait_name:ident)
+        $(trait_bounds $trait_bounds:tt)?
+        $(define $define:tt)?
+        // $(define(
+        //     Props: $Props:ident
+        //     $(, components: ($($components:ident),* $(,)?))?
+        //     $(,)?
+        // ))?
+        $(verbatim_trait_items($($verbatim_trait_items:tt)*))?
+        $(impl_for_web(
+            $(only_for_types!($($impl_for_web_only_for_types:ty),* $(,)?);)?
+            $(verbatim_trait_items!($($verbatim_trait_items_impl_web:tt)*);)?
+        ))?
+        fns($(
+            $(#$fn_attr:tt)*
+            fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
+        )*)
+    ) => {
+        crate::macros::event_names::expand_macro! {
+            {$(
+                { $fn_name $fn_args $fn_body_or_semi }
+            )*}
+            $trait_name
+        }
+
+        pub(crate) use $trait_name;
+    };
 }
 
 macro_rules! unwrap_brace_concat {
@@ -1594,6 +1697,18 @@ macro_rules! expand_item_simple {
     (
         (
             $(#$item_attrs:tt)*
+            $vis:vis expand_const_block ! {}
+        )
+        { $($expanded:tt)* }
+    ) => {
+        $(#$item_attrs)*
+        const _: () = {
+            $($expanded)*
+        };
+    };
+    (
+        (
+            $(#$item_attrs:tt)*
             $vis:vis $item_type:ident $item_name:ident ;
         )
         $item_body_expanded:tt
@@ -1673,12 +1788,12 @@ macro_rules! expand_item_and_prepend_expanded {
 
 pub(crate) use {
     behavior_type_traits, behaviors, behaviors_prelude, components, def_intrinsic_component_props, define_behavior_fn, define_behavior_fn_update_with, define_conflicted_names, define_item_and_traverse_traits,
-    dom_api_value_from_value, event_type, event_types, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or, impl_BehaviorTypeTrait,
-    impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with, on_event_implementations,
-    parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations, unwrap_brace_concat, RenderHtml,
+    dom_api_value_from_value, event_type, event_types, event_types_macros, expand_item_and_prepend_expanded, expand_item_simple, expand_nested_traits, extract_attr_builder_fn_names, extract_only_children_or,
+    impl_BehaviorTypeTrait, impl_HasConstAttrName, impl_OnEventType, impl_attr_value_dom_api_for_prop_marker, impl_attr_value_for_prop_marker, impl_attribute, impl_behavior_fn, impl_behavior_fn_update_with,
+    on_event_implementations, parse_fn_args_as_bounds, parse_fn_args_as_whether_pinned_state, prop_markers, props, props_implementations, tag_and_props_markers, tag_custom_content_model, tag_implementations,
+    unwrap_brace_concat, RenderHtml,
 };
 
-#[cfg(feature = "macros_not_expanded")]
 pub(crate) mod event_names;
 
 pub(crate) mod test;

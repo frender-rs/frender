@@ -14,6 +14,9 @@ pub mod behaviors;
 pub mod behavior_type_traits;
 
 #[cfg(not(feature = "macros_not_expanded"))]
+mod event_types_macros;
+
+#[cfg(not(feature = "macros_not_expanded"))]
 #[cfg(feature = "components")]
 pub mod markers;
 
@@ -41,14 +44,7 @@ crate::macros::def_intrinsic_component_props!(
     mod __ {
         #[behaviors]
         #[cfg(feature = "macros_not_expanded")]
-        pub mod behaviors {
-            #[cfg(feature = "web")]
-            use crate::shims::prelude::*;
-
-            use frender_dom::OnEvent;
-
-            use super::*;
-        }
+        pub mod behaviors;
 
         #[behaviors_prelude]
         mod behaviors_prelude {}
@@ -59,6 +55,10 @@ crate::macros::def_intrinsic_component_props!(
 
         #[event_types]
         mod event_types {}
+
+        #[event_types_macros]
+        #[cfg(feature = "macros_not_expanded")]
+        mod event_types_macros;
 
         #[tag_and_props_markers]
         #[cfg(feature = "components")]
@@ -125,6 +125,14 @@ crate::macros::def_intrinsic_component_props!(
         #[cfg(feature = "components")]
         #[cfg(all(feature = "macros_not_expanded"))] // wrap any to prevent auto expanding by frender-html-expand
         mod props_macros;
+
+        #[imp_element_proxy_attrs]
+        #[cfg(feature = "ElementProxyAttrs")]
+        expand_const_block! {}
+
+        #[imp_web]
+        #[cfg(feature = "web")]
+        expand_const_block! {}
 
         #[RenderHtml]
         pub trait RenderHtml {
@@ -1475,7 +1483,7 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithNameAttribute,
                                     ElementWithHeightWidthU32Attributes,
                                 );
-                                trait_bounds!(frender_form_control::input::InputElement<Renderer> + ElementWithTypeAttribute<Renderer>);
+                                trait_bounds!(frender_form_control::input::InputElement<Renderer> + behaviors::ElementWithTypeAttribute<Renderer>);
                                 define!(tags = (input { custom_content_model },));
                                 impl_for_web!();
 

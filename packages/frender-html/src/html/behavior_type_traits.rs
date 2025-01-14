@@ -1,3 +1,4 @@
+use super::event_types;
 use crate::update_element::OnEventType;
 pub trait Node: crate::UiHandleType {
     type Node<Renderer: ?Sized + super::RenderHtml>: super::behaviors::Node<Renderer>
@@ -7,41 +8,41 @@ pub trait Node: crate::UiHandleType {
 pub trait Element:
     crate::UiHandleType
     + Node
-    + OnEventType<super::event_types::on_cancel>
-    + OnEventType<super::event_types::on_error>
-    + OnEventType<super::event_types::on_scroll>
-    + OnEventType<super::event_types::on_security_policy_violation>
-    + OnEventType<super::event_types::on_select>
-    + OnEventType<super::event_types::on_wheel>
-    + OnEventType<super::event_types::on_copy>
-    + OnEventType<super::event_types::on_cut>
-    + OnEventType<super::event_types::on_paste>
-    + OnEventType<super::event_types::on_composition_end>
-    + OnEventType<super::event_types::on_composition_start>
-    + OnEventType<super::event_types::on_composition_update>
-    + OnEventType<super::event_types::on_blur>
-    + OnEventType<super::event_types::on_focus>
-    + OnEventType<super::event_types::on_focus_in>
-    + OnEventType<super::event_types::on_focus_out>
-    + OnEventType<super::event_types::on_fullscreen_change>
-    + OnEventType<super::event_types::on_fullscreen_error>
-    + OnEventType<super::event_types::on_key_down>
-    + OnEventType<super::event_types::on_key_up>
-    + OnEventType<super::event_types::on_aux_click>
-    + OnEventType<super::event_types::on_click>
-    + OnEventType<super::event_types::on_context_menu>
-    + OnEventType<super::event_types::on_double_click>
-    + OnEventType<super::event_types::on_mouse_down>
-    + OnEventType<super::event_types::on_mouse_enter>
-    + OnEventType<super::event_types::on_mouse_leave>
-    + OnEventType<super::event_types::on_mouse_move>
-    + OnEventType<super::event_types::on_mouse_out>
-    + OnEventType<super::event_types::on_mouse_over>
-    + OnEventType<super::event_types::on_mouse_up>
-    + OnEventType<super::event_types::on_touch_cancel>
-    + OnEventType<super::event_types::on_touch_end>
-    + OnEventType<super::event_types::on_touch_move>
-    + OnEventType<super::event_types::on_touch_start>
+    + OnEventType<event_types::on_cancel>
+    + OnEventType<event_types::on_error>
+    + OnEventType<event_types::on_scroll>
+    + OnEventType<event_types::on_security_policy_violation>
+    + OnEventType<event_types::on_select>
+    + OnEventType<event_types::on_wheel>
+    + OnEventType<event_types::on_copy>
+    + OnEventType<event_types::on_cut>
+    + OnEventType<event_types::on_paste>
+    + OnEventType<event_types::on_composition_end>
+    + OnEventType<event_types::on_composition_start>
+    + OnEventType<event_types::on_composition_update>
+    + OnEventType<event_types::on_blur>
+    + OnEventType<event_types::on_focus>
+    + OnEventType<event_types::on_focus_in>
+    + OnEventType<event_types::on_focus_out>
+    + OnEventType<event_types::on_fullscreen_change>
+    + OnEventType<event_types::on_fullscreen_error>
+    + OnEventType<event_types::on_key_down>
+    + OnEventType<event_types::on_key_up>
+    + OnEventType<event_types::on_aux_click>
+    + OnEventType<event_types::on_click>
+    + OnEventType<event_types::on_context_menu>
+    + OnEventType<event_types::on_double_click>
+    + OnEventType<event_types::on_mouse_down>
+    + OnEventType<event_types::on_mouse_enter>
+    + OnEventType<event_types::on_mouse_leave>
+    + OnEventType<event_types::on_mouse_move>
+    + OnEventType<event_types::on_mouse_out>
+    + OnEventType<event_types::on_mouse_over>
+    + OnEventType<event_types::on_mouse_up>
+    + OnEventType<event_types::on_touch_cancel>
+    + OnEventType<event_types::on_touch_end>
+    + OnEventType<event_types::on_touch_move>
+    + OnEventType<event_types::on_touch_start>
 {
     type Element<Renderer: ?Sized + super::RenderHtml>: super::behaviors::Element<Renderer>
         + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
@@ -260,35 +261,35 @@ pub trait ElementWithDateTimeAttribute: crate::UiHandleType + Element {
 pub trait HtmlElement:
     crate::UiHandleType
     + Element
-    + OnEventType<super::event_types::on_invalid>
-    + OnEventType<super::event_types::on_animation_cancel>
-    + OnEventType<super::event_types::on_animation_end>
-    + OnEventType<super::event_types::on_animation_iteration>
-    + OnEventType<super::event_types::on_animation_start>
-    + OnEventType<super::event_types::on_before_input>
-    + OnEventType<super::event_types::on_input>
-    + OnEventType<super::event_types::on_change>
-    + OnEventType<super::event_types::on_got_pointer_capture>
-    + OnEventType<super::event_types::on_lost_pointer_capture>
-    + OnEventType<super::event_types::on_pointer_cancel>
-    + OnEventType<super::event_types::on_pointer_down>
-    + OnEventType<super::event_types::on_pointer_enter>
-    + OnEventType<super::event_types::on_pointer_leave>
-    + OnEventType<super::event_types::on_pointer_move>
-    + OnEventType<super::event_types::on_pointer_out>
-    + OnEventType<super::event_types::on_pointer_over>
-    + OnEventType<super::event_types::on_pointer_up>
-    + OnEventType<super::event_types::on_transition_cancel>
-    + OnEventType<super::event_types::on_transition_end>
-    + OnEventType<super::event_types::on_transition_run>
-    + OnEventType<super::event_types::on_transition_start>
-    + OnEventType<super::event_types::on_drag>
-    + OnEventType<super::event_types::on_drag_end>
-    + OnEventType<super::event_types::on_drag_enter>
-    + OnEventType<super::event_types::on_drag_leave>
-    + OnEventType<super::event_types::on_drag_over>
-    + OnEventType<super::event_types::on_drag_start>
-    + OnEventType<super::event_types::on_drop>
+    + OnEventType<event_types::on_invalid>
+    + OnEventType<event_types::on_animation_cancel>
+    + OnEventType<event_types::on_animation_end>
+    + OnEventType<event_types::on_animation_iteration>
+    + OnEventType<event_types::on_animation_start>
+    + OnEventType<event_types::on_before_input>
+    + OnEventType<event_types::on_input>
+    + OnEventType<event_types::on_change>
+    + OnEventType<event_types::on_got_pointer_capture>
+    + OnEventType<event_types::on_lost_pointer_capture>
+    + OnEventType<event_types::on_pointer_cancel>
+    + OnEventType<event_types::on_pointer_down>
+    + OnEventType<event_types::on_pointer_enter>
+    + OnEventType<event_types::on_pointer_leave>
+    + OnEventType<event_types::on_pointer_move>
+    + OnEventType<event_types::on_pointer_out>
+    + OnEventType<event_types::on_pointer_over>
+    + OnEventType<event_types::on_pointer_up>
+    + OnEventType<event_types::on_transition_cancel>
+    + OnEventType<event_types::on_transition_end>
+    + OnEventType<event_types::on_transition_run>
+    + OnEventType<event_types::on_transition_start>
+    + OnEventType<event_types::on_drag>
+    + OnEventType<event_types::on_drag_end>
+    + OnEventType<event_types::on_drag_enter>
+    + OnEventType<event_types::on_drag_leave>
+    + OnEventType<event_types::on_drag_over>
+    + OnEventType<event_types::on_drag_start>
+    + OnEventType<event_types::on_drop>
 {
     type HtmlElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlElement<Renderer>
         + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
@@ -384,28 +385,28 @@ pub trait HtmlMediaElement:
     + HtmlElement
     + ElementWithSrcAttribute
     + ElementWithCrossOriginAttribute
-    + OnEventType<super::event_types::on_abort>
-    + OnEventType<super::event_types::on_can_play>
-    + OnEventType<super::event_types::on_can_play_through>
-    + OnEventType<super::event_types::on_duration_change>
-    + OnEventType<super::event_types::on_emptied>
-    + OnEventType<super::event_types::on_ended>
-    + OnEventType<super::event_types::on_loaded_data>
-    + OnEventType<super::event_types::on_loaded_metadata>
-    + OnEventType<super::event_types::on_load_start>
-    + OnEventType<super::event_types::on_pause>
-    + OnEventType<super::event_types::on_play>
-    + OnEventType<super::event_types::on_playing>
-    + OnEventType<super::event_types::on_progress>
-    + OnEventType<super::event_types::on_rate_change>
-    + OnEventType<super::event_types::on_resize>
-    + OnEventType<super::event_types::on_seeked>
-    + OnEventType<super::event_types::on_seeking>
-    + OnEventType<super::event_types::on_stalled>
-    + OnEventType<super::event_types::on_suspend>
-    + OnEventType<super::event_types::on_time_update>
-    + OnEventType<super::event_types::on_volume_change>
-    + OnEventType<super::event_types::on_waiting>
+    + OnEventType<event_types::on_abort>
+    + OnEventType<event_types::on_can_play>
+    + OnEventType<event_types::on_can_play_through>
+    + OnEventType<event_types::on_duration_change>
+    + OnEventType<event_types::on_emptied>
+    + OnEventType<event_types::on_ended>
+    + OnEventType<event_types::on_loaded_data>
+    + OnEventType<event_types::on_loaded_metadata>
+    + OnEventType<event_types::on_load_start>
+    + OnEventType<event_types::on_pause>
+    + OnEventType<event_types::on_play>
+    + OnEventType<event_types::on_playing>
+    + OnEventType<event_types::on_progress>
+    + OnEventType<event_types::on_rate_change>
+    + OnEventType<event_types::on_resize>
+    + OnEventType<event_types::on_seeked>
+    + OnEventType<event_types::on_seeking>
+    + OnEventType<event_types::on_stalled>
+    + OnEventType<event_types::on_suspend>
+    + OnEventType<event_types::on_time_update>
+    + OnEventType<event_types::on_volume_change>
+    + OnEventType<event_types::on_waiting>
 {
     type HtmlMediaElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMediaElement<Renderer>
         + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
@@ -484,9 +485,9 @@ pub trait HtmlFormElement:
     + ElementWithAcceptAttribute
     + ElementWithRelAttribute
     + ElementWithNameAttribute
-    + OnEventType<super::event_types::on_form_data>
-    + OnEventType<super::event_types::on_reset>
-    + OnEventType<super::event_types::on_submit>
+    + OnEventType<event_types::on_form_data>
+    + OnEventType<event_types::on_reset>
+    + OnEventType<event_types::on_submit>
 {
     type HtmlFormElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlFormElement<Renderer>
         + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
