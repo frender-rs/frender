@@ -2256,12 +2256,26 @@ where
     ) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F> {
         self.to_element_with(f)
     }
+
+    /// An identity fn
+    #[inline(always)]
+    pub fn make_fn_mut<
+        V: ?Sized,
+        F: for<'a> FnMut(
+            &'a V,
+        )
+            -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F2>,
+        F2: for<'a> FnMut1<<&'a ES as IntoIterator>::Item>,
+    >(
+        f: F,
+    ) -> F {
+        f
+    }
 }
 
-// TODO: rename to make_*
 /// An identity fn
 #[inline(always)]
-pub const fn synced_collection_to_elements<
+pub const fn synced_collection_make_fn_mut<
     ES,
     V: ?Sized,
     F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F2>,
@@ -2275,10 +2289,9 @@ where
     f
 }
 
-// TODO: rename to make_*
 /// An identity fn
 #[inline(always)]
-pub const fn synced_vec_to_elements<
+pub const fn synced_vec_make_fn_mut<
     T,
     V: ?Sized,
     F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, std::slice::Iter<'a, T>, F2>,
@@ -2286,5 +2299,5 @@ pub const fn synced_vec_to_elements<
 >(
     f: F,
 ) -> F {
-    synced_collection_to_elements::<Vec<T>, V, F, F2>(f)
+    synced_collection_make_fn_mut::<Vec<T>, V, F, F2>(f)
 }

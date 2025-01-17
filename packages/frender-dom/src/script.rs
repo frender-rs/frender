@@ -52,6 +52,7 @@ pub trait IntoScriptContent {
     type IntoScriptContent: assert::ScriptContent;
     fn into_script_content(this: Self) -> Self::IntoScriptContent;
 
+    // TODO: require ReactiveValue<str> instead
     type IntoScriptInnerText: CsrAttrValue<str>;
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText;
 }
@@ -116,7 +117,7 @@ impl<S: SsrStr + CsrStr> CsrAttrValue<str> for ScriptInnerTextWronglyEncoded<S> 
         },
         set = |this| cache.to_as_ref_str().as_ref(),
         into_cache = cache,
-        eq = |this, cache| *cache == this.0,
+        eq = |this, cache| this.0.match_static_str_cache(cache),
     );
 }
 

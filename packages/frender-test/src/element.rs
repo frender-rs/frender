@@ -615,7 +615,9 @@ mod dom_token_list {
 }
 
 mod event_listener {
-    use frender_html::dom::{event_types::EventType, HasEventTypeName, OnEvent, RegisterOrUpdate};
+    use frender_html::dom::{
+        event_types::EventType, HasEventTypeName, OnEvent, RegisterOrUpdate, RegisterUpdate,
+    };
 
     use crate::renderer::Renderer;
 
@@ -645,6 +647,21 @@ mod event_listener {
         }
     }
 
+    #[derive(Debug)]
+    pub struct EventListenerUnpinned<F> {
+        f: F,
+    }
+
+    impl<F> RegisterUpdate<Element, Renderer, F> for EventListenerUnpinned<F> {
+        fn register(node: &mut Element, renderer: &mut Renderer, f: F) -> Self {
+            Self { f }
+        }
+
+        fn update(&mut self, node: &mut Element, renderer: &mut Renderer, f: F) {
+            self.f = f
+        }
+    }
+
     impl<ET: HasEventTypeName + EventType> OnEvent<Renderer, ET> for Element {
         type EventListener<
             F: frender_html::dom::HandleEvent<
@@ -656,12 +673,20 @@ mod event_listener {
             F: frender_html::dom::HandleEvent<
                     <ET as frender_html::dom::event_types::EventType>::Event,
                 > + 'static,
-        > = EventListener<F>;
+        > = EventListenerUnpinned<F>;
     }
 }
 
 mod form_control {
-    use frender_html::form_control::element::FormControlElement;
+    use std::marker::PhantomData;
+
+    use frender_html::{
+        dom::RegisterUpdate,
+        form_control::{
+            element::FormControlElement,
+            value::{FormControlValueKind, HandleFormControlValue},
+        },
+    };
 
     use crate::renderer::Renderer;
 
@@ -680,20 +705,15 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListener<
-            F: frender_html::form_control::value::HandleFormControlValue<str> + 'static,
-        > = ();
+        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<str> + 'static> =
+            EventListenerUnpinned<str>;
 
-        fn on_value_change<
-            F: frender_html::form_control::value::HandleFormControlValue<str> + 'static,
-        >(
-            &mut self,
-            renderer: &mut Renderer,
-            state: &mut Self::OnValueChangeEventListener<F>,
-            f: F,
-        ) {
-            todo!()
+        type OnValueChangeElementUnpinned = Self;
+        fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+            self
         }
+
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<str> + 'static> = F;
     }
 
     impl FormControlElement<f64, Renderer> for Element {
@@ -709,20 +729,15 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListener<
-            F: frender_html::form_control::value::HandleFormControlValue<f64> + 'static,
-        > = ();
+        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<f64> + 'static> =
+            EventListenerUnpinned<f64>;
 
-        fn on_value_change<
-            F: frender_html::form_control::value::HandleFormControlValue<f64> + 'static,
-        >(
-            &mut self,
-            renderer: &mut Renderer,
-            state: &mut Self::OnValueChangeEventListener<F>,
-            f: F,
-        ) {
-            todo!()
+        type OnValueChangeElementUnpinned = Self;
+        fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+            self
         }
+
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<f64> + 'static> = F;
     }
 
     impl FormControlElement<bool, Renderer> for Element {
@@ -738,19 +753,32 @@ mod form_control {
             todo!()
         }
 
-        type OnValueChangeEventListener<
-            F: frender_html::form_control::value::HandleFormControlValue<bool> + 'static,
-        > = ();
+        type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<bool> + 'static> =
+            EventListenerUnpinned<bool>;
 
-        fn on_value_change<
-            F: frender_html::form_control::value::HandleFormControlValue<bool> + 'static,
-        >(
-            &mut self,
-            renderer: &mut Renderer,
-            state: &mut Self::OnValueChangeEventListener<F>,
-            f: F,
-        ) {
+        type OnValueChangeElementUnpinned = Self;
+        fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned {
+            self
+        }
+
+        type OnValueChangeFUnpinned<F: HandleFormControlValue<bool> + 'static> = F;
+    }
+
+    enum Never {}
+    struct EventListenerUnpinned<VK: ?Sized + FormControlValueKind> {
+        _todo: Never,
+        _phantom: PhantomData<VK>,
+    }
+
+    impl<F: HandleFormControlValue<VK> + 'static, VK: ?Sized + FormControlValueKind>
+        RegisterUpdate<Element, Renderer, F> for EventListenerUnpinned<VK>
+    {
+        fn register(node: &mut Element, renderer: &mut Renderer, f: F) -> Self {
             todo!()
+        }
+
+        fn update(&mut self, node: &mut Element, renderer: &mut Renderer, f: F) {
+            match self._todo {}
         }
     }
 }

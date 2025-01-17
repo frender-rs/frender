@@ -6,12 +6,7 @@ mod ssr {
 
     use crate::ToElement;
 
-    use super::{
-        super::{IntoHtmlChildrenWithValue, SelfAsMutCsrElementWithValue},
-        WithToElement,
-    };
-
-    impl SelfAsMutCsrElementWithValue for WithToElement {}
+    use super::{super::IntoHtmlChildrenWithValue, WithToElement};
 
     impl<
             V: ?Sized + for<'a> ToElement<ToElement<'a>: SsrElement<HtmlChildren = HC>>,
@@ -32,7 +27,13 @@ mod csr {
 
     use crate::ToElement;
 
-    use super::{super::AsMutCsrElementWithValue, WithToElement};
+    use super::{
+        super::{
+            impl_IntoAsMutCsrElementWithValue_with_Self, AsMutCsrElementWithValue,
+            IntoAsMutCsrElementWithValue,
+        },
+        WithToElement,
+    };
 
     impl<
             V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
@@ -47,6 +48,16 @@ mod csr {
 
         fn as_mut_csr_element_with_value<'a>(&'a mut self, v: &'a V) -> Self::ElementWithValue<'a> {
             v.to_element()
+        }
+    }
+
+    impl<
+            V: ?Sized + for<'a> ToElement<ToElement<'a>: CsrElement<RenderStateKind = K>>,
+            K: RenderStateKind,
+        > IntoAsMutCsrElementWithValue<V> for WithToElement
+    {
+        impl_IntoAsMutCsrElementWithValue_with_Self! {
+            type Value = V;
         }
     }
 }

@@ -7,10 +7,12 @@ mod csr {
     use crate::fn_traits::{FnMut1, FnOnce1};
 
     use super::{
-        super::{AsMutCsrElementWithValue, SelfAsMutCsrElementWithValue},
+        super::{
+            impl_IntoAsMutCsrElementWithValue_with_Self, AsMutCsrElementWithValue,
+            IntoAsMutCsrElementWithValue,
+        },
         WithFn,
     };
-    impl<F> SelfAsMutCsrElementWithValue for WithFn<F> {}
 
     impl<V, F, K> AsMutCsrElementWithValue<V> for WithFn<F>
     where
@@ -30,6 +32,17 @@ mod csr {
             value: &'a V,
         ) -> Self::ElementWithValue<'a> {
             (self.0)(value)
+        }
+    }
+
+    impl<V, F, K> IntoAsMutCsrElementWithValue<V> for WithFn<F>
+    where
+        V: ?Sized,
+        F: for<'a> FnMut1<&'a V, Output: CsrElement<RenderStateKind = K>>,
+        K: RenderStateKind,
+    {
+        impl_IntoAsMutCsrElementWithValue_with_Self! {
+            type Value = V;
         }
     }
 }

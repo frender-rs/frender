@@ -3,7 +3,25 @@ use crate::{
     TempStr, ToAsRefStr,
 };
 
-pub trait SsrStr {
+pub mod csr;
+
+pub(crate) mod known {
+    crate::define_trait_known_str!(
+        pub(crate) trait Ssr = KnownSsrStr;
+        pub(crate) trait Csr = KnownCsrStr;
+    );
+}
+
+pub trait IsNonReactiveStr {
+    fn into_reactive_value(self) -> NonReactiveStr<Self>
+    where
+        Self: Sized,
+    {
+        NonReactiveStr(self)
+    }
+}
+
+pub trait SsrStr: IsNonReactiveStr {
     /// `'static` is actually not required for ssr.
     /// However, component_fn and RenderWith require the returned element to
     /// have the same `SsrElement::HtmlChildren` for all lifetime generics.
@@ -13,6 +31,24 @@ pub trait SsrStr {
     fn into_into_static_str(self) -> Self::IntoIntoStaticStr;
 }
 
+pub trait CsrStr: IsNonReactiveStr {
+    type StaticStrCache: 'static + PartialEq<Self::IntoIntoStaticStrCache> + ToAsRefStr;
+    type IntoIntoStaticStrCache: IntoStaticStrCache<StaticStrCache = Self::StaticStrCache>;
+    /// The implementation should be zero cost.
+    /// Costs should be put into `impl IntoStaticStrCache`
+    /// so that existing `Self::StaticStrCache` can check whether the cache matches `Self::IntoIntoStaticStrCache`
+    /// before calling [`IntoStaticStrCache::update_into_static_str_cache`].
+    fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache;
+
+    fn match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool;
+
+    fn not_match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        !self.match_static_str_cache(cache)
+    }
+}
+
+// region: static strings
+impl<S: 'static + AsRef<str>> IsNonReactiveStr for S {}
 impl<S: 'static + AsRef<str>> SsrStr for S {
     type StaticStr = S;
     type IntoIntoStaticStr = SelfIntoStaticStr<S>;
@@ -20,38 +56,17 @@ impl<S: 'static + AsRef<str>> SsrStr for S {
         SelfIntoStaticStr(self)
     }
 }
-
-impl<S: IntoStaticStr> SsrStr for TempStr<S> {
-    type StaticStr = S::StaticStr;
-    type IntoIntoStaticStr = S;
-
-    fn into_into_static_str(self) -> Self::IntoIntoStaticStr {
-        self.0
-    }
-}
-
-pub trait CsrStr {
-    type StaticStrCache: 'static
-        + PartialEq<Self::IntoIntoStaticStrCache>
-        + ToAsRefStr
-        + PartialEq<Self>;
-    type IntoIntoStaticStrCache: IntoStaticStrCache<StaticStrCache = Self::StaticStrCache>;
-    fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache;
-}
-
 impl<S: 'static + AsRef<str> + PartialEq> CsrStr for S {
     type StaticStrCache = SelfToAsRefStr<S>;
     type IntoIntoStaticStrCache = SelfToAsRefStr<S>;
     fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache {
         SelfToAsRefStr(self)
     }
-}
-
-impl<S: IntoStaticStrCache> CsrStr for TempStr<S> {
-    type StaticStrCache = TempStrIntoStaticStrCache<S::StaticStrCache>;
-    type IntoIntoStaticStrCache = Self;
-    fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache {
-        self
+    fn match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        *self == cache.0
+    }
+    fn not_match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        *self != cache.0
     }
 }
 
@@ -67,16 +82,6 @@ impl<S: 'static + AsRef<str>> IntoStaticStr for SelfIntoStaticStr<S> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SelfToAsRefStr<S>(pub S);
-
-impl<S: PartialEq> PartialEq<S> for SelfToAsRefStr<S> {
-    fn eq(&self, other: &S) -> bool {
-        S::eq(&self.0, other)
-    }
-
-    fn ne(&self, other: &S) -> bool {
-        S::ne(&self.0, other)
-    }
-}
 
 impl<S: AsRef<str>> ToAsRefStr for SelfToAsRefStr<S> {
     type ToAsRefStr<'a> = &'a S
@@ -100,40 +105,116 @@ impl<S: 'static + AsRef<str> + PartialEq> IntoStaticStrCache for SelfToAsRefStr<
     }
 }
 
-pub mod csr {
-    use crate::{IntoStaticStrCache, ToAsRefStr};
+// endregion
+// region: TempStr
+impl<S> IsNonReactiveStr for TempStr<S> {}
+impl<S: IntoStaticStr> SsrStr for TempStr<S> {
+    type StaticStr = S::StaticStr;
+    type IntoIntoStaticStr = S;
 
-    use super::CsrStr;
+    fn into_into_static_str(self) -> Self::IntoIntoStaticStr {
+        self.0
+    }
+}
+impl<S: IntoStaticStrCache> CsrStr for TempStr<S> {
+    type StaticStrCache = TempStrIntoStaticStrCache<S::StaticStrCache>;
+    type IntoIntoStaticStrCache = Self;
+    fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache {
+        self
+    }
+    fn match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        cache == self
+    }
+    fn not_match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        cache != self
+    }
+}
+// endregion
+// region: NonReactiveStr
+pub struct NonReactiveStr<T: IsNonReactiveStr>(T);
 
-    pub fn update_with_option_cache<S: CsrStr, R>(
-        s: S,
-        cache: &mut Option<S::StaticStrCache>,
-        update: impl FnOnce(&str) -> R,
-    ) -> Option<R> {
-        let cache = if let Some(cache) = cache {
-            if *cache == s {
-                return None;
-            }
+impl<T: IsNonReactiveStr> IsNonReactiveStr for NonReactiveStr<T> {}
 
-            s.into_into_static_str_cache()
-                .update_into_static_str_cache(cache);
+impl<T: SsrStr> SsrStr for NonReactiveStr<T> {
+    type StaticStr = T::StaticStr;
+    type IntoIntoStaticStr = T::IntoIntoStaticStr;
 
-            cache
-        } else {
-            cache.insert(s.into_into_static_str_cache().into_static_str_cache())
+    fn into_into_static_str(self) -> Self::IntoIntoStaticStr {
+        self.0.into_into_static_str()
+    }
+}
+
+impl<T: CsrStr> CsrStr for NonReactiveStr<T> {
+    type StaticStrCache = T::StaticStrCache;
+    type IntoIntoStaticStrCache = T::IntoIntoStaticStrCache;
+
+    fn into_into_static_str_cache(self) -> Self::IntoIntoStaticStrCache {
+        self.0.into_into_static_str_cache()
+    }
+
+    fn match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        self.0.match_static_str_cache(cache)
+    }
+
+    fn not_match_static_str_cache(&self, cache: &Self::StaticStrCache) -> bool {
+        self.0.not_match_static_str_cache(cache)
+    }
+}
+// endregion
+
+pub mod define_trait_known_str {
+    #[macro_export]
+    #[doc(hidden)]
+    macro_rules! __define_trait_known_str_impl_static {
+        ($KnownStaticStr:ident) => {
+            $crate::impl_many!(
+                impl<__> $KnownStaticStr
+                    for each_of![
+                        &'static str,
+                        String,
+                        std::borrow::Cow<'static, str>,
+                        std::rc::Rc<str>,
+                        std::sync::Arc<str>,
+                    ]
+                {
+                }
+            );
         };
-
-        Some(update(cache.to_as_ref_str().as_ref()))
     }
+}
 
-    pub fn init_cache<S: CsrStr, R>(
-        //
-        s: S,
-        update: impl FnOnce(&str) -> R,
-    ) -> (S::StaticStrCache, R) {
-        let cache = s.into_into_static_str_cache().into_static_str_cache();
+/// We cannot ensure `Option<_>: !CsrStr` because
+/// `core` might `impl AsRef<str> for Option<_>`.
+/// But we can ensure `Option<_>: !KnownCsrStr`.
+#[macro_export]
+macro_rules! define_trait_known_str {
+    (
+        pub(crate) trait Ssr = $KnownSsrStr:ident;
+        pub(crate) trait Csr = $KnownCsrStr:ident;
+    ) => {
+        pub(crate) trait $KnownSsrStr: $crate::strings::SsrStr {}
+        pub(crate) trait $KnownCsrStr: $crate::strings::CsrStr {}
 
-        let res = update(cache.to_as_ref_str().as_ref());
-        (cache, res)
-    }
+        const _: () = {
+            use std::convert::AsRef;
+
+            use $crate::{
+                strings::{CsrStr, SsrStr},
+                IntoStaticStr, IntoStaticStrCache,
+            };
+
+            trait KnownStaticStr: 'static + AsRef<str> + SsrStr + CsrStr {}
+
+            $crate::__define_trait_known_str_impl_static! {KnownStaticStr}
+
+            impl<S: KnownStaticStr> $KnownSsrStr for S {}
+            impl<S: KnownStaticStr> $KnownCsrStr for S {}
+
+            impl<S: IntoStaticStr> $KnownSsrStr for $crate::TempStr<S> {}
+            impl<S: IntoStaticStrCache> $KnownCsrStr for $crate::TempStr<S> {}
+
+            impl<S: SsrStr> $KnownSsrStr for $crate::strings::NonReactiveStr<S> {}
+            impl<S: CsrStr> $KnownCsrStr for $crate::strings::NonReactiveStr<S> {}
+        };
+    };
 }

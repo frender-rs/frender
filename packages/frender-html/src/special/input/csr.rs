@@ -197,7 +197,7 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
             match (state_type, input_type) {
                 (None, None) => {}
                 (state_type, Some(input_type)) => {
-                    _ = frender_common::strings::csr::update_with_option_cache(input_type, state_type, |input_type_str| {
+                    _ = frender_common::strings::csr::update_into_option_cache(input_type, state_type, |input_type_str| {
                         use crate::html::behaviors::ElementWithTypeAttribute;
                         element.set_type(renderer, input_type_str);
                     })

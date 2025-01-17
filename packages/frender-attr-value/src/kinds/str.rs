@@ -47,7 +47,7 @@ mod csr {
 
                 state.to_as_ref_str().as_ref()
             },
-            eq = |this, cache| <S::StaticStrCache as PartialEq<S>>::eq(cache, this),
+            eq = |this, cache| this.match_static_str_cache(cache),
         );
     }
 }

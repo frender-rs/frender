@@ -1,5 +1,5 @@
 use either::Either;
-use frender::{prelude::*, synced_vec_to_elements, SyncedVec};
+use frender::{prelude::*, SyncedVec};
 use hooks::{ShareValue, Signal, SignalHook};
 
 struct Item {
@@ -169,7 +169,7 @@ fn Main() {
             component_fn!(move || {
                 h![data.use_signal()];
 
-                data.to_element_with_fn(synced_vec_to_elements(
+                data.to_element_with_fn(SyncedVec::make_fn_mut(
                     move |Data {
                               items,
                               //   selected_index,

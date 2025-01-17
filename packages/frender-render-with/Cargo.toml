@@ -13,7 +13,7 @@ frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "web",
 ] }
 frender-common = { version = "0.1.0", path = "../frender-common" }
-frender-elements = { version = "0.1.0", path = "../frender-elements" }
+frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements" }
 hooks = { version = "3.0.0-alpha", default-features = false, features = [
     "Signal",
 ] }

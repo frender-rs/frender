@@ -16,39 +16,48 @@ mod ssr {
     }
 }
 
-mod csr {
-    use crate::element_types::RenderStateWithPehKind;
+pub mod csr {
+    use crate::html::behavior_type_traits;
     use crate::html::components::style;
 
-    use crate::kinds::KindOfNonReactive;
     use crate::CsrComponent;
 
-    use frender_common::strings::csr::update_with_option_cache;
-    use frender_common::strings::CsrStr;
+    use frender_common::reactive_value::{ReactiveValue, RenderValueMut, RenderValueWithFnMutAndData};
 
-    use frender_dom::behaviors::HtmlElement;
-
-    impl<Children: CsrStr> CsrComponent<Children> for style::Marker {
-        type ChildrenRenderStateKind = KindOfNonReactive<Option<<Children as CsrStr>::StaticStrCache>>;
-
-        fn children_render_update<R: crate::RenderHtml + ?Sized>(
-            self,
-            children: Children,
-            element: &mut Self::Element<R>,
-            renderer: &mut R,
-            children_state: std::pin::Pin<&mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPeh<R>>,
-        ) {
-            self.children_unpinned_render_update(children, element, renderer, children_state.get_mut())
+    fn into_renderer<'a, ET: ?Sized + behavior_type_traits::HtmlElement, R: crate::RenderHtml + ?Sized>(
+        //
+        renderer: &'a mut R,
+        parent: &'a mut <ET as crate::BehaviorType>::OfBehaviorType<R>,
+    ) -> impl 'a + RenderValueMut<str, RenderOutput = ()> {
+        fn fn_mut_into_renderer<F: FnMut(&str)>(f: F) -> impl RenderValueMut<str, RenderOutput = ()> {
+            RenderValueWithFnMutAndData {
+                update: |f: &mut F, value: &str| f(value),
+                remove: |f: &mut F| f(""),
+                data: f,
+            }
         }
 
-        fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
-            self,
-            children: Children,
-            element: &mut Self::Element<R>,
-            renderer: &mut R,
-            children_state: &mut <Self::ChildrenRenderStateKind as RenderStateWithPehKind<Self>>::RenderStateWithPehUnpinned<R>,
-        ) {
-            _ = update_with_option_cache(children, &mut children_state.0, |value| element.set_inner_text(renderer, value))
-        }
+        fn_mut_into_renderer(|value| {
+            use frender_common::convert::FromMut as _;
+            use frender_dom::behaviors::HtmlElement as _;
+            ET::HtmlElement::from_mut(parent).set_inner_text(renderer, value)
+        })
+    }
+
+    super::super::define_Kind_with_ReactiveValue!(
+        pub struct Kind;
+        type ReactiveValueKind = str;
+        type ET: behavior_type_traits::HtmlStyleElement;
+
+        const into_mut_renderer: _ = for<R> |renderer, parent| &mut into_renderer::<ET, R>(renderer, parent);
+    );
+
+    impl<Children: ReactiveValue<str>> CsrComponent<Children> for style::Marker {
+        super::super::impl_CsrComponent_with_ReactiveValue!(
+            type Kind = Kind;
+            type This = Children;
+            const into_reactive_value: Children = |children| children;
+            const into_renderer: _ = for<R> |renderer, parent| into_renderer::<style::Marker, R>(renderer, parent);
+        );
     }
 }

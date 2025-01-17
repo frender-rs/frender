@@ -151,7 +151,7 @@ pub mod csr {
         type StaticCache = DeclarationNameStrStaticCache<S::StaticStrCache>;
 
         fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool {
-            cache.0 == *this
+            this.match_static_str_cache(&cache.0)
         }
 
         fn into_cacheable(this: Self) -> Self::Cacheable {
@@ -222,7 +222,7 @@ pub mod csr {
         type StaticCache = CacheableDeclarationNameIntoStaticStrCache<S::StaticStrCache>;
 
         fn match_cache(this: &Self, cache: &Self::StaticCache) -> bool {
-            cache.0 == this.0
+            this.0.match_static_str_cache(&cache.0)
         }
 
         fn into_cacheable(this: Self) -> Self::Cacheable {

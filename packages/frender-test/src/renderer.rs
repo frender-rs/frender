@@ -6,7 +6,7 @@ use frender_html::{
         render::{Render, RenderTextFrom, RenderWithContext},
         ProvideRenderContext,
     },
-    RenderHtml, RenderStateKindPinned, RenderStateKindUnpinned,
+    RenderHtml,
 };
 
 use crate::{

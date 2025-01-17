@@ -59,10 +59,6 @@ pub trait UnpinnedRenderStateKind {
     type UnpinnedNonReactiveState<R: RenderHtml + ?Sized>;
     /// Renderer-agnostic reactive state in unpinned environment.
     ///
-    /// [`Default`] is required so that [`RenderStateKind`](CsrElement::RenderStateKind) of `Option<impl CsrElement>`
-    /// don't need to wrap `UnpinnedReactiveState` with `Option`.
-    /// Note that [`PinnedRenderStateKind::PinnedReactiveState`] requires `Default` for a different reason.
-    ///
     /// [`Unpin`] is required so that [`StateUnmount`] can be used
     /// (caller can safely create a `Pin<&mut _>` from unpinned places
     /// and then call [`StateUnmount::state_unmount`]).
@@ -70,6 +66,12 @@ pub trait UnpinnedRenderStateKind {
     /// Another solution is to split trait [`StateUnmount`] into pinned and unpinned variants,
     /// then we don't need the `Unpin` bound.
     type UnpinnedReactiveState: StateUnmount + Default + Unpin;
+
+    #[cfg(todo)]
+    /// [`Default`] is required so that [`RenderStateKind`](CsrElement::RenderStateKind) of `Option<impl CsrElement>`
+    /// don't need to wrap `UnpinnedReactiveState` with `Option`.
+    /// Note that [`PinnedRenderStateKind::PinnedReactiveState`] requires `Default` for a different reason.
+    type UnpinnedReactiveStateDefault: StateUnmount + Default + Unpin;
 }
 
 pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
@@ -111,6 +113,9 @@ pub struct RenderStates<UH, NRS, RS> {
     pub non_reactive_state: NRS,
     pub reactive_state: RS,
 }
+
+pub(crate) type PinnedMutRenderStates<'a, UH, NRS, RS> = RenderStates<&'a mut UH, Pin<&'a mut NRS>, Pin<&'a mut RS>>;
+pub(crate) type UnpinnedMutRenderStates<'a, UH, NRS, RS> = RenderStates<&'a mut UH, &'a mut NRS, &'a mut RS>;
 
 pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
 pub type UnpinnedUiHandleOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>;

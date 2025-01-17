@@ -30,6 +30,8 @@ frender_common::impl_many!(
     }
 );
 
+type Kind = crate::element_types::KindRenderStateWithAnyParent<crate::kinds::KindOfNoState>;
+
 frender_common::impl_many!(
     impl<__> CsrComponent<Empty>
         for each_of![
@@ -48,8 +50,50 @@ frender_common::impl_many!(
             tags::wbr,
         ]
     {
-        type ChildrenRenderStateKind = crate::kinds::KindOfNoState;
-        fn children_render_update<R: RenderHtml + ?Sized>(self, Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: std::pin::Pin<&mut ()>) {}
-        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(self, Empty: Empty, _: &mut Self::Element<R>, _: &mut R, _: &mut ()) {}
+        type ChildrenRenderStateKind = Kind;
+
+        fn children_pinned_render_init<R: RenderHtml + ?Sized>(
+            //
+            self,
+            Empty: Empty,
+            _: &mut R,
+            _: &mut Self::OfBehaviorType<R>,
+            _: crate::element::PinMutRenderInitStatesOfKind<Self::ChildrenRenderStateKind, R>,
+        ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        }
+
+        fn children_pinned_render_update<R: RenderHtml + ?Sized>(
+            //
+            self,
+            Empty: Empty,
+            _: &mut R,
+            _: &mut Self::OfBehaviorType<R>,
+            _: crate::element::PinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
+        ) {
+        }
+
+        fn children_unpinned_render_init<R: RenderHtml + ?Sized>(
+            //
+            self,
+            Empty: Empty,
+            _: &mut R,
+            _: &mut Self::OfBehaviorType<R>,
+        ) -> crate::element::UnpinnedRenderStatesOfKind<Self::ChildrenRenderStateKind, R> {
+            crate::element::RenderStates {
+                ui_handle: (),
+                non_reactive_state: (),
+                reactive_state: (),
+            }
+        }
+
+        fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
+            //
+            self,
+            Empty: Empty,
+            _: &mut R,
+            _: &mut Self::OfBehaviorType<R>,
+            _: crate::element::UnpinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
+        ) {
+        }
     }
 );
