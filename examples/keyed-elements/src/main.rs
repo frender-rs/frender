@@ -129,7 +129,7 @@ fn Main() {
                          selected_index,
                          ..
                      }| {
-                        Elements(
+                        KeyedElements(
                             items
                                 .iter()
                                 .enumerate()

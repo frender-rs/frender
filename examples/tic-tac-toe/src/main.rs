@@ -91,7 +91,7 @@ fn Game() {
         move |i| state_setter.dispatch(data::GameAction::JumpTo(i))
     };
 
-    let moves = Elements((0..state.full_history().len()).map(move |i: usize| {
+    let moves = KeyedElements((0..state.full_history().len()).map(move |i: usize| {
         let desc = if i > 0 {
             format!("Go to move #{i}")
         } else {
