@@ -7,20 +7,20 @@ impl<K, E> Keyed<K, E> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct DefaultElementsAlgorithm;
+#[derive(Debug, Clone, Copy, Default)]
+pub struct DefaultAlgorithm;
 
 #[derive(Debug, Clone, Copy)]
-pub struct Elements<I: IntoIterator, A = DefaultElementsAlgorithm> {
+pub struct KeyedElements<I: IntoIterator, A = DefaultAlgorithm> {
     pub iter: I,
     pub algorithm: A,
 }
 
 #[allow(non_snake_case)]
-pub const fn Elements<I: IntoIterator>(iter: I) -> Elements<I> {
-    Elements {
+pub const fn KeyedElements<I: IntoIterator>(iter: I) -> KeyedElements<I> {
+    KeyedElements {
         iter,
-        algorithm: DefaultElementsAlgorithm,
+        algorithm: DefaultAlgorithm,
     }
 }
 

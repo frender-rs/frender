@@ -882,10 +882,10 @@ dependencies = [
  "frender-csr-web",
  "frender-dom-tokens",
  "frender-element",
- "frender-elements",
  "frender-events",
  "frender-hook-element",
  "frender-html",
+ "frender-keyed-elements",
  "frender-macros",
  "frender-render-with",
  "frender-ssr",
@@ -1020,17 +1020,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "frender-elements"
-version = "0.1.0"
-dependencies = [
- "async-str-iter",
- "frender-html",
- "frender-ssr",
- "frender-test",
- "indexmap 2.2.6",
-]
-
-[[package]]
 name = "frender-events"
 version = "0.1.0"
 dependencies = [
@@ -1098,6 +1087,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-keyed-elements"
+version = "0.1.0"
+dependencies = [
+ "async-str-iter",
+ "frender-html",
+ "frender-ssr",
+ "frender-test",
+ "indexmap 2.2.6",
+]
+
+[[package]]
 name = "frender-macro-core"
 version = "0.1.0"
 dependencies = [
@@ -1137,8 +1137,8 @@ version = "0.1.0"
 dependencies = [
  "async-str-iter",
  "frender-common",
- "frender-elements",
  "frender-html",
+ "frender-keyed-elements",
  "frender-ssr",
  "hooks",
 ]

@@ -25,7 +25,7 @@ async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 frender-csr = { version = "0.1.0", path = "../frender-csr", optional = true }
 frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = true }
 frender-render-with = { version = "0.1.0", path = "../frender-render-with", optional = true }
-frender-elements = { version = "0.1.0", path = "../frender-elements", optional = true }
+frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements", optional = true }
 frender-context = { version = "0.1.0", path = "../frender-context", default-features = false, optional = true }
 frender-element = { version = "0.1.0", path = "../frender-element" }
 frender-style = { version = "0.1.0", path = "../frender-style" }
@@ -70,10 +70,10 @@ either = [
 ]
 web = ["frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
-ssr = ["frender-elements?/ssr"] # TODO: remove ssr feature
-csr = ["ssr", "frender-csr", "frender-elements?/csr"]
+ssr = ["frender-keyed-elements?/ssr"] # TODO: remove ssr feature
+csr = ["ssr", "frender-csr", "frender-keyed-elements?/csr"]
 RenderWith = ["dep:frender-render-with"]
-Elements = ["dep:frender-elements"]
+KeyedElements = ["dep:frender-keyed-elements"]
 ToElement = []
 context = ["dep:frender-context"]
 hooks = ["dep:hooks", "frender-context?/hooks"]

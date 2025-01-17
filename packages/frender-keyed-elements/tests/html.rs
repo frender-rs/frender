@@ -1,7 +1,7 @@
 #![cfg(feature = "csr")]
 
-use frender_elements::{Elements, Keyed};
 use frender_html::cs;
+use frender_keyed_elements::{Keyed, KeyedElements};
 use frender_test::{element::Node, renderer::RendererWithRoot};
 
 fn dom_nodes_div_i32(dom: &RendererWithRoot) -> Vec<i32> {

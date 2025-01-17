@@ -39,7 +39,7 @@ use frender_html::{
     CsrElement, HtmlRenderContext, RenderHtml, StateUnmount,
 };
 
-use crate::{DefaultElementsAlgorithm, Keyed};
+use crate::{DefaultAlgorithm, Keyed};
 
 use super::{ElementsAlgorithm, KeyedElementsAlgorithm};
 
@@ -293,7 +293,7 @@ impl<K: Hash + Eq, EK: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKin
     }
 }
 
-impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultElementsAlgorithm {
+impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgorithm {
     type KeyedElementsRenderStateKind = Kind<K, E::RenderStateKind>;
 
     fn keyed_elements_render_init<

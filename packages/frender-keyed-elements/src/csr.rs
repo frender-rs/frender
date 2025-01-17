@@ -8,7 +8,7 @@ use frender_html::{
     CsrElement, HtmlRenderContext,
 };
 
-use crate::{Elements, Keyed};
+use crate::{KeyedElements, Keyed};
 
 pub trait KeyedElementsAlgorithm<K, E> {
     type KeyedElementsRenderStateKind: UnpinnedRenderStateKindPollRender;
@@ -1119,7 +1119,7 @@ pub mod linked_vec {
     }
 }
 
-impl<I, A, E> CsrElement for Elements<I, A>
+impl<I, A, E> CsrElement for KeyedElements<I, A>
 where
     I: IntoIterator<Item = E>,
     A: ElementsAlgorithm<E>,
@@ -1196,7 +1196,7 @@ where
 }
 
 #[cfg(not_working_yet)]
-pub type ElementsLinkedVec<I> = Elements<
+pub type ElementsLinkedVec<I> = KeyedElements<
     I,
     linked_vec::Algorithm<
         linked_vec::RealIndexMap<
@@ -1210,8 +1210,8 @@ pub type ElementsLinkedVec<I> = Elements<
 #[allow(non_snake_case)]
 pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(
     iter: I,
-) -> Elements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
-    Elements {
+) -> KeyedElements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
+    KeyedElements {
         iter,
         algorithm: Default::default(),
     }

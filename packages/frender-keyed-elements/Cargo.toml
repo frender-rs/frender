@@ -1,5 +1,5 @@
 [package]
-name = "frender-elements"
+name = "frender-keyed-elements"
 version = "0.1.0"
 edition = "2021"
 

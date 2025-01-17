@@ -21,7 +21,7 @@ impl IntoFnOnceRenderWithContext for Test {
                 cs::button()
                     .children(TempStr(&*String::new()))
                     .on_click(|_: &_| {}),
-                Elements(self.numbers.iter().map(|i| Keyed(*i, *i))),
+                KeyedElements(self.numbers.iter().map(|i| Keyed(*i, *i))),
             ))
         }
     }
@@ -45,7 +45,7 @@ impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
         move |ctx| {
             let numbers = self.0.borrow();
 
-            ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n))))
+            ctx.render(KeyedElements(numbers.iter().map(|n| Keyed(*n, *n))))
         }
     }
 }
@@ -58,7 +58,7 @@ impl<S: ShareValue<Value = Vec<i32>>> IntoFnOnceRenderWithContext for TestShareE
     ) -> impl FnOnceRenderWithContext<Ctx> {
         move |ctx| {
             self.0
-                .map(|numbers| ctx.render(Elements(numbers.iter().map(|n| Keyed(*n, *n)))))
+                .map(|numbers| ctx.render(KeyedElements(numbers.iter().map(|n| Keyed(*n, *n)))))
         }
     }
 }

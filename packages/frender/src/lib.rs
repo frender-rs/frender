@@ -60,8 +60,11 @@ pub use frender_render_with::{
     RenderWith, Rendered,
 };
 
-#[cfg(feature = "Elements")]
-pub use frender_elements::{DefaultElementsAlgorithm, Elements, Keyed};
+#[cfg(feature = "KeyedElements")]
+pub use frender_keyed_elements::{Keyed, KeyedElements};
+
+#[cfg(feature = "KeyedElements")]
+pub use frender_keyed_elements as keyed_elements;
 
 #[cfg(feature = "context")]
 pub use frender_context as context;
@@ -118,8 +121,8 @@ pub mod prelude {
 
     pub use frender_element::Element;
 
-    #[cfg(feature = "Elements")]
-    pub use crate::{Elements, Keyed};
+    #[cfg(feature = "KeyedElements")]
+    pub use crate::{Keyed, KeyedElements};
 
     pub use crate::dom_tokens;
 

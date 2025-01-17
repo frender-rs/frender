@@ -2,7 +2,7 @@
 
 use std::str::FromStr;
 
-use frender_elements::{Elements, Keyed};
+use frender_keyed_elements::{Keyed, KeyedElements};
 use frender_test::{element::Node, renderer::RendererWithRoot};
 
 fn dom_nodes_parse<T: FromStr + PartialEq>(dom: &RendererWithRoot) -> Vec<T>

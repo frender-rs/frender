@@ -1,6 +1,6 @@
 use frender_ssr::SsrElement;
 
-use crate::{Elements, Keyed};
+use crate::{KeyedElements, Keyed};
 
 pub struct IterKeyed<I>(I);
 
@@ -15,7 +15,7 @@ where
     }
 }
 
-impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> SsrElement for Elements<I, A>
+impl<K, E, A, I: IntoIterator<Item = Keyed<K, E>>> SsrElement for KeyedElements<I, A>
 where
     K: std::hash::Hash + Eq, // TODO: ToString ?
     E: SsrElement,
