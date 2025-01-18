@@ -10,3 +10,4 @@ frender = { path = "../../packages/frender", features = ["web", "spawn"] }
 hooks = "3.0.0-alpha"
 js-sys = "0.3.66"
 gloo = "0.11.0"
+console_error_panic_hook = "0.1.7"

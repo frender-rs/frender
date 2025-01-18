@@ -118,6 +118,9 @@ mod temp_str;
 
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
+    #[cfg(debug_assertions)]
+    console_error_panic_hook::set_once();
+
     (
         temp_str::main(),
         input(),
