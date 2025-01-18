@@ -80,6 +80,7 @@ pub trait Renderer: for<'a> RenderWithContext<RenderContext<'a> = RenderContext<
     ) where
         Self: RenderWithContext;
 
+    // TODO: rename to debug_assert*
     fn assert_cursor_is_at_node(render_context: &Self::RenderContext<'_>, node: &web_sys::Node)
     where
         Self: RenderWithContext;
@@ -236,7 +237,16 @@ impl<'a> Cursor<'a> {
     }
 
     fn check_cursor_is_at_node_or_warn(&self, node: &web_sys::Node) {
+        self.debug_assert_cursor_is_at_node(node)
+    }
+
+    /// Panics on `#[cfg(debug_assertions)]`
+    pub fn debug_assert_cursor_is_at_node(&self, node: &web_sys::Node) {
         #[cfg(debug_assertions)]
+        self.assert_cursor_is_at_node(node)
+    }
+
+    fn assert_cursor_is_at_node(&self, node: &web_sys::Node) {
         if !(self.skipped || self.cursor_is_at_node(node)) {
             web_sys::console::log_3(
                 &"[debug assertion failed] Cursor should be at:".into(),

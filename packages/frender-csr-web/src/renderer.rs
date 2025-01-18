@@ -248,7 +248,7 @@ impl frender_html::dom::csr::web::Renderer for Renderer {
     where
         Self: RenderWithContext,
     {
-        debug_assert!(render_context.cursor.cursor_is_at_node(node))
+        render_context.cursor.debug_assert_cursor_is_at_node(node)
     }
 
     fn reposition_node(render_context: &mut Self::RenderContext<'_>, node: &web_sys::Node)
