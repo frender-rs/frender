@@ -3340,6 +3340,7 @@ checksum = "ae47c6053f627732a3ded0adaf2aedddd2c02de71bacdb8a3dabbdcd4931a3ec"
 name = "synced"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "either",
  "frender",
  "gloo 0.11.0",
