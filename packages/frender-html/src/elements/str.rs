@@ -158,6 +158,7 @@ where
     ) {
         let UiHandleWithNonReactiveState { ui_handle, non_reactive_state } = states.ui_handle;
         self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+        render_context.map_mut_render_context(|render_context| ui_handle.check_and_move_cursor(render_context));
     }
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
@@ -185,6 +186,7 @@ where
             reactive_state: (),
         } = states;
         self.render_update_as_text_with_cache(render_context.renderer_mut(), ui_handle, non_reactive_state);
+        render_context.map_mut_render_context(|render_context| ui_handle.check_and_move_cursor(render_context));
     }
 }
 

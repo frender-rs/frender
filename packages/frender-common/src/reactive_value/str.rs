@@ -1,10 +1,6 @@
 use std::{pin::Pin, task::Poll};
 
-use crate::{
-    csr::StateUnmount,
-    strings::{known::KnownCsrStr, CsrStr},
-    IntoStaticStrCache, ToAsRefStr,
-};
+use crate::{csr::StateUnmount, strings::known::KnownCsrStr, IntoStaticStrCache, ToAsRefStr};
 
 use super::{ReactiveValue, ReactiveValueState};
 
@@ -37,40 +33,6 @@ impl<T: KnownCsrStr> ReactiveValue<str> for T {
         type ReactiveValueKind = str;
     );
 
-    #[cfg(todo)]
-    type StateUnpinned = CsrStrReactiveState<T::StaticStrCache>;
-
-    #[cfg(todo)]
-    fn _reactive_value_render_init_unpinned<R>(
-        self,
-        update: impl FnOnce(&str) -> R,
-    ) -> (Self::StateUnpinned, R) {
-        let cache = self.into_into_static_str_cache().into_static_str_cache();
-        let res = update(cache.to_as_ref_str().as_ref());
-        (CsrStrReactiveState(cache), res)
-    }
-
-    #[cfg(todo)]
-    fn _reactive_value_render_init_with_old_state_unpinned<R>(
-        self,
-        update: impl FnOnce(&str) -> R,
-        CsrStrReactiveState(cache): &mut Self::StateUnpinned,
-    ) -> R {
-        self.into_into_static_str_cache()
-            .update_into_static_str_cache(cache);
-        let res = update(cache.to_as_ref_str().as_ref());
-        res
-    }
-
-    #[cfg(todo)]
-    fn _reactive_value_render_update_unpinned<R>(
-        self,
-        update: impl FnOnce(&str) -> R,
-        CsrStrReactiveState(cache): &mut Self::StateUnpinned,
-    ) -> Option<R> {
-        crate::strings::csr::update_into_cache(self, update, cache)
-    }
-
     type UnpinnedState = CsrStrReactiveState<T::StaticStrCache>;
 
     type UnpinnedStateDefault = Option<Self::UnpinnedState>;
@@ -79,22 +41,31 @@ impl<T: KnownCsrStr> ReactiveValue<str> for T {
         self,
         renderer: impl super::RenderValueOnce<str, RenderOutput = Out>,
     ) -> (Self::UnpinnedState, Out) {
-        todo!()
+        let cache = self.into_into_static_str_cache().into_static_str_cache();
+        let res = renderer.render_value_once_update(cache.to_as_ref_str().as_ref());
+        (CsrStrReactiveState(cache), res)
     }
 
     fn reactive_value_render_init_with_old_state_unpinned<Out>(
         self,
         renderer: impl super::RenderValueOnce<str, RenderOutput = Out>,
-        old_state: &mut Self::UnpinnedState,
+        CsrStrReactiveState(cache): &mut Self::UnpinnedState,
     ) -> Out {
-        todo!()
+        self.into_into_static_str_cache()
+            .update_into_static_str_cache(cache);
+        let res = renderer.render_value_once_update(cache.to_as_ref_str().as_ref());
+        res
     }
 
     fn reactive_value_render_update_unpinned<Out>(
         self,
         renderer: impl super::RenderValueOnce<str, RenderOutput = Out>,
-        state: &mut Self::UnpinnedState,
+        CsrStrReactiveState(cache): &mut Self::UnpinnedState,
     ) -> Option<Out> {
-        todo!()
+        crate::strings::csr::update_into_cache(
+            self,
+            |v| renderer.render_value_once_update(v),
+            cache,
+        )
     }
 }
