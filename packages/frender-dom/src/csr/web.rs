@@ -169,6 +169,16 @@ pub struct RenderContext<'a, R: ?Sized> {
 }
 
 impl<'a> Cursor<'a> {
+    fn cloned(&self) -> Self {
+        Cursor {
+            position: match &self.position {
+                CursorPosition::After(cow) => CursorPosition::After(cow.clone()),
+                CursorPosition::FirstChildOf(cow) => CursorPosition::FirstChildOf(cow.clone()),
+            },
+            skipped: self.skipped,
+        }
+    }
+
     pub fn cursor_is_at_node(&self, node: &web_sys::Node) -> bool {
         match &self.position {
             CursorPosition::FirstChildOf(parent) => parent.first_child(),
@@ -195,14 +205,13 @@ impl<'a> Cursor<'a> {
     }
 
     pub fn readd_node(&mut self, node: &web_sys::Node, force_reposition: bool) {
-        if force_reposition {
-            // #[cfg(debug_assertions)]
-            // if self.skipped {
-            //     web_sys::console::warn_1(
-            //         &"Dom renderer's cursor can not be skipped when moving node".into(),
-            //     );
-            // }
+        if self.skipped {
+            const MSG: &str = "Dom renderer's cursor can not be skipped when moving node";
+            web_sys::console::warn_1(&MSG.into());
+            panic!("{}", MSG)
+        }
 
+        if force_reposition {
             match &self.position {
                 CursorPosition::FirstChildOf(parent) => {
                     // web_sys::console::log_2(&"FirstChildOf".into(), parent);
@@ -235,6 +244,7 @@ impl<'a> Cursor<'a> {
                 &"But the cursor is at:".into(),
             );
             self.log_self();
+            panic!("cursor is not at node");
         }
     }
 
@@ -254,6 +264,16 @@ impl<'a, R: ?Sized + Renderer> crate::render::RenderContext for RenderContext<'a
         f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
     ) -> Res {
         f(self)
+    }
+
+    fn map_mut_cloned_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        let cursor = self.cursor.cloned();
+        let out = f(self);
+        *self.cursor = cursor;
+        out
     }
 
     fn renderer_mut(&mut self) -> &mut Self::Renderer {

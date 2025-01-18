@@ -14,4 +14,10 @@ pub trait RenderContext {
     fn renderer_mut(&mut self) -> &mut Self::Renderer;
     fn log_cursor(&mut self);
     fn mark_cursor_skipped(&mut self);
+
+    // TODO: remove
+    fn map_mut_cloned_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res;
 }

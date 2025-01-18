@@ -625,7 +625,7 @@ mod state {
         RcWithKey, StatesCommon, StatesLikeVec,
     };
 
-    pub(crate) enum State<M, U, NRS, RS> {
+    pub(super) enum State<M, U, NRS, RS> {
         /// The SyncedCollection has inserted an item, but its ui handle hasn't been rendered for real.
         BeforeMounted,
         Mounted {
@@ -681,8 +681,7 @@ mod state {
         }
 
         /// Doesn't trust mount_state.
-        /// `update` should reposition if needed
-        pub(crate) fn force_render_init_or_update_with<
+        pub(super) fn force_render_init_or_update_with<
             E: CsrElement,
             Ctx: ?Sized + HtmlRenderContext,
         >(
@@ -707,7 +706,23 @@ mod state {
                 || element,
                 render_context,
                 |get_element, states, mount_state, render_context| {
-                    reposition(states.ui_handle, mount_state, render_context);
+                    // TODO: Is this sufficient since we might not trust it?
+                    let previous_was_skipped = match mount_state {
+                        MountState::MountedAndUpToDate => false,
+                        MountState::MountedAndUpToDateButPreviousWasSkipped => true,
+                        MountState::Outdated => false,
+                        MountState::OutdatedAndPreviousWasSkipped => true,
+                        MountState::OutdatedAndMoved => false,
+                    };
+
+                    // TODO: render_update shouldn't require render_context
+                    render_context.map_mut_cloned_render_context(|render_context| {
+                        reposition(states.ui_handle, mount_state, render_context)
+                    });
+
+                    if previous_was_skipped {
+                        render_context.mark_cursor_skipped();
+                    }
 
                     // render_update
                     get_element().unpinned_render_update(render_context, states);
@@ -717,7 +732,7 @@ mod state {
             )
         }
 
-        pub(crate) fn render_init_or_update_with<
+        pub(super) fn render_init_or_update_with<
             //
             E: CsrElement,
             Ctx: ?Sized + HtmlRenderContext,
@@ -784,8 +799,11 @@ mod state {
                         unreachable!()
                     };
 
-                    let mut ui_handle = render_context
-                        .map_mut_render_context(|render_context| ui_handle.mount(render_context));
+                    // TODO: render_init_with_old_state
+                    let mut ui_handle =
+                        render_context.map_mut_cloned_render_context(|render_context| {
+                            ui_handle.mount(render_context)
+                        });
 
                     // render_update
                     get_element().unpinned_render_update(
@@ -943,7 +961,7 @@ mod state {
             self.states_mut()[at..].rotate_right(len);
         }
 
-        pub(crate) fn clean<R: ?Sized>(
+        pub(super) fn clean<R: ?Sized>(
             &mut self,
             renderer: &mut R,
         ) -> &mut Vec<State<M, U, NRS, RS>>
@@ -1360,17 +1378,6 @@ mod state {
             }
         }
     }
-
-    #[cfg(todo)]
-    impl<S> Default for States<S> {
-        fn default() -> Self {
-            Self {
-                states: Vec::new(),
-                ready_to_unmount_count: 0,
-                all_outdated: false,
-            }
-        }
-    }
 }
 
 mod to_element {
@@ -1541,75 +1548,6 @@ mod to_element {
             <F::ItemToElement as CsrElement>::RenderStateKind: 'static,
         {
             type RenderStateKind = Kind<<F::ItemToElement as CsrElement>::RenderStateKind>;
-
-            #[cfg(todo)]
-            fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-                //
-                self,
-                render_context: &mut Ctx,
-                render_state: Pin<
-                    &mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>,
-                >,
-                force_reposition: bool,
-            ) {
-                self.unpinned_render_update_maybe_reposition(
-                    render_context,
-                    render_state.get_mut(),
-                    force_reposition,
-                )
-            }
-
-            #[cfg(todo)]
-            fn unpinned_render_update_maybe_reposition<
-                Ctx: ?Sized + frender_html::HtmlRenderContext,
-            >(
-                //
-                self,
-                render_context: &mut Ctx,
-                render_state: &mut State<
-                    UnpinnedRenderStateOfContext<
-                        <F::ItemToElement as Element>::RenderStateKind,
-                        Ctx,
-                    >,
-                    <Ctx::Renderer as frender_html::dom::render::Render>::CursorPlaceholder,
-                >,
-                force_reposition: bool,
-            ) {
-                render_state.state_unmounted = false;
-
-                let cursor_placeholder_force_reposition =
-                    force_reposition || render_state.render_states.is_none(); // Was unmounted, so must re-mount
-
-                let State {
-                    render_states,
-                    state_unmounted: _,
-                    cursor_placeholders,
-                } = render_state;
-
-                let cpb_or_new_cpa = render_context.map_mut_render_context(|render_context| {
-                    if let Some((cpa, cpb)) = cursor_placeholders {
-                        cpa.readd_self(render_context, cursor_placeholder_force_reposition);
-                        Ok(cpb)
-                    } else {
-                        let new_cpa = NodeRenderSelf::render_self(render_context);
-                        Err(new_cpa)
-                    }
-                });
-
-                self.unpinned_impl(render_context, render_states, force_reposition);
-
-                match cpb_or_new_cpa {
-                    Ok(cpb) => render_context.map_mut_render_context(|render_context| {
-                        cpb.readd_self(render_context, cursor_placeholder_force_reposition)
-                    }),
-                    Err(new_cpa) => {
-                        let new_cpb = render_context.map_mut_render_context(|render_context| {
-                            NodeRenderSelf::render_self(render_context)
-                        });
-                        *cursor_placeholders = Some((new_cpa, new_cpb));
-                    }
-                };
-            }
 
             fn pinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
                 //
@@ -1801,6 +1739,10 @@ mod to_element {
                     Rc::as_ptr(ui_handles)
                 ));
 
+                render_context.map_mut_render_context(|render_context| {
+                    cpa.check_and_move_cursor(render_context)
+                });
+
                 if self.all_states.borrow().0.contains(rc_with_key) {
                     // render_states has been properly synced
                     let states = &mut *ui_handles.borrow_mut();
@@ -1866,7 +1808,13 @@ mod to_element {
                                         }
                                         SimpleMountState::Outdated => {}
                                         SimpleMountState::OutdatedAndMoved => {
-                                            states.ui_handle.reposition(render_context);
+                                            // TODO: render_update shouldn't take render_context
+                                            use frender_csr::render::RenderContext as _;
+                                            render_context.map_mut_cloned_render_context(
+                                                |render_context| {
+                                                    states.ui_handle.reposition(render_context)
+                                                },
+                                            );
                                         }
                                     }
 
@@ -1911,7 +1859,9 @@ mod to_element {
                         // there might be remaining items
 
                         // shadow
+                        #[allow(unused_variables)]
                         let unprocessed_mounted = ();
+                        #[allow(unused_variables)]
                         let mounted = ();
 
                         let mut unprocessed_unmounted = 0;
@@ -1949,251 +1899,10 @@ mod to_element {
 
                     states.clean(render_context.renderer_mut());
                 }
-            }
-        }
 
-        #[cfg(todo)]
-        impl<'a, ES: Iterator, F: MapItemToElement<ES::Item>> SyncedCollectionToElement<'a, ES, F>
-        where
-            // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
-            <F::ItemToElement as CsrElement>::RenderStateKind: 'static,
-        {
-            // without caring about cursor placeholders
-            fn unpinned_impl<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-                //
-                self,
-                render_context: &mut Ctx,
-                render_states: &mut Option<
-                    RcWithKey<
-                        RefCell<
-                            RenderStates<
-                                UnpinnedRenderStateOfContext<
-                                    <F::ItemToElement as Element>::RenderStateKind,
-                                    Ctx,
-                                >,
-                            >,
-                        >,
-                    >,
-                >,
-                force_reposition: bool,
-            ) {
-                let rc_with_old_key = if let Some(render_states) = render_states {
-                    if self.all_states.borrow().0.contains(&*render_states) {
-                        /*
-                        {
-                            use frender_html::dom::render::Render;
-
-                            let states = render_states.rc.borrow();
-
-                            render_context.renderer_mut().log(
-                                &states
-                                    .states
-                                    .iter()
-                                    .map(|s| match s.mount_state {
-                                        MountState::MountedAndUpToDate => "MountedAndUpToDate ",
-                                        MountState::Outdated => "Outdated ",
-                                        MountState::OutdatedAndMoved => "OutdatedAndMoved ",
-                                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
-                                            "MountedAndUpToDateButPreviousWasSkipped "
-                                        }
-                                        MountState::OutdatedAndPreviousWasSkipped => {
-                                            "OutdatedAndPreviousWasSkipped "
-                                        }
-                                    })
-                                    .collect::<String>(),
-                            );
-                            render_context
-                                .renderer_mut()
-                                .log(&states.ready_to_unmount_count.to_string());
-                        }
-                        */
-
-                        // render_states is properly synced
-                        let render_states = &mut *render_states.borrow_mut();
-
-                        let all_outdated = std::mem::take(&mut render_states.all_outdated);
-
-                        let render_states = render_states.clean(render_context.renderer_mut());
-
-                        let mut render_states = render_states.iter_mut();
-                        let mut elements = self.items;
-                        let mut f = self.f;
-
-                        let zip = render_states.by_ref().zip(elements.by_ref());
-
-                        if force_reposition {
-                            // TODO: we could just unpinned_render_update_force_reposition outdated elements, and just force_reposition UpdateToDateButMoved elements, if not all_outdated
-                            zip.for_each(|(render_state, el)| {
-                                unpinned_render_update_force_reposition(
-                                    f.map_item_to_element(el),
-                                    render_context,
-                                    render_state,
-                                )
-                            })
-                        } else {
-                            if all_outdated {
-                                zip.for_each(|(render_state, el)| {
-                                    unpinned_render_update(
-                                        f.map_item_to_element(el),
-                                        render_context,
-                                        render_state,
-                                    )
-                                })
-                            } else {
-                                // only update outdated elements
-                                zip.for_each(|(render_state, el): (&mut _, _)| {
-                                    let Stated {
-                                        render_state,
-                                        mount_state,
-                                    } = render_state;
-
-                                    enum SimpleMountState {
-                                        UpToDate,
-                                        Outdated,
-                                        OutdatedAndMoved,
-                                    }
-
-                                    let (simple_mount_state, cursor_should_skip) = match mount_state
-                                    {
-                                        MountState::MountedAndUpToDate => {
-                                            (SimpleMountState::UpToDate, false)
-                                        }
-                                        MountState::MountedAndUpToDateButPreviousWasSkipped => {
-                                            (SimpleMountState::UpToDate, true)
-                                        }
-                                        MountState::Outdated => (SimpleMountState::Outdated, false),
-                                        MountState::OutdatedAndPreviousWasSkipped => {
-                                            (SimpleMountState::Outdated, true)
-                                        }
-                                        MountState::OutdatedAndMoved => {
-                                            (SimpleMountState::OutdatedAndMoved, false)
-                                        }
-                                    };
-
-                                    if cursor_should_skip {
-                                        render_context.mark_cursor_skipped()
-                                    }
-
-                                    *mount_state = MountState::MountedAndUpToDate;
-
-                                    let force_reposition = match simple_mount_state {
-                                        SimpleMountState::UpToDate => {
-                                            render_context.map_mut_render_context(|render_context| {
-                                                frender_html::RenderState::check_and_move_cursor(
-                                                    render_state,
-                                                    render_context,
-                                                )
-                                            });
-                                            return;
-                                        }
-                                        SimpleMountState::Outdated => false,
-                                        SimpleMountState::OutdatedAndMoved => true,
-                                    };
-
-                                    let el = f.map_item_to_element(el);
-
-                                    el.unpinned_render_update_maybe_reposition(
-                                        render_context,
-                                        render_state,
-                                        force_reposition,
-                                    );
-                                })
-                            }
-                        }
-
-                        assert_eq!(render_states.len(), 0, "too many render states");
-                        assert!(elements.next().is_none(), "too many elements");
-
-                        return;
-                    } else {
-                        // the states are outdated
-                        {
-                            let states = Rc::get_mut(&mut render_states.rc).unwrap().get_mut();
-
-                            // It should be set to false when finished.
-                            // We can assume all_outdated=true in this branch so we set it earlier.
-                            states.all_outdated = false;
-
-                            let (mounted, unmounted) = {
-                                let real_len = states.real_len();
-                                states.states.split_at_mut(real_len)
-                            };
-
-                            let mut elements = self.items;
-                            let mut f = self.f;
-
-                            let mut mounted = mounted.iter_mut();
-                            elements
-                                .by_ref()
-                                .zip(mounted.by_ref())
-                                .for_each(|(el, state)| {
-                                    unpinned_render_update(
-                                        f.map_item_to_element(el),
-                                        render_context,
-                                        state,
-                                    )
-                                });
-
-                            if mounted.len() > 0 {
-                                states.ready_to_unmount_count += mounted.len();
-                            } else {
-                                let mut unmounted = unmounted.iter_mut();
-
-                                elements.by_ref().zip(unmounted.by_ref()).for_each(
-                                    |(el, state)| {
-                                        unpinned_render_update_force_reposition(
-                                            f.map_item_to_element(el),
-                                            render_context,
-                                            state,
-                                        )
-                                    },
-                                );
-
-                                if unmounted.len() > 0 {
-                                    states.ready_to_unmount_count = unmounted.len();
-                                } else {
-                                    states.ready_to_unmount_count = 0;
-                                    states.states.extend(elements.map(|el| {
-                                        new_unpinned_render_state(
-                                            f.map_item_to_element(el),
-                                            render_context,
-                                        )
-                                    }))
-                                }
-                            }
-
-                            states.clean(render_context.renderer_mut());
-                        }
-
-                        render_states
-                    }
-                } else {
-                    // new
-                    let mut f = self.f;
-                    let states = RenderStates {
-                        states: self
-                            .items
-                            .map(|el| {
-                                new_unpinned_render_state(f.map_item_to_element(el), render_context)
-                            })
-                            .collect(),
-                        ready_to_unmount_count: 0,
-                        all_outdated: false,
-                    };
-
-                    render_states.insert(RcWithKey {
-                        rc: Rc::new(RefCell::new(states)),
-                        key: weak_vec1::Key::STACK,
-                    })
-                };
-
-                rc_with_old_key.key = self
-                    .all_states
-                    .borrow_mut()
-                    .make_rc_states_with_old_key_hint(
-                        rc_with_old_key.key,
-                        Rc::downgrade(&rc_with_old_key.rc),
-                    );
+                render_context.map_mut_render_context(|render_context| {
+                    cpb.check_and_move_cursor(render_context)
+                });
             }
         }
     }
