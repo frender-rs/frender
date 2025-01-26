@@ -47,7 +47,7 @@ mod shims;
 /// This is not public api.
 /// See also mod [`experimental`](crate::experimental) for experimental api under a feature.
 pub mod __private {
-    pub use crate::element::{PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedUiHandleOfKind, UnpinnedMutRenderStatesOfKind, UnpinnedRenderStatesOfKind};
+    pub use crate::element::PinnedUiHandleOfKind;
 }
 
 mod special;
@@ -67,3 +67,5 @@ pub mod intrinsic;
 
 // TODO: feature
 pub mod experimental;
+
+mod utils;

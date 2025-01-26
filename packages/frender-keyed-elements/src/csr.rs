@@ -8,7 +8,7 @@ use frender_html::{
     CsrElement, HtmlRenderContext,
 };
 
-use crate::{KeyedElements, Keyed};
+use crate::{Keyed, KeyedElements};
 
 pub trait KeyedElementsAlgorithm<K, E> {
     type KeyedElementsRenderStateKind: UnpinnedRenderStateKindPollRender;
@@ -1210,7 +1210,8 @@ pub type ElementsLinkedVec<I> = KeyedElements<
 #[allow(non_snake_case)]
 pub fn ElementsLinkedVec<K, E: Element, I: IntoIterator<Item = Keyed<K, E>>>(
     iter: I,
-) -> KeyedElements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>> {
+) -> KeyedElements<I, linked_vec::Algorithm<linked_vec::RealIndexMap<K, E::UnpinnedRenderState<R>>>>
+{
     KeyedElements {
         iter,
         algorithm: Default::default(),

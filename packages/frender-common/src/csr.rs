@@ -16,6 +16,12 @@ impl StateUnmount for () {
     fn state_unmount(self: Pin<&mut Self>) {}
 }
 
+impl<T: StateUnmount, const N: usize> StateUnmount for [T; N] {
+    fn state_unmount(self: Pin<&mut Self>) {
+        frender_pin_utils::pin_project_iter_mut_array(self).for_each(T::state_unmount)
+    }
+}
+
 macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_var:ident as $field:ident),+) ,)+) => {
         $(

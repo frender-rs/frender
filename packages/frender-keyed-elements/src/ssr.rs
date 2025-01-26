@@ -1,6 +1,6 @@
 use frender_ssr::SsrElement;
 
-use crate::{KeyedElements, Keyed};
+use crate::{Keyed, KeyedElements};
 
 pub struct IterKeyed<I>(I);
 

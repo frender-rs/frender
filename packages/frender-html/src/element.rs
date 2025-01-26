@@ -1,53 +1,31 @@
 use std::{pin::Pin, task::Poll};
 
+use frender_common::reactive_value::AsOptionMut;
 use frender_dom::{render::RenderContext, ui_handle::UiHandle, StateUnmount};
 
 use crate::RenderHtml;
 
-pub trait HtmlRenderContext: RenderContext<Renderer = Self::HtmlRenderer> {
-    type HtmlRenderer: RenderHtml + ?Sized;
-}
-
-impl<Ctx: ?Sized + RenderContext> HtmlRenderContext for Ctx
-where
-    Ctx::Renderer: RenderHtml,
-{
-    type HtmlRenderer = Ctx::Renderer;
-}
-
-// pub trait StatePollRender<U: ?Sized, R: ?Sized> {
-//     fn state_poll_render(self: Pin<&mut Self>, ui_handle: &mut U, renderer: &mut R) -> Poll<()>;
-// }
-
-// + StatePollRender<Self, R>
-/// A synonymous trait for [`StatePollRender`] with ui handle as Self.
-
-// impl<UH: ?Sized, S: ?Sized + StatePollRender<Self, R>, R: ?Sized> UiHandlePollRender<S, R> for UH {
-//     #[inline(always)]
-//     fn ui_handle_poll_render(&mut self, state: &mut S, renderer: &mut R) -> Poll<()> {
-//         state.state_poll_render(self, renderer)
-//     }
-// }
+pub trait HtmlRenderContext: RenderContext<Renderer: RenderHtml> {}
+impl<Ctx: ?Sized + RenderContext<Renderer: RenderHtml>> HtmlRenderContext for Ctx {}
 
 pub trait PinnedRenderStateKind {
     /// Ui handles that are renderer-specific and **NOT** pinned in pinned environment.
     type PinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
 
-    // TODO: should `*NonReactiveState` and `*ReactiveState` be merged as one `*State`?
-    /// Renderer-specific non-reactive state in pinned environment.
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized>: Default;
-    /// Renderer-agnostic reactive state in pinned environment.
+    /// State in pinned environment.
     ///
     /// [`Default`] is required so that the state can be constructed and then pinned before [`CsrElement::pinned_render_init`].
     /// Note that [`UnpinnedRenderStateKind::UnpinnedReactiveState`] requires `Default` for a different reason.
-    type PinnedReactiveState: StateUnmount + Default;
+    type PinnedState<R: RenderHtml + ?Sized>: StateUnmount;
+    type PinnedStateDefault<R: RenderHtml + ?Sized>: Default + AsOptionMut<Self::PinnedState<R>> + StateUnmount;
 }
 
 pub trait PinnedRenderStateKindPollRender: PinnedRenderStateKind {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: PinnedMutRenderStatesOfKind<Self, R>,
+        state: Pin<&mut Self::PinnedState<R>>,
+        ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>;
 }
@@ -55,30 +33,27 @@ pub trait PinnedRenderStateKindPollRender: PinnedRenderStateKind {
 pub trait UnpinnedRenderStateKind {
     /// Ui handles that are renderer-specific and not pinned in unpinned environment.
     type UnpinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
-    /// Renderer-specific non-reactive state in unpinned environment.
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized>;
-    /// Renderer-agnostic reactive state in unpinned environment.
+
+    /// State in unpinned environment.
     ///
-    /// [`Unpin`] is required so that [`StateUnmount`] can be used
+    /// [`Unpin`] is required so that [`StateUnmount`] can be used without defining another unpinned variant
     /// (caller can safely create a `Pin<&mut _>` from unpinned places
     /// and then call [`StateUnmount::state_unmount`]).
-    ///
-    /// Another solution is to split trait [`StateUnmount`] into pinned and unpinned variants,
-    /// then we don't need the `Unpin` bound.
-    type UnpinnedReactiveState: StateUnmount + Default + Unpin;
+    type UnpinnedState<R: RenderHtml + ?Sized>: StateUnmount + Unpin;
 
-    #[cfg(todo)]
     /// [`Default`] is required so that [`RenderStateKind`](CsrElement::RenderStateKind) of `Option<impl CsrElement>`
     /// don't need to wrap `UnpinnedReactiveState` with `Option`.
+    /// This optimizes `impl CsrElement for Option<impl CsrElement<RenderStateKind: UnpinnedRenderStateKind<UnpinnedState<_>: Default>>>`.
     /// Note that [`PinnedRenderStateKind::PinnedReactiveState`] requires `Default` for a different reason.
-    type UnpinnedReactiveStateDefault: StateUnmount + Default + Unpin;
+    type UnpinnedStateDefault<R: RenderHtml + ?Sized>: Default + AsOptionMut<Self::UnpinnedState<R>> + StateUnmount + Unpin;
 }
 
 pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>;
 }
@@ -87,74 +62,67 @@ pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
 pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender {}
 impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender> RenderStateKind for K {}
 
-pub type PinnedMutRenderStatesOfKind<'a, Kind, Renderer> = RenderStates<
-    //
-    &'a mut <Kind as PinnedRenderStateKind>::PinnedUiHandle<Renderer>,
-    Pin<&'a mut <Kind as PinnedRenderStateKind>::PinnedNonReactiveState<Renderer>>,
-    Pin<&'a mut <Kind as PinnedRenderStateKind>::PinnedReactiveState>,
->;
-
-pub type UnpinnedMutRenderStatesOfKind<'a, Kind, Renderer> = RenderStates<
-    //
-    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedUiHandle<Renderer>,
-    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<Renderer>,
-    &'a mut <Kind as UnpinnedRenderStateKind>::UnpinnedReactiveState,
->;
-
-pub type UnpinnedRenderStatesOfKind<Kind, Renderer> = RenderStates<
-    //
-    <Kind as UnpinnedRenderStateKind>::UnpinnedUiHandle<Renderer>,
-    <Kind as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<Renderer>,
-    <Kind as UnpinnedRenderStateKind>::UnpinnedReactiveState,
->;
-
-pub struct RenderStates<UH, NRS, RS> {
-    pub ui_handle: UH,
-    pub non_reactive_state: NRS,
-    pub reactive_state: RS,
-}
-
-pub(crate) type PinnedMutRenderStates<'a, UH, NRS, RS> = RenderStates<&'a mut UH, Pin<&'a mut NRS>, Pin<&'a mut RS>>;
-pub(crate) type UnpinnedMutRenderStates<'a, UH, NRS, RS> = RenderStates<&'a mut UH, &'a mut NRS, &'a mut RS>;
-
 pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
+pub type PinnedUnmountedUiHandleOfKind<R, K> = <<K as PinnedRenderStateKind>::PinnedUiHandle<R> as UiHandle<R>>::Unmounted;
+pub type PinnedStateOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedState<R>;
+pub type PinnedStateDefaultOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedStateDefault<R>;
+
 pub type UnpinnedUiHandleOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>;
-
-pub struct PinMutRenderInitStates<'a, NRS, RS> {
-    pub non_reactive_state: Pin<&'a mut NRS>,
-    pub reactive_state: Pin<&'a mut RS>,
-}
-
-pub type PinMutRenderInitStatesOfKind<'a, Kind, Renderer> = PinMutRenderInitStates<'a, <Kind as PinnedRenderStateKind>::PinnedNonReactiveState<Renderer>, <Kind as PinnedRenderStateKind>::PinnedReactiveState>;
+pub type UnpinnedUnmountedUiHandleOfKind<R, K> = <<K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted;
+pub type UnpinnedStateOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedState<R>;
+pub type UnpinnedStateDefaultOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedStateDefault<R>;
 
 pub trait CsrElement {
     type RenderStateKind: RenderStateKind;
 
+    /// The implementation should _initialize_ `state_default` so that [`AsOptionMut::<PinnedState>::as_option_mut(state_default).is_some()`](AsOptionMut)
+    /// or future usage will panic.
+    /// Caller of this method cannot consider this requirement as a safety guarantee.
     fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-        states: PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        state_default: Pin<&mut PinnedStateDefaultOfKind<Ctx::Renderer, Self::RenderStateKind>>,
     ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>;
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        reused_state: Pin<&mut PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        unmounted_ui_handle: PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>;
+
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state: Pin<&mut PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     );
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-    ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>;
-
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    ) -> (
         //
+        UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    );
+
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        reused_state: &mut UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        unmounted_ui_handle: UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>;
+
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state: &mut UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ui_handle: &mut UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     );
 }
 

@@ -45,6 +45,7 @@ impl<R: ?Sized, S: RenderState<R>, const N: usize> RenderState<R> for [S; N] {
     }
 }
 
+// TODO: remove
 pub struct ArrayRenderState<S, const N: usize>(pub [S; N]);
 
 impl<S, const N: usize> ArrayRenderState<S, N> {
