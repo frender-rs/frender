@@ -14,6 +14,7 @@ use crate::{
 
 impl<E0: CsrElement> CsrElement for (E0,) {
     type RenderStateKind = E0::RenderStateKind;
+    type RenderInitKind = E0::RenderInitKind;
 
     proxy_csr_element!(|this| this.0);
 }
@@ -47,6 +48,7 @@ macro_rules! impl_render_for_tuple {
             }
 
             impl<$($field: PinnedRenderInitKind),+> PinnedRenderInitKind for KindOfStates<($($field,)+)> {
+                type PinnedRenderStateKind = KindOfStates<($($field::PinnedRenderStateKind,)+)>;
                 type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInits<($($field::PinnedRenderInit<R>,)+)>;
             }
 
@@ -105,6 +107,7 @@ macro_rules! impl_render_for_tuple {
 
             impl<$($field: CsrElement),+> CsrElement for ($($field,)+) {
                 type RenderStateKind = KindOfStates<($($field::RenderStateKind,)+)>;
+                type RenderInitKind = KindOfStates<($($field::RenderInitKind,)+)>;
 
                 fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
                     //
@@ -113,7 +116,7 @@ macro_rules! impl_render_for_tuple {
                 ) -> (
                     //
                     PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-                    PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+                    PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
                 ) {
                     let res = ($(
                         $field::pinned_render_init(

@@ -6,7 +6,7 @@ use frender_dom::{
 };
 
 use crate::{
-    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     RenderHtml,
 };
 
@@ -28,6 +28,7 @@ impl PinnedRenderStateKind for KindOfNoState {
 }
 
 impl PinnedRenderInitKind for KindOfNoState {
+    type PinnedRenderStateKind = KindOfNoState;
     type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;
 }
 

@@ -1,10 +1,11 @@
 use frender_common::convert::IntoMut;
 use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
+use frender_dom::StateUnmount;
 use pin_project_lite::pin_project;
 
 use crate::dom::component::HasIntrinsicComponentTag;
 
-use crate::element::{PinMutRenderInitStates, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
+use crate::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
 use crate::element_types::RenderStateKindPollRenderWithParent;
 use crate::html::{behavior_type_traits, behaviors};
 use crate::intrinsic::Intrinsic;
@@ -90,7 +91,6 @@ impl<P: behaviors::Element<R>, C, PA, R: ?Sized> UiHandle<R> for ParentWithChild
 // region: pinned
 
 pin_project!(
-    #[derive(Default)]
     pub struct ParentWithChildrenNonReactive<C, PA> {
         #[pin]
         children: C,
@@ -98,6 +98,12 @@ pin_project!(
         parent_attributes: PA,
     }
 );
+
+impl<C: StateUnmount, PA> StateUnmount for ParentWithChildrenNonReactive<C, PA> {
+    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+        self.project().children.state_unmount()
+    }
+}
 
 impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> PinnedRenderStateKind for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
 where
@@ -113,12 +119,11 @@ where
         ChildrenKind::PinnedUiHandle<R>,
         AttrsKind::UnpinnedNonReactiveState<R>,
     >;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
+    type PinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
         //
-        ChildrenKind::PinnedNonReactiveState<R>,
+        ChildrenKind::PinnedState<R>,
         AttrsPinnedKindPinned::PinnedNonReactiveState<R>,
     >;
-    type PinnedReactiveState = ChildrenKind::PinnedReactiveState;
 }
 
 impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> PinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>

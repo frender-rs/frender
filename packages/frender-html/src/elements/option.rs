@@ -8,7 +8,7 @@ use frender_dom::{
 };
 
 use crate::{
-    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, HtmlRenderContext, RenderHtml,
 };
 
@@ -66,6 +66,7 @@ impl<K: PinnedRenderStateKind> PinnedRenderStateKind for Kind<K> {
 }
 
 impl<K: PinnedRenderInitKind> PinnedRenderInitKind for Kind<K> {
+    type PinnedRenderStateKind = Kind<K::PinnedRenderStateKind>;
     type PinnedRenderInit<R: RenderHtml + ?Sized> = OptionPinnedRenderInit<K::PinnedRenderInit<R>>;
 }
 
@@ -89,6 +90,7 @@ impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kin
 
 impl<E: CsrElement> CsrElement for Option<E> {
     type RenderStateKind = Kind<E::RenderStateKind>;
+    type RenderInitKind = Kind<E::RenderInitKind>;
 
     fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
@@ -97,7 +99,7 @@ impl<E: CsrElement> CsrElement for Option<E> {
     ) -> (
         //
         crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
     ) {
         if let Some(this) = self {
             let (state, render_init) = this.pinned_render_init(renderer);

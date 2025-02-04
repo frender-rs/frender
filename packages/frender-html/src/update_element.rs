@@ -3,7 +3,10 @@ use std::{marker::PhantomData, pin::Pin};
 use frender_common::convert::IdentityAs;
 use frender_dom::event_types::EventType;
 
-use crate::{kinds::KindOfNoState, HtmlRenderContext, RenderHtml};
+use crate::{
+    kinds::{KindOfNoState, RenderInitNothing},
+    HtmlRenderContext, RenderHtml,
+};
 
 pub trait BehaviorType {
     type OfBehaviorType<Renderer: ?Sized + RenderHtml>;
@@ -24,7 +27,29 @@ pub trait UnpinnedNonReactiveRenderStateKind {
 }
 
 pub trait PinnedNonReactiveRenderStateKind {
-    type PinnedNonReactiveState<R: ?Sized + RenderHtml>: Default;
+    type PinnedNonReactiveState<R: ?Sized + RenderHtml>;
+}
+
+pub trait PinnedNonReactiveRenderInitKind<BT: BehaviorType> {
+    type PinnedRenderStateKind: PinnedNonReactiveRenderStateKind;
+    type PinnedRenderInit<R: ?Sized + RenderHtml>: NonReactiveRenderInitPinned<
+        //
+        BT,
+        R,
+        State = <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+    >;
+}
+
+pub trait NonReactiveRenderInitPinned<BT: BehaviorType, R: ?Sized + RenderHtml> {
+    type State;
+
+    fn render_init_pinned(
+        //
+        self,
+        renderer: &mut R,
+        b: &mut BT::OfBehaviorType<R>,
+        state: Pin<&mut Self::State>,
+    );
 }
 
 pub trait UnpinnedRenderWithBehavior<BT: BehaviorType> {
@@ -48,13 +73,15 @@ pub trait UnpinnedRenderWithBehavior<BT: BehaviorType> {
 
 pub trait PinnedRenderWithBehavior<BT: BehaviorType> {
     type PinnedRenderStateKind: PinnedNonReactiveRenderStateKind;
+    type PinnedRenderInitKind: PinnedNonReactiveRenderInitKind<BT>;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         this: Self,
         renderer: &mut R,
-        b: &mut BT::OfBehaviorType<R>,
-        state: Pin<&mut <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+    ) -> (
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        <Self::PinnedRenderInitKind as PinnedNonReactiveRenderInitKind<BT>>::PinnedRenderInit<R>,
     );
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -97,16 +124,37 @@ impl PinnedNonReactiveRenderStateKind for KindOfNoState {
     type PinnedNonReactiveState<R: ?Sized + RenderHtml> = ();
 }
 
+impl<BT: BehaviorType> PinnedNonReactiveRenderInitKind<BT> for KindOfNoState {
+    type PinnedRenderStateKind = KindOfNoState;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInitNothing;
+}
+
+impl<BT: BehaviorType, R: ?Sized + RenderHtml> NonReactiveRenderInitPinned<BT, R> for RenderInitNothing {
+    type State = ();
+
+    fn render_init_pinned(
+        //
+        self,
+        _: &mut R,
+        _: &mut BT::OfBehaviorType<R>,
+        _: Pin<&mut Self::State>,
+    ) {
+    }
+}
+
 impl<BT: BehaviorType> PinnedRenderWithBehavior<BT> for () {
     type PinnedRenderStateKind = KindOfNoState;
+    type PinnedRenderInitKind = KindOfNoState;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         (): Self,
         _: &mut R,
-        _: &mut <BT as BehaviorType>::OfBehaviorType<R>,
-        _: Pin<&mut <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+    ) -> (
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        <Self::PinnedRenderInitKind as PinnedNonReactiveRenderInitKind<BT>>::PinnedRenderInit<R>,
     ) {
+        ((), RenderInitNothing)
     }
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -172,6 +220,7 @@ impl<BT: BehaviorType, A: UnpinnedRenderWithBehavior<BT>, B: UnpinnedRenderWithB
 
 impl<BT: BehaviorType, A: PinnedRenderWithBehavior<BT>, B: PinnedRenderWithBehavior<BT>> PinnedRenderWithBehavior<BT> for (A, B) {
     type PinnedRenderStateKind = KindOfTwo<A::PinnedRenderStateKind, B::PinnedRenderStateKind>;
+    type PinnedRenderInitKind = KindOfTwo<A::PinnedRenderInitKind, B::PinnedRenderInitKind>;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //

@@ -26,12 +26,13 @@ pub trait PinnedRenderStateKind {
     type PinnedState<R: RenderHtml + ?Sized>: StateUnmount;
 }
 
-pub trait PinnedRenderInitKind: PinnedRenderStateKind {
+pub trait PinnedRenderInitKind {
+    type PinnedRenderStateKind: PinnedRenderStateKind;
     type PinnedRenderInit<R: RenderHtml + ?Sized>: CsrElementRenderInitPinned<
         //
         R,
-        UiHandle = Self::PinnedUiHandle<R>,
-        State = Self::PinnedState<R>,
+        UiHandle = PinnedUiHandleOfKind<R, Self::PinnedRenderStateKind>,
+        State = PinnedStateOfKind<R, Self::PinnedRenderStateKind>,
     >;
 }
 
@@ -68,8 +69,8 @@ pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
 }
 
 /// Trait alias for experimental traits.
-pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender + PinnedRenderInitKind {}
-impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender + PinnedRenderInitKind> RenderStateKind for K {}
+pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender {}
+impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender> RenderStateKind for K {}
 
 pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
 pub type PinnedRenderInitOfKind<R, K> = <K as PinnedRenderInitKind>::PinnedRenderInit<R>;
@@ -82,6 +83,7 @@ pub type UnpinnedStateOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedSta
 
 pub trait CsrElement {
     type RenderStateKind: RenderStateKind;
+    type RenderInitKind: PinnedRenderInitKind<PinnedRenderStateKind = Self::RenderStateKind>;
 
     /// The implementation should _initialize_ `state_default` so that [`AsOptionMut::<PinnedState>::as_option_mut(state_default).is_some()`](AsOptionMut)
     /// or future usage will panic.
@@ -93,7 +95,7 @@ pub trait CsrElement {
     ) -> (
         //
         PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
     );
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
@@ -146,7 +148,7 @@ macro_rules! proxy_csr_element {
             renderer: &mut Renderer,
         ) -> (
             $crate::__private::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-            $crate::__private::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+            $crate::__private::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
         ) {
             let $this = self;
             $expr.pinned_render_init(renderer)

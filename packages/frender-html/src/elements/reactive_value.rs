@@ -4,7 +4,7 @@ use frender_common::reactive_value::{ReactiveValue, ReactiveValueKind, ReactiveV
 use frender_dom::{ui_handle::UiHandle, StateUnmount};
 
 use crate::{
-    element::{CsrElement, CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElement, CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     stateless_render::{StatelessRender, StatelessRenderStateKind},
     RenderHtml,
 };
@@ -17,7 +17,8 @@ pub trait ReactiveValueWithKind: ReactiveValue<Self::ReactiveValueKind> {
 
 pub struct ReactiveValueIntoElement<V: ReactiveValueWithKind>(pub V);
 
-struct Kind<PRI, US, VK: ?Sized>(super::Kind<(PRI, US, VK)>);
+struct StateKind<PS, US, VK: ?Sized>(super::Kind<(PS, US, VK)>);
+struct InitKind<PRI, US, VK: ?Sized>(super::Kind<(PRI, US, VK)>);
 
 struct RenderInit<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind>(PRI, PhantomData<VK>);
 
@@ -45,26 +46,25 @@ where
     }
 }
 
-impl<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKind for Kind<PRI, US, VK>
+impl<PS: StateUnmount, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKind for StateKind<PS, US, VK>
 where
-    PRI::State: StateUnmount,
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
     type PinnedUiHandle<R: crate::RenderHtml + ?Sized> = StatelessK::UiHandle<R>;
-    type PinnedState<R: crate::RenderHtml + ?Sized> = PRI::State;
+    type PinnedState<R: crate::RenderHtml + ?Sized> = PS;
 }
 
-impl<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderInitKind for Kind<PRI, US, VK>
+impl<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderInitKind for InitKind<PRI, US, VK>
 where
     PRI::State: StateUnmount,
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
+    type PinnedRenderStateKind = StateKind<PRI::State, US, VK>;
     type PinnedRenderInit<R: crate::RenderHtml + ?Sized> = RenderInit<PRI, VK>;
 }
 
-impl<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKindPollRender for Kind<PRI, US, VK>
+impl<PS: ReactiveValueState<ReactiveValueKind = VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKindPollRender for StateKind<PS, US, VK>
 where
-    PRI::State: ReactiveValueState<ReactiveValueKind = VK>,
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
@@ -74,7 +74,7 @@ where
         ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        PRI::State::poll_render(
+        PS::poll_render(
             //
             state,
             |v| StatelessRender::stateless_render_update(v, renderer, ui_handle),
@@ -83,7 +83,7 @@ where
     }
 }
 
-impl<PRI, US: StateUnmount + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKind for Kind<PRI, US, VK>
+impl<PS, US: StateUnmount + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKind for StateKind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
@@ -91,7 +91,7 @@ where
     type UnpinnedState<R: RenderHtml + ?Sized> = US;
 }
 
-impl<PRI, US: ReactiveValueState<ReactiveValueKind = VK> + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKindPollRender for Kind<PRI, US, VK>
+impl<PS, US: ReactiveValueState<ReactiveValueKind = VK> + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKindPollRender for StateKind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
@@ -115,7 +115,8 @@ impl<V: ReactiveValueWithKind, StatelessK: StatelessRenderStateKind> CsrElement 
 where
     for<'a> <V::ReactiveValueKind as ReactiveValueKind>::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
-    type RenderStateKind = Kind<V::PinnedRenderInit, V::UnpinnedState, V::ReactiveValueKind>;
+    type RenderStateKind = StateKind<V::PinnedState, V::UnpinnedState, V::ReactiveValueKind>;
+    type RenderInitKind = InitKind<V::PinnedRenderInit, V::UnpinnedState, V::ReactiveValueKind>;
 
     fn pinned_render_init<Renderer: ?Sized + crate::RenderHtml>(
         //
@@ -124,7 +125,7 @@ where
     ) -> (
         //
         crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
     ) {
         1
     }

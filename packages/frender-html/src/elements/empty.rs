@@ -7,6 +7,7 @@ use crate::{
 
 impl CsrElement for Empty {
     type RenderStateKind = KindOfNoState;
+    type RenderInitKind = KindOfNoState;
 
     fn pinned_render_init<Renderer: ?Sized + crate::RenderHtml>(
         //

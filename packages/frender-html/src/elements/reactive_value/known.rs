@@ -10,15 +10,23 @@ use crate::element::CsrElement;
 
 use super::{ReactiveValueIntoElement, ReactiveValueWithKind};
 
+macro_rules! proxy_reactive_value_into_element {
+    () => {
+        proxy_reactive_value_into_element! {Self}
+    };
+    ($SelfTy:ty) => {
+        type RenderStateKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderStateKind;
+        type RenderInitKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderInitKind;
+        crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+    };
+}
+
 // region: &'static str -- self as value and also cache
 impl ReactiveValueWithKind for &'static str {
     type ReactiveValueKind = &'static str;
 }
-
 impl CsrElement for &'static str {
-    type RenderStateKind = <ReactiveValueIntoElement<&'static str> as CsrElement>::RenderStateKind;
-
-    crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+    proxy_reactive_value_into_element! {}
 }
 // endregion
 // region: other static strings -- self as cache but lends as value temporarily
@@ -45,8 +53,7 @@ impl_many!(
             std::sync::Arc<str>,
         ]
     {
-        type RenderStateKind = <ReactiveValueIntoElement<Self> as CsrElement>::RenderStateKind;
-        crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+        proxy_reactive_value_into_element! {}
     }
 );
 // endregion
@@ -55,8 +62,7 @@ impl ReactiveValueWithKind for StringElement {
     type ReactiveValueKind = StringElement;
 }
 impl CsrElement for StringElement {
-    type RenderStateKind = <ReactiveValueIntoElement<Self> as CsrElement>::RenderStateKind;
-    crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+    proxy_reactive_value_into_element! {}
 }
 // endregion
 // region: TempStr
@@ -72,8 +78,7 @@ where
     S: frender_common::IntoStaticStrCache,
 {
     // No matter what S is, TempStr<S> acts like TempStr<&'static str>
-    type RenderStateKind = <ReactiveValueIntoElement<TempStr<&'static str>> as CsrElement>::RenderStateKind;
-    crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+    proxy_reactive_value_into_element!(TempStr<&'static str>);
 }
 // endregion
 // region: NonReactiveStr
@@ -81,8 +86,7 @@ impl<S: CsrStr> ReactiveValueWithKind for NonReactiveStr<S> {
     type ReactiveValueKind = str;
 }
 impl<S: CsrStr> CsrElement for NonReactiveStr<S> {
-    type RenderStateKind = <ReactiveValueIntoElement<Self> as CsrElement>::RenderStateKind;
-    crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+    proxy_reactive_value_into_element! {}
 }
 // endregion
 // region: scalar
@@ -105,8 +109,7 @@ impl_many!(
             char
         ]
     {
-        type RenderStateKind = <ReactiveValueIntoElement<Self> as CsrElement>::RenderStateKind;
-        crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
+        proxy_reactive_value_into_element! {}
     }
 );
 // endregion

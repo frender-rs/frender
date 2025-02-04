@@ -9,7 +9,7 @@ use frender_dom::{
 use pin_project_lite::pin_project;
 
 use crate::{
-    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     ui_handles::EitherUiHandle,
     CsrElement, HtmlRenderContext, RenderHtml,
 };
@@ -153,6 +153,7 @@ impl<KA: PinnedRenderStateKind, KB: PinnedRenderStateKind> PinnedRenderStateKind
 }
 
 impl<KA: PinnedRenderInitKind, KB: PinnedRenderInitKind> PinnedRenderInitKind for Kind<KA, KB> {
+    type PinnedRenderStateKind = Kind<KA::PinnedRenderStateKind, KB::PinnedRenderStateKind>;
     type PinnedRenderInit<R: RenderHtml + ?Sized> = EitherPinnedRenderInit<KA::PinnedRenderInit<R>, KB::PinnedRenderInit<R>>;
 }
 
@@ -188,6 +189,7 @@ impl<KA: PinnedRenderStateKindPollRender, KB: PinnedRenderStateKindPollRender> P
 
 impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
     type RenderStateKind = Kind<A::RenderStateKind, B::RenderStateKind>;
+    type RenderInitKind = Kind<A::RenderInitKind, B::RenderInitKind>;
 
     fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
@@ -196,7 +198,7 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
     ) -> (
         //
         crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
     ) {
         match self {
             EitherElement::A(this) => {

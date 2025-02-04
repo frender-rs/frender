@@ -4,7 +4,7 @@ use frender_common::utils::pin_project_iter_mut_array;
 use frender_dom::render::RenderWithContext;
 
 use crate::{
-    element::{self, CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{self, CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, HtmlRenderContext, RenderHtml,
 };
 
@@ -40,6 +40,7 @@ impl<K: PinnedRenderStateKind, const N: usize> PinnedRenderStateKind for Kind<K,
     type PinnedState<R: RenderHtml + ?Sized> = [K::PinnedState<R>; N];
 }
 impl<K: PinnedRenderInitKind, const N: usize> PinnedRenderInitKind for Kind<K, N> {
+    type PinnedRenderStateKind = Kind<K::PinnedRenderStateKind, N>;
     type PinnedRenderInit<R: RenderHtml + ?Sized> = [K::PinnedRenderInit<R>; N];
 }
 
@@ -76,6 +77,7 @@ impl<K: PinnedRenderStateKindPollRender, const N: usize> PinnedRenderStateKindPo
 
 impl<E: CsrElement, const N: usize> CsrElement for [E; N] {
     type RenderStateKind = Kind<E::RenderStateKind, N>;
+    type RenderInitKind = Kind<E::RenderInitKind, N>;
 
     fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
@@ -84,7 +86,7 @@ impl<E: CsrElement, const N: usize> CsrElement for [E; N] {
     ) -> (
         //
         element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
     ) {
         use arrayvec::ArrayVec;
 

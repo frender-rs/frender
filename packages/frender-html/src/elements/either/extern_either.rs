@@ -16,6 +16,7 @@ where
     R: CsrElement,
 {
     type RenderStateKind = super::Kind<L::RenderStateKind, R::RenderStateKind>;
+    type RenderInitKind = super::Kind<L::RenderInitKind, R::RenderInitKind>;
 
     proxy_csr_element!(|this| into_either_element(this));
 }

@@ -30,7 +30,7 @@ frender_common::impl_many!(
     }
 );
 
-type Kind = crate::element_types::KindRenderStateWithAnyParent<crate::kinds::KindOfNoState>;
+type Kind = crate::element_types::StateKindWithAnyParent<crate::kinds::KindOfNoState>;
 
 frender_common::impl_many!(
     impl<__> CsrComponent<Empty>
