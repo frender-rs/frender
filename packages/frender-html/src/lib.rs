@@ -22,6 +22,8 @@ pub mod html;
 
 pub use html::components as cs;
 
+pub mod stateless_render;
+
 #[cfg(feature = "ElementProxyAttrs")]
 pub mod element_proxy_attrs;
 
@@ -47,7 +49,7 @@ mod shims;
 /// This is not public api.
 /// See also mod [`experimental`](crate::experimental) for experimental api under a feature.
 pub mod __private {
-    pub use crate::element::PinnedUiHandleOfKind;
+    pub use crate::element::{PinnedRenderInitOfKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind};
 }
 
 mod special;

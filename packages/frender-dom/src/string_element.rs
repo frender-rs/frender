@@ -1,5 +1,7 @@
 use std::{marker::PhantomData, str::FromStr};
 
+mod reactive_value;
+
 mod imp_wasm {
     pub(super) type StaticOwnedStr = String;
 }

@@ -136,9 +136,7 @@ crate::macros::def_intrinsic_component_props!(
 
         #[RenderHtml]
         pub trait RenderHtml {
-            additional_bounds!(dyn 'static + RenderTextFromKnown<Self::Text> + Render + RenderWithContext);
-
-            type Text: behaviors::Node<Self> + 'static;
+            additional_bounds!(dyn 'static + RenderTextFromKnown + Render + RenderWithContext);
         }
     }
 

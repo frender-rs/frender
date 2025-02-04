@@ -1,213 +1,86 @@
 use std::{pin::Pin, task::Poll};
 
 use frender_dom::{
-    render::RenderContext,
-    ui_handle::{UiHandle, UnmountedUiHandle},
+    behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
+    render::{Render, RenderContext, RenderWithContext},
+    ui_handle::{UiHandle as _, UnmountedUiHandle as _},
     StateUnmount as _,
 };
 
 use crate::{
-    element::{PinMutRenderInitStates, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
-    kinds::UiHandleWithNonReactiveState,
+    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, HtmlRenderContext, RenderHtml,
 };
 
-// region: ui handle
-
-pub enum UiHandleMaybe<M, U> {
-    BeforeMounted,
-    Mounted(M),
-    Unmounted(U),
-}
-
-impl<M, U> UiHandleMaybe<M, U> {
-    fn mount_unmounted<Ctx: ?Sized + HtmlRenderContext>(&mut self, render_context: &mut Ctx) -> &mut M
-    where
-        U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
-    {
-        let UiHandleMaybe::Unmounted(unmounted) = self.take() else { unreachable!() };
-
-        *self = render_context.map_mut_render_context(|render_context| Self::Mounted(unmounted.mount(render_context)));
-
-        match self {
-            UiHandleMaybe::Mounted(mounted) => mounted,
-            _ => unreachable!(),
-        }
-    }
-
-    pub fn take(&mut self) -> Self {
-        std::mem::replace(self, Self::BeforeMounted)
-    }
-
-    /// Returns `true` if mounted in this call.
-    pub fn mount_in_place<Ctx: ?Sized>(&mut self, render_context: &mut Ctx) -> bool
-    where
-        Ctx: RenderContext,
-        U: UnmountedUiHandle<Ctx::Renderer, Mounted = M>,
-    {
-        match self {
-            UiHandleMaybe::Unmounted(_) => {
-                let UiHandleMaybe::Unmounted(unmounted) = self.take() else { unreachable!() };
-                *self = Self::Mounted(render_context.map_mut_render_context(|render_context| unmounted.mount(render_context)));
-                true
-            }
-            _ => false,
-        }
-    }
-
-    /// Returns `true` if unmounted in this call.
-    /// Returns `false` if already unmounted before.
-    pub fn unmount_in_place<R: ?Sized>(&mut self, renderer: &mut R) -> bool
-    where
-        M: UiHandle<R, Unmounted = U>,
-    {
-        match self {
-            UiHandleMaybe::Mounted(_) => {
-                let UiHandleMaybe::Mounted(mounted) = self.take() else { unreachable!() };
-                *self = Self::Unmounted(mounted.unmount(renderer));
-                true
-            }
-            _ => false,
-        }
-    }
-}
-
-pub type UiHandleMaybeMounted<M, R> = UiHandleMaybe<M, <M as UiHandle<R>>::Unmounted>;
-
-pub struct UnmountedUiHandleMaybe<U>(Option<U>);
-
-impl<U, R: ?Sized> UnmountedUiHandle<R> for UnmountedUiHandleMaybe<U>
-where
-    U: UnmountedUiHandle<R>,
-{
-    type Mounted = UiHandleMaybe<U::Mounted, U>;
-
-    fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
-    where
-        R: frender_dom::render::RenderWithContext,
-    {
-        match self.0 {
-            Some(unmounted) => UiHandleMaybe::Mounted(unmounted.mount(render_context)),
-            None => UiHandleMaybe::BeforeMounted,
-        }
-    }
-}
-
-impl<M, U, R: ?Sized> UiHandle<R> for UiHandleMaybe<M, U>
-where
-    M: UiHandle<R, Unmounted = U>,
-    U: UnmountedUiHandle<R, Mounted = M>,
-{
-    type Unmounted = UnmountedUiHandleMaybe<U>;
-
-    fn unmount(self, renderer: &mut R) -> <Self as UiHandle<R>>::Unmounted {
-        match self {
-            UiHandleMaybe::BeforeMounted => UnmountedUiHandleMaybe(None),
-            UiHandleMaybe::Mounted(mounted) => UnmountedUiHandleMaybe(Some(mounted.unmount(renderer))),
-            UiHandleMaybe::Unmounted(unmounted) => UnmountedUiHandleMaybe(Some(unmounted)),
-        }
-    }
-
-    fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
-    where
-        R: frender_dom::render::RenderWithContext,
-    {
-        if let UiHandleMaybe::Mounted(m) = self {
-            m.reposition(render_context)
-        }
-    }
-
-    fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
-    where
-        R: frender_dom::render::RenderWithContext,
-    {
-        if let UiHandleMaybe::Mounted(m) = self {
-            m.check_and_move_cursor(render_context);
-        }
-    }
-
-    fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
-    where
-        R: frender_dom::render::RenderWithContext,
-    {
-        if let UiHandleMaybe::Mounted(m) = self {
-            m.assert_cursor_is_at_self(render_context);
-        }
-    }
-}
-
-// endregion
+pub type UiHandle<R, T> = (<R as Render>::CursorPlaceholder, Option<T>);
 
 // region: kind
 
 pub struct Kind<K>(super::Kind<K>);
 
 impl<K: UnpinnedRenderStateKind> UnpinnedRenderStateKind for Kind<K> {
-    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = Option<UiHandleWithNonReactiveState<K::UnpinnedUiHandle<R>, K::UnpinnedNonReactiveState<R>>>;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type UnpinnedReactiveState = K::UnpinnedReactiveState;
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = UiHandle<R, K::UnpinnedUiHandle<R>>;
+    type UnpinnedState<R: RenderHtml + ?Sized> = Option<K::UnpinnedState<R>>;
 }
 
 impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for Kind<K> {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        (_, ui_handle): &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let RenderStates {
-            ui_handle,
-            non_reactive_state: (),
-            reactive_state,
-        } = states;
-
-        if let Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) = ui_handle {
-            K::unpinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            )
-        } else {
-            Poll::Ready(())
+        match (state, ui_handle) {
+            (None, None) => Poll::Ready(()),
+            (Some(state), Some(ui_handle)) => K::unpinned_poll_render(renderer, state, ui_handle, cx),
+            _ => super::unreachable_debug!("unpinned state and ui handle of Option<impl CsrElement> are invalid"),
         }
     }
 }
 
+// region: CsrElementRenderInitPinned
+pub struct OptionPinnedRenderInit<T>(pub Option<T>);
+
+impl<T: CsrElementRenderInitPinned<R>, R: ?Sized + Render> CsrElementRenderInitPinned<R> for OptionPinnedRenderInit<T> {
+    type UiHandle = UiHandle<R, T::UiHandle>;
+    type State = Option<T::State>;
+
+    fn render_init_pinned(self, render_context: &mut <R as RenderWithContext>::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle {
+        let cp = NodeRenderSelf::render_self(render_context);
+
+        let ui_handle = match (self.0, state.as_pin_mut()) {
+            (Some(this), Some(state)) => Some(this.render_init_pinned(render_context, state)),
+            (None, None) => None,
+            _ => super::unreachable_debug!("state of OptionPinnedRenderInit is invalid"),
+        };
+
+        (cp, ui_handle)
+    }
+}
+// endregion
+
 impl<K: PinnedRenderStateKind> PinnedRenderStateKind for Kind<K> {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = Option<K::PinnedUiHandle<R>>;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = K::PinnedNonReactiveState<R>;
-    type PinnedReactiveState = K::PinnedReactiveState;
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandle<R, K::PinnedUiHandle<R>>;
+    type PinnedState<R: RenderHtml + ?Sized> = Option<K::PinnedState<R>>;
+}
+
+impl<K: PinnedRenderInitKind> PinnedRenderInitKind for Kind<K> {
+    type PinnedRenderInit<R: RenderHtml + ?Sized> = OptionPinnedRenderInit<K::PinnedRenderInit<R>>;
 }
 
 impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kind<K> {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        state: Pin<&mut Self::PinnedState<R>>,
+        (_, ui_handle): &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let RenderStates {
-            ui_handle,
-            non_reactive_state,
-            reactive_state,
-        } = states;
-
-        if let Some(ui_handle) = ui_handle {
-            K::pinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            )
-        } else {
-            Poll::Ready(())
+        match (state.as_pin_mut(), ui_handle) {
+            (None, None) => Poll::Ready(()),
+            (Some(state), Some(ui_handle)) => K::pinned_poll_render(renderer, state, ui_handle, cx),
+            _ => super::unreachable_debug!("pinned state and ui handle of Option<impl CsrElement> are invalid"),
         }
     }
 }
@@ -217,52 +90,90 @@ impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kin
 impl<E: CsrElement> CsrElement for Option<E> {
     type RenderStateKind = Kind<E::RenderStateKind>;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        match self {
-            Some(this) => Some(this.pinned_render_init(render_context, states)),
-            None => None,
+        renderer: &mut Renderer,
+    ) -> (
+        //
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+    ) {
+        if let Some(this) = self {
+            let (state, render_init) = this.pinned_render_init(renderer);
+            (Some(state), OptionPinnedRenderInit(Some(render_init)))
+        } else {
+            (None, OptionPinnedRenderInit(None))
         }
     }
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        RenderStates {
-            ui_handle,
-            mut non_reactive_state,
-            reactive_state,
-        }: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        mut reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        (unmounted_cp, unmounted_ui_handle): crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        render_context.map_mut_render_context(|render_context| {
+            let cp = unmounted_cp.mount(render_context);
+            let ui_handle = match (reused_state.as_mut().as_pin_mut(), unmounted_ui_handle) {
+                (None, None) => {
+                    if let Some(this) = self {
+                        Some({
+                            let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
+                            reused_state.set(Some(state));
+                            let state = reused_state.as_pin_mut().unwrap();
+
+                            render_init.render_init_pinned(render_context, state)
+                        })
+                    } else {
+                        None
+                    }
+                }
+                (Some(reused_state_some), Some(unmounted_ui_handle)) => {
+                    if let Some(this) = self {
+                        Some(this.pinned_render_init_by_reusing(render_context, reused_state_some, unmounted_ui_handle))
+                    } else {
+                        reused_state.set(None);
+                        drop(unmounted_ui_handle);
+                        None
+                    }
+                }
+                _ => super::unreachable_debug!("pinned_render_init_by_reusing state is invalid"),
+            };
+            (cp, ui_handle)
+        })
+    }
+
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        mut state_full: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        (cp, ui_handle_full): &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        match (self, ui_handle) {
-            (None, ui_handle) => {
-                if let Some(ui_handle) = ui_handle.take() {
-                    // NonReactiveState is dropped and set to default
-                    non_reactive_state.set(Default::default());
-
-                    // ReactiveState is state_unmounted but not set to default
-                    reactive_state.state_unmount();
-
-                    // ui handle is unmounted and dropped
-                    _ = ui_handle.unmount(render_context.renderer_mut());
+        match (state_full.as_mut().as_pin_mut(), &mut *ui_handle_full) {
+            (None, None) => {
+                if let Some(this) = self {
+                    *ui_handle_full = Some({
+                        let (state, render_init) = this.pinned_render_init(renderer);
+                        state_full.set(Some(state));
+                        let state = state_full.as_pin_mut().unwrap();
+                        cp.with_render_context_after_self(renderer, |render_context| render_init.render_init_pinned(render_context, state))
+                    })
+                } else {
+                    // does nothing
                 }
             }
-            (Some(this), ui_handle @ None) => {
-                *ui_handle = Some(this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state }));
+            (Some(state), Some(ui_handle)) => {
+                if let Some(this) = self {
+                    this.pinned_render_update(renderer, state, ui_handle)
+                } else {
+                    state.state_unmount();
+                    state_full.set(None);
+                    drop(ui_handle_full.take().unwrap().unmount(renderer));
+                }
             }
-            (Some(this), Some(ui_handle)) => this.pinned_render_update(
-                render_context,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-            ),
+            _ => super::unreachable_debug!("pinned_render_update state invalid"),
         }
     }
 
@@ -270,69 +181,79 @@ impl<E: CsrElement> CsrElement for Option<E> {
         //
         self,
         render_context: &mut Ctx,
-    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        match self {
-            Some(this) => {
-                let RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                } = this.unpinned_render_init(render_context);
-                RenderStates {
-                    ui_handle: Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }),
-                    non_reactive_state: (),
-                    reactive_state,
-                }
-            }
-            None => RenderStates {
-                ui_handle: None,
-                non_reactive_state: (),
-                reactive_state: Default::default(), // Note default reactive state is used when None.render_init()
-            },
+    ) -> (
+        //
+        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) {
+        let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
+
+        if let Some(this) = self {
+            let (state, ui_handle) = this.unpinned_render_init(render_context);
+            (Some(state), (cp, Some(ui_handle)))
+        } else {
+            (None, (cp, None))
         }
     }
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) {
-        let RenderStates {
-            ui_handle,
-            non_reactive_state: (),
-            reactive_state,
-        } = states;
-
-        match (self, ui_handle) {
-            (None, ui_handle) => {
-                if let Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) = ui_handle.take() {
-                    // NonReactiveState is dropped
-                    drop(non_reactive_state);
-
-                    // ReactiveState is state_unmounted but not set to default
-                    Pin::new(reactive_state).state_unmount();
-
-                    // ui handle is unmounted and dropped
-                    _ = ui_handle.unmount(render_context.renderer_mut());
+        reused_state_full: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        (unmounted_cp, unmounted_ui_handle): crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let cp = render_context.map_mut_render_context(|render_context| unmounted_cp.mount(render_context));
+        let ui_handle = match (&mut *reused_state_full, unmounted_ui_handle) {
+            (None, None) => {
+                if let Some(this) = self {
+                    let (state, ui_handle) = this.unpinned_render_init(render_context);
+                    *reused_state_full = Some(state);
+                    Some(ui_handle)
+                } else {
+                    None
                 }
             }
-            (Some(this), ui_handle @ None) => {
-                let states = this.unpinned_render_init(render_context);
-                *reactive_state = states.reactive_state;
-                *ui_handle = Some(UiHandleWithNonReactiveState {
-                    ui_handle: states.ui_handle,
-                    non_reactive_state: states.non_reactive_state,
-                });
+            (Some(reused_state), Some(unmounted_ui_handle)) => {
+                if let Some(this) = self {
+                    Some(this.unpinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle))
+                } else {
+                    *reused_state_full = None;
+                    drop(unmounted_ui_handle);
+                    None
+                }
             }
-            (Some(this), Some(UiHandleWithNonReactiveState { ui_handle, non_reactive_state })) => this.unpinned_render_update(
-                render_context,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-            ),
+            _ => super::unreachable_debug!("unpinned_render_init_by_reusing state invalid"),
+        };
+        (cp, ui_handle)
+    }
+
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state_full: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        (cp, ui_handle_full): &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+    ) {
+        match (&mut *state_full, &mut *ui_handle_full) {
+            (None, None) => {
+                if let Some(this) = self {
+                    let (state, ui_handle) = cp.with_render_context_after_self(renderer, |render_context| this.unpinned_render_init(render_context));
+                    *state_full = Some(state);
+                    *ui_handle_full = Some(ui_handle);
+                } else {
+                    // does nothing
+                }
+            }
+            (Some(state), Some(ui_handle)) => {
+                if let Some(this) = self {
+                    this.unpinned_render_update(renderer, state, ui_handle)
+                } else {
+                    Pin::new(state).state_unmount();
+                    *state_full = None;
+                    ui_handle_full.take().unwrap().unmount(renderer);
+                }
+            }
+            _ => super::unreachable_debug!("unpinned_render_update state invalid"),
         }
     }
 }

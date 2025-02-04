@@ -1,21 +1,32 @@
 use std::pin::Pin;
 
-use frender_dom::{ui_handle::UiHandle, StateUnmount};
+use frender_dom::{
+    behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
+    render::{Render, RenderContext},
+    ui_handle::{UiHandle as _, UnmountedUiHandle as _},
+    StateUnmount,
+};
 use pin_project_lite::pin_project;
 
 use crate::{
-    element::{PinMutRenderInitStates, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
-    kinds::UiHandleWithNonReactiveState,
+    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     ui_handles::EitherUiHandle,
     CsrElement, HtmlRenderContext, RenderHtml,
 };
 
 pub use frender_common::either::EitherElement;
 
+// region: UiHandle
+pub type UiHandle<R, A, B> = (
+    //
+    <R as Render>::CursorPlaceholder,
+    EitherUiHandle<A, B>,
+);
+// endregion
 // region: EitherState
 
 pin_project!(
-    #[project = EitherReactiveStateProj]
+    #[project = EitherStateProj]
     pub enum EitherState<A, B> {
         A {
             #[pin]
@@ -31,14 +42,14 @@ pin_project!(
 impl<A, B> EitherState<A, B> {
     fn assert_a_pin_mut(self: Pin<&mut Self>) -> Pin<&mut A> {
         match self.project() {
-            EitherReactiveStateProj::A { inner } => inner,
-            EitherReactiveStateProj::B { inner: _ } => unreachable!(),
+            EitherStateProj::A { inner } => inner,
+            EitherStateProj::B { inner: _ } => unreachable!(),
         }
     }
     fn assert_b_pin_mut(self: Pin<&mut Self>) -> Pin<&mut B> {
         match self.project() {
-            EitherReactiveStateProj::B { inner } => inner,
-            EitherReactiveStateProj::A { inner: _ } => unreachable!(),
+            EitherStateProj::B { inner } => inner,
+            EitherStateProj::A { inner: _ } => unreachable!(),
         }
     }
     fn assert_a_mut(&mut self) -> &mut A {
@@ -55,116 +66,120 @@ impl<A, B> EitherState<A, B> {
     }
 }
 
-/// Prefer `A::default()`
-impl<A: Default, B: Default> Default for EitherState<A, B> {
-    fn default() -> Self {
-        Self::A { inner: Default::default() }
-    }
-}
-
 impl<A: StateUnmount, B: StateUnmount> StateUnmount for EitherState<A, B> {
     fn state_unmount(self: Pin<&mut Self>) {
         match self.project() {
-            EitherReactiveStateProj::A { inner } => inner.state_unmount(),
-            EitherReactiveStateProj::B { inner } => inner.state_unmount(),
+            EitherStateProj::A { inner } => inner.state_unmount(),
+            EitherStateProj::B { inner } => inner.state_unmount(),
         }
     }
 }
 
 // endregion
-
 // region: kind
 
 pub struct Kind<KA, KB>(super::Kind<(KA, KB)>);
 
 impl<KA: UnpinnedRenderStateKind, KB: UnpinnedRenderStateKind> UnpinnedRenderStateKind for Kind<KA, KB> {
-    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = EitherUiHandle<
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = UiHandle<
         //
-        UiHandleWithNonReactiveState<KA::UnpinnedUiHandle<R>, KA::UnpinnedNonReactiveState<R>>,
-        UiHandleWithNonReactiveState<KB::UnpinnedUiHandle<R>, KB::UnpinnedNonReactiveState<R>>,
+        R,
+        KA::UnpinnedUiHandle<R>,
+        KB::UnpinnedUiHandle<R>,
     >;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type UnpinnedReactiveState = EitherState<KA::UnpinnedReactiveState, KB::UnpinnedReactiveState>;
+    type UnpinnedState<R: RenderHtml + ?Sized> = EitherState<
+        //
+        KA::UnpinnedState<R>,
+        KB::UnpinnedState<R>,
+    >;
 }
 
 impl<KA: UnpinnedRenderStateKindPollRender, KB: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for Kind<KA, KB> {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        let RenderStates {
-            ui_handle,
-            non_reactive_state: (),
-            reactive_state,
-        } = states;
+        match (state, ui_handle) {
+            (EitherState::A { inner: state }, (_, EitherUiHandle::A(ui_handle))) => KA::unpinned_poll_render(renderer, state, ui_handle, cx),
+            (EitherState::B { inner: state }, (_, EitherUiHandle::B(ui_handle))) => KB::unpinned_poll_render(renderer, state, ui_handle, cx),
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("unpinned state and ui handle of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
+        }
+    }
+}
 
-        match (ui_handle, reactive_state) {
-            (EitherUiHandle::A(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }), EitherState::A { inner: reactive_state }) => KA::unpinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            ),
-            (EitherUiHandle::B(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }), EitherState::B { inner: reactive_state }) => KB::unpinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            ),
-            _ => unreachable!(),
+pub enum EitherPinnedRenderInit<A, B> {
+    A(A),
+    B(B),
+}
+
+impl<A: CsrElementRenderInitPinned<R>, B: CsrElementRenderInitPinned<R>, R: ?Sized + Render> CsrElementRenderInitPinned<R> for EitherPinnedRenderInit<A, B> {
+    type UiHandle = UiHandle<R, A::UiHandle, B::UiHandle>;
+    type State = EitherState<A::State, B::State>;
+
+    fn render_init_pinned(self, render_context: &mut <R as frender_dom::render::RenderWithContext>::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle {
+        match (self, state.project()) {
+            (EitherPinnedRenderInit::A(this), EitherStateProj::A { inner }) => {
+                //
+
+                (NodeRenderSelf::render_self(render_context), EitherUiHandle::A(A::render_init_pinned(this, render_context, inner)))
+            }
+            (EitherPinnedRenderInit::B(this), EitherStateProj::B { inner }) => {
+                //
+                (NodeRenderSelf::render_self(render_context), EitherUiHandle::B(B::render_init_pinned(this, render_context, inner)))
+            }
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("pinned state and RenderInit of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
         }
     }
 }
 
 impl<KA: PinnedRenderStateKind, KB: PinnedRenderStateKind> PinnedRenderStateKind for Kind<KA, KB> {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = EitherUiHandle<KA::PinnedUiHandle<R>, KB::PinnedUiHandle<R>>;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = EitherState<KA::PinnedNonReactiveState<R>, KB::PinnedNonReactiveState<R>>;
-    type PinnedReactiveState = EitherState<KA::PinnedReactiveState, KB::PinnedReactiveState>;
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandle<R, KA::PinnedUiHandle<R>, KB::PinnedUiHandle<R>>;
+    type PinnedState<R: RenderHtml + ?Sized> = EitherState<KA::PinnedState<R>, KB::PinnedState<R>>;
+}
+
+impl<KA: PinnedRenderInitKind, KB: PinnedRenderInitKind> PinnedRenderInitKind for Kind<KA, KB> {
+    type PinnedRenderInit<R: RenderHtml + ?Sized> = EitherPinnedRenderInit<KA::PinnedRenderInit<R>, KB::PinnedRenderInit<R>>;
 }
 
 impl<KA: PinnedRenderStateKindPollRender, KB: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kind<KA, KB> {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        state: Pin<&mut Self::PinnedState<R>>,
+        ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        let RenderStates {
-            ui_handle,
-            non_reactive_state,
-            reactive_state,
-        } = states;
-
-        let non_reactive_state = non_reactive_state.project();
-        let reactive_state = reactive_state.project();
-        match (ui_handle, non_reactive_state, reactive_state) {
-            (EitherUiHandle::A(ui_handle), EitherReactiveStateProj::A { inner: non_reactive_state }, EitherReactiveStateProj::A { inner: reactive_state }) => KA::pinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            ),
-            (EitherUiHandle::B(ui_handle), EitherReactiveStateProj::B { inner: non_reactive_state }, EitherReactiveStateProj::B { inner: reactive_state }) => KB::pinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            ),
-            _ => unreachable!(),
+        match (state.project(), ui_handle) {
+            (EitherStateProj::A { inner }, (_, EitherUiHandle::A(ui_handle))) => {
+                //
+                KA::pinned_poll_render(renderer, inner, ui_handle, cx)
+            }
+            (EitherStateProj::B { inner }, (_, EitherUiHandle::B(ui_handle))) => {
+                //
+                KB::pinned_poll_render(renderer, inner, ui_handle, cx)
+            }
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("pinned state and ui handle of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
         }
     }
 }
@@ -174,108 +189,121 @@ impl<KA: PinnedRenderStateKindPollRender, KB: PinnedRenderStateKindPollRender> P
 impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
     type RenderStateKind = Kind<A::RenderStateKind, B::RenderStateKind>;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        PinMutRenderInitStates {
-            mut non_reactive_state,
-            mut reactive_state,
-        }: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        renderer: &mut Renderer,
+    ) -> (
+        //
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+    ) {
         match self {
-            EitherElement::A(this) => EitherUiHandle::A(this.pinned_render_init(
-                render_context,
-                PinMutRenderInitStates {
-                    // pinned_render_init is assumed to be called with default states
-                    non_reactive_state: non_reactive_state.assert_a_pin_mut(),
-                    reactive_state: reactive_state.assert_a_pin_mut(),
-                },
-            )),
-            EitherElement::B(this) => EitherUiHandle::B(this.pinned_render_init(
-                render_context,
-                PinMutRenderInitStates {
-                    // pinned_render_init is assumed to be called with default states
-                    // So EitherState::A doesn't need to be state_unmounted
-                    non_reactive_state: {
-                        non_reactive_state.set(EitherState::B { inner: Default::default() });
-                        non_reactive_state.assert_b_pin_mut()
-                    },
-                    reactive_state: {
-                        reactive_state.set(EitherState::B { inner: Default::default() });
-                        reactive_state.assert_b_pin_mut()
-                    },
-                },
-            )),
+            EitherElement::A(this) => {
+                let (state, render_init) = this.pinned_render_init(renderer);
+                (EitherState::A { inner: state }, EitherPinnedRenderInit::A(render_init))
+            }
+            EitherElement::B(this) => {
+                let (state, render_init) = this.pinned_render_init(renderer);
+                (EitherState::B { inner: state }, EitherPinnedRenderInit::B(render_init))
+            }
         }
     }
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        mut reused_state_full: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        (unmounted_cp, unmounted_ui_handle): crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let cp = render_context.map_mut_render_context(|render_context| unmounted_cp.mount(render_context));
+
+        let ui_handle = match (reused_state_full.as_mut().project(), unmounted_ui_handle) {
+            (EitherStateProj::A { inner: reused_state }, EitherUiHandle::A(unmounted_ui_handle)) => match self {
+                EitherElement::A(this) => EitherUiHandle::A(this.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
+                EitherElement::B(this) => {
+                    drop(unmounted_ui_handle);
+                    let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
+                    reused_state_full.set(EitherState::B { inner: state });
+
+                    let reused_state = reused_state_full.assert_b_pin_mut();
+                    let ui_handle = render_context.map_mut_render_context(|render_context| render_init.render_init_pinned(render_context, reused_state));
+                    EitherUiHandle::B(ui_handle)
+                }
+            },
+            (EitherStateProj::B { inner: reused_state }, EitherUiHandle::B(unmounted_ui_handle)) => match self {
+                EitherElement::B(this) => EitherUiHandle::B(this.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
+                EitherElement::A(this) => {
+                    drop(unmounted_ui_handle);
+                    let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
+                    reused_state_full.set(EitherState::A { inner: state });
+
+                    let reused_state = reused_state_full.assert_a_pin_mut();
+                    let ui_handle = render_context.map_mut_render_context(|render_context| render_init.render_init_pinned(render_context, reused_state));
+                    EitherUiHandle::A(ui_handle)
+                }
+            },
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("pinned reused state and unmounted ui handle of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
+        };
+
+        (cp, ui_handle)
+    }
+
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        mut state_full: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle_full: &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        let RenderStates {
-            ui_handle,
-            mut non_reactive_state,
-            mut reactive_state,
-        } = states;
-        match self {
-            EitherElement::A(this) => match ui_handle {
-                EitherUiHandle::A(ui_handle) => this.pinned_render_update(
-                    render_context,
-                    RenderStates {
-                        ui_handle,
-                        non_reactive_state: non_reactive_state.assert_a_pin_mut(),
-                        reactive_state: reactive_state.assert_a_pin_mut(),
-                    },
-                ),
-                EitherUiHandle::B(_) => {
-                    // drop B::NonReactiveState
-                    non_reactive_state.set(EitherState::A { inner: Default::default() });
-                    let non_reactive_state = non_reactive_state.assert_a_pin_mut();
+        match (state_full.as_mut().project(), &mut *ui_handle_full) {
+            (EitherStateProj::A { inner: state }, (cp, EitherUiHandle::A(ui_handle))) => match self {
+                EitherElement::A(this) => this.pinned_render_update(renderer, state, ui_handle),
+                EitherElement::B(this) => {
+                    state.state_unmount();
 
-                    // state_unmount B::ReactiveState
-                    reactive_state.as_mut().assert_b_pin_mut().state_unmount();
-                    reactive_state.set(EitherState::A { inner: Default::default() });
-                    let reactive_state = reactive_state.assert_a_pin_mut();
+                    let (state, render_init) = this.pinned_render_init(renderer);
 
-                    let ui_handle_a = this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state });
-                    let ui_handle_b = std::mem::replace(ui_handle, EitherUiHandle::A(ui_handle_a));
-                    let EitherUiHandle::B(ui_handle_b) = ui_handle_b else { unreachable!() };
+                    state_full.set(EitherState::B { inner: state });
+                    let state = state_full.assert_b_pin_mut();
 
-                    // unmount B::UiHandle
-                    _ = ui_handle_b.unmount(render_context.renderer_mut());
+                    let ui_handle = cp.with_render_context_after_self(renderer, |render_context| render_init.render_init_pinned(render_context, state));
+                    let old_ui_handle = std::mem::replace(&mut ui_handle_full.1, EitherUiHandle::B(ui_handle));
+
+                    let EitherUiHandle::A(old_ui_handle) = old_ui_handle else { unreachable!() };
+                    old_ui_handle.unmount(renderer);
                 }
             },
-            EitherElement::B(this) => match ui_handle {
-                EitherUiHandle::B(ui_handle) => this.pinned_render_update(
-                    render_context,
-                    RenderStates {
-                        ui_handle,
-                        non_reactive_state: non_reactive_state.assert_b_pin_mut(),
-                        reactive_state: reactive_state.assert_b_pin_mut(),
-                    },
-                ),
-                EitherUiHandle::A(_) => {
-                    // drop A::NonReactiveState
-                    non_reactive_state.set(EitherState::B { inner: Default::default() });
-                    let non_reactive_state = non_reactive_state.assert_b_pin_mut();
+            (EitherStateProj::B { inner: state }, (cp, EitherUiHandle::B(ui_handle))) => match self {
+                EitherElement::B(this) => this.pinned_render_update(renderer, state, ui_handle),
+                EitherElement::A(this) => {
+                    state.state_unmount();
 
-                    // state_unmount A::ReactiveState
-                    reactive_state.as_mut().assert_a_pin_mut().state_unmount();
-                    reactive_state.set(EitherState::B { inner: Default::default() });
-                    let reactive_state = reactive_state.assert_b_pin_mut();
+                    let (state, render_init) = this.pinned_render_init(renderer);
 
-                    let ui_handle_b = this.pinned_render_init(render_context, PinMutRenderInitStates { non_reactive_state, reactive_state });
-                    let ui_handle_a = std::mem::replace(ui_handle, EitherUiHandle::B(ui_handle_b));
-                    let EitherUiHandle::A(ui_handle_a) = ui_handle_a else { unreachable!() };
+                    state_full.set(EitherState::A { inner: state });
+                    let state = state_full.assert_a_pin_mut();
 
-                    // unmount A::UiHandle
-                    _ = ui_handle_a.unmount(render_context.renderer_mut());
+                    let ui_handle = cp.with_render_context_after_self(renderer, |render_context| render_init.render_init_pinned(render_context, state));
+                    let old_ui_handle = std::mem::replace(&mut ui_handle_full.1, EitherUiHandle::A(ui_handle));
+
+                    let EitherUiHandle::B(old_ui_handle) = old_ui_handle else { unreachable!() };
+                    old_ui_handle.unmount(renderer);
                 }
             },
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("pinned reused state and unmounted ui handle of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
         }
     }
 
@@ -283,104 +311,104 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
         //
         self,
         render_context: &mut Ctx,
-    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+    ) -> (
+        //
+        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) {
         match self {
             EitherElement::A(this) => {
-                let RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                } = this.unpinned_render_init(render_context);
-
-                RenderStates {
-                    ui_handle: EitherUiHandle::A(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }),
-                    non_reactive_state: (),
-                    reactive_state: EitherState::A { inner: reactive_state },
-                }
+                let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
+                let (state, ui_handle) = this.unpinned_render_init(render_context);
+                (EitherState::A { inner: state }, (cp, EitherUiHandle::A(ui_handle)))
             }
             EitherElement::B(this) => {
-                let RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                } = this.unpinned_render_init(render_context);
-
-                RenderStates {
-                    ui_handle: EitherUiHandle::B(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }),
-                    non_reactive_state: (),
-                    reactive_state: EitherState::B { inner: reactive_state },
-                }
+                let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
+                let (state, ui_handle) = this.unpinned_render_init(render_context);
+                (EitherState::B { inner: state }, (cp, EitherUiHandle::B(ui_handle)))
             }
         }
     }
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        RenderStates {
-            ui_handle,
-            non_reactive_state: (),
-            reactive_state,
-        }: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        reused_state_full: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        (unmounted_cp, unmounted_ui_handle): crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let cp = render_context.map_mut_render_context(|render_context| unmounted_cp.mount(render_context));
+        let ui_handle = match (&mut *reused_state_full, unmounted_ui_handle) {
+            (EitherState::A { inner: reused_state }, EitherUiHandle::A(unmounted_ui_handle)) => match self {
+                EitherElement::A(this) => EitherUiHandle::A(this.unpinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
+                EitherElement::B(this) => {
+                    drop(unmounted_ui_handle);
+
+                    let (state, ui_handle) = this.unpinned_render_init(render_context);
+                    *reused_state_full = EitherState::B { inner: state };
+                    EitherUiHandle::B(ui_handle)
+                }
+            },
+            (EitherState::B { inner: reused_state }, EitherUiHandle::B(unmounted_ui_handle)) => match self {
+                EitherElement::B(this) => EitherUiHandle::B(this.unpinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
+                EitherElement::A(this) => {
+                    drop(unmounted_ui_handle);
+
+                    let (state, ui_handle) = this.unpinned_render_init(render_context);
+                    *reused_state_full = EitherState::A { inner: state };
+                    EitherUiHandle::A(ui_handle)
+                }
+            },
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("unpinned reused state and unmounted ui handle of EitherElement is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
+        };
+
+        (cp, ui_handle)
+    }
+
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state_full: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        (cp, ui_handle_full): &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        match self {
-            EitherElement::A(this) => match ui_handle {
-                EitherUiHandle::A(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) => {
-                    this.unpinned_render_update(
-                        render_context,
-                        RenderStates {
-                            ui_handle,
-                            non_reactive_state,
-                            reactive_state: reactive_state.assert_a_mut(),
-                        },
-                    );
-                }
-                wrong_ui_handle @ EitherUiHandle::B(_) => {
-                    let RenderStates {
-                        ui_handle,
-                        non_reactive_state,
-                        reactive_state: correct_reactive_state,
-                    } = this.unpinned_render_init(render_context);
+        match (&mut *state_full, &mut *ui_handle_full) {
+            (EitherState::A { inner: state }, EitherUiHandle::A(ui_handle)) => match self {
+                EitherElement::A(this) => this.unpinned_render_update(renderer, state, ui_handle),
+                EitherElement::B(this) => {
+                    Pin::new(state).state_unmount();
+                    let (state, ui_handle) = cp.with_render_context_after_self(renderer, |render_context| this.unpinned_render_init(render_context));
 
-                    let wrong_ui_handle = std::mem::replace(wrong_ui_handle, EitherUiHandle::A(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }));
-                    let EitherUiHandle::B(wrong_ui_handle) = wrong_ui_handle else { unreachable!() };
-
-                    drop(wrong_ui_handle.non_reactive_state);
-                    Pin::new(reactive_state.assert_b_mut()).state_unmount();
-                    _ = wrong_ui_handle.ui_handle.unmount(render_context.renderer_mut());
-
-                    *reactive_state = EitherState::A { inner: correct_reactive_state };
+                    *state_full = EitherState::B { inner: state };
+                    let old_ui_handle = std::mem::replace(ui_handle_full, EitherUiHandle::B(ui_handle));
+                    let EitherUiHandle::A(old_ui_handle) = old_ui_handle else { unreachable!() };
+                    old_ui_handle.unmount(renderer);
                 }
             },
-            EitherElement::B(this) => match ui_handle {
-                EitherUiHandle::B(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }) => {
-                    this.unpinned_render_update(
-                        render_context,
-                        RenderStates {
-                            ui_handle,
-                            non_reactive_state,
-                            reactive_state: reactive_state.assert_b_mut(),
-                        },
-                    );
-                }
-                wrong_ui_handle @ EitherUiHandle::A(_) => {
-                    let RenderStates {
-                        ui_handle,
-                        non_reactive_state,
-                        reactive_state: correct_reactive_state,
-                    } = this.unpinned_render_init(render_context);
+            (EitherState::B { inner: state }, EitherUiHandle::B(ui_handle)) => match self {
+                EitherElement::B(this) => this.unpinned_render_update(renderer, state, ui_handle),
+                EitherElement::A(this) => {
+                    Pin::new(state).state_unmount();
+                    let (state, ui_handle) = cp.with_render_context_after_self(renderer, |render_context| this.unpinned_render_init(render_context));
 
-                    let wrong_ui_handle = std::mem::replace(wrong_ui_handle, EitherUiHandle::B(UiHandleWithNonReactiveState { ui_handle, non_reactive_state }));
-                    let EitherUiHandle::B(wrong_ui_handle) = wrong_ui_handle else { unreachable!() };
-
-                    drop(wrong_ui_handle.non_reactive_state);
-                    Pin::new(reactive_state.assert_a_mut()).state_unmount();
-                    _ = wrong_ui_handle.ui_handle.unmount(render_context.renderer_mut());
-
-                    *reactive_state = EitherState::B { inner: correct_reactive_state };
+                    *state_full = EitherState::A { inner: state };
+                    let old_ui_handle = std::mem::replace(ui_handle_full, EitherUiHandle::A(ui_handle));
+                    let EitherUiHandle::B(old_ui_handle) = old_ui_handle else { unreachable!() };
+                    old_ui_handle.unmount(renderer);
                 }
             },
+            _ => {
+                if cfg!(debug_assertions) {
+                    unreachable!("unpinned state and ui handle of EitherElement for render update is invalid")
+                } else {
+                    unreachable!()
+                }
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ use frender_common::convert::FromMut as _;
 use frender_dom::behaviors::ElementWithChildren;
 
 use crate::element::{
-    PinnedRenderStateKind, PinnedStateDefaultOfKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, RenderStateKind, UnpinnedRenderStateKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
+    PinnedRenderInitKind, PinnedRenderStateKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, RenderStateKind, UnpinnedRenderStateKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
     UnpinnedUnmountedUiHandleOfKind,
 };
 use crate::{BehaviorType, RenderHtml};
@@ -35,17 +35,33 @@ pub trait RenderStateKindPollRenderWithParent<ParentType: ?Sized + BehaviorType>
     ) -> Poll<()>;
 }
 
+pub trait RenderInitWithParent<ParentType: ?Sized + BehaviorType, R: ?Sized + RenderHtml> {
+    type PinnedRenderStateKind: PinnedRenderStateKind;
+    fn render_init_pinned_with_parent(
+        //
+        self,
+        renderer: &mut R,
+        parent: &mut ParentType::OfBehaviorType<R>,
+        children_state: Pin<&mut PinnedStateOfKind<R, Self::PinnedRenderStateKind>>,
+    );
+}
+
+pub trait PinnedRenderInitKindWithParent<ParentType: ?Sized + BehaviorType> {
+    type PinnedRenderInitWithParent<R: ?Sized + RenderHtml>: RenderInitWithParent<ParentType, R>;
+}
+
 pub trait CsrComponent<Children>: BehaviorType {
-    type ChildrenRenderStateKind: RenderStateKindPollRenderWithParent<Self>;
+    type ChildrenRenderStateKind: RenderStateKindPollRenderWithParent<Self> + PinnedRenderInitKindWithParent<Self>;
 
     fn children_pinned_render_init<R: RenderHtml + ?Sized>(
         //
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::OfBehaviorType<R>,
-        children_state_default: Pin<&mut PinnedStateDefaultOfKind<R, Self::ChildrenRenderStateKind>>,
-    ) -> PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>;
+    ) -> (
+        PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        <Self::ChildrenRenderStateKind as PinnedRenderInitKindWithParent<Self>>::PinnedRenderInitWithParent<R>,
+    );
 
     fn children_pinned_render_init_by_reusing<R: RenderHtml + ?Sized>(
         //
@@ -107,13 +123,11 @@ pub struct KindRenderStateWithAnyParent<CK>(Never, std::marker::PhantomData<CK>)
 impl<CK: UnpinnedRenderStateKind> UnpinnedRenderStateKind for KindRenderStateWithAnyParent<CK> {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = CK::UnpinnedUiHandle<R>;
     type UnpinnedState<R: RenderHtml + ?Sized> = CK::UnpinnedState<R>;
-    type UnpinnedStateDefault<R: RenderHtml + ?Sized> = CK::UnpinnedStateDefault<R>;
 }
 
 impl<CK: PinnedRenderStateKind> PinnedRenderStateKind for KindRenderStateWithAnyParent<CK> {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = CK::PinnedUiHandle<R>;
     type PinnedState<R: RenderHtml + ?Sized> = CK::PinnedState<R>;
-    type PinnedStateDefault<R: RenderHtml + ?Sized> = CK::PinnedStateDefault<R>;
 }
 
 impl<
@@ -144,6 +158,10 @@ impl<
         CK::unpinned_poll_render(renderer, state, ui_handle, cx)
     }
 }
+
+impl<CK: PinnedRenderInitKind, ElType: ?Sized + behavior_type_traits::Element> PinnedRenderInitKindWithParent for KindRenderStateWithAnyParent<CK> {}
+
+pub struct RenderInitWithAnyParent;
 
 impl<C: CsrComponentNormalElement, Children: Element> CsrComponent<Children> for C {
     type ChildrenRenderStateKind = KindRenderStateWithAnyParent<Children::RenderStateKind>;

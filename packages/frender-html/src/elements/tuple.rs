@@ -2,87 +2,76 @@
 
 use std::{pin::Pin, task::Poll};
 
+use frender_dom::render::RenderWithContext;
+
 use crate::{
     element::{
-        PinMutRenderInitStates, PinMutRenderInitStatesOfKind, PinnedMutRenderStatesOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind, RenderStates, UnpinnedMutRenderStatesOfKind,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedRenderStatesOfKind,
+        CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderInitOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind,
+        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind,
     },
-    CsrElement, HtmlRenderContext, RenderHtml,
+    proxy_csr_element, CsrElement, HtmlRenderContext, RenderHtml,
 };
 
 impl<E0: CsrElement> CsrElement for (E0,) {
     type RenderStateKind = E0::RenderStateKind;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        self.0.pinned_render_init(render_context, states)
-    }
-
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) {
-        self.0.pinned_render_update(render_context, states)
-    }
-
-    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        self.0.unpinned_render_init(render_context)
-    }
-
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) {
-        self.0.unpinned_render_update(render_context, states)
-    }
+    proxy_csr_element!(|this| this.0);
 }
 
 pub struct KindOfStates<TupleOfKinds>(super::Kind<TupleOfKinds>);
 
+pub struct RenderInits<TupleOfRenderInits>(pub TupleOfRenderInits);
+
 macro_rules! impl_render_for_tuple {
     ($($name:ident ($($field_idx:tt as $field:ident),+) ,)+) => {
         $(
+            impl<Renderer: ?Sized + RenderWithContext, $($field: CsrElementRenderInitPinned<Renderer>),+> CsrElementRenderInitPinned<Renderer> for RenderInits<($($field,)+)> {
+                type UiHandle = ($($field::UiHandle,)+);
+                type State = ($($field::State,)+);
+
+                fn render_init_pinned(self, render_context: &mut Renderer::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle {
+                    let state = frender_common::utils::pin_project::$name(state);
+                    ($(
+                        $field::render_init_pinned(
+                            self.0.$field_idx,
+                            render_context,
+                            state.$field_idx,
+                        )
+                    ,)+)
+                }
+            }
+
             impl<$($field: PinnedRenderStateKind),+> PinnedRenderStateKind for KindOfStates<($($field,)+)> {
                 type PinnedUiHandle<R: RenderHtml + ?Sized> = ($($field::PinnedUiHandle<R>,)+);
-                type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ($($field::PinnedNonReactiveState<R>,)+);
-                type PinnedReactiveState = ($($field::PinnedReactiveState,)+);
+                type PinnedState<R: RenderHtml + ?Sized> = ($($field::PinnedState<R>,)+);
+            }
+
+            impl<$($field: PinnedRenderInitKind),+> PinnedRenderInitKind for KindOfStates<($($field,)+)> {
+                type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInits<($($field::PinnedRenderInit<R>,)+)>;
             }
 
             impl<$($field: UnpinnedRenderStateKind),+> UnpinnedRenderStateKind for KindOfStates<($($field,)+)> {
                 type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ($($field::UnpinnedUiHandle<R>,)+);
-                type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ($($field::UnpinnedNonReactiveState<R>,)+);
-                type UnpinnedReactiveState = ($($field::UnpinnedReactiveState,)+);
+                type UnpinnedState<R: RenderHtml + ?Sized> = ($($field::UnpinnedState<R>,)+);
             }
 
             impl<$($field: PinnedRenderStateKindPollRender),+> PinnedRenderStateKindPollRender for KindOfStates<($($field,)+)> {
                 fn pinned_poll_render<R: RenderHtml + ?Sized>(
                     //
                     renderer: &mut R,
-                    states: PinnedMutRenderStatesOfKind<Self, R>,
+                    state: Pin<&mut Self::PinnedState<R>>,
+                    ui_handle: &mut Self::PinnedUiHandle<R>,
                     cx: &mut std::task::Context<'_>,
                 ) -> Poll<()> {
-                    let ui_handle = states.ui_handle;
-                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
-                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
+                    let state = frender_common::utils::pin_project::$name(state);
 
                     match ($(
-                        $field::pinned_poll_render(renderer, RenderStates {
-                            ui_handle: &mut ui_handle.$field_idx,
-                            non_reactive_state: non_reactive_state.$field_idx,
-                            reactive_state: reactive_state.$field_idx,
-                        }, cx)
+                        $field::pinned_poll_render(
+                            renderer,
+                            state.$field_idx,
+                            &mut ui_handle.$field_idx,
+                            cx,
+                        )
                     ,)+) {
                         #[allow(unused_variables)]
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
@@ -95,15 +84,17 @@ macro_rules! impl_render_for_tuple {
                 fn unpinned_poll_render<R: RenderHtml + ?Sized>(
                     //
                     renderer: &mut R,
-                    states: UnpinnedMutRenderStatesOfKind<Self, R>,
+                    state: &mut Self::UnpinnedState<R>,
+                    ui_handle: &mut Self::UnpinnedUiHandle<R>,
                     cx: &mut std::task::Context<'_>,
                 ) -> Poll<()> {
                     match ($(
-                        $field::unpinned_poll_render(renderer, RenderStates {
-                            ui_handle: &mut states.ui_handle.$field_idx,
-                            non_reactive_state: &mut states.non_reactive_state.$field_idx,
-                            reactive_state: &mut states.reactive_state.$field_idx,
-                        }, cx)
+                        $field::unpinned_poll_render(
+                            renderer,
+                            &mut state.$field_idx,
+                            &mut ui_handle.$field_idx,
+                            cx,
+                        )
                     ,)+) {
                         #[allow(unused_variables)]
                         ( $(std::task::Poll::Ready($field @ ()),)+ ) => std::task::Poll::Ready(()),
@@ -115,42 +106,59 @@ macro_rules! impl_render_for_tuple {
             impl<$($field: CsrElement),+> CsrElement for ($($field,)+) {
                 type RenderStateKind = KindOfStates<($($field::RenderStateKind,)+)>;
 
-                fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+                fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
                     //
                     self,
-                    render_context: &mut Ctx,
-                    states: PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-                ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
-                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
+                    renderer: &mut Renderer,
+                ) -> (
+                    //
+                    PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+                    PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+                ) {
+                    let res = ($(
+                        $field::pinned_render_init(
+                            self.$field_idx,
+                            renderer,
+                        ),
+                    )+);
 
-                    ($(
-                        self.$field_idx.pinned_render_init(
-                            render_context,
-                            PinMutRenderInitStates {
-                                non_reactive_state: non_reactive_state.$field_idx,
-                                reactive_state: reactive_state.$field_idx,
-                            },
-                        )
-                    ,)+)
+                    (
+                        ($(res.$field_idx.0,)+),
+                        RenderInits(($(res.$field_idx.1,)+)),
+                    )
                 }
 
-                fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-                    //
+                fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
                     self,
                     render_context: &mut Ctx,
-                    states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-                ) {
-                    let non_reactive_state = frender_common::utils::pin_project::$name(states.non_reactive_state);
-                    let reactive_state = frender_common::utils::pin_project::$name(states.reactive_state);
-                    $(
-                        self.$field_idx.pinned_render_update(
+                    reused_state: Pin<&mut PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+                    unmounted_ui_handle: PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+                    let reused_state = frender_common::utils::pin_project::$name(reused_state);
+                    ($(
+                        $field::pinned_render_init_by_reusing(
+                            self.$field_idx,
                             render_context,
-                            RenderStates {
-                                ui_handle: &mut states.ui_handle.$field_idx,
-                                non_reactive_state: non_reactive_state.$field_idx,
-                                reactive_state: reactive_state.$field_idx,
-                            },
+                            reused_state.$field_idx,
+                            unmounted_ui_handle.$field_idx,
+                        ),
+                    )+)
+                }
+
+                fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
+                    //
+                    self,
+                    renderer: &mut Renderer,
+                    state: Pin<&mut PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+                    ui_handle: &mut PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+                ) {
+                    let state = frender_common::utils::pin_project::$name(state);
+                    $(
+                        $field::pinned_render_update(
+                            self.$field_idx,
+                            renderer,
+                            state.$field_idx,
+                            &mut ui_handle.$field_idx,
                         );
                     )+
                 }
@@ -159,32 +167,52 @@ macro_rules! impl_render_for_tuple {
                     //
                     self,
                     render_context: &mut Ctx,
-                ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-                    let states = ($(
-                        self.$field_idx.unpinned_render_init(render_context),
+                ) -> (
+                    //
+                    UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                    UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                ) {
+                    let res = ($(
+                        $field::unpinned_render_init(
+                            self.$field_idx,
+                            render_context,
+                        ),
                     )+);
-
-                    RenderStates {
-                        ui_handle: ($(states.$field_idx.ui_handle,)+),
-                        non_reactive_state: ($(states.$field_idx.non_reactive_state,)+),
-                        reactive_state: ($(states.$field_idx.reactive_state,)+),
-                    }
+                    (
+                        ($(res.$field_idx.0,)+),
+                        ($(res.$field_idx.1,)+),
+                    )
                 }
 
-                fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-                    //
+                fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
                     self,
                     render_context: &mut Ctx,
-                    states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+                    reused_state: &mut UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                    unmounted_ui_handle: UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                ) -> UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+                    ($(
+                        $field::unpinned_render_init_by_reusing(
+                            self.$field_idx,
+                            render_context,
+                            &mut reused_state.$field_idx,
+                            unmounted_ui_handle.$field_idx,
+                        ),
+                    )+)
+                }
+
+                fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+                    //
+                    self,
+                    renderer: &mut Renderer,
+                    state: &mut UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+                    ui_handle: &mut UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
                 ) {
                     $(
-                        self.$field_idx.unpinned_render_update(
-                            render_context,
-                            RenderStates {
-                                ui_handle: &mut states.ui_handle.$field_idx,
-                                non_reactive_state: &mut states.non_reactive_state.$field_idx,
-                                reactive_state: &mut states.reactive_state.$field_idx,
-                            },
+                        $field::unpinned_render_update(
+                            self.$field_idx,
+                            renderer,
+                            &mut state.$field_idx,
+                            &mut ui_handle.$field_idx,
                         );
                     )+
                 }

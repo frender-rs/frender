@@ -1,23 +1,38 @@
 use std::{pin::Pin, task::Poll};
 
-use frender_common::reactive_value::AsOptionMut;
-use frender_dom::{render::RenderContext, ui_handle::UiHandle, StateUnmount};
+use frender_dom::{
+    render::{RenderContext, RenderWithContext},
+    ui_handle::UiHandle,
+    StateUnmount,
+};
 
 use crate::RenderHtml;
 
 pub trait HtmlRenderContext: RenderContext<Renderer: RenderHtml> {}
 impl<Ctx: ?Sized + RenderContext<Renderer: RenderHtml>> HtmlRenderContext for Ctx {}
 
+pub trait CsrElementRenderInitPinned<R: ?Sized + RenderWithContext> {
+    type UiHandle: UiHandle<R>;
+    type State: StateUnmount;
+
+    fn render_init_pinned(self, render_context: &mut R::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle;
+}
+
 pub trait PinnedRenderStateKind {
     /// Ui handles that are renderer-specific and **NOT** pinned in pinned environment.
     type PinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
 
     /// State in pinned environment.
-    ///
-    /// [`Default`] is required so that the state can be constructed and then pinned before [`CsrElement::pinned_render_init`].
-    /// Note that [`UnpinnedRenderStateKind::UnpinnedReactiveState`] requires `Default` for a different reason.
     type PinnedState<R: RenderHtml + ?Sized>: StateUnmount;
-    type PinnedStateDefault<R: RenderHtml + ?Sized>: Default + AsOptionMut<Self::PinnedState<R>> + StateUnmount;
+}
+
+pub trait PinnedRenderInitKind: PinnedRenderStateKind {
+    type PinnedRenderInit<R: RenderHtml + ?Sized>: CsrElementRenderInitPinned<
+        //
+        R,
+        UiHandle = Self::PinnedUiHandle<R>,
+        State = Self::PinnedState<R>,
+    >;
 }
 
 pub trait PinnedRenderStateKindPollRender: PinnedRenderStateKind {
@@ -40,12 +55,6 @@ pub trait UnpinnedRenderStateKind {
     /// (caller can safely create a `Pin<&mut _>` from unpinned places
     /// and then call [`StateUnmount::state_unmount`]).
     type UnpinnedState<R: RenderHtml + ?Sized>: StateUnmount + Unpin;
-
-    /// [`Default`] is required so that [`RenderStateKind`](CsrElement::RenderStateKind) of `Option<impl CsrElement>`
-    /// don't need to wrap `UnpinnedReactiveState` with `Option`.
-    /// This optimizes `impl CsrElement for Option<impl CsrElement<RenderStateKind: UnpinnedRenderStateKind<UnpinnedState<_>: Default>>>`.
-    /// Note that [`PinnedRenderStateKind::PinnedReactiveState`] requires `Default` for a different reason.
-    type UnpinnedStateDefault<R: RenderHtml + ?Sized>: Default + AsOptionMut<Self::UnpinnedState<R>> + StateUnmount + Unpin;
 }
 
 pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
@@ -58,19 +67,18 @@ pub trait UnpinnedRenderStateKindPollRender: UnpinnedRenderStateKind {
     ) -> Poll<()>;
 }
 
-/// Trait alias for experimental traits [`UnpinnedRenderStateKindPollRender`] + [`PinnedRenderStateKindPollRender`].
-pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender {}
-impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender> RenderStateKind for K {}
+/// Trait alias for experimental traits.
+pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender + PinnedRenderInitKind {}
+impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender + PinnedRenderInitKind> RenderStateKind for K {}
 
 pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
+pub type PinnedRenderInitOfKind<R, K> = <K as PinnedRenderInitKind>::PinnedRenderInit<R>;
 pub type PinnedUnmountedUiHandleOfKind<R, K> = <<K as PinnedRenderStateKind>::PinnedUiHandle<R> as UiHandle<R>>::Unmounted;
 pub type PinnedStateOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedState<R>;
-pub type PinnedStateDefaultOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedStateDefault<R>;
 
 pub type UnpinnedUiHandleOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>;
 pub type UnpinnedUnmountedUiHandleOfKind<R, K> = <<K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted;
 pub type UnpinnedStateOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedState<R>;
-pub type UnpinnedStateDefaultOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedStateDefault<R>;
 
 pub trait CsrElement {
     type RenderStateKind: RenderStateKind;
@@ -78,12 +86,15 @@ pub trait CsrElement {
     /// The implementation should _initialize_ `state_default` so that [`AsOptionMut::<PinnedState>::as_option_mut(state_default).is_some()`](AsOptionMut)
     /// or future usage will panic.
     /// Caller of this method cannot consider this requirement as a safety guarantee.
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        state_default: Pin<&mut PinnedStateDefaultOfKind<Ctx::Renderer, Self::RenderStateKind>>,
-    ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>;
+        renderer: &mut Renderer,
+    ) -> (
+        //
+        PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+    );
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
@@ -129,23 +140,48 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn pinned_render_init<Renderer: ?Sized + $crate::RenderHtml>(
             //
             self,
+            renderer: &mut Renderer,
+        ) -> (
+            $crate::__private::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+            $crate::__private::PinnedRenderInitOfKind<Renderer, Self::RenderStateKind>,
+        ) {
+            let $this = self;
+            $expr.pinned_render_init(renderer)
+        }
+
+        fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            self,
             render_context: &mut Ctx,
-            states: $crate::__private::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+            reused_state: ::core::pin::Pin<&mut $crate::__private::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+            unmounted_ui_handle: $crate::__private::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
         ) -> $crate::__private::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
             let $this = self;
-            $expr.pinned_render_init(render_context, states)
+            $expr.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)
         }
 
         fn unpinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
             //
             self,
             render_context: &mut Ctx,
-        ) -> $crate::__private::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+        ) -> (
+            $crate::__private::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+            $crate::__private::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        ) {
             let $this = self;
             $expr.unpinned_render_init(render_context)
+        }
+
+        fn unpinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(
+            self,
+            render_context: &mut Ctx,
+            reused_state: &mut $crate::__private::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+            unmounted_ui_handle: $crate::__private::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        ) -> $crate::__private::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+            let $this = self;
+            $expr.unpinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)
         }
 
         $crate::proxy_csr_element_render_update!(|$this| $expr);
@@ -155,24 +191,26 @@ macro_rules! proxy_csr_element {
 #[macro_export]
 macro_rules! proxy_csr_element_render_update {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn pinned_render_update<Renderer: ?Sized + $crate::RenderHtml>(
             //
             self,
-            render_context: &mut Ctx,
-            states: $crate::__private::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+            renderer: &mut Renderer,
+            state: ::core::pin::Pin<&mut $crate::__private::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+            ui_handle: &mut $crate::__private::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
         ) {
             let $this = self;
-            $expr.pinned_render_update(render_context, states)
+            $expr.pinned_render_update(renderer, state, ui_handle)
         }
 
-        fn unpinned_render_update<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn unpinned_render_update<Renderer: ?Sized + $crate::RenderHtml>(
             //
             self,
-            render_context: &mut Ctx,
-            states: $crate::__private::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+            renderer: &mut Renderer,
+            state: &mut $crate::__private::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+            ui_handle: &mut $crate::__private::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
         ) {
             let $this = self;
-            $expr.unpinned_render_update(render_context, states)
+            $expr.unpinned_render_update(renderer, state, ui_handle)
         }
     };
 }

@@ -24,6 +24,7 @@ frender-attr-value = { version = "0.1.0", path = "../frender-attr-value", featur
 frender-form-control = { version = "0.1.0", path = "../frender-form-control", features = [
     "ssr",
 ] }
+arrayvec = { version = "0.7.6", default-features = false }
 
 [dependencies.web-sys]
 version = "0.3.60"

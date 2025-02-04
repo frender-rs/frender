@@ -1,25 +1,42 @@
 use std::{marker::PhantomData, task::Poll};
 
-use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
+use frender_dom::{
+    render::RenderWithContext,
+    ui_handle::{UiHandle, UnmountedUiHandle},
+};
 
 use crate::{
-    element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElementRenderInitPinned, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedRenderInitKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     RenderHtml,
 };
 
 pub enum KindOfNoState {}
 
+#[derive(Debug)]
+pub struct RenderInitNothing;
+
+impl<R: ?Sized + RenderWithContext> CsrElementRenderInitPinned<R> for RenderInitNothing {
+    type UiHandle = ();
+    type State = ();
+
+    fn render_init_pinned(self, _: &mut R::RenderContext<'_>, _: std::pin::Pin<&mut Self::State>) -> Self::UiHandle {}
+}
+
 impl PinnedRenderStateKind for KindOfNoState {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = ();
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type PinnedReactiveState = ();
+    type PinnedState<R: RenderHtml + ?Sized> = ();
+}
+
+impl PinnedRenderInitKind for KindOfNoState {
+    type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;
 }
 
 impl PinnedRenderStateKindPollRender for KindOfNoState {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         _: &mut R,
-        _: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        _: std::pin::Pin<&mut Self::PinnedState<R>>,
+        (): &mut Self::PinnedUiHandle<R>,
         _: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         Poll::Ready(())
@@ -28,16 +45,16 @@ impl PinnedRenderStateKindPollRender for KindOfNoState {
 
 impl UnpinnedRenderStateKind for KindOfNoState {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ();
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type UnpinnedReactiveState = ();
+    type UnpinnedState<R: RenderHtml + ?Sized> = ();
 }
 
 impl UnpinnedRenderStateKindPollRender for KindOfNoState {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
-        _: &mut R,
-        _: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
-        _: &mut std::task::Context<'_>,
+        renderer: &mut R,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
+        cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         Poll::Ready(())
     }
@@ -118,49 +135,35 @@ pub struct KindUnpinned<K: UnpinnedRenderStateKind>(Never, PhantomData<K>);
 
 impl<K: UnpinnedRenderStateKind> UnpinnedRenderStateKind for KindUnpinned<K> {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = K::UnpinnedUiHandle<R>;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = K::UnpinnedNonReactiveState<R>;
-    type UnpinnedReactiveState = K::UnpinnedReactiveState;
+    type UnpinnedState<R: RenderHtml + ?Sized> = K::UnpinnedState<R>;
 }
 
 impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for KindUnpinned<K> {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        K::unpinned_poll_render(renderer, states, cx)
+        K::unpinned_poll_render(renderer, state, ui_handle, cx)
     }
 }
 
 impl<K: UnpinnedRenderStateKind> PinnedRenderStateKind for KindUnpinned<K> {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleWithNonReactiveState<K::UnpinnedUiHandle<R>, K::UnpinnedNonReactiveState<R>>;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type PinnedReactiveState = K::UnpinnedReactiveState;
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = K::UnpinnedUiHandle<R>;
+    type PinnedState<R: RenderHtml + ?Sized> = K::UnpinnedState<R>;
 }
 
 impl<K: UnpinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for KindUnpinned<K> {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        state: std::pin::Pin<&mut Self::PinnedState<R>>,
+        ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let RenderStates {
-            ui_handle: UiHandleWithNonReactiveState { ui_handle, non_reactive_state },
-            non_reactive_state: _,
-            reactive_state,
-        } = states;
-
-        K::unpinned_poll_render(
-            renderer,
-            RenderStates {
-                ui_handle,
-                non_reactive_state,
-                reactive_state: reactive_state.get_mut(),
-            },
-            cx,
-        )
+        K::unpinned_poll_render(renderer, state.get_mut(), ui_handle, cx)
     }
 }
 // endregion
