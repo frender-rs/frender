@@ -147,8 +147,9 @@ crate::macros::def_intrinsic_component_props!(
         sub_traits!(
             pub trait Element {
                 trait_bounds!(
-                    frender_dom::behaviors::Element<Renderer>
+                    frender_dom::ui_handle::UiHandle<Renderer, Unmounted: frender_dom::behaviors::ElementWithChildren<Renderer>>
                         //
+                        + frender_dom::behaviors::Element<Renderer>
                         + frender_dom::behaviors::ElementWithChildren<Renderer>
                         + frender_dom::behaviors::ElementWithClassList<Renderer>
                 );

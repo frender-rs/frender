@@ -35,14 +35,10 @@ impl<T: ReactiveValueState> ReactiveValueState for Option<T> {
     }
 }
 
-pub trait ReactiveValueRenderInitPinned<VK: ?Sized + ReactiveValueKind> {
-    type State;
+pub trait RenderInitPinned<R, S: ?Sized> {
+    type Output;
 
-    fn render_init_pinned<Out>(
-        self,
-        renderer: impl FnOnce(VK::Value<'_>) -> Out,
-        state: Pin<&mut Self::State>,
-    ) -> Out;
+    fn render_init_pinned(self, renderer: R, state: Pin<&mut S>) -> Self::Output;
 }
 
 pub trait ProvideValueOfKind<VK: ?Sized + ReactiveValueKind> {
@@ -58,13 +54,19 @@ pub trait ReusableRendererOfKind<VK: ?Sized + ReactiveValueKind> {
 
 pub trait ReactiveValue<VK: ?Sized + ReactiveValueKind> {
     type PinnedState: ReactiveValueState<ReactiveValueKind = VK>;
-    type PinnedRenderInit: ReactiveValueRenderInitPinned<VK, State = Self::PinnedState>;
+    type PinnedRenderInit<R: FnOnce(VK::Value<'_>) -> Out, Out>: RenderInitPinned<
+        R,
+        Self::PinnedState,
+        Output = Out,
+    >;
 
     /// Requires [`Unpin`] so that [`ReactiveValueState`] can be reused without defining another trait taking `&mut self`.
     type UnpinnedState: Unpin + ReactiveValueState<ReactiveValueKind = VK>;
 
     /// `state` is `Default::default()` at a pinned place.
-    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit);
+    fn pinned_render_init<R: FnOnce(VK::Value<'_>) -> Out, Out>(
+        self,
+    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>);
 
     /// `old_state` has been [unmounted](ReactiveStrStateUnmount::reactive_value_state_unmount) but not necessarily set to `Default::default()`.
     fn pinned_render_init_by_reusing<Out>(
@@ -103,30 +105,31 @@ pub trait ReactiveValueExt<VK: ?Sized + ReactiveValueKind>: ReactiveValue<VK> + 
 impl<T: ReactiveValue<VK>, VK: ?Sized + ReactiveValueKind> ReactiveValueExt<VK> for T {}
 
 #[macro_export]
-macro_rules! impl_reactive_value_unpinned_with_pinned {
+macro_rules! impl_reactive_value_unpinned_init_with_pinned {
     (
         type ReactiveValueKind = $ReactiveValueKind:ty;
     ) => {
-        type UnpinnedState = Self::PinnedState;
-
         fn unpinned_render_init<Out>(
             self,
             renderer: impl ::core::ops::FnOnce(
                 <$ReactiveValueKind as $crate::reactive_value::ReactiveValueKind>::Value<'_>,
             ) -> Out,
         ) -> (Self::UnpinnedState, Out) {
-            let (mut state, render_init) = <Self as $crate::reactive_value::ReactiveValue<
-                $ReactiveValueKind,
-            >>::pinned_render_init(self);
-
-            let out =
-                <Self::PinnedRenderInit as $crate::reactive_value::ReactiveValueRenderInitPinned<
-                    $ReactiveValueKind,
-                >>::render_init_pinned(
-                    render_init, renderer, ::core::pin::Pin::new(&mut state)
-                );
-            (state, out)
+            $crate::reactive_value::unpinned_render_init_with_pinned(self, renderer)
         }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_reactive_value_unpinned_with_pinned {
+    (
+        type ReactiveValueKind = $ReactiveValueKind:ty;
+    ) => {
+        type UnpinnedState = Self::PinnedState;
+
+        $crate::impl_reactive_value_unpinned_init_with_pinned!(
+            type ReactiveValueKind = $ReactiveValueKind;
+        );
 
         fn unpinned_render_init_by_reusing<Out>(
             self,
@@ -138,7 +141,7 @@ macro_rules! impl_reactive_value_unpinned_with_pinned {
         ) -> Out {
             #[rustfmt::skip]
             return <Self as $crate::reactive_value::ReactiveValue::<
-                $ReactiveValueKind
+                $ReactiveValueKind,
             >>::pinned_render_init_by_reusing(
                 self,
                 renderer,
@@ -161,4 +164,76 @@ macro_rules! impl_reactive_value_unpinned_with_pinned {
     };
 }
 
-use impl_reactive_value_unpinned_with_pinned;
+#[macro_export]
+macro_rules! impl_reactive_value_pinned_reuse_and_update_with_unpinned {
+    (
+        type ReactiveValueKind = $ReactiveValueKind:ty;
+    ) => {
+        fn pinned_render_init_by_reusing<Out>(
+            self,
+            renderer: impl $crate::reactive_value::ReusableRendererOfKind<
+                $ReactiveValueKind,
+                Output = Out,
+            >,
+            reused_state: ::core::pin::Pin<&mut Self::PinnedState>,
+        ) -> Out {
+            #[rustfmt::skip]
+            return <Self as $crate::reactive_value::ReactiveValue::<
+                $ReactiveValueKind,
+            >>::unpinned_render_init_by_reusing(
+                self,
+                renderer,
+                ::core::pin::Pin::get_mut(reused_state),
+            );
+        }
+
+        fn pinned_render_update<Out>(
+            self,
+            renderer: impl ::core::ops::FnOnce(
+                <$ReactiveValueKind as $crate::reactive_value::ReactiveValueKind>::Value<'_>,
+            ) -> Out,
+            state: ::core::pin::Pin<&mut Self::UnpinnedState>,
+        ) -> Option<Out> {
+            #[rustfmt::skip]
+            return <Self as $crate::reactive_value::ReactiveValue::<
+                $ReactiveValueKind,
+            >>::unpinned_render_update(
+                self,
+                renderer,
+                ::core::pin::Pin::get_mut(state),
+            );
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_reactive_value_with_mixed_unpinned {
+    (
+        type ReactiveValueKind = $ReactiveValueKind:ty;
+    ) => {
+        $crate::impl_reactive_value_unpinned_init_with_pinned!(
+            type ReactiveValueKind = $ReactiveValueKind;
+        );
+        $crate::impl_reactive_value_pinned_reuse_and_update_with_unpinned!(
+            type ReactiveValueKind = $ReactiveValueKind;
+        );
+    };
+}
+
+pub fn unpinned_render_init_with_pinned<
+    V: ReactiveValue<VK>,
+    VK: ?Sized + ReactiveValueKind,
+    Out,
+    R: FnOnce(VK::Value<'_>) -> Out,
+>(
+    this: V,
+    renderer: R,
+) -> (V::PinnedState, Out)
+where
+    V::PinnedState: Unpin,
+{
+    let (mut state, render_init) = V::pinned_render_init::<R, Out>(this);
+
+    let out = render_init.render_init_pinned(renderer, ::core::pin::Pin::new(&mut state));
+    (state, out)
+}

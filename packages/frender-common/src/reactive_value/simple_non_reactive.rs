@@ -4,7 +4,7 @@ use frender_macro_rules::impl_many;
 
 use crate::{csr::StateUnmount, reactive_value::ProvideValueOfKind};
 
-use super::{ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState};
+use super::{ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned};
 
 trait KnownSimpleNonReactive: 'static + Copy + PartialEq {}
 
@@ -54,38 +54,38 @@ impl<T: KnownSimpleNonReactive> ReactiveValueState for State<T> {
     }
 }
 
-pub struct RenderInit<T>(PhantomData<T>);
+pub struct RenderInit;
 
-impl<T: KnownSimpleNonReactive> ReactiveValueRenderInitPinned<T> for RenderInit<T> {
-    type State = State<T>;
+impl<T: KnownSimpleNonReactive, R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out>
+    RenderInitPinned<R, State<T>> for RenderInit
+{
+    type Output = Out;
 
-    fn render_init_pinned<Out>(
-        self,
-        renderer: impl FnOnce(T) -> Out,
-        state: std::pin::Pin<&mut Self::State>,
-    ) -> Out {
+    fn render_init_pinned(self, renderer: R, state: std::pin::Pin<&mut State<T>>) -> Self::Output {
         renderer(state.0)
     }
 }
 
 impl<T: KnownSimpleNonReactive> ReactiveValue<T> for T {
-    super::impl_reactive_value_unpinned_with_pinned!(
+    type PinnedState = State<T>;
+    type PinnedRenderInit<R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out> = RenderInit;
+    type UnpinnedState = State<T>;
+
+    crate::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = T;
     );
 
-    type PinnedState = State<T>;
-    type PinnedRenderInit = RenderInit<T>;
-
-    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
-        (State(self), RenderInit(PhantomData))
+    fn pinned_render_init<R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out>(
+        self,
+    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
+        (State(self), RenderInit)
     }
 
-    fn pinned_render_init_by_reusing<Out>(
+    fn unpinned_render_init_by_reusing<Out>(
         self,
         renderer: impl super::ReusableRendererOfKind<T, Output = Out>,
-        reused_state: std::pin::Pin<&mut Self::PinnedState>,
+        State(cache): &mut Self::PinnedState,
     ) -> Out {
-        let State(cache) = reused_state.get_mut();
         if self == *cache {
             struct Provide<T>(T);
 
@@ -102,12 +102,11 @@ impl<T: KnownSimpleNonReactive> ReactiveValue<T> for T {
         }
     }
 
-    fn pinned_render_update<Out>(
+    fn unpinned_render_update<Out>(
         self,
         renderer: impl FnOnce(T) -> Out,
-        state: std::pin::Pin<&mut Self::PinnedState>,
+        State(cache): &mut Self::PinnedState,
     ) -> Option<Out> {
-        let State(cache) = state.get_mut();
         if self == *cache {
             None
         } else {

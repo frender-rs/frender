@@ -342,9 +342,11 @@ macro_rules! behavior_type_traits {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
-                use crate::update_element::OnEventType;
+                use frender_common::convert::IdentityAs;
+                // use frender_dom::ui_handle::UiHandle;
 
-                use super::event_types;
+                use crate::update_element::OnEventType;
+                use super::{event_types, behaviors};
             }
         }
     };
@@ -381,9 +383,17 @@ macro_rules! behavior_type_traits {
                 }
                 append {
                     {
-                        type $trait_name<Renderer: ?Sized + super::RenderHtml>: super::behaviors::$trait_name<Renderer>
-                            + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-                            + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>
+                        type $trait_name<Renderer: ?Sized + super::RenderHtml>: behaviors::$trait_name<Renderer>
+                            + IdentityAs<Self::OfBehaviorType<Renderer>>
+                            + IdentityAs<Self::UiHandle<Renderer>>
+                            /*
+                            + UiHandle<
+                                Renderer,
+                                Unmounted: IdentityAs<
+                                    <Self::UiHandle<Renderer> as UiHandle<Renderer>>::Unmounted
+                                >
+                            >
+                            */
                         ;
                     }
                 }
@@ -640,6 +650,12 @@ macro_rules! tag_implementations {
 
             impl UiHandleType for $tags {
                 type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
+
+                /*
+                fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> <Self::UiHandle<R> as UiHandle<R>>::Unmounted {
+                    R::$tags(renderer)
+                }
+                */
 
                 fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
                     let unmounted = <Ctx::Renderer as RenderHtml>::$tags(render_context.renderer_mut());

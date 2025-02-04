@@ -2,10 +2,7 @@ use frender_events::{
     event::Event, event_types::EventType, web::JsCastEventType, HasEventTypeName,
 };
 
-use frender_dom::{
-    csr::{self, web::event_listener::unpinned},
-    RegisterOrUpdate, RegisterUpdate,
-};
+use frender_dom::csr::{self, web::event_listener::unpinned};
 
 use super::{
     super::value::HandleFormControlValue, FormControlElement, HandleFormControlValueChange,

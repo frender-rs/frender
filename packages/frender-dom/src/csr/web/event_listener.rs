@@ -1,8 +1,9 @@
+use frender_common::reactive_value::RenderInitPinned;
 use frender_events::web::JsCastEventType;
 
-use std::marker::PhantomPinned;
+use std::marker::{PhantomData, PhantomPinned};
 
-use frender_csr::event_listener::{HandleEvent, RegisterOrUpdate};
+use frender_csr::event_listener::{HandleEvent, PinnedRegisterUpdate};
 
 mod handle_js_cast_event {
     use frender_common::HandleEvent;
@@ -130,37 +131,45 @@ pub mod unpinned {
 pin_project_lite::pin_project!(
     /// An updatable EventListener.
     #[derive(Debug)]
-    pub struct MaybeEventListener<F: ?Sized> {
+    pub struct EventListener<F: ?Sized> {
         // marked as !Unpin for future optimization.
         #[pin]
         _pin: PhantomPinned,
         // TODO: maybe this can be implemented with self-referential structs without Rc. See https://doc.rust-lang.org/nightly/std/pin/index.html#a-self-referential-struct
-        inner: Option<unpinned::EventListener<F>>,
+        inner: unpinned::EventListener<F>,
     }
 );
-
-impl<F: ?Sized> Default for MaybeEventListener<F> {
-    fn default() -> Self {
-        Self {
-            _pin: PhantomPinned,
-            inner: Default::default(),
-        }
-    }
-}
 
 pin_project_lite::pin_project!(
     #[derive(Debug)]
-    pub struct MaybeEventListenerOfType<F, ET: ?Sized> {
+    pub struct EventListenerOfType<F, ET: ?Sized> {
         #[pin]
-        inner: MaybeEventListener<handle_js_cast_event::HandleJsCastEvent<ET, F>>,
+        inner: EventListener<handle_js_cast_event::HandleJsCastEvent<ET, F>>,
     }
 );
 
-impl<F, ET: ?Sized> Default for MaybeEventListenerOfType<F, ET> {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
+pub struct PinnedRegisterInit<
+    F: HandleEvent<ET::Event> + 'static,
+    ET: ?Sized + JsCastEventType + 'static,
+> {
+    _phantom: PhantomData<(F, ET)>,
+}
+
+impl<
+        N: AsRef<web_sys::EventTarget>,
+        R: ?Sized,
+        F: HandleEvent<ET::Event> + 'static,
+        ET: ?Sized + JsCastEventType + 'static,
+    > RenderInitPinned<(&mut super::Node<N>, &mut R), EventListenerOfType<F, ET>>
+    for PinnedRegisterInit<F, ET>
+{
+    type Output = ();
+
+    fn render_init_pinned(
+        self,
+        _: (&mut super::Node<N>, &mut R),
+        _: std::pin::Pin<&mut EventListenerOfType<F, ET>>,
+    ) -> Self::Output {
     }
 }
 
@@ -169,25 +178,37 @@ impl<
         R: ?Sized,
         F: HandleEvent<ET::Event> + 'static,
         ET: ?Sized + JsCastEventType + 'static,
-    > RegisterOrUpdate<super::Node<N>, R, F> for MaybeEventListenerOfType<F, ET>
+    > PinnedRegisterUpdate<super::Node<N>, R, F> for EventListenerOfType<F, ET>
 {
-    fn register_or_update(
-        self: std::pin::Pin<&mut Self>,
-        element: &mut super::Node<N>,
+    type PinnedRegisterInit = PinnedRegisterInit<F, ET>;
+
+    fn pinned_register_init(
+        node: &mut super::Node<N>,
         _: &mut R,
         f: F,
-    ) {
-        {
-            let this = self.project().inner.project().inner;
-            let f = handle_js_cast_event::HandleJsCastEvent::new(f);
+    ) -> (Self, Self::PinnedRegisterInit)
+    where
+        Self: Sized,
+    {
+        let f = handle_js_cast_event::HandleJsCastEvent::new(f);
+        let target: &web_sys::EventTarget = node.0.as_ref();
+        let this = Self {
+            inner: EventListener {
+                _pin: PhantomPinned,
+                inner: unpinned::EventListener::new(target, ET::EVENT_TYPE_NAME, f),
+            },
+        };
+        (
+            this,
+            PinnedRegisterInit {
+                _phantom: PhantomData,
+            },
+        )
+    }
 
-            if let Some(this) = this {
-                this.update(f)
-            } else {
-                let target: &web_sys::EventTarget = element.0.as_ref();
-
-                *this = Some(unpinned::EventListener::new(target, ET::EVENT_TYPE_NAME, f))
-            }
-        }
+    fn pinned_update(self: std::pin::Pin<&mut Self>, _: &mut super::Node<N>, _: &mut R, f: F) {
+        let this = self.project().inner.project().inner;
+        let f = handle_js_cast_event::HandleJsCastEvent::new(f);
+        this.update(f)
     }
 }

@@ -46,7 +46,10 @@ pub(crate) mod proxy_attr {
 }
 
 mod event_listener {
-    use frender_dom::{RegisterOrUpdate, RegisterUpdate};
+    use std::pin::Pin;
+
+    use frender_common::reactive_value::RenderInitPinned;
+    use frender_dom::{PinnedRegisterUpdate, RegisterUpdate};
 
     use super::ElementProxyAttrs;
 
@@ -58,12 +61,35 @@ mod event_listener {
         }
     );
 
-    impl<EL, E: ?Sized, R: ?Sized, F> RegisterOrUpdate<ElementProxyAttrs<E>, R, F> for EventListener<EL>
-    where
-        EL: RegisterOrUpdate<E, R, F>,
+    pub struct RegisterInit<T>(T);
+
+    impl<
+            //
+            T: for<'n, 'r> RenderInitPinned<(&'n mut N, &'r mut R), S, Output = ()>,
+            N: ?Sized,
+            R: ?Sized,
+            S,
+        > RenderInitPinned<(&mut ElementProxyAttrs<N>, &mut R), EventListener<S>> for RegisterInit<T>
     {
-        fn register_or_update(self: std::pin::Pin<&mut Self>, node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) {
-            self.project().inner.register_or_update(&mut node.0, renderer, f)
+        type Output = ();
+
+        fn render_init_pinned(self, (node, renderer): (&mut ElementProxyAttrs<N>, &mut R), state: Pin<&mut EventListener<S>>) -> Self::Output {
+            self.0.render_init_pinned((&mut node.0, renderer), state.project().inner)
+        }
+    }
+
+    impl<EL, E: ?Sized, R: ?Sized, F> PinnedRegisterUpdate<ElementProxyAttrs<E>, R, F> for EventListener<EL>
+    where
+        EL: PinnedRegisterUpdate<E, R, F>,
+    {
+        type PinnedRegisterInit = RegisterInit<EL::PinnedRegisterInit>;
+
+        fn pinned_register_init(node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) -> (Self, Self::PinnedRegisterInit) {
+            let (inner, init) = EL::pinned_register_init(&mut node.0, renderer, f);
+            (EventListener { inner }, RegisterInit(init))
+        }
+        fn pinned_update(self: Pin<&mut Self>, node: &mut ElementProxyAttrs<E>, renderer: &mut R, f: F) {
+            EL::pinned_update(self.project().inner, &mut node.0, renderer, f);
         }
     }
 

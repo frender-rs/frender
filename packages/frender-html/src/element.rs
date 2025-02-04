@@ -1,7 +1,8 @@
 use std::{pin::Pin, task::Poll};
 
+use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::{
-    render::{RenderContext, RenderWithContext},
+    render::{RenderContext, RenderContextRenderTextFrom},
     ui_handle::UiHandle,
     StateUnmount,
 };
@@ -11,29 +12,12 @@ use crate::RenderHtml;
 pub trait HtmlRenderContext: RenderContext<Renderer: RenderHtml> {}
 impl<Ctx: ?Sized + RenderContext<Renderer: RenderHtml>> HtmlRenderContext for Ctx {}
 
-pub trait CsrElementRenderInitPinned<R: ?Sized + RenderWithContext> {
-    type UiHandle: UiHandle<R>;
-    type State: StateUnmount;
-
-    fn render_init_pinned(self, render_context: &mut R::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle;
-}
-
 pub trait PinnedRenderStateKind {
     /// Ui handles that are renderer-specific and **NOT** pinned in pinned environment.
     type PinnedUiHandle<R: RenderHtml + ?Sized>: UiHandle<R>;
 
     /// State in pinned environment.
     type PinnedState<R: RenderHtml + ?Sized>: StateUnmount;
-}
-
-pub trait PinnedRenderInitKind {
-    type PinnedRenderStateKind: PinnedRenderStateKind;
-    type PinnedRenderInit<R: RenderHtml + ?Sized>: CsrElementRenderInitPinned<
-        //
-        R,
-        UiHandle = PinnedUiHandleOfKind<R, Self::PinnedRenderStateKind>,
-        State = PinnedStateOfKind<R, Self::PinnedRenderStateKind>,
-    >;
 }
 
 pub trait PinnedRenderStateKindPollRender: PinnedRenderStateKind {
@@ -73,7 +57,6 @@ pub trait RenderStateKind: UnpinnedRenderStateKindPollRender + PinnedRenderState
 impl<K: ?Sized + UnpinnedRenderStateKindPollRender + PinnedRenderStateKindPollRender> RenderStateKind for K {}
 
 pub type PinnedUiHandleOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedUiHandle<R>;
-pub type PinnedRenderInitOfKind<R, K> = <K as PinnedRenderInitKind>::PinnedRenderInit<R>;
 pub type PinnedUnmountedUiHandleOfKind<R, K> = <<K as PinnedRenderStateKind>::PinnedUiHandle<R> as UiHandle<R>>::Unmounted;
 pub type PinnedStateOfKind<R, K> = <K as PinnedRenderStateKind>::PinnedState<R>;
 
@@ -83,19 +66,22 @@ pub type UnpinnedStateOfKind<R, K> = <K as UnpinnedRenderStateKind>::UnpinnedSta
 
 pub trait CsrElement {
     type RenderStateKind: RenderStateKind;
-    type RenderInitKind: PinnedRenderInitKind<PinnedRenderStateKind = Self::RenderStateKind>;
 
-    /// The implementation should _initialize_ `state_default` so that [`AsOptionMut::<PinnedState>::as_option_mut(state_default).is_some()`](AsOptionMut)
-    /// or future usage will panic.
-    /// Caller of this method cannot consider this requirement as a safety guarantee.
-    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
+    type PinnedRenderInit<R: ?Sized + RenderHtml>: for<'a, 'b> RenderInitPinned<
+        //
+        &'a mut R::RenderContext<'b>,
+        PinnedStateOfKind<R, Self::RenderStateKind>,
+        Output = PinnedUiHandleOfKind<R, Self::RenderStateKind>,
+    >;
+
+    fn pinned_render_init<R: ?Sized + RenderHtml>(
         //
         self,
-        renderer: &mut Renderer,
+        renderer: &mut R,
     ) -> (
         //
-        PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
+        PinnedStateOfKind<R, Self::RenderStateKind>,
+        Self::PinnedRenderInit<R>,
     );
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
@@ -142,13 +128,14 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init<Renderer: ?Sized + $crate::RenderHtml>(
+        fn pinned_render_init<TCsrElementRenderer: ?::core::marker::Sized + $crate::RenderHtml>(
             //
             self,
-            renderer: &mut Renderer,
+            renderer: &mut TCsrElementRenderer,
         ) -> (
-            $crate::__private::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-            $crate::__private::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
+            //
+            $crate::__private::PinnedStateOfKind<TCsrElementRenderer, Self::RenderStateKind>,
+            Self::PinnedRenderInit<TCsrElementRenderer>,
         ) {
             let $this = self;
             $expr.pinned_render_init(renderer)

@@ -1,8 +1,7 @@
 use std::task::Poll;
 
 use frender_common::reactive_value::{
-    ProvideValueOfKind, ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned,
-    ReactiveValueState,
+    ProvideValueOfKind, ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned,
 };
 use frender_csr::StateUnmount;
 
@@ -32,40 +31,41 @@ impl ReactiveValueState for State {
 
 pub struct RenderInit;
 
-impl ReactiveValueRenderInitPinned<StringElement> for RenderInit {
-    type State = State;
+impl<R: FnOnce(&StringElement) -> Out, Out> RenderInitPinned<R, State> for RenderInit {
+    type Output = Out;
 
-    fn render_init_pinned<Out>(
-        self,
-        renderer: impl FnOnce(&StringElement) -> Out,
-        state: std::pin::Pin<&mut Self::State>,
-    ) -> Out {
+    fn render_init_pinned(self, renderer: R, state: std::pin::Pin<&mut State>) -> Self::Output {
         renderer(&state.0)
     }
 }
 
 impl ReactiveValue<StringElement> for StringElement {
-    frender_common::impl_reactive_value_unpinned_with_pinned!(
+    type UnpinnedState = State;
+    type PinnedState = State;
+    type PinnedRenderInit<R: FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out, Out> =
+        RenderInit;
+
+    frender_common::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = StringElement;
     );
 
-    type PinnedState = State;
-    type PinnedRenderInit = RenderInit;
-
-    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
+    fn pinned_render_init<
+        R: FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out,
+        Out,
+    >(
+        self,
+    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
         (State(self), RenderInit)
     }
 
-    fn pinned_render_init_by_reusing<Out>(
+    fn unpinned_render_init_by_reusing<Out>(
         self,
         renderer: impl frender_common::reactive_value::ReusableRendererOfKind<
             StringElement,
             Output = Out,
         >,
-        reused_state: std::pin::Pin<&mut Self::PinnedState>,
+        State(cache): &mut Self::PinnedState,
     ) -> Out {
-        let State(cache) = reused_state.get_mut();
-
         if self == *cache {
             struct Provide<'a>(&'a StringElement);
 
@@ -81,13 +81,11 @@ impl ReactiveValue<StringElement> for StringElement {
         }
     }
 
-    fn pinned_render_update<Out>(
+    fn unpinned_render_update<Out>(
         self,
-        renderer: impl FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out,
-        state: std::pin::Pin<&mut Self::PinnedState>,
+        renderer: impl FnOnce(&StringElement) -> Out,
+        State(cache): &mut Self::PinnedState,
     ) -> Option<Out> {
-        let State(cache) = state.get_mut();
-
         if self == *cache {
             None
         } else {

@@ -1,7 +1,7 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::convert::FromMut;
-use frender_dom::{event_types::EventType, HandleEvent, MaybeHandleEvent, RegisterUpdate};
+use frender_common::{convert::FromMut, reactive_value::RenderInitPinned};
+use frender_dom::{event_types::EventType, HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate};
 
 use crate::{
     update_element::{OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
@@ -19,7 +19,7 @@ impl<EVT: EventType, ET: OnEventType<EVT>, H: HandleEvent<EVT::Event> + 'static>
 }
 
 impl<EVT: EventType, ET: OnEventType<EVT>, F: HandleEvent<EVT::Event> + 'static> PinnedNonReactiveRenderStateKind for Kind<EVT, ET, F> {
-    type PinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = PinnedEventListenerOf<EVT, ET::OnEvent<R>, R, F>;
+    type PinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = Option<PinnedEventListenerOf<EVT, ET::OnEvent<R>, R, F>>;
 }
 
 pub struct Property<EVT, F> {
@@ -33,6 +33,30 @@ impl<EVT, F> Property<EVT, F> {
     }
 }
 
+pub struct RenderInit<EVT, BT, T>(PhantomData<(EVT, BT)>, Option<T>);
+
+impl<
+        //
+        EVT: EventType,
+        BT: OnEventType<EVT>,
+        T: for<'n, 'r> RenderInitPinned<(&'n mut BT::OnEvent<R>, &'r mut R), EL, Output = ()>,
+        EL,
+        R: ?Sized + RenderHtml,
+    > RenderInitPinned<(&mut R, &mut BT::OfBehaviorType<R>), Option<EL>> for RenderInit<EVT, BT, T>
+{
+    type Output = ();
+    fn render_init_pinned(self, (renderer, b): (&mut R, &mut BT::OfBehaviorType<R>), state: Pin<&mut Option<EL>>) -> Self::Output {
+        match (self.1, state.as_pin_mut()) {
+            (None, None) => {}
+            (Some(init), Some(state)) => {
+                let element = <BT::OnEvent<R>>::from_mut(b);
+                init.render_init_pinned((element, renderer), state)
+            }
+            _ => unreachable!(),
+        }
+    }
+}
+
 impl<
         //
         EVT: EventType,
@@ -42,15 +66,36 @@ impl<
     > PinnedRenderWithBehavior<BT> for Property<EVT, F>
 {
     type PinnedRenderStateKind = Kind<EVT, BT, H>;
+    type PinnedRenderInitWithBehavior<R: ?Sized + RenderHtml> = RenderInit<
+        //
+        EVT,
+        BT,
+        <PinnedEventListenerOf<
+            //
+            EVT,
+            BT::OnEvent<R>,
+            R,
+            H,
+        > as PinnedRegisterUpdate<BT::OnEvent<R>, R, H>>::PinnedRegisterInit,
+    >;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         this: Self,
         renderer: &mut R,
-        b: &mut BT::OfBehaviorType<R>,
-        state: ::core::pin::Pin<&mut <Self::PinnedRenderStateKind as crate::update_element::PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
+    ) -> (
+        //
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        Self::PinnedRenderInitWithBehavior<R>,
     ) {
-        <Self as PinnedRenderWithBehavior<BT>>::pinned_render_update_with_behavior(this, renderer, b, state)
+        if let Some(this) = this.f.into() {
+            let element = <BT::OnEvent<R>>::from_mut(b);
+            let (state, init) = PinnedRegisterUpdate::pinned_register_init(element, renderer, this);
+            (Some(state), RenderInit(PhantomData, Some(init)))
+        } else {
+            (None, RenderInit(PhantomData, None))
+        }
     }
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -60,12 +105,17 @@ impl<
         b: &mut BT::OfBehaviorType<R>,
         mut state: ::core::pin::Pin<&mut <Self::PinnedRenderStateKind as crate::update_element::PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
     ) {
-        let element = <BT::OnEvent<R>>::from_mut(b);
-
         if let Some(this) = this.f.into() {
-            frender_dom::RegisterOrUpdate::register_or_update(state, element, renderer, this)
+            let element = <BT::OnEvent<R>>::from_mut(b);
+            if let Some(state) = state.as_mut().as_pin_mut() {
+                PinnedRegisterUpdate::pinned_update(state, element, renderer, this)
+            } else {
+                let (init_state, init) = PinnedRegisterUpdate::pinned_register_init(element, renderer, this);
+                state.set(Some(init_state));
+                init.render_init_pinned((element, renderer), state.as_pin_mut().unwrap());
+            }
         } else {
-            state.set(Default::default())
+            state.set(None)
         }
     }
 }

@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::convert::IdentityAs;
-use frender_dom::event_types::EventType;
+use frender_common::{convert::IdentityAs, reactive_value::RenderInitPinned};
+use frender_dom::{event_types::EventType, ui_handle::UiHandle};
 
 use crate::{
     kinds::{KindOfNoState, RenderInitNothing},
@@ -16,6 +16,21 @@ pub trait UiHandleType: BehaviorType {
     type UiHandle<Renderer: ?Sized + RenderHtml>: IdentityAs<Self::OfBehaviorType<Renderer>>;
 
     fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer>;
+
+    /*
+    type UiHandle<Renderer: ?Sized + RenderHtml>: UiHandle<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>>;
+
+    fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> <Self::UiHandle<R> as UiHandle<R>>::Unmounted;
+
+    fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
+        use frender_dom::{render::RenderContext as _, ui_handle::UnmountedUiHandle as _};
+        render_context.map_mut_render_context(|render_context| {
+            Self::create_unmounted_ui_handle_of_type(render_context.renderer_mut())
+                //
+                .mount(render_context)
+        })
+    }
+    */
 }
 
 pub trait OnEventType<EVT: EventType>: BehaviorType {
@@ -28,28 +43,6 @@ pub trait UnpinnedNonReactiveRenderStateKind {
 
 pub trait PinnedNonReactiveRenderStateKind {
     type PinnedNonReactiveState<R: ?Sized + RenderHtml>;
-}
-
-pub trait PinnedNonReactiveRenderInitKind<BT: BehaviorType> {
-    type PinnedRenderStateKind: PinnedNonReactiveRenderStateKind;
-    type PinnedRenderInit<R: ?Sized + RenderHtml>: NonReactiveRenderInitPinned<
-        //
-        BT,
-        R,
-        State = <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
-    >;
-}
-
-pub trait NonReactiveRenderInitPinned<BT: BehaviorType, R: ?Sized + RenderHtml> {
-    type State;
-
-    fn render_init_pinned(
-        //
-        self,
-        renderer: &mut R,
-        b: &mut BT::OfBehaviorType<R>,
-        state: Pin<&mut Self::State>,
-    );
 }
 
 pub trait UnpinnedRenderWithBehavior<BT: BehaviorType> {
@@ -73,15 +66,21 @@ pub trait UnpinnedRenderWithBehavior<BT: BehaviorType> {
 
 pub trait PinnedRenderWithBehavior<BT: BehaviorType> {
     type PinnedRenderStateKind: PinnedNonReactiveRenderStateKind;
-    type PinnedRenderInitKind: PinnedNonReactiveRenderInitKind<BT>;
+    type PinnedRenderInitWithBehavior<R: ?Sized + RenderHtml>: for<'r, 'b> RenderInitPinned<
+        (&'r mut R, &'b mut BT::OfBehaviorType<R>),
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        Output = (),
+    >;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         this: Self,
         renderer: &mut R,
+        b: &mut BT::OfBehaviorType<R>,
     ) -> (
+        //
         <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
-        <Self::PinnedRenderInitKind as PinnedNonReactiveRenderInitKind<BT>>::PinnedRenderInit<R>,
+        Self::PinnedRenderInitWithBehavior<R>,
     );
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -124,35 +123,19 @@ impl PinnedNonReactiveRenderStateKind for KindOfNoState {
     type PinnedNonReactiveState<R: ?Sized + RenderHtml> = ();
 }
 
-impl<BT: BehaviorType> PinnedNonReactiveRenderInitKind<BT> for KindOfNoState {
-    type PinnedRenderStateKind = KindOfNoState;
-    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInitNothing;
-}
-
-impl<BT: BehaviorType, R: ?Sized + RenderHtml> NonReactiveRenderInitPinned<BT, R> for RenderInitNothing {
-    type State = ();
-
-    fn render_init_pinned(
-        //
-        self,
-        _: &mut R,
-        _: &mut BT::OfBehaviorType<R>,
-        _: Pin<&mut Self::State>,
-    ) {
-    }
-}
-
 impl<BT: BehaviorType> PinnedRenderWithBehavior<BT> for () {
     type PinnedRenderStateKind = KindOfNoState;
-    type PinnedRenderInitKind = KindOfNoState;
+    type PinnedRenderInitWithBehavior<R: ?Sized + RenderHtml> = RenderInitNothing;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         (): Self,
         _: &mut R,
+        _: &mut BT::OfBehaviorType<R>,
     ) -> (
+        //
         <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
-        <Self::PinnedRenderInitKind as PinnedNonReactiveRenderInitKind<BT>>::PinnedRenderInit<R>,
+        Self::PinnedRenderInitWithBehavior<R>,
     ) {
         ((), RenderInitNothing)
     }
@@ -218,20 +201,48 @@ impl<BT: BehaviorType, A: UnpinnedRenderWithBehavior<BT>, B: UnpinnedRenderWithB
     }
 }
 
+pub struct RenderInitTwo<A, B>(A, B);
+
+impl<
+        //
+        A: for<'a, 'b> RenderInitPinned<(&'a mut R1, &'b mut R2), SA, Output = ()>,
+        B: for<'a, 'b> RenderInitPinned<(&'a mut R1, &'b mut R2), SB, Output = ()>,
+        R1: ?Sized,
+        R2: ?Sized,
+        SA,
+        SB,
+    > RenderInitPinned<(&mut R1, &mut R2), TwoStates<SA, SB>> for RenderInitTwo<A, B>
+{
+    type Output = ();
+
+    fn render_init_pinned(self, (r1, r2): (&mut R1, &mut R2), state: Pin<&mut TwoStates<SA, SB>>) -> Self::Output {
+        let state = state.project();
+        self.0.render_init_pinned((r1, r2), state.a);
+        self.1.render_init_pinned((r1, r2), state.b);
+    }
+}
+
 impl<BT: BehaviorType, A: PinnedRenderWithBehavior<BT>, B: PinnedRenderWithBehavior<BT>> PinnedRenderWithBehavior<BT> for (A, B) {
     type PinnedRenderStateKind = KindOfTwo<A::PinnedRenderStateKind, B::PinnedRenderStateKind>;
-    type PinnedRenderInitKind = KindOfTwo<A::PinnedRenderInitKind, B::PinnedRenderInitKind>;
+    type PinnedRenderInitWithBehavior<R: ?Sized + RenderHtml> = RenderInitTwo<
+        //
+        A::PinnedRenderInitWithBehavior<R>,
+        B::PinnedRenderInitWithBehavior<R>,
+    >;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         (this_a, this_b): Self,
         renderer: &mut R,
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
-        state: Pin<&mut <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+    ) -> (
+        //
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        Self::PinnedRenderInitWithBehavior<R>,
     ) {
-        let state = state.project();
-        A::pinned_render_init_with_behavior(this_a, renderer, b, state.a);
-        B::pinned_render_init_with_behavior(this_b, renderer, b, state.b);
+        let (a, render_init_a) = A::pinned_render_init_with_behavior(this_a, renderer, b);
+        let (b, render_init_b) = B::pinned_render_init_with_behavior(this_b, renderer, b);
+        (TwoStates { a, b }, RenderInitTwo(render_init_a, render_init_b))
     }
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
@@ -286,15 +297,19 @@ where
     T::IntoProperty: PinnedRenderWithBehavior<BT>,
 {
     type PinnedRenderStateKind = <T::IntoProperty as PinnedRenderWithBehavior<BT>>::PinnedRenderStateKind;
+    type PinnedRenderInitWithBehavior<R: ?Sized + RenderHtml> = <T::IntoProperty as PinnedRenderWithBehavior<BT>>::PinnedRenderInitWithBehavior<R>;
 
     fn pinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         this: Self,
         renderer: &mut R,
         b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
-        state: Pin<&mut <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+    ) -> (
+        //
+        <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
+        Self::PinnedRenderInitWithBehavior<R>,
     ) {
-        <T::IntoProperty>::pinned_render_init_with_behavior(T::into_property(this), renderer, b, state)
+        <T::IntoProperty>::pinned_render_init_with_behavior(T::into_property(this), renderer, b)
     }
 
     fn pinned_render_update_with_behavior<R: ?Sized + RenderHtml>(

@@ -1,35 +1,29 @@
 use std::{marker::PhantomData, task::Poll};
 
+use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::{
     render::RenderWithContext,
     ui_handle::{UiHandle, UnmountedUiHandle},
 };
 
 use crate::{
-    element::{CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     RenderHtml,
 };
 
 pub enum KindOfNoState {}
 
-#[derive(Debug)]
 pub struct RenderInitNothing;
 
-impl<R: ?Sized + RenderWithContext> CsrElementRenderInitPinned<R> for RenderInitNothing {
-    type UiHandle = ();
-    type State = ();
+impl<R> RenderInitPinned<R, ()> for RenderInitNothing {
+    type Output = ();
 
-    fn render_init_pinned(self, _: &mut R::RenderContext<'_>, _: std::pin::Pin<&mut Self::State>) -> Self::UiHandle {}
+    fn render_init_pinned(self, renderer: R, state: std::pin::Pin<&mut ()>) -> Self::Output {}
 }
 
 impl PinnedRenderStateKind for KindOfNoState {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = ();
     type PinnedState<R: RenderHtml + ?Sized> = ();
-}
-
-impl PinnedRenderInitKind for KindOfNoState {
-    type PinnedRenderStateKind = KindOfNoState;
-    type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;
 }
 
 impl PinnedRenderStateKindPollRender for KindOfNoState {

@@ -1,9 +1,8 @@
-use super::event_types;
+use super::{behaviors, event_types};
 use crate::update_element::OnEventType;
+use frender_common::convert::IdentityAs;
 pub trait Node: crate::UiHandleType {
-    type Node<Renderer: ?Sized + super::RenderHtml>: super::behaviors::Node<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type Node<Renderer: ?Sized + super::RenderHtml>: behaviors::Node<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait Element:
     crate::UiHandleType
@@ -44,219 +43,139 @@ pub trait Element:
     + OnEventType<event_types::on_touch_move>
     + OnEventType<event_types::on_touch_start>
 {
-    type Element<Renderer: ?Sized + super::RenderHtml>: super::behaviors::Element<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type Element<Renderer: ?Sized + super::RenderHtml>: behaviors::Element<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithHrefAttribute: crate::UiHandleType + Element {
-    type ElementWithHrefAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithHrefAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithHrefAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHrefAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithTargetAttribute: crate::UiHandleType + Element {
-    type ElementWithTargetAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithTargetAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithTargetAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithTargetAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithTypeAttribute: crate::UiHandleType + Element {
-    type ElementWithTypeAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithTypeAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithTypeAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithTypeAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithCiteAttribute: crate::UiHandleType + Element {
-    type ElementWithCiteAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithCiteAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithCiteAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithCiteAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithPlaceHolderAttribute: crate::UiHandleType + Element {
-    type ElementWithPlaceHolderAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithPlaceHolderAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithPlaceHolderAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithPlaceHolderAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithMaxMinLengthAttributes: crate::UiHandleType + Element {
-    type ElementWithMaxMinLengthAttributes<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithMaxMinLengthAttributes<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithMaxMinLengthAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMaxMinLengthAttributes<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithHeightWidthStrAttributes: crate::UiHandleType + Element {
-    type ElementWithHeightWidthStrAttributes<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithHeightWidthStrAttributes<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithHeightWidthStrAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHeightWidthStrAttributes<Renderer>
+        + IdentityAs<Self::OfBehaviorType<Renderer>>
+        + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithHeightWidthU32Attributes: crate::UiHandleType + Element {
-    type ElementWithHeightWidthU32Attributes<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithHeightWidthU32Attributes<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithHeightWidthU32Attributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHeightWidthU32Attributes<Renderer>
+        + IdentityAs<Self::OfBehaviorType<Renderer>>
+        + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithMaxF64Attribute: crate::UiHandleType + Element {
-    type ElementWithMaxF64Attribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithMaxF64Attribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithMaxF64Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMaxF64Attribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithValueF64Attribute: crate::UiHandleType + Element {
-    type ElementWithValueF64Attribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithValueF64Attribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithValueF64Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithValueF64Attribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithValueStrAttribute: crate::UiHandleType + Element {
-    type ElementWithValueStrAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithValueStrAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithValueStrAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithValueStrAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithOpenAttribute: crate::UiHandleType + Element {
-    type ElementWithOpenAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithOpenAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithOpenAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithOpenAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithNameAttribute: crate::UiHandleType + Element {
-    type ElementWithNameAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithNameAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithNameAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithNameAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithDisabledAttribute: crate::UiHandleType + Element {
-    type ElementWithDisabledAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithDisabledAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithDisabledAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithDisabledAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithCrossOriginAttribute: crate::UiHandleType + Element {
-    type ElementWithCrossOriginAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithCrossOriginAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithCrossOriginAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithCrossOriginAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithRelAttribute: crate::UiHandleType + Element {
-    type ElementWithRelAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithRelAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithRelAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithRelAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithReferrerPolicyAttribute: crate::UiHandleType + Element {
-    type ElementWithReferrerPolicyAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithReferrerPolicyAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithReferrerPolicyAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithReferrerPolicyAttribute<Renderer>
+        + IdentityAs<Self::OfBehaviorType<Renderer>>
+        + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithAltAttribute: crate::UiHandleType + Element {
-    type ElementWithAltAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithAltAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithAltAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAltAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithLoadingAttribute: crate::UiHandleType + Element {
-    type ElementWithLoadingAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithLoadingAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithLoadingAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithLoadingAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithAcceptAttribute: crate::UiHandleType + Element {
-    type ElementWithAcceptAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithAcceptAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithAcceptAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAcceptAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithAutoCompleteAttribute: crate::UiHandleType + Element {
-    type ElementWithAutoCompleteAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithAutoCompleteAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithAutoCompleteAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAutoCompleteAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithAutoCorrectAttribute: crate::UiHandleType + Element {
-    type ElementWithAutoCorrectAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithAutoCorrectAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithAutoCorrectAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAutoCorrectAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithFormAttribute: crate::UiHandleType + Element {
-    type ElementWithFormAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithFormAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithFormAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFormAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithFormAttributes: crate::UiHandleType + Element + ElementWithFormAttribute {
-    type ElementWithFormAttributes<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithFormAttributes<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithFormAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFormAttributes<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithFetchPriorityAttribute: crate::UiHandleType + Element {
-    type ElementWithFetchPriorityAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithFetchPriorityAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithFetchPriorityAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFetchPriorityAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithHrefLangAttribute: crate::UiHandleType + Element + ElementWithHrefAttribute {
-    type ElementWithHrefLangAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithHrefLangAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithHrefLangAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHrefLangAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithSizesAttribute: crate::UiHandleType + Element {
-    type ElementWithSizesAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithSizesAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithSizesAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSizesAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithUseMapAttribute: crate::UiHandleType + Element {
-    type ElementWithUseMapAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithUseMapAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithUseMapAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithUseMapAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithLabelAttribute: crate::UiHandleType + Element {
-    type ElementWithLabelAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithLabelAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithLabelAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithLabelAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithForAttribute: crate::UiHandleType + Element {
-    type ElementWithForAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithForAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithForAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithForAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithIntegrityAttribute: crate::UiHandleType + Element {
-    type ElementWithIntegrityAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithIntegrityAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithIntegrityAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithIntegrityAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithBlockingAttribute: crate::UiHandleType + Element {
-    type ElementWithBlockingAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithBlockingAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithBlockingAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithBlockingAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithMultipleAttribute: crate::UiHandleType + Element {
-    type ElementWithMultipleAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithMultipleAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithMultipleAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMultipleAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithRequiredAttribute: crate::UiHandleType + Element {
-    type ElementWithRequiredAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithRequiredAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithRequiredAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithRequiredAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithSizeU32Attribute: crate::UiHandleType + Element {
-    type ElementWithSizeU32Attribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithSizeU32Attribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithSizeU32Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSizeU32Attribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithSrcAttribute: crate::UiHandleType + Element {
-    type ElementWithSrcAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithSrcAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithSrcAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSrcAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithSrcsetAttribute: crate::UiHandleType + Element + ElementWithSrcAttribute {
-    type ElementWithSrcsetAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithSrcsetAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithSrcsetAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSrcsetAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithBgColorAttribute: crate::UiHandleType + Element {
-    type ElementWithBgColorAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithBgColorAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithBgColorAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithBgColorAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithAlignAttribute: crate::UiHandleType + Element {
-    type ElementWithAlignAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithAlignAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithAlignAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAlignAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithMediaAttribute: crate::UiHandleType + Element {
-    type ElementWithMediaAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithMediaAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithMediaAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMediaAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithReadOnlyAttribute: crate::UiHandleType + Element {
-    type ElementWithReadOnlyAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithReadOnlyAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithReadOnlyAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithReadOnlyAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait ElementWithDateTimeAttribute: crate::UiHandleType + Element {
-    type ElementWithDateTimeAttribute<Renderer: ?Sized + super::RenderHtml>: super::behaviors::ElementWithDateTimeAttribute<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type ElementWithDateTimeAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithDateTimeAttribute<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlElement:
     crate::UiHandleType
@@ -291,94 +210,58 @@ pub trait HtmlElement:
     + OnEventType<event_types::on_drag_start>
     + OnEventType<event_types::on_drop>
 {
-    type HtmlElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDataListElement: crate::UiHandleType + HtmlElement {
-    type HtmlDataListElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDataListElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDataListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDataListElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDivElement: crate::UiHandleType + HtmlElement {
-    type HtmlDivElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDivElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDivElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDivElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDListElement: crate::UiHandleType + HtmlElement {
-    type HtmlDListElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDListElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDListElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlHeadingElement: crate::UiHandleType + HtmlElement {
-    type HtmlHeadingElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlHeadingElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlHeadingElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHeadingElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlHeadElement: crate::UiHandleType + HtmlElement {
-    type HtmlHeadElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlHeadElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlHeadElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHeadElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlHrElement: crate::UiHandleType + HtmlElement {
-    type HtmlHrElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlHrElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlHrElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHrElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlLegendElement: crate::UiHandleType + HtmlElement {
-    type HtmlLegendElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlLegendElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlLegendElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLegendElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlMenuElement: crate::UiHandleType + HtmlElement {
-    type HtmlMenuElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMenuElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlMenuElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMenuElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlParagraphElement: crate::UiHandleType + HtmlElement {
-    type HtmlParagraphElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlParagraphElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlParagraphElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlParagraphElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlPictureElement: crate::UiHandleType + HtmlElement {
-    type HtmlPictureElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlPictureElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlPictureElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlPictureElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlPreElement: crate::UiHandleType + HtmlElement {
-    type HtmlPreElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlPreElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlPreElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlPreElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlSpanElement: crate::UiHandleType + HtmlElement {
-    type HtmlSpanElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlSpanElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlSpanElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSpanElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTemplateElement: crate::UiHandleType + HtmlElement {
-    type HtmlTemplateElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTemplateElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTemplateElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTemplateElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTitleElement: crate::UiHandleType + HtmlElement {
-    type HtmlTitleElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTitleElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTitleElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTitleElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlElementWithHref: crate::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute + ElementWithReferrerPolicyAttribute + ElementWithRelAttribute {
-    type HtmlElementWithHref<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlElementWithHref<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlElementWithHref<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlElementWithHref<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlAnchorElement: crate::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithTypeAttribute + ElementWithHrefLangAttribute {
-    type HtmlAnchorElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlAnchorElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlAnchorElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAnchorElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlAreaElement: crate::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithAltAttribute {
-    type HtmlAreaElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlAreaElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlAreaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAreaElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlMediaElement:
     crate::UiHandleType
@@ -408,74 +291,46 @@ pub trait HtmlMediaElement:
     + OnEventType<event_types::on_volume_change>
     + OnEventType<event_types::on_waiting>
 {
-    type HtmlMediaElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMediaElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlMediaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMediaElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlBaseElement: crate::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute {
-    type HtmlBaseElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlBaseElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlBaseElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBaseElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlQuoteElement: crate::UiHandleType + HtmlElement + ElementWithCiteAttribute {
-    type HtmlQuoteElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlQuoteElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlQuoteElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlQuoteElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlBodyElement: crate::UiHandleType + HtmlElement {
-    type HtmlBodyElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlBodyElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlBodyElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBodyElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlBrElement: crate::UiHandleType + HtmlElement {
-    type HtmlBrElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlBrElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlBrElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBrElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlButtonElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithFormAttributes + ElementWithDisabledAttribute + ElementWithNameAttribute + ElementWithValueStrAttribute {
-    type HtmlButtonElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlButtonElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlButtonElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlButtonElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlCanvasElement: crate::UiHandleType + HtmlElement + ElementWithHeightWidthU32Attributes {
-    type HtmlCanvasElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlCanvasElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlCanvasElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlCanvasElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableCaptionElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute {
-    type HtmlTableCaptionElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableCaptionElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableCaptionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableCaptionElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDataElement: crate::UiHandleType + HtmlElement + ElementWithValueStrAttribute {
-    type HtmlDataElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDataElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDataElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDataElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlModElement: crate::UiHandleType + HtmlElement + ElementWithCiteAttribute + ElementWithDateTimeAttribute {
-    type HtmlModElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlModElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlModElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlModElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDetailsElement: crate::UiHandleType + HtmlElement + ElementWithOpenAttribute {
-    type HtmlDetailsElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDetailsElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDetailsElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDetailsElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlDialogElement: crate::UiHandleType + HtmlElement + ElementWithOpenAttribute {
-    type HtmlDialogElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlDialogElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlDialogElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDialogElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlEmbedElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithSrcAttribute + ElementWithHeightWidthStrAttributes {
-    type HtmlEmbedElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlEmbedElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlEmbedElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlEmbedElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlFieldSetElement: crate::UiHandleType + HtmlElement + ElementWithFormAttribute + ElementWithDisabledAttribute + ElementWithNameAttribute {
-    type HtmlFieldSetElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlFieldSetElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlFieldSetElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlFieldSetElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlFormElement:
     crate::UiHandleType
@@ -489,14 +344,10 @@ pub trait HtmlFormElement:
     + OnEventType<event_types::on_reset>
     + OnEventType<event_types::on_submit>
 {
-    type HtmlFormElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlFormElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlFormElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlFormElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlHtmlElement: crate::UiHandleType + HtmlElement {
-    type HtmlHtmlElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlHtmlElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlHtmlElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHtmlElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlIFrameElement:
     crate::UiHandleType
@@ -508,9 +359,7 @@ pub trait HtmlIFrameElement:
     + ElementWithNameAttribute
     + ElementWithHeightWidthStrAttributes
 {
-    type HtmlIFrameElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlIFrameElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlIFrameElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlIFrameElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlImageElement:
     crate::UiHandleType
@@ -524,9 +373,7 @@ pub trait HtmlImageElement:
     + ElementWithCrossOriginAttribute
     + ElementWithHeightWidthU32Attributes
 {
-    type HtmlImageElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlImageElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlImageElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlImageElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlInputElement:
     crate::UiHandleType
@@ -547,19 +394,13 @@ pub trait HtmlInputElement:
     + ElementWithNameAttribute
     + ElementWithHeightWidthU32Attributes
 {
-    type HtmlInputElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlInputElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlInputElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlInputElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlLabelElement: crate::UiHandleType + HtmlElement + ElementWithForAttribute {
-    type HtmlLabelElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlLabelElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlLabelElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLabelElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlLiElement: crate::UiHandleType + HtmlElement {
-    type HtmlLiElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlLiElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlLiElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLiElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlLinkElement:
     crate::UiHandleType
@@ -576,54 +417,34 @@ pub trait HtmlLinkElement:
     + ElementWithRelAttribute
     + ElementWithCrossOriginAttribute
 {
-    type HtmlLinkElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlLinkElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlLinkElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLinkElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlMapElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
-    type HtmlMapElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMapElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlMapElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMapElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlMetaElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
-    type HtmlMetaElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMetaElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlMetaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMetaElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlMeterElement: crate::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
-    type HtmlMeterElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlMeterElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlMeterElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMeterElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlObjectElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithUseMapAttribute + ElementWithFormAttribute + ElementWithNameAttribute + ElementWithHeightWidthStrAttributes {
-    type HtmlObjectElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlObjectElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlObjectElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlObjectElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlOListElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute {
-    type HtmlOListElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlOListElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlOListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOListElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlOptGroupElement: crate::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute {
-    type HtmlOptGroupElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlOptGroupElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlOptGroupElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOptGroupElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlOptionElement: crate::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute + ElementWithValueStrAttribute {
-    type HtmlOptionElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlOptionElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlOptionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOptionElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlOutputElement: crate::UiHandleType + HtmlElement + ElementWithForAttribute + ElementWithFormAttribute + ElementWithNameAttribute {
-    type HtmlOutputElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlOutputElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlOutputElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOutputElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlProgressElement: crate::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
-    type HtmlProgressElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlProgressElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlProgressElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlProgressElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlScriptElement:
     crate::UiHandleType
@@ -636,9 +457,7 @@ pub trait HtmlScriptElement:
     + ElementWithReferrerPolicyAttribute
     + ElementWithCrossOriginAttribute
 {
-    type HtmlScriptElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlScriptElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlScriptElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlScriptElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlSelectElement:
     crate::UiHandleType
@@ -651,56 +470,36 @@ pub trait HtmlSelectElement:
     + ElementWithDisabledAttribute
     + ElementWithNameAttribute
 {
-    type HtmlSelectElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlSelectElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlSelectElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSelectElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlSlotElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
-    type HtmlSlotElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlSlotElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlSlotElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSlotElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlSourceElement:
     crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithSrcsetAttribute + ElementWithSizesAttribute + ElementWithHeightWidthU32Attributes
 {
-    type HtmlSourceElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlSourceElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlSourceElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSourceElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlStyleElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithBlockingAttribute {
-    type HtmlStyleElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlStyleElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlStyleElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlStyleElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
-    type HtmlTableElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableChildElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
-    type HtmlTableChildElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableChildElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableChildElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableChildElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableSectionElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
-    type HtmlTableSectionElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableSectionElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableSectionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableSectionElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableRowElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
-    type HtmlTableRowElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableRowElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableRowElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableRowElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableColElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
-    type HtmlTableColElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableColElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableColElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableColElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTableCellElement: crate::UiHandleType + HtmlElement + ElementWithHeightWidthStrAttributes + HtmlTableChildElement {
-    type HtmlTableCellElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTableCellElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTableCellElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableCellElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTextAreaElement:
     crate::UiHandleType
@@ -715,32 +514,20 @@ pub trait HtmlTextAreaElement:
     + ElementWithDisabledAttribute
     + ElementWithNameAttribute
 {
-    type HtmlTextAreaElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTextAreaElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTextAreaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTextAreaElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTimeElement: crate::UiHandleType + HtmlElement + ElementWithDateTimeAttribute {
-    type HtmlTimeElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTimeElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTimeElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTimeElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlTrackElement: crate::UiHandleType + HtmlElement + ElementWithSrcAttribute + ElementWithLabelAttribute {
-    type HtmlTrackElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlTrackElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlTrackElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTrackElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlUListElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute {
-    type HtmlUListElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlUListElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlUListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlUListElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlAudioElement: crate::UiHandleType + HtmlMediaElement {
-    type HtmlAudioElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlAudioElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlAudioElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAudioElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }
 pub trait HtmlVideoElement: crate::UiHandleType + HtmlMediaElement + ElementWithHeightWidthU32Attributes {
-    type HtmlVideoElement<Renderer: ?Sized + super::RenderHtml>: super::behaviors::HtmlVideoElement<Renderer>
-        + ::frender_common::convert::IdentityAs<Self::OfBehaviorType<Renderer>>
-        + ::frender_common::convert::IdentityAs<Self::UiHandle<Renderer>>;
+    type HtmlVideoElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlVideoElement<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>> + IdentityAs<Self::UiHandle<Renderer>>;
 }

@@ -50,7 +50,8 @@ impl_many!(
             self,
             render_context: &mut Ctx,
         ) -> StatelessUiHandleOfKind<Ctx::Renderer, Self::StatelessRenderStateKind> {
-            render_context.renderer_mut().render_text_from(self).mount(render_context)
+            use frender_dom::render::RenderContextRenderTextFrom as _;
+            render_context.map_mut_render_context(|render_context| render_context.render_text_from(self))
         }
 
         fn stateless_render_update<R: ?Sized + RenderHtml>(
@@ -59,7 +60,7 @@ impl_many!(
             renderer: &mut R,
             ui_handle: &mut StatelessUiHandleOfKind<R, Self::StatelessRenderStateKind>,
         ) {
-            renderer.update_text_from(ui_handle, &self);
+            renderer.update_text_from(ui_handle, self);
         }
     }
 );

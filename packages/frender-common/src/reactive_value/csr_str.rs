@@ -6,8 +6,7 @@ use crate::{
 };
 
 use super::{
-    ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState,
-    ReusableRendererOfKind,
+    ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned, ReusableRendererOfKind,
 };
 
 impl ReactiveValueKind for str {
@@ -37,16 +36,13 @@ impl<C> ReactiveValueState for State<C> {
     }
 }
 
-pub struct RenderInit<Cache>(PhantomData<Cache>);
+pub struct RenderInit;
 
-impl<Cache: ToAsRefStr> ReactiveValueRenderInitPinned<str> for RenderInit<Cache> {
-    type State = State<Cache>;
-
-    fn render_init_pinned<Out>(
-        self,
-        renderer: impl FnOnce(TempStr<&str>) -> Out,
-        state: Pin<&mut Self::State>,
-    ) -> Out {
+impl<Cache: ToAsRefStr, R: FnOnce(TempStr<&str>) -> Out, Out> RenderInitPinned<R, State<Cache>>
+    for RenderInit
+{
+    type Output = Out;
+    fn render_init_pinned(self, renderer: R, state: Pin<&mut State<Cache>>) -> Self::Output {
         let State(cache) = state.get_mut();
         renderer(TempStr(cache.to_as_ref_str().as_ref()))
     }
@@ -54,26 +50,29 @@ impl<Cache: ToAsRefStr> ReactiveValueRenderInitPinned<str> for RenderInit<Cache>
 
 /// [`CsrStr`] are non reactive
 impl<T: CsrStr> ReactiveValue<str> for T {
-    super::impl_reactive_value_unpinned_with_pinned!(
+    type PinnedState = State<T::StaticStrCache>;
+    type UnpinnedState = State<T::StaticStrCache>;
+    type PinnedRenderInit<R: FnOnce(<str as ReactiveValueKind>::Value<'_>) -> Out, Out> =
+        RenderInit;
+
+    crate::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = str;
     );
 
-    type PinnedState = State<T::StaticStrCache>;
-    type PinnedRenderInit = RenderInit<T::StaticStrCache>;
-
-    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
+    fn pinned_render_init<R: FnOnce(<str as ReactiveValueKind>::Value<'_>) -> Out, Out>(
+        self,
+    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
         (
             State(self.into_into_static_str_cache().into_static_str_cache()),
-            RenderInit(PhantomData),
+            RenderInit,
         )
     }
 
-    fn pinned_render_init_by_reusing<Out>(
+    fn unpinned_render_init_by_reusing<Out>(
         self,
         renderer: impl ReusableRendererOfKind<str, Output = Out>,
-        reused_state: Pin<&mut Self::PinnedState>,
+        State(cache): &mut Self::PinnedState,
     ) -> Out {
-        let State(cache) = reused_state.get_mut();
         if self.match_static_str_cache(cache) {
             struct Provide<'a, C>(&'a C);
 
@@ -93,12 +92,11 @@ impl<T: CsrStr> ReactiveValue<str> for T {
         }
     }
 
-    fn pinned_render_update<Out>(
+    fn unpinned_render_update<Out>(
         self,
         renderer: impl FnOnce(<str as super::ReactiveValueKind>::Value<'_>) -> Out,
-        state: Pin<&mut Self::PinnedState>,
+        State(cache): &mut Self::PinnedState,
     ) -> Option<Out> {
-        let State(cache) = state.get_mut();
         if self.match_static_str_cache(cache) {
             None
         } else {

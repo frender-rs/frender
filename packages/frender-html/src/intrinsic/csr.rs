@@ -1,3 +1,6 @@
+use std::marker::PhantomData;
+use std::task::Poll;
+
 use frender_common::convert::IntoMut;
 use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
 use frender_dom::StateUnmount;
@@ -14,6 +17,7 @@ use crate::{CsrComponent, HtmlRenderContext, RenderHtml};
 
 use crate::CsrElement;
 
+enum Never {}
 pub struct Kind<
     //
     BT: behavior_type_traits::Element,
@@ -21,7 +25,7 @@ pub struct Kind<
     AttrsKind: UnpinnedNonReactiveRenderStateKind,
     AttrsPinnedKindUnpinned: UnpinnedNonReactiveRenderStateKind,
     AttrsPinnedKindPinned: PinnedNonReactiveRenderStateKind,
->(crate::elements::Kind<(BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned)>);
+>(Never, PhantomData<(BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned)>);
 
 // region: ui handle
 
@@ -91,15 +95,16 @@ impl<P: behaviors::Element<R>, C, PA, R: ?Sized> UiHandle<R> for ParentWithChild
 // region: pinned
 
 pin_project!(
-    pub struct ParentWithChildrenNonReactive<C, PA> {
+    pub struct ParentWithChildrenState<C, PAU, PAP> {
         #[pin]
         children: C,
+        parent_attributes_unpinned: PAU,
         #[pin]
-        parent_attributes: PA,
+        parent_attributes_pinned: PAP,
     }
 );
 
-impl<C: StateUnmount, PA> StateUnmount for ParentWithChildrenNonReactive<C, PA> {
+impl<C: StateUnmount, PAU, PAP> StateUnmount for ParentWithChildrenState<C, PAU, PAP> {
     fn state_unmount(self: std::pin::Pin<&mut Self>) {
         self.project().children.state_unmount()
     }
@@ -119,9 +124,10 @@ where
         ChildrenKind::PinnedUiHandle<R>,
         AttrsKind::UnpinnedNonReactiveState<R>,
     >;
-    type PinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
+    type PinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenState<
         //
         ChildrenKind::PinnedState<R>,
+        AttrsKind::UnpinnedNonReactiveState<R>,
         AttrsPinnedKindPinned::PinnedNonReactiveState<R>,
     >;
 }
@@ -137,24 +143,12 @@ where
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        state: std::pin::Pin<&mut Self::PinnedState<R>>,
+        ParentWithChildren { parent, children, parent_attributes: _ }: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        let RenderStates {
-            ui_handle: ParentWithChildren { parent, children, parent_attributes: _ },
-            non_reactive_state,
-            reactive_state,
-        } = states;
-        ChildrenKind::pinned_poll_render_with_parent(
-            renderer,
-            parent.into_mut(),
-            RenderStates {
-                ui_handle: children,
-                non_reactive_state: non_reactive_state.project().children,
-                reactive_state,
-            },
-            cx,
-        )
+    ) -> Poll<()> {
+        let state = state.project().children;
+        ChildrenKind::pinned_poll_render_with_parent(renderer, parent.into_mut(), state, children, cx)
     }
 }
 
@@ -176,12 +170,12 @@ where
         ChildrenKind::UnpinnedUiHandle<R>,
         (),
     >;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ParentWithChildrenNonReactive<
+    type UnpinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenState<
         //
-        ChildrenKind::UnpinnedNonReactiveState<R>,
+        ChildrenKind::UnpinnedState<R>,
         (AttrsKind::UnpinnedNonReactiveState<R>, AttrsPinnedKindUnpinned::UnpinnedNonReactiveState<R>),
+        (),
     >;
-    type UnpinnedReactiveState = ChildrenKind::UnpinnedReactiveState;
 }
 
 impl<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned> UnpinnedRenderStateKindPollRender for Kind<BT, ChildrenKind, AttrsKind, AttrsPinnedKindUnpinned, AttrsPinnedKindPinned>
@@ -195,27 +189,15 @@ where
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        ParentWithChildrenState {
+            children: state,
+            parent_attributes_unpinned: _,
+            parent_attributes_pinned: (),
+        }: &mut Self::UnpinnedState<R>,
+        ParentWithChildren { parent, children, parent_attributes: _ }: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<()> {
-        let RenderStates {
-            ui_handle: ParentWithChildren { parent, children, parent_attributes: _ },
-            non_reactive_state: ParentWithChildrenNonReactive {
-                children: non_reactive_state,
-                parent_attributes: _,
-            },
-            reactive_state,
-        } = states;
-        ChildrenKind::unpinned_poll_render_with_parent(
-            renderer,
-            parent.into_mut(),
-            RenderStates {
-                ui_handle: children,
-                non_reactive_state,
-                reactive_state,
-            },
-            cx,
-        )
+    ) -> Poll<()> {
+        ChildrenKind::unpinned_poll_render_with_parent(renderer, parent.into_mut(), state, children, cx)
     }
 }
 
@@ -243,7 +225,31 @@ where
         AttrsWithPinnedState::PinnedRenderStateKind,
     >;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit;
+
+    fn pinned_render_init<R: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut R,
+    ) -> (
+        //
+        crate::element::PinnedStateOfKind<R, Self::RenderStateKind>,
+        Self::PinnedRenderInit<R>,
+    ) {
+        let Self {
+            //
+            type_marker,
+            attributes,
+            attributes_with_pinned_state,
+            children,
+        } = self;
+
+        let parent = BT::create_unmounted_ui_handle_of_type(renderer);
+        let mut parent: <BT::Element<R> as UiHandle<R>>::Unmounted = From::from(parent);
+        type_marker.children_pinned_render_init(children, renderer, parent);
+    }
+
+    fn pinned_render_ainit<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
@@ -374,7 +380,7 @@ where
                 children: children_states.ui_handle,
                 parent_attributes: (),
             },
-            non_reactive_state: ParentWithChildrenNonReactive {
+            non_reactive_state: ParentWithChildrenState {
                 children: children_states.non_reactive_state,
                 parent_attributes,
             },
@@ -401,7 +407,7 @@ where
                 children: children_ui_handle,
                 parent_attributes: (),
             },
-            non_reactive_state: ParentWithChildrenNonReactive {
+            non_reactive_state: ParentWithChildrenState {
                 children: children_non_reactive_state,
                 parent_attributes: (parent_attributes, parent_attributes_pinned),
             },

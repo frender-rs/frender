@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use frender_common::reactive_value::{ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState};
+use frender_common::reactive_value::{ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned};
 use frender_dom::{ui_handle::UiHandle, StateUnmount};
 
 use crate::{
@@ -20,11 +20,11 @@ pub struct ReactiveValueIntoElement<V: ReactiveValueWithKind>(pub V);
 struct StateKind<PS, US, VK: ?Sized>(super::Kind<(PS, US, VK)>);
 struct InitKind<PRI, US, VK: ?Sized>(super::Kind<(PRI, US, VK)>);
 
-struct RenderInit<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind>(PRI, PhantomData<VK>);
+struct RenderInit<PRI: RenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind>(PRI, PhantomData<VK>);
 
 impl<
         //
-        PRI: ReactiveValueRenderInitPinned<VK>,
+        PRI: RenderInitPinned<VK>,
         VK: ?Sized + ReactiveValueKind,
         R: ?Sized + RenderHtml,
         UH: UiHandle<R>,
@@ -54,7 +54,7 @@ where
     type PinnedState<R: crate::RenderHtml + ?Sized> = PS;
 }
 
-impl<PRI: ReactiveValueRenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderInitKind for InitKind<PRI, US, VK>
+impl<PRI: RenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderInitKind for InitKind<PRI, US, VK>
 where
     PRI::State: StateUnmount,
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,

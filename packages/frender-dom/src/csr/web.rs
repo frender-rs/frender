@@ -306,7 +306,7 @@ impl<
     > crate::OnEvent<Renderer, ET> for Node<N>
 {
     type EventListener<F: frender_common::HandleEvent<ET::Event> + 'static> =
-        event_listener::MaybeEventListenerOfType<F, ET>;
+        event_listener::EventListenerOfType<F, ET>;
 
     type EventListenerUnpinned<F: frender_common::HandleEvent<ET::Event> + 'static> =
         event_listener::unpinned::EventListenerOfType<F, ET>;
