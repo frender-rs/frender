@@ -1,7 +1,10 @@
 use std::marker::PhantomData;
+use std::pin::Pin;
 use std::task::Poll;
 
 use frender_common::convert::IntoMut;
+use frender_common::reactive_value::RenderInitPinned;
+use frender_dom::render::RenderWithContext;
 use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
 use frender_dom::StateUnmount;
 use pin_project_lite::pin_project;
@@ -29,19 +32,18 @@ pub struct Kind<
 
 // region: ui handle
 
-pub struct ParentWithChildren<P, C, PA> {
+pub struct ParentWithChildren<P, C> {
     parent: P,
     children: C,
-    parent_attributes: PA,
 }
 
 /// The unmounted [`ParentWithChildren`] can only be constructed in [`UiHandle::unmount`],
 /// in which case its children doesn't need to be re-mounted.
-impl<P: UnmountedUiHandle<R>, C, PA, R: ?Sized> UnmountedUiHandle<R> for ParentWithChildren<P, C, PA>
+impl<P: UnmountedUiHandle<R>, C, R: ?Sized> UnmountedUiHandle<R> for ParentWithChildren<P, C>
 where
     P::Mounted: behaviors::Element<R>,
 {
-    type Mounted = ParentWithChildren<P::Mounted, C, PA>;
+    type Mounted = ParentWithChildren<P::Mounted, C>;
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
@@ -50,21 +52,19 @@ where
         ParentWithChildren {
             parent: self.parent.mount(render_context),
             children: self.children,
-            parent_attributes: self.parent_attributes,
         }
     }
 }
 
 /// P must be an [`Element`](behaviors::Element) so that
 /// when its children don't need to be unmounted or mounted.
-impl<P: behaviors::Element<R>, C, PA, R: ?Sized> UiHandle<R> for ParentWithChildren<P, C, PA> {
-    type Unmounted = ParentWithChildren<P::Unmounted, C, PA>;
+impl<P: behaviors::Element<R>, C, R: ?Sized> UiHandle<R> for ParentWithChildren<P, C> {
+    type Unmounted = ParentWithChildren<P::Unmounted, C>;
 
     fn unmount(self, renderer: &mut R) -> Self::Unmounted {
         ParentWithChildren {
             parent: self.parent.unmount(renderer),
             children: self.children,
-            parent_attributes: self.parent_attributes,
         }
     }
 
@@ -105,8 +105,22 @@ pin_project!(
 );
 
 impl<C: StateUnmount, PAU, PAP> StateUnmount for ParentWithChildrenState<C, PAU, PAP> {
-    fn state_unmount(self: std::pin::Pin<&mut Self>) {
+    fn state_unmount(self: Pin<&mut Self>) {
         self.project().children.state_unmount()
+    }
+}
+
+pub struct ParentWithChildrenStateUnpinned<C, PAU, PAP> {
+    children: C,
+    parent_attributes_unpinned: PAU,
+    parent_attributes_pinned: PAP,
+}
+
+impl<C, PAU, PAP> Unpin for ParentWithChildrenStateUnpinned<C, PAU, PAP> {}
+
+impl<C: StateUnmount + Unpin, PAU, PAP> StateUnmount for ParentWithChildrenStateUnpinned<C, PAU, PAP> {
+    fn state_unmount(self: Pin<&mut Self>) {
+        Pin::new(&mut self.get_mut().children).state_unmount()
     }
 }
 
@@ -122,7 +136,6 @@ where
         //
         BT::Element<R>,
         ChildrenKind::PinnedUiHandle<R>,
-        AttrsKind::UnpinnedNonReactiveState<R>,
     >;
     type PinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenState<
         //
@@ -143,8 +156,8 @@ where
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        state: std::pin::Pin<&mut Self::PinnedState<R>>,
-        ParentWithChildren { parent, children, parent_attributes: _ }: &mut Self::PinnedUiHandle<R>,
+        state: Pin<&mut Self::PinnedState<R>>,
+        ParentWithChildren { parent, children }: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         let state = state.project().children;
@@ -168,13 +181,12 @@ where
         //
         BT::Element<R>,
         ChildrenKind::UnpinnedUiHandle<R>,
-        (),
     >;
-    type UnpinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenState<
+    type UnpinnedState<R: RenderHtml + ?Sized> = ParentWithChildrenStateUnpinned<
         //
         ChildrenKind::UnpinnedState<R>,
-        (AttrsKind::UnpinnedNonReactiveState<R>, AttrsPinnedKindUnpinned::UnpinnedNonReactiveState<R>),
-        (),
+        AttrsKind::UnpinnedNonReactiveState<R>,
+        AttrsPinnedKindUnpinned::UnpinnedNonReactiveState<R>,
     >;
 }
 
@@ -189,19 +201,55 @@ where
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        ParentWithChildrenState {
-            children: state,
-            parent_attributes_unpinned: _,
-            parent_attributes_pinned: (),
-        }: &mut Self::UnpinnedState<R>,
-        ParentWithChildren { parent, children, parent_attributes: _ }: &mut Self::UnpinnedUiHandle<R>,
+        state: &mut Self::UnpinnedState<R>,
+        ParentWithChildren { parent, children }: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        ChildrenKind::unpinned_poll_render_with_parent(renderer, parent.into_mut(), state, children, cx)
+        ChildrenKind::unpinned_poll_render_with_parent(renderer, parent.into_mut(), &mut state.children, children, cx)
     }
 }
 
 // endregion
+
+pub struct RenderInit<PB, P, IPAP, IC> {
+    _parent_as_behavior_type: PhantomData<PB>,
+    parent: P,
+    init_parent_attributes_pinned: IPAP,
+    init_children: IC,
+}
+
+impl<
+        //
+        PB,
+        P: IntoMut<PB>,
+        PAU,
+        IPAP: for<'r, 'p> RenderInitPinned<(&'r mut Ctx::Renderer, &'p mut PB), SPAP, Output = ()>,
+        IC: for<'r, 'p> RenderInitPinned<(&'r mut Ctx::Renderer, &'p mut PB), SC, Output = C>,
+        C,
+        SC,
+        SPAP,
+        Ctx: ?Sized + HtmlRenderContext,
+    > RenderInitPinned<&mut Ctx, ParentWithChildrenState<SC, PAU, SPAP>> for RenderInit<PB, P, IPAP, IC>
+{
+    type Output = ParentWithChildren<P, C>;
+    fn render_init_pinned(self, render_context: &mut Ctx, state: Pin<&mut ParentWithChildrenState<SC, PAU, SPAP>>) -> Self::Output {
+        let renderer = render_context.renderer_mut();
+        let Self {
+            _parent_as_behavior_type: PhantomData,
+            mut parent,
+            init_parent_attributes_pinned,
+            init_children,
+        } = self;
+
+        let state = state.project();
+
+        let p: &mut PB = parent.into_mut();
+
+        let () = init_parent_attributes_pinned.render_init_pinned((renderer, p), state.parent_attributes_pinned);
+        let children = init_children.render_init_pinned((renderer, p), state.children);
+        ParentWithChildren { parent, children }
+    }
+}
 
 impl<
         //
@@ -225,16 +273,22 @@ where
         AttrsWithPinnedState::PinnedRenderStateKind,
     >;
 
-    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<
+        //
+        BT::OfBehaviorType<R>,
+        BT::Element<R>,
+        AttrsWithPinnedState::PinnedRenderInitWithBehavior<R>,
+        BT::ChildrenPinnedRenderInit<R>,
+    >;
 
-    fn pinned_render_init<R: ?Sized + RenderHtml>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
-        renderer: &mut R,
+        render_context: &mut Ctx,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<R, Self::RenderStateKind>,
-        Self::PinnedRenderInit<R>,
+        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Ctx::Renderer>,
     ) {
         let Self {
             //
@@ -244,16 +298,39 @@ where
             children,
         } = self;
 
-        let parent = BT::create_unmounted_ui_handle_of_type(renderer);
-        let mut parent: <BT::Element<R> as UiHandle<R>>::Unmounted = From::from(parent);
-        type_marker.children_pinned_render_init(children, renderer, parent);
+        let parent = BT::create_and_mount_ui_handle_of_type(render_context);
+        let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
+
+        let renderer = render_context.renderer_mut();
+
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+
+        let state_au = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
+        let (state_ap, init_ap) = AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b);
+
+        let (children, init_children) = type_marker.children_pinned_render_init(children, renderer, parent_b);
+
+        (
+            //
+            ParentWithChildrenState {
+                children,
+                parent_attributes_unpinned: state_au,
+                parent_attributes_pinned: state_ap,
+            },
+            RenderInit {
+                _parent_as_behavior_type: PhantomData,
+                parent,
+                init_parent_attributes_pinned: init_ap,
+                init_children,
+            },
+        )
     }
 
-    fn pinned_render_ainit<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: crate::element::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let Self {
             //
@@ -262,46 +339,29 @@ where
             attributes_with_pinned_state,
             children,
         } = self;
+        let reused_state = reused_state.project();
 
-        let PinMutRenderInitStates { non_reactive_state, reactive_state } = states;
+        let ParentWithChildren { parent, children: mut children_ui_handle } = unmounted_ui_handle;
 
-        let non_reactive_state = non_reactive_state.project();
-        let children_non_reactive_state = non_reactive_state.children;
-        let parent_attributes_pinned_state = non_reactive_state.parent_attributes;
-
-        let parent = BT::create_and_mount_ui_handle_of_type(render_context);
-        let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
+        let mut parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
 
         let renderer = render_context.renderer_mut();
-        let parent_attributes;
         let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
-        {
-            parent_attributes = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
-            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned_state);
-        }
 
-        let children_ui_handle = type_marker.children_pinned_render_init(
-            children,
-            renderer,
-            parent_b,
-            PinMutRenderInitStates {
-                non_reactive_state: children_non_reactive_state,
-                reactive_state,
-            },
-        );
+        Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, reused_state.parent_attributes_unpinned);
+        AttrsWithPinnedState::pinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, reused_state.parent_attributes_pinned);
 
-        ParentWithChildren {
-            parent,
-            children: children_ui_handle,
-            parent_attributes,
-        }
+        type_marker.children_pinned_render_update(children, renderer, parent_b, reused_state.children, &mut children_ui_handle);
+
+        ParentWithChildren { parent, children: children_ui_handle }
     }
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: crate::element::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        renderer: &mut Renderer,
+        state: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ParentWithChildren { parent, children: children_ui_handle }: &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         let Self {
             //
@@ -311,47 +371,25 @@ where
             children,
         } = self;
 
-        let RenderStates {
-            ui_handle: ParentWithChildren {
-                parent,
-                children: children_ui_handle,
-                parent_attributes,
-            },
-            non_reactive_state,
-            reactive_state,
-        } = states;
+        let state = state.project();
 
-        let non_reactive_state = non_reactive_state.project();
-        let children_non_reactive_state = non_reactive_state.children;
-        let parent_attributes_pinned_state = non_reactive_state.parent_attributes;
+        let parent_b: &mut BT::OfBehaviorType<Renderer> = parent.into_mut();
 
-        let renderer = render_context.renderer_mut();
-        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+        Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, state.parent_attributes_unpinned);
+        AttrsWithPinnedState::pinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, state.parent_attributes_pinned);
 
-        {
-            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, parent_attributes);
-            AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned_state);
-        }
-
-        type_marker.children_pinned_render_update(
-            children,
-            renderer,
-            parent_b,
-            RenderStates {
-                ui_handle: children_ui_handle,
-                non_reactive_state: children_non_reactive_state,
-                reactive_state,
-            },
-        );
-
-        render_context.map_mut_render_context(|render_context| parent.check_and_move_cursor(render_context));
+        type_marker.children_pinned_render_update(children, renderer, parent_b, state.children, children_ui_handle);
     }
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
+    ) -> (
+        //
+        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) {
         let Self {
             type_marker,
             attributes,
@@ -365,34 +403,61 @@ where
         let renderer = render_context.renderer_mut();
         let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
 
-        let parent_attributes = {
-            (
-                Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b),
-                AttrsWithPinnedState::unpinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b),
-            )
-        };
+        let parent_attributes_unpinned = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
+        let parent_attributes_pinned = AttrsWithPinnedState::unpinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b);
 
-        let children_states = type_marker.children_unpinned_render_init(children, renderer, parent_b);
+        let (state_children, children) = type_marker.children_unpinned_render_init(children, renderer, parent_b);
 
-        RenderStates {
-            ui_handle: ParentWithChildren {
-                parent,
-                children: children_states.ui_handle,
-                parent_attributes: (),
+        (
+            ParentWithChildrenStateUnpinned {
+                children: state_children,
+                parent_attributes_unpinned,
+                parent_attributes_pinned,
             },
-            non_reactive_state: ParentWithChildrenState {
-                children: children_states.non_reactive_state,
-                parent_attributes,
-            },
-            reactive_state: children_states.reactive_state,
-        }
+            ParentWithChildren { parent, children },
+        )
     }
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: crate::element::UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        ParentWithChildrenStateUnpinned {
+            children: reused_children,
+            parent_attributes_unpinned: reused_pau,
+            parent_attributes_pinned: reused_pap,
+        }: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        ParentWithChildren { parent, children: mut children_ui_handle }: crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let Self {
+            type_marker,
+            attributes,
+            attributes_with_pinned_state,
+            children,
+        } = self;
+
+        let mut parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
+
+        let renderer = render_context.renderer_mut();
+        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+
+        Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, reused_pau);
+        AttrsWithPinnedState::unpinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, reused_pap);
+
+        type_marker.children_unpinned_render_update(children, renderer, parent_b, reused_children, &mut children_ui_handle);
+
+        ParentWithChildren { parent, children: children_ui_handle }
+    }
+
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        ParentWithChildrenStateUnpinned {
+            children: state_children,
+            parent_attributes_unpinned: state_pau,
+            parent_attributes_pinned: state_pap,
+        }: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ParentWithChildren { parent, children: children_ui_handle }: &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         let Self {
             type_marker,
@@ -401,38 +466,11 @@ where
             children,
         } = self;
 
-        let RenderStates {
-            ui_handle: ParentWithChildren {
-                parent,
-                children: children_ui_handle,
-                parent_attributes: (),
-            },
-            non_reactive_state: ParentWithChildrenState {
-                children: children_non_reactive_state,
-                parent_attributes: (parent_attributes, parent_attributes_pinned),
-            },
-            reactive_state,
-        } = states;
+        let parent_b: &mut BT::OfBehaviorType<Renderer> = parent.into_mut();
 
-        let renderer = render_context.renderer_mut();
-        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+        Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, state_pau);
+        AttrsWithPinnedState::unpinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, state_pap);
 
-        {
-            Attrs::unpinned_render_update_with_behavior(attributes, renderer, parent_b, parent_attributes);
-            AttrsWithPinnedState::unpinned_render_update_with_behavior(attributes_with_pinned_state, renderer, parent_b, parent_attributes_pinned);
-        }
-
-        type_marker.children_unpinned_render_update(
-            children,
-            renderer,
-            parent_b,
-            RenderStates {
-                ui_handle: children_ui_handle,
-                non_reactive_state: children_non_reactive_state,
-                reactive_state,
-            },
-        );
-
-        render_context.map_mut_render_context(|render_context| parent.check_and_move_cursor(render_context));
+        type_marker.children_unpinned_render_update(children, renderer, parent_b, state_children, children_ui_handle);
     }
 }

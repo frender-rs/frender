@@ -190,7 +190,13 @@ impl<C: CsrComponentNormalElement, Children: CsrElement> CsrComponent<Children> 
         PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         Self::ChildrenPinnedRenderInit<R>,
     ) {
-        let (state, children) = children.pinned_render_init(renderer);
+        let (state, children) = <C::Element<R>>::from_mut(parent)
+            //
+            .with_render_context_at_first_child_of_self(
+                //
+                renderer,
+                |render_context| children.pinned_render_init(render_context),
+            );
         (state, RenderInitWithAnyParent(PhantomData, children))
     }
 

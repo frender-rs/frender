@@ -1,5 +1,5 @@
 use frender_common::{
-    convert::{FromMut, IdentityAs, IntoMut},
+    convert::{FromMut, IntoMut},
     impl_many, TempStr,
 };
 pub use frender_csr::render::{RenderContext, RenderWithContext};
@@ -23,9 +23,7 @@ pub trait RenderTextFrom<V>:
 /// Trait alias for [`RenderTextFrom`] with all known primitive types.
 pub trait RenderTextFromKnown:
     RenderTextFrom<&'static str>
-    + for<'a> RenderTextFrom<TempStr<&'a str>, Text = Self::TextFromTempStr>
     + RenderTextFrom<StringElement>
-    + for<'a> RenderTextFrom<&'a StringElement, Text = Self::TextFromRefStringElement>
     + RenderTextFrom<i8>
     + RenderTextFrom<u8>
     + RenderTextFrom<i16>
@@ -41,6 +39,9 @@ pub trait RenderTextFromKnown:
     + RenderTextFrom<f32>
     + RenderTextFrom<f64>
     + RenderTextFrom<char>
+    //
+    + for<'a>RenderTextFrom<TempStr<&'a str>,Text = Self::TextFromTempStr>
+    + for<'a>RenderTextFrom<&'a StringElement,Text = Self::TextFromRefStringElement>
 {
     type TextFromTempStr: UiHandle<Self> + 'static;
     type TextFromRefStringElement: UiHandle<Self> + 'static;
@@ -76,20 +77,42 @@ where
     type TextFromRefStringElement = TextFromRefStringElement;
 }
 
+pub trait RenderIntoTextKnownKind {
+    type RenderIntoText<R: ?Sized + RenderTextFromKnown>: UiHandle<R> + 'static;
+}
+
 pub trait RenderIntoTextKnown: Sized {
+    type RenderIntoTextKnownKind: RenderIntoTextKnownKind;
+    type StaticRenderIntoTextKnown: 'static
+        + RenderIntoTextKnown<RenderIntoTextKnownKind = Self::RenderIntoTextKnownKind>;
     type RenderTextFromSelf<R: ?Sized + RenderTextFromKnown>: ?Sized
-        + RenderTextFrom<Self, Text: UiHandle<R>>
+        + for<'a> RenderWithContext<
+            RenderContext<'a>: FromMut<R::RenderContext<'a>> + IntoMut<R::RenderContext<'a>>,
+        > + RenderTextFrom<
+            Self,
+            Text = <Self::RenderIntoTextKnownKind as RenderIntoTextKnownKind>::RenderIntoText<R>,
+        > + RenderTextFrom<
+            Self::StaticRenderIntoTextKnown,
+            Text = <Self::RenderIntoTextKnownKind as RenderIntoTextKnownKind>::RenderIntoText<R>,
+        > + FromMut<R>
+        + IntoMut<R>;
+}
+
+pub trait SimpleStaticRenderIntoTextKnown: 'static + Sized {
+    type SimpleStaticRenderIntoText<R: ?Sized + RenderTextFromKnown>: UiHandle<R> + 'static;
+    type SimpleStaticRenderTextFromSelf<R: ?Sized + RenderTextFromKnown>: ?Sized
+        + for<'a> RenderWithContext<
+            RenderContext<'a>: FromMut<R::RenderContext<'a>> + IntoMut<R::RenderContext<'a>>,
+        > + RenderTextFrom<Self, Text = Self::SimpleStaticRenderIntoText<R>>
         + FromMut<R>
         + IntoMut<R>;
 }
 
 impl_many!(
-    impl<__> RenderIntoTextKnown
+    impl<__> SimpleStaticRenderIntoTextKnown
         for each_of![
             &'static str,
-            TempStr<&str>,
             StringElement,
-            &StringElement,
             i8,
             u8,
             i16,
@@ -107,9 +130,42 @@ impl_many!(
             char,
         ]
     {
-        type RenderTextFromSelf<R: ?Sized + RenderTextFromKnown> = R;
+        type SimpleStaticRenderIntoText<R: ?Sized + RenderTextFromKnown> =
+            <R as RenderTextFrom<Self>>::Text;
+        type SimpleStaticRenderTextFromSelf<R: ?Sized + RenderTextFromKnown> = R;
     }
 );
+
+/// Self as Kind
+impl<T: SimpleStaticRenderIntoTextKnown> RenderIntoTextKnownKind for T {
+    type RenderIntoText<R: ?Sized + RenderTextFromKnown> = T::SimpleStaticRenderIntoText<R>;
+}
+
+impl<T: SimpleStaticRenderIntoTextKnown> RenderIntoTextKnown for T {
+    type RenderIntoTextKnownKind = T;
+    type StaticRenderIntoTextKnown = T;
+    type RenderTextFromSelf<R: ?Sized + RenderTextFromKnown> = T::SimpleStaticRenderTextFromSelf<R>;
+}
+
+impl RenderIntoTextKnownKind for TempStr<&'static str> {
+    type RenderIntoText<R: ?Sized + RenderTextFromKnown> = R::TextFromTempStr;
+}
+
+impl RenderIntoTextKnown for TempStr<&str> {
+    type RenderIntoTextKnownKind = TempStr<&'static str>;
+    type StaticRenderIntoTextKnown = TempStr<&'static str>;
+    type RenderTextFromSelf<R: ?Sized + RenderTextFromKnown> = R;
+}
+
+impl RenderIntoTextKnownKind for &'static StringElement {
+    type RenderIntoText<R: ?Sized + RenderTextFromKnown> = R::TextFromRefStringElement;
+}
+
+impl RenderIntoTextKnown for &StringElement {
+    type RenderIntoTextKnownKind = &'static StringElement;
+    type StaticRenderIntoTextKnown = &'static StringElement;
+    type RenderTextFromSelf<R: ?Sized + RenderTextFromKnown> = R;
+}
 
 pub trait Render: RenderWithContext {
     fn log(&mut self, v: &str);

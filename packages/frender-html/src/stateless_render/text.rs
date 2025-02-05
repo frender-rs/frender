@@ -1,10 +1,8 @@
 use std::marker::PhantomData;
 
-use frender_common::{impl_many, TempStr};
-use frender_dom::{
-    render::{RenderIntoTextKnown, RenderTextFrom},
-    string_element::StringElement,
-};
+use frender_common::convert::FromMut;
+use frender_dom::render::RenderIntoTextKnownKind;
+use frender_dom::render::{RenderContextRenderTextFrom as _, RenderIntoTextKnown, RenderTextFrom, RenderWithContext};
 
 use crate::{HtmlRenderContext, RenderHtml};
 
@@ -18,85 +16,32 @@ impl<V: 'static + RenderIntoTextKnown> StatelessRenderStateKind for Kind<V> {
 }
 
 // known text ('static)
-impl_many!(
-    impl<__> StatelessRender
-        for each_of![
-            // string
-            &'static str,
-            // - known special text elements
-            StringElement,
-            // - known scalar types
-            i8,
-            u8,
-            i16,
-            u16,
-            i32,
-            u32,
-            i64,
-            u64,
-            i128,
-            u128,
-            isize,
-            usize,
-            f32,
-            f64,
-            char,
-        ]
-    {
-        type StatelessRenderStateKind = Kind<Self>;
 
-        fn stateless_render_init<Ctx: ?Sized + HtmlRenderContext>(
-            //
-            self,
-            render_context: &mut Ctx,
-        ) -> StatelessUiHandleOfKind<Ctx::Renderer, Self::StatelessRenderStateKind> {
-            use frender_dom::render::RenderContextRenderTextFrom as _;
-            render_context.map_mut_render_context(|render_context| render_context.render_text_from(self))
-        }
+impl<T: RenderIntoTextKnown> StatelessRender for T {
+    type StatelessRenderStateKind = Kind<T::StaticRenderIntoTextKnown>;
 
-        fn stateless_render_update<R: ?Sized + RenderHtml>(
-            //
-            self,
-            renderer: &mut R,
-            ui_handle: &mut StatelessUiHandleOfKind<R, Self::StatelessRenderStateKind>,
-        ) {
-            renderer.update_text_from(ui_handle, self);
-        }
-    }
-);
-
-impl StatelessRender for &StringElement {
-    type StatelessRenderStateKind = Kind<&'static StringElement>;
     fn stateless_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
     ) -> StatelessUiHandleOfKind<Ctx::Renderer, Self::StatelessRenderStateKind> {
+        // Ctx -> impl RenderContextRenderTextFrom<Self>
+        render_context.map_mut_render_context(|render_context: &mut <Ctx::Renderer as RenderWithContext>::RenderContext<'_>| {
+            let render_context: &mut <T::RenderTextFromSelf<Ctx::Renderer> as RenderWithContext>::RenderContext<'_> = FromMut::from_mut(render_context);
+
+            let text: <T::RenderIntoTextKnownKind as RenderIntoTextKnownKind>::RenderIntoText<Ctx::Renderer> = render_context.render_text_from(self);
+
+            text
+        })
     }
+
     fn stateless_render_update<R: ?Sized + RenderHtml>(
         //
         self,
         renderer: &mut R,
         ui_handle: &mut StatelessUiHandleOfKind<R, Self::StatelessRenderStateKind>,
     ) {
-        renderer.update_text_from(ui_handle, &self);
-    }
-}
-
-impl StatelessRender for TempStr<&str> {
-    type StatelessRenderStateKind = Kind<TempStr<&'static str>>;
-    fn stateless_render_init<Ctx: ?Sized + HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-    ) -> StatelessUiHandleOfKind<Ctx::Renderer, Self::StatelessRenderStateKind> {
-    }
-    fn stateless_render_update<R: ?Sized + RenderHtml>(
-        //
-        self,
-        renderer: &mut R,
-        ui_handle: &mut StatelessUiHandleOfKind<R, Self::StatelessRenderStateKind>,
-    ) {
-        renderer.update_text_from(ui_handle, &self);
+        let renderer = T::RenderTextFromSelf::<R>::from_mut(renderer);
+        renderer.update_text_from(ui_handle, self);
     }
 }

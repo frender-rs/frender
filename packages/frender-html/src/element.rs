@@ -74,14 +74,14 @@ pub trait CsrElement {
         Output = PinnedUiHandleOfKind<R, Self::RenderStateKind>,
     >;
 
-    fn pinned_render_init<R: ?Sized + RenderHtml>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
-        renderer: &mut R,
+        render_context: &mut Ctx,
     ) -> (
         //
-        PinnedStateOfKind<R, Self::RenderStateKind>,
-        Self::PinnedRenderInit<R>,
+        PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Ctx::Renderer>,
     );
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(

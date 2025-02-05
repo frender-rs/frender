@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_common::{convert::IdentityAs, reactive_value::RenderInitPinned};
-use frender_dom::{event_types::EventType, ui_handle::UiHandle};
+use frender_dom::event_types::EventType;
 
 use crate::{
     kinds::{KindOfNoState, RenderInitNothing},
@@ -234,7 +234,7 @@ impl<BT: BehaviorType, A: PinnedRenderWithBehavior<BT>, B: PinnedRenderWithBehav
         //
         (this_a, this_b): Self,
         renderer: &mut R,
-        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+        b: &mut BT::OfBehaviorType<R>,
     ) -> (
         //
         <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
@@ -303,7 +303,7 @@ where
         //
         this: Self,
         renderer: &mut R,
-        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+        b: &mut BT::OfBehaviorType<R>,
     ) -> (
         //
         <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
