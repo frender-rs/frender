@@ -53,21 +53,20 @@ pub trait ReusableRendererOfKind<VK: ?Sized + ReactiveValueKind> {
     fn reuse(self, provide_value: impl ProvideValueOfKind<VK>) -> Self::Output;
 }
 
+/// `for<R: FnOnce(VK::Value<'_>) -> Out, Out> RenderInitPinned<R, S, Output = R::RenderOutput>`
+pub trait ReactiveValueRenderInitPinned<VK: ?Sized + ReactiveValueKind, S: ?Sized>: Sized {
+    type RenderInitPinned<R: FnOnce(VK::Value<'_>) -> Out, Out>: RenderInitPinned<R, S, Output = Out>
+        + From<Self>;
+}
+
 pub trait ReactiveValue<VK: ?Sized + ReactiveValueKind> {
     type PinnedState: ReactiveValueState<ReactiveValueKind = VK>;
-    type PinnedRenderInit<R: FnOnce(VK::Value<'_>) -> Out, Out>: RenderInitPinned<
-        R,
-        Self::PinnedState,
-        Output = Out,
-    >;
+    type PinnedRenderInit: ReactiveValueRenderInitPinned<VK, Self::PinnedState>;
 
     /// Requires [`Unpin`] so that [`ReactiveValueState`] can be reused without defining another trait taking `&mut self`.
     type UnpinnedState: Unpin + ReactiveValueState<ReactiveValueKind = VK>;
 
-    /// `state` is `Default::default()` at a pinned place.
-    fn pinned_render_init<R: FnOnce(VK::Value<'_>) -> Out, Out>(
-        self,
-    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>);
+    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit);
 
     /// `old_state` has been [unmounted](ReactiveStrStateUnmount::reactive_value_state_unmount) but not necessarily set to `Default::default()`.
     fn pinned_render_init_by_reusing<Out>(
@@ -233,8 +232,12 @@ pub fn unpinned_render_init_with_pinned<
 where
     V::PinnedState: Unpin,
 {
-    let (mut state, render_init) = V::pinned_render_init::<R, Out>(this);
+    let (mut state, render_init) = V::pinned_render_init(this);
 
-    let out = render_init.render_init_pinned(renderer, ::core::pin::Pin::new(&mut state));
+    let out = <<V::PinnedRenderInit as ReactiveValueRenderInitPinned<VK, _>>::RenderInitPinned<
+        R,
+        Out,
+    >>::from(render_init)
+    .render_init_pinned(renderer, ::core::pin::Pin::new(&mut state));
     (state, out)
 }

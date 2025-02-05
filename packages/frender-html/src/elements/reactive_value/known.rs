@@ -16,7 +16,8 @@ macro_rules! proxy_reactive_value_into_element {
     };
     ($SelfTy:ty) => {
         type RenderStateKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderStateKind;
-        type RenderInitKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderInitKind;
+        type PinnedRenderInit<R: ?Sized + crate::RenderHtml> = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::PinnedRenderInit<R>;
+
         crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
     };
 }

@@ -1,7 +1,8 @@
 use std::task::Poll;
 
 use frender_common::reactive_value::{
-    ProvideValueOfKind, ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned,
+    ProvideValueOfKind, ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned,
+    ReactiveValueState, RenderInitPinned,
 };
 use frender_csr::StateUnmount;
 
@@ -39,22 +40,21 @@ impl<R: FnOnce(&StringElement) -> Out, Out> RenderInitPinned<R, State> for Rende
     }
 }
 
+impl ReactiveValueRenderInitPinned<StringElement, State> for RenderInit {
+    type RenderInitPinned<R: FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out, Out> =
+        Self;
+}
+
 impl ReactiveValue<StringElement> for StringElement {
     type UnpinnedState = State;
     type PinnedState = State;
-    type PinnedRenderInit<R: FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out, Out> =
-        RenderInit;
+    type PinnedRenderInit = RenderInit;
 
     frender_common::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = StringElement;
     );
 
-    fn pinned_render_init<
-        R: FnOnce(<StringElement as ReactiveValueKind>::Value<'_>) -> Out,
-        Out,
-    >(
-        self,
-    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
+    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
         (State(self), RenderInit)
     }
 

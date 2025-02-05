@@ -1,10 +1,9 @@
 use std::{pin::Pin, task::Poll};
 
 use frender_common::utils::pin_project_iter_mut_array;
-use frender_dom::render::RenderWithContext;
 
 use crate::{
-    element::{self, CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, HtmlRenderContext, RenderHtml,
 };
 
@@ -39,22 +38,6 @@ impl<K: PinnedRenderStateKind, const N: usize> PinnedRenderStateKind for Kind<K,
     type PinnedUiHandle<R: RenderHtml + ?Sized> = [K::PinnedUiHandle<R>; N];
     type PinnedState<R: RenderHtml + ?Sized> = [K::PinnedState<R>; N];
 }
-impl<K: PinnedRenderInitKind, const N: usize> PinnedRenderInitKind for Kind<K, N> {
-    type PinnedRenderStateKind = Kind<K::PinnedRenderStateKind, N>;
-    type PinnedRenderInit<R: RenderHtml + ?Sized> = [K::PinnedRenderInit<R>; N];
-}
-
-impl<T: CsrElementRenderInitPinned<R>, const N: usize, R: ?Sized + RenderWithContext> CsrElementRenderInitPinned<R> for [T; N] {
-    type UiHandle = [T::UiHandle; N];
-    type State = [T::State; N];
-
-    fn render_init_pinned(self, render_context: &mut R::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle {
-        let mut state = pin_project_iter_mut_array(state);
-        // This relies on a documented feature of <[_; N]>::map():
-        // > ..., with function f applied to each element in order
-        self.map(|this| this.render_init_pinned(render_context, state.next().unwrap()))
-    }
-}
 
 impl<K: PinnedRenderStateKindPollRender, const N: usize> PinnedRenderStateKindPollRender for Kind<K, N> {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
@@ -77,23 +60,23 @@ impl<K: PinnedRenderStateKindPollRender, const N: usize> PinnedRenderStateKindPo
 
 impl<E: CsrElement, const N: usize> CsrElement for [E; N] {
     type RenderStateKind = Kind<E::RenderStateKind, N>;
-    type RenderInitKind = Kind<E::RenderInitKind, N>;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = [E::PinnedRenderInit<R>; N];
 
-    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
-        renderer: &mut Renderer,
+        render_context: &mut Ctx,
     ) -> (
         //
-        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
+        element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Ctx::Renderer>,
     ) {
         use arrayvec::ArrayVec;
 
         let (states, render_inits) = self
             .into_iter()
             //
-            .map(|el| el.pinned_render_init(renderer))
+            .map(|el| el.pinned_render_init(render_context))
             .unzip::<_, _, ArrayVec<_, N>, ArrayVec<_, N>>();
 
         let (

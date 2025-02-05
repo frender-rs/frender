@@ -2,19 +2,20 @@
 
 use std::{pin::Pin, task::Poll};
 
+use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::render::RenderWithContext;
 
 use crate::{
     element::{
-        CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderInitOfKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind,
+        PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind,
+        UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind,
     },
     proxy_csr_element, CsrElement, HtmlRenderContext, RenderHtml,
 };
 
 impl<E0: CsrElement> CsrElement for (E0,) {
     type RenderStateKind = E0::RenderStateKind;
-    type RenderInitKind = E0::RenderInitKind;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = E0::PinnedRenderInit<R>;
 
     proxy_csr_element!(|this| this.0);
 }
@@ -24,18 +25,17 @@ pub struct KindOfStates<TupleOfKinds>(super::Kind<TupleOfKinds>);
 pub struct RenderInits<TupleOfRenderInits>(pub TupleOfRenderInits);
 
 macro_rules! impl_render_for_tuple {
-    ($($name:ident ($($field_idx:tt as $field:ident),+) ,)+) => {
+    ($($name:ident ($($field_idx:tt as $field:ident :: $state:ident :: $out:ident),+) ,)+) => {
         $(
-            impl<Renderer: ?Sized + RenderWithContext, $($field: CsrElementRenderInitPinned<Renderer>),+> CsrElementRenderInitPinned<Renderer> for RenderInits<($($field,)+)> {
-                type UiHandle = ($($field::UiHandle,)+);
-                type State = ($($field::State,)+);
+            impl<Renderer: ?Sized, $($field: for<'r> RenderInitPinned<&'r mut Renderer, $state, Output = $out>, $state, $out),+> RenderInitPinned<&mut Renderer, ($($state,)+)> for RenderInits<($($field,)+)> {
+                type Output = ($($out,)+);
 
-                fn render_init_pinned(self, render_context: &mut Renderer::RenderContext<'_>, state: Pin<&mut Self::State>) -> Self::UiHandle {
+                fn render_init_pinned(self, renderer: &mut Renderer, state: Pin<&mut ($($state,)+)>) -> Self::Output {
                     let state = frender_common::utils::pin_project::$name(state);
                     ($(
                         $field::render_init_pinned(
                             self.0.$field_idx,
-                            render_context,
+                            renderer,
                             state.$field_idx,
                         )
                     ,)+)
@@ -45,11 +45,6 @@ macro_rules! impl_render_for_tuple {
             impl<$($field: PinnedRenderStateKind),+> PinnedRenderStateKind for KindOfStates<($($field,)+)> {
                 type PinnedUiHandle<R: RenderHtml + ?Sized> = ($($field::PinnedUiHandle<R>,)+);
                 type PinnedState<R: RenderHtml + ?Sized> = ($($field::PinnedState<R>,)+);
-            }
-
-            impl<$($field: PinnedRenderInitKind),+> PinnedRenderInitKind for KindOfStates<($($field,)+)> {
-                type PinnedRenderStateKind = KindOfStates<($($field::PinnedRenderStateKind,)+)>;
-                type PinnedRenderInit<R: RenderHtml + ?Sized> = RenderInits<($($field::PinnedRenderInit<R>,)+)>;
             }
 
             impl<$($field: UnpinnedRenderStateKind),+> UnpinnedRenderStateKind for KindOfStates<($($field,)+)> {
@@ -107,21 +102,20 @@ macro_rules! impl_render_for_tuple {
 
             impl<$($field: CsrElement),+> CsrElement for ($($field,)+) {
                 type RenderStateKind = KindOfStates<($($field::RenderStateKind,)+)>;
-                type RenderInitKind = KindOfStates<($($field::RenderInitKind,)+)>;
+                type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInits<($($field::PinnedRenderInit<R>,)+)>;
 
-                fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
-                    //
+                fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
                     self,
-                    renderer: &mut Renderer,
+                    render_context: &mut Ctx,
                 ) -> (
                     //
-                    PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-                    PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
+                    PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+                    Self::PinnedRenderInit<Ctx::Renderer>,
                 ) {
                     let res = ($(
                         $field::pinned_render_init(
                             self.$field_idx,
-                            renderer,
+                            render_context,
                         ),
                     )+);
 
@@ -225,16 +219,16 @@ macro_rules! impl_render_for_tuple {
 }
 
 impl_render_for_tuple! {
-    tuple_2 (0 as R0, 1 as R1),
-    tuple_3 (0 as R0, 1 as R1, 2 as R2),
-    tuple_4 (0 as R0, 1 as R1, 2 as R2, 3 as R3),
-    tuple_5 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4),
-    tuple_6 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5),
-    tuple_7 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6),
-    tuple_8 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7),
-    tuple_9 (0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8),
-    tuple_10(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9),
-    tuple_11(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10),
-    tuple_12(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10, 11 as R11),
-    // tuple_13(0 as R0, 1 as R1, 2 as R2, 3 as R3, 4 as R4, 5 as R5, 6 as R6, 7 as R7, 8 as R8, 9 as R9, 10 as R10, 11 as R11, 12 as R12),
+    tuple_2 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1),
+    tuple_3 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2),
+    tuple_4 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3),
+    tuple_5 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4),
+    tuple_6 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5),
+    tuple_7 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6),
+    tuple_8 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7),
+    tuple_9 (0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7, 8 as R8::S8::OUT8),
+    tuple_10(0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7, 8 as R8::S8::OUT8, 9 as R9::S9::OUT9),
+    tuple_11(0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7, 8 as R8::S8::OUT8, 9 as R9::S9::OUT9, 10 as R10::S10::OUT10),
+    tuple_12(0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7, 8 as R8::S8::OUT8, 9 as R9::S9::OUT9, 10 as R10::S10::OUT10, 11 as R11::S11::OUT11),
+    // tuple_13(0 as R0::S0::OUT0, 1 as R1::S1::OUT1, 2 as R2::S2::OUT2, 3 as R3::S3::OUT3, 4 as R4::S4::OUT4, 5 as R5::S5::OUT5, 6 as R6::S6::OUT6, 7 as R7::S7::OUT7, 8 as R8::S8::OUT8, 9 as R9::S9::OUT9, 10 as R10::S10::OUT10, 11 as R11::S11::OUT11, 12 as R12::S12::OUT12),
 }

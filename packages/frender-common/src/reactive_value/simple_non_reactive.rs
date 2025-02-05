@@ -1,10 +1,13 @@
-use std::{marker::PhantomData, task::Poll};
+use std::task::Poll;
 
 use frender_macro_rules::impl_many;
 
 use crate::{csr::StateUnmount, reactive_value::ProvideValueOfKind};
 
-use super::{ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned};
+use super::{
+    ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState,
+    RenderInitPinned,
+};
 
 trait KnownSimpleNonReactive: 'static + Copy + PartialEq {}
 
@@ -56,8 +59,8 @@ impl<T: KnownSimpleNonReactive> ReactiveValueState for State<T> {
 
 pub struct RenderInit;
 
-impl<T: KnownSimpleNonReactive, R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out>
-    RenderInitPinned<R, State<T>> for RenderInit
+impl<T: KnownSimpleNonReactive, R: FnOnce(T) -> Out, Out> RenderInitPinned<R, State<T>>
+    for RenderInit
 {
     type Output = Out;
 
@@ -66,18 +69,20 @@ impl<T: KnownSimpleNonReactive, R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -
     }
 }
 
+impl<T: KnownSimpleNonReactive> ReactiveValueRenderInitPinned<T, State<T>> for RenderInit {
+    type RenderInitPinned<R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out> = Self;
+}
+
 impl<T: KnownSimpleNonReactive> ReactiveValue<T> for T {
     type PinnedState = State<T>;
-    type PinnedRenderInit<R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out> = RenderInit;
+    type PinnedRenderInit = RenderInit;
     type UnpinnedState = State<T>;
 
     crate::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = T;
     );
 
-    fn pinned_render_init<R: FnOnce(<T as ReactiveValueKind>::Value<'_>) -> Out, Out>(
-        self,
-    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
+    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
         (State(self), RenderInit)
     }
 

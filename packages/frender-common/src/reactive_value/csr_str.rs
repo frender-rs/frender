@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, pin::Pin, task::Poll};
+use std::{pin::Pin, task::Poll};
 
 use crate::{
     csr::StateUnmount, reactive_value::ProvideValueOfKind, strings::CsrStr, IntoStaticStrCache,
@@ -6,7 +6,8 @@ use crate::{
 };
 
 use super::{
-    ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned, ReusableRendererOfKind,
+    ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState,
+    RenderInitPinned, ReusableRendererOfKind,
 };
 
 impl ReactiveValueKind for str {
@@ -48,20 +49,21 @@ impl<Cache: ToAsRefStr, R: FnOnce(TempStr<&str>) -> Out, Out> RenderInitPinned<R
     }
 }
 
+impl<Cache: ToAsRefStr> ReactiveValueRenderInitPinned<str, State<Cache>> for RenderInit {
+    type RenderInitPinned<R: FnOnce(<str as ReactiveValueKind>::Value<'_>) -> Out, Out> = Self;
+}
+
 /// [`CsrStr`] are non reactive
 impl<T: CsrStr> ReactiveValue<str> for T {
     type PinnedState = State<T::StaticStrCache>;
     type UnpinnedState = State<T::StaticStrCache>;
-    type PinnedRenderInit<R: FnOnce(<str as ReactiveValueKind>::Value<'_>) -> Out, Out> =
-        RenderInit;
+    type PinnedRenderInit = RenderInit;
 
     crate::impl_reactive_value_with_mixed_unpinned!(
         type ReactiveValueKind = str;
     );
 
-    fn pinned_render_init<R: FnOnce(<str as ReactiveValueKind>::Value<'_>) -> Out, Out>(
-        self,
-    ) -> (Self::PinnedState, Self::PinnedRenderInit<R, Out>) {
+    fn pinned_render_init(self) -> (Self::PinnedState, Self::PinnedRenderInit) {
         (
             State(self.into_into_static_str_cache().into_static_str_cache()),
             RenderInit,

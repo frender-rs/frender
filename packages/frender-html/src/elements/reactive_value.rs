@@ -1,12 +1,12 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, pin::Pin};
 
-use frender_common::reactive_value::{ReactiveValue, ReactiveValueKind, ReactiveValueState, RenderInitPinned};
-use frender_dom::{ui_handle::UiHandle, StateUnmount};
+use frender_common::reactive_value::{ReactiveValue, ReactiveValueKind, ReactiveValueRenderInitPinned, ReactiveValueState, RenderInitPinned, ReusableRendererOfKind};
+use frender_dom::{ui_handle::UnmountedUiHandle, StateUnmount};
 
 use crate::{
-    element::{CsrElement, CsrElementRenderInitPinned, PinnedRenderInitKind, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    element::{CsrElement, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     stateless_render::{StatelessRender, StatelessRenderStateKind},
-    RenderHtml,
+    HtmlRenderContext, RenderHtml,
 };
 
 mod known;
@@ -17,36 +17,33 @@ pub trait ReactiveValueWithKind: ReactiveValue<Self::ReactiveValueKind> {
 
 pub struct ReactiveValueIntoElement<V: ReactiveValueWithKind>(pub V);
 
-struct StateKind<PS, US, VK: ?Sized>(super::Kind<(PS, US, VK)>);
-struct InitKind<PRI, US, VK: ?Sized>(super::Kind<(PRI, US, VK)>);
+struct Kind<PS, US, VK: ?Sized>(super::Kind<(PS, US, VK)>);
 
-struct RenderInit<PRI: RenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind>(PRI, PhantomData<VK>);
+struct RenderInit<PRI, VK: ?Sized + ReactiveValueKind>(PRI, PhantomData<VK>);
 
 impl<
         //
-        PRI: RenderInitPinned<VK>,
+        PRI: ReactiveValueRenderInitPinned<VK, S>,
         VK: ?Sized + ReactiveValueKind,
-        R: ?Sized + RenderHtml,
-        UH: UiHandle<R>,
-    > CsrElementRenderInitPinned<R> for RenderInit<PRI, VK>
+        Ctx: ?Sized + HtmlRenderContext,
+        UH,
+        S: ?Sized,
+    > RenderInitPinned<&mut Ctx, S> for RenderInit<PRI, VK>
 where
-    PRI::State: StateUnmount,
-    for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind: StatelessRenderStateKind<UiHandle<R> = UH>>,
+    for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind: StatelessRenderStateKind<UiHandle<Ctx::Renderer> = UH>>,
 {
-    type UiHandle = UH;
-    type State = PRI::State;
+    type Output = UH;
 
-    fn render_init_pinned(self, render_context: &mut R::RenderContext<'_>, state: std::pin::Pin<&mut Self::State>) -> Self::UiHandle {
-        PRI::render_init_pinned(
+    fn render_init_pinned(self, render_context: &mut Ctx, state: Pin<&mut S>) -> Self::Output {
+        PRI::RenderInitPinned::from(self.0).render_init_pinned(
             //
-            self.0,
-            |value| StatelessRender::stateless_render_init(value, render_context),
+            |v| StatelessRender::stateless_render_init(v, render_context),
             state,
         )
     }
 }
 
-impl<PS: StateUnmount, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKind for StateKind<PS, US, VK>
+impl<PS: StateUnmount, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKind for Kind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
@@ -54,23 +51,14 @@ where
     type PinnedState<R: crate::RenderHtml + ?Sized> = PS;
 }
 
-impl<PRI: RenderInitPinned<VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderInitKind for InitKind<PRI, US, VK>
-where
-    PRI::State: StateUnmount,
-    for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
-{
-    type PinnedRenderStateKind = StateKind<PRI::State, US, VK>;
-    type PinnedRenderInit<R: crate::RenderHtml + ?Sized> = RenderInit<PRI, VK>;
-}
-
-impl<PS: ReactiveValueState<ReactiveValueKind = VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKindPollRender for StateKind<PS, US, VK>
+impl<PS: ReactiveValueState<ReactiveValueKind = VK>, VK: ?Sized + ReactiveValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKindPollRender for Kind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        state: std::pin::Pin<&mut Self::PinnedState<R>>,
+        state: Pin<&mut Self::PinnedState<R>>,
         ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
@@ -83,7 +71,7 @@ where
     }
 }
 
-impl<PS, US: StateUnmount + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKind for StateKind<PS, US, VK>
+impl<PS, US: StateUnmount + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKind for Kind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
@@ -91,7 +79,7 @@ where
     type UnpinnedState<R: RenderHtml + ?Sized> = US;
 }
 
-impl<PS, US: ReactiveValueState<ReactiveValueKind = VK> + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKindPollRender for StateKind<PS, US, VK>
+impl<PS, US: ReactiveValueState<ReactiveValueKind = VK> + Unpin, VK: ?Sized + ReactiveValueKind, StatelessK: StatelessRenderStateKind> UnpinnedRenderStateKindPollRender for Kind<PS, US, VK>
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
@@ -104,7 +92,7 @@ where
     ) -> std::task::Poll<()> {
         US::poll_render(
             //
-            state,
+            Pin::new(state),
             |v| StatelessRender::stateless_render_update(v, renderer, ui_handle),
             cx,
         )
@@ -115,35 +103,47 @@ impl<V: ReactiveValueWithKind, StatelessK: StatelessRenderStateKind> CsrElement 
 where
     for<'a> <V::ReactiveValueKind as ReactiveValueKind>::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
-    type RenderStateKind = StateKind<V::PinnedState, V::UnpinnedState, V::ReactiveValueKind>;
-    type RenderInitKind = InitKind<V::PinnedRenderInit, V::UnpinnedState, V::ReactiveValueKind>;
+    type RenderStateKind = Kind<V::PinnedState, V::UnpinnedState, V::ReactiveValueKind>;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<
+        //
+        V::PinnedRenderInit,
+        V::ReactiveValueKind,
+    >;
 
-    fn pinned_render_init<Renderer: ?Sized + crate::RenderHtml>(
+    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
-        renderer: &mut Renderer,
+        _: &mut Ctx,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        crate::element::PinnedRenderInitOfKind<Renderer, Self::RenderInitKind>,
+        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Ctx::Renderer>,
     ) {
-        1
+        let (state, render_init) = self.0.pinned_render_init();
+        (state, RenderInit(render_init, PhantomData))
     }
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + crate::HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        reused_state: std::pin::Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
         unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        todo!()
+        let ui_handle = render_context.map_mut_render_context(|render_context| unmounted_ui_handle.mount(render_context));
+        self.0.pinned_render_init_by_reusing(
+            ReusableRenderer {
+                renderer: render_context.renderer_mut(),
+                ui_handle,
+            },
+            reused_state,
+        )
     }
 
     fn pinned_render_update<Renderer: ?Sized + crate::RenderHtml>(
         //
         self,
         renderer: &mut Renderer,
-        state: std::pin::Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        state: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
         ui_handle: &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         todo!()
@@ -178,5 +178,35 @@ where
         ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         todo!()
+    }
+}
+
+struct ReusableRenderer<'a, R: ?Sized, UH> {
+    ui_handle: UH,
+    renderer: &'a mut R,
+}
+
+impl<
+        //
+        R: ?Sized + RenderHtml,
+        UH,
+        VK: ?Sized + ReactiveValueKind,
+        StatelessK: StatelessRenderStateKind<UiHandle<R> = UH>,
+    > ReusableRendererOfKind<VK> for ReusableRenderer<'_, R, UH>
+where
+    for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
+{
+    type Output = UH;
+
+    fn render(mut self, value: VK::Value<'_>) -> Self::Output {
+        StatelessRender::stateless_render_update(value, self.renderer, &mut self.ui_handle);
+        self.ui_handle
+    }
+
+    fn reuse(self, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) -> Self::Output {
+        // TODO: check if debug_assertions
+        let _ = provide_value;
+
+        self.ui_handle
     }
 }

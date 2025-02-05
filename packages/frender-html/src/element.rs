@@ -128,17 +128,17 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init<TCsrElementRenderer: ?::core::marker::Sized + $crate::RenderHtml>(
+        fn pinned_render_init<Ctx: ?::core::marker::Sized + $crate::HtmlRenderContext>(
             //
             self,
-            renderer: &mut TCsrElementRenderer,
+            render_context: &mut Ctx,
         ) -> (
             //
-            $crate::__private::PinnedStateOfKind<TCsrElementRenderer, Self::RenderStateKind>,
-            Self::PinnedRenderInit<TCsrElementRenderer>,
+            $crate::__private::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+            Self::PinnedRenderInit<Ctx::Renderer>,
         ) {
             let $this = self;
-            $expr.pinned_render_init(renderer)
+            $expr.pinned_render_init(render_context)
         }
 
         fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(

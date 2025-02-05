@@ -16,7 +16,11 @@ where
     R: CsrElement,
 {
     type RenderStateKind = super::Kind<L::RenderStateKind, R::RenderStateKind>;
-    type RenderInitKind = super::Kind<L::RenderInitKind, R::RenderInitKind>;
-
+    type PinnedRenderInit<Renderer: ?Sized + crate::RenderHtml> = super::RenderInit<
+        //
+        Renderer::CursorPlaceholder,
+        L::PinnedRenderInit<Renderer>,
+        R::PinnedRenderInit<Renderer>,
+    >;
     proxy_csr_element!(|this| into_either_element(this));
 }
