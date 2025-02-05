@@ -2,6 +2,7 @@ use std::{pin::Pin, task::Poll};
 
 use crate::csr::StateUnmount;
 
+mod array;
 pub mod csr_str;
 pub mod simple_non_reactive;
 
