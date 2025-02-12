@@ -61,6 +61,7 @@ default = [
     "context",
     "SyncedCollection",
     "KeyedElements",
+    "Memo",
 ]
 nightly = ["frender-render-with?/nightly"]
 html = ["csr"]
@@ -81,3 +82,4 @@ ToElement = []
 context = ["dep:frender-context"]
 hooks = ["dep:hooks", "frender-context?/hooks"]
 SyncedCollection = []
+Memo = []

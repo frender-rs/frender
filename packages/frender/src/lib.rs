@@ -93,7 +93,9 @@ pub mod style {
 }
 pub use frender_style::style::comma_separated as style;
 
+#[cfg(feature = "Memo")]
 pub mod memoed;
+#[cfg(feature = "Memo")]
 pub use memoed::{memo, Memo};
 
 #[cfg(all(feature = "web"))]
