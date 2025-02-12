@@ -38,6 +38,7 @@ version = "0.1.0"
 [dependencies.frender-html]
 path = "../frender-html"
 version = "0.1.0"
+default-features = false
 optional = true
 
 [dependencies.frender-macros]
@@ -62,12 +63,12 @@ default = [
     "KeyedElements",
 ]
 nightly = ["frender-render-with?/nightly"]
-html = ["frender-html", "csr"]
-html-components = ["html"]
+html = ["csr"]
+html-components = ["html", "frender-html/components"]
 either = [
     "dep:either",
     "frender-ssr/either",
-    "frender-html?/either",
+    "frender-html/either",
     "frender-csr?/either",
 ]
 web = ["frender-csr-web"]
