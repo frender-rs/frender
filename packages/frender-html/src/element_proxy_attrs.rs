@@ -154,6 +154,18 @@ mod dom {
         }
     }
 
+    impl<R: ?Sized, E: ?Sized + behaviors::SetInnerHtmlFromStr<R>> behaviors::SetInnerHtmlFromStr<R> for ElementProxyAttrs<E> {
+        fn set_inner_html_from_str(&mut self, renderer: &mut R, value: impl frender_dom::render_from::str::ValueForStr) {
+            self.0.set_inner_html_from_str(renderer, value)
+        }
+    }
+
+    impl<R: ?Sized, E: ?Sized + behaviors::SetInnerTextFromStr<R>> behaviors::SetInnerTextFromStr<R> for ElementProxyAttrs<E> {
+        fn set_inner_text_from_str(&mut self, renderer: &mut R, value: impl frender_dom::render_from::str::ValueForStr) {
+            self.0.set_inner_text_from_str(renderer, value)
+        }
+    }
+
     impl<R: ?Sized, E: ?Sized + behaviors::Element<R>> behaviors::Element<R> for ElementProxyAttrs<E> {
         fn set_attribute(&mut self, renderer: &mut R, name: &str, value: &str) {
             self.0.set_attribute(renderer, name, value)
@@ -163,20 +175,12 @@ mod dom {
             self.0.remove_attribute(renderer, name)
         }
 
-        fn set_inner_html(&mut self, renderer: &mut R, value: &str) {
-            self.0.set_inner_html(renderer, value)
-        }
-
         fn as_node_ref(&self) -> &(dyn 'static + frender_dom::node_ref::traits::Element) {
             self.0.as_node_ref()
         }
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::HtmlElement<R>> behaviors::HtmlElement<R> for ElementProxyAttrs<E> {
-        fn set_inner_text(&mut self, renderer: &mut R, value: &str) {
-            self.0.set_inner_text(renderer, value)
-        }
-
         fn as_node_ref(&self) -> &(dyn 'static + frender_dom::node_ref::traits::HtmlElement) {
             <E as behaviors::HtmlElement<_>>::as_node_ref(&self.0)
         }

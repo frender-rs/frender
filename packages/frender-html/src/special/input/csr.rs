@@ -1,83 +1,95 @@
-use std::task::Poll;
+use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_common::{convert::IntoMut, strings::CsrStr};
+use frender_dom::StateUnmount;
 use frender_form_control::{
-    input::{InputChecked, InputDataModel, InputType, InputValue, InputValueKind, IntoInputDataModel},
+    input::{InputDataModel, InputType, InputValue, InputValueKind, IntoInputDataModel},
     value::{FormControlValue, FormControlValueStateKind},
 };
 
 use crate::{
-    element::{PinMutRenderInitStates, PinnedRenderStateKind, RenderStates, UnpinnedRenderStateKind},
+    element::{PinnedRenderStateKind, UnpinnedRenderStateKind},
     element_types::RenderStateKindPollRenderWithParent,
     html::components::input,
-    kinds::UiHandleWithNonReactiveState,
+    kinds::RenderInitNothing,
     CsrComponent, RenderHtml,
 };
 
 enum Never {}
-pub struct Kind<Value, Checked, TypeCache>(Never, std::marker::PhantomData<(Value, Checked, TypeCache)>);
+pub struct Kind<ValueKind: ?Sized, ValueStateKind: ?Sized, CheckedStateKind: ?Sized, TypeCache>(
+    //
+    Never,
+    PhantomData<ValueKind>,
+    PhantomData<ValueStateKind>,
+    PhantomData<CheckedStateKind>,
+    PhantomData<TypeCache>,
+);
 
-type NonReactiveState<R, Value, Checked, TypeCache> = (
+type KindOf<Value, Checked, Type> = Kind<
+    //
+    <Value as InputValue>::ValueKind,
+    <Value as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind,
+    <Checked as FormControlValue<bool>>::StateKind,
+    <<Type as InputType>::InputTypeStr as CsrStr>::StaticStrCache,
+>;
+
+type StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache> = State<
+    <ValueStateKind as FormControlValueStateKind<ValueKind>>::UnpinnedState<<ValueKind as InputValueKind>::AsMutFormControlElement<<R as RenderHtml>::input, R>, R>,
+    <CheckedStateKind as FormControlValueStateKind<bool>>::UnpinnedState<<R as RenderHtml>::input, R>,
     Option<TypeCache>,
-    <<Value as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind as FormControlValueStateKind<<Value as InputValue>::ValueKind>>::UnpinnedNonReactiveState<
-        <<Value as InputValue>::ValueKind as InputValueKind>::AsMutFormControlElement<<R as RenderHtml>::input, R>,
-        R,
-    >,
-    <<Checked as FormControlValue<bool>>::StateKind as FormControlValueStateKind<bool>>::UnpinnedNonReactiveState<<R as RenderHtml>::input, R>,
-);
+>;
 
-type ReactiveState<Value, Checked> = (
-    <<Value as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind as FormControlValueStateKind<<Value as InputValue>::ValueKind>>::UnpinnedReactiveState,
-    <<Checked as FormControlValue<bool>>::StateKind as FormControlValueStateKind<bool>>::UnpinnedReactiveState,
-);
+pub struct State<ValueState, CheckedState, TypeCache> {
+    value: ValueState,
+    checked: CheckedState,
+    type_cache: TypeCache,
+}
 
-impl<Value: InputValue, Checked: InputChecked, TypeCache> UnpinnedRenderStateKind for Kind<Value, Checked, TypeCache> {
+impl<ValueState, CheckedState, TypeCache> Unpin for State<ValueState, CheckedState, TypeCache> {}
+impl<ValueState: StateUnmount + Unpin, CheckedState: StateUnmount + Unpin, TypeCache> StateUnmount for State<ValueState, CheckedState, TypeCache> {
+    fn state_unmount(self: Pin<&mut Self>) {
+        let Self { value, checked, type_cache: _ } = self.get_mut();
+        Pin::new(value).state_unmount();
+        Pin::new(checked).state_unmount();
+    }
+}
+
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache> UnpinnedRenderStateKind
+    for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
+{
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ();
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = NonReactiveState<R, Value, Checked, TypeCache>;
-    type UnpinnedReactiveState = ReactiveState<Value, Checked>;
+    type UnpinnedState<R: RenderHtml + ?Sized> = StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache>;
 }
-impl<Value: InputValue, Checked: InputChecked, TypeCache> PinnedRenderStateKind for Kind<Value, Checked, TypeCache> {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleWithNonReactiveState<(), NonReactiveState<R, Value, Checked, TypeCache>>;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type PinnedReactiveState = ReactiveState<Value, Checked>;
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache> PinnedRenderStateKind
+    for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
+{
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = ();
+    type PinnedState<R: RenderHtml + ?Sized> = StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache>;
 }
-impl<Value: InputValue, Checked: InputChecked, TypeCache> RenderStateKindPollRenderWithParent<input::Marker> for Kind<Value, Checked, TypeCache> {
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache>
+    RenderStateKindPollRenderWithParent<input::Marker> for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
+{
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
         parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
-        RenderStates {
-            ui_handle: UiHandleWithNonReactiveState { ui_handle, non_reactive_state },
-            non_reactive_state: _,
-            reactive_state,
-        }: crate::element::PinnedMutRenderStatesOfKind<Self, R>,
+        state: Pin<&mut crate::element::PinnedStateOfKind<R, Self>>,
+        ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        Self::unpinned_poll_render_with_parent(
-            renderer,
-            parent,
-            RenderStates {
-                ui_handle,
-                non_reactive_state,
-                reactive_state: reactive_state.get_mut(),
-            },
-            cx,
-        )
+        Self::unpinned_poll_render_with_parent(renderer, parent, state.get_mut(), ui_handle, cx)
     }
 
     fn unpinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
         parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
-        RenderStates {
-            ui_handle: (),
-            non_reactive_state: (_, nrs_value, nrs_checked),
-            reactive_state: (rs_value, rs_checked),
-        }: crate::element::UnpinnedMutRenderStatesOfKind<Self, R>,
+        State { value, checked, type_cache: _ }: &mut crate::element::UnpinnedStateOfKind<R, Self>,
+        ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let a = <<Value as FormControlValue<_>>::StateKind>::unpinned_poll_render_form_control_value_state(renderer, parent.into_mut(), nrs_value, rs_value, cx);
-        let b = <<Checked as FormControlValue<bool>>::StateKind>::unpinned_poll_render_form_control_value_state(renderer, parent, nrs_checked, rs_checked, cx);
+        let a = ValueStateKind::unpinned_poll_render_form_control_value_state(renderer, parent.into_mut(), value, cx);
+        let b = CheckedStateKind::unpinned_poll_render_form_control_value_state(renderer, parent, checked, cx);
 
         match (a, b) {
             (Poll::Ready(()), Poll::Ready(())) => Poll::Ready(()),
@@ -87,7 +99,14 @@ impl<Value: InputValue, Checked: InputChecked, TypeCache> RenderStateKindPollRen
 }
 
 impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
-    type ChildrenRenderStateKind = Kind<DataModel::Value, DataModel::Checked, <<DataModel::Type as InputType>::InputTypeStr as CsrStr>::StaticStrCache>;
+    type ChildrenRenderStateKind = KindOf<
+        //
+        DataModel::Value,
+        DataModel::Checked,
+        DataModel::Type,
+    >;
+
+    type ChildrenPinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;
 
     fn children_pinned_render_init<R: RenderHtml + ?Sized>(
         //
@@ -95,17 +114,13 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         children: DataModel,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        PinMutRenderInitStates { non_reactive_state, reactive_state }: crate::element::PinMutRenderInitStatesOfKind<Self::ChildrenRenderStateKind, R>,
-    ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
-        let () = non_reactive_state.get_mut();
-        let non_reactive_state;
-        RenderStates {
-            ui_handle: (),
-            non_reactive_state,
-            reactive_state: *reactive_state.get_mut(),
-        } = self.children_unpinned_render_init(children, renderer, parent);
-
-        UiHandleWithNonReactiveState { ui_handle: (), non_reactive_state }
+    ) -> (
+        //
+        crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        Self::ChildrenPinnedRenderInit<R>,
+    ) {
+        let (state, ()) = self.children_unpinned_render_init(children, renderer, parent);
+        (state, RenderInitNothing)
     }
 
     fn children_pinned_render_update<R: RenderHtml + ?Sized>(
@@ -114,22 +129,22 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         children: DataModel,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        RenderStates {
-            ui_handle: UiHandleWithNonReactiveState { ui_handle, non_reactive_state },
-            non_reactive_state: _,
-            reactive_state,
-        }: crate::element::PinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
+        children_state: Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
-        self.children_unpinned_render_update(
-            children,
-            renderer,
-            parent,
-            RenderStates {
-                ui_handle,
-                non_reactive_state,
-                reactive_state: reactive_state.get_mut(),
-            },
-        );
+        self.children_unpinned_render_update(children, renderer, parent, children_state.get_mut(), children_ui_handle)
+    }
+
+    fn children_pinned_render_init_by_reusing<R: RenderHtml + ?Sized>(
+        //
+        self,
+        children: DataModel,
+        renderer: &mut R,
+        parent: &mut Self::OfBehaviorType<R>,
+        children_reused_state: Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        self.children_unpinned_render_init_by_reusing(children, renderer, parent, children_reused_state.get_mut(), children_unmounted_ui_handle)
     }
 
     fn children_unpinned_render_init<R: RenderHtml + ?Sized>(
@@ -138,7 +153,11 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         children: DataModel,
         renderer: &mut R,
         element: &mut Self::OfBehaviorType<R>,
-    ) -> crate::element::UnpinnedRenderStatesOfKind<Self::ChildrenRenderStateKind, R> {
+    ) -> (
+        //
+        crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) {
         let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 
         // type should be updated before value is updated
@@ -163,15 +182,33 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
 
         // value should be updated after type is updated
 
-        let (nrs_value, rs_value) = <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_init(value, renderer, element.into_mut());
+        let state_value = <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_init(value, renderer, element.into_mut());
 
-        let (nrs_checked, rs_checked) = <DataModel::Checked as FormControlValue<bool>>::render_init(checked, renderer, element);
+        let state_checked = <DataModel::Checked as FormControlValue<bool>>::render_init(checked, renderer, element);
 
-        RenderStates {
-            ui_handle: (),
-            non_reactive_state: (state_type, nrs_value, nrs_checked),
-            reactive_state: (rs_value, rs_checked),
-        }
+        (
+            State {
+                value: state_value,
+                checked: state_checked,
+                type_cache: state_type,
+            },
+            (),
+        )
+    }
+
+    fn children_unpinned_render_init_by_reusing<R: RenderHtml + ?Sized>(
+        //
+        self,
+        children: DataModel,
+        renderer: &mut R,
+        parent: &mut Self::OfBehaviorType<R>,
+        children_reused_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        (): crate::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        // TODO: render_init or render_update?
+        // render_init is correct but render_update might avoid unnecessary rendering
+        (*children_reused_state, ()) = self.children_unpinned_render_init(children, renderer, parent);
+        ()
     }
 
     fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
@@ -180,15 +217,16 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         children: DataModel,
         renderer: &mut R,
         element: &mut Self::OfBehaviorType<R>,
-        children_states: crate::element::UnpinnedMutRenderStatesOfKind<Self::ChildrenRenderStateKind, R>,
+        children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        children_ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 
-        let RenderStates {
-            ui_handle: (),
-            non_reactive_state: (state_type, state_value, state_checked),
-            reactive_state: (rs_value, rs_checked),
-        } = children_states;
+        let State {
+            type_cache: state_type,
+            value: state_value,
+            checked: state_checked,
+        } = children_state;
 
         // type should be updated before value is updated
         {
@@ -211,8 +249,8 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         }
 
         // value should be updated after type is updated
-        <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_update(value, renderer, element.into_mut(), state_value, rs_value);
+        <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_update(value, renderer, element.into_mut(), state_value);
 
-        <DataModel::Checked as FormControlValue<bool>>::render_update(checked, renderer, element, state_checked, rs_checked);
+        <DataModel::Checked as FormControlValue<bool>>::render_update(checked, renderer, element, state_checked);
     }
 }

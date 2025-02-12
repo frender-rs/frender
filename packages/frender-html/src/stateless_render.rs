@@ -24,7 +24,3 @@ pub trait StatelessRender {
         ui_handle: &mut StatelessUiHandleOfKind<R, Self::StatelessRenderStateKind>,
     );
 }
-
-// pub trait ReactiveTextKind: for<'a> ReactiveValueKind<Value<'a>: ValueRenderIntoText> {}
-
-// impl<T: IntoReactiveText> CsrElement for T {}

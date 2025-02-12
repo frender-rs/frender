@@ -2,6 +2,8 @@ use std::{marker::PhantomData, pin::Pin};
 
 use frender_dom::StateUnmount;
 
+use crate::element::FormControlElement;
+
 use super::{FormControlValue, FormControlValueKind, FormControlValueStateKind};
 
 #[derive(Debug, Clone, Copy)]
@@ -42,49 +44,29 @@ impl<
         VK: ?Sized + FormControlValueKind,
     > FormControlValueStateKind<VK> for KindOfEitherFormControlValue<KA, KB>
 {
-    type UnpinnedNonReactiveState<
-        E: crate::element::FormControlElement<VK, R> + ?Sized,
-        R: ?Sized,
-    > = EitherFormControlValueState<
-        KA::UnpinnedNonReactiveState<E, R>,
-        KB::UnpinnedNonReactiveState<E, R>,
-    >;
-
-    type UnpinnedReactiveState =
-        EitherFormControlValueState<KA::UnpinnedReactiveState, KB::UnpinnedReactiveState>;
+    type UnpinnedState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
+        EitherFormControlValueState<
+            //
+            KA::UnpinnedState<E, R>,
+            KB::UnpinnedState<E, R>,
+        >;
 
     fn unpinned_poll_render_form_control_value_state<
-        E: crate::element::FormControlElement<VK, R> + ?Sized,
+        E: FormControlElement<VK, R> + ?Sized,
         R: ?Sized,
     >(
         renderer: &mut R,
         element: &mut E,
-        non_reactive_state: &mut Self::UnpinnedNonReactiveState<E, R>,
-        reactive_state: &mut Self::UnpinnedReactiveState,
+        state: &mut Self::UnpinnedState<E, R>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
-        match (non_reactive_state, reactive_state) {
-            (
-                EitherFormControlValueState::A(non_reactive_state),
-                EitherFormControlValueState::A(reactive_state),
-            ) => KA::unpinned_poll_render_form_control_value_state(
-                renderer,
-                element,
-                non_reactive_state,
-                reactive_state,
-                cx,
-            ),
-            (
-                EitherFormControlValueState::B(non_reactive_state),
-                EitherFormControlValueState::B(reactive_state),
-            ) => KB::unpinned_poll_render_form_control_value_state(
-                renderer,
-                element,
-                non_reactive_state,
-                reactive_state,
-                cx,
-            ),
-            _ => unreachable!(),
+        match state {
+            EitherFormControlValueState::A(state) => {
+                KA::unpinned_poll_render_form_control_value_state(renderer, element, state, cx)
+            }
+            EitherFormControlValueState::B(state) => {
+                KB::unpinned_poll_render_form_control_value_state(renderer, element, state, cx)
+            }
         }
     }
 }
@@ -94,53 +76,39 @@ impl<A: FormControlValue<VK>, B: FormControlValue<VK>, VK: ?Sized + FormControlV
 {
     type StateKind = KindOfEitherFormControlValue<A::StateKind, B::StateKind>;
 
-    fn render_init<E: crate::element::FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+    fn render_init<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
         this: Self,
         renderer: &mut R,
         element: &mut E,
-    ) -> (
-        <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
-        <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedReactiveState,
-    ) {
+    ) -> <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedState<E, R> {
         match this {
             Self::A(this) => {
-                let (nrs, rs) = A::render_init(this, renderer, element);
-                (
-                    EitherFormControlValueState::A(nrs),
-                    EitherFormControlValueState::A(rs),
-                )
+                let s = A::render_init(this, renderer, element);
+                EitherFormControlValueState::A(s)
             }
             Self::B(this) => {
-                let (nrs, rs) = B::render_init(this, renderer, element);
-                (
-                    EitherFormControlValueState::B(nrs),
-                    EitherFormControlValueState::B(rs),
-                )
+                let s = B::render_init(this, renderer, element);
+                EitherFormControlValueState::B(s)
             }
         }
     }
 
-    fn render_update<E: crate::element::FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+    fn render_update<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
         this: Self,
         renderer: &mut R,
         element: &mut E,
-        non_reactive_state: &mut <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
-        reactive_state: &mut <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedReactiveState,
+        state: &mut <Self::StateKind as super::FormControlValueStateKind<VK>>::UnpinnedState<E, R>,
     ) {
-        match (this, non_reactive_state, reactive_state) {
-            (
-                Self::A(this),
-                EitherFormControlValueState::A(non_reactive_state),
-                EitherFormControlValueState::A(reactive_state),
-            ) => A::render_update(this, renderer, element, non_reactive_state, reactive_state),
-            (
-                Self::B(this),
-                EitherFormControlValueState::B(non_reactive_state),
-                EitherFormControlValueState::B(reactive_state),
-            ) => B::render_update(this, renderer, element, non_reactive_state, reactive_state),
-            (this, non_reactive_state, reactive_state) => {
-                Pin::new(&mut *reactive_state).state_unmount();
-                (*non_reactive_state, *reactive_state) = Self::render_init(this, renderer, element);
+        match (this, state) {
+            (Self::A(this), EitherFormControlValueState::A(state)) => {
+                A::render_update(this, renderer, element, state)
+            }
+            (Self::B(this), EitherFormControlValueState::B(state)) => {
+                B::render_update(this, renderer, element, state)
+            }
+            (this, state) => {
+                Pin::new(&mut *state).state_unmount();
+                *state = Self::render_init(this, renderer, element);
             }
         }
     }
@@ -170,10 +138,8 @@ mod extern_either {
             this: Self,
             renderer: &mut R,
             element: &mut E,
-        ) -> (
-            <Self::StateKind as crate::value::FormControlValueStateKind<V>>::UnpinnedNonReactiveState<E, R>,
-            <Self::StateKind as crate::value::FormControlValueStateKind<V>>::UnpinnedReactiveState,
-        ){
+        ) -> <Self::StateKind as crate::value::FormControlValueStateKind<V>>::UnpinnedState<E, R>
+        {
             EitherFormControlValue::render_init(from_either(this), renderer, element)
         }
 
@@ -181,18 +147,11 @@ mod extern_either {
             this: Self,
             renderer: &mut R,
             element: &mut E,
-            non_reactive_state: &mut <Self::StateKind as crate::value::FormControlValueStateKind<
+            state: &mut <Self::StateKind as crate::value::FormControlValueStateKind<
                 V,
-            >>::UnpinnedNonReactiveState<E, R>,
-            reactive_state: &mut <Self::StateKind as crate::value::FormControlValueStateKind<V>>::UnpinnedReactiveState,
+            >>::UnpinnedState<E, R>,
         ) {
-            EitherFormControlValue::render_update(
-                from_either(this),
-                renderer,
-                element,
-                non_reactive_state,
-                reactive_state,
-            );
+            EitherFormControlValue::render_update(from_either(this), renderer, element, state);
         }
     }
 }

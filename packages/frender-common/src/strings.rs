@@ -131,7 +131,7 @@ impl<S: IntoStaticStrCache> CsrStr for TempStr<S> {
 }
 // endregion
 // region: NonReactiveStr
-pub struct NonReactiveStr<T: IsNonReactiveStr>(T);
+pub struct NonReactiveStr<T: IsNonReactiveStr>(pub T);
 
 impl<T: IsNonReactiveStr> IsNonReactiveStr for NonReactiveStr<T> {}
 
@@ -217,4 +217,21 @@ macro_rules! define_trait_known_str {
             impl<S: CsrStr> $KnownCsrStr for $crate::strings::NonReactiveStr<S> {}
         };
     };
+}
+
+/// This trait exists because we cannot `impl AsRef<str> for TempStr<_>`.
+pub trait AsRefStr {
+    fn as_ref_str(&self) -> &str;
+}
+
+impl<T: AsRef<str>> AsRefStr for T {
+    fn as_ref_str(&self) -> &str {
+        self.as_ref()
+    }
+}
+
+impl<S: AsRefStr> AsRefStr for TempStr<S> {
+    fn as_ref_str(&self) -> &str {
+        self.0.as_ref_str()
+    }
 }

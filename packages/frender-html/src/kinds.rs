@@ -15,10 +15,10 @@ pub enum KindOfNoState {}
 
 pub struct RenderInitNothing;
 
-impl<R> RenderInitPinned<R, ()> for RenderInitNothing {
+impl<R, S: ?Sized> RenderInitPinned<R, S> for RenderInitNothing {
     type Output = ();
 
-    fn render_init_pinned(self, renderer: R, state: std::pin::Pin<&mut ()>) -> Self::Output {}
+    fn render_init_pinned(self, _: R, _: std::pin::Pin<&mut S>) -> Self::Output {}
 }
 
 impl PinnedRenderStateKind for KindOfNoState {

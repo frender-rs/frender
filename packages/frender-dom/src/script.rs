@@ -1,50 +1,43 @@
-use async_str_iter::{any_str::IterAnyStr, IntoAsyncStrIterator};
-use frender_attr_value::csr::CsrAttrValue;
+use async_str_iter::any_str::IterAnyStr;
 use frender_common::{
-    strings::{CsrStr, SsrStr},
-    IntoStaticStr, IntoStaticStrCache, ToAsRefStr,
+    reactive_value::ReactiveValueWithKind,
+    strings::{CsrStr, NonReactiveStr, SsrStr},
+    IntoStaticStr,
 };
 use frender_ssr::html::assert;
 
-pub struct ScriptContentNoInnerText;
+use crate::render_from::str::ValueKindForStr;
 
-impl CsrAttrValue<str> for ScriptContentNoInnerText {
-    type State = ();
+mod no_inner_text {
+    use frender_common::{
+        proxy_reactive_value,
+        reactive_value::{non_reactive::Uncached, ReactiveValue, ReactiveValueWithKind},
+        value_kind::KindOfOwned,
+    };
 
-    fn update_absent_attribute_value_into_state(
-        Self: Self,
-        _: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
-    ) -> Self::State {
+    use crate::render_from::str::ValueForStr;
+
+    pub struct ScriptContentNoInnerText;
+
+    #[derive(Clone, Copy, Default)]
+    pub struct EmptyStr;
+
+    impl ValueForStr for EmptyStr {
+        fn render_str_from_self(self, renderer: impl crate::render_from::str::RenderFromKnownStr) {
+            renderer.render_from("");
+        }
     }
 
-    fn update_attribute_value_into_state(
-        Self: Self,
-        updater: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
-    ) -> Self::State {
-        updater.remove()
+    type KindOfEmptyStr = KindOfOwned<EmptyStr>;
+
+    impl ReactiveValue<KindOfEmptyStr> for ScriptContentNoInnerText {
+        proxy_reactive_value!(
+            for<ValueKind = KindOfEmptyStr> |self| -> Uncached<EmptyStr> { Uncached(EmptyStr) }
+        );
     }
 
-    fn can_skip_update(Self: &Self, (): &Self::State) -> bool {
-        true
-    }
-
-    fn update_attribute_value_with_state(
-        Self: Self,
-        _: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
-        (): &mut Self::State,
-    ) {
-    }
-
-    fn force_update_attribute_value_with_state(
-        this: Self,
-        updater: impl frender_attr_value::csr::UpdateAttrValue<Kind = str>,
-        (): &mut Self::State,
-    ) {
-        Self::update_attribute_value_into_state(this, updater)
-    }
-
-    fn attribute_is_known_as_absent((): &Self::State) -> bool {
-        true
+    impl ReactiveValueWithKind for ScriptContentNoInnerText {
+        type ReactiveValueKind = KindOfEmptyStr;
     }
 }
 
@@ -52,8 +45,7 @@ pub trait IntoScriptContent {
     type IntoScriptContent: assert::ScriptContent;
     fn into_script_content(this: Self) -> Self::IntoScriptContent;
 
-    // TODO: require ReactiveValue<str> instead
-    type IntoScriptInnerText: CsrAttrValue<str>;
+    type IntoScriptInnerText: ReactiveValueWithKind<ReactiveValueKind: ValueKindForStr>;
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText;
 }
 
@@ -64,62 +56,14 @@ impl IntoScriptContent for crate::Empty {
         async_str_iter::empty::Empty
     }
 
-    type IntoScriptInnerText = ScriptContentNoInnerText;
+    type IntoScriptInnerText = no_inner_text::ScriptContentNoInnerText;
 
     fn into_script_inner_text(Self: Self) -> Self::IntoScriptInnerText {
-        ScriptContentNoInnerText
-    }
-}
-
-impl<T: IntoScriptContent> IntoScriptContent for Option<T> {
-    type IntoScriptContent = async_str_iter::option::IterOption<T::IntoScriptContent>;
-
-    fn into_script_content(this: Self) -> Self::IntoScriptContent {
-        this.map(T::into_script_content).into_async_str_iterator()
-    }
-
-    type IntoScriptInnerText = Option<T::IntoScriptInnerText>;
-
-    fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText {
-        this.map(T::into_script_inner_text)
-    }
-}
-
-#[cfg(feature = "either")]
-impl<L: IntoScriptContent, R: IntoScriptContent> IntoScriptContent for either::Either<L, R> {
-    type IntoScriptContent =
-        async_str_iter::either::IterEither<L::IntoScriptContent, R::IntoScriptContent>;
-
-    fn into_script_content(this: Self) -> Self::IntoScriptContent {
-        use async_str_iter::either::IterEither;
-        match this {
-            either::Either::Left(this) => IterEither::Left(L::into_script_content(this)),
-            either::Either::Right(this) => IterEither::Right(R::into_script_content(this)),
-        }
-    }
-
-    type IntoScriptInnerText = either::Either<L::IntoScriptInnerText, R::IntoScriptInnerText>;
-
-    fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText {
-        this.map_either(L::into_script_inner_text, R::into_script_inner_text)
+        no_inner_text::ScriptContentNoInnerText
     }
 }
 
 pub struct ScriptInnerTextWronglyEncoded<S: SsrStr + CsrStr>(pub S);
-
-impl<S: SsrStr + CsrStr> CsrAttrValue<str> for ScriptInnerTextWronglyEncoded<S> {
-    type State = S::StaticStrCache;
-
-    frender_attr_value::impl_csr_attr_value_with_cache!(
-        kind![str],
-        before_set = {
-            let cache = this.0.into_into_static_str_cache().into_static_str_cache();
-        },
-        set = |this| cache.to_as_ref_str().as_ref(),
-        into_cache = cache,
-        eq = |this, cache| this.0.match_static_str_cache(cache),
-    );
-}
 
 impl<S: SsrStr + CsrStr> IntoScriptContent for ScriptInnerTextWronglyEncoded<S> {
     type IntoScriptContent =
@@ -131,9 +75,9 @@ impl<S: SsrStr + CsrStr> IntoScriptContent for ScriptInnerTextWronglyEncoded<S> 
         ))
     }
 
-    type IntoScriptInnerText = Self;
+    type IntoScriptInnerText = NonReactiveStr<S>;
 
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText {
-        this
+        NonReactiveStr(this.0)
     }
 }

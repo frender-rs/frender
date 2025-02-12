@@ -122,7 +122,7 @@ pub enum EitherPinnedRenderInit<A, B> {
     B(B),
 }
 
-struct RenderInit<C, A, B> {
+pub struct RenderInit<C, A, B> {
     cursor_placeholder: C,
     render_init: EitherPinnedRenderInit<A, B>,
 }

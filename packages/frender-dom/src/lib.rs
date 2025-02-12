@@ -40,6 +40,8 @@ pub mod event_listener;
 
 pub mod string_element;
 
+pub mod render_from;
+
 mod provide_render_context;
 mod render_state_with_peh;
 

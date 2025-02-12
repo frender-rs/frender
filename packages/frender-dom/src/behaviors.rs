@@ -1,4 +1,17 @@
-use crate::render::RenderWithContext;
+use crate::{render::RenderWithContext, render_from::str::ValueForStr};
+
+#[cfg(feature = "web")]
+mod inner_html_web;
+#[cfg(feature = "web")]
+mod inner_text_web;
+
+pub trait SetInnerHtmlFromStr<Renderer: ?Sized> {
+    fn set_inner_html_from_str(&mut self, renderer: &mut Renderer, value: impl ValueForStr);
+}
+
+pub trait SetInnerTextFromStr<Renderer: ?Sized> {
+    fn set_inner_text_from_str(&mut self, renderer: &mut Renderer, value: impl ValueForStr);
+}
 
 // TODO: replace RenderHtml::$tag() with NodeRenderSelf
 pub trait NodeRenderSelf<Renderer: ?Sized + RenderWithContext> {
@@ -42,20 +55,16 @@ pub trait Node<Renderer: ?Sized> {
     fn remove_self(&mut self, renderer: &mut Renderer);
 }
 
-pub trait Element<Renderer: ?Sized>: Node<Renderer> {
+pub trait Element<Renderer: ?Sized>: Node<Renderer> + SetInnerHtmlFromStr<Renderer> {
     fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str);
     fn remove_attribute(&mut self, renderer: &mut Renderer, name: &str);
-
-    fn set_inner_html(&mut self, renderer: &mut Renderer, value: &str);
 
     /// This kind of method of behavior traits have the same name `as_node_ref`
     /// so that callers can call it with `$TraitName::as_node_ref` in macros.
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::Element);
 }
 
-pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> {
-    fn set_inner_text(&mut self, renderer: &mut Renderer, value: &str);
-
+pub trait HtmlElement<Renderer: ?Sized>: Element<Renderer> + SetInnerTextFromStr<Renderer> {
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement);
 }
 
@@ -157,10 +166,6 @@ impl<
             .unwrap_throw()
     }
 
-    fn set_inner_html(&mut self, _: &mut Renderer, value: &str) {
-        AsRef::<web_sys::Element>::as_ref(&self.0).set_inner_html(value)
-    }
-
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::Element) {
         AsRef::<web_sys::Element>::as_ref(&self.0)
     }
@@ -172,10 +177,6 @@ impl<
         Renderer: ?Sized + crate::csr::web::Renderer,
     > HtmlElement<Renderer> for crate::csr::web::Node<N>
 {
-    fn set_inner_text(&mut self, _: &mut Renderer, value: &str) {
-        AsRef::<web_sys::HtmlElement>::as_ref(&self.0).set_inner_text(value)
-    }
-
     fn as_node_ref(&self) -> &(dyn 'static + crate::node_ref::traits::HtmlElement) {
         AsRef::<web_sys::HtmlElement>::as_ref(&self.0)
     }

@@ -18,6 +18,10 @@ impl<T: ?Sized, R: ?Sized + FromMut<T>> IntoMut<R> for T {
     }
 }
 
+pub trait IdentityMut<T: ?Sized>: FromMut<T> + IntoMut<T> {}
+impl<T: ?Sized, R: ?Sized + FromMut<T> + IntoMut<T>> IdentityMut<T> for R {}
+
+// TODO: rename to Identity
 pub trait IdentityAs<T>: From<T> + Into<T> + FromMut<T> + IntoMut<T> {}
 
 impl<T, R: From<T> + Into<T> + FromMut<T> + IntoMut<T>> IdentityAs<T> for R {}

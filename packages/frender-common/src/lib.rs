@@ -23,6 +23,8 @@ pub mod csr;
 
 pub mod strings;
 
+pub mod value_kind;
+
 pub mod reactive_value;
 
 pub mod utils {

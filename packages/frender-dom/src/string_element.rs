@@ -1,7 +1,5 @@
 use std::{marker::PhantomData, str::FromStr};
 
-mod reactive_value;
-
 mod imp_wasm {
     pub(super) type StaticOwnedStr = String;
 }
@@ -49,31 +47,47 @@ mod imp {
 /// If you have a static owned string like `&'static str`, `String` or `Rc<str>`,
 /// just use that as an element.
 #[derive(Debug, Clone, PartialEq, Eq)]
+// TODO: rename to WebJsString
 pub struct StringElement {
     repr: imp::Repr,
     _marker: PhantomData<*mut u8>, // not at all threadsafe
 }
 
 #[cfg(feature = "web")]
-impl StringElement {
-    /// This method requires crate feature `web`.
-    ///
-    /// If compiling on `target_arch = "wasm32"`, this method is a zero cost cast.
-    pub fn from_js_string(v: web_sys::js_sys::JsString) -> Self {
-        Self {
-            repr: imp::from_js_string(v),
-            _marker: PhantomData,
+const _: () = {
+    use std::borrow::Cow;
+
+    use web_sys::js_sys::JsString;
+
+    impl StringElement {
+        /// This method requires crate feature `web`.
+        ///
+        /// If compiling on `target_arch = "wasm32"`, this method is a zero cost cast.
+        pub fn from_js_string(v: JsString) -> Self {
+            Self {
+                repr: imp::from_js_string(v),
+                _marker: PhantomData,
+            }
+        }
+
+        pub fn as_js_string(&self) -> Result<&JsString, &std::rc::Rc<str>> {
+            imp::ResultJsString(&self.repr)
+        }
+
+        pub(crate) fn as_js_string_or_into(&self) -> Cow<JsString> {
+            self.as_js_string()
+                .map_or_else(|s| Cow::Owned(From::from(&**s)), Cow::Borrowed)
+        }
+
+        pub fn into_js_string(self) -> Result<JsString, std::rc::Rc<str>> {
+            imp::ResultJsString(self.repr)
+        }
+
+        pub(crate) fn into_js_string_or_into(self) -> JsString {
+            self.into_js_string().unwrap_or_else(|s| From::from(&*s))
         }
     }
-
-    pub fn as_js_string(&self) -> Result<&web_sys::js_sys::JsString, &std::rc::Rc<str>> {
-        imp::ResultJsString(&self.repr)
-    }
-
-    pub fn into_js_string(self) -> Result<web_sys::js_sys::JsString, std::rc::Rc<str>> {
-        imp::ResultJsString(self.repr)
-    }
-}
+};
 
 impl From<&str> for StringElement {
     fn from(value: &str) -> Self {
@@ -95,6 +109,23 @@ impl FromStr for StringElement {
 impl std::fmt::Display for StringElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(&self.repr, f)
+    }
+}
+
+mod reactive_value {
+    use frender_common::{
+        reactive_value::{ReactiveValueWithKind, UncachedNonReactiveValueWithKind},
+        value_kind::{KindOfOwned, KindOfRef},
+    };
+
+    use super::StringElement;
+
+    impl UncachedNonReactiveValueWithKind for StringElement {
+        type UncachedNonReactiveValueKind = KindOfOwned<StringElement>;
+    }
+
+    impl ReactiveValueWithKind for StringElement {
+        type ReactiveValueKind = KindOfRef<StringElement>;
     }
 }
 
