@@ -67,7 +67,7 @@ use impl_bounds::impl_bounds;
 
 pub mod intrinsic;
 
-// TODO: feature
+#[cfg(feature = "experimental")]
 pub mod experimental;
 
 mod utils;

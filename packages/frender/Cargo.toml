@@ -39,7 +39,7 @@ version = "0.1.0"
 path = "../frender-html"
 version = "0.1.0"
 default-features = false
-optional = true
+features = ["experimental"]
 
 [dependencies.frender-macros]
 version = "1.0.0-alpha.8"
