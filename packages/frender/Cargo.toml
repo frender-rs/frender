@@ -59,6 +59,7 @@ default = [
     "ToElement",
     "context",
     "SyncedCollection",
+    "KeyedElements",
 ]
 nightly = ["frender-render-with?/nightly"]
 html = ["frender-html", "csr"]
