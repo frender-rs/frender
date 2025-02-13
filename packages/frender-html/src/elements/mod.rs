@@ -9,6 +9,8 @@ pub use crate::intrinsic::csr as intrinsic;
 
 mod empty;
 
+mod prefix_cursor_placeholder;
+
 enum Never {}
 
 pub(crate) struct Kind<K: ?Sized>(std::marker::PhantomData<K>, Never);

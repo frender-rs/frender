@@ -38,7 +38,7 @@ pub trait Element<Renderer: ?Sized>:
     + OnEvent<Renderer, event_types::on_touch_end>
     + OnEvent<Renderer, event_types::on_touch_move>
     + OnEvent<Renderer, event_types::on_touch_start>
-    + frender_dom::ui_handle::UiHandle<Renderer, Unmounted: frender_dom::behaviors::ElementWithChildren<Renderer>>
+    + frender_dom::ui_handle::UiHandle<Renderer>
     + frender_dom::behaviors::Element<Renderer>
     + frender_dom::behaviors::ElementWithChildren<Renderer>
     + frender_dom::behaviors::ElementWithClassList<Renderer>

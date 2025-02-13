@@ -149,20 +149,20 @@ where
             return Poll::Ready(());
         }
 
-        let (mut state, ui_handle) = this.element_or_state.as_mut().as_pin_mut_state_or_insert(
-            |element| {
-                let (state, init) = this.p.provide_render_context(|render_context| {
-                    element.pinned_render_init(render_context)
-                });
-                (state, (init, &mut this.p))
-            },
-            |(init, this_p), state| {
-                use frender_html::experimental::RenderInitPinned as _;
-                this_p.provide_render_context(|render_context| {
+        let (mut state, ui_handle) = this.p.provide_render_context(|render_context| {
+            this.element_or_state.as_mut().as_pin_mut_state_or_insert(
+                |element| {
+                    use frender_html::dom::render::RenderContext as _;
+                    let (state, init) = element.pinned_render_init(render_context.renderer_mut());
+                    (state, (init, render_context))
+                },
+                |(init, render_context), state| {
+                    use frender_html::experimental::RenderInitPinned as _;
+
                     init.render_init_pinned(render_context, state)
-                })
-            },
-        );
+                },
+            )
+        });
 
         if let Poll::Pending = <E::RenderStateKind>::pinned_poll_render(
             this.p.renderer_mut(),

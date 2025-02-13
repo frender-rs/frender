@@ -343,7 +343,7 @@ macro_rules! behavior_type_traits {
             $expand_item
             {
                 use frender_common::convert::IdentityAs;
-                // use frender_dom::ui_handle::UiHandle;
+                use frender_dom::ui_handle::UiHandle;
 
                 use crate::update_element::OnEventType;
                 use super::{event_types, behaviors};
@@ -386,14 +386,10 @@ macro_rules! behavior_type_traits {
                         type $trait_name<Renderer: ?Sized + super::RenderHtml>: behaviors::$trait_name<Renderer>
                             + IdentityAs<Self::OfBehaviorType<Renderer>>
                             + IdentityAs<Self::UiHandle<Renderer>>
-                            /*
                             + UiHandle<
                                 Renderer,
-                                Unmounted: IdentityAs<
-                                    <Self::UiHandle<Renderer> as UiHandle<Renderer>>::Unmounted
-                                >
+                                Unmounted = Self::UnmountedUiHandle<Renderer>,
                             >
-                            */
                         ;
                     }
                 }
@@ -649,18 +645,17 @@ macro_rules! tag_implementations {
             }
 
             impl UiHandleType for $tags {
+                type UnmountedUiHandle<Renderer: ?Sized + RenderHtml> = <Renderer::$tags as UiHandle<Renderer>>::Unmounted;
                 type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
 
-                /*
                 fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> <Self::UiHandle<R> as UiHandle<R>>::Unmounted {
                     R::$tags(renderer)
                 }
-                */
 
-                fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
-                    let unmounted = <Ctx::Renderer as RenderHtml>::$tags(render_context.renderer_mut());
-                    render_context.map_mut_render_context(|render_context| unmounted.mount(render_context))
-                }
+                // fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
+                //     let unmounted = <Ctx::Renderer as RenderHtml>::$tags(render_context.renderer_mut());
+                //     render_context.map_mut_render_context(|render_context| unmounted.mount(render_context))
+                // }
             }
 
             impl HasIntrinsicComponentTag for $tags {
@@ -1229,7 +1224,7 @@ macro_rules! RenderHtml {
     ) => {
         $($($(
             #[allow(non_camel_case_types)]
-            type $tags: self::behaviors::$trait_name<Self> + UiHandle<Self> + 'static;
+            type $tags: self::behaviors::$trait_name<Self> + UiHandle<Self, Unmounted: ProvideMutMounted<Self>> + 'static;
             fn $tags(&mut self) -> <Self::$tags as UiHandle<Self>>::Unmounted;
         )*)?)?
     };

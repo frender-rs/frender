@@ -125,14 +125,14 @@ where
         V::ReactiveValueKind,
     >;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        _: &mut Ctx,
+        _: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
         let (state, render_init) = self.0.pinned_render_init();
         (state, RenderInit(render_init, PhantomData))

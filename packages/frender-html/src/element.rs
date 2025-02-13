@@ -1,11 +1,7 @@
 use std::{pin::Pin, task::Poll};
 
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::{
-    render::{RenderContext, RenderContextRenderTextFrom},
-    ui_handle::UiHandle,
-    StateUnmount,
-};
+use frender_dom::{render::RenderContext, ui_handle::UiHandle, StateUnmount};
 
 use crate::RenderHtml;
 
@@ -74,14 +70,15 @@ pub trait CsrElement {
         Output = PinnedUiHandleOfKind<R, Self::RenderStateKind>,
     >;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    /// The caller should make sure mutated `render_context` is then passed to [`RenderInitPinned::render_init_pinned`].
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        renderer: &mut Renderer,
     ) -> (
         //
-        PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     );
 
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
@@ -128,17 +125,17 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init<Ctx: ?::core::marker::Sized + $crate::HtmlRenderContext>(
+        fn pinned_render_init<Renderer: ?::core::marker::Sized + $crate::RenderHtml>(
             //
             self,
-            render_context: &mut Ctx,
+            renderer: &mut Renderer,
         ) -> (
             //
-            $crate::__private::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-            Self::PinnedRenderInit<Ctx::Renderer>,
+            $crate::__private::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+            Self::PinnedRenderInit<Renderer>,
         ) {
             let $this = self;
-            $expr.pinned_render_init(render_context)
+            $expr.pinned_render_init(renderer)
         }
 
         fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(

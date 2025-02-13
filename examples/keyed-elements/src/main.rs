@@ -71,6 +71,8 @@ impl Data {
 
 #[component(main(get_dom_element = "frender-root"))]
 fn Main() {
+    console_error_panic_hook::set_once();
+
     // data's updates are not reactive here
     let data = hooks::use_mut_with(|| hooks::GenSignalHook::new(Data::new())).to_signal();
 

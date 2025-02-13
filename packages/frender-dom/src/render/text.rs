@@ -6,20 +6,14 @@ use frender_common::{
     },
     TempStr,
 };
-use frender_csr::render::{RenderContext, RenderWithContext};
+use frender_csr::render::RenderWithContext;
 
 use crate::{string_element::StringElement, ui_handle::UiHandle};
 
-pub trait RenderContextRenderTextFrom<V>: RenderContext {
-    fn render_text_from(&mut self, v: V) -> <Self::Renderer as RenderTextFrom<V>>::Text
-    where
-        Self::Renderer: RenderTextFrom<V>; // TODO: move the where bound to trait
-}
-
-pub trait RenderTextFrom<V>:
-    for<'a> RenderWithContext<RenderContext<'a>: RenderContextRenderTextFrom<V>>
-{
+pub trait RenderTextFrom<V>: RenderWithContext {
     type Text: UiHandle<Self> + 'static;
+
+    fn render_text_from(render_context: &mut Self::RenderContext<'_>, v: V) -> Self::Text;
 
     fn update_text_from(&mut self, text: &mut Self::Text, v: V);
 }
@@ -102,7 +96,7 @@ macro_rules! define {
                     self,
                     render_context: &mut Renderer::RenderContext<'_>,
                 ) -> <Self::TextKind as TextKind>::Text<Renderer> {
-                    render_context.render_text_from(self)
+                    Renderer::render_text_from(render_context, self)
                 }
 
                 fn update_text_from_self<Renderer: ?Sized + RenderTextFromKnown>(

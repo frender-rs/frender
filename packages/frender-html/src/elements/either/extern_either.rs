@@ -18,7 +18,6 @@ where
     type RenderStateKind = super::Kind<L::RenderStateKind, R::RenderStateKind>;
     type PinnedRenderInit<Renderer: ?Sized + crate::RenderHtml> = super::RenderInit<
         //
-        Renderer::CursorPlaceholder,
         L::PinnedRenderInit<Renderer>,
         R::PinnedRenderInit<Renderer>,
     >;

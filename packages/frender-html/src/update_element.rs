@@ -1,7 +1,10 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_common::{convert::IdentityAs, reactive_value::RenderInitPinned};
-use frender_dom::event_types::EventType;
+use frender_dom::{
+    event_types::EventType,
+    ui_handle::{ProvideMutMounted, UiHandle},
+};
 
 use crate::{
     kinds::{KindOfNoState, RenderInitNothing},
@@ -13,14 +16,10 @@ pub trait BehaviorType {
 }
 
 pub trait UiHandleType: BehaviorType {
-    type UiHandle<Renderer: ?Sized + RenderHtml>: IdentityAs<Self::OfBehaviorType<Renderer>>;
+    type UnmountedUiHandle<Renderer: ?Sized + RenderHtml>: ProvideMutMounted<Renderer, Mounted = Self::UiHandle<Renderer>>;
+    type UiHandle<Renderer: ?Sized + RenderHtml>: UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>> + IdentityAs<Self::OfBehaviorType<Renderer>>;
 
-    fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer>;
-
-    /*
-    type UiHandle<Renderer: ?Sized + RenderHtml>: UiHandle<Renderer> + IdentityAs<Self::OfBehaviorType<Renderer>>;
-
-    fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> <Self::UiHandle<R> as UiHandle<R>>::Unmounted;
+    fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> Self::UnmountedUiHandle<R>;
 
     fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
         use frender_dom::{render::RenderContext as _, ui_handle::UnmountedUiHandle as _};
@@ -30,7 +29,6 @@ pub trait UiHandleType: BehaviorType {
                 .mount(render_context)
         })
     }
-    */
 }
 
 pub trait OnEventType<EVT: EventType>: BehaviorType {

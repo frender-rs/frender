@@ -34,12 +34,8 @@ pub trait IntoRenderElementExt: ProvideRenderContext {
         Self::Renderer: RenderHtml,
     {
         async move {
-            let (state, init) = self.provide_render_context(|render_context| {
-                element.pinned_render_init(render_context)
-            });
-
+            let (state, init) = element.pinned_render_init(self.renderer_mut());
             let mut state = pin!(state);
-
             let mut ui_handle = self.provide_render_context(|render_context| {
                 init.render_init_pinned(render_context, state.as_mut())
             });

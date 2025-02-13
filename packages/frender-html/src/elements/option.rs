@@ -41,20 +41,17 @@ impl<K: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender for
 }
 
 // region: RenderInit
-pub struct RenderInit<C, T>(C, pub Option<T>);
+pub struct OptionRenderInit<T>(pub Option<T>);
 
-impl<C, T: RenderInitPinned<R, S>, R, S> RenderInitPinned<R, Option<S>> for RenderInit<C, T> {
-    type Output = (C, Option<T::Output>);
+impl<T: RenderInitPinned<R, S>, R, S> RenderInitPinned<R, Option<S>> for OptionRenderInit<T> {
+    type Output = Option<T::Output>;
 
     fn render_init_pinned(self, renderer: R, state: Pin<&mut Option<S>>) -> Self::Output {
-        (
-            self.0,
-            match (self.1, state.as_pin_mut()) {
-                (Some(init), Some(state)) => Some(init.render_init_pinned(renderer, state)),
-                (None, None) => None,
-                _ => super::unreachable_debug!("state of option::RenderInit is invalid"),
-            },
-        )
+        match (self.0, state.as_pin_mut()) {
+            (Some(init), Some(state)) => Some(init.render_init_pinned(renderer, state)),
+            (None, None) => None,
+            _ => super::unreachable_debug!("state of option::RenderInit is invalid"),
+        }
     }
 }
 // endregion
@@ -82,26 +79,26 @@ impl<K: PinnedRenderStateKindPollRender> PinnedRenderStateKindPollRender for Kin
 
 // endregion
 
+pub type RenderInit<T> = super::prefix_cursor_placeholder::RenderInit<OptionRenderInit<T>>;
+
 impl<E: CsrElement> CsrElement for Option<E> {
     type RenderStateKind = Kind<E::RenderStateKind>;
-    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<R::CursorPlaceholder, E::PinnedRenderInit<R>>;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<E::PinnedRenderInit<R>>;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        renderer: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
-        let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
-
         if let Some(this) = self {
-            let (state, render_init) = this.pinned_render_init(render_context);
-            (Some(state), RenderInit(cp, Some(render_init)))
+            let (state, render_init) = this.pinned_render_init(renderer);
+            (Some(state), super::prefix_cursor_placeholder::RenderInit(OptionRenderInit(Some(render_init))))
         } else {
-            (None, RenderInit(cp, None))
+            (None, super::prefix_cursor_placeholder::RenderInit(OptionRenderInit(None)))
         }
     }
 
@@ -117,7 +114,7 @@ impl<E: CsrElement> CsrElement for Option<E> {
                 (None, None) => {
                     if let Some(this) = self {
                         Some({
-                            let (state, render_init) = this.pinned_render_init(render_context);
+                            let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
                             reused_state.set(Some(state));
                             let state = reused_state.as_pin_mut().unwrap();
 
@@ -154,7 +151,7 @@ impl<E: CsrElement> CsrElement for Option<E> {
                 if let Some(this) = self {
                     *ui_handle_full = Some({
                         cp.with_render_context_after_self(renderer, |render_context| {
-                            let (state, render_init) = this.pinned_render_init(render_context);
+                            let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
                             state_full.set(Some(state));
                             let state = state_full.as_pin_mut().unwrap();
                             render_init.render_init_pinned(render_context, state)

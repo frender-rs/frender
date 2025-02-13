@@ -6,6 +6,15 @@ pub trait UnmountedUiHandle<Renderer: ?Sized> {
         Renderer: crate::render::RenderWithContext;
 }
 
+// TODO: redesign by splitting Behavior and UiHandle
+pub trait ProvideMutMounted<Renderer: ?Sized>: UnmountedUiHandle<Renderer> {
+    fn provide_mut_mounted<Out>(
+        &mut self,
+        renderer: &mut Renderer,
+        f: impl FnOnce(&mut Renderer, &mut Self::Mounted) -> Out,
+    ) -> Out;
+}
+
 pub trait UiHandle<Renderer: ?Sized> {
     type Unmounted: UnmountedUiHandle<Renderer, Mounted = Self>;
 

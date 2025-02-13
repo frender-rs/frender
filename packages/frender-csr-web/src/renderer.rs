@@ -79,8 +79,6 @@ impl RenderWithContext for Renderer {
 }
 
 impl RenderHtml for Renderer {
-    type Text = Node<web_sys::Text>;
-
     html_elements!(
         abbr: HtmlElement,
         address: HtmlElement,

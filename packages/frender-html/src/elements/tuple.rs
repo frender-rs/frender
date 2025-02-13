@@ -3,7 +3,6 @@
 use std::{pin::Pin, task::Poll};
 
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::render::RenderWithContext;
 
 use crate::{
     element::{
@@ -104,18 +103,18 @@ macro_rules! impl_render_for_tuple {
                 type RenderStateKind = KindOfStates<($($field::RenderStateKind,)+)>;
                 type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInits<($($field::PinnedRenderInit<R>,)+)>;
 
-                fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+                fn pinned_render_init<R: ?Sized + RenderHtml>(
                     self,
-                    render_context: &mut Ctx,
+                    renderer: &mut R,
                 ) -> (
                     //
-                    PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-                    Self::PinnedRenderInit<Ctx::Renderer>,
+                    PinnedStateOfKind<R, Self::RenderStateKind>,
+                    Self::PinnedRenderInit<R>,
                 ) {
                     let res = ($(
                         $field::pinned_render_init(
                             self.$field_idx,
-                            render_context,
+                            renderer,
                         ),
                     )+);
 

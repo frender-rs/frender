@@ -122,37 +122,24 @@ pub enum EitherPinnedRenderInit<A, B> {
     B(B),
 }
 
-pub struct RenderInit<C, A, B> {
-    cursor_placeholder: C,
-    render_init: EitherPinnedRenderInit<A, B>,
-}
-
-impl<
-        //
-        C,
-        A: RenderInitPinned<R, SA>,
-        B: RenderInitPinned<R, SB>,
-        R,
-        SA,
-        SB,
-    > RenderInitPinned<R, EitherState<SA, SB>> for RenderInit<C, A, B>
-{
-    type Output = (C, EitherUiHandle<A::Output, B::Output>);
-
+impl<A: RenderInitPinned<R, SA>, B: RenderInitPinned<R, SB>, R, SA, SB> RenderInitPinned<R, EitherState<SA, SB>> for EitherPinnedRenderInit<A, B> {
+    type Output = EitherUiHandle<A::Output, B::Output>;
     fn render_init_pinned(self, renderer: R, state: Pin<&mut EitherState<SA, SB>>) -> Self::Output {
-        match (self.render_init, state.project()) {
+        match (self, state.project()) {
             (EitherPinnedRenderInit::A(this), EitherStateProj::A { inner }) => {
                 //
-                (self.cursor_placeholder, EitherUiHandle::A(A::render_init_pinned(this, renderer, inner)))
+                EitherUiHandle::A(A::render_init_pinned(this, renderer, inner))
             }
             (EitherPinnedRenderInit::B(this), EitherStateProj::B { inner }) => {
                 //
-                (self.cursor_placeholder, EitherUiHandle::B(B::render_init_pinned(this, renderer, inner)))
+                EitherUiHandle::B(B::render_init_pinned(this, renderer, inner))
             }
             _ => super::unreachable_debug!("pinned state and RenderInit of EitherElement is invalid"),
         }
     }
 }
+
+pub type RenderInit<A, B> = super::prefix_cursor_placeholder::RenderInit<EitherPinnedRenderInit<A, B>>;
 
 impl<KA: PinnedRenderStateKind, KB: PinnedRenderStateKind> PinnedRenderStateKind for Kind<KA, KB> {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandle<R, KA::PinnedUiHandle<R>, KB::PinnedUiHandle<R>>;
@@ -193,41 +180,34 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
     type RenderStateKind = Kind<A::RenderStateKind, B::RenderStateKind>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<
         //
-        R::CursorPlaceholder,
         A::PinnedRenderInit<R>,
         B::PinnedRenderInit<R>,
     >;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        renderer: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
-        let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
-
         match self {
             EitherElement::A(this) => {
-                let (state, render_init) = this.pinned_render_init(render_context);
+                let (state, render_init) = this.pinned_render_init(renderer);
                 (
+                    //
                     EitherState::A { inner: state },
-                    RenderInit {
-                        cursor_placeholder: cp,
-                        render_init: EitherPinnedRenderInit::A(render_init),
-                    },
+                    super::prefix_cursor_placeholder::RenderInit(EitherPinnedRenderInit::A(render_init)),
                 )
             }
             EitherElement::B(this) => {
-                let (state, render_init) = this.pinned_render_init(render_context);
+                let (state, render_init) = this.pinned_render_init(renderer);
                 (
+                    //
                     EitherState::B { inner: state },
-                    RenderInit {
-                        cursor_placeholder: cp,
-                        render_init: EitherPinnedRenderInit::B(render_init),
-                    },
+                    super::prefix_cursor_placeholder::RenderInit(EitherPinnedRenderInit::B(render_init)),
                 )
             }
         }
@@ -246,7 +226,7 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
                 EitherElement::A(this) => EitherUiHandle::A(this.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
                 EitherElement::B(this) => {
                     drop(unmounted_ui_handle);
-                    let (state, render_init) = this.pinned_render_init(render_context);
+                    let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
                     reused_state_full.set(EitherState::B { inner: state });
 
                     let reused_state = reused_state_full.assert_b_pin_mut();
@@ -258,7 +238,7 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
                 EitherElement::B(this) => EitherUiHandle::B(this.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)),
                 EitherElement::A(this) => {
                     drop(unmounted_ui_handle);
-                    let (state, render_init) = this.pinned_render_init(render_context);
+                    let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
                     reused_state_full.set(EitherState::A { inner: state });
 
                     let reused_state = reused_state_full.assert_a_pin_mut();
@@ -292,7 +272,7 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
                     state.state_unmount();
 
                     let ui_handle = cp.with_render_context_after_self(renderer, |render_context| {
-                        let (state, render_init) = this.pinned_render_init(render_context);
+                        let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
 
                         state_full.set(EitherState::B { inner: state });
                         let state = state_full.assert_b_pin_mut();
@@ -311,7 +291,7 @@ impl<A: CsrElement, B: CsrElement> CsrElement for EitherElement<A, B> {
                     state.state_unmount();
 
                     let ui_handle = cp.with_render_context_after_self(renderer, |render_context| {
-                        let (state, render_init) = this.pinned_render_init(render_context);
+                        let (state, render_init) = this.pinned_render_init(render_context.renderer_mut());
 
                         state_full.set(EitherState::A { inner: state });
                         let state = state_full.assert_a_pin_mut();

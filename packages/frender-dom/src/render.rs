@@ -1,8 +1,7 @@
 pub use frender_csr::render::{RenderContext, RenderWithContext};
 
 pub use self::text::{
-    KnownValueForText, KnownValueKindForText, RenderContextRenderTextFrom, RenderTextFrom,
-    RenderTextFromKnown, TextKind,
+    KnownValueForText, KnownValueKindForText, RenderTextFrom, RenderTextFromKnown, TextKind,
 };
 
 use crate::ui_handle::UiHandle;

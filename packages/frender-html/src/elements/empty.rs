@@ -9,14 +9,14 @@ impl CsrElement for Empty {
     type RenderStateKind = KindOfNoState;
     type PinnedRenderInit<R: ?Sized + crate::RenderHtml> = RenderInitNothing;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + crate::RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        _: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
         ((), RenderInitNothing)
     }

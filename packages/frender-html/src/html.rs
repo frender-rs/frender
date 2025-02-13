@@ -1,7 +1,7 @@
 use frender_attr_value::html::{ContentEditable, Spellcheck};
 use frender_dom::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
-    ui_handle::UiHandle,
+    ui_handle::{ProvideMutMounted, UiHandle},
 };
 use frender_form_control::textarea::TextAreaValue;
 
@@ -147,7 +147,7 @@ crate::macros::def_intrinsic_component_props!(
         sub_traits!(
             pub trait Element {
                 trait_bounds!(
-                    frender_dom::ui_handle::UiHandle<Renderer, Unmounted: frender_dom::behaviors::ElementWithChildren<Renderer>>
+                    frender_dom::ui_handle::UiHandle<Renderer>
                         //
                         + frender_dom::behaviors::Element<Renderer>
                         + frender_dom::behaviors::ElementWithChildren<Renderer>

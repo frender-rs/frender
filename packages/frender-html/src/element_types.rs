@@ -113,7 +113,6 @@ pub trait CsrComponent<Children>: BehaviorType {
 enum Never {}
 
 pub struct StateKindWithAnyParent<CK>(Never, PhantomData<CK>);
-pub struct InitKindWithAnyParent<CK>(Never, PhantomData<CK>);
 
 impl<CK: UnpinnedRenderStateKind> UnpinnedRenderStateKind for StateKindWithAnyParent<CK> {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = CK::UnpinnedUiHandle<R>;
@@ -184,19 +183,13 @@ impl<C: CsrComponentNormalElement, Children: CsrElement> CsrComponent<Children> 
         self,
         children: Children,
         renderer: &mut R,
-        parent: &mut Self::OfBehaviorType<R>,
+        _: &mut Self::OfBehaviorType<R>,
     ) -> (
         //
         PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         Self::ChildrenPinnedRenderInit<R>,
     ) {
-        let (state, children) = <C::Element<R>>::from_mut(parent)
-            //
-            .with_render_context_at_first_child_of_self(
-                //
-                renderer,
-                |render_context| children.pinned_render_init(render_context),
-            );
+        let (state, children) = children.pinned_render_init(renderer);
         (state, RenderInitWithAnyParent(PhantomData, children))
     }
 

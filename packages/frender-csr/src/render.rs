@@ -20,4 +20,9 @@ pub trait RenderContext {
         &mut self,
         f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
     ) -> Res;
+
+    fn map_mut_unrendered_render_context_and_then_reposition<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res;
 }

@@ -8,7 +8,7 @@ use wasm_bindgen::UnwrapThrowExt as _;
 
 use crate::{
     render::RenderWithContext,
-    ui_handle::{UiHandle, UnmountedUiHandle},
+    ui_handle::{ProvideMutMounted, UiHandle, UnmountedUiHandle},
 };
 
 pub mod event_listener;
@@ -32,6 +32,16 @@ impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UnmountedUiHandle<R> for Nod
     {
         R::mount_node(render_context, self.0.as_ref());
         self
+    }
+}
+
+impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> ProvideMutMounted<R> for Node<N> {
+    fn provide_mut_mounted<Out>(
+        &mut self,
+        renderer: &mut R,
+        f: impl FnOnce(&mut R, &mut Self::Mounted) -> Out,
+    ) -> Out {
+        f(renderer, self)
     }
 }
 
@@ -189,8 +199,15 @@ impl<'a> Cursor<'a> {
     }
 
     pub fn force_add_node(&mut self, node: &web_sys::Node) {
+        if self.skipped {
+            const MSG: &str = "Dom renderer's cursor can not be skipped when moving or adding node";
+            web_sys::console::warn_1(&MSG.into());
+            panic!("{}", MSG)
+        }
+
         match &self.position {
             CursorPosition::FirstChildOf(parent) => {
+                // TODO: is this correct for DocumentFragment?
                 parent.prepend_with_node_1(node).unwrap_throw();
             }
             CursorPosition::After(pre) => {
@@ -296,6 +313,27 @@ impl<'a, R: ?Sized + Renderer> crate::render::RenderContext for RenderContext<'a
 
     fn mark_cursor_skipped(&mut self) {
         self.cursor.skipped = true;
+    }
+
+    fn map_mut_unrendered_render_context_and_then_reposition<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        use wasm_bindgen::JsCast as _;
+        let fragment = self.renderer.document().create_document_fragment();
+
+        let mut cursor = Cursor {
+            position: CursorPosition::FirstChildOf(Cow::Borrowed(fragment.unchecked_ref())), // TODO: type checking
+            skipped: false,
+        };
+        let res = f(&mut RenderContext {
+            renderer: self.renderer,
+            cursor: &mut cursor,
+        });
+
+        self.cursor.force_add_node(&fragment);
+
+        res
     }
 }
 

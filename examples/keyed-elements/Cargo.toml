@@ -6,11 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-frender = { path = "../../packages/frender", features = [
+frender = { path = "../../packages/frender", default-features = false, features = [
     "web",
     "spawn",
+    "html-components",
     "KeyedElements",
+    "either",
 ] }
 hooks = "3.0.0-alpha"
 gloo = "0.8.0"
 either = "1.8.1"
+console_error_panic_hook = "0.1.7"

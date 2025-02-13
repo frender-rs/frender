@@ -2206,6 +2206,7 @@ dependencies = [
 name = "keyed-elements"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "either",
  "frender",
  "gloo 0.8.0",

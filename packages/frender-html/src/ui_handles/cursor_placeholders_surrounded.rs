@@ -53,6 +53,27 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
         )
     }
 
+    pub fn output_and_surround<R: ?Sized + RenderWithContext, Out>(
+        //
+        render_context: &mut R::RenderContext<'_>,
+        f: impl FnOnce(&mut R::RenderContext<'_>) -> (Out, UH),
+    ) -> (Out, Self)
+    where
+        C: NodeRenderSelf<R>,
+    {
+        let a = C::render_self(render_context);
+        let (out, ui_handle) = f(render_context);
+        let b = C::render_self(render_context);
+        (
+            out,
+            Self {
+                //
+                cursor_placeholders: [a, b],
+                ui_handle,
+            },
+        )
+    }
+
     pub fn map_mut_surrounded_with_render_context<R: ?Sized + RenderWithContext, Out>(
         //
         &mut self,
@@ -89,6 +110,32 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
         });
 
         out
+    }
+
+    pub fn mount_and_map<R: ?Sized + RenderWithContext, Out, MUH>(
+        //
+        self,
+        render_context: &mut R::RenderContext<'_>,
+        f: impl FnOnce(UH, &mut R::RenderContext<'_>) -> (Out, MUH),
+    ) -> (Out, CursorPlaceholdersSurrounded<C::Mounted, MUH>)
+    where
+        C: UnmountedUiHandle<R>,
+    {
+        let Self {
+            cursor_placeholders: [start, end],
+            ui_handle,
+        } = self;
+
+        let start = start.mount(render_context);
+        let (out, ui_handle) = f(ui_handle, render_context);
+        let end = end.mount(render_context);
+        (
+            out,
+            CursorPlaceholdersSurrounded {
+                cursor_placeholders: [start, end],
+                ui_handle,
+            },
+        )
     }
 }
 

@@ -211,9 +211,10 @@ where
 
 // endregion
 
-pub struct RenderInit<PB, P, IPAP, IC> {
+pub struct RenderInit<PB, P, UP, IPAP, IC> {
     _parent_as_behavior_type: PhantomData<PB>,
-    parent: P,
+    _parent: PhantomData<P>,
+    unmounted_parent: UP,
     init_parent_attributes_pinned: IPAP,
     init_children: IC,
 }
@@ -221,7 +222,8 @@ pub struct RenderInit<PB, P, IPAP, IC> {
 impl<
         //
         PB,
-        P: IntoMut<PB>,
+        UP: UnmountedUiHandle<Ctx::Renderer>,
+        P: IntoMut<PB> + From<UP::Mounted>,
         PAU,
         IPAP: for<'r, 'p> RenderInitPinned<(&'r mut Ctx::Renderer, &'p mut PB), SPAP, Output = ()>,
         IC: for<'r, 'p> RenderInitPinned<(&'r mut Ctx::Renderer, &'p mut PB), SC, Output = C>,
@@ -229,21 +231,26 @@ impl<
         SC,
         SPAP,
         Ctx: ?Sized + HtmlRenderContext,
-    > RenderInitPinned<&mut Ctx, ParentWithChildrenState<SC, PAU, SPAP>> for RenderInit<PB, P, IPAP, IC>
+    > RenderInitPinned<&mut Ctx, ParentWithChildrenState<SC, PAU, SPAP>> for RenderInit<PB, P, UP, IPAP, IC>
 {
     type Output = ParentWithChildren<P, C>;
     fn render_init_pinned(self, render_context: &mut Ctx, state: Pin<&mut ParentWithChildrenState<SC, PAU, SPAP>>) -> Self::Output {
-        let renderer = render_context.renderer_mut();
         let Self {
             _parent_as_behavior_type: PhantomData,
-            mut parent,
+            _parent,
+            unmounted_parent,
             init_parent_attributes_pinned,
             init_children,
         } = self;
 
+        let parent = render_context.map_mut_render_context(|render_context| unmounted_parent.mount(render_context));
+        let mut parent: P = From::from(parent);
+
         let state = state.project();
 
         let p: &mut PB = parent.into_mut();
+
+        let renderer = render_context.renderer_mut();
 
         let () = init_parent_attributes_pinned.render_init_pinned((renderer, p), state.parent_attributes_pinned);
         let children = init_children.render_init_pinned((renderer, p), state.children);
@@ -277,19 +284,22 @@ where
         //
         BT::OfBehaviorType<R>,
         BT::Element<R>,
+        BT::UnmountedUiHandle<R>,
         AttrsWithPinnedState::PinnedRenderInitWithBehavior<R>,
         BT::ChildrenPinnedRenderInit<R>,
     >;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        renderer: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
+        use frender_dom::ui_handle::ProvideMutMounted as _;
+
         let Self {
             //
             type_marker,
@@ -298,28 +308,34 @@ where
             children,
         } = self;
 
-        let parent = BT::create_and_mount_ui_handle_of_type(render_context);
-        let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
+        let mut unmounted_parent = BT::create_unmounted_ui_handle_of_type(renderer);
 
-        let renderer = render_context.renderer_mut();
+        let (init_state, init_ap, init_children) = unmounted_parent.provide_mut_mounted(renderer, |renderer, parent| {
+            let parent_b: &mut BT::OfBehaviorType<Renderer> = parent.into_mut();
 
-        let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
+            let state_au = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
+            let (state_ap, init_ap) = AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b);
 
-        let state_au = Attrs::unpinned_render_init_with_behavior(attributes, renderer, parent_b);
-        let (state_ap, init_ap) = AttrsWithPinnedState::pinned_render_init_with_behavior(attributes_with_pinned_state, renderer, parent_b);
+            let (children, init_children) = type_marker.children_pinned_render_init(children, renderer, parent_b);
 
-        let (children, init_children) = type_marker.children_pinned_render_init(children, renderer, parent_b);
+            (
+                ParentWithChildrenState {
+                    children,
+                    parent_attributes_unpinned: state_au,
+                    parent_attributes_pinned: state_ap,
+                },
+                init_ap,
+                init_children,
+            )
+        });
 
         (
             //
-            ParentWithChildrenState {
-                children,
-                parent_attributes_unpinned: state_au,
-                parent_attributes_pinned: state_ap,
-            },
+            init_state,
             RenderInit {
                 _parent_as_behavior_type: PhantomData,
-                parent,
+                _parent: PhantomData,
+                unmounted_parent,
                 init_parent_attributes_pinned: init_ap,
                 init_children,
             },
@@ -343,7 +359,8 @@ where
 
         let ParentWithChildren { parent, children: mut children_ui_handle } = unmounted_ui_handle;
 
-        let mut parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
+        let parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
+        let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
 
         let renderer = render_context.renderer_mut();
         let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();
@@ -435,7 +452,8 @@ where
             children,
         } = self;
 
-        let mut parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
+        let parent = render_context.map_mut_render_context(|render_context| parent.mount(render_context));
+        let mut parent: BT::Element<Ctx::Renderer> = From::from(parent);
 
         let renderer = render_context.renderer_mut();
         let parent_b: &mut BT::OfBehaviorType<Ctx::Renderer> = parent.into_mut();

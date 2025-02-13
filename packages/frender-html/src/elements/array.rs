@@ -62,21 +62,21 @@ impl<E: CsrElement, const N: usize> CsrElement for [E; N] {
     type RenderStateKind = Kind<E::RenderStateKind, N>;
     type PinnedRenderInit<R: ?Sized + RenderHtml> = [E::PinnedRenderInit<R>; N];
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
+        renderer: &mut Renderer,
     ) -> (
         //
-        element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        Self::PinnedRenderInit<Ctx::Renderer>,
+        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
     ) {
         use arrayvec::ArrayVec;
 
         let (states, render_inits) = self
             .into_iter()
             //
-            .map(|el| el.pinned_render_init(render_context))
+            .map(|el| el.pinned_render_init(renderer))
             .unzip::<_, _, ArrayVec<_, N>, ArrayVec<_, N>>();
 
         let (

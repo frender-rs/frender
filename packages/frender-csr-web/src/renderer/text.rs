@@ -1,4 +1,4 @@
-use frender_html::{dom::csr::web::Node, dom::render::RenderTextFrom};
+use frender_html::dom::{csr::web::Node, render::RenderTextFrom};
 
 use super::Renderer;
 
@@ -31,16 +31,16 @@ mod js_shims {
     }
 }
 
-mod to_js_string {
+mod into_js_string {
     use wasm_bindgen::JsValue;
 
-    pub(super) trait ToJsString {
-        fn to_js_string(&self) -> js_sys::JsString;
+    pub(super) trait IntoJsString {
+        fn into_js_string(self) -> js_sys::JsString;
     }
 
-    impl ToJsString for char {
-        fn to_js_string(&self) -> js_sys::JsString {
-            From::from(*self)
+    impl IntoJsString for char {
+        fn into_js_string(self) -> js_sys::JsString {
+            From::from(self)
         }
     }
 
@@ -56,88 +56,124 @@ mod to_js_string {
     }
 
     impl_for_each_of!(
-        impl<__> ToJsString
+        impl<__> IntoJsString
             for each_of! {
                 i8, u8, i16, u16, i32, u32, i64, u64, i128, u128, isize, usize,
                 f32, f64,
-                bool,
             }
         {
-            fn to_js_string(&self) -> js_sys::JsString {
-                super::js_shims::js_string(JsValue::from(*self))
+            fn into_js_string(self) -> js_sys::JsString {
+                super::js_shims::js_string(JsValue::from(self))
             }
         }
     );
 }
 
-mod to_text_node {
+mod into_text_node {
+    use std::{borrow::Cow, rc::Rc, sync::Arc};
+
+    use wasm_bindgen::JsCast as _;
+
+    use frender_common::{
+        impl_many, strings::AsRefStr as _, value_kind::StaticRefOrTempOwned, TempStr,
+    };
     use frender_html::dom::string_element::StringElement;
 
     use super::Renderer;
 
-    pub(super) trait ToTextNode {
-        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text;
+    pub(super) trait IntoTextNode {
+        fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text;
 
-        fn update_text_node(&self, renderer: &mut Renderer, text: &web_sys::Text);
+        fn update_text_node(self, renderer: &mut Renderer, text: &web_sys::Text);
     }
 
-    impl<V: ?Sized + super::to_js_string::ToJsString> ToTextNode for V {
-        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
-            use wasm_bindgen::JsCast;
+    impl<V: super::into_js_string::IntoJsString> IntoTextNode for V {
+        fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
             super::js_shims::Document::create_text_node(
                 renderer.document.unchecked_ref(),
-                self.to_js_string(),
+                self.into_js_string(),
             )
         }
 
-        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
-            use wasm_bindgen::JsCast;
-            super::js_shims::Text::set_data(text.unchecked_ref(), self.to_js_string())
+        fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
+            super::js_shims::Text::set_data(text.unchecked_ref(), self.into_js_string())
         }
     }
 
-    impl ToTextNode for str {
-        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
-            renderer.document.create_text_node(self)
-        }
+    impl_many!(
+        impl<__> IntoTextNode
+            for each_of![
+                //
+                &'static str,
+                String,
+                Cow<'static, str>,
+                TempStr<&str>,
+                StaticRefOrTempOwned<'_, str>,
+                Rc<str>,
+                &Rc<str>,
+                Arc<str>,
+                &Arc<str>,
+            ]
+        {
+            fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
+                renderer.document.create_text_node(self.as_ref_str())
+            }
 
-        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
-            text.set_data(self)
+            fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
+                text.set_data(self.as_ref_str())
+            }
         }
-    }
+    );
 
-    impl ToTextNode for StringElement {
-        fn to_text_node(&self, renderer: &mut Renderer) -> web_sys::Text {
-            match self.as_js_string() {
-                Ok(this) => {
-                    use wasm_bindgen::JsCast;
-                    super::js_shims::Document::create_text_node_ref(
-                        renderer.document.unchecked_ref(),
-                        this,
-                    )
-                }
-                Err(this) => renderer.document.create_text_node(this),
+    impl IntoTextNode for StringElement {
+        fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
+            match self.into_js_string() {
+                Ok(this) => super::js_shims::Document::create_text_node(
+                    renderer.document.unchecked_ref(),
+                    this,
+                ),
+                Err(this) => renderer.document.create_text_node(&this),
             }
         }
 
-        fn update_text_node(&self, _: &mut Renderer, text: &web_sys::Text) {
+        fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
+            match self.into_js_string() {
+                Ok(this) => super::js_shims::Text::set_data(text.unchecked_ref(), this),
+                Err(this) => text.set_data(&this),
+            }
+        }
+    }
+
+    impl IntoTextNode for &StringElement {
+        fn into_text_node(self, renderer: &mut Renderer) -> web_sys::Text {
             match self.as_js_string() {
-                Ok(this) => {
-                    use wasm_bindgen::JsCast;
-                    super::js_shims::Text::set_data_ref(text.unchecked_ref(), this)
-                }
-                Err(this) => text.set_data(this),
+                Ok(this) => super::js_shims::Document::create_text_node_ref(
+                    renderer.document.unchecked_ref(),
+                    this,
+                ),
+                Err(this) => renderer.document.create_text_node(&this),
+            }
+        }
+
+        fn update_text_node(self, _: &mut Renderer, text: &web_sys::Text) {
+            match self.as_js_string() {
+                Ok(this) => super::js_shims::Text::set_data_ref(text.unchecked_ref(), this),
+                Err(this) => text.set_data(&this),
             }
         }
     }
 }
 
-impl<V: ?Sized + to_text_node::ToTextNode> RenderTextFrom<Node<web_sys::Text>, V> for Renderer {
-    fn render_text_from(&mut self, v: &V) -> Node<web_sys::Text> {
-        Node(v.to_text_node(self))
+impl<V: into_text_node::IntoTextNode> RenderTextFrom<V> for Renderer {
+    type Text = Node<web_sys::Text>;
+
+    fn render_text_from(render_context: &mut Self::RenderContext<'_>, v: V) -> Self::Text {
+        let text = v.into_text_node(render_context.renderer);
+        <Self as frender_html::dom::csr::web::Renderer>::mount_node(render_context, &text);
+        Node(text)
     }
 
-    fn update_text_from(&mut self, text: &mut Node<web_sys::Text>, v: &V) {
+    fn update_text_from(&mut self, text: &mut Self::Text, v: V) {
         v.update_text_node(self, &text.0)
     }
 }

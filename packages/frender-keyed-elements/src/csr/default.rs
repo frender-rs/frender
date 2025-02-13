@@ -3,13 +3,13 @@
 //! - Case I : `1 2 3 4 5 6 7        => 1 *4* 2 3 4 5 6 7`
 //! - Case II: `1 2 3 4 5 6 7 8 9... => 1  4  5 6 7 8 9 ... *2 3*`
 //!
-//! In case I, it's more performant to just move *4* to after 2
-//! (force_reposition *4* and go on as normal).
+//! In case I, it's more performant to just move *4* to after 1
+//! (reposition *4* and go on as normal).
 //!
 //! In case II, it's more performant to move *2 3* to the end.
 //! (mark *2 3* as MightUnmount and go on as normal.
-//! When *2* is met, force_reposition *2*.
-//! When *3* is met, force_reposition *3*.).
+//! When *2* is met, reposition *2*.
+//! When *3* is met, reposition *3*.).
 //!
 //! The problem is: while iterating elements, we meet *1* followed by *4*.
 //! We can't decide this is case I or case II.
@@ -21,38 +21,74 @@
 //!
 //! # Implementation details
 //!
-//! The render state `Element::UnpinnedRenderState` might NOT get dropped when unmounted.
-//! [`RenderState::unmount`] will always run when unmounted.
+//! The render state [`UnpinnedState`](UnpinnedRenderStateKind::UnpinnedState) might NOT get dropped when unmounted.
+//! [`StateUnmount::state_unmount`] will always run when unmounted.
 
 use std::{cmp::Ordering, hash::Hash, marker::PhantomData, pin::Pin, task::Poll};
 
-use indexmap::IndexMap;
+use indexmap::{map::Entry, IndexMap};
 
 use frender_html::{
     dom::{
         render::RenderContext,
         ui_handle::{UiHandle, UnmountedUiHandle},
     },
-    elements::option::UiHandleMaybe,
-    experimental::{RenderStates, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    experimental::{self, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     ui_handles::CursorPlaceholdersSurrounded,
-    CsrElement, HtmlRenderContext, RenderHtml, StateUnmount,
+    CsrElement, RenderHtml, StateUnmount,
 };
 
 use crate::{DefaultAlgorithm, Keyed};
 
-use super::{ElementsAlgorithm, KeyedElementsAlgorithm};
+use super::KeyedElementsAlgorithm;
 
-struct State<M, U, S> {
-    // TODO: UiHandleMaybe is used to avoid re-alloc when unmount and mount with the cost of larger size.
-    // This might be optimized with one of the followings:
-    // - union
-    // - in place collect <https://doc.rust-lang.org/src/alloc/vec/in_place_collect.rs.html>
-    ui_handle: UiHandleMaybe<M, U>,
-    non_reactive_state: S,
+struct StatedUiHandle<U> {
     // The following fields could have a smaller representation like `usize`.
     order: usize,
     update_state: UpdateState,
+
+    // TODO: We rely on in-place collect <https://doc.rust-lang.org/src/alloc/vec/in_place_collect.rs.html>
+    // since in current implementation MountedUiHandle and UnmountedUiHandle are the same type.
+    //
+    // This might be implemented with UiHandleMaybe<M, U> to avoid re-alloc when unmount and mount
+    // with the cost of larger size and some runtime overhead.
+    //
+    // This might be optimized with union.
+    ui_handle: U,
+}
+
+impl<U> StatedUiHandle<U> {
+    fn map_ui_handle<T>(self, f: impl FnOnce(U) -> T) -> StatedUiHandle<T> {
+        let Self {
+            order,
+            update_state,
+            ui_handle,
+        } = self;
+        StatedUiHandle {
+            order,
+            update_state,
+            ui_handle: f(ui_handle),
+        }
+    }
+
+    fn sort(this: &mut [Self]) {
+        let mut cur = 0;
+
+        while let Some(cur_u) = this.get(cur) {
+            if cur_u.order != cur {
+                this.swap(cur, cur_u.order);
+            } else {
+                cur += 1;
+            }
+        }
+
+        if cfg!(debug_assertions) {
+            if !(this.iter().enumerate().all(|(i, u)| i == u.order)) {
+                let unsorted = this.iter().map(|u| u.order).collect::<Vec<_>>();
+                panic!("Failed to sort StatedUiHandles: {:?}", unsorted.as_slice())
+            }
+        }
+    }
 }
 
 // TODO: implement with bit fields for simplicity
@@ -106,40 +142,37 @@ impl UpdateState {
 }
 
 // the first `key_to_index.len()` states are mounted.
-pub struct UiHandlesWithNonReactiveStates<M, U, S>(Vec<State<M, U, S>>);
+pub struct UiHandles<U>(Vec<StatedUiHandle<U>>);
 
-pub struct UnmountedUiHandlesWithNonReactiveStates<M, U, S>(Vec<State<M, U, S>>);
+pub struct UnmountedUiHandles<U>(Vec<StatedUiHandle<U>>);
 
-impl<U: UnmountedUiHandle<R>, S, R: ?Sized> UnmountedUiHandle<R>
-    for UnmountedUiHandlesWithNonReactiveStates<U::Mounted, U, S>
-{
-    type Mounted = UiHandlesWithNonReactiveStates<U::Mounted, U, S>;
+impl<U: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R> for UnmountedUiHandles<U> {
+    type Mounted = UiHandles<U::Mounted>;
 
     fn mount(mut self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
         R: frender_html::dom::render::RenderWithContext,
     {
-        self.0
-            .iter_mut()
-            .for_each(|this| _ = this.ui_handle.mount_in_place(render_context));
-
-        UiHandlesWithNonReactiveStates(self.0)
+        StatedUiHandle::sort(&mut self.0);
+        UiHandles(
+            self.0
+                .into_iter()
+                .map(|this| this.map_ui_handle(|u| u.mount(render_context)))
+                .collect(),
+        )
     }
 }
 
-impl<M: UiHandle<R>, S, R: ?Sized> UiHandle<R>
-    for UiHandlesWithNonReactiveStates<M, M::Unmounted, S>
-{
-    type Unmounted = UnmountedUiHandlesWithNonReactiveStates<M, M::Unmounted, S>;
+impl<M: UiHandle<R>, R: ?Sized> UiHandle<R> for UiHandles<M> {
+    type Unmounted = UnmountedUiHandles<M::Unmounted>;
 
-    fn unmount(mut self, renderer: &mut R) -> Self::Unmounted {
-        for this in self.0.iter_mut() {
-            let UiHandleMaybe::Mounted(mounted) = this.ui_handle.take() else {
-                unreachable!()
-            };
-            this.ui_handle = UiHandleMaybe::Unmounted(mounted.unmount(renderer));
-        }
-        UnmountedUiHandlesWithNonReactiveStates(self.0)
+    fn unmount(self, renderer: &mut R) -> Self::Unmounted {
+        UnmountedUiHandles(
+            self.0
+                .into_iter()
+                .map(|this| this.map_ui_handle(|u| u.unmount(renderer)))
+                .collect(),
+        )
     }
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
@@ -147,10 +180,7 @@ impl<M: UiHandle<R>, S, R: ?Sized> UiHandle<R>
         R: frender_html::dom::render::RenderWithContext,
     {
         for this in self.0.iter_mut() {
-            match &mut this.ui_handle {
-                UiHandleMaybe::Mounted(mounted) => mounted.reposition(render_context),
-                _ => unreachable!(),
-            }
+            this.ui_handle.reposition(render_context);
         }
     }
 
@@ -159,10 +189,7 @@ impl<M: UiHandle<R>, S, R: ?Sized> UiHandle<R>
         R: frender_html::dom::render::RenderWithContext,
     {
         for this in self.0.iter() {
-            match &this.ui_handle {
-                UiHandleMaybe::Mounted(mounted) => mounted.check_and_move_cursor(render_context),
-                _ => unreachable!(),
-            }
+            this.ui_handle.check_and_move_cursor(render_context);
         }
     }
 
@@ -176,57 +203,17 @@ impl<M: UiHandle<R>, S, R: ?Sized> UiHandle<R>
     }
 }
 
-pub struct KeyToIndex<K>(IndexMap<K, ()>);
+pub struct States<K, S>(IndexMap<K, S>);
 
-pub struct ReactiveStates<S>(Vec<S>);
+impl<K, S> Unpin for States<K, S> {}
 
-impl<S> Default for ReactiveStates<S> {
-    fn default() -> Self {
-        Self(Default::default())
-    }
-}
-
-impl<S: StateUnmount + Unpin> StateUnmount for ReactiveStates<S> {
+impl<K, S: StateUnmount + Unpin> StateUnmount for States<K, S> {
     fn state_unmount(self: Pin<&mut Self>) {
         self.get_mut()
             .0
-            .iter_mut()
+            .values_mut()
             .map(Pin::new)
             .for_each(S::state_unmount)
-    }
-}
-
-#[cfg(todo)]
-fn insert_at_index<'s, K: Hash + Eq, S: Default>(
-    states: &'s mut Vec<State<S>>,
-    key_to_index: &mut IndexMap<K, ()>,
-    key: K,
-    index: usize,
-) -> &'s mut State<S> {
-    debug_assert!(index <= key_to_index.len());
-    let old_index = match key_to_index.entry(key) {
-        indexmap::map::Entry::Occupied(entry) => entry.index(),
-        indexmap::map::Entry::Vacant(entry) => {
-            let real_len = entry.index();
-            entry.insert(());
-            push_state_with_real_len(states, real_len);
-            real_len
-        }
-    };
-
-    if old_index != index {
-        key_to_index.swap_indices(old_index, index);
-        states.swap(old_index, index);
-    }
-
-    &mut states[index]
-}
-
-fn push_state_with_real_len<T: Default>(states: &mut Vec<T>, real_len: usize) {
-    debug_assert!(states.len() >= real_len);
-
-    if states.len() == real_len {
-        states.push(Default::default());
     }
 }
 
@@ -234,16 +221,9 @@ enum Never {}
 pub struct Kind<K: Hash + Eq, EK: UnpinnedRenderStateKind>(Never, PhantomData<(K, EK)>);
 
 impl<K: Hash + Eq, EK: UnpinnedRenderStateKind> UnpinnedRenderStateKind for Kind<K, EK> {
-    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = CursorPlaceholdersSurrounded<
-        R::CursorPlaceholder,
-        UiHandlesWithNonReactiveStates<
-            EK::UnpinnedUiHandle<R>,
-            <EK::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted,
-            EK::UnpinnedNonReactiveState<R>,
-        >,
-    >;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = KeyToIndex<K>;
-    type UnpinnedReactiveState = ReactiveStates<EK::UnpinnedReactiveState>;
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> =
+        CursorPlaceholdersSurrounded<R::CursorPlaceholder, UiHandles<EK::UnpinnedUiHandle<R>>>;
+    type UnpinnedState<R: RenderHtml + ?Sized> = States<K, EK::UnpinnedState<R>>;
 }
 
 impl<K: Hash + Eq, EK: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKindPollRender
@@ -252,39 +232,18 @@ impl<K: Hash + Eq, EK: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKin
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        RenderStates {
-            ui_handle,
-            non_reactive_state: KeyToIndex(key_to_index),
-            reactive_state: ReactiveStates(reactive_states),
-        }: frender_html::experimental::UnpinnedMutRenderStatesOfKind<Self, R>,
+        States(states): &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let UiHandlesWithNonReactiveStates(states) = ui_handle.surrounded_mut();
-        debug_assert_eq!(states.len(), key_to_index.len());
-        debug_assert_eq!(states.len(), reactive_states.len());
+        let UiHandles(ui_handles) = ui_handle.surrounded_mut();
+        debug_assert_eq!(ui_handles.len(), states.len());
 
         let mut res = Poll::Ready(());
-        for (
-            State {
-                ui_handle,
-                non_reactive_state,
-                ..
-            },
-            reactive_state,
-        ) in states.iter_mut().zip(reactive_states.iter_mut())
+        for (StatedUiHandle { ui_handle, .. }, state) in
+            ui_handles.iter_mut().zip(states.values_mut())
         {
-            let UiHandleMaybe::Mounted(ui_handle) = ui_handle else {
-                unreachable!()
-            };
-            if let Poll::Pending = EK::unpinned_poll_render(
-                renderer,
-                RenderStates {
-                    ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                },
-                cx,
-            ) {
+            if let Poll::Pending = EK::unpinned_poll_render(renderer, state, ui_handle, cx) {
                 res = Poll::Pending
             }
         }
@@ -296,6 +255,11 @@ impl<K: Hash + Eq, EK: UnpinnedRenderStateKindPollRender> UnpinnedRenderStateKin
 impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgorithm {
     type KeyedElementsRenderStateKind = Kind<K, E::RenderStateKind>;
 
+    fn dummy_state<Renderer: ?Sized + RenderHtml>(
+    ) -> experimental::UnpinnedStateOfKind<Renderer, Self::KeyedElementsRenderStateKind> {
+        States(Default::default())
+    }
+
     fn keyed_elements_render_init<
         I: IntoIterator<Item = Keyed<K, E>>,
         Ctx: ?Sized + frender_html::HtmlRenderContext,
@@ -303,98 +267,116 @@ impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgori
         self,
         elements: I,
         render_context: &mut Ctx,
-    ) -> frender_html::experimental::UnpinnedRenderStatesOfKind<
-        Self::KeyedElementsRenderStateKind,
-        Ctx::Renderer,
-    > {
-        let (ui_handle, (key_to_index, reactive_states)) =
-            render_context.map_mut_render_context(|render_context| {
-                CursorPlaceholdersSurrounded::surround_and_output(
-                    render_context,
-                    |render_context| {
-                        let (ui_handles, rest) = elements
-                            .into_iter()
-                            .enumerate()
-                            .map(|(order, Keyed(key, element))| {
-                                let RenderStates {
-                                    ui_handle,
-                                    non_reactive_state,
-                                    reactive_state,
-                                } = E::unpinned_render_init(element, render_context);
+    ) -> (
+        experimental::UnpinnedStateOfKind<Ctx::Renderer, Self::KeyedElementsRenderStateKind>,
+        experimental::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::KeyedElementsRenderStateKind>,
+    ) {
+        render_context.map_mut_render_context(|render_context| {
+            CursorPlaceholdersSurrounded::output_and_surround(render_context, |render_context| {
+                let (states, ui_handles) = elements
+                    .into_iter()
+                    .enumerate()
+                    .map(|(order, Keyed(key, element))| {
+                        let (state, ui_handle) = E::unpinned_render_init(element, render_context);
 
-                                (
-                                    // ui_handles
-                                    State {
-                                        ui_handle: UiHandleMaybe::Mounted(ui_handle),
-                                        non_reactive_state,
-                                        order,
-                                        update_state: UpdateState::Mounted,
-                                    },
-                                    (
-                                        // key_to_index
-                                        (key, ()),
-                                        // reactive_states
-                                        reactive_state,
-                                    ),
-                                )
-                            })
-                            .collect();
+                        (
+                            // key_to_state
+                            (key, state),
+                            // ui_handles
+                            StatedUiHandle {
+                                order,
+                                update_state: UpdateState::Mounted,
+                                ui_handle,
+                            },
+                        )
+                    })
+                    .collect();
 
-                        (UiHandlesWithNonReactiveStates(ui_handles), rest)
-                    },
-                )
-            });
-        RenderStates {
-            ui_handle,
-            non_reactive_state: KeyToIndex(key_to_index),
-            reactive_state: ReactiveStates(reactive_states),
-        }
+                (States(states), UiHandles(ui_handles))
+            })
+        })
     }
 
-    fn keyed_elements_render_update<
+    fn keyed_elements_render_init_by_reusing<
         I: IntoIterator<Item = Keyed<K, E>>,
         Ctx: ?Sized + frender_html::HtmlRenderContext,
     >(
         self,
         elements: I,
         render_context: &mut Ctx,
-        states: frender_html::experimental::UnpinnedMutRenderStatesOfKind<
-            Self::KeyedElementsRenderStateKind,
+        States(key_to_state): &mut experimental::UnpinnedStateOfKind<
             Ctx::Renderer,
+            Self::KeyedElementsRenderStateKind,
+        >,
+        unmounted_ui_handle: experimental::UnpinnedUnmountedUiHandleOfKind<
+            Ctx::Renderer,
+            Self::KeyedElementsRenderStateKind,
+        >,
+    ) -> experimental::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::KeyedElementsRenderStateKind>
+    {
+        render_context
+            .map_mut_render_context(|render_context| {
+                unmounted_ui_handle.mount_and_map(
+                    render_context,
+                    |UnmountedUiHandles(unmounted_ui_handles), render_context| {
+                        debug_assert_eq!(unmounted_ui_handles.len(), key_to_state.len());
+                        render_context.map_mut_unrendered_render_context_and_then_reposition(
+                            |render_context| {
+                                let mut ui_handles = render_context.map_mut_cloned_render_context(
+                                    |render_context| {
+                                        // TODO: sort before mount?
+                                        unmounted_ui_handles
+                                            .into_iter()
+                                            .enumerate()
+                                            .map(|(i, u)| StatedUiHandle {
+                                                order: i,
+                                                update_state: UpdateState::MightUnmounted,
+                                                ui_handle: u.ui_handle.mount(render_context),
+                                            })
+                                            .collect::<Vec<_>>()
+                                    },
+                                );
+
+                                render_update(
+                                    elements,
+                                    render_context,
+                                    key_to_state,
+                                    &mut ui_handles,
+                                );
+
+                                ((), UiHandles(ui_handles))
+                            },
+                        )
+                    },
+                )
+            })
+            .1
+    }
+
+    fn keyed_elements_render_update<
+        I: IntoIterator<Item = Keyed<K, E>>,
+        Renderer: ?Sized + frender_html::RenderHtml,
+    >(
+        self,
+        elements: I,
+        renderer: &mut Renderer,
+        States(key_to_state): &mut experimental::UnpinnedStateOfKind<
+            Renderer,
+            Self::KeyedElementsRenderStateKind,
+        >,
+        ui_handle: &mut experimental::UnpinnedUiHandleOfKind<
+            Renderer,
+            Self::KeyedElementsRenderStateKind,
         >,
     ) {
-        use frender_html::dom::behaviors::{Node as _, NodeRenderSelf};
-
-        let RenderStates {
-            ui_handle,
-            non_reactive_state,
-            reactive_state,
-        } = states;
-
-        render_context.map_mut_render_context(|render_context| {
-            ui_handle.map_mut_surrounded_with_render_context(
-                render_context,
-                |ui_handle, render_context| {
-                    render_update(
-                        elements,
-                        render_context,
-                        RenderStates {
-                            ui_handle,
-                            non_reactive_state,
-                            reactive_state,
-                        },
-                    )
-                },
-            )
-        })
+        ui_handle.use_surrounded_render_context(
+            renderer,
+            |UiHandles(ui_handles), render_context| {
+                render_update(elements, render_context, key_to_state, ui_handles)
+            },
+        )
     }
 }
-
-type UiHandlesOfKind<EK, R> = UiHandlesWithNonReactiveStates<
-    <EK as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>,
-    <<EK as UnpinnedRenderStateKind>::UnpinnedUiHandle<R> as UiHandle<R>>::Unmounted,
-    <EK as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<R>,
->;
 
 fn render_update<
     K: Hash + Eq,
@@ -404,43 +386,36 @@ fn render_update<
 >(
     elements: I,
     render_context: &mut R::RenderContext<'_>,
-    RenderStates {
-        ui_handle: UiHandlesWithNonReactiveStates(states),
-        non_reactive_state: KeyToIndex(key_to_index),
-        reactive_state: ReactiveStates(reactive_states),
-    }: RenderStates<
-        &mut UiHandlesOfKind<E::RenderStateKind, R>,
-        &mut KeyToIndex<K>,
-        &mut ReactiveStates<<E::RenderStateKind as UnpinnedRenderStateKind>::UnpinnedReactiveState>,
+    key_to_state: &mut IndexMap<K, experimental::UnpinnedStateOfKind<R, E::RenderStateKind>>,
+    ui_handles: &mut Vec<
+        StatedUiHandle<experimental::UnpinnedUiHandleOfKind<R, E::RenderStateKind>>,
     >,
 ) {
-    let elements = elements.into_iter();
-
     // TODO: specialize for ExactSizeIterator
+    // let elements = elements.into_iter();
     // if elements.len() == 0 {
     // }
 
     let mut cur = 0;
     let mut old_cur = 0;
 
-    let old_mounted_count = key_to_index.len();
+    let old_mounted_count = key_to_state.len();
 
-    states.iter_mut().for_each(|state| {
+    ui_handles.iter_mut().for_each(|state| {
         state.update_state = UpdateState::MightUnmounted;
     });
 
     for Keyed(key, element) in elements {
-        match key_to_index.entry(key) {
-            indexmap::map::Entry::Occupied(entry) => {
+        match key_to_state.entry(key) {
+            Entry::Occupied(mut entry) => {
                 // old element old state, possible new position
 
                 let index = entry.index();
-                let State {
+                let StatedUiHandle {
                     ui_handle,
-                    non_reactive_state,
                     order,
                     update_state,
-                } = &mut states[index];
+                } = &mut ui_handles[index];
 
                 enum Strategy {
                     // force_position = false
@@ -457,11 +432,11 @@ fn render_update<
                     Ordering::Equal => Strategy::NoMove,
                     Ordering::Less => {
                         let old_order = *order;
-                        // order = 4, old_cur = 2
+                        // old_order = 4, old_cur = 1
                         // *4* is moved left or *2 3* is moved right
-                        // 1 2 3 4 => 1 4 2 3
-                        // 1 2 3 4 5 6 7 8 => 1 4 2 3 5 6 7 8
-                        // 1 2 3 4 5 6 7 8 => 1 4 5 6 7 8 2 3
+                        // 1 2 3 4 => 1 4 2 3                  MoveLeft
+                        // 1 2 3 4 5 6 7 8 => 1 4 2 3 5 6 7 8  Skip (*2 3* will move right)
+                        // 1 2 3 4 5 6 7 8 => 1 4 5 6 7 8 2 3  Skip (*5 6 7 8* will NoMove, *2 3* will move right)
                         let before = old_order - old_cur;
                         let after = old_mounted_count - old_order;
 
@@ -481,28 +456,19 @@ fn render_update<
                     }
                 };
 
-                let UiHandleMaybe::Mounted(ui_handle) = ui_handle else {
-                    unreachable!()
-                };
+                let state = entry.get_mut();
+
+                element.unpinned_render_update(render_context.renderer_mut(), state, ui_handle);
 
                 {
                     let force_reposition =
                         matches!(strategy, Strategy::MoveLeft { .. } | Strategy::MoveRight);
                     if force_reposition {
                         ui_handle.reposition(render_context);
+                    } else {
+                        ui_handle.check_and_move_cursor(render_context);
                     }
                 }
-
-                let reactive_state = &mut reactive_states[index];
-
-                element.unpinned_render_update(
-                    render_context,
-                    RenderStates {
-                        ui_handle,
-                        non_reactive_state,
-                        reactive_state,
-                    },
-                );
 
                 update_state.mark_as_mounted();
                 let old_order = *order;
@@ -511,7 +477,7 @@ fn render_update<
                 match strategy {
                     Strategy::NoMove | Strategy::Skip => {
                         old_cur = old_order + 1;
-                        while states
+                        while ui_handles
                             .get_mut(old_cur)
                             .map(|state| state.update_state.take_old_moved_left())
                             .unwrap_or(false)
@@ -523,7 +489,7 @@ fn render_update<
                         debug_assert!(old_order > old_cur);
                         debug_assert!(old_order < old_mounted_count);
                         // mark state at old order `old_order` as moved left
-                        states[old_order].update_state.mark_as_old_moved_left();
+                        ui_handles[old_order].update_state.mark_as_old_moved_left();
                         // old_cur doesn't change
                     }
                     Strategy::MoveRight => {
@@ -531,45 +497,37 @@ fn render_update<
                     }
                 }
             }
-            indexmap::map::Entry::Vacant(entry) => {
+            Entry::Vacant(entry) => {
                 let index = entry.index();
-                debug_assert_eq!(states.len(), index);
-                debug_assert_eq!(reactive_states.len(), index);
+                debug_assert_eq!(ui_handles.len(), index);
                 // TODO: swap with the first MightUnmount state
 
-                let RenderStates {
+                let (state, ui_handle) = element.unpinned_render_init(render_context);
+                ui_handles.push(StatedUiHandle {
                     ui_handle,
-                    non_reactive_state,
-                    reactive_state,
-                } = element.unpinned_render_init(render_context);
-                states.push(State {
-                    ui_handle: UiHandleMaybe::Mounted(ui_handle),
-                    non_reactive_state,
                     order: cur,
                     update_state: UpdateState::Mounted,
                 });
 
-                reactive_states.push(reactive_state);
-
-                entry.insert(());
+                entry.insert(state);
             }
         };
 
         cur += 1;
     }
 
-    let real_len = key_to_index.len();
+    let real_len = key_to_state.len();
     let mut mounted_count = 0;
-    while mounted_count < key_to_index.len() {
-        if states[mounted_count]
+    while mounted_count < key_to_state.len() {
+        if ui_handles[mounted_count]
             .update_state
             .is_marked_as_might_unmounted()
         {
-            key_to_index.swap_remove_index(mounted_count);
-            states.swap(
+            key_to_state.swap_remove_index(mounted_count);
+            ui_handles.swap(
                 mounted_count,
                 // this has been decremented
-                key_to_index.len(),
+                key_to_state.len(),
             );
         } else {
             mounted_count += 1;
@@ -578,18 +536,10 @@ fn render_update<
 
     let renderer = render_context.renderer_mut();
 
-    states.drain(mounted_count..real_len).for_each(|state| {
-        debug_assert!(state.update_state.is_marked_as_might_unmounted());
-        let UiHandleMaybe::Mounted(ui_handle) = state.ui_handle else {
-            unreachable!()
-        };
-        _ = ui_handle.unmount(renderer);
+    ui_handles.drain(mounted_count..real_len).for_each(|u| {
+        debug_assert!(u.update_state.is_marked_as_might_unmounted());
+        _ = u.ui_handle.unmount(renderer);
     });
 
-    reactive_states
-        .drain(mounted_count..real_len)
-        .for_each(|mut state| Pin::new(&mut state).state_unmount());
-
-    debug_assert_eq!(states.len(), key_to_index.len());
-    debug_assert_eq!(reactive_states.len(), key_to_index.len());
+    debug_assert_eq!(ui_handles.len(), key_to_state.len());
 }
