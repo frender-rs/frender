@@ -1981,32 +1981,3 @@ where
         f
     }
 }
-
-/// An identity fn
-#[inline(always)]
-pub const fn synced_collection_make_fn_mut<
-    ES,
-    V: ?Sized,
-    F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, F2>,
-    F2: for<'a> FnMut1<<&'a ES as IntoIterator>::Item>,
->(
-    f: F,
-) -> F
-where
-    for<'a> &'a ES: IntoIterator,
-{
-    f
-}
-
-/// An identity fn
-#[inline(always)]
-pub const fn synced_vec_make_fn_mut<
-    T,
-    V: ?Sized,
-    F: for<'a> FnMut(&'a V) -> SyncedCollectionToElement<'a, std::slice::Iter<'a, T>, F2>,
-    F2: for<'a> FnMut1<&'a T>,
->(
-    f: F,
-) -> F {
-    synced_collection_make_fn_mut::<Vec<T>, V, F, F2>(f)
-}
