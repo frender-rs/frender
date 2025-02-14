@@ -1968,7 +1968,7 @@ where
 
     /// An identity fn
     #[inline(always)]
-    pub fn make_fn_mut<
+    pub const fn make_fn_mut<
         V: ?Sized,
         F: for<'a> FnMut(
             &'a V,
