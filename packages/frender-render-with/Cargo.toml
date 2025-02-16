@@ -5,15 +5,21 @@ edition = "2021"
 
 [dependencies]
 async-str-iter = { version = "0.1.0", path = "../async-str-iter", default-features = false }
-frender-html = { version = "0.1.0", path = "../frender-html" }
+frender-html = { version = "0.1.0", path = "../frender-html", default-features = false, features = [
+    "components",   # TODO: remove
+    "experimental",
+] }
 frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 
 [dev-dependencies]
 frender-html = { version = "0.1.0", path = "../frender-html", features = [
     "web",
+    "components",
 ] }
 frender-common = { version = "0.1.0", path = "../frender-common" }
-frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements" }
+frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements", features = [
+    "csr",
+] }
 hooks = { version = "3.0.0-alpha", default-features = false, features = [
     "Signal",
 ] }

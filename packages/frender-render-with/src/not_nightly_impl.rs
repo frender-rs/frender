@@ -1,19 +1,23 @@
-use std::task::Poll;
+use std::{any::Any, marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_html::{
-    dom::{render::RenderWithContext, ui_handle::UiHandle},
-    experimental::{
-        PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderStates,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+    dom::{
+        render::RenderWithContext,
+        ui_handle::{UiHandle, UnmountedUiHandle},
     },
-    kinds::UiHandleWithNonReactiveState,
-    StateUnmount,
+    experimental::{
+        self, RenderInitPinned, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+    },
+    kinds::KindUnpinned,
+    CsrElement, HtmlRenderContext, RenderHtml, StateUnmount,
 };
 
-use super::*;
+use crate::{
+    CsrRenderContext, CsrRenderContextInner, IntoFnOnceRenderWithContext, RenderWith, Rendered,
+    RenderedInner,
+};
 
 // region: dyn safe UiHandle
-
 trait DynSafeUnmountedUiHandle<Renderer: ?Sized> {
     fn mount<'a>(
         self: Box<Self>,
@@ -25,11 +29,7 @@ trait DynSafeUnmountedUiHandle<Renderer: ?Sized> {
         Renderer: RenderWithContext;
 }
 
-impl<R: ?Sized, T: UnmountedUiHandle<R>> DynSafeUnmountedUiHandle<R> for T
-where
-    // Note
-    T::Mounted: PollRender<R>,
-{
+impl<R: ?Sized, T: UnmountedUiHandle<R>> DynSafeUnmountedUiHandle<R> for T {
     fn mount<'a>(
         self: Box<Self>,
         render_context: &mut <R>::RenderContext<'_>,
@@ -43,9 +43,8 @@ where
     }
 }
 
-// Note the `PollRender<Renderer>` bound
-trait DynSafeUiHandle<Renderer: ?Sized>: PollRender<Renderer> {
-    fn upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+trait DynSafeUiHandle<Renderer: ?Sized> {
+    fn upcast_mut_ui_handle<'a>(&mut self) -> &mut (dyn 'a + Any)
     where
         Self: 'a;
 
@@ -70,8 +69,8 @@ trait DynSafeUiHandle<Renderer: ?Sized>: PollRender<Renderer> {
         Renderer: RenderWithContext;
 }
 
-impl<R: ?Sized, T: UiHandle<R> + PollRender<R>> DynSafeUiHandle<R> for T {
-    fn upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+impl<R: ?Sized, T: UiHandle<R>> DynSafeUiHandle<R> for T {
+    fn upcast_mut_ui_handle<'a>(&mut self) -> &mut (dyn 'a + Any)
     where
         Self: 'a,
     {
@@ -154,75 +153,90 @@ impl<'a, R: 'a + ?Sized> UiHandle<R> for BoxDynUiHandle<'a, R> {
     }
 }
 
+impl<'a, R: 'a + ?Sized> BoxDynUiHandle<'a, R> {
+    fn upcast_mut_ui_handle(&mut self) -> &mut (dyn 'a + Any) {
+        self.0.upcast_mut_ui_handle()
+    }
+
+    fn from_sized<U: 'a + UiHandle<R>>(u: Box<U>) -> Self {
+        Self(u)
+    }
+}
+impl<R: 'static + ?Sized> BoxDynUiHandle<'static, R> {
+    fn downcast_mut<U: 'static>(&mut self) -> Option<&mut U> {
+        self.upcast_mut_ui_handle().downcast_mut()
+    }
+}
 // endregion
 // region: ReactiveState
-
-trait AnyStateUnmount: StateUnmount {
-    fn upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+trait AnyState<R: ?Sized>: PollRender<R> {
+    fn state_state_unmount(self: Pin<&mut Self>);
+    fn state_upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
     where
         Self: 'a;
 }
-impl<T: StateUnmount> AnyStateUnmount for T {
-    fn upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+
+pub struct BoxDynState<'a, R: ?Sized>(Box<dyn 'a + AnyState<R> + Unpin>);
+
+impl<'a, R: ?Sized> BoxDynState<'a, R> {
+    fn dummy() -> Self {
+        Self(Box::new(DummyState))
+    }
+
+    fn upcast_mut_state(&mut self) -> &mut (dyn 'a + Any)
     where
-        Self: 'a,
+        R: 'a,
     {
-        self
+        AnyState::state_upcast_mut(self.as_mut_unboxed())
+    }
+
+    fn as_mut_unboxed(&mut self) -> &mut (dyn 'a + AnyState<R> + Unpin) {
+        &mut *self.0
+    }
+
+    fn from_sized<S: 'a + AnyState<R> + Unpin>(s: Box<S>) -> Self {
+        Self(s)
+    }
+
+    fn new<K: UnpinnedRenderStateKindPollRender + 'static>(state: K::UnpinnedState<R>) -> Self
+    where
+        R: RenderHtml,
+    {
+        Self::from_sized(Box::new(TypedState {
+            kind: PhantomData::<K>,
+            state,
+        }))
     }
 }
 
-pub struct OptionBoxReactiveState(Option<Box<dyn AnyStateUnmount + Unpin>>);
-
-impl Default for OptionBoxReactiveState {
-    fn default() -> Self {
-        Self(None)
-    }
-}
-
-impl StateUnmount for OptionBoxReactiveState {
+impl<'a, R: ?Sized> StateUnmount for BoxDynState<'a, R> {
     fn state_unmount(self: Pin<&mut Self>) {
-        if let Some(this) = &mut self.get_mut().0 {
-            Pin::new(this.as_mut()).state_unmount();
-        }
+        Pin::new(self.get_mut().as_mut_unboxed()).state_state_unmount();
     }
 }
 
 // endregion
-// region: dyn safe poll_render
-
-struct TypedReactiveState<S, K> {
-    reactive_state: S,
+// region: TypedState
+struct TypedState<S, K> {
     kind: PhantomData<K>,
+    state: S,
 }
 
-impl<S, K> Unpin for TypedReactiveState<S, K> {}
-
-impl<S: StateUnmount + Unpin, K> StateUnmount for TypedReactiveState<S, K> {
-    fn state_unmount(self: Pin<&mut Self>) {
-        S::state_unmount(Pin::new(&mut self.get_mut().reactive_state))
-    }
-}
-
+impl<S, K> Unpin for TypedState<S, K> {}
+// endregion
+// region: dyn safe poll_render
 trait PollRender<R: ?Sized> {
     fn poll_render(
         //
         &mut self,
         renderer: &mut R,
-        reactive_state: &mut OptionBoxReactiveState,
+        ui_handle: &mut BoxDynUiHandle<'static, R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>;
 }
 
-type UiHandleOfKind<K, R> = UiHandleWithNonReactiveState<
-    <K as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>,
-    (
-        <K as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<R>,
-        PhantomData<K>,
-    ),
->;
-
 impl<K: UnpinnedRenderStateKindPollRender, R: ?Sized + RenderHtml> PollRender<R>
-    for UiHandleOfKind<K, R>
+    for TypedState<K::UnpinnedState<R>, K>
 where
     // Note
     K: 'static,
@@ -231,41 +245,69 @@ where
         //
         &mut self,
         renderer: &mut R,
-        reactive_state: &mut OptionBoxReactiveState,
+        ui_handle: &mut BoxDynUiHandle<'static, R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let Self {
-            ui_handle,
-            non_reactive_state: (non_reactive_state, PhantomData),
-        } = self;
-
-        let reactive_state = reactive_state
-            .0
-            .get_or_insert_with(|| Box::new(<K::UnpinnedReactiveState>::default()));
-
-        let reactive_state = reactive_state.as_mut().upcast_mut().downcast_mut().unwrap();
-
         K::unpinned_poll_render(
             renderer,
-            RenderStates {
-                ui_handle,
-                non_reactive_state,
-                reactive_state,
-            },
+            &mut self.state,
+            ui_handle.downcast_mut().unwrap(),
             cx,
         )
     }
 }
+impl<K: UnpinnedRenderStateKindPollRender, R: ?Sized + RenderHtml> AnyState<R>
+    for TypedState<K::UnpinnedState<R>, K>
+where
+    // Note
+    K: 'static,
+{
+    fn state_state_unmount(self: Pin<&mut Self>) {
+        Pin::new(&mut self.get_mut().state).state_unmount()
+    }
 
-//
+    fn state_upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+    where
+        Self: 'a,
+    {
+        &mut self.state
+    }
+}
+// endregion
+// region: DummyState
+struct DummyState;
 
+impl<R: ?Sized> PollRender<R> for DummyState {
+    fn poll_render(
+        //
+        &mut self,
+        _: &mut R,
+        _: &mut BoxDynUiHandle<'static, R>,
+        _: &mut std::task::Context<'_>,
+    ) -> Poll<()> {
+        unreachable!()
+    }
+}
+
+impl<R: ?Sized> AnyState<R> for DummyState {
+    fn state_state_unmount(self: Pin<&mut Self>) {
+        unreachable!()
+    }
+    fn state_upcast_mut<'a>(&mut self) -> &mut (dyn 'a + Any)
+    where
+        Self: 'a,
+    {
+        unreachable!()
+    }
+}
+// endregion
+// region: kind
 enum Never {}
 pub struct Kind(Never);
 
 impl UnpinnedRenderStateKind for Kind {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = BoxDynUiHandle<'static, R>;
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type UnpinnedReactiveState = OptionBoxReactiveState;
+    type UnpinnedState<R: RenderHtml + ?Sized> = BoxDynState<'static, R>;
     // TODO: State should be statically typed and stacked allocated without Pin<Box<dyn __>> with [impl Trait in type aliases](https://github.com/rust-lang/rust/issues/63063)
 }
 
@@ -273,132 +315,142 @@ impl UnpinnedRenderStateKindPollRender for Kind {
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        RenderStates {
-            ui_handle,
-            non_reactive_state: (),
-            reactive_state,
-        }: frender_html::experimental::UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        ui_handle.0.poll_render(renderer, reactive_state, cx)
+        state.as_mut_unboxed().poll_render(renderer, ui_handle, cx)
     }
 }
+// endregion
+// region: RenderInit
+pub struct RenderInit<F>(F);
 
-impl PinnedRenderStateKind for Kind {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = BoxDynUiHandle<'static, R>;
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> = ();
-    type PinnedReactiveState = OptionBoxReactiveState;
-}
+impl<F: IntoFnOnceRenderWithContext, Ctx: ?Sized + HtmlRenderContext>
+    RenderInitPinned<&mut Ctx, BoxDynState<'static, Ctx::Renderer>> for RenderInit<F>
+{
+    type Output = BoxDynUiHandle<'static, Ctx::Renderer>;
 
-impl PinnedRenderStateKindPollRender for Kind {
-    fn pinned_poll_render<R: RenderHtml + ?Sized>(
-        //
-        renderer: &mut R,
-        RenderStates {
-            ui_handle,
-            non_reactive_state,
-            reactive_state,
-        }: frender_html::experimental::PinnedMutRenderStatesOfKind<Self, R>,
-        cx: &mut std::task::Context<'_>,
-    ) -> Poll<()> {
-        Self::unpinned_poll_render(
-            renderer,
-            RenderStates {
-                ui_handle,
-                non_reactive_state: non_reactive_state.get_mut(),
-                reactive_state: reactive_state.get_mut(),
-            },
-            cx,
-        )
+    fn render_init_pinned(
+        self,
+        render_context: &mut Ctx,
+        state: Pin<&mut BoxDynState<'static, Ctx::Renderer>>,
+    ) -> Self::Output {
+        let ui_handle;
+        (*state.get_mut(), ui_handle) = RenderWith(self.0).unpinned_render_init(render_context);
+        ui_handle
     }
 }
+// endregion
 
 impl<F: IntoFnOnceRenderWithContext> CsrElement for RenderWith<F> {
-    type RenderStateKind = Kind;
+    type RenderStateKind = KindUnpinned<Kind>;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<F>;
 
-    fn pinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: frender_html::experimental::PinMutRenderInitStatesOfKind<
-            Self::RenderStateKind,
-            Ctx::Renderer,
-        >,
-    ) -> frender_html::experimental::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>
-    {
-        todo!()
+        _: &mut Renderer,
+    ) -> (
+        //
+        experimental::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
+    ) {
+        (BoxDynState::dummy(), RenderInit(self.0))
     }
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        states: frender_html::experimental::PinnedMutRenderStatesOfKind<
-            Self::RenderStateKind,
-            Ctx::Renderer,
+        reused_state: Pin<
+            &mut experimental::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
         >,
+        unmounted_ui_handle: experimental::PinnedUnmountedUiHandleOfKind<
+            Ctx::Renderer,
+            Self::RenderStateKind,
+        >,
+    ) -> experimental::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        self.unpinned_render_init_by_reusing(
+            render_context,
+            reused_state.get_mut(),
+            unmounted_ui_handle,
+        )
+    }
+
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state: Pin<&mut experimental::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut experimental::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        todo!()
+        self.unpinned_render_update(renderer, state.get_mut(), ui_handle)
     }
 
     fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
-    ) -> UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        let f = self.0.into_fn_once_render_with_context::<Ctx>();
-        // f(CsrRenderContext { render_context })
-        todo!()
-    }
-
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    ) -> (
         //
-        self,
-        render_context: &mut Ctx,
-        states: frender_html::experimental::UnpinnedMutRenderStatesOfKind<
-            Self::RenderStateKind,
-            Ctx::Renderer,
-        >,
+        experimental::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        experimental::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) {
-        todo!()
-    }
+        fn render_init<K: UnpinnedRenderStateKindPollRender + 'static, R: ?Sized + RenderHtml>(
+            this: Rendered<K, R>,
+        ) -> (BoxDynState<'static, R>, BoxDynUiHandle<'static, R>) {
+            let Rendered(::core::marker::PhantomData, RenderedInner::Init((state, ui_handle))) =
+                this
+            else {
+                unreachable!()
+            };
 
-    #[cfg(a)]
-    fn render_update_maybe_reposition<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        render_state: Pin<&mut frender_html::RenderStateOfContext<Self::RenderStateKind, Ctx>>,
-        force_reposition: bool,
-    ) {
-        let state = render_state.get_mut();
-
-        let phantom_state = PhantomData;
-
-        fn default_pin_box_dyn_render_state_with_phantom_hint<
-            Renderer: ?Sized + RenderHtml,
-            K: RenderStateKindUnpinned + 'static,
-        >(
-            _: PhantomData<K>,
-        ) -> Pin<Box<dyn 'static + AnyRenderState<Renderer>>> {
-            Box::pin(<K::UnpinnedRenderState<Renderer> as Default>::default())
+            (
+                BoxDynState::<R>::new::<K>(state),
+                BoxDynUiHandle::from_sized(Box::new(ui_handle)),
+            )
         }
 
-        let state = state.get_or_insert_with(|| PinBoxDynRenderState {
-            render_state: default_pin_box_dyn_render_state_with_phantom_hint::<Ctx::Renderer, _>(
-                phantom_state,
-            ),
-        });
+        let f = self.0.into_fn_once_render_with_context::<Ctx::Renderer>();
+        render_context.map_mut_render_context(|render_context| {
+            render_init(f(CsrRenderContext(CsrRenderContextInner::Init(
+                render_context,
+            ))))
+        })
+    }
 
-        let render_state = state.render_state.as_mut().get_mut();
-        let render_state = render_state.upcast_mut_dyn_any();
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
+        self,
+        render_context: &mut Ctx,
+        reused_state: &mut experimental::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        unmounted_ui_handle: experimental::UnpinnedUnmountedUiHandleOfKind<
+            Ctx::Renderer,
+            Self::RenderStateKind,
+        >,
+    ) -> experimental::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        // TODO: is mount-then-update correct?
+        let mut ui_handle = render_context
+            .map_mut_render_context(|render_context| unmounted_ui_handle.mount(render_context));
+        self.unpinned_render_update(render_context.renderer_mut(), reused_state, &mut ui_handle);
+        ui_handle
+    }
 
-        let f = self.0.into_fn_once_render_with_context::<Ctx>();
-        let rendered: Rendered<_> = f(CsrRenderContext {
-            render_context,
-            render_state,
-            force_reposition,
-        });
-        rendered.type_check(phantom_state);
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        state: &mut BoxDynState<'static, Renderer>,
+        ui_handle: &mut BoxDynUiHandle<'static, Renderer>,
+    ) {
+        let f = self.0.into_fn_once_render_with_context::<Renderer>();
+        let Rendered(self::PhantomData, RenderedInner::Update) =
+            f(CsrRenderContext(CsrRenderContextInner::Update {
+                renderer,
+                state: state.upcast_mut_state(),
+                ui_handle: ui_handle.upcast_mut_ui_handle(),
+            }))
+        else {
+            unreachable!()
+        };
     }
 }
