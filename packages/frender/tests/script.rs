@@ -14,18 +14,6 @@ fn script_empty() {
 }
 
 #[test]
-fn script_option_empty() {
-    assert_eq!(
-        block_on(rsx!(<script>{None::<Empty>}</script>).render_to_string()),
-        "<script></script>"
-    );
-    assert_eq!(
-        block_on(rsx!(<script>{Some(Empty)}</script>).render_to_string()),
-        "<script></script>"
-    );
-}
-
-#[test]
 fn script_danger() {
     use frender::ScriptInnerTextWronglyEncoded;
     assert_eq!(
@@ -42,7 +30,7 @@ fn script_danger() {
     assert_eq!(
         block_on(
             cs::script()
-                .children(Some(ScriptInnerTextWronglyEncoded("1</script/")))
+                .children(ScriptInnerTextWronglyEncoded("1</script/"))
                 .render_to_string()
         ),
         "<script>1</script/</script>"
