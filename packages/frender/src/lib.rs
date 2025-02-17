@@ -52,10 +52,7 @@ pub use event::*;
 pub use frender_events::event;
 
 #[cfg(feature = "RenderWith")]
-pub use frender_render_with::{
-    CsrRenderContext, DefaultAnyRenderState, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
-    RenderWith, Rendered,
-};
+pub use frender_render_with::{self as render_with, RenderWith};
 
 #[cfg(feature = "KeyedElements")]
 pub use frender_keyed_elements::{Keyed, KeyedElements};

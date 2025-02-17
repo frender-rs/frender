@@ -55,8 +55,6 @@ default = [
     "html-components",
     "either",
     "hooks",
-    # "RenderWith",
-    # "Elements",
     "ToElement",
     "context",
     "SyncedCollection",
@@ -64,7 +62,7 @@ default = [
     "Memo",
 ]
 nightly = ["frender-render-with?/nightly"]
-html = ["csr"]
+html = ["csr"] # TODO: remove
 html-components = ["html", "frender-html/components"]
 either = [
     "dep:either",

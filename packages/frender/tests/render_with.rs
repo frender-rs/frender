@@ -1,21 +1,25 @@
+#![cfg(feature = "RenderWith")]
+#![cfg(feature = "hooks")]
 #![allow(dead_code)] // TODO: add tests
 
 use std::cell::RefCell;
 
-use frender::prelude::*;
-use frender_common::TempStr;
 use hooks::ShareValue;
 
-use frender::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext};
+use frender::html::RenderHtml;
+use frender::prelude::*;
+use frender::render_with::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext};
+
+use frender_common::TempStr; // TODO: export in frender
 
 struct Test {
     numbers: Vec<i32>,
 }
 
 impl IntoFnOnceRenderWithContext for Test {
-    fn into_fn_once_render_with_context<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
-    ) -> impl FnOnceRenderWithContext<Ctx> {
+    ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {
             ctx.render((
                 cs::button()
@@ -30,18 +34,18 @@ impl IntoFnOnceRenderWithContext for Test {
 struct TestShareValue<S: ShareValue<Value = String>>(S);
 
 impl<S: ShareValue<Value = String>> IntoFnOnceRenderWithContext for TestShareValue<S> {
-    fn into_fn_once_render_with_context<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
-    ) -> impl FnOnceRenderWithContext<Ctx> {
+    ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| self.0.map(|s| ctx.render(TempStr(s.as_str())))
     }
 }
 
 struct TestRcRefCellElements(std::rc::Rc<RefCell<Vec<i32>>>);
 impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
-    fn into_fn_once_render_with_context<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
-    ) -> impl FnOnceRenderWithContext<Ctx> {
+    ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {
             let numbers = self.0.borrow();
 
@@ -53,9 +57,9 @@ impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
 struct TestShareElements<S: ShareValue<Value = Vec<i32>>>(S);
 
 impl<S: ShareValue<Value = Vec<i32>>> IntoFnOnceRenderWithContext for TestShareElements<S> {
-    fn into_fn_once_render_with_context<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
-    ) -> impl FnOnceRenderWithContext<Ctx> {
+    ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {
             self.0
                 .map(|numbers| ctx.render(KeyedElements(numbers.iter().map(|n| Keyed(*n, *n)))))
