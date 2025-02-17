@@ -165,7 +165,8 @@ pub mod csr {
     pub struct CacheableDeclarationValueIntoStaticStrCache<S>(S);
 
     impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationValue<S> {
-        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        type ToAsRefStr<'a>
+            = S::ToAsRefStr<'a>
         where
             Self: 'a;
 
@@ -187,7 +188,8 @@ pub mod csr {
     }
 
     impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationValueIntoStaticStrCache<S> {
-        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        type ToAsRefStr<'a>
+            = S::ToAsRefStr<'a>
         where
             Self: 'a;
 

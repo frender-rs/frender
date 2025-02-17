@@ -35,7 +35,8 @@ pub(crate) trait HasDomTokensDomApi<BT: BehaviorType> {
 }
 
 impl<ET: behavior_type_traits::Element> HasDomTokensDomApi<ET> for prop_markers::Element::class {
-    type DomTokensDomApi<'a, R: 'a + ?Sized + RenderHtml> = <ET::Element<R> as ElementWithClassList<R>>::ClassList<'a>
+    type DomTokensDomApi<'a, R: 'a + ?Sized + RenderHtml>
+        = <ET::Element<R> as ElementWithClassList<R>>::ClassList<'a>
     where
         ET: 'a;
 
@@ -48,7 +49,8 @@ impl<ET: behavior_type_traits::Element> HasDomTokensDomApi<ET> for prop_markers:
 }
 
 impl<ET: behavior_type_traits::ElementWithRelAttribute> HasDomTokensDomApi<ET> for prop_markers::ElementWithRelAttribute::rel {
-    type DomTokensDomApi<'a, R: 'a + ?Sized + RenderHtml> = <ET::ElementWithRelAttribute<R> as ElementWithRelList<R>>::RelList<'a>
+    type DomTokensDomApi<'a, R: 'a + ?Sized + RenderHtml>
+        = <ET::ElementWithRelAttribute<R> as ElementWithRelList<R>>::RelList<'a>
     where
         ET: 'a;
 

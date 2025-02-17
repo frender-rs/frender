@@ -30,7 +30,10 @@ impl FormControlValueKind for str {
 }
 
 impl<T: Copy> FormControlValueKind for T {
-    type FormControlValue<'a> = T where T: 'a;
+    type FormControlValue<'a>
+        = T
+    where
+        T: 'a;
 }
 
 pub trait FromFormControlValue<VK: ?Sized + FormControlValueKind> {

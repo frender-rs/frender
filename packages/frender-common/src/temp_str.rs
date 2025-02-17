@@ -13,7 +13,8 @@ impl<C: PartialEq<S>, S> PartialEq<TempStr<S>> for TempStrIntoStaticStrCache<C> 
 }
 
 impl<C: ToAsRefStr> ToAsRefStr for TempStrIntoStaticStrCache<C> {
-    type ToAsRefStr<'a> = C::ToAsRefStr<'a>
+    type ToAsRefStr<'a>
+        = C::ToAsRefStr<'a>
     where
         Self: 'a;
 
@@ -219,7 +220,8 @@ impl<S: PartialEq<T>, T: ?Sized> PartialEq<&T> for RefToStaticStrCache<S> {
 }
 
 impl<S: ToAsRefStr> ToAsRefStr for RefToStaticStrCache<S> {
-    type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+    type ToAsRefStr<'a>
+        = S::ToAsRefStr<'a>
     where
         Self: 'a;
 
@@ -302,7 +304,8 @@ pub trait ToAsRefStr {
 }
 
 impl<'this, T: ?Sized + ToAsRefStr> ToAsRefStr for &'this T {
-    type ToAsRefStr<'a> = T::ToAsRefStr<'this>
+    type ToAsRefStr<'a>
+        = T::ToAsRefStr<'this>
     where
         Self: 'a;
 
@@ -321,7 +324,8 @@ crate::impl_many!(
             std::sync::Arc<str>,
         ]
     {
-        type ToAsRefStr<'a> = &'a Self
+        type ToAsRefStr<'a>
+            = &'a Self
         where
             Self: 'a;
 

@@ -32,7 +32,8 @@ pub(crate) trait HasStyleDomApi<BT: BehaviorType> {
 }
 
 impl<ET: behavior_type_traits::HtmlElement> HasStyleDomApi<ET> for prop_markers::HtmlElement::style {
-    type StyleDomApi<'a, R: 'a + ?Sized + RenderHtml> = <ET::HtmlElement<R> as ElementWithStyle<R>>::Style<'a>
+    type StyleDomApi<'a, R: 'a + ?Sized + RenderHtml>
+        = <ET::HtmlElement<R> as ElementWithStyle<R>>::Style<'a>
     where
         ET: 'a;
 

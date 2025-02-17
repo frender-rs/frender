@@ -84,7 +84,8 @@ impl<S: 'static + AsRef<str>> IntoStaticStr for SelfIntoStaticStr<S> {
 pub struct SelfToAsRefStr<S>(pub S);
 
 impl<S: AsRef<str>> ToAsRefStr for SelfToAsRefStr<S> {
-    type ToAsRefStr<'a> = &'a S
+    type ToAsRefStr<'a>
+        = &'a S
     where
         Self: 'a;
 

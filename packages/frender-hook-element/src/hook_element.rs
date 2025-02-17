@@ -54,7 +54,8 @@ impl<F, HookData> UseHookData for FnMutUseHookData<F, HookData>
 where
     F: for<'hook> FnMut1<Pin<&'hook mut HookData>>,
 {
-    type Value<'hook> = <F as FnMut1<Pin<&'hook mut HookData>>>::_Output
+    type Value<'hook>
+        = <F as FnMut1<Pin<&'hook mut HookData>>>::_Output
     where
         Self::HookData: 'hook;
 

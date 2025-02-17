@@ -130,7 +130,8 @@ pub mod csr {
     }
 
     impl<S: ToAsRefStr> ToAsRefStr for DeclarationNameStrStaticCache<S> {
-        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        type ToAsRefStr<'a>
+            = S::ToAsRefStr<'a>
         where
             Self: 'a;
 
@@ -173,7 +174,8 @@ pub mod csr {
     }
 
     impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationName<S> {
-        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        type ToAsRefStr<'a>
+            = S::ToAsRefStr<'a>
         where
             Self: 'a;
 
@@ -195,7 +197,8 @@ pub mod csr {
     }
 
     impl<S: ToAsRefStr> ToAsRefStr for CacheableDeclarationNameIntoStaticStrCache<S> {
-        type ToAsRefStr<'a> = S::ToAsRefStr<'a>
+        type ToAsRefStr<'a>
+            = S::ToAsRefStr<'a>
         where
             Self: 'a;
 

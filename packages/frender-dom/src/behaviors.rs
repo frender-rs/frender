@@ -207,7 +207,8 @@ mod web {
             Renderer: ?Sized + crate::csr::web::Renderer,
         > ElementWithStyle<Renderer> for crate::csr::web::Node<N>
     {
-        type Style<'a> = web_sys::CssStyleDeclaration
+        type Style<'a>
+            = web_sys::CssStyleDeclaration
         where
             Self: 'a,
             Renderer: 'a;
@@ -222,7 +223,8 @@ mod web {
             Renderer: ?Sized + crate::csr::web::Renderer,
         > ElementWithClassList<Renderer> for crate::csr::web::Node<N>
     {
-        type ClassList<'a> = web_sys::DomTokenList
+        type ClassList<'a>
+            = web_sys::DomTokenList
         where
             Self: 'a,
             Renderer: 'a;
@@ -246,7 +248,8 @@ mod web {
                 ],
             )
         {
-            type RelList<'a> = web_sys::DomTokenList
+            type RelList<'a>
+                = web_sys::DomTokenList
             where
                 Self: 'a,
                 Renderer: 'a;

@@ -17,7 +17,8 @@ where
     // TODO: make this implied in RenderStateKind, or make RenderState and UnpinnedRenderState 'static
     // E::ToElementRenderStateKind: 'static,
 {
-    type ToElement<'a> = SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, MapItemWithToElement>
+    type ToElement<'a>
+        = SyncedCollectionToElement<'a, <&'a ES as IntoIterator>::IntoIter, MapItemWithToElement>
     where
         Self: 'a;
 

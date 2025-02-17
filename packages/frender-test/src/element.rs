@@ -523,7 +523,8 @@ mod dom {
     }
 
     impl behaviors::ElementWithClassList<Renderer> for Element {
-        type ClassList<'a> = super::DomTokenList
+        type ClassList<'a>
+            = super::DomTokenList
         where
             Self: 'a,
             Renderer: 'a;
@@ -534,7 +535,8 @@ mod dom {
     }
 
     impl behaviors::ElementWithRelList<Renderer> for Element {
-        type RelList<'a> = super::DomTokenList
+        type RelList<'a>
+            = super::DomTokenList
         where
             Self: 'a,
             Renderer: 'a;
@@ -568,7 +570,8 @@ mod dom {
         }
 
         impl behaviors::ElementWithStyle<Renderer> for Element {
-            type Style<'a> = ElementRenderStyle<'a>
+            type Style<'a>
+                = ElementRenderStyle<'a>
             where
                 Self: 'a,
                 Renderer: 'a;

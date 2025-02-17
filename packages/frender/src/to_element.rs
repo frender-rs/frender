@@ -11,7 +11,8 @@ pub trait ToElement {
 }
 
 impl<E: ?Sized + ToElement> ToElement for &E {
-    type ToElement<'a> = E::ToElement<'a>
+    type ToElement<'a>
+        = E::ToElement<'a>
     where
         Self: 'a;
 
@@ -35,7 +36,8 @@ pub mod with {
     pub struct ToElementWithFn<E, F: for<'e> Fn1<&'e E>>(pub E, pub F);
 
     impl<E, F: for<'e> Fn1<&'e E>> ToElement for ToElementWithFn<E, F> {
-        type ToElement<'a> = <F as FnOnce1<&'a E>>::Output_
+        type ToElement<'a>
+            = <F as FnOnce1<&'a E>>::Output_
         where
             Self: 'a;
 
@@ -56,7 +58,8 @@ pub mod with {
     }
 
     impl<'e, E: ?Sized, F: ?Sized + Fn1<&'e E>> ToElement for RefToElementWithFn<'e, E, F> {
-        type ToElement<'a> = <F as FnOnce1<&'e E>>::Output_
+        type ToElement<'a>
+            = <F as FnOnce1<&'e E>>::Output_
         where
             Self: 'a;
 
@@ -79,7 +82,8 @@ mod imps {
                 char,
             ]
         {
-            type ToElement<'a> = Self
+            type ToElement<'a>
+                = Self
             where
                 Self: 'a;
             fn to_element(&self) -> Self {
@@ -90,7 +94,8 @@ mod imps {
 
     // acts like `TempStr<&'static str>`
     impl ToElement for str {
-        type ToElement<'a> = TempStr<&'a str>
+        type ToElement<'a>
+            = TempStr<&'a str>
         where
             Self: 'a;
 
@@ -108,7 +113,8 @@ mod imps {
                 std::borrow::Cow<'_, str>,
             ]
         {
-            type ToElement<'a> = TempStr<&'a Self>
+            type ToElement<'a>
+                = TempStr<&'a Self>
             where
                 Self: 'a;
             fn to_element(&self) -> TempStr<&Self> {
@@ -125,7 +131,8 @@ mod imps {
                 std::sync::Arc<str>,
             ]
         {
-            type ToElement<'a> = Self
+            type ToElement<'a>
+                = Self
             where
                 Self: 'a;
             fn to_element(&self) -> Self {
@@ -193,7 +200,8 @@ mod tests {
     }
 
     impl<'c> TypeAssertCow for Cow<'c, str> {
-        type Expected<'a> = Cow<'c, str>
+        type Expected<'a>
+            = Cow<'c, str>
         where
             'c: 'a;
     }

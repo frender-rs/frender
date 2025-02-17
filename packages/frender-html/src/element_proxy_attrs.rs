@@ -187,7 +187,8 @@ mod dom {
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::ElementWithClassList<R>> behaviors::ElementWithClassList<R> for ElementProxyAttrs<E> {
-        type ClassList<'a> = E::ClassList<'a>
+        type ClassList<'a>
+            = E::ClassList<'a>
         where
             Self: 'a,
             R: 'a;
@@ -198,7 +199,8 @@ mod dom {
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::ElementWithRelList<R>> behaviors::ElementWithRelList<R> for ElementProxyAttrs<E> {
-        type RelList<'a> = E::RelList<'a>
+        type RelList<'a>
+            = E::RelList<'a>
         where
             Self: 'a,
             R: 'a;
@@ -209,7 +211,8 @@ mod dom {
     }
 
     impl<R: ?Sized, E: ?Sized + behaviors::ElementWithStyle<R>> behaviors::ElementWithStyle<R> for ElementProxyAttrs<E> {
-        type Style<'a> = E::Style<'a>
+        type Style<'a>
+            = E::Style<'a>
         where
             Self: 'a,
             R: 'a;

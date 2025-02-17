@@ -20,7 +20,8 @@ mod csr {
         F: for<'a> FnMut1<&'a V, Output: CsrElement<RenderStateKind = K>>,
         K: RenderStateKind,
     {
-        type ElementWithValue<'a> = <F as FnOnce1<&'a V>>::Output_
+        type ElementWithValue<'a>
+            = <F as FnOnce1<&'a V>>::Output_
         where
             Self: 'a,
             V: 'a;
