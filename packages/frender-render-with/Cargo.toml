@@ -9,7 +9,6 @@ frender-html = { version = "0.1.0", path = "../frender-html", default-features =
     "components",   # TODO: remove
     "experimental",
 ] }
-frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
 
 [dev-dependencies]
 frender-html = { version = "0.1.0", path = "../frender-html", features = [

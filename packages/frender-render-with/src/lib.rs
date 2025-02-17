@@ -6,7 +6,6 @@ use frender_html::{
     experimental::{self, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
     CsrElement, RenderHtml,
 };
-use frender_ssr::SsrElement;
 
 /// This struct is a wrapper for render context so that it can only be used with
 /// [`ctx.render(element)`](CsrRenderContext::render).
@@ -68,15 +67,6 @@ enum RenderedInner<K: UnpinnedRenderStateKind, R: ?Sized + RenderHtml> {
 }
 
 pub struct RenderWith<F>(pub F);
-
-// TODO: implement ssr with csr
-impl<F> SsrElement for RenderWith<F> {
-    type HtmlChildren = async_str_iter::empty::Empty;
-
-    fn into_html_children(self) -> Self::HtmlChildren {
-        async_str_iter::empty::Empty
-    }
-}
 
 /// This might be just
 /// `for<'r,  Renderer: ?Sized + RenderHtml> FnMut(CsrRenderContext<'r,  Renderer, dyn Any>) -> Rendered<'r, impl Any>`
