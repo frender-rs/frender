@@ -2,7 +2,6 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 use std::task::Poll;
 
-use frender_csr::render_state::compound::CompoundState;
 use frender_csr::StateUnmount;
 use frender_html::dom::ui_handle::UnmountedUiHandle as _;
 use frender_html::experimental::{PinnedStateOfKind, PinnedUiHandleOfKind, RenderInitPinned};
@@ -18,6 +17,31 @@ use frender_html::{HtmlRenderContext, RenderStateKind};
 use crate::fn_traits::{FnOnce1, FnOnce2};
 
 use super::{Memo, MemoAndProvideFirstArgument};
+
+pin_project_lite::pin_project!(
+    #[derive(Debug)]
+    pub struct CompoundState<S, T> {
+        #[pin]
+        pub reactive: S,
+        pub non_reactive: T,
+    }
+);
+
+impl<S, T> CompoundState<S, T> {
+    pub fn pin_project(self: Pin<&mut Self>) -> CompoundState<Pin<&mut S>, &mut T> {
+        let this = self.project();
+        CompoundState {
+            reactive: this.reactive,
+            non_reactive: this.non_reactive,
+        }
+    }
+}
+
+impl<S: StateUnmount, T> StateUnmount for CompoundState<S, T> {
+    fn state_unmount(self: Pin<&mut Self>) {
+        self.project().reactive.state_unmount()
+    }
+}
 
 enum Never {}
 pub struct Kind<K, Dep>(Never, PhantomData<(K, Dep)>);

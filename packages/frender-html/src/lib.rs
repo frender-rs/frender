@@ -1,6 +1,6 @@
 #![cfg_attr(feature = "macros_not_expanded", recursion_limit = "2048")]
 
-pub use frender_common::expand;
+pub use frender_common::{csr::StateUnmount, expand};
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
 
@@ -14,7 +14,6 @@ use element::CsrElement as Element; // TODO: remove
 // TODO: some apis are unstable and should be sealed
 pub use element::{CsrElement, HtmlRenderContext, RenderStateKind};
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
-pub use frender_dom::{render_state, RenderStateWithParentElementsHandle, StateUnmount};
 
 pub use frender_form_control as form_control;
 

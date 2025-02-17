@@ -1,8 +1,7 @@
-use frender_csr::render_state::compound::CompoundState;
 use frender_html::{experimental, RenderStateKind};
 
 use crate::fn_traits::{FnOnce1, FnOnce2};
-use crate::memo::csr::Kind;
+use crate::memo::csr::{CompoundState, Kind};
 
 use super::super::CsrElementRenderUpdate;
 
