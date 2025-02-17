@@ -40,7 +40,8 @@ mod csr {
             K: RenderStateKind,
         > AsMutCsrElementWithValue<V> for WithToElement
     {
-        type ElementWithValue<'a> = V::ToElement<'a>
+        type ElementWithValue<'a>
+            = V::ToElement<'a>
         where
             V: 'a;
 

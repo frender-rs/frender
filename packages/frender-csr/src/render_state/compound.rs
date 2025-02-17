@@ -1,9 +1,11 @@
 use std::pin::Pin;
 
+use frender_common::csr::StateUnmount;
+
 use crate::RenderState;
 
 pin_project_lite::pin_project!(
-    #[derive(Debug, Default)]
+    #[derive(Debug)]
     pub struct CompoundState<S, T> {
         #[pin]
         pub reactive: S,
@@ -18,6 +20,12 @@ impl<S, T> CompoundState<S, T> {
             reactive: this.reactive,
             non_reactive: this.non_reactive,
         }
+    }
+}
+
+impl<S: StateUnmount, T> StateUnmount for CompoundState<S, T> {
+    fn state_unmount(self: Pin<&mut Self>) {
+        self.project().reactive.state_unmount()
     }
 }
 

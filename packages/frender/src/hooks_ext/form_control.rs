@@ -18,16 +18,20 @@ use hooks::{Hook as _, HookPollNextUpdate, HookUnmount, ShareValue, Signal};
 
 mod textarea;
 
-pub struct OptionSignalHook<SH> {
-    pub(crate) inner: Option<SH>,
+pub struct State<SH, NRS> {
+    inner: SH,
+    non_reactive_state: NRS,
     #[cfg(debug_assertions)]
     update_times: UpdateTimes,
 }
 
-impl<SH> OptionSignalHook<SH> {
-    fn new(inner: SH) -> Self {
+impl<SH, NRS> Unpin for State<SH, NRS> {}
+
+impl<SH, NRS> State<SH, NRS> {
+    fn new(inner: SH, non_reactive_state: NRS) -> Self {
         Self {
-            inner: Some(inner),
+            inner,
+            non_reactive_state,
             #[cfg(debug_assertions)]
             update_times: 0,
         }
@@ -61,10 +65,11 @@ This might be caused by bugs of hooks and frender."##,
     }
 }
 
-impl<SH: HookUnmount + Unpin> StateUnmount for OptionSignalHook<SH> {
+impl<SH: HookUnmount + Unpin, NRS> StateUnmount for State<SH, NRS> {
     fn state_unmount(self: Pin<&mut Self>) {
         let Self {
             inner,
+            non_reactive_state: _,
             #[cfg(debug_assertions)]
             update_times,
         } = self.get_mut();
@@ -74,19 +79,7 @@ impl<SH: HookUnmount + Unpin> StateUnmount for OptionSignalHook<SH> {
             *update_times = 0;
         }
 
-        if let Some(inner) = inner {
-            Pin::new(inner).unmount();
-        }
-    }
-}
-
-impl<SH> Default for OptionSignalHook<SH> {
-    fn default() -> Self {
-        Self {
-            inner: None,
-            #[cfg(debug_assertions)]
-            update_times: 0,
-        }
+        Pin::new(inner).unmount();
     }
 }
 
@@ -185,10 +178,8 @@ where
     S::SignalHook: Unpin,
     Val: FromFormControlValue<VK> + Borrow<VK>,
 {
-    type UnpinnedNonReactiveState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
-        E::OnValueChangeEventListenerUnpinned<SignalIntoControlledValue<S>>;
-
-    type UnpinnedReactiveState = OptionSignalHook<S::SignalHook>;
+    type UnpinnedState<E: FormControlElement<VK, R> + ?Sized, R: ?Sized> =
+        State<S::SignalHook, E::OnValueChangeEventListenerUnpinned<SignalIntoControlledValue<S>>>;
 
     fn unpinned_poll_render_form_control_value_state<
         E: FormControlElement<VK, R> + ?Sized,
@@ -196,17 +187,14 @@ where
     >(
         renderer: &mut R,
         element: &mut E,
-        _: &mut Self::UnpinnedNonReactiveState<E, R>,
-        OptionSignalHook {
-            inner,
+        State {
+            inner: signal_hook,
+            non_reactive_state: _,
             #[cfg(debug_assertions)]
             update_times,
-        }: &mut Self::UnpinnedReactiveState,
+        }: &mut Self::UnpinnedState<E, R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let Some(signal_hook) = inner else {
-            return Poll::Ready(());
-        };
         match Pin::new(&mut *signal_hook).poll_next_update(cx) {
             Poll::Ready(true) => {
                 {
@@ -258,10 +246,7 @@ where
         this: Self,
         renderer: &mut R,
         element: &mut E,
-    ) -> (
-        <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
-        <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedReactiveState,
-    ) {
+    ) -> <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedState<E, R> {
         this.0.map(|value| {
             let value = value.borrow();
             element.set_default_value(renderer, value);
@@ -269,13 +254,13 @@ where
         });
 
         let signal_hook = this.0.to_signal_hook();
-        (
+        State::new(
+            signal_hook,
             RegisterUpdate::register(
                 element.on_value_change_element_unpinned(),
                 renderer,
                 From::from(this),
             ),
-            OptionSignalHook::new(signal_hook),
         )
     }
 
@@ -283,13 +268,20 @@ where
         this: Self,
         renderer: &mut R,
         element: &mut E,
-        event_listener: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedNonReactiveState<E, R>,
-        reactive_state: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedReactiveState,
+        State {
+            inner: signal_hook,
+            non_reactive_state: event_listener,
+            #[cfg(debug_assertions)]
+            update_times,
+        }: &mut <Self::StateKind as FormControlValueStateKind<VK>>::UnpinnedState<E, R>,
     ) {
-        if let Some(signal_hook) = &mut reactive_state.inner {
-            if this.0.is_signal_of(signal_hook) {
-                return;
-            }
+        #[cfg(debug_assertions)]
+        {
+            *update_times = 0;
+        }
+
+        if this.0.is_signal_of(signal_hook) {
+            return;
         }
 
         this.0.map(|value| {
@@ -298,7 +290,7 @@ where
             element.set_value(renderer, value);
         });
 
-        reactive_state.inner = Some(this.0.to_signal_hook());
+        *signal_hook = this.0.to_signal_hook();
 
         event_listener.update(
             E::on_value_change_element_unpinned(element),

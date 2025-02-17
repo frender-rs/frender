@@ -138,6 +138,13 @@ macro_rules! proxy_csr_element {
             $expr.pinned_render_init(renderer)
         }
 
+        $crate::proxy_csr_element_without_pinned_render_init!(|$this| $expr);
+    };
+}
+
+#[macro_export]
+macro_rules! proxy_csr_element_without_pinned_render_init {
+    (|$this:pat_param| $expr:expr) => {
         fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(
             self,
             render_context: &mut Ctx,

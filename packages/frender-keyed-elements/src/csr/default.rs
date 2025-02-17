@@ -316,7 +316,7 @@ impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgori
     {
         render_context
             .map_mut_render_context(|render_context| {
-                unmounted_ui_handle.mount_and_map(
+                unmounted_ui_handle.mount_and_map_and_output(
                     render_context,
                     |UnmountedUiHandles(unmounted_ui_handles), render_context| {
                         debug_assert_eq!(unmounted_ui_handles.len(), key_to_state.len());

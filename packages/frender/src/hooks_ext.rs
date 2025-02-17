@@ -1,6 +1,8 @@
 use hooks::{ShareValue, ToOwnedShareValue};
 
-use crate::fn_traits::{FnMut1, FnMut2};
+use crate::fn_traits::FnMut1;
+#[cfg(feature = "Memo")]
+use crate::fn_traits::FnMut2;
 
 pub mod callback;
 pub mod element;
@@ -46,6 +48,7 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_set_form_control_value()
     }
 
+    #[cfg(feature = "ToElement")]
     fn into_element(self) -> element::SignalIntoElement<Self, element::WithToElement>
     where
         Self: Sized,
@@ -54,6 +57,7 @@ pub trait ShareValueExt: ShareValue {
         element::SignalIntoElement(self, element::WithToElement)
     }
 
+    #[cfg(feature = "ToElement")]
     fn to_element(
         &self,
     ) -> element::SignalIntoElement<Self::OwnedShareValue, element::WithToElement>
@@ -83,6 +87,7 @@ pub trait ShareValueExt: ShareValue {
         self.to_owned_share_value().into_element_with_fn(f)
     }
 
+    #[cfg(feature = "Memo")]
     fn into_element_with_memo<F, Dep>(
         self,
         f: F,
@@ -96,6 +101,7 @@ pub trait ShareValueExt: ShareValue {
         element::SignalIntoElement(self, crate::Memo(f, dep))
     }
 
+    #[cfg(feature = "Memo")]
     fn to_element_with_memo<F, Dep>(
         &self,
         f: F,

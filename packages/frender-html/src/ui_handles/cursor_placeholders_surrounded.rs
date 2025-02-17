@@ -112,7 +112,31 @@ impl<C, UH> CursorPlaceholdersSurrounded<C, UH> {
         out
     }
 
-    pub fn mount_and_map<R: ?Sized + RenderWithContext, Out, MUH>(
+    pub fn mount_and_map<R: ?Sized + RenderWithContext, MUH>(
+        //
+        self,
+        render_context: &mut R::RenderContext<'_>,
+        f: impl FnOnce(UH, &mut R::RenderContext<'_>) -> MUH,
+    ) -> CursorPlaceholdersSurrounded<C::Mounted, MUH>
+    where
+        C: UnmountedUiHandle<R>,
+    {
+        let Self {
+            cursor_placeholders: [start, end],
+            ui_handle,
+        } = self;
+
+        let start = start.mount(render_context);
+        let ui_handle = f(ui_handle, render_context);
+        let end = end.mount(render_context);
+
+        CursorPlaceholdersSurrounded {
+            cursor_placeholders: [start, end],
+            ui_handle,
+        }
+    }
+
+    pub fn mount_and_map_and_output<R: ?Sized + RenderWithContext, Out, MUH>(
         //
         self,
         render_context: &mut R::RenderContext<'_>,

@@ -1,3 +1,5 @@
+mod memo_phantom;
+
 pub struct MemoCallWithRef<F, Dep> {
     f: F,
     _dep: std::marker::PhantomData<Dep>,
@@ -13,16 +15,14 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
 }
 
 mod csr {
-    use crate::Memo;
+    use crate::{memo::csr::Kind, Memo};
     use frender_html::{CsrElement, RenderStateKind};
 
-    use crate::{
-        fn_traits::FnMut2,
-        memoed::{MemoAndProvideFirstArgument, MemoPhantomAndProvideFirstArgument},
-    };
+    use crate::{fn_traits::FnMut2, memo::MemoAndProvideFirstArgument};
 
     use super::{
         super::{AsMutCsrElementWithValue, IntoAsMutCsrElementWithValue},
+        memo_phantom::MemoPhantomAndProvideFirstArgument,
         MemoCallWithRef,
     };
 
@@ -32,9 +32,10 @@ mod csr {
         F: for<'a, 'b> FnMut2<&'a V, &'b Dep, Output: CsrElement<RenderStateKind = K>>,
         K: RenderStateKind,
     {
-        type ElementWithValueRenderStateKind = crate::memoed::csr::Kind<K, Dep>;
+        type ElementWithValueRenderStateKind = Kind<K, Dep>;
 
-        type ElementWithValue<'a> = MemoPhantomAndProvideFirstArgument<&'a mut F, &'a V, Dep>
+        type ElementWithValue<'a>
+            = MemoPhantomAndProvideFirstArgument<&'a mut F, &'a V, Dep>
         where
             Self: 'a,
             V: 'a;
@@ -63,7 +64,8 @@ mod csr {
             (MemoCallWithRef::new(f), dep)
         }
 
-        type OwnedPartIntoCsrElement<'a> = MemoAndProvideFirstArgument<&'a mut F, &'a V, Dep>
+        type OwnedPartIntoCsrElement<'a>
+            = MemoAndProvideFirstArgument<&'a mut F, &'a V, Dep>
         where
             Self: 'a,
             V: 'a;

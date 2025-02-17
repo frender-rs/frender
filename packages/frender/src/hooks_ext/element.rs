@@ -1,17 +1,19 @@
-pub use self::{with_fn::WithFn, with_memo::MemoCallWithRef, with_to_element::WithToElement};
+pub use self::with_fn::WithFn;
+#[cfg(feature = "Memo")]
+pub use self::with_memo::MemoCallWithRef;
+#[cfg(feature = "ToElement")]
+pub use self::with_to_element::WithToElement;
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_csr::StateUnmount;
 
 use frender_html::{
-    dom::ui_handle::UiHandle as _,
     experimental::{
-        self, PinMutRenderInitStates, PinnedMutRenderStatesOfKind, PinnedRenderStateKind,
-        PinnedRenderStateKindPollRender, RenderStates, UnpinnedMutRenderStatesOfKind,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+        self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind,
+        PinnedUiHandleOfKind, RenderInitPinned, UnpinnedRenderStateKind,
+        UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
     },
-    kinds::UiHandleWithNonReactiveState,
     ui_handles::CursorPlaceholdersSurrounded,
     CsrElement, HtmlRenderContext, RenderHtml, RenderStateKind,
 };
@@ -20,46 +22,52 @@ use hooks::{HookUnmount, ShareValue, Signal, SignalHook};
 use pin_project_lite::pin_project;
 
 mod with_fn;
+#[cfg(feature = "Memo")]
 mod with_memo;
+#[cfg(feature = "ToElement")]
 mod with_to_element;
 
 pub trait CsrElementRenderUpdate {
     type RenderStateKind: RenderStateKind;
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        renderer: &mut Renderer,
+        state: Pin<&mut PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     );
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        renderer: &mut Renderer,
+        state: &mut UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ui_handle: &mut UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     );
 }
 
 impl<E: CsrElement> CsrElementRenderUpdate for E {
     type RenderStateKind = <E as CsrElement>::RenderStateKind;
 
-    fn pinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        renderer: &mut Renderer,
+        state: Pin<&mut PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        <E as CsrElement>::pinned_render_update(self, render_context, states)
+        <E as CsrElement>::pinned_render_update(self, renderer, state, ui_handle)
     }
 
-    fn unpinned_render_update<Ctx: ?Sized + HtmlRenderContext>(
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        states: UnpinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
+        renderer: &mut Renderer,
+        state: &mut UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ui_handle: &mut UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        <E as CsrElement>::unpinned_render_update(self, render_context, states)
+        <E as CsrElement>::unpinned_render_update(self, renderer, state, ui_handle)
     }
 }
 
@@ -159,12 +167,13 @@ mod ssr {
 }
 
 pin_project!(
-    #[project = OptionSignalHookAndOtherProj]
-    pub struct OptionSignalHookAndOther<SH, T> {
+    #[project = StateProj]
+    pub struct State<SH, T, NRS> {
         #[pin]
-        signal_hook: Option<SH>,
+        signal_hook: SH,
         #[pin]
         other: T,
+        non_reactive_state: NRS,
         update_times: UpdateTimes,
     }
 );
@@ -184,11 +193,12 @@ fn reset_update_times(value: &mut UpdateTimes) {
     let () = value;
 }
 
-impl<SH, T> OptionSignalHookAndOther<SH, T> {
-    fn new(signal_hook: SH, other: T) -> Self {
+impl<SH, T, NRS> State<SH, T, NRS> {
+    fn new(signal_hook: SH, other: T, non_reactive_state: NRS) -> Self {
         Self {
-            signal_hook: Some(signal_hook),
+            signal_hook,
             other,
+            non_reactive_state,
             #[cfg(debug_assertions)]
             update_times: 0,
             #[cfg(not(debug_assertions))]
@@ -222,68 +232,72 @@ This might be caused by bugs of hooks and frender."##,
     }
 }
 
-impl<SH, T: Default> Default for OptionSignalHookAndOther<SH, T> {
-    fn default() -> Self {
-        Self {
-            signal_hook: None,
-            other: Default::default(),
-            update_times: Default::default(),
-        }
+impl<SH: HookUnmount, T: StateUnmount, NRS> StateProj<'_, SH, T, NRS> {
+    fn state_unmount(self) {
+        let Self {
+            signal_hook,
+            other,
+            non_reactive_state: _,
+            update_times,
+        } = self;
+        signal_hook.unmount();
+        other.state_unmount();
+        reset_update_times(update_times);
     }
 }
 
-impl<SH: HookUnmount, T: StateUnmount> StateUnmount for OptionSignalHookAndOther<SH, T> {
+impl<SH: HookUnmount, T: StateUnmount, NRS> StateUnmount for State<SH, T, NRS> {
     fn state_unmount(self: Pin<&mut Self>) {
-        let this = self.project();
-        if let Some(signal_hook) = this.signal_hook.as_pin_mut() {
-            signal_hook.unmount();
-        }
-
-        #[cfg(debug_assertions)]
-        {
-            *this.update_times = 0;
-        }
-
-        this.other.state_unmount();
+        self.project().state_unmount()
     }
 }
 
-trait OptionSignalHookRenderer<V: ?Sized, S: ?Sized> {
-    fn render_with_value(&mut self, reactive_state: Pin<&mut S>, value: &V);
+trait SignalHookRenderer<V: ?Sized, S: ?Sized, NRS: ?Sized> {
+    fn render_with_value(
+        &mut self,
+        reactive_state: Pin<&mut S>,
+        non_reactive_state: &mut NRS,
+        value: &V,
+    );
 
     fn poll_render(
         &mut self,
         reactive_state: Pin<&mut S>,
+        non_reactive_state: &mut NRS,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()>;
 
     fn warn(&mut self, message: &str);
 }
 
-impl<SH: SignalHook, T> OptionSignalHookAndOther<SH, T> {
+impl<SH: SignalHook, T, NRS> StateProj<'_, SH, T, NRS> {
     fn poll_render(
-        self: Pin<&mut Self>,
-        mut renderer: impl OptionSignalHookRenderer<SH::SignalShareValue, T>,
+        self,
+        mut renderer: impl SignalHookRenderer<SH::SignalShareValue, T, NRS>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        let OptionSignalHookAndOtherProj {
-            signal_hook,
+        let StateProj {
+            mut signal_hook,
             other: mut reactive_state,
+            non_reactive_state,
             #[cfg(debug_assertions)]
             update_times,
             #[cfg(not(debug_assertions))]
                 update_times: (),
-        } = self.project();
-        let Some(mut signal_hook) = signal_hook.as_pin_mut() else {
-            return Poll::Ready(());
-        };
+        } = self;
 
         match signal_hook.as_mut().poll_next_update(cx) {
             Poll::Ready(true) => {
                 {
                     let signal = signal_hook.as_mut().use_hook(); // mark as seen
 
-                    signal.map(|value| renderer.render_with_value(reactive_state.as_mut(), value));
+                    signal.map(|value| {
+                        renderer.render_with_value(
+                            reactive_state.as_mut(),
+                            non_reactive_state,
+                            value,
+                        )
+                    });
                 }
 
                 match signal_hook.as_mut().poll_next_update(cx) {
@@ -299,26 +313,28 @@ impl<SH: SignalHook, T> OptionSignalHookAndOther<SH, T> {
                         cx.waker().wake_by_ref();
                         Poll::Pending
                     }
-                    Poll::Ready(false) => renderer.poll_render(reactive_state, cx),
+                    Poll::Ready(false) => {
+                        renderer.poll_render(reactive_state, non_reactive_state, cx)
+                    }
                     Poll::Pending => {
-                        _ = renderer.poll_render(reactive_state, cx);
+                        _ = renderer.poll_render(reactive_state, non_reactive_state, cx);
                         Poll::Pending
                     }
                 }
             }
-            Poll::Ready(false) => renderer.poll_render(reactive_state, cx),
+            Poll::Ready(false) => renderer.poll_render(reactive_state, non_reactive_state, cx),
             Poll::Pending => {
-                _ = renderer.poll_render(reactive_state, cx);
+                _ = renderer.poll_render(reactive_state, non_reactive_state, cx);
                 Poll::Pending
             }
         }
     }
 
     fn poll_render_with_fn_and_data<Data>(
-        self: Pin<&mut Self>,
+        self,
         data: Data,
-        f_render: impl FnMut(&mut Data, Pin<&mut T>, &SH::SignalShareValue),
-        f_poll: impl FnMut(&mut Data, Pin<&mut T>, &mut std::task::Context<'_>) -> Poll<()>,
+        f_render: impl FnMut(&mut Data, Pin<&mut T>, &mut NRS, &SH::SignalShareValue),
+        f_poll: impl FnMut(&mut Data, Pin<&mut T>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
         f_warn: impl FnMut(&mut Data, &str),
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
@@ -331,23 +347,30 @@ impl<SH: SignalHook, T> OptionSignalHookAndOther<SH, T> {
 
         impl<
                 Data,
-                FRender: FnMut(&mut Data, Pin<&mut S>, &V),
-                FPoll: FnMut(&mut Data, Pin<&mut S>, &mut std::task::Context<'_>) -> Poll<()>,
+                FRender: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &V),
+                FPoll: FnMut(&mut Data, Pin<&mut S>, &mut NRS, &mut std::task::Context<'_>) -> Poll<()>,
                 FWarn: FnMut(&mut Data, &str),
                 V: ?Sized,
                 S: ?Sized,
-            > OptionSignalHookRenderer<V, S> for Renderer<Data, FRender, FPoll, FWarn>
+                NRS: ?Sized,
+            > SignalHookRenderer<V, S, NRS> for Renderer<Data, FRender, FPoll, FWarn>
         {
-            fn render_with_value(&mut self, reactive_state: Pin<&mut S>, value: &V) {
-                (self.f_render)(&mut self.data, reactive_state, value)
+            fn render_with_value(
+                &mut self,
+                reactive_state: Pin<&mut S>,
+                non_reactive_state: &mut NRS,
+                value: &V,
+            ) {
+                (self.f_render)(&mut self.data, reactive_state, non_reactive_state, value)
             }
 
             fn poll_render(
                 &mut self,
                 reactive_state: Pin<&mut S>,
+                non_reactive_state: &mut NRS,
                 cx: &mut std::task::Context<'_>,
             ) -> Poll<()> {
-                (self.f_poll)(&mut self.data, reactive_state, cx)
+                (self.f_poll)(&mut self.data, reactive_state, non_reactive_state, cx)
             }
 
             fn warn(&mut self, message: &str) {
@@ -384,16 +407,10 @@ where
         <KindOfMutElement<E, SH::SignalShareValue> as UnpinnedRenderStateKind>::UnpinnedUiHandle<R>,
     >;
 
-    type UnpinnedNonReactiveState<R: RenderHtml + ?Sized> = (
-        E,
-        <KindOfMutElement<E, SH::SignalShareValue> as UnpinnedRenderStateKind>::UnpinnedNonReactiveState<
-            R,
-        >,
-    );
-
-    type UnpinnedReactiveState = OptionSignalHookAndOther<
+    type UnpinnedState<R: RenderHtml + ?Sized> = State<
         SH,
-        <KindOfMutElement<E, SH::SignalShareValue> as UnpinnedRenderStateKind>::UnpinnedReactiveState,
+        <KindOfMutElement<E, SH::SignalShareValue> as UnpinnedRenderStateKind>::UnpinnedState<R>,
+        E,
     >;
 }
 
@@ -406,46 +423,78 @@ where
     fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        RenderStates {
-            ui_handle,
-            non_reactive_state: (element, non_reactive_state),
-            reactive_state,
-        }: experimental::UnpinnedMutRenderStatesOfKind<Self, R>,
+        state: &mut Self::UnpinnedState<R>,
+        ui_handle: &mut Self::UnpinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        Pin::new(reactive_state).poll_render_with_fn_and_data(
-            (renderer, ui_handle, element, non_reactive_state),
-            |(renderer, ui_handle, element, non_reactive_state), reactive_state, value: &_| {
-                ui_handle.use_surrounded_render_context(renderer, |ui_handle, render_context| {
-                    element
-                        .as_mut_csr_element_with_value(value)
-                        .unpinned_render_update(
-                            render_context,
-                            RenderStates {
-                                ui_handle,
-                                non_reactive_state,
-                                reactive_state: reactive_state.get_mut(),
-                            },
-                        )
-                })
+        let ui_handle = ui_handle.surrounded_mut();
+        Pin::new(state).project().poll_render_with_fn_and_data(
+            (renderer, ui_handle),
+            |(renderer, ui_handle), reactive_state, element, value: &_| {
+                element
+                    .as_mut_csr_element_with_value(value)
+                    .unpinned_render_update::<R>(renderer, reactive_state.get_mut(), ui_handle)
             },
-            |(renderer, ui_handle, _, non_reactive_state), reactive_state, cx| {
+            |(renderer, ui_handle), reactive_state, _, cx| {
                 E::ElementWithValueRenderStateKind::unpinned_poll_render::<R>(
                     renderer,
-                    RenderStates {
-                        ui_handle: ui_handle.surrounded_mut(),
-                        non_reactive_state,
-                        reactive_state: reactive_state.get_mut(),
-                    },
+                    reactive_state.get_mut(),
+                    ui_handle,
                     cx,
                 )
             },
-            |(renderer, _, _, _), message| {
+            |(renderer, _), message| {
                 // TODO: warn instead of log
                 renderer.log(message)
             },
             cx,
         )
+    }
+}
+
+pin_project!(
+    pub struct PinnedState<SH, T, NRS> {
+        #[pin]
+        inner: State<SH, Option<T>, NRS>,
+    }
+);
+
+impl<SH, T, NRS> PinnedState<SH, T, NRS> {
+    fn project_state(self: Pin<&mut Self>) -> StateProj<'_, SH, T, NRS> {
+        let StateProj {
+            signal_hook,
+            other,
+            non_reactive_state,
+            update_times,
+        } = self.project().inner.project();
+        StateProj {
+            signal_hook,
+            other: other.as_pin_mut().unwrap(),
+            non_reactive_state,
+            update_times,
+        }
+    }
+
+    fn pin_insert(self: Pin<&mut Self>, state: T) -> StateProj<SH, T, NRS> {
+        let StateProj {
+            signal_hook,
+            mut other,
+            non_reactive_state,
+            update_times,
+        } = self.project().inner.project();
+        other.set(Some(state));
+        StateProj {
+            signal_hook,
+            other: other.as_pin_mut().unwrap(),
+            non_reactive_state,
+            update_times,
+        }
+    }
+}
+
+impl<SH: HookUnmount, T: StateUnmount, NRS> StateUnmount for PinnedState<SH, T, NRS> {
+    fn state_unmount(self: Pin<&mut Self>) {
+        self.project_state().state_unmount()
     }
 }
 
@@ -455,22 +504,15 @@ where
     E: AsMutCsrElementWithValue<SH::SignalShareValue>,
     // SH: Unpin,
 {
-    type PinnedUiHandle<R: RenderHtml + ?Sized> = UiHandleWithNonReactiveState<
-        CursorPlaceholdersSurrounded<
-            R::CursorPlaceholder,
-            <KindOfMutElement<E, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedUiHandle<R>,
-        >,
-        E,
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = CursorPlaceholdersSurrounded<
+        R::CursorPlaceholder,
+        <KindOfMutElement<E, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedUiHandle<R>,
     >;
 
-    type PinnedNonReactiveState<R: RenderHtml + ?Sized> =
-        <KindOfMutElement<E, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedNonReactiveState<
-            R,
-        >;
-
-    type PinnedReactiveState = OptionSignalHookAndOther<
+    type PinnedState<R: RenderHtml + ?Sized> = PinnedState<
         SH,
-        <KindOfMutElement<E, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedReactiveState,
+        <KindOfMutElement<E, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedState<R>,
+        E,
     >;
 }
 
@@ -483,45 +525,27 @@ where
     fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        RenderStates {
-            ui_handle:
-                UiHandleWithNonReactiveState {
-                    ui_handle,
-                    non_reactive_state: element,
-                },
-            non_reactive_state,
-            reactive_state,
-        }: experimental::PinnedMutRenderStatesOfKind<Self, R>,
+        state: Pin<&mut Self::PinnedState<R>>,
+        ui_handle: &mut Self::PinnedUiHandle<R>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
-        reactive_state.poll_render_with_fn_and_data(
-            (renderer, ui_handle, element, non_reactive_state),
-            |(renderer, ui_handle, element, non_reactive_state), reactive_state, value: &_| {
-                ui_handle.use_surrounded_render_context(renderer, |ui_handle, render_context| {
-                    element
-                        .as_mut_csr_element_with_value(value)
-                        .pinned_render_update(
-                            render_context,
-                            RenderStates {
-                                ui_handle,
-                                non_reactive_state: non_reactive_state.as_mut(),
-                                reactive_state,
-                            },
-                        )
-                })
+        let ui_handle = ui_handle.surrounded_mut();
+        state.project_state().poll_render_with_fn_and_data(
+            (renderer, ui_handle),
+            |(renderer, ui_handle), reactive_state, element, value: &_| {
+                element
+                    .as_mut_csr_element_with_value(value)
+                    .pinned_render_update::<R>(renderer, reactive_state, ui_handle)
             },
-            |(renderer, ui_handle, _, non_reactive_state), reactive_state, cx| {
+            |(renderer, ui_handle), reactive_state, _, cx| {
                 E::ElementWithValueRenderStateKind::pinned_poll_render::<R>(
                     renderer,
-                    RenderStates {
-                        ui_handle: ui_handle.surrounded_mut(),
-                        non_reactive_state: non_reactive_state.as_mut(),
-                        reactive_state,
-                    },
+                    reactive_state,
+                    ui_handle,
                     cx,
                 )
             },
-            |(renderer, _, _, _), message| {
+            |(renderer, _), message| {
                 // TODO: warn instead of log
                 renderer.log(message)
             },
@@ -549,160 +573,173 @@ fn use_signal_hook_map<SH: SignalHook, R>(
     signal.map(f)
 }
 
+pub struct RenderInit<F, OwnedPart> {
+    _f: PhantomData<F>,
+    owned_part: OwnedPart,
+}
+
+impl<SH, F, Ctx: ?Sized + HtmlRenderContext>
+    RenderInitPinned<
+        &mut Ctx,
+        PinnedState<
+            SH,
+            PinnedStateOfKind<Ctx::Renderer, KindOfMutElement<F::MutPart, SH::SignalShareValue>>,
+            F::MutPart,
+        >,
+    > for RenderInit<F, F::OwnedPart>
+where
+    SH: Unpin + SignalHook,
+    F: IntoAsMutCsrElementWithValue<SH::SignalShareValue>,
+{
+    type Output = CursorPlaceholdersSurrounded<
+        <Ctx::Renderer as frender_html::dom::render::Render>::CursorPlaceholder,
+        <KindOfMutElement<F::MutPart, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedUiHandle<
+            Ctx::Renderer,
+        >,
+    >;
+
+    fn render_init_pinned(
+        self,
+        render_context: &mut Ctx,
+        state: Pin<
+            &mut PinnedState<
+                SH,
+                <KindOfMutElement<F::MutPart, SH::SignalShareValue> as PinnedRenderStateKind>::PinnedState<
+                    Ctx::Renderer,
+                >,
+                F::MutPart,
+            >,
+        >,
+    ) -> Self::Output {
+        let Self {
+            _f: self::PhantomData,
+            owned_part,
+        } = self;
+        let StateProj {
+            signal_hook,
+            other: mut reactive_state,
+            non_reactive_state: mut_part,
+            update_times: _,
+        } = state.project().inner.project();
+        render_context.map_mut_render_context(|render_context| {
+            CursorPlaceholdersSurrounded::surround::<Ctx::Renderer>(
+                render_context,
+                |render_context| {
+                    signal_hook.map(|value| {
+                        use frender_csr::render::RenderContext as _;
+                        let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
+                        let (state_init, render_init) =
+                            element.pinned_render_init(render_context.renderer_mut());
+
+                        reactive_state.set(Some(state_init));
+                        let state = reactive_state.as_pin_mut().unwrap();
+                        render_init.render_init_pinned(render_context, state)
+                    })
+                },
+            )
+        })
+    }
+}
+
 impl<S: Signal, F> CsrElement for SignalIntoElement<S, F>
 where
     S::SignalHook: Unpin,
     F: IntoAsMutCsrElementWithValue<<S as ShareValue>::Value>,
 {
     type RenderStateKind = Kind<S::SignalHook, F::MutPart>;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit<F, F::OwnedPart>;
 
-    fn pinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-        PinMutRenderInitStates {
-            non_reactive_state,
-            reactive_state,
-        }: experimental::PinMutRenderInitStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) -> experimental::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        _: &mut Renderer,
+    ) -> (
+        //
+        PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        Self::PinnedRenderInit<Renderer>,
+    ) {
         let Self(signal, f) = self;
-        let (mut mut_part, owned_part) = f.into_csr_parts();
-        let mut reactive_state = reactive_state.project();
-        let ui_handle = render_context.map_mut_render_context(|render_context| {
-            CursorPlaceholdersSurrounded::surround(render_context, |render_context| {
-                signal.map(|value| {
-                    let element = F::owned_part_into_csr_element(&mut mut_part, value, owned_part);
-                    element.pinned_render_init(
-                        render_context,
-                        PinMutRenderInitStates {
-                            non_reactive_state,
-                            reactive_state: reactive_state.other,
-                        },
-                    )
-                })
-            })
-        });
+        let (mut_part, owned_part) = f.into_csr_parts();
 
-        reactive_state
-            .signal_hook
-            .set(Some(signal.to_signal_hook()));
-        UiHandleWithNonReactiveState {
-            ui_handle,
-            non_reactive_state: mut_part,
-        }
+        (
+            PinnedState {
+                inner: State {
+                    signal_hook: signal.to_signal_hook(),
+                    other: None,
+                    non_reactive_state: mut_part,
+                    #[cfg(debug_assertions)]
+                    update_times: 0,
+                    #[cfg(not(debug_assertions))]
+                    update_times: (),
+                },
+            },
+            RenderInit {
+                _f: PhantomData,
+                owned_part,
+            },
+        )
     }
 
-    fn pinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        RenderStates {
-            ui_handle:
-                UiHandleWithNonReactiveState {
-                    ui_handle,
-                    non_reactive_state: mut_part,
-                },
-            non_reactive_state,
-            reactive_state,
-        }: experimental::PinnedMutRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer>,
-    ) {
-        let reactive_state = reactive_state.project();
-        let Some(mut signal_hook) = reactive_state.signal_hook.as_pin_mut() else {
-            panic!()
-        };
+        reused_state: Pin<&mut PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        unmounted_ui_handle: experimental::PinnedUnmountedUiHandleOfKind<
+            Ctx::Renderer,
+            Self::RenderStateKind,
+        >,
+    ) -> PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        let StateProj {
+            signal_hook,
+            other: state,
+            non_reactive_state: mut_part,
+            update_times,
+        } = reused_state.project_state();
+        let signal_hook = signal_hook.get_mut();
 
-        reset_update_times(reactive_state.update_times);
+        reset_update_times(update_times);
 
         let Self(signal, f) = self;
 
         let owned_part;
         (*mut_part, owned_part) = f.into_csr_parts();
 
-        if signal.is_signal_of(&signal_hook) {
-            // f is never considered as changed.
-            // The state has been kept up-to-date in poll_render.
-            // So we just skip render_update.
-            return render_context.map_mut_render_context(|render_context| {
-                ui_handle.check_and_move_cursor(render_context)
-            });
-        }
-
-        render_context.map_mut_render_context(|render_context| {
-            ui_handle.map_mut_surrounded_with_render_context(
+        let ui_handle = render_context.map_mut_render_context(|render_context| {
+            unmounted_ui_handle.mount_and_map(
                 render_context,
-                |ui_handle, render_context| {
+                |unmounted_ui_handle, render_context| {
                     signal.map(|value| {
                         let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
-                        CsrElement::pinned_render_update(
+                        CsrElement::pinned_render_init_by_reusing(
                             element,
                             render_context,
-                            RenderStates {
-                                ui_handle,
-                                non_reactive_state,
-                                reactive_state: reactive_state.other,
-                            },
+                            state,
+                            unmounted_ui_handle,
                         )
                     })
                 },
             )
         });
 
-        signal_hook.set(signal.to_signal_hook()); // TODO: signal.update_into_signal_hook?
+        *signal_hook = signal.to_signal_hook(); // TODO: signal.update_into_signal_hook?
+
+        ui_handle
     }
 
-    fn unpinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
-        render_context: &mut Ctx,
-    ) -> experimental::UnpinnedRenderStatesOfKind<Self::RenderStateKind, Ctx::Renderer> {
-        let Self(signal, f) = self;
-        let (mut mut_part, owned_part) = f.into_csr_parts();
-        let (ui_handle, (non_reactive_state, reactive_state)) = render_context
-            .map_mut_render_context(|render_context| {
-                CursorPlaceholdersSurrounded::surround_and_output(
-                    render_context,
-                    |render_context| {
-                        let RenderStates {
-                            ui_handle,
-                            non_reactive_state,
-                            reactive_state,
-                        } = signal.map(|value| {
-                            let element =
-                                F::owned_part_into_csr_element(&mut mut_part, value, owned_part);
-                            element.unpinned_render_init(render_context)
-                        });
-                        (ui_handle, (non_reactive_state, reactive_state))
-                    },
-                )
-            });
-        RenderStates {
-            ui_handle,
-            non_reactive_state: (mut_part, non_reactive_state),
-            reactive_state: OptionSignalHookAndOther::new(signal.to_signal_hook(), reactive_state),
-        }
-    }
-
-    fn unpinned_render_update<Ctx: ?Sized + frender_html::HtmlRenderContext>(
-        //
-        self,
-        render_context: &mut Ctx,
-        RenderStates {
-            ui_handle,
-            non_reactive_state: (mut_part, non_reactive_state),
-            reactive_state:
-                OptionSignalHookAndOther {
-                    signal_hook,
-                    other: reactive_state,
-                    update_times,
-                },
-        }: experimental::UnpinnedMutRenderStatesOfKind<
-            Self::RenderStateKind,
-            Ctx::Renderer,
-        >,
+        renderer: &mut Renderer,
+        state: Pin<&mut PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
-        let Some(signal_hook) = signal_hook else {
-            panic!()
-        };
+        let StateProj {
+            signal_hook,
+            other: state,
+            non_reactive_state: mut_part,
+            update_times,
+        } = state.project_state();
+        let signal_hook = signal_hook.get_mut();
 
         reset_update_times(update_times);
 
@@ -715,29 +752,116 @@ where
             // f is never considered as changed.
             // The state has been kept up-to-date in poll_render.
             // So we just skip render_update.
-            return render_context.map_mut_render_context(|render_context| {
-                ui_handle.check_and_move_cursor(render_context)
-            });
+            return;
         }
 
-        render_context.map_mut_render_context(|render_context| {
-            ui_handle.map_mut_surrounded_with_render_context(
+        let ui_handle = ui_handle.surrounded_mut();
+        signal.map(|value| {
+            let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
+            CsrElement::pinned_render_update(element, renderer, state, ui_handle)
+        });
+
+        *signal_hook = signal.to_signal_hook(); // TODO: signal.update_into_signal_hook?
+    }
+
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
+        //
+        self,
+        render_context: &mut Ctx,
+    ) -> (
+        //
+        UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) {
+        let Self(signal, f) = self;
+        let (mut mut_part, owned_part) = f.into_csr_parts();
+        let (state, ui_handle) = render_context.map_mut_render_context(|render_context| {
+            CursorPlaceholdersSurrounded::output_and_surround(render_context, |render_context| {
+                signal.map(|value| {
+                    let element = F::owned_part_into_csr_element(&mut mut_part, value, owned_part);
+                    element.unpinned_render_init(render_context)
+                })
+            })
+        });
+        (
+            State::new(signal.to_signal_hook(), state, mut_part),
+            ui_handle,
+        )
+    }
+
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
+        self,
+        render_context: &mut Ctx,
+        State {
+            signal_hook,
+            other: state,
+            non_reactive_state: mut_part,
+            update_times,
+        }: &mut UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        unmounted_ui_handle: experimental::UnpinnedUnmountedUiHandleOfKind<
+            Ctx::Renderer,
+            Self::RenderStateKind,
+        >,
+    ) -> UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        reset_update_times(update_times);
+
+        let Self(signal, f) = self;
+
+        let owned_part;
+        (*mut_part, owned_part) = f.into_csr_parts();
+
+        let ui_handle = render_context.map_mut_render_context(|render_context| {
+            unmounted_ui_handle.mount_and_map(
                 render_context,
-                |ui_handle, render_context| {
+                |unmounted_ui_handle, render_context| {
                     signal.map(|value| {
                         let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
-                        CsrElement::unpinned_render_update(
+                        CsrElement::unpinned_render_init_by_reusing(
                             element,
                             render_context,
-                            RenderStates {
-                                ui_handle,
-                                non_reactive_state,
-                                reactive_state,
-                            },
+                            state,
+                            unmounted_ui_handle,
                         )
                     })
                 },
             )
+        });
+
+        *signal_hook = signal.to_signal_hook(); // TODO: signal.update_into_signal_hook?
+
+        ui_handle
+    }
+
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
+        //
+        self,
+        renderer: &mut Renderer,
+        State {
+            signal_hook,
+            other: state,
+            non_reactive_state: mut_part,
+            update_times,
+        }: &mut UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ui_handle: &mut UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+    ) {
+        reset_update_times(update_times);
+
+        let Self(signal, f) = self;
+
+        let owned_part;
+        (*mut_part, owned_part) = f.into_csr_parts();
+
+        if signal.is_signal_of(signal_hook) {
+            // f is never considered as changed.
+            // The state has been kept up-to-date in poll_render.
+            // So we just skip render_update.
+            return;
+        }
+
+        let ui_handle = ui_handle.surrounded_mut();
+        signal.map(|value| {
+            let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
+            CsrElement::unpinned_render_update(element, renderer, state, ui_handle)
         });
 
         *signal_hook = signal.to_signal_hook(); // TODO: signal.update_into_signal_hook?
