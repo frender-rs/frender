@@ -25,6 +25,7 @@ frender-form-control = { version = "0.1.0", path = "../frender-form-control", fe
     "ssr",
 ] }
 arrayvec = { version = "0.7.6", default-features = false }
+ref-cast = { version = "1.0.23", optional = true }
 
 [dependencies.web-sys]
 version = "0.3.60"
@@ -122,7 +123,7 @@ either = [
     "frender-dom/either",
     "frender-form-control/either",
 ]
-ElementProxyAttrs = []
+ElementProxyAttrs = ["dep:ref-cast"]
 components = []
 chrono = ["frender-form-control/chrono"]
 experimental = []

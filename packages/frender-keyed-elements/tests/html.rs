@@ -2,10 +2,10 @@
 
 use frender_html::cs;
 use frender_keyed_elements::{Keyed, KeyedElements};
-use frender_test::{element::Node, renderer::RendererWithRoot};
+use frender_test::{element::Node, renderer::Root};
 
-fn dom_nodes_div_i32(dom: &RendererWithRoot) -> Vec<i32> {
-    let nodes = dom.nodes();
+fn dom_nodes_div_i32(root: &Root) -> Vec<i32> {
+    let nodes = root.clone_nodes();
     let mut nodes = nodes.iter();
     assert!(nodes.next().unwrap().is_cursor_placeholder());
     assert!(nodes.next_back().unwrap().is_cursor_placeholder());
@@ -29,27 +29,25 @@ fn dom_nodes_div_i32(dom: &RendererWithRoot) -> Vec<i32> {
 #[cfg(feature = "csr")]
 #[test]
 fn prepend() {
-    let mut dom = RendererWithRoot::new();
-    let mut render_state = Default::default();
+    use frender_html::CsrElement;
+    use frender_test::renderer::unpinned_render_init;
 
-    assert!(dom.nodes().is_empty());
+    let (ref mut renderer, ref root, (ref mut state, ref mut ui_handle)) = unpinned_render_init(
+        KeyedElements((0..5).map(|n| Keyed(n, cs::div().children(n)))),
+    );
 
-    {
-        let elements = (0..5).map(|n| Keyed(n, cs::div().children(n)));
-        dom.unpinned_render_update(Elements(elements), &mut render_state);
-        assert_eq!(dom_nodes_div_i32(&dom), [0, 1, 2, 3, 4]);
-    }
+    assert_eq!(dom_nodes_div_i32(root), [0, 1, 2, 3, 4]);
 
     {
         let elements = [9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div().children(n)));
-        dom.unpinned_render_update(Elements(elements), &mut render_state);
-        assert_eq!(dom_nodes_div_i32(&dom), [9, 0, 1, 2, 3, 4]);
+        KeyedElements(elements).unpinned_render_update(renderer, state, ui_handle);
+        assert_eq!(dom_nodes_div_i32(root), [9, 0, 1, 2, 3, 4]);
     }
 
     {
         let elements = [10, 11, 12, 9, 0, 1, 2, 3, 4].map(|n| Keyed(n, cs::div().children(n)));
-        dom.unpinned_render_update(Elements(elements), &mut render_state);
+        KeyedElements(elements).unpinned_render_update(renderer, state, ui_handle);
 
-        assert_eq!(dom_nodes_div_i32(&dom), [10, 11, 12, 9, 0, 1, 2, 3, 4]);
+        assert_eq!(dom_nodes_div_i32(root), [10, 11, 12, 9, 0, 1, 2, 3, 4]);
     }
 }

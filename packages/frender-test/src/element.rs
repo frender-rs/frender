@@ -1,3 +1,4 @@
+pub use self::dom::UnmountedElement;
 pub use dom_token_list::DomTokenList;
 
 use std::{
@@ -95,7 +96,7 @@ impl Node {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) enum Cursor {
     FirstChildOf(Element),
     After {
@@ -271,7 +272,7 @@ impl Element {
         }
     }
 
-    pub(crate) fn new_with_tag(tag: impl Into<Cow<'static, str>>) -> Self {
+    fn new_with_tag(tag: impl Into<Cow<'static, str>>) -> Self {
         Self {
             inner: Rc::new(RefCell::new(ElementInner {
                 parent: None,
@@ -290,7 +291,7 @@ impl Element {
         self.inner.borrow().parent.clone()
     }
 
-    pub(crate) fn children(&self) -> Vec<Node> {
+    pub fn children(&self) -> Vec<Node> {
         self.inner.borrow().children.clone()
     }
 
@@ -371,11 +372,64 @@ impl WeakElement {
 mod cursor_placeholder {
     use std::borrow::Cow;
 
-    use frender_html::dom::behaviors::{self, Node as _};
+    use frender_html::dom::{
+        behaviors::{self, Node as _},
+        ui_handle::{UiHandle, UnmountedUiHandle},
+    };
 
     use crate::renderer::{RenderContext, Renderer};
 
     use super::{CursorPlaceholder, Node};
+
+    pub struct UnmountedCursorPlaceholder(CursorPlaceholder);
+
+    impl UnmountedUiHandle<Renderer> for UnmountedCursorPlaceholder {
+        type Mounted = CursorPlaceholder;
+
+        fn mount(self, render_context: &mut RenderContext) -> Self::Mounted
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.0.clone())), true);
+            self.0
+        }
+    }
+
+    impl UiHandle<Renderer> for CursorPlaceholder {
+        type Unmounted = UnmountedCursorPlaceholder;
+
+        fn unmount(self, renderer: &mut Renderer) -> Self::Unmounted {
+            self.parent()
+                .expect("CursorPlaceholder should have a parent")
+                .upgrade()
+                .expect("CursorPlaceholder's parent should not have been dropped")
+                .remove_child(&Node::CursorPlaceholder(self.clone()));
+            UnmountedCursorPlaceholder(self)
+        }
+
+        fn reposition(&mut self, render_context: &mut RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), true);
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(Cow::Owned(Node::CursorPlaceholder(self.clone())), false);
+        }
+
+        fn assert_cursor_is_at_self(&self, render_context: &RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            assert!(render_context.cursor_is_at(
+                |node| matches!(node, Node::CursorPlaceholder(cp) if cp.is_same_cursor_placeholder(self))
+            ))
+        }
+    }
 
     impl behaviors::Node<Renderer> for CursorPlaceholder {
         fn log_self(&self, _: &mut Renderer) {
@@ -443,11 +497,75 @@ mod cursor_placeholder {
 }
 
 mod dom {
-    use crate::renderer::Renderer;
+    use crate::renderer::{RenderContext, Renderer};
 
     use super::{Element, Node};
 
-    use frender_html::dom::behaviors;
+    use frender_html::dom::{
+        behaviors,
+        render_from::str::ValueForStr,
+        ui_handle::{ProvideMutMounted, UiHandle, UnmountedUiHandle},
+    };
+
+    pub struct UnmountedElement(Element);
+
+    impl UnmountedElement {
+        pub(crate) fn new_with_tag(tag: impl Into<std::borrow::Cow<'static, str>>) -> Self {
+            Self(Element::new_with_tag(tag))
+        }
+    }
+
+    impl UnmountedUiHandle<Renderer> for UnmountedElement {
+        type Mounted = Element;
+
+        fn mount(self, render_context: &mut RenderContext) -> Self::Mounted {
+            render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.0.clone())), true);
+            self.0
+        }
+    }
+
+    impl ProvideMutMounted<Renderer> for UnmountedElement {
+        fn provide_mut_mounted<Out>(
+            &mut self,
+            renderer: &mut Renderer,
+            f: impl FnOnce(&mut Renderer, &mut Self::Mounted) -> Out,
+        ) -> Out {
+            f(renderer, &mut self.0)
+        }
+    }
+
+    impl UiHandle<Renderer> for Element {
+        type Unmounted = UnmountedElement;
+
+        fn unmount(self, renderer: &mut Renderer) -> Self::Unmounted {
+            todo!()
+        }
+
+        fn reposition(&mut self, render_context: &mut RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), true)
+        }
+
+        fn check_and_move_cursor(&self, render_context: &mut RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            render_context.readd_node(std::borrow::Cow::Owned(Node::Element(self.clone())), false)
+        }
+
+        fn assert_cursor_is_at_self(&self, render_context: &RenderContext)
+        where
+            Renderer: frender_html::dom::render::RenderWithContext,
+        {
+            assert!(render_context
+                .current_node()
+                .as_ref()
+                .and_then(Node::as_element)
+                .map_or(false, |e| e.is_same_element(self)))
+        }
+    }
 
     impl behaviors::Node<Renderer> for Element {
         fn log_self(&self, _: &mut Renderer) {
@@ -494,6 +612,12 @@ mod dom {
         }
     }
 
+    impl behaviors::SetInnerHtmlFromStr<Renderer> for Element {
+        fn set_inner_html_from_str(&mut self, renderer: &mut Renderer, value: impl ValueForStr) {
+            todo!()
+        }
+    }
+
     impl behaviors::Element<Renderer> for Element {
         fn set_attribute(&mut self, renderer: &mut Renderer, name: &str, value: &str) {
             todo!()
@@ -503,20 +627,18 @@ mod dom {
             todo!()
         }
 
-        fn set_inner_html(&mut self, renderer: &mut Renderer, value: &str) {
-            todo!()
-        }
-
         fn as_node_ref(&self) -> &(dyn 'static + frender_html::dom::node_ref::traits::Element) {
             todo!()
         }
     }
 
-    impl behaviors::HtmlElement<Renderer> for Element {
-        fn set_inner_text(&mut self, renderer: &mut Renderer, value: &str) {
+    impl behaviors::SetInnerTextFromStr<Renderer> for Element {
+        fn set_inner_text_from_str(&mut self, renderer: &mut Renderer, value: impl ValueForStr) {
             todo!()
         }
+    }
 
+    impl behaviors::HtmlElement<Renderer> for Element {
         fn as_node_ref(&self) -> &(dyn 'static + frender_html::dom::node_ref::traits::HtmlElement) {
             todo!()
         }
@@ -618,8 +740,11 @@ mod dom_token_list {
 }
 
 mod event_listener {
-    use frender_html::dom::{
-        event_types::EventType, HasEventTypeName, OnEvent, RegisterOrUpdate, RegisterUpdate,
+    use frender_html::{
+        dom::{
+            event_types::EventType, HasEventTypeName, OnEvent, PinnedRegisterUpdate, RegisterUpdate,
+        },
+        experimental::RenderInitPinned,
     };
 
     use crate::renderer::Renderer;
@@ -639,8 +764,41 @@ mod event_listener {
         }
     }
 
-    impl<F> RegisterOrUpdate<Element, Renderer, F> for EventListener<F> {
-        fn register_or_update(
+    #[non_exhaustive]
+    pub enum RenderInit {}
+
+    impl<F>
+        RenderInitPinned<
+            //
+            (&mut Element, &mut Renderer),
+            EventListener<F>,
+        > for RenderInit
+    {
+        type Output = ();
+        fn render_init_pinned(
+            self,
+            renderer: (&mut Element, &mut Renderer),
+            state: std::pin::Pin<&mut EventListener<F>>,
+        ) -> Self::Output {
+            todo!()
+        }
+    }
+
+    impl<F> PinnedRegisterUpdate<Element, Renderer, F> for EventListener<F> {
+        type PinnedRegisterInit = RenderInit;
+
+        fn pinned_register_init(
+            node: &mut Element,
+            renderer: &mut Renderer,
+            f: F,
+        ) -> (Self, Self::PinnedRegisterInit)
+        where
+            Self: Sized,
+        {
+            todo!()
+        }
+
+        fn pinned_update(
             self: std::pin::Pin<&mut Self>,
             node: &mut Element,
             renderer: &mut Renderer,
@@ -768,7 +926,7 @@ mod form_control {
     }
 
     enum Never {}
-    struct EventListenerUnpinned<VK: ?Sized + FormControlValueKind> {
+    pub struct EventListenerUnpinned<VK: ?Sized + FormControlValueKind> {
         _todo: Never,
         _phantom: PhantomData<VK>,
     }

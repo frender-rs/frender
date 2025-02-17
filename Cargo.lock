@@ -1079,6 +1079,7 @@ dependencies = [
  "gloo-events 0.2.0",
  "js-sys",
  "pin-project-lite",
+ "ref-cast",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1188,6 +1189,7 @@ dependencies = [
 name = "frender-test"
 version = "0.1.0"
 dependencies = [
+ "frender-common",
  "frender-html",
  "frender-macro-rules",
  "indexmap 2.2.6",
@@ -2933,6 +2935,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "567664f262709473930a4bf9e51bf2ebf3348f2e748ccc50dea20646858f8f29"
 dependencies = [
  "bitflags 1.3.2",
+]
+
+[[package]]
+name = "ref-cast"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccf0a6f84d5f1d581da8b41b47ec8600871962f2a528115b542b362d4b744931"
+dependencies = [
+ "ref-cast-impl",
+]
+
+[[package]]
+name = "ref-cast-impl"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcc303e793d3734489387d205e9b186fac9c6cfacedd98cbb2e8a5943595f3e6"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.60",
 ]
 
 [[package]]

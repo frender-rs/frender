@@ -3,60 +3,54 @@ use std::borrow::Cow;
 use frender_html::{
     dom::{
         behaviors::ElementWithChildren as _,
-        render::{Render, RenderTextFrom, RenderWithContext},
+        render::{Render, RenderWithContext},
         ProvideRenderContext,
     },
-    RenderHtml,
+    experimental, ElementProxyAttrs, RenderHtml,
 };
 
-use crate::{
-    element::{CursorPlaceholder, Node},
-    text::Text,
-};
+use crate::element::{CursorPlaceholder, Element, Node, UnmountedElement};
+
+mod text;
 
 #[non_exhaustive]
 pub struct Renderer {}
 
-pub struct RendererWithRoot {
+pub struct Root(crate::element::Element);
+
+impl Root {
+    pub fn clone_nodes(&self) -> Vec<Node> {
+        self.0.children()
+    }
+}
+
+struct RendererWithRoot {
     renderer: Renderer,
-    root: crate::element::Element,
+    root: Root,
 }
 
 impl RendererWithRoot {
+    pub fn provide_render_context_and_renderer<Out>(
+        mut self,
+        f: impl FnOnce(&mut RenderContext) -> Out,
+    ) -> (Renderer, Root, Out) {
+        let out = self
+            .root
+            .0
+            .with_render_context_at_first_child_of_self(&mut self.renderer, f);
+
+        (self.renderer, self.root, out)
+    }
     pub fn new() -> Self {
         let root = crate::element::Element::new_dummy();
         Self {
             renderer: Renderer {},
-            root,
+            root: Root(root),
         }
     }
 
-    pub fn nodes(&self) -> Vec<Node> {
-        self.root.children()
-    }
-
-    pub fn render_update<E: frender_html::CsrElement>(
-        &mut self,
-        element: E,
-        render_state: std::pin::Pin<
-            &mut <E::RenderStateKind as RenderStateKindPinned>::RenderState<Renderer>,
-        >,
-    ) {
-        self.provide_render_context(|render_context| {
-            frender_html::CsrElement::render_update(element, render_context, render_state)
-        })
-    }
-
-    pub fn unpinned_render_update<E: frender_html::CsrElement>(
-        &mut self,
-        element: E,
-        render_state: &mut <E::RenderStateKind as RenderStateKindUnpinned>::UnpinnedRenderState<
-            Renderer,
-        >,
-    ) {
-        self.provide_render_context(|render_context| {
-            frender_html::CsrElement::unpinned_render_update(element, render_context, render_state)
-        })
+    pub fn clone_nodes(&self) -> Vec<Node> {
+        self.root.clone_nodes()
     }
 }
 
@@ -68,6 +62,7 @@ impl ProvideRenderContext for RendererWithRoot {
         f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
     ) -> Res {
         self.root
+            .0
             .with_render_context_at_first_child_of_self(&mut self.renderer, f)
     }
 
@@ -191,16 +186,6 @@ impl Renderer {
     }
 }
 
-impl<S: ?Sized + ToString> RenderTextFrom<Text, S> for Renderer {
-    fn render_text_from(&mut self, v: &S) -> Text {
-        Text::new(v.to_string())
-    }
-
-    fn update_text_from(&mut self, text: &mut Text, v: &S) {
-        text.update(v.to_string())
-    }
-}
-
 macro_rules! html_elements {
     (
         |$tag:pat_param| -> $Element:ty { $e:expr },
@@ -208,7 +193,7 @@ macro_rules! html_elements {
     ) => {
         $(
             type $name = $Element;
-            fn $name(&mut self) -> Self::$name {
+            fn $name(&mut self) -> ElementProxyAttrs<UnmountedElement> {
                 let $tag = <frender_html::cs::$name::Marker as frender_html::dom::component::HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG;
                 $e
             }
@@ -225,6 +210,9 @@ impl std::fmt::Debug for Cursor {
 }
 
 impl Cursor {
+    fn cloned(&self) -> Self {
+        Self(self.0.clone(), self.1)
+    }
     fn is_same_cursor(&self, other: &Self) -> bool {
         self.1 == other.1
             && match (&self.0, &other.0) {
@@ -277,6 +265,23 @@ impl frender_html::dom::render::RenderContext for RenderContext<'_> {
         f(self)
     }
 
+    fn map_mut_cloned_render_context<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        f(&mut RenderContext {
+            renderer: self.renderer,
+            cursor: &mut self.cursor.cloned(),
+        })
+    }
+
+    fn map_mut_unrendered_render_context_and_then_reposition<Res>(
+        &mut self,
+        f: impl FnOnce(&mut <Self::Renderer as RenderWithContext>::RenderContext<'_>) -> Res,
+    ) -> Res {
+        todo!()
+    }
+
     fn renderer_mut(&mut self) -> &mut Self::Renderer {
         &mut self.renderer
     }
@@ -295,11 +300,9 @@ impl RenderWithContext for Renderer {
 }
 
 impl RenderHtml for Renderer {
-    type Text = Text;
-
     html_elements!(
-        |tag| -> frender_html::ElementProxyAttrs<crate::element::Element> {
-            frender_html::ElementProxyAttrs(crate::element::Element::new_with_tag(tag))
+        |tag| -> ElementProxyAttrs<Element> {
+            ElementProxyAttrs(UnmountedElement::new_with_tag(tag))
         },
         abbr,
         address,
@@ -413,4 +416,22 @@ impl RenderHtml for Renderer {
         track,
         ul,
     );
+}
+
+pub fn unpinned_render_init<E: frender_html::CsrElement>(
+    element: E,
+) -> (
+    Renderer,
+    Root,
+    (
+        experimental::UnpinnedStateOfKind<Renderer, E::RenderStateKind>,
+        experimental::UnpinnedUiHandleOfKind<Renderer, E::RenderStateKind>,
+    ),
+) {
+    let dom = RendererWithRoot::new();
+    assert!(dom.clone_nodes().is_empty());
+
+    dom.provide_render_context_and_renderer(|render_context| {
+        element.unpinned_render_init(render_context)
+    })
 }

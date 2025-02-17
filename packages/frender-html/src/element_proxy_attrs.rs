@@ -1,6 +1,16 @@
 pub use event_listener::EventListener;
+use ref_cast::{ref_cast_custom, RefCastCustom};
 
+#[derive(RefCastCustom)]
+#[repr(transparent)]
 pub struct ElementProxyAttrs<E: ?Sized>(pub E);
+
+impl<E: ?Sized> ElementProxyAttrs<E> {
+    #[ref_cast_custom]
+    fn ref_cast_mut(inner: &mut E) -> &mut Self;
+}
+
+mod ui_handle;
 
 pub(crate) mod proxy_attr {
     use frender_common::impl_many;
