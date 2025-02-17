@@ -1,4 +1,4 @@
-pub use frender_csr::render::{RenderContext, RenderWithContext};
+pub use frender_csr_core::render::{RenderContext, RenderWithContext};
 
 pub use self::text::{
     KnownValueForText, KnownValueKindForText, RenderTextFrom, RenderTextFromKnown, TextKind,

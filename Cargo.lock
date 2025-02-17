@@ -884,7 +884,6 @@ dependencies = [
  "either",
  "frender-common",
  "frender-context",
- "frender-csr",
  "frender-csr-web",
  "frender-dom-tokens",
  "frender-element",
@@ -942,10 +941,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "frender-csr"
+name = "frender-csr-core"
 version = "0.1.0"
 dependencies = [
- "either",
  "frender-common",
  "pin-project-lite",
 ]
@@ -992,7 +990,7 @@ dependencies = [
  "either",
  "frender-attr-value",
  "frender-common",
- "frender-csr",
+ "frender-csr-core",
  "frender-dom-tokens",
  "frender-events",
  "frender-ssr",

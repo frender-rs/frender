@@ -3,7 +3,7 @@ use frender_events::web::JsCastEventType;
 
 use std::marker::{PhantomData, PhantomPinned};
 
-use frender_csr::event_listener::{HandleEvent, PinnedRegisterUpdate};
+use frender_csr_core::event_listener::{HandleEvent, PinnedRegisterUpdate};
 
 mod handle_js_cast_event {
     use frender_common::HandleEvent;
@@ -42,7 +42,7 @@ mod handle_js_cast_event {
 pub mod unpinned {
     use std::{borrow::Cow, cell::RefCell, rc::Rc};
 
-    use frender_csr::event_listener::{HandleEvent, RegisterUpdate};
+    use frender_csr_core::event_listener::{HandleEvent, RegisterUpdate};
     use frender_events::web::JsCastEventType;
 
     use super::handle_js_cast_event::HandleJsCastEvent;

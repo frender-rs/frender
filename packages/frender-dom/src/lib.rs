@@ -1,6 +1,6 @@
 pub use event_listener::OnEvent;
 pub use frender_common::Empty;
-pub use frender_csr::{
+pub use frender_csr_core::{
     event_listener::{HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate},
     StateUnmount,
 };

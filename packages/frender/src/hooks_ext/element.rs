@@ -6,9 +6,8 @@ pub use self::with_to_element::WithToElement;
 
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_csr::StateUnmount;
-
 use frender_html::{
+    dom::StateUnmount,
     experimental::{
         self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedStateOfKind,
         PinnedUiHandleOfKind, RenderInitPinned, UnpinnedRenderStateKind,
@@ -626,7 +625,7 @@ where
                 render_context,
                 |render_context| {
                     signal_hook.map(|value| {
-                        use frender_csr::render::RenderContext as _;
+                        use frender_html::dom::render::RenderContext as _;
                         let element = F::owned_part_into_csr_element(mut_part, value, owned_part);
                         let (state_init, render_init) =
                             element.pinned_render_init(render_context.renderer_mut());

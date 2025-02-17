@@ -1,5 +1,5 @@
 use frender_common::HandleEvent;
-use frender_csr::event_listener::{PinnedRegisterUpdate, RegisterUpdate};
+use frender_csr_core::event_listener::{PinnedRegisterUpdate, RegisterUpdate};
 
 use crate::event_types::EventType;
 

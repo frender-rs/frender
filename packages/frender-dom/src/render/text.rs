@@ -6,7 +6,7 @@ use frender_common::{
     },
     TempStr,
 };
-use frender_csr::render::RenderWithContext;
+use frender_csr_core::render::RenderWithContext;
 
 use crate::{string_element::StringElement, ui_handle::UiHandle};
 

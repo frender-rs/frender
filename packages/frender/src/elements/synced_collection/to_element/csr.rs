@@ -1,9 +1,9 @@
 use std::{cell::RefCell, marker::PhantomData, pin::Pin, rc::Rc};
 
-use frender_csr::render::RenderContext as _;
 use frender_html::{
     dom::{
         behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
+        render::RenderContext as _,
         ui_handle::{UiHandle, UnmountedUiHandle},
     },
     experimental::{
@@ -383,7 +383,6 @@ where
                             *mount_state = MountState::MountedAndUpToDate;
 
                             if cursor_should_skip {
-                                use frender_csr::render::RenderContext;
                                 render_context.mark_cursor_skipped()
                             }
 

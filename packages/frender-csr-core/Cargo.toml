@@ -1,5 +1,5 @@
 [package]
-name = "frender-csr"
+name = "frender-csr-core"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,5 +7,4 @@ edition = "2021"
 
 [dependencies]
 frender-common = { version = "0.1.0", path = "../frender-common" }
-either = { version = "1.9.0", default-features = false, optional = true }
 pin-project-lite = "0.2.13"

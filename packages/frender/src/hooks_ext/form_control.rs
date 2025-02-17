@@ -1,9 +1,8 @@
 use std::{borrow::Borrow, marker::PhantomData, pin::Pin, task::Poll};
 
 use frender_common::{IntoStaticStr, PrimarilyBorrow, ToStaticStr};
-use frender_csr::StateUnmount;
 use frender_html::{
-    dom::RegisterUpdate,
+    dom::{RegisterUpdate, StateUnmount},
     form_control::{
         element::FormControlElement,
         input::{InputValue, InputValueKind},
