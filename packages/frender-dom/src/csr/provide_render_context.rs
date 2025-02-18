@@ -1,4 +1,4 @@
-use crate::render::RenderWithContext;
+use crate::csr::render::RenderWithContext;
 
 pub trait ProvideRenderContext {
     type Renderer: ?Sized + RenderWithContext;

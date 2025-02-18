@@ -1,6 +1,6 @@
 use std::pin::Pin;
 
-use frender_html::{experimental, kinds::KindUnpinned, CsrElement, HtmlRenderContext, RenderHtml};
+use frender_csr::{experimental, kinds::KindUnpinned, CsrElement, HtmlRenderContext, RenderHtml};
 
 use crate::{Keyed, KeyedElements};
 

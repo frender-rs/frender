@@ -6,10 +6,7 @@ pub use self::cursor_place_holder::CursorPlaceholder;
 
 use wasm_bindgen::UnwrapThrowExt as _;
 
-use crate::{
-    render::RenderWithContext,
-    ui_handle::{ProvideMutMounted, UiHandle, UnmountedUiHandle},
-};
+use crate::csr::{render::RenderWithContext, ProvideMutMounted, UiHandle, UnmountedUiHandle};
 
 pub mod event_listener;
 
@@ -28,7 +25,7 @@ impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UnmountedUiHandle<R> for Nod
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: crate::render::RenderWithContext,
+        R: RenderWithContext,
     {
         R::mount_node(render_context, self.0.as_ref());
         self
@@ -55,21 +52,21 @@ impl<N: AsRef<web_sys::Node>, R: ?Sized + Renderer> UiHandle<R> for Node<N> {
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: crate::render::RenderWithContext,
+        R: RenderWithContext,
     {
         R::reposition_node(render_context, self.0.as_ref())
     }
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: crate::render::RenderWithContext,
+        R: RenderWithContext,
     {
         R::check_and_move_cursor_after_node(render_context, self.0.as_ref());
     }
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: crate::render::RenderWithContext,
+        R: RenderWithContext,
     {
         R::assert_cursor_is_at_node(render_context, self.0.as_ref());
     }
@@ -282,7 +279,7 @@ impl<'a> Cursor<'a> {
     }
 }
 
-impl<'a, R: ?Sized + Renderer> crate::render::RenderContext for RenderContext<'a, R> {
+impl<'a, R: ?Sized + Renderer> crate::csr::render::RenderContext for RenderContext<'a, R> {
     type Renderer = R;
 
     #[inline(always)]
@@ -341,7 +338,7 @@ impl<
         N: AsRef<ET::JsEventTarget> + AsRef<web_sys::EventTarget>,
         Renderer: ?Sized,
         ET: JsCastEventType + 'static,
-    > crate::OnEvent<Renderer, ET> for Node<N>
+    > crate::csr::OnEvent<Renderer, ET> for Node<N>
 {
     type EventListener<F: frender_common::HandleEvent<ET::Event> + 'static> =
         event_listener::EventListenerOfType<F, ET>;

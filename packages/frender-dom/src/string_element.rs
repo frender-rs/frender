@@ -129,6 +129,7 @@ mod reactive_value {
     }
 }
 
+#[cfg(feature = "ssr")]
 pub mod ssr {
     use std::marker::PhantomData;
 

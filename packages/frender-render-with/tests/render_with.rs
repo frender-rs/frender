@@ -1,3 +1,4 @@
+#![cfg(feature = "csr")]
 #![allow(dead_code)] // TODO: add tests
 
 use std::cell::RefCell;

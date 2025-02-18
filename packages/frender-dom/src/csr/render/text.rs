@@ -8,7 +8,7 @@ use frender_common::{
 };
 use frender_csr_core::render::RenderWithContext;
 
-use crate::{string_element::StringElement, ui_handle::UiHandle};
+use crate::{csr::ui_handle::UiHandle, string_element::StringElement};
 
 pub trait RenderTextFrom<V>: RenderWithContext {
     type Text: UiHandle<Self> + 'static;

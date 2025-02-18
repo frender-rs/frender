@@ -5,8 +5,10 @@ use web_sys::{
 };
 
 use crate::{
-    csr::web::{self, Node},
-    render_from::RenderFrom,
+    csr::{
+        render_from::{str::ValueForStr, RenderFrom},
+        web::{self, Node},
+    },
     string_element::StringElement,
 };
 
@@ -58,11 +60,7 @@ impl<'a, N: AsRef<web_sys::Element>> RenderFrom<&StringElement> for RenderSetInn
 impl<N: AsRef<web_sys::Node> + AsRef<web_sys::Element>, Renderer: ?Sized + web::Renderer>
     SetInnerHtmlFromStr<Renderer> for Node<N>
 {
-    fn set_inner_html_from_str(
-        &mut self,
-        _: &mut Renderer,
-        value: impl crate::render_from::str::ValueForStr,
-    ) {
+    fn set_inner_html_from_str(&mut self, _: &mut Renderer, value: impl ValueForStr) {
         value.render_str_from_self(RenderSetInnerHtml(self))
     }
 }

@@ -48,6 +48,8 @@ mod element_types;
 
 #[cfg(feature = "csr")]
 pub mod kinds;
+
+// TODO: move to frender-dom or separate crates
 #[cfg(feature = "csr")]
 pub mod ui_handles;
 
@@ -93,5 +95,23 @@ mod utils;
 pub mod csr {
     pub use crate::html::RenderHtml;
 
-    pub use crate::element::CsrElement;
+    pub use crate::element::{CsrElement, HtmlRenderContext};
+
+    #[cfg(feature = "experimental")]
+    pub use super::experimental;
+
+    pub use super::kinds;
+
+    pub use frender_common::csr::StateUnmount;
+
+    pub use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
+
+    pub mod render {
+        pub use frender_dom::render::{RenderContext, RenderWithContext};
+    }
+
+    // TODO: move to frender-dom or separate crates
+    pub mod ui_handles {
+        pub use crate::ui_handles::CursorPlaceholdersSurrounded;
+    }
 }

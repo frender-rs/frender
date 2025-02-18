@@ -4,7 +4,7 @@ pub use self::text::{
     KnownValueForText, KnownValueKindForText, RenderTextFrom, RenderTextFromKnown, TextKind,
 };
 
-use crate::ui_handle::UiHandle;
+use crate::csr::{behaviors, ui_handle::UiHandle};
 
 mod text;
 
@@ -13,7 +13,7 @@ pub trait Render: RenderWithContext {
 
     type CursorPlaceholder: 'static
         + UiHandle<Self>
-        + crate::behaviors::NodeRenderSelf<Self>
-        + crate::behaviors::NodeWithRenderContextAfterSelf<Self>
-        + crate::behaviors::Node<Self>;
+        + behaviors::NodeRenderSelf<Self>
+        + behaviors::NodeWithRenderContextAfterSelf<Self>
+        + behaviors::Node<Self>;
 }

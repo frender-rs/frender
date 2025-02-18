@@ -72,7 +72,11 @@ either = [
 web = ["frender-csr-web"]
 spawn = ["frender-csr-web?/spawn"]
 ssr = ["frender-keyed-elements?/ssr"]
-csr = ["ssr", "frender-keyed-elements?/csr"] # TODO: remove ssr feature
+csr = [
+    "ssr",
+    "frender-keyed-elements?/csr",
+    "frender-render-with?/csr",
+] # TODO: remove ssr feature
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]
 ToElement = []

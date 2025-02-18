@@ -9,3 +9,4 @@ frender-html = { version = "0.1.0", path = "../frender-html", default-features =
 ] }
 
 [features]
+experimental = ["frender-html/experimental"]

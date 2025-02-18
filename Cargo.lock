@@ -994,7 +994,6 @@ name = "frender-dom"
 version = "0.1.0"
 dependencies = [
  "async-str-iter",
- "either",
  "frender-attr-value",
  "frender-common",
  "frender-csr-core",
@@ -1111,7 +1110,7 @@ name = "frender-keyed-elements"
 version = "0.1.0"
 dependencies = [
  "async-str-iter",
- "frender-html",
+ "frender-csr",
  "frender-ssr",
  "frender-test",
  "indexmap 2.2.6",
@@ -1155,8 +1154,8 @@ version = "0.1.0"
 name = "frender-render-with"
 version = "0.1.0"
 dependencies = [
- "async-str-iter",
  "frender-common",
+ "frender-csr",
  "frender-html",
  "frender-keyed-elements",
  "hooks",

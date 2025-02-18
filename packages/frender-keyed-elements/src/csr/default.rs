@@ -28,14 +28,11 @@ use std::{cmp::Ordering, hash::Hash, marker::PhantomData, pin::Pin, task::Poll};
 
 use indexmap::{map::Entry, IndexMap};
 
-use frender_html::{
-    dom::{
-        render::RenderContext,
-        ui_handle::{UiHandle, UnmountedUiHandle},
-    },
+use frender_csr::{
     experimental::{self, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    render::{RenderContext, RenderWithContext},
     ui_handles::CursorPlaceholdersSurrounded,
-    CsrElement, RenderHtml, StateUnmount,
+    CsrElement, HtmlRenderContext, RenderHtml, StateUnmount, UiHandle, UnmountedUiHandle,
 };
 
 use crate::{DefaultAlgorithm, Keyed};
@@ -151,7 +148,7 @@ impl<U: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R> for UnmountedUiHan
 
     fn mount(mut self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         StatedUiHandle::sort(&mut self.0);
         UiHandles(
@@ -177,7 +174,7 @@ impl<M: UiHandle<R>, R: ?Sized> UiHandle<R> for UiHandles<M> {
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         for this in self.0.iter_mut() {
             this.ui_handle.reposition(render_context);
@@ -186,7 +183,7 @@ impl<M: UiHandle<R>, R: ?Sized> UiHandle<R> for UiHandles<M> {
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         for this in self.0.iter() {
             this.ui_handle.check_and_move_cursor(render_context);
@@ -195,7 +192,7 @@ impl<M: UiHandle<R>, R: ?Sized> UiHandle<R> for UiHandles<M> {
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_html::dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         if let Some(first) = self.0.first() {
             first.ui_handle.assert_cursor_is_at_self(render_context);
@@ -262,7 +259,7 @@ impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgori
 
     fn keyed_elements_render_init<
         I: IntoIterator<Item = Keyed<K, E>>,
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
+        Ctx: ?Sized + HtmlRenderContext,
     >(
         self,
         elements: I,
@@ -299,7 +296,7 @@ impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgori
 
     fn keyed_elements_render_init_by_reusing<
         I: IntoIterator<Item = Keyed<K, E>>,
-        Ctx: ?Sized + frender_html::HtmlRenderContext,
+        Ctx: ?Sized + HtmlRenderContext,
     >(
         self,
         elements: I,
@@ -355,7 +352,7 @@ impl<K: Hash + Eq, E: CsrElement> KeyedElementsAlgorithm<K, E> for DefaultAlgori
 
     fn keyed_elements_render_update<
         I: IntoIterator<Item = Keyed<K, E>>,
-        Renderer: ?Sized + frender_html::RenderHtml,
+        Renderer: ?Sized + RenderHtml,
     >(
         self,
         elements: I,

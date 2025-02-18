@@ -1,11 +1,8 @@
-pub use event_listener::OnEvent;
+pub use self::tag::HasIntrinsicComponentTag;
+
 pub use frender_common::Empty;
-pub use frender_csr_core::{
-    event_listener::{HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate},
-    StateUnmount,
-};
+
 pub use frender_events::{event, event_types, HasEventTypeName};
-pub use provide_render_context::ProvideRenderContext;
 
 pub mod style {
     pub mod csr {
@@ -17,15 +14,13 @@ pub mod dom_tokens {
     pub use frender_dom_tokens::{DomToken, DomTokenList, DomTokens};
 }
 
-pub mod render;
+mod tag;
 
+#[cfg(feature = "csr")]
 pub mod csr;
 
-pub mod component;
-
-pub mod behaviors;
-
-pub mod ui_handle;
+#[cfg(feature = "ssr")]
+pub mod ssr;
 
 pub mod script;
 
@@ -35,13 +30,7 @@ pub mod special;
 
 pub mod node_ref;
 
-pub mod event_listener;
-
 pub mod string_element;
-
-pub mod render_from;
-
-mod provide_render_context;
 
 #[cfg(feature = "web")]
 mod shims;

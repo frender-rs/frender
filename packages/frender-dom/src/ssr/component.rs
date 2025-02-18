@@ -3,9 +3,15 @@ use frender_ssr::{
     SsrElement,
 };
 
-pub trait HasIntrinsicComponentTag {
-    const INTRINSIC_COMPONENT_TAG: &'static str;
+use crate::tag::HasIntrinsicComponentTag;
+
+pub trait HasIntrinsicComponentTagSsr: HasIntrinsicComponentTag {
     const ASSERT_TAG_NAME: AssertTagName<&'static str>;
+}
+
+impl<T: ?Sized + HasIntrinsicComponentTag> HasIntrinsicComponentTagSsr for T {
+    const ASSERT_TAG_NAME: AssertTagName<&'static str> =
+        AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
 }
 
 pub trait SsrComponentNormalElement: HasIntrinsicComponentTag {}

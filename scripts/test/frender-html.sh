@@ -1,5 +1,7 @@
 set -eu
 
+. ./scripts/features.sh
+
 while IFS= read -r line; do
   # either requires csr
   if [[ "$line" == *either,* ]] && [[ "$line" != *csr,* ]]; then

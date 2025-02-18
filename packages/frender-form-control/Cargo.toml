@@ -27,7 +27,8 @@ features = [
 ]
 
 [features]
-either = ["dep:either"]
-ssr = ["dep:frender-ssr"]
+csr = ["frender-dom/csr"]
+ssr = ["dep:frender-ssr", "frender-dom/ssr"]
 web = ["frender-events/web", "frender-dom/web", "dep:web-sys"]
 chrono = ["dep:chrono"]
+either = ["dep:either"]

@@ -5,8 +5,10 @@ use web_sys::{
 };
 
 use crate::{
-    csr::web::{self, Node},
-    render_from::RenderFrom,
+    csr::{
+        render_from::{str::ValueForStr, RenderFrom},
+        web::{self, Node},
+    },
     string_element::StringElement,
 };
 
@@ -60,11 +62,7 @@ impl<
         Renderer: ?Sized + web::Renderer,
     > SetInnerTextFromStr<Renderer> for Node<N>
 {
-    fn set_inner_text_from_str(
-        &mut self,
-        _: &mut Renderer,
-        value: impl crate::render_from::str::ValueForStr,
-    ) {
+    fn set_inner_text_from_str(&mut self, _: &mut Renderer, value: impl ValueForStr) {
         value.render_str_from_self(RenderSetInnerText(self))
     }
 }

@@ -1,9 +1,11 @@
+use frender_csr_core::render::RenderWithContext;
+
 pub trait UnmountedUiHandle<Renderer: ?Sized> {
     type Mounted: UiHandle<Renderer, Unmounted = Self>;
 
     fn mount(self, render_context: &mut Renderer::RenderContext<'_>) -> Self::Mounted
     where
-        Renderer: crate::render::RenderWithContext;
+        Renderer: RenderWithContext;
 }
 
 // TODO: redesign by splitting Behavior and UiHandle
@@ -22,11 +24,11 @@ pub trait UiHandle<Renderer: ?Sized> {
 
     fn reposition(&mut self, render_context: &mut Renderer::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext;
+        Renderer: RenderWithContext;
 
     fn check_and_move_cursor(&self, render_context: &mut Renderer::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext;
+        Renderer: RenderWithContext;
 
     /// The implementations and callers of this method could
     /// skip this method or just emits a warning.
@@ -34,7 +36,7 @@ pub trait UiHandle<Renderer: ?Sized> {
     /// developers could know the implementation might be wrong.
     fn assert_cursor_is_at_self(&self, render_context: &Renderer::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext;
+        Renderer: RenderWithContext;
 }
 
 impl<Renderer: ?Sized> UnmountedUiHandle<Renderer> for () {
@@ -42,7 +44,7 @@ impl<Renderer: ?Sized> UnmountedUiHandle<Renderer> for () {
 
     fn mount(self, _: &mut <Renderer>::RenderContext<'_>) -> Self::Mounted
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
     }
 }
@@ -54,19 +56,19 @@ impl<Renderer: ?Sized> UiHandle<Renderer> for () {
 
     fn reposition(&mut self, _: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
     }
 
     fn check_and_move_cursor(&self, _: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
     }
 
     fn assert_cursor_is_at_self(&self, _: &<Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
     }
 }
@@ -81,7 +83,7 @@ macro_rules! impl_for_tuple {
 
                 fn mount(self, render_context: &mut Renderer::RenderContext<'_>) -> Self::Mounted
                 where
-                    Renderer: crate::render::RenderWithContext,
+                    Renderer: RenderWithContext,
                 {
                     let ($($v,)*) = self;
                     ($($v.mount(render_context),)*)
@@ -99,7 +101,7 @@ macro_rules! impl_for_tuple {
 
                 fn reposition(&mut self, render_context: &mut Renderer::RenderContext<'_>)
                 where
-                    Renderer: crate::render::RenderWithContext,
+                    Renderer: RenderWithContext,
                 {
                     let ($($v,)*) = self;
                     $($v.reposition(render_context);)*
@@ -107,7 +109,7 @@ macro_rules! impl_for_tuple {
 
                 fn check_and_move_cursor(&self, render_context: &mut Renderer::RenderContext<'_>)
                 where
-                    Renderer: crate::render::RenderWithContext,
+                    Renderer: RenderWithContext,
                 {
                     let ($($v,)*) = self;
                     $($v.check_and_move_cursor(render_context);)*
@@ -115,7 +117,7 @@ macro_rules! impl_for_tuple {
 
                 fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
                 where
-                    Renderer: crate::render::RenderWithContext,
+                    Renderer: RenderWithContext,
                 {
                     // just assert cursor at the first ui handle
                     self.0.assert_cursor_is_at_self(render_context)
@@ -149,7 +151,7 @@ impl<Renderer: ?Sized, UH: UnmountedUiHandle<Renderer>, const N: usize> Unmounte
 
     fn mount(self, render_context: &mut <Renderer>::RenderContext<'_>) -> Self::Mounted
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         self.map(|this| this.mount(render_context))
     }
@@ -164,7 +166,7 @@ impl<Renderer: ?Sized, UH: UiHandle<Renderer>, const N: usize> UiHandle<Renderer
 
     fn reposition(&mut self, render_context: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         self.iter_mut()
             .for_each(|this| this.reposition(render_context))
@@ -172,7 +174,7 @@ impl<Renderer: ?Sized, UH: UiHandle<Renderer>, const N: usize> UiHandle<Renderer
 
     fn check_and_move_cursor(&self, render_context: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         self.iter()
             .for_each(|this| this.check_and_move_cursor(render_context));
@@ -180,7 +182,7 @@ impl<Renderer: ?Sized, UH: UiHandle<Renderer>, const N: usize> UiHandle<Renderer
 
     fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         // just assert cursor at the first ui handle
         if let Some(first) = self.first() {
@@ -196,7 +198,7 @@ impl<T: UnmountedUiHandle<Renderer>, Renderer: ?Sized> UnmountedUiHandle<Rendere
 
     fn mount(self, render_context: &mut Renderer::RenderContext<'_>) -> Self::Mounted
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         self.map(|this| this.mount(render_context))
     }
@@ -210,7 +212,7 @@ impl<T: UiHandle<Renderer>, Renderer: ?Sized> UiHandle<Renderer> for Option<T> {
 
     fn reposition(&mut self, render_context: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         if let Some(this) = self {
             this.reposition(render_context);
@@ -219,7 +221,7 @@ impl<T: UiHandle<Renderer>, Renderer: ?Sized> UiHandle<Renderer> for Option<T> {
 
     fn check_and_move_cursor(&self, render_context: &mut <Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         if let Some(this) = self {
             this.check_and_move_cursor(render_context);
@@ -228,7 +230,7 @@ impl<T: UiHandle<Renderer>, Renderer: ?Sized> UiHandle<Renderer> for Option<T> {
 
     fn assert_cursor_is_at_self(&self, render_context: &<Renderer>::RenderContext<'_>)
     where
-        Renderer: crate::render::RenderWithContext,
+        Renderer: RenderWithContext,
     {
         if let Some(this) = self {
             this.assert_cursor_is_at_self(render_context);
