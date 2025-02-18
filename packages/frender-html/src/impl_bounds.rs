@@ -302,7 +302,7 @@ pub(crate) mod MaybeHandleEvent {
             impl<
                 H: frender_dom::HandleEvent<dyn crate::dom::event::$event_trait_name> + 'static,
                 F: frender_dom::MaybeHandleEvent<dyn crate::dom::event::$event_trait_name, HandleEvent = H> + 'static,
-            > crate::update_element::IntoProperty
+            > crate::into_property::IntoProperty
                 for $($wrapper)*::<F>
             {
                 type IntoProperty = crate::event_listener::Property<crate::html::event_types::$event_name, F>;
@@ -418,4 +418,5 @@ pub(crate) mod SetRef {
 pub(crate) use crate::dom_tokens::impl_bounds as DomTokens;
 pub(crate) use crate::style::impl_bounds as Style;
 
+#[cfg(feature = "ssr")]
 pub(crate) mod ssr;

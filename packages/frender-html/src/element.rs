@@ -210,8 +210,8 @@ macro_rules! proxy_csr_element_render_update {
 
 #[cfg(any(test, doctest))]
 mod tests {
-    /// ```compile_fail
-    /// # use frender_element::Element;
+    /// ```compile_fail,E0277
+    /// # use frender_html::CsrElement as Element;
     /// # fn __(v: (impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,impl Element,)) -> impl Element {
     /// #   v
     /// # }
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn tuple_max_elements() {
-        use crate::Element;
+        use crate::CsrElement as Element;
         fn __(
             v: (
                 impl Element,

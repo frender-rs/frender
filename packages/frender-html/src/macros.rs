@@ -551,11 +551,15 @@ macro_rules! props_implementations {
         )*)
     ) => {
         const _: () = {
+            #[cfg(feature = "csr")]
             #[allow(unused_imports)]
             use frender_common::convert::FromMut as _;
 
             #[allow(unused_imports)]
-            use self::{props::$trait_name as props, prop_markers::$trait_name as prop_markers, behaviors_prelude::$trait_name::*};
+            use self::{props::$trait_name as props, prop_markers::$trait_name as prop_markers};
+
+            #[cfg(feature = "csr")]
+            use self::behaviors_prelude::$trait_name::*;
 
             const _: () = {
                 use crate::intrinsic::{TagOrPropsMarker, PropsMarker};
@@ -604,18 +608,24 @@ macro_rules! props_implementations {
 
 macro_rules! tag_implementations {
     (expand_item $expand_item:tt) => {
-        const _: () = {
+        crate::macros::expand_item_and_prepend_expanded! { $expand_item {
+            #[cfg(feature = "ssr")]
+            use crate::dom::component::HasIntrinsicComponentTag;
+
+            #[cfg(feature = "ssr")]
             use ::frender_ssr::html::tag::AssertTagName;
+            #[cfg(feature = "csr")]
             use frender_dom::ui_handle::UnmountedUiHandle;
-            use crate::{
-                dom::component::{HasIntrinsicComponentTag, SsrComponentNormalElement},
-                BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType,
-            };
 
+            #[cfg(feature = "ssr")]
+            use crate::dom::component::SsrComponentNormalElement;
+
+            #[cfg(feature = "csr")]
+            use crate::{BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType};
+
+            #[cfg(feature = "csr")]
             use self::behavior_type_traits::*;
-
-            crate::macros::expand_item_simple! $expand_item
-        };
+        } }
     };
     (
         extends($($extends:ident)*)
@@ -640,10 +650,12 @@ macro_rules! tag_implementations {
         $($($(
             use self::markers::$tags;
 
+            #[cfg(feature = "csr")]
             impl BehaviorType for $tags {
                 type OfBehaviorType<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
             }
 
+            #[cfg(feature = "csr")]
             impl UiHandleType for $tags {
                 type UnmountedUiHandle<Renderer: ?Sized + RenderHtml> = <Renderer::$tags as UiHandle<Renderer>>::Unmounted;
                 type UiHandle<Renderer: ?Sized + RenderHtml> = Renderer::$tags;
@@ -658,6 +670,7 @@ macro_rules! tag_implementations {
                 // }
             }
 
+            #[cfg(feature = "ssr")]
             impl HasIntrinsicComponentTag for $tags {
                 const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
                 const ASSERT_TAG_NAME: AssertTagName<&'static str> =
@@ -665,14 +678,18 @@ macro_rules! tag_implementations {
             }
 
             crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
+                #[cfg(feature = "ssr")]
                 impl SsrComponentNormalElement for $tags {}
+                #[cfg(feature = "csr")]
                 impl CsrComponentNormalElement for $tags {}
             }}
 
+            #[cfg(feature = "csr")]
             crate::macros::impl_BehaviorTypeTrait! {
                 $tags {$trait_name}
             }
 
+            #[cfg(feature = "csr")]
             crate::html::for_all_ancestors_macros::$trait_name! {
                 [crate::macros::impl_BehaviorTypeTrait!]
                 {$tags} // prepend
@@ -692,6 +709,7 @@ macro_rules! impl_BehaviorTypeTrait {
 
 macro_rules! on_event_implementations {
     (expand_item $expand_item:tt) => {
+        #[cfg(feature = "csr")]
         const _: () = {
             use crate::update_element::OnEventType;
 
@@ -842,8 +860,12 @@ macro_rules! impl_HasConstAttrName {
         fn_name($fn_name:ident)
         $(attr_name($attr_name:expr))?
     ) => {
-        impl crate::property_common::HasConstAttrName for prop_markers::$fn_name {
+        impl crate::has_const_attr_name::HasConstAttrName for prop_markers::$fn_name {
             const ATTR_NAME: &str = ::frender_common::expand!({$($attr_name)?} or (stringify!($fn_name)));
+        }
+
+        #[cfg(feature = "ssr")]
+        impl crate::has_const_attr_name::HasConstAttrNameSsr for prop_markers::$fn_name {
             const ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME: frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName<&'static str>
                 = frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName::new_from_str(::core::concat!(
                     " ",
@@ -886,7 +908,7 @@ macro_rules! impl_attribute {
     } $trait_name:ident $(ref_value_kind($ref_value_kind:tt))?) => {
         impl<
             V: frender_attr_value::AttrValue<$($maybe_ty)*>,
-        > crate::update_element::IntoProperty
+        > crate::into_property::IntoProperty
             for props::$fn_name<V>
         {
             type IntoProperty = crate::attr_value::Property<prop_markers::$fn_name, V>;
@@ -904,6 +926,7 @@ macro_rules! impl_attribute {
             type AttrValueKind = $($maybe_ty)*;
         }
 
+        #[cfg(feature = "csr")]
         crate::macros::impl_attr_value_for_prop_marker! {
             update_with($($update_with)?)
             prop_marker(prop_markers::$fn_name)
@@ -913,15 +936,16 @@ macro_rules! impl_attribute {
             value_kind($($maybe_ty)*)
         }
 
+        #[cfg(feature = "ssr")]
         impl<
             V: frender_attr_value::AttrValue<$($maybe_ty)*>,
         > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
-            type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
+            type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::ssr::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
 
             fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-                crate::attr_value::into_space_and_html_attributes_or_empty::<prop_markers::$fn_name, V>(self.0)
+                crate::attr_value::ssr::into_space_and_html_attributes_or_empty::<prop_markers::$fn_name, V>(self.0)
             }
         }
 
@@ -940,7 +964,7 @@ macro_rules! impl_attribute {
 
         impl<
             V: crate::impl_bounds::$bounds::Bounds,
-        > crate::update_element::IntoProperty
+        > crate::into_property::IntoProperty
             for props::$fn_name<V>
         {
             type IntoProperty = crate::impl_bounds::$bounds::Property<prop_markers::$fn_name, V>;
@@ -949,6 +973,7 @@ macro_rules! impl_attribute {
             }
         }
 
+        #[cfg(feature = "ssr")]
         impl<
             V: crate::impl_bounds::$bounds::Bounds,
         > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
@@ -1024,7 +1049,7 @@ macro_rules! impl_attr_value_dom_api_for_prop_marker {
         ref_value_kind($($ref_value_kind:tt)?)
         value_kind($($value_kind:tt)*)
     ) => {
-        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasDomApi<BT> for $prop_marker {
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::csr::HasDomApi<BT> for $prop_marker {
             type DomApiValue<'a> = frender_common::expand![
                 {$($DomApiValue)?}
                 or ($($custom_type)?)
@@ -1071,9 +1096,9 @@ macro_rules! impl_attr_value_for_prop_marker {
             type SpecRemoveAttrOfBehaviorType = crate::property_common::SpecRemoveAttrOfElementTypeWithAttrName<Self>;
         }
 
-        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
-        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
-            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrValueOfElementWithAttrName<Self>;
+        impl crate::attr_value::csr::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::csr::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::csr::SpecUpdateAttrValueOfElementWithAttrName<Self>;
         }
     };
     (
@@ -1118,11 +1143,11 @@ macro_rules! impl_attr_value_for_prop_marker {
     ) => {
         impl crate::property_common::UseSpecRemoveAttrOfBehaviorType for $prop_marker {}
         impl<BT: behavior_type_traits::$trait_name> crate::property_common::HasSpecRemoveAttrOfBehaviorType<BT> for $prop_marker {
-            type SpecRemoveAttrOfBehaviorType = crate::attr_value::SpecRemoveAttrWithDomApi<Self>;
+            type SpecRemoveAttrOfBehaviorType = crate::attr_value::csr::SpecRemoveAttrWithDomApi<Self>;
         }
-        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
-        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
-            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrWithDomApi<Self>;
+        impl crate::attr_value::csr::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::csr::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::csr::SpecUpdateAttrWithDomApi<Self>;
         }
 
         crate::macros::impl_attr_value_dom_api_for_prop_marker! {
@@ -1164,9 +1189,9 @@ macro_rules! impl_attr_value_for_prop_marker {
                 $remove
             }
         }
-        impl crate::attr_value::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
-        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
-            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::SpecUpdateAttrWithDomApi<Self>;
+        impl crate::attr_value::csr::UseSpecUpdateAttrValueOfBehaviorType for $prop_marker {}
+        impl<BT: behavior_type_traits::$trait_name> crate::attr_value::csr::HasSpecUpdateAttrValueOfBehaviorType<BT> for $prop_marker {
+            type SpecUpdateAttrValueOfBehaviorType = crate::attr_value::csr::SpecUpdateAttrWithDomApi<Self>;
         }
 
         crate::macros::impl_attr_value_dom_api_for_prop_marker! {

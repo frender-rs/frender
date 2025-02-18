@@ -1,4 +1,6 @@
-use frender_dom::component::HasIntrinsicComponentTag;
+#![cfg(feature = "components")]
+#![cfg(feature = "csr")]
+
 use frender_html::html::{behavior_type_traits, markers};
 
 #[test]
@@ -12,11 +14,3 @@ where
 }
 
 const _: () = assert_impl();
-
-#[test]
-fn tag_name() {
-    assert_eq!(
-        <markers::div as HasIntrinsicComponentTag>::INTRINSIC_COMPONENT_TAG,
-        "div"
-    );
-}

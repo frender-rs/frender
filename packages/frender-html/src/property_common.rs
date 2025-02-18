@@ -1,8 +1,7 @@
-use crate::{html::behavior_type_traits, BehaviorType, RenderHtml};
+use crate::{has_const_attr_name::HasConstAttrName, html::behavior_type_traits, BehaviorType, RenderHtml};
 
 use frender_common::convert::FromMut as _;
 use frender_dom::behaviors::Element as _;
-use frender_ssr::html::attr::AssertSpaceAndHtmlAttributeName;
 
 pub(crate) trait RemoveAttrOfBehaviorType<BT: BehaviorType> {
     fn remove_attr_of_behavior_type<R: ?Sized + RenderHtml>(
@@ -29,11 +28,6 @@ where
     ) {
         <T::SpecRemoveAttrOfBehaviorType>::remove_attr_of_behavior_type(b, renderer)
     }
-}
-
-pub(crate) trait HasConstAttrName {
-    const ASSERT_SPACE_AND_HTML_ATTRIBUTE_NAME: AssertSpaceAndHtmlAttributeName<&'static str>;
-    const ATTR_NAME: &'static str;
 }
 
 pub(crate) struct SpecRemoveAttrOfElementTypeWithAttrName<T: ?Sized + HasConstAttrName>(T);

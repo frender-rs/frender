@@ -13,7 +13,7 @@ frender-common = { version = "0.1.0", path = "../frender-common" }
 # stack_dst = "0.8.1"
 gloo-events = { version = "0.2.0", optional = true }
 js-sys = { version = "0.3.64", optional = true }
-frender-ssr = { version = "0.1.0", path = "../frender-ssr" }
+frender-ssr = { version = "0.1.0", path = "../frender-ssr", optional = true }
 frender-dom = { version = "0.1.0", path = "../frender-dom" }
 async-str-iter = { version = "0.1.0", path = "../async-str-iter" }
 either = { version = "1.9.0", default-features = false, optional = true }
@@ -105,8 +105,10 @@ features = [
 ]
 
 [features]
-# default = ["components", "macros_not_expanded"] # TODO: remove
-default = ["components"] # TODO: remove
+macros_not_expanded = []
+components = []
+csr = []
+ssr = ["dep:frender-ssr"]
 web = [
     "frender-style/web",
     "frender-dom/web",
@@ -116,7 +118,8 @@ web = [
     "dep:web-sys",
     "dep:wasm-bindgen",
 ]
-macros_not_expanded = []
+# impl CsrElement for either::Either
+# Also requires csr
 either = [
     "dep:either",
     "frender-ssr/either",
@@ -124,6 +127,8 @@ either = [
     "frender-form-control/either",
 ]
 ElementProxyAttrs = ["dep:ref-cast"]
-components = []
+# Enables frender-form-control/chrono
+# Also requires ssr
 chrono = ["frender-form-control/chrono"]
+# Also requires csr
 experimental = []

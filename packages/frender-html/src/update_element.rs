@@ -7,6 +7,7 @@ use frender_dom::{
 };
 
 use crate::{
+    into_property::IntoProperty,
     kinds::{KindOfNoState, RenderInitNothing},
     HtmlRenderContext, RenderHtml,
 };
@@ -257,12 +258,6 @@ impl<BT: BehaviorType, A: PinnedRenderWithBehavior<BT>, B: PinnedRenderWithBehav
 }
 // endregion
 // region: Into
-
-pub trait IntoProperty {
-    type IntoProperty;
-    fn into_property(this: Self) -> Self::IntoProperty;
-}
-
 impl<T: IntoProperty, BT: BehaviorType> UnpinnedRenderWithBehavior<BT> for T
 where
     T::IntoProperty: UnpinnedRenderWithBehavior<BT>,

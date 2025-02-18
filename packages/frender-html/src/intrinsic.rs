@@ -1,13 +1,15 @@
 use frender_common::Empty;
 
-// #[cfg(feature = "csr")]
+#[cfg(feature = "csr")]
 pub use csr_attr_state::AttributeState;
 
-// #[cfg(feature = "csr")]
+#[cfg(feature = "csr")]
 mod csr_attr_state;
-// #[cfg(feature = "csr")]
+
+#[cfg(feature = "csr")]
 pub mod csr;
 
+#[cfg(feature = "ssr")]
 mod ssr;
 
 /// A marker trait which should only be implemented for tag markers or props markers.

@@ -80,9 +80,13 @@ macro_rules! test {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
+                #![cfg(feature = "components")]
+
                 #![allow(non_camel_case_types)]
                 // #![allow(non_snake_case)]
                 // #![allow(unused_imports)]
+
+                #[cfg(feature = "csr")]
                 use crate::update_element::{UnpinnedRenderWithBehavior, PinnedRenderWithBehavior};
 
                 use super::*;
@@ -111,6 +115,7 @@ macro_rules! test {
             fn $fn_name:ident $fn_args:tt $fn_body_or_semi:tt
         )*)
     ) => {
+        #[cfg(feature = "csr")]
         const _: () = {
             use super::{behavior_type_traits::$trait_name as BehaviorTypeTrait, props::$trait_name as props};
             trait Test {
@@ -134,7 +139,9 @@ macro_rules! test {
 
 pub(crate) use {impl_prop, test, type_prop};
 
-mod ttt {
+#[cfg(feature = "components")]
+#[cfg(feature = "csr")]
+mod test_id {
     use frender_attr_value::AttrValue;
 
     use crate::update_element::UnpinnedRenderWithBehavior;

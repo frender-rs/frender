@@ -1,3 +1,5 @@
+#![cfg(feature = "components")]
+
 use frender_html::cs;
 
 #[test]

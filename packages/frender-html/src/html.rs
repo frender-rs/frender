@@ -8,9 +8,11 @@ use frender_form_control::textarea::TextAreaValue;
 use crate::impl_bounds::{DomTokens, Style};
 
 #[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "csr")]
 pub mod behaviors;
 
 #[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "csr")]
 pub mod behavior_type_traits;
 
 #[cfg(not(feature = "macros_not_expanded"))]
@@ -21,7 +23,6 @@ mod event_types_macros;
 pub mod markers;
 
 #[cfg(not(feature = "macros_not_expanded"))]
-#[cfg(feature = "components")]
 pub mod prop_markers;
 
 #[cfg(not(feature = "macros_not_expanded"))]
@@ -36,33 +37,36 @@ pub mod props;
 #[cfg(feature = "components")]
 mod props_builders;
 
-#[cfg(feature = "components")]
 #[cfg(not(feature = "macros_not_expanded"))]
+#[cfg(feature = "components")]
 mod for_all_ancestors_macros;
 
 crate::macros::def_intrinsic_component_props!(
     mod __ {
         #[behaviors]
         #[cfg(feature = "macros_not_expanded")]
+        #[cfg(feature = "csr")]
         pub mod behaviors;
 
         #[behaviors_prelude]
+        #[cfg(feature = "csr")]
         mod behaviors_prelude {}
 
         #[behavior_type_traits]
         #[cfg(feature = "macros_not_expanded")]
+        #[cfg(feature = "csr")]
         pub mod behavior_type_traits {}
 
         #[event_types]
-        mod event_types {}
+        mod event_types;
 
         #[event_types_macros]
         #[cfg(feature = "macros_not_expanded")]
         mod event_types_macros;
 
         #[tag_and_props_markers]
-        #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
+        #[cfg(feature = "components")]
         pub mod markers {
             //! A module of tag markers and Props markers.
             //!
@@ -72,7 +76,6 @@ crate::macros::def_intrinsic_component_props!(
         }
 
         #[prop_markers]
-        #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
         pub mod prop_markers {
             pub mod conflicted_names {
@@ -91,20 +94,22 @@ crate::macros::def_intrinsic_component_props!(
         #[props]
         #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
-        pub mod props {}
+        pub mod props;
 
         #[props_implementations]
-        expand_without_submodule! {}
+        #[cfg(feature = "components")]
+        expand_const_block! {}
 
         #[tag_implementations]
-        expand_without_submodule! {}
+        #[cfg(feature = "components")]
+        expand_const_block! {}
 
         #[on_event_implementations]
         expand_without_submodule! {}
 
         #[for_all_ancestors_macros]
-        #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
+        #[cfg(feature = "components")]
         mod for_all_ancestors_macros;
 
         #[test]
@@ -117,8 +122,8 @@ crate::macros::def_intrinsic_component_props!(
         pub mod components;
 
         #[props_builders]
-        #[cfg(feature = "components")]
         #[cfg(feature = "macros_not_expanded")]
+        #[cfg(feature = "components")]
         mod props_builders;
 
         #[props_macros]
@@ -128,13 +133,16 @@ crate::macros::def_intrinsic_component_props!(
 
         #[imp_element_proxy_attrs]
         #[cfg(feature = "ElementProxyAttrs")]
+        #[cfg(feature = "csr")]
         expand_const_block! {}
 
         #[imp_web]
         #[cfg(feature = "web")]
+        #[cfg(feature = "csr")]
         expand_const_block! {}
 
         #[RenderHtml]
+        #[cfg(feature = "csr")]
         pub trait RenderHtml {
             additional_bounds!(dyn 'static + RenderTextFromKnown + Render + RenderWithContext);
         }

@@ -40,7 +40,11 @@ fn test_is_special_attribute() {
 }
 
 fn expand_and_write(src_root: &Path) -> io::Result<()> {
-    let items = utils::cargo_expand_html("frender-html", "html")?;
+    let items = utils::cargo_expand_html(
+        "frender-html",
+        "html",
+        "macros_not_expanded,csr,ssr,components",
+    )?;
 
     let parent_folder = src_root.join("html");
 
@@ -75,6 +79,8 @@ fn expand_and_write(src_root: &Path) -> io::Result<()> {
         if !has_special_attribute {
             continue;
         }
+
+        eprintln!("Expand mod {ident}");
 
         assert!(unsafety.is_none());
         assert!(semi.is_none());

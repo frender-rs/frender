@@ -11,15 +11,31 @@ pub fn format_item(item: syn::Item) -> String {
     })
 }
 
-pub fn cargo_expand_html(pkg_name: &str, mod_name: &str) -> io::Result<Vec<syn::Item>> {
-    let output = std::process::Command::new("cargo")
+pub fn cargo_expand_html(
+    pkg_name: &str,
+    mod_name: &str,
+    features: &str,
+) -> io::Result<Vec<syn::Item>> {
+    let mut command = std::process::Command::new("cargo");
+    command
         .arg("expand")
         .arg("-p")
         .arg(pkg_name)
         .arg("--features")
-        .arg("macros_not_expanded")
-        .arg("--ugly")
-        .output()?;
+        .arg(features)
+        .arg("--ugly");
+
+    eprintln!(
+        "Run: {} {}",
+        command.get_program().to_string_lossy(),
+        command
+            .get_args()
+            .map(|a| a.to_string_lossy())
+            .collect::<Vec<_>>()
+            .join(" ")
+    );
+
+    let output = command.output()?;
 
     if !output.status.success() {
         io::stdout().write_all(&output.stdout)?;

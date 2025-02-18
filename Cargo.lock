@@ -941,6 +941,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "frender-csr"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
+]
+
+[[package]]
 name = "frender-csr-core"
 version = "0.1.0"
 dependencies = [
@@ -1080,6 +1087,13 @@ dependencies = [
  "ref-cast",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "frender-html-components"
+version = "0.1.0"
+dependencies = [
+ "frender-html",
 ]
 
 [[package]]
