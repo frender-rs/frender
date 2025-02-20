@@ -20,3 +20,11 @@ impl<S: ToAsRefStr> UncachedNonReactiveValue<str> for TempStr<S> {
         Provide(self.0)
     }
 }
+
+impl UncachedNonReactiveValue<str> for &str {
+    type UncachedIntoProvideValue = Provide<Self>;
+
+    fn uncached_into_provide_value(self) -> Self::UncachedIntoProvideValue {
+        Provide(self)
+    }
+}

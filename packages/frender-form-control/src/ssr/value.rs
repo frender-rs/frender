@@ -1,4 +1,9 @@
-use super::FormControlValueKind;
+use std::borrow::Borrow;
+
+use crate::{
+    value::{FormControlValueKind, KindOfChecked, KindOfValue, KindOfValueAsNumber},
+    values::{EitherFormControlValue, UncontrolledWithDefaultValue},
+};
 
 pub trait MaybeProvideFormControlValue<VK: ?Sized + FormControlValueKind> {
     type ProvideFormControlValue: ProvideFormControlValue<VK>;
@@ -9,7 +14,7 @@ pub trait MaybeProvideFormControlValue<VK: ?Sized + FormControlValueKind> {
 pub trait ProvideFormControlValue<VK: ?Sized + FormControlValueKind>:
     MaybeProvideFormControlValue<VK, ProvideFormControlValue = Self>
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R;
+    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R;
 }
 
 macro_rules! impl_maybe_provide_with_some {
@@ -24,22 +29,6 @@ macro_rules! impl_maybe_provide_with_some {
     };
 }
 
-pub struct BorrowToProvideFormControlValue<V>(pub V);
-
-impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
-    for BorrowToProvideFormControlValue<T>
-{
-    impl_maybe_provide_with_some! {}
-}
-
-impl<T: std::borrow::Borrow<VK>, VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
-    for BorrowToProvideFormControlValue<T>
-{
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R {
-        receive(self.0.borrow())
-    }
-}
-
 pub enum NeverProvideFormControlValue {}
 
 impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
@@ -51,31 +40,34 @@ impl<VK: ?Sized + FormControlValueKind> MaybeProvideFormControlValue<VK>
 impl<VK: ?Sized + FormControlValueKind> ProvideFormControlValue<VK>
     for NeverProvideFormControlValue
 {
-    fn provide_form_control_value<R>(&self, _: impl FnOnce(&VK) -> R) -> R {
+    fn provide_form_control_value<R>(
+        &self,
+        _: impl FnOnce(<VK as FormControlValueKind>::Value<'_>) -> R,
+    ) -> R {
         match *self {}
     }
 }
 
 macro_rules! provide_self {
-    ($($ty:ty),* $(,)?) => {
+    ($(($ty:ty, $FK:ty)),* $(,)?) => {
         $(
-            impl MaybeProvideFormControlValue<$ty> for $ty {
+            impl MaybeProvideFormControlValue<$FK> for $ty {
                 impl_maybe_provide_with_some! {}
             }
 
-            impl ProvideFormControlValue<$ty> for $ty {
-                fn provide_form_control_value<R>(&self, receive: impl FnOnce(&$ty) -> R) -> R {
-                    receive(self)
+            impl ProvideFormControlValue<$FK> for $ty {
+                fn provide_form_control_value<R>(&self, receive: impl FnOnce($ty) -> R) -> R {
+                    receive(*self)
                 }
             }
         )*
     };
 }
 
-provide_self!(f64, bool);
+provide_self!((f64, KindOfValueAsNumber), (bool, KindOfChecked));
 
 frender_common::impl_many!(
-    impl<__> MaybeProvideFormControlValue<str>
+    impl<__> MaybeProvideFormControlValue<KindOfValue>
         for each_of![
             //
             &str,
@@ -90,7 +82,7 @@ frender_common::impl_many!(
 );
 
 frender_common::impl_many!(
-    impl<__> ProvideFormControlValue<str>
+    impl<__> ProvideFormControlValue<KindOfValue>
         for each_of![
             //
             &str,
@@ -126,6 +118,41 @@ impl<T: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind>
     }
 }
 
+impl<
+        VK: ?Sized + FormControlValueKind,
+        A: ProvideFormControlValue<VK>,
+        B: ProvideFormControlValue<VK>,
+    > ProvideFormControlValue<VK> for EitherFormControlValue<A, B>
+{
+    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
+        match self {
+            EitherFormControlValue::A(this) => this.provide_form_control_value(receive),
+            EitherFormControlValue::B(this) => this.provide_form_control_value(receive),
+        }
+    }
+}
+
+impl<
+        VK: ?Sized + FormControlValueKind,
+        A: MaybeProvideFormControlValue<VK>,
+        B: MaybeProvideFormControlValue<VK>,
+    > MaybeProvideFormControlValue<VK> for EitherFormControlValue<A, B>
+{
+    type ProvideFormControlValue =
+        EitherFormControlValue<A::ProvideFormControlValue, B::ProvideFormControlValue>;
+
+    fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
+        match this {
+            Self::A(this) => {
+                A::maybe_into_provide_form_control_value(this).map(EitherFormControlValue::A)
+            }
+            Self::B(this) => {
+                B::maybe_into_provide_form_control_value(this).map(EitherFormControlValue::B)
+            }
+        }
+    }
+}
+
 // either
 #[cfg(feature = "either")]
 impl<
@@ -135,7 +162,7 @@ impl<
         B: ProvideFormControlValue<VK>,
     > ProvideFormControlValue<VK> for either::Either<A, B>
 {
-    fn provide_form_control_value<R>(&self, receive: impl FnOnce(&VK) -> R) -> R {
+    fn provide_form_control_value<R>(&self, receive: impl FnOnce(VK::Value<'_>) -> R) -> R {
         either::for_both!(self, this => this.provide_form_control_value(receive))
     }
 }
@@ -159,5 +186,15 @@ impl<
                 R::maybe_into_provide_form_control_value(this).map(either::Either::Right)
             }
         }
+    }
+}
+
+impl<V: MaybeProvideFormControlValue<VK>, VK: ?Sized + FormControlValueKind>
+    MaybeProvideFormControlValue<VK> for UncontrolledWithDefaultValue<V>
+{
+    type ProvideFormControlValue = V::ProvideFormControlValue;
+
+    fn maybe_into_provide_form_control_value(this: Self) -> Option<Self::ProvideFormControlValue> {
+        V::maybe_into_provide_form_control_value(this.0)
     }
 }

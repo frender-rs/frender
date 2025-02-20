@@ -1,22 +1,27 @@
+use std::convert::identity;
+
 use async_str_iter::{
     any_str::IterAnyStr, chain::Chain, option::IterOption, IntoAsyncStrIterator as _,
 };
 use frender_common::{strings::SsrStr, IntoStaticStr};
-use frender_dom::component::IntoSpaceAndHtmlAttributesOrEmpty;
+use frender_dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty;
 use frender_ssr::html::{
     attr::{AssertSpaceAndHtmlAttributeName, SpaceAndHtmlAttribute},
     attr_value::AttrEqValue,
 };
 
-use crate::value::{MaybeProvideFormControlValue, ProvideFormControlValue as _};
+use crate::ssr::value::{MaybeProvideFormControlValue, ProvideFormControlValue as _};
 
-use super::{InputChecked, InputDataModel, InputType, InputValue, InputValueKind};
+use super::{
+    value_kind::InputValueKindSsr, InputDataModel, InputType, SsrInputChecked, SsrInputType,
+    SsrInputValue,
+};
 
 impl<
         //
-        Type: InputType,
-        Value: InputValue,
-        Checked: InputChecked,
+        Type: SsrInputType,
+        Value: SsrInputValue,
+        Checked: SsrInputChecked,
     > IntoSpaceAndHtmlAttributesOrEmpty for InputDataModel<Type, Value, Checked>
 {
     type SpaceAndHtmlAttributesOrEmpty = Chain<
@@ -25,9 +30,7 @@ impl<
             SpaceAndHtmlAttribute<
                 //
                 AssertSpaceAndHtmlAttributeName<&'static str>,
-                AttrEqValue<IterAnyStr<
-                    <<Type as InputType>::InputTypeStr as SsrStr>::StaticStr
-                >>,
+                AttrEqValue<IterAnyStr<<<Type as InputType>::InputTypeStr as SsrStr>::StaticStr>>,
             >,
         >,
         Chain<
@@ -36,9 +39,11 @@ impl<
                 SpaceAndHtmlAttribute<
                     //
                     AssertSpaceAndHtmlAttributeName<&'static str>,
-                    <Value::ValueKind as InputValueKind>::IntoInputValueAttrValue<
+                    <Value::ValueKind as InputValueKindSsr>::IntoInputValueAttrValue<
                         //
-                        <Value as MaybeProvideFormControlValue<Value::ValueKind>>::ProvideFormControlValue,
+                        <Value::IntoSsrInputValue as MaybeProvideFormControlValue<
+                            Value::ValueKind,
+                        >>::ProvideFormControlValue,
                     >,
                 >,
             >,
@@ -64,16 +69,22 @@ impl<
         let input_type = Type::maybe_into_input_type_str(input_type)
             .map(|v| v.into_into_static_str().into_static_str());
 
-        let value_attr = Value::maybe_into_provide_form_control_value(value)
-            .map(|value| {
-                let input_type = input_type.as_ref().map_or("", |v| v.as_ref());
-                Value::ValueKind::into_input_value_attr_value(value, input_type)
-            })
-            .map(|eq_value| SpaceAndHtmlAttribute(VALUE, eq_value));
+        let value_attr = Value::IntoSsrInputValue::maybe_into_provide_form_control_value(
+            Value::into_ssr_input_value(value),
+        )
+        .map(|value| {
+            let input_type = input_type.as_ref().map_or("", |v| v.as_ref());
+            Value::ValueKind::into_input_value_attr_value(value, input_type)
+        })
+        .map(|eq_value| SpaceAndHtmlAttribute(VALUE, eq_value));
 
         let checked_attr = {
-            let checked = Checked::maybe_into_provide_form_control_value(checked)
-                .map_or(false, |checked| checked.provide_form_control_value(|v| *v));
+            let checked = Checked::IntoSsrInputChecked::maybe_into_provide_form_control_value(
+                Checked::into_ssr_input_checked(checked),
+            )
+            .map_or(false, |checked| {
+                checked.provide_form_control_value(identity)
+            });
             checked.then_some(CHECKED)
         };
 

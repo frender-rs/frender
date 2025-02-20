@@ -1,16 +1,10 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_dom::StateUnmount;
+use frender_dom::csr::StateUnmount;
 
-use crate::element::FormControlElement;
+use crate::{csr::element::FormControlElement, values::EitherFormControlValue};
 
 use super::{FormControlValue, FormControlValueKind, FormControlValueStateKind};
-
-#[derive(Debug, Clone, Copy)]
-pub enum EitherFormControlValue<A, B> {
-    A(A),
-    B(B),
-}
 
 enum Never {}
 pub struct KindOfEitherFormControlValue<KA, KB>(Never, PhantomData<(KA, KB)>);
@@ -69,6 +63,28 @@ impl<
             }
         }
     }
+
+    fn render_remove<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        renderer: &mut R,
+        element: &mut E,
+        state: &Self::UnpinnedState<E, R>,
+    ) {
+        match state {
+            EitherFormControlValueState::A(state) => KA::render_remove(renderer, element, state),
+            EitherFormControlValueState::B(state) => KB::render_remove(renderer, element, state),
+        }
+    }
+
+    fn unpinned_unmount<E: FormControlElement<VK, R> + ?Sized, R: ?Sized>(
+        renderer: &mut R,
+        element: &mut E,
+        state: &mut Self::UnpinnedState<E, R>,
+    ) {
+        match state {
+            EitherFormControlValueState::A(state) => KA::unpinned_unmount(renderer, element, state),
+            EitherFormControlValueState::B(state) => KB::unpinned_unmount(renderer, element, state),
+        }
+    }
 }
 
 impl<A: FormControlValue<VK>, B: FormControlValue<VK>, VK: ?Sized + FormControlValueKind>
@@ -107,51 +123,9 @@ impl<A: FormControlValue<VK>, B: FormControlValue<VK>, VK: ?Sized + FormControlV
                 B::render_update(this, renderer, element, state)
             }
             (this, state) => {
-                Pin::new(&mut *state).state_unmount();
+                Self::StateKind::unpinned_unmount(renderer, element, state);
                 *state = Self::render_init(this, renderer, element);
             }
-        }
-    }
-}
-
-#[cfg(feature = "either")]
-mod extern_either {
-    use either::Either;
-
-    use crate::value::{FormControlValue, FormControlValueKind};
-
-    use super::EitherFormControlValue;
-
-    fn from_either<A, B>(this: Either<A, B>) -> EitherFormControlValue<A, B> {
-        match this {
-            Either::Left(this) => EitherFormControlValue::A(this),
-            Either::Right(this) => EitherFormControlValue::B(this),
-        }
-    }
-
-    impl<V: ?Sized + FormControlValueKind, A: FormControlValue<V>, B: FormControlValue<V>>
-        FormControlValue<V> for Either<A, B>
-    {
-        type StateKind = super::KindOfEitherFormControlValue<A::StateKind, B::StateKind>;
-
-        fn render_init<E: crate::element::FormControlElement<V, R> + ?Sized, R: ?Sized>(
-            this: Self,
-            renderer: &mut R,
-            element: &mut E,
-        ) -> <Self::StateKind as crate::value::FormControlValueStateKind<V>>::UnpinnedState<E, R>
-        {
-            EitherFormControlValue::render_init(from_either(this), renderer, element)
-        }
-
-        fn render_update<E: crate::element::FormControlElement<V, R> + ?Sized, R: ?Sized>(
-            this: Self,
-            renderer: &mut R,
-            element: &mut E,
-            state: &mut <Self::StateKind as crate::value::FormControlValueStateKind<
-                V,
-            >>::UnpinnedState<E, R>,
-        ) {
-            EitherFormControlValue::render_update(from_either(this), renderer, element, state);
         }
     }
 }

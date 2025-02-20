@@ -2,19 +2,26 @@ use std::marker::PhantomData;
 
 use frender_events::event::Event;
 
-use frender_dom::{behaviors, HandleEvent, RegisterUpdate};
+use frender_dom::csr::{behaviors, HandleEvent, RegisterUpdate};
 
-use super::value::{FormControlValueKind, HandleFormControlValue};
+use crate::{
+    value::{KindOfChecked, KindOfValue, KindOfValueAsNumber},
+    FormControlValueKind,
+};
 
-pub trait FormControlElement<V: ?Sized + FormControlValueKind, Renderer: ?Sized>:
+use super::value::HandleFormControlValue;
+
+pub trait FormControlElement<VK: ?Sized + FormControlValueKind, Renderer: ?Sized>:
     behaviors::HtmlElement<Renderer>
 {
-    fn set_default_value(&mut self, renderer: &mut Renderer, value: &V);
-    fn set_value(&mut self, renderer: &mut Renderer, value: &V);
+    fn set_default_value(&mut self, renderer: &mut Renderer, value: VK::Value<'_>);
+    fn remove_default_value(&mut self, renderer: &mut Renderer);
+
+    fn set_value(&mut self, renderer: &mut Renderer, value: VK::Value<'_>);
 
     fn remove_value(&mut self, renderer: &mut Renderer);
 
-    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<V> + 'static>: RegisterUpdate<
+    type OnValueChangeEventListenerUnpinned<F: HandleFormControlValue<VK> + 'static>: RegisterUpdate<
         Self::OnValueChangeElementUnpinned,
         Renderer,
         Self::OnValueChangeFUnpinned<F>,
@@ -24,7 +31,7 @@ pub trait FormControlElement<V: ?Sized + FormControlValueKind, Renderer: ?Sized>
 
     fn on_value_change_element_unpinned(&mut self) -> &mut Self::OnValueChangeElementUnpinned;
 
-    type OnValueChangeFUnpinned<F: HandleFormControlValue<V> + 'static>: From<F>;
+    type OnValueChangeFUnpinned<F: HandleFormControlValue<VK> + 'static>: From<F>;
 }
 
 #[derive(Debug)]
@@ -59,19 +66,19 @@ pub trait HandleFormControlValueKind: FormControlValueKind {
     fn event_form_control_value<E: ?Sized + Event>(e: &E) -> Option<Self::FormControlValue<'_>>;
 }
 
-impl HandleFormControlValueKind for str {
+impl HandleFormControlValueKind for KindOfValue {
     fn event_form_control_value<E: ?Sized + Event>(e: &E) -> Option<Self::FormControlValue<'_>> {
         e.target_form_control_value()
     }
 }
 
-impl HandleFormControlValueKind for bool {
+impl HandleFormControlValueKind for KindOfChecked {
     fn event_form_control_value<E: ?Sized + Event>(e: &E) -> Option<Self::FormControlValue<'_>> {
         e.target_input_checked()
     }
 }
 
-impl HandleFormControlValueKind for f64 {
+impl HandleFormControlValueKind for KindOfValueAsNumber {
     fn event_form_control_value<E: ?Sized + Event>(e: &E) -> Option<Self::FormControlValue<'_>> {
         e.target_input_value_as_number()
     }

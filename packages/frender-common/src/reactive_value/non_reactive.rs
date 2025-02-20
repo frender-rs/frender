@@ -158,6 +158,7 @@ impl<T: CachedNonReactiveValueRenderInit<VK, Cache>, VK: ?Sized + ValueKind, Cac
     type RenderInitPinned<R: FnOnce(<VK as ValueKind>::Value<'_>) -> Out, Out> = Self;
 }
 
+// TODO: proxy SsrStr
 #[derive(Debug)]
 pub struct Uncached<T>(pub T);
 

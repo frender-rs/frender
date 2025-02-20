@@ -5,13 +5,6 @@ use crate::{
 
 pub mod csr;
 
-pub(crate) mod known {
-    crate::define_trait_known_str!(
-        pub(crate) trait Ssr = KnownSsrStr;
-        pub(crate) trait Csr = KnownCsrStr;
-    );
-}
-
 pub trait IsNonReactiveStr {
     fn into_reactive_value(self) -> NonReactiveStr<Self>
     where
@@ -190,17 +183,23 @@ pub mod define_trait_known_str {
 #[macro_export]
 macro_rules! define_trait_known_str {
     (
+        $(
+            pub(crate) trait IsNonReactiveStr = $KnownIsNonReactiveStr:ident;
+        )?
         pub(crate) trait Ssr = $KnownSsrStr:ident;
         pub(crate) trait Csr = $KnownCsrStr:ident;
     ) => {
-        pub(crate) trait $KnownSsrStr: $crate::strings::SsrStr {}
-        pub(crate) trait $KnownCsrStr: $crate::strings::CsrStr {}
+        $(
+            pub(crate) trait $KnownIsNonReactiveStr: $crate::strings::IsNonReactiveStr {}
+        )?
+        pub(crate) trait $KnownSsrStr: $crate::strings::SsrStr $(+ $KnownIsNonReactiveStr)? {}
+        pub(crate) trait $KnownCsrStr: $crate::strings::CsrStr $(+ $KnownIsNonReactiveStr)? {}
 
         const _: () = {
             use std::convert::AsRef;
 
             use $crate::{
-                strings::{CsrStr, SsrStr},
+                strings::{IsNonReactiveStr, CsrStr, SsrStr},
                 IntoStaticStr, IntoStaticStrCache,
             };
 
@@ -208,12 +207,21 @@ macro_rules! define_trait_known_str {
 
             $crate::__define_trait_known_str_impl_static! {KnownStaticStr}
 
+            $(
+                impl<S: KnownStaticStr> $KnownIsNonReactiveStr for S {}
+            )?
             impl<S: KnownStaticStr> $KnownSsrStr for S {}
             impl<S: KnownStaticStr> $KnownCsrStr for S {}
 
+            $(
+                impl<S> $KnownIsNonReactiveStr for $crate::TempStr<S> {}
+            )?
             impl<S: IntoStaticStr> $KnownSsrStr for $crate::TempStr<S> {}
             impl<S: IntoStaticStrCache> $KnownCsrStr for $crate::TempStr<S> {}
 
+            $(
+                impl<S: IsNonReactiveStr> $KnownIsNonReactiveStr for $crate::strings::NonReactiveStr<S> {}
+            )?
             impl<S: SsrStr> $KnownSsrStr for $crate::strings::NonReactiveStr<S> {}
             impl<S: CsrStr> $KnownCsrStr for $crate::strings::NonReactiveStr<S> {}
         };

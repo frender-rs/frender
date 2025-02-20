@@ -1,29 +1,33 @@
-use frender_common::{
-    strings::{CsrStr, SsrStr},
-    IntoStaticStr, IntoStaticStrCache, TempStr,
-};
+#[cfg(feature = "csr")]
+pub(crate) use self::csr::KnownReactiveValueStr;
 
-trait KnownStaticStr: 'static + AsRef<str> + SsrStr + CsrStr {}
+use frender_common::{define_trait_known_str, reactive_value::non_reactive::Uncached};
 
-frender_common::impl_many!(
-    impl<__> KnownStaticStr
-        for each_of![
-            &'static str,
-            String,
-            std::borrow::Cow<'static, str>,
-            std::rc::Rc<str>,
-            std::sync::Arc<str>,
-        ]
-    {
-    }
+define_trait_known_str!(
+    pub(crate) trait IsNonReactiveStr = KnownIsNonReactiveStr;
+    pub(crate) trait Ssr = KnownSsrStr;
+    pub(crate) trait Csr = KnownCsrStr;
 );
 
-pub(crate) trait KnownSsrStr: SsrStr {}
+pub(crate) trait KnownIsNonReactiveStrOrUncached {}
 
-impl<S: KnownStaticStr> KnownSsrStr for S {}
-impl<S: IntoStaticStr> KnownSsrStr for TempStr<S> {}
+impl<T: KnownIsNonReactiveStr> KnownIsNonReactiveStrOrUncached for T {}
+impl<T> KnownIsNonReactiveStrOrUncached for Uncached<T> {}
 
-pub(crate) trait KnownCsrStr: CsrStr {}
+#[cfg(feature = "csr")]
+mod csr {
+    use frender_common::reactive_value::{
+        non_reactive::{Uncached, UncachedNonReactiveValue},
+        ReactiveValue,
+    };
 
-impl<S: KnownStaticStr> KnownCsrStr for S {}
-impl<S: IntoStaticStrCache> KnownCsrStr for TempStr<S> {}
+    use super::{KnownCsrStr, KnownIsNonReactiveStrOrUncached};
+
+    pub(crate) trait KnownReactiveValueStr:
+        KnownIsNonReactiveStrOrUncached + ReactiveValue<str>
+    {
+    }
+
+    impl<T: KnownCsrStr> KnownReactiveValueStr for T {}
+    impl<T: UncachedNonReactiveValue<str>> KnownReactiveValueStr for Uncached<T> {}
+}
