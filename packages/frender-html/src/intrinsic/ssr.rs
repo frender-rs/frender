@@ -1,4 +1,4 @@
-use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::ssr::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_ssr::SsrElement;
 
 impl<TM, Children, Attrs, AttrsWithPinnedState> SsrElement for super::Intrinsic<TM, Children, Attrs, AttrsWithPinnedState>

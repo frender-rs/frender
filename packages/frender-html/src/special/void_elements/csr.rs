@@ -1,5 +1,8 @@
-use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_dom::Empty;
+use frender_dom::{
+    ssr::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent},
+    HasIntrinsicComponentTag as _,
+};
 
 use crate::kinds::RenderInitNothing;
 use crate::{html::markers as tags, CsrComponent, RenderHtml};

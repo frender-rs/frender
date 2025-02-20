@@ -69,8 +69,6 @@ pub mod __private {
 
 mod special;
 
-mod attr;
-
 mod attr_value;
 mod dom_tokens;
 mod event_listener;
@@ -104,10 +102,10 @@ pub mod csr {
 
     pub use frender_common::csr::StateUnmount;
 
-    pub use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
+    pub use frender_dom::csr::{UiHandle, UnmountedUiHandle};
 
     pub mod render {
-        pub use frender_dom::render::{RenderContext, RenderWithContext};
+        pub use frender_dom::csr::render::{RenderContext, RenderWithContext};
     }
 
     // TODO: move to frender-dom or separate crates

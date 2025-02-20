@@ -2,7 +2,9 @@ use async_str_iter::any_str::IterAnyStr;
 use frender_common::{strings::SsrStr, IntoStaticStr};
 use frender_ssr::html::assert;
 
-pub trait SsrScriptContent {
+use super::ScriptContent;
+
+pub trait SsrScriptContent: ScriptContent {
     type IntoScriptContent: assert::ScriptContent;
     fn into_script_content(this: Self) -> Self::IntoScriptContent;
 }
@@ -18,6 +20,8 @@ impl SsrScriptContent for crate::Empty {
 /// Requires `S: SsrStr` because this type is only need in server side rendering.
 /// Use [`ScriptInnerTextCsrOnly`](super::ScriptInnerTextCsrOnly) for just csr.
 pub struct ScriptInnerTextWronglyEncoded<S: SsrStr>(pub S);
+
+impl<S: SsrStr> ScriptContent for ScriptInnerTextWronglyEncoded<S> {}
 
 impl<S: SsrStr> SsrScriptContent for ScriptInnerTextWronglyEncoded<S> {
     type IntoScriptContent =

@@ -2,8 +2,8 @@ use std::{marker::PhantomData, pin::Pin};
 
 use frender_common::{convert::IdentityAs, reactive_value::RenderInitPinned};
 use frender_dom::{
+    csr::{OnEvent, ProvideMutMounted, UiHandle},
     event_types::EventType,
-    ui_handle::{ProvideMutMounted, UiHandle},
 };
 
 use crate::{
@@ -23,7 +23,7 @@ pub trait UiHandleType: BehaviorType {
     fn create_unmounted_ui_handle_of_type<R: ?Sized + RenderHtml>(renderer: &mut R) -> Self::UnmountedUiHandle<R>;
 
     fn create_and_mount_ui_handle_of_type<Ctx: ?Sized + HtmlRenderContext>(render_context: &mut Ctx) -> Self::UiHandle<Ctx::Renderer> {
-        use frender_dom::{render::RenderContext as _, ui_handle::UnmountedUiHandle as _};
+        use frender_dom::csr::{render::RenderContext as _, UnmountedUiHandle as _};
         render_context.map_mut_render_context(|render_context| {
             Self::create_unmounted_ui_handle_of_type(render_context.renderer_mut())
                 //
@@ -33,7 +33,7 @@ pub trait UiHandleType: BehaviorType {
 }
 
 pub trait OnEventType<EVT: EventType>: BehaviorType {
-    type OnEvent<Renderer: ?Sized + RenderHtml>: frender_dom::OnEvent<Renderer, EVT> + IdentityAs<Self::OfBehaviorType<Renderer>>;
+    type OnEvent<Renderer: ?Sized + RenderHtml>: OnEvent<Renderer, EVT> + IdentityAs<Self::OfBehaviorType<Renderer>>;
 }
 
 pub trait UnpinnedNonReactiveRenderStateKind {

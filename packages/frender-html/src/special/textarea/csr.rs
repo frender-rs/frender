@@ -1,13 +1,15 @@
 use std::marker::PhantomData;
 
 use frender_common::convert::{FromMut as _, IntoMut as _};
-use frender_form_control::value::FormControlValueStateKind;
+use frender_form_control::{
+    csr::{FormControlValue, FormControlValueStateKind},
+    KindOfValue,
+};
 
 use crate::{
     cs::textarea,
     element::{PinnedRenderStateKind, UnpinnedRenderStateKind},
     element_types::RenderStateKindPollRenderWithParent,
-    form_control::value::FormControlValue,
     html::behavior_type_traits,
     kinds::RenderInitNothing,
     CsrComponent, RenderHtml,
@@ -16,17 +18,17 @@ use crate::{
 enum Never {}
 pub struct Kind<K, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement>(Never, PhantomData<K>, PhantomData<ET>);
 
-impl<K: FormControlValueStateKind<str>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> UnpinnedRenderStateKind for Kind<K, ET> {
+impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> UnpinnedRenderStateKind for Kind<K, ET> {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ();
     type UnpinnedState<R: RenderHtml + ?Sized> = K::UnpinnedState<ET::HtmlTextAreaElement<R>, R>;
 }
 
-impl<K: FormControlValueStateKind<str>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> PinnedRenderStateKind for Kind<K, ET> {
+impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> PinnedRenderStateKind for Kind<K, ET> {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = ();
     type PinnedState<R: RenderHtml + ?Sized> = K::UnpinnedState<ET::HtmlTextAreaElement<R>, R>;
 }
 
-impl<K: FormControlValueStateKind<str>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> RenderStateKindPollRenderWithParent<ET> for Kind<K, ET> {
+impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_traits::HtmlTextAreaElement> RenderStateKindPollRenderWithParent<ET> for Kind<K, ET> {
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
@@ -65,7 +67,7 @@ impl<K: FormControlValueStateKind<str>, ET: ?Sized + behavior_type_traits::HtmlT
 
 impl<Children> CsrComponent<Children> for textarea::Marker
 where
-    Children: FormControlValue<str>,
+    Children: FormControlValue<KindOfValue>,
 {
     type ChildrenRenderStateKind = Kind<Children::StateKind, Self>;
     type ChildrenPinnedRenderInit<R: RenderHtml + ?Sized> = RenderInitNothing;

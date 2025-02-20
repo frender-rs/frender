@@ -1,12 +1,12 @@
 use frender_common::reactive_value::ReactiveValueWithKind;
-use frender_dom::script::IntoScriptContent;
+use frender_dom::script::CsrScriptContent;
 
 use crate::{
     special::parent_only::{impl_parent_only, RenderInnerTextKind},
     CsrComponent,
 };
 
-impl<Children: IntoScriptContent> CsrComponent<Children> for crate::cs::script::Marker {
+impl<Children: CsrScriptContent> CsrComponent<Children> for crate::cs::script::Marker {
     impl_parent_only!(
         type Children = Children;
 

@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use frender_dom::render::{KnownValueForText, TextKind};
+use frender_dom::csr::render::{KnownValueForText, TextKind};
 
 use crate::{HtmlRenderContext, RenderHtml};
 

@@ -5,7 +5,7 @@ macro_rules! type_prop {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]);) => {
-        type $fn_name<V: frender_dom::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static, BT: BehaviorTypeTrait>:
+        type $fn_name<V: frender_dom::csr::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static, BT: BehaviorTypeTrait>:
             UnpinnedRenderWithBehavior<BT> +
             PinnedRenderWithBehavior<BT>
         ;
@@ -44,7 +44,7 @@ macro_rules! impl_prop {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]);) => {
-        type $fn_name<V: frender_dom::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static, BT: BehaviorTypeTrait> =
+        type $fn_name<V: frender_dom::csr::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static, BT: BehaviorTypeTrait> =
             props::$fn_name<V>
         ;
     };

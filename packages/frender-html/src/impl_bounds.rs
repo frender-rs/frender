@@ -285,68 +285,6 @@ mod updater {
 }
 
 #[allow(non_snake_case)]
-pub(crate) mod MaybeHandleEvent {
-    macro_rules! __impl_csr_MaybeHandleEvent {
-        (
-            meta! {
-                wrapper! {$($wrapper:tt)*}
-                prop_marker! {$($prop_marker:tt)*}
-                bounds_attrs! { #[event($event_name:ident::$event_trait_name:ident)] }
-                bounds!  {$($bounds:tt)*}
-                bounds_tps!  {}
-                csr_element_ty! { $csr_element_ty:ident }
-                $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
-            }
-            $csr:ident !{ $($csr_fields:tt)* }
-        ) => {
-            impl<
-                H: frender_dom::HandleEvent<dyn crate::dom::event::$event_trait_name> + 'static,
-                F: frender_dom::MaybeHandleEvent<dyn crate::dom::event::$event_trait_name, HandleEvent = H> + 'static,
-            > crate::into_property::IntoProperty
-                for $($wrapper)*::<F>
-            {
-                type IntoProperty = crate::event_listener::Property<crate::html::event_types::$event_name, F>;
-                fn into_property(Self(this): Self) -> Self::IntoProperty {
-                    crate::event_listener::Property::new(this)
-                }
-            }
-        };
-    }
-
-    pub(crate) use __impl_csr_MaybeHandleEvent as csr;
-
-    macro_rules! __impl_ssr_MaybeHandleEvent {
-        (
-            meta! {
-                wrapper! {$($wrapper:tt)*}
-                prop_marker! {$($prop_marker:tt)*}
-                bounds_attrs! { #[event($($bounds_tp:tt)*)] }
-                bounds!  {$($bounds:tt)*}
-                bounds_tps!  {}
-                csr_element_ty! { $csr_element_ty:ty }
-                $(attr_name! { $attr_name_ident:ident = $attr_name:expr })?
-            }
-            $ssr:ident !{ $($ssr_fields:tt)* }
-        ) => {
-            #[cfg(todo)]
-            impl<
-                V: frender_dom::MaybeHandleEvent<dyn $($bounds_tp)* ::Event> + 'static,
-            > $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
-                for $($wrapper)*::<V>
-            {
-                type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;
-
-                fn into_space_and_html_attributes_or_empty(self) -> Self::SpaceAndHtmlAttributesOrEmpty {
-                    ::async_str_iter::empty::Empty
-                }
-            }
-        };
-    }
-
-    pub(crate) use __impl_ssr_MaybeHandleEvent as ssr;
-}
-
-#[allow(non_snake_case)]
 pub(crate) mod SetRef {
     macro_rules! __Ref_csr {
         (
@@ -399,7 +337,7 @@ pub(crate) mod SetRef {
         ) => {
             impl<
                 V: FnOnce($(&$bounds_tps),*),
-            > $crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+            > $crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
                 for $($wrapper)*::<V>
             {
                 type SpaceAndHtmlAttributesOrEmpty = ::async_str_iter::empty::Empty;

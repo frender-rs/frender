@@ -5,7 +5,7 @@ use crate::special::parent_only::RenderInnerTextKind;
 use crate::CsrComponent;
 
 use frender_common::reactive_value::ReactiveValueWithKind;
-use frender_dom::render_from::str::ValueKindForStr;
+use frender_dom::csr::render_from::str::ValueKindForStr;
 
 impl<Children: ReactiveValueWithKind> CsrComponent<Children> for style::Marker
 where

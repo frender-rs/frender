@@ -114,7 +114,7 @@ macro_rules! behaviors {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
-                use frender_dom::OnEvent;
+                use frender_dom::csr::OnEvent;
 
                 use super::{*, event_types};
             }
@@ -170,7 +170,7 @@ macro_rules! imp_element_proxy_attrs {
         crate::macros::expand_item_and_prepend_expanded! {
             $expand_item
             {
-                use frender_dom::OnEvent;
+                use frender_dom::csr::OnEvent;
             }
         }
     };
@@ -202,7 +202,7 @@ macro_rules! imp_element_proxy_attrs {
                 prepend {
                     impl<
                         Renderer: ?Sized,
-                        E: ?Sized + frender_dom::behaviors::Element<Renderer>,
+                        E: ?Sized + frender_dom::csr::behaviors::Element<Renderer>,
                     > self::behaviors::$trait_name<Renderer> for crate::ElementProxyAttrs<E>
                     where Self:
                         $(self::behaviors::$extends<Renderer> +)*
@@ -211,7 +211,7 @@ macro_rules! imp_element_proxy_attrs {
                 append {
                     $($($trait_bounds)*)?
                     {
-                        $(crate::element_proxy_attrs::macros::impl_behavior_fn! {
+                        $(crate::element_proxy_attrs::csr::macros::impl_behavior_fn! {
                             $fn_name $fn_args $fn_body_or_semi ($trait_name)
                         })*
                     }
@@ -343,7 +343,7 @@ macro_rules! behavior_type_traits {
             $expand_item
             {
                 use frender_common::convert::IdentityAs;
-                use frender_dom::ui_handle::UiHandle;
+                use frender_dom::csr::UiHandle;
 
                 use crate::update_element::OnEventType;
                 use super::{event_types, behaviors};
@@ -609,16 +609,15 @@ macro_rules! props_implementations {
 macro_rules! tag_implementations {
     (expand_item $expand_item:tt) => {
         crate::macros::expand_item_and_prepend_expanded! { $expand_item {
-            #[cfg(feature = "ssr")]
-            use crate::dom::component::HasIntrinsicComponentTag;
+            use frender_dom::HasIntrinsicComponentTag;
 
             #[cfg(feature = "ssr")]
             use ::frender_ssr::html::tag::AssertTagName;
             #[cfg(feature = "csr")]
-            use frender_dom::ui_handle::UnmountedUiHandle;
+            use frender_dom::csr::UnmountedUiHandle;
 
             #[cfg(feature = "ssr")]
-            use crate::dom::component::SsrComponentNormalElement;
+            use frender_dom::ssr::SsrComponentNormalElement;
 
             #[cfg(feature = "csr")]
             use crate::{BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType};
@@ -670,11 +669,8 @@ macro_rules! tag_implementations {
                 // }
             }
 
-            #[cfg(feature = "ssr")]
             impl HasIntrinsicComponentTag for $tags {
                 const INTRINSIC_COMPONENT_TAG: &'static str = stringify!($tags);
-                const ASSERT_TAG_NAME: AssertTagName<&'static str> =
-                    AssertTagName::new_from_str(Self::INTRINSIC_COMPONENT_TAG);
             }
 
             crate::macros::tag_custom_content_model! {{$($($tag_info)*)?}{}{
@@ -882,14 +878,16 @@ macro_rules! impl_attribute {
         $event_type_ident:ident,
         $event_type_listener_ident:ident $(,)?
     ]); $trait_name:tt) => {
-        crate::impl_bounds! {
-            props::$fn_name(
-                prop_marker(prop_markers::$fn_name),
-                #[event($fn_name::$event_trait_name)]
-                bounds as crate::impl_bounds::MaybeHandleEvent,
-                element as $trait_name,
-                attr_name = __,
-            )
+        impl<
+            H: frender_common::HandleEvent<dyn crate::dom::event::$event_trait_name> + 'static,
+            F: frender_common::MaybeHandleEvent<dyn crate::dom::event::$event_trait_name, HandleEvent = H> + 'static,
+        > crate::into_property::IntoProperty
+            for props::$fn_name::<F>
+        {
+            type IntoProperty = crate::event_listener::Property<crate::html::event_types::$fn_name, F>;
+            fn into_property(Self(this): Self) -> Self::IntoProperty {
+                crate::event_listener::Property::new(this)
+            }
         }
     };
     ($fn_name:ident ($value:ident : attr_value![$($maybe_ty:tt)*]) ; $trait_name:ident) => {
@@ -939,7 +937,7 @@ macro_rules! impl_attribute {
         #[cfg(feature = "ssr")]
         impl<
             V: frender_attr_value::AttrValue<$($maybe_ty)*>,
-        > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+        > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
             type SpaceAndHtmlAttributesOrEmpty = crate::attr_value::ssr::SpaceAndHtmlAttributesOrEmpty<V, $($maybe_ty)*>;
@@ -976,7 +974,7 @@ macro_rules! impl_attribute {
         #[cfg(feature = "ssr")]
         impl<
             V: crate::impl_bounds::$bounds::Bounds,
-        > crate::dom::component::IntoSpaceAndHtmlAttributesOrEmpty
+        > crate::dom::ssr::IntoSpaceAndHtmlAttributesOrEmpty
             for props::$fn_name<V>
         {
             type SpaceAndHtmlAttributesOrEmpty = crate::impl_bounds::$bounds::ssr::Output<V>;
@@ -1412,12 +1410,12 @@ macro_rules! event_type {
         }
 
         #[cfg(feature = "web")]
-        impl ::frender_dom::csr::web::JsCastEventType for $fn_name {
+        impl ::frender_events::web::JsCastEventType for $fn_name {
             type JsEventTarget = web_sys::$trait_name;
             type JsCastEvent = web_sys::$event_trait_name;
 
             fn js_event_as_event(event: &Self::JsCastEvent) -> &Self::Event {
-                frender_dom::csr::web::Event::new_from_ref(event)
+                ::frender_events::web::Event::new_from_ref(event)
             }
         }
 
@@ -1593,7 +1591,7 @@ macro_rules! parse_fn_args_as_bounds {
         $event_type_listener_ident:ident $(,)?
     ]) do $commands:tt) => {
         $crate::expand! {
-            { frender_dom::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static }
+            { frender_common::MaybeHandleEvent<dyn $crate::dom::event::$event_trait_name> + 'static }
             do $commands
         }
     };

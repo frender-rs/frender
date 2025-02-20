@@ -1,7 +1,8 @@
 use frender_attr_value::html::{ContentEditable, Spellcheck};
-use frender_dom::{
+#[cfg(feature = "csr")]
+use frender_dom::csr::{
     render::{Render, RenderTextFromKnown, RenderWithContext},
-    ui_handle::{ProvideMutMounted, UiHandle},
+    ProvideMutMounted, UiHandle,
 };
 use frender_form_control::textarea::TextAreaValue;
 
@@ -149,17 +150,17 @@ crate::macros::def_intrinsic_component_props!(
     }
 
     pub trait Node {
-        trait_bounds!(frender_dom::behaviors::Node<Renderer> + UiHandle<Renderer>);
+        trait_bounds!(frender_dom::csr::behaviors::Node<Renderer> + UiHandle<Renderer>);
         impl_for_web!();
 
         sub_traits!(
             pub trait Element {
                 trait_bounds!(
-                    frender_dom::ui_handle::UiHandle<Renderer>
+                    frender_dom::csr::UiHandle<Renderer>
                         //
-                        + frender_dom::behaviors::Element<Renderer>
-                        + frender_dom::behaviors::ElementWithChildren<Renderer>
-                        + frender_dom::behaviors::ElementWithClassList<Renderer>
+                        + frender_dom::csr::behaviors::Element<Renderer>
+                        + frender_dom::csr::behaviors::ElementWithChildren<Renderer>
+                        + frender_dom::csr::behaviors::ElementWithClassList<Renderer>
                 );
 
                 impl_for_web!();
@@ -507,7 +508,7 @@ crate::macros::def_intrinsic_component_props!(
                         }
                     }
                     pub trait ElementWithRelAttribute {
-                        trait_bounds!(frender_dom::behaviors::ElementWithRelList<Renderer>);
+                        trait_bounds!(frender_dom::csr::behaviors::ElementWithRelList<Renderer>);
                         impl_for_web!(
                             only_for_types!(web_sys::HtmlAnchorElement, web_sys::HtmlAreaElement, web_sys::HtmlFormElement, web_sys::HtmlLinkElement,);
                         );
@@ -761,9 +762,9 @@ crate::macros::def_intrinsic_component_props!(
 
                     pub trait HtmlElement {
                         trait_bounds!(
-                            frender_dom::behaviors::HtmlElement<Renderer>
+                            frender_dom::csr::behaviors::HtmlElement<Renderer>
                                 //
-                                + frender_dom::behaviors::ElementWithStyle<Renderer>
+                                + frender_dom::csr::behaviors::ElementWithStyle<Renderer>
                         );
 
                         define!(
@@ -1666,7 +1667,7 @@ crate::macros::def_intrinsic_component_props!(
                                 define!(tags = (script { custom_content_model },)); // TODO: special children
                                 impl_for_web!();
 
-                                fn children(value: children![impl frender_dom::script::IntoScriptContent]);
+                                fn children(value: children![impl frender_dom::script::ScriptContent]);
 
                                 fn r#async(value: attr_value![bool]) {
                                     attr_name!("async");
@@ -1860,7 +1861,7 @@ crate::macros::def_intrinsic_component_props!(
                                     ElementWithDisabledAttribute,
                                     ElementWithNameAttribute,
                                 );
-                                trait_bounds!(frender_form_control::element::FormControlElement<str, Renderer>);
+                                trait_bounds!(frender_form_control::csr::FormControlElement<frender_form_control::KindOfValue, Renderer>);
 
                                 define!(tags = (textarea { custom_content_model },));
                                 impl_for_web!();

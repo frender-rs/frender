@@ -1,4 +1,4 @@
-use frender_dom::ui_handle::UiHandle;
+use frender_dom::csr::UiHandle;
 
 use crate::{HtmlRenderContext, RenderHtml};
 

@@ -1,4 +1,4 @@
-use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
+use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
 
 pub enum EitherUiHandle<A, B> {
     A(A),
@@ -10,7 +10,7 @@ impl<A: UnmountedUiHandle<R>, B: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHan
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         match self {
             EitherUiHandle::A(a) => EitherUiHandle::A(a.mount(render_context)),
@@ -31,7 +31,7 @@ impl<A: UiHandle<R>, B: UiHandle<R>, R: ?Sized> UiHandle<R> for EitherUiHandle<A
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         match self {
             EitherUiHandle::A(a) => a.reposition(render_context),
@@ -41,7 +41,7 @@ impl<A: UiHandle<R>, B: UiHandle<R>, R: ?Sized> UiHandle<R> for EitherUiHandle<A
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         match self {
             EitherUiHandle::A(a) => a.check_and_move_cursor(render_context),
@@ -51,7 +51,7 @@ impl<A: UiHandle<R>, B: UiHandle<R>, R: ?Sized> UiHandle<R> for EitherUiHandle<A
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         match self {
             EitherUiHandle::A(this) => this.assert_cursor_is_at_self(render_context),

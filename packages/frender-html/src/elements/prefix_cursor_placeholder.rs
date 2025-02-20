@@ -1,7 +1,7 @@
 use std::pin::Pin;
 
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::{behaviors::NodeRenderSelf, render::Render};
+use frender_dom::csr::{behaviors::NodeRenderSelf, render::Render};
 
 use crate::HtmlRenderContext;
 

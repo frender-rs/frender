@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use frender_common::convert::FromMut as _;
-use frender_dom::behaviors::ElementWithStyle;
+use frender_dom::csr::behaviors::ElementWithStyle;
 use frender_style::csr::{CsrStyle, CssStyleDeclaration};
 
 use crate::{

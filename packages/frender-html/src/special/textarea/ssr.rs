@@ -1,4 +1,4 @@
-use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::ssr::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_form_control::textarea::SsrTextAreaValue;
 use frender_ssr::html::tag::AssertTagName;
 
@@ -22,7 +22,7 @@ where
     >;
 
     fn ssr_component<Attrs: IntoSpaceAndHtmlAttributesOrEmpty>(self, attrs: Attrs, children: Children) -> Self::OneElement<Attrs> {
-        use frender_dom::component::HasIntrinsicComponentTag;
+        use frender_dom::ssr::HasIntrinsicComponentTagSsr;
         frender_ssr::html::element::NormalElement::new(Self::ASSERT_TAG_NAME, attrs.into_space_and_html_attributes_or_empty(), Children::into_ssr_text_area_value(children))
     }
 }

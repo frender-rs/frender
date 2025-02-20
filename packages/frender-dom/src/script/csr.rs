@@ -2,9 +2,11 @@ use frender_common::reactive_value::ReactiveValueWithKind;
 
 use crate::{csr::render_from::str::ValueKindForStr, Empty};
 
+use super::ScriptContent;
+
 mod no_inner_text;
 
-pub trait CsrScriptContent {
+pub trait CsrScriptContent: ScriptContent {
     type IntoScriptInnerText: ReactiveValueWithKind<ReactiveValueKind: ValueKindForStr>;
     fn into_script_inner_text(this: Self) -> Self::IntoScriptInnerText;
 }
@@ -21,6 +23,11 @@ impl CsrScriptContent for Empty {
 pub struct ScriptInnerTextCsrOnly<S: ReactiveValueWithKind<ReactiveValueKind: ValueKindForStr>>(
     pub S,
 );
+
+impl<S: ReactiveValueWithKind<ReactiveValueKind: ValueKindForStr>> ScriptContent
+    for ScriptInnerTextCsrOnly<S>
+{
+}
 
 impl<S: ReactiveValueWithKind<ReactiveValueKind: ValueKindForStr>> CsrScriptContent
     for ScriptInnerTextCsrOnly<S>

@@ -1,4 +1,4 @@
-use frender_dom::ui_handle::{ProvideMutMounted, UiHandle, UnmountedUiHandle};
+use frender_dom::csr::{render::RenderWithContext, ProvideMutMounted, UiHandle, UnmountedUiHandle};
 
 use super::ElementProxyAttrs;
 
@@ -7,7 +7,7 @@ impl<E: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHandle<R> for ElementProxyAt
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         ElementProxyAttrs(self.0.mount(render_context))
     }
@@ -32,21 +32,21 @@ impl<E: UiHandle<R>, R: ?Sized> UiHandle<R> for ElementProxyAttrs<E> {
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.0.reposition(render_context)
     }
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.0.check_and_move_cursor(render_context)
     }
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.0.assert_cursor_is_at_self(render_context)
     }

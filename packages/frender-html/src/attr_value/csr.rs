@@ -6,7 +6,7 @@ use frender_attr_value::{
     AttrValue,
 };
 use frender_common::convert::FromMut as _;
-use frender_dom::behaviors::Element as _;
+use frender_dom::csr::behaviors::Element as _;
 
 use crate::{
     has_const_attr_name::HasConstAttrName,

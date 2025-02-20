@@ -1,10 +1,7 @@
 use std::{marker::PhantomData, task::Poll};
 
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::{
-    render::RenderWithContext,
-    ui_handle::{UiHandle, UnmountedUiHandle},
-};
+use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
 
 use crate::{
     element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
@@ -87,7 +84,7 @@ impl<T: UnmountedUiHandle<R>, C, R: ?Sized> UnmountedUiHandle<R> for UiHandleWit
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.map_ui_handle(|text| text.mount(render_context))
     }
@@ -102,21 +99,21 @@ impl<T: UiHandle<R>, C, R: ?Sized> UiHandle<R> for UiHandleWithNonReactiveState<
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.ui_handle.reposition(render_context)
     }
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.ui_handle.check_and_move_cursor(render_context)
     }
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.ui_handle.assert_cursor_is_at_self(render_context)
     }

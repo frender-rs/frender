@@ -1,7 +1,7 @@
 use crate::{has_const_attr_name::HasConstAttrName, html::behavior_type_traits, BehaviorType, RenderHtml};
 
 use frender_common::convert::FromMut as _;
-use frender_dom::behaviors::Element as _;
+use frender_dom::csr::behaviors::Element as _;
 
 pub(crate) trait RemoveAttrOfBehaviorType<BT: BehaviorType> {
     fn remove_attr_of_behavior_type<R: ?Sized + RenderHtml>(

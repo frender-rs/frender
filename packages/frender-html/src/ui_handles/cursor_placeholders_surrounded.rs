@@ -1,7 +1,7 @@
-use frender_dom::{
+use frender_dom::csr::{
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf},
     render::{RenderContext, RenderWithContext},
-    ui_handle::{UiHandle, UnmountedUiHandle},
+    UiHandle, UnmountedUiHandle,
 };
 
 pub struct CursorPlaceholdersSurrounded<C, UH> {
@@ -168,7 +168,7 @@ impl<C: UnmountedUiHandle<R>, UH: UnmountedUiHandle<R>, R: ?Sized> UnmountedUiHa
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let Self {
             cursor_placeholders: [start, end],
@@ -204,7 +204,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlacehold
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let Self {
             cursor_placeholders: [start, end],
@@ -217,7 +217,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlacehold
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         let Self {
             cursor_placeholders: [start, end],
@@ -238,7 +238,7 @@ impl<C: UiHandle<R>, UH: UiHandle<R>, R: ?Sized> UiHandle<R> for CursorPlacehold
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.cursor_placeholders[0].assert_cursor_is_at_self(render_context)
     }

@@ -1,7 +1,7 @@
 use super::{behaviors, event_types};
 use crate::update_element::OnEventType;
 use frender_common::convert::IdentityAs;
-use frender_dom::ui_handle::UiHandle;
+use frender_dom::csr::UiHandle;
 pub trait Node: crate::UiHandleType {
     type Node<Renderer: ?Sized + super::RenderHtml>: behaviors::Node<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>

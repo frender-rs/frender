@@ -107,8 +107,8 @@ features = [
 [features]
 macros_not_expanded = []
 components = []
-csr = []
-ssr = ["dep:frender-ssr"]
+csr = ["frender-dom/csr", "frender-form-control/csr"]
+ssr = ["dep:frender-ssr", "frender-dom/ssr", "frender-form-control/ssr"]
 web = [
     "frender-style/web",
     "frender-dom/web",
@@ -128,7 +128,7 @@ either = [
 ]
 ElementProxyAttrs = ["dep:ref-cast"]
 # Enables frender-form-control/chrono
-# Also requires ssr
+# Also requires ssr or csr
 chrono = ["frender-form-control/chrono"]
 # Also requires csr
 experimental = []

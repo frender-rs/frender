@@ -4,12 +4,12 @@ use std::task::Poll;
 
 use frender_common::convert::IntoMut;
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::render::RenderWithContext;
-use frender_dom::ui_handle::{UiHandle, UnmountedUiHandle};
-use frender_dom::StateUnmount;
+use frender_dom::csr::render::RenderWithContext;
+use frender_dom::csr::StateUnmount;
+use frender_dom::csr::{UiHandle, UnmountedUiHandle};
 use pin_project_lite::pin_project;
 
-use crate::dom::component::HasIntrinsicComponentTag;
+use crate::dom::HasIntrinsicComponentTag;
 
 use crate::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
 use crate::element_types::RenderStateKindPollRenderWithParent;
@@ -47,7 +47,7 @@ where
 
     fn mount(self, render_context: &mut <R>::RenderContext<'_>) -> Self::Mounted
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         ParentWithChildren {
             parent: self.parent.mount(render_context),
@@ -70,21 +70,21 @@ impl<P: behaviors::Element<R>, C, R: ?Sized> UiHandle<R> for ParentWithChildren<
 
     fn reposition(&mut self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.parent.reposition(render_context)
     }
 
     fn check_and_move_cursor(&self, render_context: &mut <R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.parent.check_and_move_cursor(render_context)
     }
 
     fn assert_cursor_is_at_self(&self, render_context: &<R>::RenderContext<'_>)
     where
-        R: frender_dom::render::RenderWithContext,
+        R: RenderWithContext,
     {
         self.parent.assert_cursor_is_at_self(render_context)
     }
@@ -298,7 +298,7 @@ where
         crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
         Self::PinnedRenderInit<Renderer>,
     ) {
-        use frender_dom::ui_handle::ProvideMutMounted as _;
+        use frender_dom::csr::ProvideMutMounted as _;
 
         let Self {
             //

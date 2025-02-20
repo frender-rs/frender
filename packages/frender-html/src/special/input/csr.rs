@@ -1,10 +1,16 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_common::{convert::IntoMut, strings::CsrStr};
-use frender_dom::StateUnmount;
+use frender_common::{
+    convert::IntoMut,
+    reactive_value::non_reactive::{CachedNonReactiveValue, CachedNonReactiveValueRenderInit as _},
+    strings::CsrStr,
+    TempStr,
+};
+use frender_dom::csr::StateUnmount;
 use frender_form_control::{
-    input::{InputDataModel, InputType, InputValue, InputValueKind, IntoInputDataModel},
-    value::{FormControlValue, FormControlValueStateKind},
+    csr::{FormControlValue, FormControlValueStateKind},
+    input::{CsrInputChecked, CsrInputValue, InputDataModel, InputType, InputValue, InputValueKind, InputValueKindCsr, IntoCsrInputDataModel, IntoInputDataModel},
+    KindOfChecked,
 };
 
 use crate::{
@@ -28,14 +34,14 @@ pub struct Kind<ValueKind: ?Sized, ValueStateKind: ?Sized, CheckedStateKind: ?Si
 type KindOf<Value, Checked, Type> = Kind<
     //
     <Value as InputValue>::ValueKind,
-    <Value as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind,
-    <Checked as FormControlValue<bool>>::StateKind,
-    <<Type as InputType>::InputTypeStr as CsrStr>::StaticStrCache,
+    <<Value as CsrInputValue>::IntoCsrInputValue as FormControlValue<<Value as InputValue>::ValueKind>>::StateKind,
+    <<Checked as CsrInputChecked>::IntoCsrInputChecked as FormControlValue<KindOfChecked>>::StateKind,
+    <<Type as InputType>::InputTypeStr as CachedNonReactiveValue<str>>::Cache,
 >;
 
 type StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache> = State<
-    <ValueStateKind as FormControlValueStateKind<ValueKind>>::UnpinnedState<<ValueKind as InputValueKind>::AsMutFormControlElement<<R as RenderHtml>::input, R>, R>,
-    <CheckedStateKind as FormControlValueStateKind<bool>>::UnpinnedState<<R as RenderHtml>::input, R>,
+    <ValueStateKind as FormControlValueStateKind<ValueKind>>::UnpinnedState<<ValueKind as InputValueKindCsr>::AsMutFormControlElement<<R as RenderHtml>::input, R>, R>,
+    <CheckedStateKind as FormControlValueStateKind<KindOfChecked>>::UnpinnedState<<R as RenderHtml>::input, R>,
     Option<TypeCache>,
 >;
 
@@ -54,19 +60,19 @@ impl<ValueState: StateUnmount + Unpin, CheckedState: StateUnmount + Unpin, TypeC
     }
 }
 
-impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache> UnpinnedRenderStateKind
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<KindOfChecked>, TypeCache> UnpinnedRenderStateKind
     for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
 {
     type UnpinnedUiHandle<R: RenderHtml + ?Sized> = ();
     type UnpinnedState<R: RenderHtml + ?Sized> = StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache>;
 }
-impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache> PinnedRenderStateKind
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<KindOfChecked>, TypeCache> PinnedRenderStateKind
     for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
 {
     type PinnedUiHandle<R: RenderHtml + ?Sized> = ();
     type PinnedState<R: RenderHtml + ?Sized> = StateOf<R, ValueKind, ValueStateKind, CheckedStateKind, TypeCache>;
 }
-impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<bool>, TypeCache>
+impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlValueStateKind<ValueKind>, CheckedStateKind: ?Sized + FormControlValueStateKind<KindOfChecked>, TypeCache>
     RenderStateKindPollRenderWithParent<input::Marker> for Kind<ValueKind, ValueStateKind, CheckedStateKind, TypeCache>
 {
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
@@ -98,7 +104,7 @@ impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlVal
     }
 }
 
-impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
+impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker {
     type ChildrenRenderStateKind = KindOf<
         //
         DataModel::Value,
@@ -165,10 +171,8 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
             let input_type = <DataModel::Type>::maybe_into_input_type_str(r#type);
 
             if let Some(input_type) = input_type {
-                let (cache, ()) = frender_common::strings::csr::init_cache(input_type, |input_type_str| {
-                    use crate::html::behaviors::ElementWithTypeAttribute;
-                    element.set_type(renderer, input_type_str);
-                });
+                let (mut cache, render_init) = CachedNonReactiveValue::into_cache_and_render_init(input_type);
+                render_init.cached_non_reactive_value_render_init(renderer_update_type(renderer, element), &mut cache);
 
                 Some(cache)
             } else {
@@ -182,9 +186,11 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
 
         // value should be updated after type is updated
 
-        let state_value = <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_init(value, renderer, element.into_mut());
+        let value = CsrInputValue::into_csr_input_value(value);
+        let state_value = <<DataModel::Value as CsrInputValue>::IntoCsrInputValue as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_init(value, renderer, element.into_mut());
 
-        let state_checked = <DataModel::Checked as FormControlValue<bool>>::render_init(checked, renderer, element);
+        let checked = CsrInputChecked::into_csr_input_checked(checked);
+        let state_checked = <<DataModel::Checked as CsrInputChecked>::IntoCsrInputChecked as FormControlValue<KindOfChecked>>::render_init(checked, renderer, element);
 
         (
             State {
@@ -218,7 +224,7 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         renderer: &mut R,
         element: &mut Self::OfBehaviorType<R>,
         children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        children_ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 
@@ -234,14 +240,16 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
 
             match (state_type, input_type) {
                 (None, None) => {}
+                (Some(cache), Some(input_type)) => {
+                    _ = CachedNonReactiveValue::maybe_update_into_cache_and_render(input_type, renderer_update_type(renderer, element), cache);
+                }
                 (state_type, Some(input_type)) => {
-                    _ = frender_common::strings::csr::update_into_option_cache(input_type, state_type, |input_type_str| {
-                        use crate::html::behaviors::ElementWithTypeAttribute;
-                        element.set_type(renderer, input_type_str);
-                    })
+                    let (cache, render_init) = CachedNonReactiveValue::into_cache_and_render_init(input_type);
+                    let cache = state_type.insert(cache);
+                    render_init.cached_non_reactive_value_render_init(renderer_update_type(renderer, element), cache);
                 }
                 (state_type, None) => {
-                    use frender_dom::behaviors::Element;
+                    use frender_dom::csr::behaviors::Element as _;
                     element.remove_attribute(renderer, "type");
                     *state_type = None;
                 }
@@ -249,8 +257,17 @@ impl<DataModel: IntoInputDataModel> CsrComponent<DataModel> for input::Marker {
         }
 
         // value should be updated after type is updated
-        <DataModel::Value as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_update(value, renderer, element.into_mut(), state_value);
+        let value = CsrInputValue::into_csr_input_value(value);
+        <<DataModel::Value as CsrInputValue>::IntoCsrInputValue as FormControlValue<<DataModel::Value as InputValue>::ValueKind>>::render_update(value, renderer, element.into_mut(), state_value);
 
-        <DataModel::Checked as FormControlValue<bool>>::render_update(checked, renderer, element, state_checked);
+        let checked = CsrInputChecked::into_csr_input_checked(checked);
+        <<DataModel::Checked as CsrInputChecked>::IntoCsrInputChecked as FormControlValue<KindOfChecked>>::render_update(checked, renderer, element, state_checked);
+    }
+}
+
+fn renderer_update_type<'a, R: ?Sized + RenderHtml>(renderer: &'a mut R, element: &'a mut R::input) -> impl 'a + FnOnce(TempStr<&str>) {
+    |TempStr(input_type_str)| {
+        use crate::html::behaviors::ElementWithTypeAttribute as _;
+        element.set_type(renderer, input_type_str);
     }
 }

@@ -1,5 +1,5 @@
 use frender_common::convert::FromMut as _;
-use frender_dom::behaviors::{ElementWithClassList, ElementWithRelList};
+use frender_dom::csr::behaviors::{ElementWithClassList, ElementWithRelList};
 
 use crate::{
     html::{behavior_type_traits, prop_markers},

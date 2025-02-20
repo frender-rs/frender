@@ -3,7 +3,7 @@ use frender_common::{
     value_kind::ValueKind,
 };
 use frender_dom::{
-    render_from::str::{ValueForStr, ValueKindForStr},
+    csr::render_from::str::{ValueForStr, ValueKindForStr},
     special::DangerousInnerHtml,
 };
 
@@ -33,7 +33,7 @@ fn update_inner_html<ET: ?Sized + behavior_type_traits::Element, R: RenderHtml +
     value: V,
 ) {
     use frender_common::convert::IntoMut as _;
-    use frender_dom::behaviors::SetInnerHtmlFromStr as _;
+    use frender_dom::csr::behaviors::SetInnerHtmlFromStr as _;
 
     let parent: &mut ET::Element<R> = parent.into_mut();
     parent.set_inner_html_from_str(renderer, value);

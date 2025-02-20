@@ -1,7 +1,10 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_common::{convert::FromMut, reactive_value::RenderInitPinned};
-use frender_dom::{event_types::EventType, HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate};
+use frender_dom::{
+    csr::{HandleEvent, MaybeHandleEvent, PinnedRegisterUpdate, RegisterUpdate},
+    event_types::EventType,
+};
 
 use crate::{
     update_element::{OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
@@ -10,8 +13,8 @@ use crate::{
 
 use super::Property;
 
-pub type UnpinnedEventListenerOf<EVT, E, R, F> = <E as ::frender_dom::OnEvent<R, EVT>>::EventListenerUnpinned<F>;
-pub type PinnedEventListenerOf<EVT, E, R, F> = <E as ::frender_dom::OnEvent<R, EVT>>::EventListener<F>;
+pub type UnpinnedEventListenerOf<EVT, E, R, F> = <E as ::frender_dom::csr::OnEvent<R, EVT>>::EventListenerUnpinned<F>;
+pub type PinnedEventListenerOf<EVT, E, R, F> = <E as ::frender_dom::csr::OnEvent<R, EVT>>::EventListener<F>;
 
 enum Never {}
 pub struct Kind<EVT, ET, H>(Never, PhantomData<(EVT, ET, H)>);

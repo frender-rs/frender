@@ -1,5 +1,9 @@
 mod value_kind;
 pub use value_kind::InputValueKind;
+#[cfg(feature = "csr")]
+pub use value_kind::InputValueKindCsr;
+#[cfg(feature = "ssr")]
+pub use value_kind::InputValueKindSsr;
 
 mod checked;
 mod r#type;

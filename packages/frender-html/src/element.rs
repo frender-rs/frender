@@ -1,7 +1,7 @@
 use std::{pin::Pin, task::Poll};
 
 use frender_common::reactive_value::RenderInitPinned;
-use frender_dom::{render::RenderContext, ui_handle::UiHandle, StateUnmount};
+use frender_dom::csr::{render::RenderContext, StateUnmount, UiHandle};
 
 use crate::RenderHtml;
 

@@ -28,144 +28,144 @@ pub mod Element {
     impl<V: frender_attr_value::AttrValue<str>> Property for part<V> {
         type PropertyMarker = _prop_markers::part;
     }
-    pub struct on_cancel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_cancel<V> {
+    pub struct on_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_cancel<V> {
         type PropertyMarker = _prop_markers::on_cancel;
     }
-    pub struct on_error<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_error<V> {
+    pub struct on_error<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_error<V> {
         type PropertyMarker = _prop_markers::on_error;
     }
-    pub struct on_scroll<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_scroll<V> {
+    pub struct on_scroll<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_scroll<V> {
         type PropertyMarker = _prop_markers::on_scroll;
     }
-    pub struct on_security_policy_violation<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::SecurityPolicyViolationEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::SecurityPolicyViolationEvent> + 'static> Property for on_security_policy_violation<V> {
+    pub struct on_security_policy_violation<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::SecurityPolicyViolationEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::SecurityPolicyViolationEvent> + 'static> Property for on_security_policy_violation<V> {
         type PropertyMarker = _prop_markers::on_security_policy_violation;
     }
-    pub struct on_select<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_select<V> {
+    pub struct on_select<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_select<V> {
         type PropertyMarker = _prop_markers::on_select;
     }
-    pub struct on_wheel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::WheelEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::WheelEvent> + 'static> Property for on_wheel<V> {
+    pub struct on_wheel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::WheelEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::WheelEvent> + 'static> Property for on_wheel<V> {
         type PropertyMarker = _prop_markers::on_wheel;
     }
-    pub struct on_copy<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_copy<V> {
+    pub struct on_copy<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_copy<V> {
         type PropertyMarker = _prop_markers::on_copy;
     }
-    pub struct on_cut<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_cut<V> {
+    pub struct on_cut<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_cut<V> {
         type PropertyMarker = _prop_markers::on_cut;
     }
-    pub struct on_paste<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_paste<V> {
+    pub struct on_paste<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_paste<V> {
         type PropertyMarker = _prop_markers::on_paste;
     }
-    pub struct on_composition_end<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_end<V> {
+    pub struct on_composition_end<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_end<V> {
         type PropertyMarker = _prop_markers::on_composition_end;
     }
-    pub struct on_composition_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_start<V> {
+    pub struct on_composition_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_start<V> {
         type PropertyMarker = _prop_markers::on_composition_start;
     }
-    pub struct on_composition_update<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_update<V> {
+    pub struct on_composition_update<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::CompositionEvent> + 'static> Property for on_composition_update<V> {
         type PropertyMarker = _prop_markers::on_composition_update;
     }
-    pub struct on_blur<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_blur<V> {
+    pub struct on_blur<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_blur<V> {
         type PropertyMarker = _prop_markers::on_blur;
     }
-    pub struct on_focus<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus<V> {
+    pub struct on_focus<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus<V> {
         type PropertyMarker = _prop_markers::on_focus;
     }
-    pub struct on_focus_in<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus_in<V> {
+    pub struct on_focus_in<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus_in<V> {
         type PropertyMarker = _prop_markers::on_focus_in;
     }
-    pub struct on_focus_out<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus_out<V> {
+    pub struct on_focus_out<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::FocusEvent> + 'static> Property for on_focus_out<V> {
         type PropertyMarker = _prop_markers::on_focus_out;
     }
-    pub struct on_fullscreen_change<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_fullscreen_change<V> {
+    pub struct on_fullscreen_change<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_fullscreen_change<V> {
         type PropertyMarker = _prop_markers::on_fullscreen_change;
     }
-    pub struct on_fullscreen_error<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_fullscreen_error<V> {
+    pub struct on_fullscreen_error<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_fullscreen_error<V> {
         type PropertyMarker = _prop_markers::on_fullscreen_error;
     }
-    pub struct on_key_down<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static> Property for on_key_down<V> {
+    pub struct on_key_down<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static> Property for on_key_down<V> {
         type PropertyMarker = _prop_markers::on_key_down;
     }
-    pub struct on_key_up<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static> Property for on_key_up<V> {
+    pub struct on_key_up<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::KeyboardEvent> + 'static> Property for on_key_up<V> {
         type PropertyMarker = _prop_markers::on_key_up;
     }
-    pub struct on_aux_click<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_aux_click<V> {
+    pub struct on_aux_click<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_aux_click<V> {
         type PropertyMarker = _prop_markers::on_aux_click;
     }
-    pub struct on_click<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_click<V> {
+    pub struct on_click<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_click<V> {
         type PropertyMarker = _prop_markers::on_click;
     }
-    pub struct on_context_menu<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_context_menu<V> {
+    pub struct on_context_menu<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_context_menu<V> {
         type PropertyMarker = _prop_markers::on_context_menu;
     }
-    pub struct on_double_click<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_double_click<V> {
+    pub struct on_double_click<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_double_click<V> {
         type PropertyMarker = _prop_markers::on_double_click;
     }
-    pub struct on_mouse_down<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_down<V> {
+    pub struct on_mouse_down<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_down<V> {
         type PropertyMarker = _prop_markers::on_mouse_down;
     }
-    pub struct on_mouse_enter<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_enter<V> {
+    pub struct on_mouse_enter<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_enter<V> {
         type PropertyMarker = _prop_markers::on_mouse_enter;
     }
-    pub struct on_mouse_leave<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_leave<V> {
+    pub struct on_mouse_leave<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_leave<V> {
         type PropertyMarker = _prop_markers::on_mouse_leave;
     }
-    pub struct on_mouse_move<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_move<V> {
+    pub struct on_mouse_move<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_move<V> {
         type PropertyMarker = _prop_markers::on_mouse_move;
     }
-    pub struct on_mouse_out<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_out<V> {
+    pub struct on_mouse_out<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_out<V> {
         type PropertyMarker = _prop_markers::on_mouse_out;
     }
-    pub struct on_mouse_over<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_over<V> {
+    pub struct on_mouse_over<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_over<V> {
         type PropertyMarker = _prop_markers::on_mouse_over;
     }
-    pub struct on_mouse_up<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_up<V> {
+    pub struct on_mouse_up<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::MouseEvent> + 'static> Property for on_mouse_up<V> {
         type PropertyMarker = _prop_markers::on_mouse_up;
     }
-    pub struct on_touch_cancel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_cancel<V> {
+    pub struct on_touch_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_cancel<V> {
         type PropertyMarker = _prop_markers::on_touch_cancel;
     }
-    pub struct on_touch_end<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_end<V> {
+    pub struct on_touch_end<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_end<V> {
         type PropertyMarker = _prop_markers::on_touch_end;
     }
-    pub struct on_touch_move<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_move<V> {
+    pub struct on_touch_move<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_move<V> {
         type PropertyMarker = _prop_markers::on_touch_move;
     }
-    pub struct on_touch_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_start<V> {
+    pub struct on_touch_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TouchEvent> + 'static> Property for on_touch_start<V> {
         type PropertyMarker = _prop_markers::on_touch_start;
     }
 }
@@ -826,120 +826,120 @@ pub mod HtmlElement {
     impl<V: frender_attr_value::AttrValue<str>> Property for virtual_keyboard_policy<V> {
         type PropertyMarker = _prop_markers::virtual_keyboard_policy;
     }
-    pub struct on_invalid<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_invalid<V> {
+    pub struct on_invalid<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_invalid<V> {
         type PropertyMarker = _prop_markers::on_invalid;
     }
-    pub struct on_animation_cancel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_cancel<V> {
+    pub struct on_animation_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_cancel<V> {
         type PropertyMarker = _prop_markers::on_animation_cancel;
     }
-    pub struct on_animation_end<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_end<V> {
+    pub struct on_animation_end<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_end<V> {
         type PropertyMarker = _prop_markers::on_animation_end;
     }
-    pub struct on_animation_iteration<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_iteration<V> {
+    pub struct on_animation_iteration<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_iteration<V> {
         type PropertyMarker = _prop_markers::on_animation_iteration;
     }
-    pub struct on_animation_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_start<V> {
+    pub struct on_animation_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::AnimationEvent> + 'static> Property for on_animation_start<V> {
         type PropertyMarker = _prop_markers::on_animation_start;
     }
-    pub struct on_before_input<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static> Property for on_before_input<V> {
+    pub struct on_before_input<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static> Property for on_before_input<V> {
         type PropertyMarker = _prop_markers::on_before_input;
     }
-    pub struct on_input<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static> Property for on_input<V> {
+    pub struct on_input<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::InputEvent> + 'static> Property for on_input<V> {
         type PropertyMarker = _prop_markers::on_input;
     }
-    pub struct on_change<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_change<V> {
+    pub struct on_change<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_change<V> {
         type PropertyMarker = _prop_markers::on_change;
     }
-    pub struct on_got_pointer_capture<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_got_pointer_capture<V> {
+    pub struct on_got_pointer_capture<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_got_pointer_capture<V> {
         type PropertyMarker = _prop_markers::on_got_pointer_capture;
     }
-    pub struct on_lost_pointer_capture<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_lost_pointer_capture<V> {
+    pub struct on_lost_pointer_capture<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_lost_pointer_capture<V> {
         type PropertyMarker = _prop_markers::on_lost_pointer_capture;
     }
-    pub struct on_pointer_cancel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_cancel<V> {
+    pub struct on_pointer_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_cancel<V> {
         type PropertyMarker = _prop_markers::on_pointer_cancel;
     }
-    pub struct on_pointer_down<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_down<V> {
+    pub struct on_pointer_down<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_down<V> {
         type PropertyMarker = _prop_markers::on_pointer_down;
     }
-    pub struct on_pointer_enter<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_enter<V> {
+    pub struct on_pointer_enter<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_enter<V> {
         type PropertyMarker = _prop_markers::on_pointer_enter;
     }
-    pub struct on_pointer_leave<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_leave<V> {
+    pub struct on_pointer_leave<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_leave<V> {
         type PropertyMarker = _prop_markers::on_pointer_leave;
     }
-    pub struct on_pointer_move<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_move<V> {
+    pub struct on_pointer_move<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_move<V> {
         type PropertyMarker = _prop_markers::on_pointer_move;
     }
-    pub struct on_pointer_out<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_out<V> {
+    pub struct on_pointer_out<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_out<V> {
         type PropertyMarker = _prop_markers::on_pointer_out;
     }
-    pub struct on_pointer_over<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_over<V> {
+    pub struct on_pointer_over<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_over<V> {
         type PropertyMarker = _prop_markers::on_pointer_over;
     }
-    pub struct on_pointer_up<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_up<V> {
+    pub struct on_pointer_up<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::PointerEvent> + 'static> Property for on_pointer_up<V> {
         type PropertyMarker = _prop_markers::on_pointer_up;
     }
-    pub struct on_transition_cancel<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_cancel<V> {
+    pub struct on_transition_cancel<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_cancel<V> {
         type PropertyMarker = _prop_markers::on_transition_cancel;
     }
-    pub struct on_transition_end<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_end<V> {
+    pub struct on_transition_end<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_end<V> {
         type PropertyMarker = _prop_markers::on_transition_end;
     }
-    pub struct on_transition_run<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_run<V> {
+    pub struct on_transition_run<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_run<V> {
         type PropertyMarker = _prop_markers::on_transition_run;
     }
-    pub struct on_transition_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_start<V> {
+    pub struct on_transition_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::TransitionEvent> + 'static> Property for on_transition_start<V> {
         type PropertyMarker = _prop_markers::on_transition_start;
     }
-    pub struct on_drag<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag<V> {
+    pub struct on_drag<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag<V> {
         type PropertyMarker = _prop_markers::on_drag;
     }
-    pub struct on_drag_end<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_end<V> {
+    pub struct on_drag_end<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_end<V> {
         type PropertyMarker = _prop_markers::on_drag_end;
     }
-    pub struct on_drag_enter<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_enter<V> {
+    pub struct on_drag_enter<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_enter<V> {
         type PropertyMarker = _prop_markers::on_drag_enter;
     }
-    pub struct on_drag_leave<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_leave<V> {
+    pub struct on_drag_leave<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_leave<V> {
         type PropertyMarker = _prop_markers::on_drag_leave;
     }
-    pub struct on_drag_over<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_over<V> {
+    pub struct on_drag_over<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_over<V> {
         type PropertyMarker = _prop_markers::on_drag_over;
     }
-    pub struct on_drag_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_start<V> {
+    pub struct on_drag_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drag_start<V> {
         type PropertyMarker = _prop_markers::on_drag_start;
     }
-    pub struct on_drop<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drop<V> {
+    pub struct on_drop<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_drop<V> {
         type PropertyMarker = _prop_markers::on_drop;
     }
 }
@@ -1084,92 +1084,92 @@ pub mod HtmlMediaElement {
     impl<V: frender_attr_value::AttrValue<str>> Property for preload<V> {
         type PropertyMarker = _prop_markers::preload;
     }
-    pub struct on_abort<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_abort<V> {
+    pub struct on_abort<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_abort<V> {
         type PropertyMarker = _prop_markers::on_abort;
     }
-    pub struct on_can_play<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_can_play<V> {
+    pub struct on_can_play<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_can_play<V> {
         type PropertyMarker = _prop_markers::on_can_play;
     }
-    pub struct on_can_play_through<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_can_play_through<V> {
+    pub struct on_can_play_through<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_can_play_through<V> {
         type PropertyMarker = _prop_markers::on_can_play_through;
     }
-    pub struct on_duration_change<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_duration_change<V> {
+    pub struct on_duration_change<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_duration_change<V> {
         type PropertyMarker = _prop_markers::on_duration_change;
     }
-    pub struct on_emptied<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_emptied<V> {
+    pub struct on_emptied<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_emptied<V> {
         type PropertyMarker = _prop_markers::on_emptied;
     }
-    pub struct on_ended<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_ended<V> {
+    pub struct on_ended<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_ended<V> {
         type PropertyMarker = _prop_markers::on_ended;
     }
-    pub struct on_loaded_data<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_loaded_data<V> {
+    pub struct on_loaded_data<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_loaded_data<V> {
         type PropertyMarker = _prop_markers::on_loaded_data;
     }
-    pub struct on_loaded_metadata<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_loaded_metadata<V> {
+    pub struct on_loaded_metadata<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_loaded_metadata<V> {
         type PropertyMarker = _prop_markers::on_loaded_metadata;
     }
-    pub struct on_load_start<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_load_start<V> {
+    pub struct on_load_start<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_load_start<V> {
         type PropertyMarker = _prop_markers::on_load_start;
     }
-    pub struct on_pause<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_pause<V> {
+    pub struct on_pause<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_pause<V> {
         type PropertyMarker = _prop_markers::on_pause;
     }
-    pub struct on_play<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_play<V> {
+    pub struct on_play<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_play<V> {
         type PropertyMarker = _prop_markers::on_play;
     }
-    pub struct on_playing<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_playing<V> {
+    pub struct on_playing<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_playing<V> {
         type PropertyMarker = _prop_markers::on_playing;
     }
-    pub struct on_progress<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_progress<V> {
+    pub struct on_progress<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_progress<V> {
         type PropertyMarker = _prop_markers::on_progress;
     }
-    pub struct on_rate_change<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_rate_change<V> {
+    pub struct on_rate_change<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_rate_change<V> {
         type PropertyMarker = _prop_markers::on_rate_change;
     }
-    pub struct on_resize<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_resize<V> {
+    pub struct on_resize<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_resize<V> {
         type PropertyMarker = _prop_markers::on_resize;
     }
-    pub struct on_seeked<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_seeked<V> {
+    pub struct on_seeked<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_seeked<V> {
         type PropertyMarker = _prop_markers::on_seeked;
     }
-    pub struct on_seeking<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_seeking<V> {
+    pub struct on_seeking<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_seeking<V> {
         type PropertyMarker = _prop_markers::on_seeking;
     }
-    pub struct on_stalled<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_stalled<V> {
+    pub struct on_stalled<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_stalled<V> {
         type PropertyMarker = _prop_markers::on_stalled;
     }
-    pub struct on_suspend<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_suspend<V> {
+    pub struct on_suspend<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_suspend<V> {
         type PropertyMarker = _prop_markers::on_suspend;
     }
-    pub struct on_time_update<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_time_update<V> {
+    pub struct on_time_update<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_time_update<V> {
         type PropertyMarker = _prop_markers::on_time_update;
     }
-    pub struct on_volume_change<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_volume_change<V> {
+    pub struct on_volume_change<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_volume_change<V> {
         type PropertyMarker = _prop_markers::on_volume_change;
     }
-    pub struct on_waiting<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_waiting<V> {
+    pub struct on_waiting<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_waiting<V> {
         type PropertyMarker = _prop_markers::on_waiting;
     }
 }
@@ -1320,16 +1320,16 @@ pub mod HtmlFormElement {
     impl<V: frender_attr_value::AttrValue<bool>> Property for no_validate<V> {
         type PropertyMarker = _prop_markers::no_validate;
     }
-    pub struct on_form_data<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_form_data<V> {
+    pub struct on_form_data<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_form_data<V> {
         type PropertyMarker = _prop_markers::on_form_data;
     }
-    pub struct on_reset<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_reset<V> {
+    pub struct on_reset<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_reset<V> {
         type PropertyMarker = _prop_markers::on_reset;
     }
-    pub struct on_submit<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
-    impl<V: frender_dom::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_submit<V> {
+    pub struct on_submit<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static>(pub V);
+    impl<V: frender_common::MaybeHandleEvent<dyn crate::dom::event::Event> + 'static> Property for on_submit<V> {
         type PropertyMarker = _prop_markers::on_submit;
     }
 }
@@ -1716,8 +1716,8 @@ pub mod HtmlScriptElement {
     #[allow(unused_imports)]
     pub use super::HtmlElement::*;
     use crate::intrinsic::Property;
-    pub struct children<V: frender_dom::script::IntoScriptContent>(pub V);
-    impl<V: frender_dom::script::IntoScriptContent> Property for children<V> {
+    pub struct children<V: frender_dom::script::ScriptContent>(pub V);
+    impl<V: frender_dom::script::ScriptContent> Property for children<V> {
         type PropertyMarker = _prop_markers::children;
     }
     pub struct r#async<V: frender_attr_value::AttrValue<bool>>(pub V);

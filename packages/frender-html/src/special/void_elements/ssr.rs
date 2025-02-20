@@ -1,4 +1,4 @@
-use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::ssr::{HasIntrinsicComponentTagSsr, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_dom::Empty;
 use frender_ssr::html::tag::AssertTagName;
 

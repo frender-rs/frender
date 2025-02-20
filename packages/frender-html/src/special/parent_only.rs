@@ -4,7 +4,7 @@ use frender_common::{
     reactive_value::{ProvideValueOfKind, ReactiveValueRenderInitPinned, ReactiveValueState, RenderInitPinned, ReusableRendererOfKind},
     value_kind::ValueKind,
 };
-use frender_dom::{render_from::str::ValueKindForStr, StateUnmount};
+use frender_dom::csr::{render_from::str::ValueKindForStr, StateUnmount};
 
 use crate::{
     element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
@@ -285,7 +285,7 @@ pub enum RenderInnerTextKind {}
 impl<BT: behavior_type_traits::HtmlElement, VK: ?Sized + ValueKindForStr> RenderKind<BT, VK> for RenderInnerTextKind {
     fn render<R: crate::RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, value: <VK as frender_common::value_kind::ValueKind>::Value<'_>) {
         use frender_common::convert::IntoMut as _;
-        use frender_dom::behaviors::SetInnerTextFromStr as _;
+        use frender_dom::csr::behaviors::SetInnerTextFromStr as _;
 
         let parent: &mut BT::HtmlElement<R> = parent.into_mut();
         parent.set_inner_text_from_str(renderer, value)

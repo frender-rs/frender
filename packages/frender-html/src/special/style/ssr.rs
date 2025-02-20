@@ -2,7 +2,7 @@ use async_str_iter::any_str::IterAnyStr;
 
 use frender_common::{strings::SsrStr, IntoStaticStr};
 
-use frender_dom::component::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::ssr::{IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 
 use crate::html::components::style;
 

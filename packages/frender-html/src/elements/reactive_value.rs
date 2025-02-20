@@ -4,7 +4,7 @@ use frender_common::{
     reactive_value::{ReactiveValueRenderInitPinned, ReactiveValueState, ReactiveValueWithKind, RenderInitPinned, ReusableRendererOfKind},
     value_kind::ValueKind,
 };
-use frender_dom::{ui_handle::UnmountedUiHandle, StateUnmount};
+use frender_dom::csr::{StateUnmount, UnmountedUiHandle};
 
 use crate::{
     element::{CsrElement, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},

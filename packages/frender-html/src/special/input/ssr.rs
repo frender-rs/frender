@@ -1,11 +1,11 @@
-use frender_dom::component::{HasIntrinsicComponentTag, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
+use frender_dom::ssr::{HasIntrinsicComponentTagSsr, IntoSpaceAndHtmlAttributesOrEmpty, SsrComponent};
 use frender_ssr::html::tag::AssertTagName;
 
-use frender_form_control::input::{InputDataModel, IntoInputDataModel};
+use frender_form_control::input::{InputDataModel, IntoInputDataModel, IntoSsrInputDataModel};
 
 use crate::html::components::input;
 
-impl<DataModel: IntoInputDataModel> SsrComponent<DataModel> for input::Marker {
+impl<DataModel: IntoSsrInputDataModel> SsrComponent<DataModel> for input::Marker {
     type OneElement<Attrs: IntoSpaceAndHtmlAttributesOrEmpty> = frender_ssr::html::element::VoidElement<
         //
         AssertTagName<&'static str>,

@@ -90,11 +90,29 @@ pub trait CachedNonReactiveValue<VK: ?Sized + ValueKind> {
 
     fn into_cache_and_render_init(self) -> (Self::Cache, Self::RenderInit);
 
+    /// Always render
     fn update_into_cache_and_render<Out>(
         self,
         renderer: impl FnOnce(VK::Value<'_>) -> Out,
         cache: &mut Self::Cache,
     ) -> Out;
+
+    /// Doesn't render if self matches cache
+    #[must_use]
+    fn maybe_update_into_cache_and_render<Out>(
+        self,
+        renderer: impl FnOnce(VK::Value<'_>) -> Out,
+        cache: &mut Self::Cache,
+    ) -> Option<Out>
+    where
+        Self: Sized,
+    {
+        if Self::match_cache(&self, cache) {
+            None
+        } else {
+            Some(self.update_into_cache_and_render(renderer, cache))
+        }
+    }
 }
 
 pub trait CachedNonReactiveValueRenderInit<VK: ?Sized + ValueKind, Cache> {

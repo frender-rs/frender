@@ -1,7 +1,6 @@
 #![cfg(feature = "components")]
-#![cfg(feature = "ssr")]
 
-use frender_dom::component::HasIntrinsicComponentTag;
+use frender_dom::HasIntrinsicComponentTag;
 use frender_html::html::markers;
 
 #[test]

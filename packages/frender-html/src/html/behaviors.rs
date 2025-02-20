@@ -1,6 +1,6 @@
 use super::{event_types, *};
-use frender_dom::OnEvent;
-pub trait Node<Renderer: ?Sized>: frender_dom::behaviors::Node<Renderer> + UiHandle<Renderer> {}
+use frender_dom::csr::OnEvent;
+pub trait Node<Renderer: ?Sized>: frender_dom::csr::behaviors::Node<Renderer> + UiHandle<Renderer> {}
 pub trait Element<Renderer: ?Sized>:
     Node<Renderer>
     + OnEvent<Renderer, event_types::on_cancel>
@@ -38,10 +38,10 @@ pub trait Element<Renderer: ?Sized>:
     + OnEvent<Renderer, event_types::on_touch_end>
     + OnEvent<Renderer, event_types::on_touch_move>
     + OnEvent<Renderer, event_types::on_touch_start>
-    + frender_dom::ui_handle::UiHandle<Renderer>
-    + frender_dom::behaviors::Element<Renderer>
-    + frender_dom::behaviors::ElementWithChildren<Renderer>
-    + frender_dom::behaviors::ElementWithClassList<Renderer>
+    + frender_dom::csr::UiHandle<Renderer>
+    + frender_dom::csr::behaviors::Element<Renderer>
+    + frender_dom::csr::behaviors::ElementWithChildren<Renderer>
+    + frender_dom::csr::behaviors::ElementWithClassList<Renderer>
 {
     fn set_id(&mut self, renderer: &mut Renderer, value: &str);
 }
@@ -93,7 +93,7 @@ pub trait ElementWithDisabledAttribute<Renderer: ?Sized>: Element<Renderer> {
 pub trait ElementWithCrossOriginAttribute<Renderer: ?Sized>: Element<Renderer> {
     fn set_cross_origin(&mut self, renderer: &mut Renderer, value: Option<&str>);
 }
-pub trait ElementWithRelAttribute<Renderer: ?Sized>: Element<Renderer> + frender_dom::behaviors::ElementWithRelList<Renderer> {}
+pub trait ElementWithRelAttribute<Renderer: ?Sized>: Element<Renderer> + frender_dom::csr::behaviors::ElementWithRelList<Renderer> {}
 pub trait ElementWithReferrerPolicyAttribute<Renderer: ?Sized>: Element<Renderer> {
     fn set_referrer_policy(&mut self, renderer: &mut Renderer, value: &str);
 }
@@ -197,8 +197,8 @@ pub trait HtmlElement<Renderer: ?Sized>:
     + OnEvent<Renderer, event_types::on_drag_over>
     + OnEvent<Renderer, event_types::on_drag_start>
     + OnEvent<Renderer, event_types::on_drop>
-    + frender_dom::behaviors::HtmlElement<Renderer>
-    + frender_dom::behaviors::ElementWithStyle<Renderer>
+    + frender_dom::csr::behaviors::HtmlElement<Renderer>
+    + frender_dom::csr::behaviors::ElementWithStyle<Renderer>
 {
     fn set_access_key(&mut self, renderer: &mut Renderer, value: &str);
     fn set_content_editable(&mut self, renderer: &mut Renderer, value: &str);
@@ -475,7 +475,7 @@ pub trait HtmlTextAreaElement<Renderer: ?Sized>:
     + ElementWithAutoCorrectAttribute<Renderer>
     + ElementWithDisabledAttribute<Renderer>
     + ElementWithNameAttribute<Renderer>
-    + frender_form_control::element::FormControlElement<str, Renderer>
+    + frender_form_control::csr::FormControlElement<frender_form_control::KindOfValue, Renderer>
 {
     fn set_cols(&mut self, renderer: &mut Renderer, value: u32);
     fn set_rows(&mut self, renderer: &mut Renderer, value: u32);

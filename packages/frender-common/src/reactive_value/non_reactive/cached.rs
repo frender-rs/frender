@@ -36,10 +36,6 @@ impl<T: CachedNonReactiveValue<VK>, VK: ?Sized + ValueKind> ReactiveValue<VK> fo
         renderer: impl FnOnce(VK::Value<'_>) -> Out,
         super::State(::core::marker::PhantomData, cache): &mut Self::PinnedState,
     ) -> Option<Out> {
-        if T::match_cache(&self, cache) {
-            None
-        } else {
-            Some(self.update_into_cache_and_render(renderer, cache))
-        }
+        T::maybe_update_into_cache_and_render(self, renderer, cache)
     }
 }
