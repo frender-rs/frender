@@ -26,6 +26,7 @@ pub use element_proxy_attrs::ElementProxyAttrs;
 #[cfg(feature = "csr")]
 pub mod ui_handles;
 
+#[cfg(feature = "csr")]
 mod elements;
 
 mod macros;

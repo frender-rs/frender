@@ -1,7 +1,7 @@
 use std::{marker::PhantomData, pin::Pin};
 
 use frender_common::{
-    reactive_value::{ReactiveValueRenderInitPinned, ReactiveValueState, ReactiveValueWithKind, RenderInitPinned, ReusableRendererOfKind},
+    reactive_value::{ReactiveValueIntoElement, ReactiveValueRenderInitPinned, ReactiveValueState, ReactiveValueWithKind, RenderInitPinned, ReusableRendererOfKind},
     value_kind::ValueKind,
 };
 use frender_dom::csr::{StateUnmount, UnmountedUiHandle};
@@ -13,8 +13,6 @@ use crate::{
 };
 
 mod known;
-
-pub struct ReactiveValueIntoElement<V: ReactiveValueWithKind>(pub V);
 
 pub struct Kind<PS, US, VK: ?Sized>(super::Kind<(PS, US, VK)>);
 

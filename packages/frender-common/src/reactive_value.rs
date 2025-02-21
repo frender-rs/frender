@@ -1,3 +1,4 @@
+pub use self::into_element::ReactiveValueIntoElement;
 pub use self::with_kind::{ReactiveValueWithKind, UncachedNonReactiveValueWithKind};
 
 use std::{pin::Pin, task::Poll};
@@ -7,6 +8,8 @@ use crate::value_kind::ValueKind;
 
 mod array;
 mod with_kind;
+
+mod into_element;
 
 pub mod non_reactive;
 
