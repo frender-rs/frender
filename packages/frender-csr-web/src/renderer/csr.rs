@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    csr::RenderHtml,
+    csr::experimental::RenderHtml,
     dom::csr::{
         render::{Render, RenderWithContext},
         web::{CursorPlaceholder, Node, RenderContext},

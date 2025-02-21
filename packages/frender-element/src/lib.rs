@@ -1,3 +1,8 @@
+#![cfg(all(feature = "csr", feature = "ssr"))]
+
+use frender_csr::CsrElement;
+use frender_ssr::SsrElement;
+
 #[cfg(feature = "either")]
 macro_rules! doc_cfg_either {
     ($e:expr) => {
@@ -209,6 +214,6 @@ macro_rules! doc_elements_all {
 #[doc = doc_elements_all!()]
 /// </tbody>
 /// </table>
-pub trait Element: frender_ssr::SsrElement + frender_html::CsrElement {}
+pub trait Element: SsrElement + CsrElement {}
 
-impl<E: ?Sized + frender_ssr::SsrElement + frender_html::CsrElement> Element for E {}
+impl<E: ?Sized + SsrElement + CsrElement> Element for E {}

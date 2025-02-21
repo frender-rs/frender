@@ -1,13 +1,11 @@
 use std::marker::PhantomData;
 
-use frender_common::convert::FromMut as _;
-use frender_dom::csr::behaviors::ElementWithStyle;
 use frender_style::csr::{CsrStyle, CssStyleDeclaration};
 
 use crate::{
-    html::behavior_type_traits,
+    html::RenderHtml,
     update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType, RenderHtml,
+    BehaviorType,
 };
 
 use super::Property;
@@ -35,7 +33,7 @@ impl<PM, S> UnpinnedNonReactiveRenderStateKind for Kind<PM, S> {
 impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBehavior<BT> for Property<PM, V> {
     type UnpinnedRenderStateKind = Kind<PM, V::State>;
 
-    fn unpinned_render_init_with_behavior<R: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
@@ -44,7 +42,7 @@ impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBe
         V::csr_style_render_init(value, &mut PM::style_dom_api(b, renderer))
     }
 
-    fn unpinned_render_update_with_behavior<R: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,

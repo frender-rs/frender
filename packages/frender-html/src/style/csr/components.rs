@@ -1,11 +1,9 @@
 use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::ElementWithStyle;
-use frender_style::csr::{CsrStyle, CssStyleDeclaration};
 
 use crate::{
-    html::{behavior_type_traits, prop_markers},
-    update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType, RenderHtml,
+    html::{behavior_type_traits, prop_markers, RenderHtml},
+    BehaviorType,
 };
 
 use super::HasStyleDomApi;

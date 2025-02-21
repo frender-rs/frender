@@ -1,23 +1,18 @@
 #![cfg_attr(feature = "macros_not_expanded", recursion_limit = "2048")]
 
-pub use frender_common::{csr::StateUnmount, expand};
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
 
-pub use self::dom::Empty;
-
-#[cfg(feature = "csr")]
-pub use html::RenderHtml;
 #[cfg(feature = "csr")]
 pub use update_element::{BehaviorType, UiHandleType};
 
 // TODO: some apis are unstable and should be sealed
 #[cfg(feature = "csr")]
-pub use element::{CsrElement, HtmlRenderContext, RenderStateKind};
-#[cfg(feature = "csr")]
 pub use element_types::{CsrComponent, CsrComponentNormalElement};
 
 pub use frender_form_control as form_control;
+
+use frender_common::{expand, Empty};
 
 // TODO: make private
 pub mod html;
@@ -41,9 +36,6 @@ pub use element_proxy_attrs::ElementProxyAttrs;
 mod update_element;
 
 #[cfg(feature = "csr")]
-mod element;
-
-#[cfg(feature = "csr")]
 mod element_types;
 
 #[cfg(feature = "csr")]
@@ -64,7 +56,11 @@ mod shims;
 /// See also mod [`experimental`](crate::experimental) for experimental api under a feature.
 pub mod __private {
     #[cfg(feature = "csr")]
-    pub use crate::element::{PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind};
+    #[doc(hidden)]
+    pub use crate::{
+        csr::element::{HtmlRenderContext, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind},
+        html::RenderHtml,
+    };
 }
 
 mod special;
@@ -86,9 +82,8 @@ mod utils;
 
 #[cfg(feature = "csr")]
 pub mod csr {
-    pub use crate::html::RenderHtml;
-
-    pub use crate::element::{CsrElement, HtmlRenderContext};
+    pub(crate) mod element;
+    pub use element::{CsrElement, RenderStateKind};
 
     #[cfg(feature = "experimental")]
     pub mod experimental;

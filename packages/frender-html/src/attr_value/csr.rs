@@ -10,10 +10,10 @@ use frender_dom::csr::behaviors::Element as _;
 
 use crate::{
     has_const_attr_name::HasConstAttrName,
-    html::{behavior_type_traits, behaviors},
+    html::{behavior_type_traits, behaviors, RenderHtml},
     property_common::RemoveAttrOfBehaviorType,
     update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType, RenderHtml,
+    BehaviorType,
 };
 
 use super::{HasAttrValueKind, Property};
@@ -22,7 +22,7 @@ enum Never {}
 pub struct Kind<PM, S>(Never, PhantomData<(PM, S)>);
 
 impl<PM, S> UnpinnedNonReactiveRenderStateKind for Kind<PM, S> {
-    type UnpinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = S;
+    type UnpinnedNonReactiveState<R: ?Sized + RenderHtml> = S;
 }
 
 pub(crate) trait UpdateAttrValueOfBehaviorType<BT: BehaviorType>: HasAttrValueKind {

@@ -1,11 +1,11 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::{
-    csr::experimental::{
-        self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderInitPinned,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+use frender_html::csr::{
+    experimental::{
+        self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
+        RenderHtml, RenderInitPinned, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
     },
-    CsrElement, RenderHtml, StateUnmount,
+    CsrElement, StateUnmount,
 };
 
 use crate::{ContextKey, ContextKeyInner};
@@ -173,7 +173,7 @@ impl<
         )
     }
 
-    fn pinned_render_init_by_reusing<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
         reused_state: Pin<
@@ -220,7 +220,7 @@ impl<
             .provide(|| get_element().pinned_render_update(renderer, state, ui_handle))
     }
 
-    fn unpinned_render_init<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
@@ -243,7 +243,7 @@ impl<
         )
     }
 
-    fn unpinned_render_init_by_reusing<Ctx: ?Sized + frender_html::HtmlRenderContext>(
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
         reused_state: &mut experimental::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,

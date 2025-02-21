@@ -1,6 +1,6 @@
 use frender_dom::csr::UiHandle;
 
-use crate::{HtmlRenderContext, RenderHtml};
+use crate::{csr::element::HtmlRenderContext, html::RenderHtml};
 
 pub mod text;
 

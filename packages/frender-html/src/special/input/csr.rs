@@ -14,11 +14,11 @@ use frender_form_control::{
 };
 
 use crate::{
-    element::{PinnedRenderStateKind, UnpinnedRenderStateKind},
+    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
     element_types::RenderStateKindPollRenderWithParent,
-    html::components::input,
+    html::{components::input, RenderHtml},
     kinds::RenderInitNothing,
-    CsrComponent, RenderHtml,
+    CsrComponent,
 };
 
 enum Never {}
@@ -79,8 +79,8 @@ impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlVal
         //
         renderer: &mut R,
         parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
-        state: Pin<&mut crate::element::PinnedStateOfKind<R, Self>>,
-        ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self>,
+        state: Pin<&mut element::PinnedStateOfKind<R, Self>>,
+        ui_handle: &mut element::PinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         Self::unpinned_poll_render_with_parent(renderer, parent, state.get_mut(), ui_handle, cx)
@@ -90,8 +90,8 @@ impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlVal
         //
         renderer: &mut R,
         parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
-        State { value, checked, type_cache: _ }: &mut crate::element::UnpinnedStateOfKind<R, Self>,
-        ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<R, Self>,
+        State { value, checked, type_cache: _ }: &mut element::UnpinnedStateOfKind<R, Self>,
+        ui_handle: &mut element::UnpinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> Poll<()> {
         let a = ValueStateKind::unpinned_poll_render_form_control_value_state(renderer, parent.into_mut(), value, cx);
@@ -122,7 +122,7 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         parent: &mut Self::OfBehaviorType<R>,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         Self::ChildrenPinnedRenderInit<R>,
     ) {
         let (state, ()) = self.children_unpinned_render_init(children, renderer, parent);
@@ -135,8 +135,8 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         children: DataModel,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_state: Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-        children_ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        children_state: Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_ui_handle: &mut element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         self.children_unpinned_render_update(children, renderer, parent, children_state.get_mut(), children_ui_handle)
     }
@@ -147,9 +147,9 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         children: DataModel,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_reused_state: Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-        children_unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        children_reused_state: Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_unmounted_ui_handle: element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         self.children_unpinned_render_init_by_reusing(children, renderer, parent, children_reused_state.get_mut(), children_unmounted_ui_handle)
     }
 
@@ -161,8 +161,8 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         element: &mut Self::OfBehaviorType<R>,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 
@@ -208,9 +208,9 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         children: DataModel,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_reused_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        (): crate::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        children_reused_state: &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        (): element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         // TODO: render_init or render_update?
         // render_init is correct but render_update might avoid unnecessary rendering
         (*children_reused_state, ()) = self.children_unpinned_render_init(children, renderer, parent);
@@ -223,8 +223,8 @@ impl<DataModel: IntoCsrInputDataModel> CsrComponent<DataModel> for input::Marker
         children: DataModel,
         renderer: &mut R,
         element: &mut Self::OfBehaviorType<R>,
-        children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        children_state: &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        (): &mut element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         let InputDataModel { r#type, value, checked } = children.into_input_data_model();
 

@@ -1,4 +1,8 @@
-use crate::{has_const_attr_name::HasConstAttrName, html::behavior_type_traits, BehaviorType, RenderHtml};
+use crate::{
+    has_const_attr_name::HasConstAttrName,
+    html::{behavior_type_traits, RenderHtml},
+    BehaviorType,
+};
 
 use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::Element as _;

@@ -26,7 +26,7 @@ frender-csr-web = { version = "0.1.0", path = "../frender-csr-web", optional = t
 frender-render-with = { version = "0.1.0", path = "../frender-render-with", optional = true }
 frender-keyed-elements = { version = "0.1.0", path = "../frender-keyed-elements", optional = true }
 frender-context = { version = "0.1.0", path = "../frender-context", default-features = false, optional = true }
-frender-element = { version = "0.1.0", path = "../frender-element" }
+frender-element = { version = "0.1.0", path = "../frender-element", default-features = false }
 frender-style = { version = "0.1.0", path = "../frender-style" }
 frender-dom-tokens = { version = "0.1.0", path = "../frender-dom-tokens" }
 
@@ -81,6 +81,7 @@ ssr = [
     #
     "frender-keyed-elements?/ssr",
     "frender-html/ssr",
+    "frender-element/ssr",
 ]
 csr = [
     #
@@ -88,6 +89,7 @@ csr = [
     "frender-render-with?/csr",
     "frender-csr-web?/csr",
     "frender-html/csr",
+    "frender-element/csr",
 ]
 RenderWith = ["dep:frender-render-with"]
 KeyedElements = ["dep:frender-keyed-elements"]

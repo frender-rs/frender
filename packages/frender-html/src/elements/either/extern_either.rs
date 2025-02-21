@@ -1,7 +1,7 @@
 use either::Either;
 use frender_common::either::EitherElement;
 
-use crate::{element::CsrElement, proxy_csr_element};
+use crate::{csr::CsrElement, html::RenderHtml, proxy_csr_element};
 
 fn into_either_element<L, R>(this: Either<L, R>) -> EitherElement<L, R> {
     match this {
@@ -16,7 +16,7 @@ where
     R: CsrElement,
 {
     type RenderStateKind = super::Kind<L::RenderStateKind, R::RenderStateKind>;
-    type PinnedRenderInit<Renderer: ?Sized + crate::RenderHtml> = super::RenderInit<
+    type PinnedRenderInit<Renderer: ?Sized + RenderHtml> = super::RenderInit<
         //
         L::PinnedRenderInit<Renderer>,
         R::PinnedRenderInit<Renderer>,

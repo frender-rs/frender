@@ -1,17 +1,19 @@
 use std::{marker::PhantomData, pin::Pin};
 
-use frender_html::{
+use frender_csr::{
     experimental::{
-        self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, RenderInitPinned,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender, UnpinnedStateOfKind,
-        UnpinnedUiHandleOfKind,
+        self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
+        RenderHtml, RenderInitPinned, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+        UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
     },
-    CsrElement, HtmlRenderContext, RenderHtml, StateUnmount,
+    CsrElement, StateUnmount,
 };
 
-use crate::{
+use crate::RenderWith;
+
+use super::{
     CsrRenderContext, CsrRenderContextInner, FnOnceRenderWithContext, IntoFnOnceRenderWithContext,
-    RenderWith, Rendered, RenderedInner,
+    Rendered, RenderedInner,
 };
 
 type KindOf<R, T> = <<T as NamedIntoFnOnceRenderWithContext>::NamedIntoFnOnceRenderWithContext<
@@ -231,7 +233,7 @@ impl<F: IntoFnOnceRenderWithContext> CsrElement for RenderWith<F> {
             Self::RenderStateKind,
         >,
     ) -> experimental::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
-        use frender_html::dom::ui_handle::UnmountedUiHandle as _;
+        use frender_csr::UnmountedUiHandle as _;
 
         // TODO: is mount-then-update correct?
         let mut ui_handle = render_context

@@ -10,7 +10,7 @@ pub mod component_fn_options {
     }
 
     pub mod csr_only {
-        pub use frender_html::CsrElement as Element;
+        pub use frender_html::csr::CsrElement as Element;
     }
 }
 

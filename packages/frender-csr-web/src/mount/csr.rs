@@ -1,5 +1,5 @@
 use frender_csr_ext::IntoRenderElementExt as _;
-use frender_html::CsrElement;
+use frender_html::csr::CsrElement;
 
 use super::GetDomElement;
 

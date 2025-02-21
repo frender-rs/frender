@@ -3,13 +3,13 @@ use std::{pin::Pin, task::Poll};
 use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{
     behaviors::{NodeRenderSelf, NodeWithRenderContextAfterSelf as _},
-    render::{Render, RenderContext, RenderWithContext},
+    render::{Render, RenderContext},
     StateUnmount as _, UiHandle as _, UnmountedUiHandle as _,
 };
 
 use crate::{
-    element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
-    CsrElement, HtmlRenderContext, RenderHtml,
+    csr::element::{self, CsrElement, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    html::RenderHtml,
 };
 
 pub type UiHandle<R, T> = (<R as Render>::CursorPlaceholder, Option<T>);
@@ -90,7 +90,7 @@ impl<E: CsrElement> CsrElement for Option<E> {
         renderer: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
         Self::PinnedRenderInit<Renderer>,
     ) {
         if let Some(this) = self {
@@ -104,9 +104,9 @@ impl<E: CsrElement> CsrElement for Option<E> {
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        mut reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
-        (unmounted_cp, unmounted_ui_handle): crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        mut reused_state: Pin<&mut element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        (unmounted_cp, unmounted_ui_handle): element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         render_context.map_mut_render_context(|render_context| {
             let cp = unmounted_cp.mount(render_context);
             let ui_handle = match (reused_state.as_mut().as_pin_mut(), unmounted_ui_handle) {
@@ -142,8 +142,8 @@ impl<E: CsrElement> CsrElement for Option<E> {
         //
         self,
         renderer: &mut Renderer,
-        mut state_full: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
-        (cp, ui_handle_full): &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        mut state_full: Pin<&mut element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        (cp, ui_handle_full): &mut element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         match (state_full.as_mut().as_pin_mut(), &mut *ui_handle_full) {
             (None, None) => {
@@ -179,8 +179,8 @@ impl<E: CsrElement> CsrElement for Option<E> {
         render_context: &mut Ctx,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) {
         let cp = render_context.map_mut_render_context(|render_context| NodeRenderSelf::render_self(render_context));
 
@@ -195,9 +195,9 @@ impl<E: CsrElement> CsrElement for Option<E> {
     fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        reused_state_full: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        (unmounted_cp, unmounted_ui_handle): crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        reused_state_full: &mut element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        (unmounted_cp, unmounted_ui_handle): element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let cp = render_context.map_mut_render_context(|render_context| unmounted_cp.mount(render_context));
         let ui_handle = match (&mut *reused_state_full, unmounted_ui_handle) {
             (None, None) => {
@@ -227,8 +227,8 @@ impl<E: CsrElement> CsrElement for Option<E> {
         //
         self,
         renderer: &mut Renderer,
-        state_full: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        (cp, ui_handle_full): &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        state_full: &mut element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        (cp, ui_handle_full): &mut element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         match (&mut *state_full, &mut *ui_handle_full) {
             (None, None) => {

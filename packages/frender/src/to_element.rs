@@ -1,6 +1,6 @@
 pub use self::with::{RefToElementWithFn, ToElementWithFn};
 
-use frender_html::CsrElement;
+use frender_html::csr::CsrElement;
 use frender_ssr::SsrElement;
 
 pub trait ToElement {
@@ -149,7 +149,7 @@ mod tests {
     use super::ToElement;
     use frender_common::TempStr;
     use frender_element::Element;
-    use frender_html::CsrElement;
+    use frender_html::csr::CsrElement;
     use frender_ssr::SsrElement;
 
     const fn type_assert()

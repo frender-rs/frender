@@ -1,6 +1,6 @@
 use frender_html::{
     csr::experimental::{PinnedRenderStateKind, UnpinnedRenderStateKind},
-    CsrElement, RenderStateKind,
+    csr::{CsrElement, RenderStateKind},
 };
 use frender_ssr::{html::assert::HtmlChildren, SsrElement};
 

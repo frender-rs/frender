@@ -620,7 +620,7 @@ macro_rules! tag_implementations {
             use frender_dom::ssr::SsrComponentNormalElement;
 
             #[cfg(feature = "csr")]
-            use crate::{BehaviorType, CsrComponentNormalElement, RenderHtml, HtmlRenderContext, UiHandleType};
+            use crate::{csr::element::HtmlRenderContext, BehaviorType, CsrComponentNormalElement, UiHandleType};
 
             #[cfg(feature = "csr")]
             use self::behavior_type_traits::*;

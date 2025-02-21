@@ -3,9 +3,10 @@ use std::marker::PhantomData;
 use frender_dom::dom_tokens::{DomTokenList, DomTokens};
 
 use crate::{
+    html::RenderHtml,
     intrinsic::AttributeState,
     update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType, RenderHtml,
+    BehaviorType,
 };
 
 use super::Property;
@@ -33,7 +34,7 @@ impl<PM, S> UnpinnedNonReactiveRenderStateKind for Kind<PM, S> {
 impl<PM: HasDomTokensDomApi<BT>, V: DomTokens, BT: BehaviorType> UnpinnedRenderWithBehavior<BT> for Property<PM, V> {
     type UnpinnedRenderStateKind = Kind<PM, V::State>;
 
-    fn unpinned_render_init_with_behavior<R: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_init_with_behavior<R: ?Sized + RenderHtml>(
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
@@ -42,7 +43,7 @@ impl<PM: HasDomTokensDomApi<BT>, V: DomTokens, BT: BehaviorType> UnpinnedRenderW
         AttributeState(_prop_marker, V::dom_tokens_render_init(value, &mut PM::dom_tokens_dom_api(b, renderer)))
     }
 
-    fn unpinned_render_update_with_behavior<R: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_update_with_behavior<R: ?Sized + RenderHtml>(
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,

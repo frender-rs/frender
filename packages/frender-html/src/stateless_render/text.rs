@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use frender_dom::csr::render::{KnownValueForText, TextKind};
 
-use crate::{HtmlRenderContext, RenderHtml};
+use crate::{csr::element::HtmlRenderContext, html::RenderHtml};
 
 use super::{StatelessRender, StatelessRenderStateKind, StatelessUiHandleOfKind};
 

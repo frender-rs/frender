@@ -11,14 +11,13 @@ use pin_project_lite::pin_project;
 
 use crate::dom::HasIntrinsicComponentTag;
 
-use crate::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
+use crate::csr::element::{self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
+use crate::csr::CsrElement;
 use crate::element_types::RenderStateKindPollRenderWithParent;
 use crate::html::{behavior_type_traits, behaviors};
 use crate::intrinsic::Intrinsic;
 use crate::update_element::{PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
-use crate::{CsrComponent, HtmlRenderContext, RenderHtml};
-
-use crate::CsrElement;
+use crate::{html::RenderHtml, CsrComponent};
 
 enum Never {}
 pub struct Kind<
@@ -295,7 +294,7 @@ where
         renderer: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
         Self::PinnedRenderInit<Renderer>,
     ) {
         use frender_dom::csr::ProvideMutMounted as _;
@@ -345,9 +344,9 @@ where
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
-        unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        reused_state: Pin<&mut element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        unmounted_ui_handle: element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let Self {
             //
             type_marker,
@@ -377,8 +376,8 @@ where
         //
         self,
         renderer: &mut Renderer,
-        state: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
-        ParentWithChildren { parent, children: children_ui_handle }: &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        state: Pin<&mut element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ParentWithChildren { parent, children: children_ui_handle }: &mut element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         let Self {
             //
@@ -404,8 +403,8 @@ where
         render_context: &mut Ctx,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) {
         let Self {
             type_marker,
@@ -442,9 +441,9 @@ where
             children: reused_children,
             parent_attributes_unpinned: reused_pau,
             parent_attributes_pinned: reused_pap,
-        }: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        ParentWithChildren { parent, children: mut children_ui_handle }: crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        }: &mut element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        ParentWithChildren { parent, children: mut children_ui_handle }: element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let Self {
             type_marker,
             attributes,
@@ -474,8 +473,8 @@ where
             children: state_children,
             parent_attributes_unpinned: state_pau,
             parent_attributes_pinned: state_pap,
-        }: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        ParentWithChildren { parent, children: children_ui_handle }: &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        }: &mut element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ParentWithChildren { parent, children: children_ui_handle }: &mut element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         let Self {
             type_marker,

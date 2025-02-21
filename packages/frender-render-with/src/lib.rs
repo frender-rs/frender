@@ -2,7 +2,7 @@
 
 #[cfg(feature = "csr")]
 pub use self::csr::{
-    CsrRenderContext, FnOnceRenderWithContext, IntoFnOnceRenderWithContext, Rendered,
+    CsrRenderContext, FnOnceRenderWithContext, IntoFnOnceRenderWithContext, RenderHtml, Rendered,
 };
 
 #[cfg(feature = "csr")]

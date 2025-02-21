@@ -1,11 +1,12 @@
 use std::{marker::PhantomData, pin::Pin, task::Poll};
 
-use frender_html::{
-    csr::experimental::{
-        self, PinnedRenderStateKind, PinnedRenderStateKindPollRender, PinnedUiHandleOfKind,
-        UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender,
+use frender_html::csr::{
+    experimental::{
+        self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender,
+        PinnedUiHandleOfKind, RenderHtml, UnpinnedRenderStateKind,
+        UnpinnedRenderStateKindPollRender,
     },
-    CsrElement, HtmlRenderContext, RenderHtml, RenderStateKind, StateUnmount,
+    CsrElement, RenderStateKind, StateUnmount,
 };
 use hooks_core::{HookPollNextUpdate, HookUnmount};
 use pin_project_lite::pin_project;
@@ -34,7 +35,7 @@ type UpdateTimes = u8;
 #[cfg(debug_assertions)]
 fn increment_update_times(
     update_times: &mut UpdateTimes,
-    renderer: &mut (impl ?Sized + frender_html::RenderHtml),
+    renderer: &mut (impl ?Sized + RenderHtml),
     f: &'static str,
 ) {
     const MAX_MINUS_1: UpdateTimes = UpdateTimes::MAX - 1;
@@ -83,9 +84,8 @@ where
     // Note
     HookData: Unpin,
 {
-    type UnpinnedUiHandle<R: frender_html::RenderHtml + ?Sized> = EK::UnpinnedUiHandle<R>;
-    type UnpinnedState<R: frender_html::RenderHtml + ?Sized> =
-        ReactiveState<EK::UnpinnedState<R>, HookData, F>;
+    type UnpinnedUiHandle<R: RenderHtml + ?Sized> = EK::UnpinnedUiHandle<R>;
+    type UnpinnedState<R: RenderHtml + ?Sized> = ReactiveState<EK::UnpinnedState<R>, HookData, F>;
 }
 
 impl<EK: UnpinnedRenderStateKindPollRender, HookData: Default + HookUnmount, F>
@@ -97,7 +97,7 @@ where
     // Note: F must output CsrElement of same kind.
     F: for<'hook> UseHookData<HookData = HookData, Value<'hook>: CsrElement<RenderStateKind = EK>>,
 {
-    fn unpinned_poll_render<R: frender_html::RenderHtml + ?Sized>(
+    fn unpinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
         ReactiveState {
@@ -153,8 +153,8 @@ where
 impl<EK: PinnedRenderStateKind, HookData: Default + HookUnmount, F> PinnedRenderStateKind
     for Kind<EK, HookData, F>
 {
-    type PinnedUiHandle<R: frender_html::RenderHtml + ?Sized> = EK::PinnedUiHandle<R>;
-    type PinnedState<R: frender_html::RenderHtml + ?Sized> =
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = EK::PinnedUiHandle<R>;
+    type PinnedState<R: RenderHtml + ?Sized> =
         ReactiveState<Option<EK::PinnedState<R>>, HookData, F>;
 }
 
@@ -165,7 +165,7 @@ where
     // Note: F must output CsrElement of same kind.
     F: for<'hook> UseHookData<HookData = HookData, Value<'hook>: CsrElement<RenderStateKind = EK>>,
 {
-    fn pinned_poll_render<R: frender_html::RenderHtml + ?Sized>(
+    fn pinned_poll_render<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
         state: Pin<&mut Self::PinnedState<R>>,
@@ -272,7 +272,7 @@ where
     F: for<'hook> UseHookData<HookData = HookData, Value<'hook>: CsrElement<RenderStateKind = EK>>,
 {
     type RenderStateKind = Kind<EK, HookData, F>;
-    type PinnedRenderInit<R: ?Sized + frender_html::RenderHtml> = RenderInit;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInit;
 
     fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //

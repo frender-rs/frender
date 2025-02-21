@@ -1,13 +1,13 @@
 use std::borrow::Cow;
 
 use frender_html::{
-    csr::experimental,
+    csr::experimental::{self, RenderHtml},
     dom::csr::{
         behaviors::ElementWithChildren as _,
         render::{Render, RenderWithContext},
         ProvideRenderContext,
     },
-    ElementProxyAttrs, RenderHtml,
+    ElementProxyAttrs,
 };
 
 use crate::element::{CursorPlaceholder, Element, Node, UnmountedElement};
@@ -419,7 +419,7 @@ impl RenderHtml for Renderer {
     );
 }
 
-pub fn unpinned_render_init<E: frender_html::CsrElement>(
+pub fn unpinned_render_init<E: frender_html::csr::CsrElement>(
     element: E,
 ) -> (
     Renderer,

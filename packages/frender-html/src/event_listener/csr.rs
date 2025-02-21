@@ -7,8 +7,8 @@ use frender_dom::{
 };
 
 use crate::{
+    html::RenderHtml,
     update_element::{OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    RenderHtml,
 };
 
 use super::Property;
@@ -20,11 +20,11 @@ enum Never {}
 pub struct Kind<EVT, ET, H>(Never, PhantomData<(EVT, ET, H)>);
 
 impl<EVT: EventType, ET: OnEventType<EVT>, H: HandleEvent<EVT::Event> + 'static> UnpinnedNonReactiveRenderStateKind for Kind<EVT, ET, H> {
-    type UnpinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = Option<UnpinnedEventListenerOf<EVT, ET::OnEvent<R>, R, H>>;
+    type UnpinnedNonReactiveState<R: ?Sized + RenderHtml> = Option<UnpinnedEventListenerOf<EVT, ET::OnEvent<R>, R, H>>;
 }
 
 impl<EVT: EventType, ET: OnEventType<EVT>, F: HandleEvent<EVT::Event> + 'static> PinnedNonReactiveRenderStateKind for Kind<EVT, ET, F> {
-    type PinnedNonReactiveState<R: ?Sized + crate::RenderHtml> = Option<PinnedEventListenerOf<EVT, ET::OnEvent<R>, R, F>>;
+    type PinnedNonReactiveState<R: ?Sized + RenderHtml> = Option<PinnedEventListenerOf<EVT, ET::OnEvent<R>, R, F>>;
 }
 
 pub struct RenderInit<EVT, BT, T>(PhantomData<(EVT, BT)>, Option<T>);

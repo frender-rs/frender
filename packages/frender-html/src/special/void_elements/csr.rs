@@ -5,7 +5,11 @@ use frender_dom::{
 };
 
 use crate::kinds::RenderInitNothing;
-use crate::{html::markers as tags, CsrComponent, RenderHtml};
+use crate::{
+    csr::element,
+    html::{markers as tags, RenderHtml},
+    CsrComponent,
+};
 
 type Kind = crate::element_types::StateKindWithAnyParent<crate::kinds::KindOfNoState>;
 
@@ -38,7 +42,7 @@ frender_common::impl_many!(
             _: &mut Self::OfBehaviorType<R>,
         ) -> (
             //
-            crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
             Self::ChildrenPinnedRenderInit<R>,
         ) {
             ((), RenderInitNothing)
@@ -50,9 +54,9 @@ frender_common::impl_many!(
             Empty: Empty,
             _: &mut R,
             _: &mut Self::OfBehaviorType<R>,
-            _: std::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-            (): crate::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-        ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+            _: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+            (): element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        ) -> element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         }
 
         fn children_pinned_render_update<R: RenderHtml + ?Sized>(
@@ -61,8 +65,8 @@ frender_common::impl_many!(
             Empty: Empty,
             _: &mut R,
             _: &mut Self::OfBehaviorType<R>,
-            _: std::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-            (): &mut crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            _: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+            (): &mut element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
         }
 
@@ -74,8 +78,8 @@ frender_common::impl_many!(
             _: &mut Self::OfBehaviorType<R>,
         ) -> (
             //
-            crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
             ((), ())
         }
@@ -86,9 +90,9 @@ frender_common::impl_many!(
             Empty: Empty,
             _: &mut R,
             _: &mut Self::OfBehaviorType<R>,
-            (): &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            (): crate::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-        ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+            (): &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            (): element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        ) -> element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         }
 
         fn children_unpinned_render_update<R: RenderHtml + ?Sized>(
@@ -97,8 +101,8 @@ frender_common::impl_many!(
             Empty: Empty,
             _: &mut R,
             _: &mut Self::OfBehaviorType<R>,
-            (): &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            (): &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            (): &mut element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
         }
     }

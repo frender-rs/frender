@@ -1025,7 +1025,7 @@ dependencies = [
 name = "frender-element"
 version = "0.1.0"
 dependencies = [
- "frender-html",
+ "frender-csr",
  "frender-ssr",
 ]
 

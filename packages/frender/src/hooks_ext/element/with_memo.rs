@@ -16,7 +16,7 @@ impl<F, Dep> MemoCallWithRef<F, Dep> {
 
 mod csr {
     use crate::{memo::csr::Kind, Memo};
-    use frender_html::{CsrElement, RenderStateKind};
+    use frender_html::csr::{CsrElement, RenderStateKind};
 
     use crate::{fn_traits::FnMut2, memo::MemoAndProvideFirstArgument};
 

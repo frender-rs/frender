@@ -9,11 +9,11 @@ use frender_form_control::{
 
 use crate::{
     cs::textarea,
-    element::{PinnedRenderStateKind, UnpinnedRenderStateKind},
+    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
     element_types::RenderStateKindPollRenderWithParent,
-    html::behavior_type_traits,
+    html::{behavior_type_traits, RenderHtml},
     kinds::RenderInitNothing,
-    CsrComponent, RenderHtml,
+    CsrComponent,
 };
 
 enum Never {}
@@ -34,8 +34,8 @@ impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_trait
         //
         renderer: &mut R,
         parent: &mut <ET as crate::BehaviorType>::OfBehaviorType<R>,
-        state: std::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self>>,
-        ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self>,
+        state: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self>>,
+        ui_handle: &mut element::PinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         <Self as RenderStateKindPollRenderWithParent<ET>>::unpinned_poll_render_with_parent(
@@ -52,8 +52,8 @@ impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_trait
         //
         renderer: &mut R,
         parent: &mut <ET as crate::BehaviorType>::OfBehaviorType<R>,
-        state: &mut crate::element::UnpinnedStateOfKind<R, Self>,
-        (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self>,
+        state: &mut element::UnpinnedStateOfKind<R, Self>,
+        (): &mut element::UnpinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<()> {
         K::unpinned_poll_render_form_control_value_state(
@@ -85,7 +85,7 @@ where
         parent: &mut Self::OfBehaviorType<R>,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
         Self::ChildrenPinnedRenderInit<R>,
     ) {
         let (state, ()) = self.children_unpinned_render_init(children, renderer, parent);
@@ -98,9 +98,9 @@ where
         children: Children,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_reused_state: std::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-        children_unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        children_reused_state: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_unmounted_ui_handle: element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         self.children_unpinned_render_init_by_reusing(
             //
             children,
@@ -117,8 +117,8 @@ where
         children: Children,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_state: std::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-        children_ui_handle: &mut crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        children_state: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+        children_ui_handle: &mut element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         self.children_unpinned_render_update(
             //
@@ -138,8 +138,8 @@ where
         parent: &mut Self::OfBehaviorType<R>,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         (Children::IntoCsrTextAreaValue::render_init(Children::into_csr_text_area_value(children), renderer, parent.into_mut()), ())
     }
@@ -150,9 +150,9 @@ where
         children: Children,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_reused_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        (): crate::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+        children_reused_state: &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        (): element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
         // TODO: render_init or render_update?
         // render_init is correct but render_update might avoid unnecessary rendering
         *children_reused_state = Children::IntoCsrTextAreaValue::render_init(Children::into_csr_text_area_value(children), renderer, parent.into_mut());
@@ -165,8 +165,8 @@ where
         children: Children,
         renderer: &mut R,
         parent: &mut Self::OfBehaviorType<R>,
-        children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-        (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        children_state: &mut element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+        (): &mut element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
     ) {
         Children::IntoCsrTextAreaValue::render_update(Children::into_csr_text_area_value(children), renderer, parent.into(), children_state)
     }

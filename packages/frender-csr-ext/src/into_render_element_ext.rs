@@ -2,10 +2,10 @@ use std::{future::Future, pin::pin};
 
 use frender_csr::{
     experimental::{
-        PinnedRenderStateKind, PinnedRenderStateKindPollRender, ProvideRenderContext,
+        PinnedRenderStateKind, PinnedRenderStateKindPollRender, ProvideRenderContext, RenderHtml,
         RenderInitPinned as _,
     },
-    CsrElement, RenderHtml, StateUnmount,
+    CsrElement, StateUnmount,
 };
 
 pub trait IntoRenderElementExt: ProvideRenderContext {

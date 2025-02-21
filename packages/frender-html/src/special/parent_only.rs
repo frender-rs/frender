@@ -7,10 +7,10 @@ use frender_common::{
 use frender_dom::csr::{render_from::str::ValueKindForStr, StateUnmount};
 
 use crate::{
-    element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
+    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
     element_types::RenderStateKindPollRenderWithParent,
-    html::behavior_type_traits,
-    BehaviorType, RenderHtml,
+    html::{behavior_type_traits, RenderHtml},
+    BehaviorType,
 };
 
 pub(crate) trait RenderKind<BT: ?Sized + BehaviorType, VK: ?Sized + ValueKind> {
@@ -168,7 +168,7 @@ macro_rules! impl_parent_only {
             $RenderKind,
         >;
 
-        type ChildrenPinnedRenderInit<R: crate::RenderHtml + ?Sized> = crate::special::parent_only::RenderInit<
+        type ChildrenPinnedRenderInit<R: crate::html::RenderHtml + ?Sized> = crate::special::parent_only::RenderInit<
             //
             Self,
             $ValueKind,
@@ -176,7 +176,7 @@ macro_rules! impl_parent_only {
             <$ReactiveValue as ::frender_common::reactive_value::ReactiveValue<$ValueKind>>::PinnedRenderInit,
         >;
 
-        fn children_pinned_render_init<R: crate::RenderHtml + ?Sized>(
+        fn children_pinned_render_init<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
@@ -184,7 +184,7 @@ macro_rules! impl_parent_only {
             _: &mut <Self as crate::BehaviorType>::OfBehaviorType<R>,
         ) -> (
             //
-            crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            crate::csr::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
             Self::ChildrenPinnedRenderInit<R>,
         ) {
             let (state, init) = ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::pinned_render_init($reactive_value);
@@ -192,15 +192,15 @@ macro_rules! impl_parent_only {
             (state, crate::special::parent_only::RenderInit::new(init))
         }
 
-        fn children_pinned_render_init_by_reusing<R: crate::RenderHtml + ?Sized>(
+        fn children_pinned_render_init_by_reusing<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
             renderer: &mut R,
             parent: &mut Self::OfBehaviorType<R>,
-            children_reused_state: ::core::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-            (): crate::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-        ) -> crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+            children_reused_state: ::core::pin::Pin<&mut crate::csr::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+            (): crate::csr::element::PinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        ) -> crate::csr::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
             ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::pinned_render_init_by_reusing(
                 $reactive_value,
                 crate::special::parent_only::ReusableRenderer::<Self, R, $RenderKind>::new(renderer, parent),
@@ -209,14 +209,14 @@ macro_rules! impl_parent_only {
             ()
         }
 
-        fn children_pinned_render_update<R: crate::RenderHtml + ?Sized>(
+        fn children_pinned_render_update<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
             renderer: &mut R,
             parent: &mut Self::OfBehaviorType<R>,
-            children_state: ::core::pin::Pin<&mut crate::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
-            (): &mut crate::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            children_state: ::core::pin::Pin<&mut crate::csr::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>>,
+            (): &mut crate::csr::element::PinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
             _ = ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::pinned_render_update(
                 $reactive_value,
@@ -225,7 +225,7 @@ macro_rules! impl_parent_only {
             )
         }
 
-        fn children_unpinned_render_init<R: crate::RenderHtml + ?Sized>(
+        fn children_unpinned_render_init<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
@@ -233,8 +233,8 @@ macro_rules! impl_parent_only {
             parent: &mut Self::OfBehaviorType<R>,
         ) -> (
             //
-            crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            crate::csr::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            crate::csr::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
             ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::unpinned_render_init(
                 //
@@ -243,15 +243,15 @@ macro_rules! impl_parent_only {
             )
         }
 
-        fn children_unpinned_render_init_by_reusing<R: crate::RenderHtml + ?Sized>(
+        fn children_unpinned_render_init_by_reusing<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
             renderer: &mut R,
             parent: &mut Self::OfBehaviorType<R>,
-            children_reused_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            (): crate::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
-        ) -> crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
+            children_reused_state: &mut crate::csr::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            (): crate::csr::element::UnpinnedUnmountedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+        ) -> crate::csr::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind> {
             ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::unpinned_render_init_by_reusing(
                 $reactive_value,
                 crate::special::parent_only::ReusableRenderer::<Self, R, $RenderKind>::new(renderer, parent),
@@ -260,14 +260,14 @@ macro_rules! impl_parent_only {
             ()
         }
 
-        fn children_unpinned_render_update<R: crate::RenderHtml + ?Sized>(
+        fn children_unpinned_render_update<R: crate::html::RenderHtml + ?Sized>(
             //
             self,
             $children: $Children,
             renderer: &mut R,
             parent: &mut Self::OfBehaviorType<R>,
-            children_state: &mut crate::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
-            (): &mut crate::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
+            children_state: &mut crate::csr::element::UnpinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
+            (): &mut crate::csr::element::UnpinnedUiHandleOfKind<R, Self::ChildrenRenderStateKind>,
         ) {
             _ = ::frender_common::reactive_value::ReactiveValue::<$ValueKind>::unpinned_render_update(
                 $reactive_value,
@@ -283,7 +283,7 @@ pub(crate) use impl_parent_only;
 pub enum RenderInnerTextKind {}
 
 impl<BT: behavior_type_traits::HtmlElement, VK: ?Sized + ValueKindForStr> RenderKind<BT, VK> for RenderInnerTextKind {
-    fn render<R: crate::RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, value: <VK as frender_common::value_kind::ValueKind>::Value<'_>) {
+    fn render<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, value: <VK as frender_common::value_kind::ValueKind>::Value<'_>) {
         use frender_common::convert::IntoMut as _;
         use frender_dom::csr::behaviors::SetInnerTextFromStr as _;
 
@@ -291,7 +291,7 @@ impl<BT: behavior_type_traits::HtmlElement, VK: ?Sized + ValueKindForStr> Render
         parent.set_inner_text_from_str(renderer, value)
     }
 
-    fn reuse<R: crate::RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) {
+    fn reuse<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) {
         // TODO: check when debug_assertions
         let _ = (renderer, parent, provide_value);
     }

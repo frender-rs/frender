@@ -119,7 +119,7 @@ pub mod prelude {
 
     pub use frender_hook_element::component_fn;
 
-    pub use frender_html::CsrElement;
+    pub use frender_html::csr::CsrElement;
 
     pub use frender_element::Element;
 

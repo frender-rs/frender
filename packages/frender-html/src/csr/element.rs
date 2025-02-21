@@ -3,7 +3,7 @@ use std::{pin::Pin, task::Poll};
 use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{render::RenderContext, StateUnmount, UiHandle};
 
-use crate::RenderHtml;
+use crate::html::RenderHtml;
 
 pub trait HtmlRenderContext: RenderContext<Renderer: RenderHtml> {}
 impl<Ctx: ?Sized + RenderContext<Renderer: RenderHtml>> HtmlRenderContext for Ctx {}
@@ -125,7 +125,7 @@ pub trait CsrElement {
 #[macro_export]
 macro_rules! proxy_csr_element {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init<Renderer: ?::core::marker::Sized + $crate::RenderHtml>(
+        fn pinned_render_init<Renderer: ?::core::marker::Sized + $crate::__private::RenderHtml>(
             //
             self,
             renderer: &mut Renderer,
@@ -145,7 +145,7 @@ macro_rules! proxy_csr_element {
 #[macro_export]
 macro_rules! proxy_csr_element_without_pinned_render_init {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn pinned_render_init_by_reusing<Ctx: ?Sized + $crate::__private::HtmlRenderContext>(
             self,
             render_context: &mut Ctx,
             reused_state: ::core::pin::Pin<&mut $crate::__private::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
@@ -155,7 +155,7 @@ macro_rules! proxy_csr_element_without_pinned_render_init {
             $expr.pinned_render_init_by_reusing(render_context, reused_state, unmounted_ui_handle)
         }
 
-        fn unpinned_render_init<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn unpinned_render_init<Ctx: ?Sized + $crate::__private::HtmlRenderContext>(
             //
             self,
             render_context: &mut Ctx,
@@ -167,7 +167,7 @@ macro_rules! proxy_csr_element_without_pinned_render_init {
             $expr.unpinned_render_init(render_context)
         }
 
-        fn unpinned_render_init_by_reusing<Ctx: ?Sized + $crate::HtmlRenderContext>(
+        fn unpinned_render_init_by_reusing<Ctx: ?Sized + $crate::__private::HtmlRenderContext>(
             self,
             render_context: &mut Ctx,
             reused_state: &mut $crate::__private::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
@@ -184,7 +184,7 @@ macro_rules! proxy_csr_element_without_pinned_render_init {
 #[macro_export]
 macro_rules! proxy_csr_element_render_update {
     (|$this:pat_param| $expr:expr) => {
-        fn pinned_render_update<Renderer: ?Sized + $crate::RenderHtml>(
+        fn pinned_render_update<Renderer: ?Sized + $crate::__private::RenderHtml>(
             //
             self,
             renderer: &mut Renderer,
@@ -195,7 +195,7 @@ macro_rules! proxy_csr_element_render_update {
             $expr.pinned_render_update(renderer, state, ui_handle)
         }
 
-        fn unpinned_render_update<Renderer: ?Sized + $crate::RenderHtml>(
+        fn unpinned_render_update<Renderer: ?Sized + $crate::__private::RenderHtml>(
             //
             self,
             renderer: &mut Renderer,
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn tuple_max_elements() {
-        use crate::CsrElement as Element;
+        use crate::csr::CsrElement as Element;
         fn __(
             v: (
                 impl Element,

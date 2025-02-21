@@ -2,7 +2,7 @@
 pub struct WithFn<F>(pub F);
 
 mod csr {
-    use frender_html::{CsrElement, RenderStateKind};
+    use frender_html::csr::{CsrElement, RenderStateKind};
 
     use crate::fn_traits::{FnMut1, FnOnce1};
 

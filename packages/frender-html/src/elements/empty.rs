@@ -1,21 +1,22 @@
 use frender_dom::Empty;
 
 use crate::{
+    csr::element::{self, CsrElement, HtmlRenderContext},
+    html::RenderHtml,
     kinds::{KindOfNoState, RenderInitNothing},
-    CsrElement, HtmlRenderContext,
 };
 
 impl CsrElement for Empty {
     type RenderStateKind = KindOfNoState;
-    type PinnedRenderInit<R: ?Sized + crate::RenderHtml> = RenderInitNothing;
+    type PinnedRenderInit<R: ?Sized + RenderHtml> = RenderInitNothing;
 
-    fn pinned_render_init<Renderer: ?Sized + crate::RenderHtml>(
+    fn pinned_render_init<Renderer: ?Sized + RenderHtml>(
         //
         self,
         _: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
         Self::PinnedRenderInit<Renderer>,
     ) {
         ((), RenderInitNothing)
@@ -24,17 +25,17 @@ impl CsrElement for Empty {
     fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         _: &mut Ctx,
-        _: std::pin::Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
-        (): crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        _: std::pin::Pin<&mut element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        (): element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
     }
 
-    fn pinned_render_update<Renderer: ?Sized + crate::RenderHtml>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         _: &mut Renderer,
-        _: std::pin::Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
-        (): &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        _: std::pin::Pin<&mut element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        (): &mut element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
     }
 
@@ -44,8 +45,8 @@ impl CsrElement for Empty {
         _: &mut Ctx,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) {
         ((), ())
     }
@@ -53,17 +54,17 @@ impl CsrElement for Empty {
     fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         _: &mut Ctx,
-        (): &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        (): crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        (): &mut element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        (): element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
     }
 
-    fn unpinned_render_update<Renderer: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         _: &mut Renderer,
-        (): &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        (): &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        (): &mut element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        (): &mut element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
     }
 }

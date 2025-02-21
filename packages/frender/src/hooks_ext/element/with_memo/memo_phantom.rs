@@ -1,4 +1,7 @@
-use frender_html::{csr::experimental, RenderStateKind};
+use frender_html::csr::{
+    experimental::{self, RenderHtml},
+    RenderStateKind,
+};
 
 use crate::fn_traits::{FnOnce1, FnOnce2};
 use crate::memo::csr::{CompoundState, Kind};
@@ -56,7 +59,7 @@ where
 {
     type RenderStateKind = Kind<K, Dep>;
 
-    fn pinned_render_update<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         renderer: &mut Renderer,
@@ -70,7 +73,7 @@ where
         (self.f)(dep).pinned_render_update(renderer, state, ui_handle)
     }
 
-    fn unpinned_render_update<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         renderer: &mut Renderer,

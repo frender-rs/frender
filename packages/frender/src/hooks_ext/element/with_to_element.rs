@@ -23,7 +23,7 @@ mod ssr {
 }
 
 mod csr {
-    use frender_html::{CsrElement, RenderStateKind};
+    use frender_html::csr::{CsrElement, RenderStateKind};
 
     use crate::ToElement;
 

@@ -4,8 +4,8 @@ use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::{render::RenderWithContext, UiHandle, UnmountedUiHandle};
 
 use crate::{
-    element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
-    RenderHtml,
+    csr::element::{PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    html::RenderHtml,
 };
 
 pub enum KindOfNoState {}

@@ -8,14 +8,14 @@ use frender_html::cs;
 use frender_keyed_elements::{Keyed, KeyedElements};
 use hooks::ShareValue;
 
-use frender_render_with::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext};
+use frender_render_with::{FnOnceRenderWithContext, IntoFnOnceRenderWithContext, RenderHtml};
 
 struct Test {
     numbers: Vec<i32>,
 }
 
 impl IntoFnOnceRenderWithContext for Test {
-    fn into_fn_once_render_with_context<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
     ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {
@@ -32,7 +32,7 @@ impl IntoFnOnceRenderWithContext for Test {
 struct TestShareValue<S: ShareValue<Value = String>>(S);
 
 impl<S: ShareValue<Value = String>> IntoFnOnceRenderWithContext for TestShareValue<S> {
-    fn into_fn_once_render_with_context<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
     ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| self.0.map(|s| ctx.render(TempStr(s.as_str())))
@@ -41,7 +41,7 @@ impl<S: ShareValue<Value = String>> IntoFnOnceRenderWithContext for TestShareVal
 
 struct TestRcRefCellElements(std::rc::Rc<RefCell<Vec<i32>>>);
 impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
-    fn into_fn_once_render_with_context<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
     ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {
@@ -55,7 +55,7 @@ impl IntoFnOnceRenderWithContext for TestRcRefCellElements {
 struct TestShareElements<S: ShareValue<Value = Vec<i32>>>(S);
 
 impl<S: ShareValue<Value = Vec<i32>>> IntoFnOnceRenderWithContext for TestShareElements<S> {
-    fn into_fn_once_render_with_context<Renderer: ?Sized + frender_html::RenderHtml>(
+    fn into_fn_once_render_with_context<Renderer: ?Sized + RenderHtml>(
         self,
     ) -> impl FnOnceRenderWithContext<Renderer> {
         move |ctx| {

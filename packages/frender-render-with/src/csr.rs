@@ -2,8 +2,11 @@ use std::{any::Any, marker::PhantomData};
 
 use frender_csr::{
     experimental::{self, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
-    CsrElement, RenderHtml,
+    CsrElement,
 };
+
+pub trait RenderHtml: experimental::RenderHtml {}
+impl<T: ?Sized + experimental::RenderHtml> RenderHtml for T {}
 
 #[cfg(feature = "nightly")]
 mod nightly_impl;

@@ -7,9 +7,9 @@ use frender_common::{
 use frender_dom::csr::{StateUnmount, UnmountedUiHandle};
 
 use crate::{
-    element::{CsrElement, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    csr::element::{self, CsrElement, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender},
+    html::RenderHtml,
     stateless_render::{StatelessRender, StatelessRenderStateKind, StatelessUiHandleOfKind},
-    HtmlRenderContext, RenderHtml,
 };
 
 mod known;
@@ -46,8 +46,8 @@ impl<PS: StateUnmount, VK: ?Sized + ValueKind, US, StatelessK: StatelessRenderSt
 where
     for<'a> VK::Value<'a>: StatelessRender<StatelessRenderStateKind = StatelessK>,
 {
-    type PinnedUiHandle<R: crate::RenderHtml + ?Sized> = StatelessK::UiHandle<R>;
-    type PinnedState<R: crate::RenderHtml + ?Sized> = PS;
+    type PinnedUiHandle<R: RenderHtml + ?Sized> = StatelessK::UiHandle<R>;
+    type PinnedState<R: RenderHtml + ?Sized> = PS;
 }
 
 impl<PS: ReactiveValueState<ReactiveValueKind = VK>, VK: ?Sized + ValueKind, US, StatelessK: StatelessRenderStateKind> PinnedRenderStateKindPollRender for Kind<PS, US, VK>
@@ -131,19 +131,19 @@ where
         _: &mut Renderer,
     ) -> (
         //
-        crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        element::PinnedStateOfKind<Renderer, Self::RenderStateKind>,
         Self::PinnedRenderInit<Renderer>,
     ) {
         let (state, render_init) = self.0.pinned_render_init();
         (state, RenderInit(render_init, PhantomData))
     }
 
-    fn pinned_render_init_by_reusing<Ctx: ?Sized + crate::HtmlRenderContext>(
+    fn pinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        reused_state: Pin<&mut crate::element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
-        unmounted_ui_handle: crate::element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        reused_state: Pin<&mut element::PinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>>,
+        unmounted_ui_handle: element::PinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::PinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let ui_handle = render_context.map_mut_render_context(|render_context| unmounted_ui_handle.mount(render_context));
         self.0.pinned_render_init_by_reusing(
             ReusableRenderer {
@@ -154,12 +154,12 @@ where
         )
     }
 
-    fn pinned_render_update<Renderer: ?Sized + crate::RenderHtml>(
+    fn pinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         renderer: &mut Renderer,
-        state: Pin<&mut crate::element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
-        ui_handle: &mut crate::element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        state: Pin<&mut element::PinnedStateOfKind<Renderer, Self::RenderStateKind>>,
+        ui_handle: &mut element::PinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         _ = self.0.pinned_render_update(
             //
@@ -168,24 +168,24 @@ where
         )
     }
 
-    fn unpinned_render_init<Ctx: ?Sized + crate::HtmlRenderContext>(
+    fn unpinned_render_init<Ctx: ?Sized + HtmlRenderContext>(
         //
         self,
         render_context: &mut Ctx,
     ) -> (
         //
-        crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
     ) {
         self.0.unpinned_render_init(|v| StatelessRender::stateless_render_init(v, render_context))
     }
 
-    fn unpinned_render_init_by_reusing<Ctx: ?Sized + crate::HtmlRenderContext>(
+    fn unpinned_render_init_by_reusing<Ctx: ?Sized + HtmlRenderContext>(
         self,
         render_context: &mut Ctx,
-        reused_state: &mut crate::element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
-        unmounted_ui_handle: crate::element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
-    ) -> crate::element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
+        reused_state: &mut element::UnpinnedStateOfKind<Ctx::Renderer, Self::RenderStateKind>,
+        unmounted_ui_handle: element::UnpinnedUnmountedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind>,
+    ) -> element::UnpinnedUiHandleOfKind<Ctx::Renderer, Self::RenderStateKind> {
         let ui_handle = render_context.map_mut_render_context(|render_context| unmounted_ui_handle.mount(render_context));
         self.0.unpinned_render_init_by_reusing(
             ReusableRenderer {
@@ -196,12 +196,12 @@ where
         )
     }
 
-    fn unpinned_render_update<Renderer: ?Sized + crate::RenderHtml>(
+    fn unpinned_render_update<Renderer: ?Sized + RenderHtml>(
         //
         self,
         renderer: &mut Renderer,
-        state: &mut crate::element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
-        ui_handle: &mut crate::element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
+        state: &mut element::UnpinnedStateOfKind<Renderer, Self::RenderStateKind>,
+        ui_handle: &mut element::UnpinnedUiHandleOfKind<Renderer, Self::RenderStateKind>,
     ) {
         _ = self.0.unpinned_render_update(
             //

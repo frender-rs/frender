@@ -6,7 +6,7 @@ use frender_common::{
 };
 use frender_dom::string_element::StringElement;
 
-use crate::element::CsrElement;
+use crate::{csr::CsrElement, html::RenderHtml};
 
 use super::{ReactiveValueIntoElement, ValueKindStatelessRender};
 
@@ -16,7 +16,7 @@ macro_rules! proxy_reactive_value_into_element {
     };
     ($SelfTy:ty) => {
         type RenderStateKind = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::RenderStateKind;
-        type PinnedRenderInit<R: ?Sized + crate::RenderHtml> = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::PinnedRenderInit<R>;
+        type PinnedRenderInit<R: ?Sized + RenderHtml> = <ReactiveValueIntoElement<$SelfTy> as CsrElement>::PinnedRenderInit<R>;
 
         crate::proxy_csr_element!(|this| ReactiveValueIntoElement(this));
     };

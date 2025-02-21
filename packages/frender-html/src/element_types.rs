@@ -6,13 +6,17 @@ use frender_common::convert::FromMut as _;
 use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::behaviors::ElementWithChildren;
 
-use crate::element::{
-    PinnedRenderStateKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, RenderStateKind, UnpinnedRenderStateKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind, UnpinnedUnmountedUiHandleOfKind,
+use crate::{
+    csr::{
+        element::{
+            PinnedRenderStateKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, RenderStateKind, UnpinnedRenderStateKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
+            UnpinnedUnmountedUiHandleOfKind,
+        },
+        CsrElement,
+    },
+    html::{behavior_type_traits, RenderHtml},
+    BehaviorType,
 };
-use crate::{BehaviorType, RenderHtml};
-
-use crate::html::behavior_type_traits;
-use crate::CsrElement;
 
 pub trait CsrComponentNormalElement: behavior_type_traits::Element {}
 
