@@ -6,12 +6,11 @@ use frender_dom::{
 
 use crate::kinds::RenderInitNothing;
 use crate::{
-    csr::element,
+    csr::{component::CsrComponent, element},
     html::{markers as tags, RenderHtml},
-    CsrComponent,
 };
 
-type Kind = crate::element_types::StateKindWithAnyParent<crate::kinds::KindOfNoState>;
+type Kind = crate::csr::component::StateKindWithAnyParent<crate::kinds::KindOfNoState>;
 
 frender_common::impl_many!(
     impl<__> CsrComponent<Empty>

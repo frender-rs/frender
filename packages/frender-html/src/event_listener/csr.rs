@@ -7,8 +7,8 @@ use frender_dom::{
 };
 
 use crate::{
+    csr::behavior_type::{BehaviorType, OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
     html::RenderHtml,
-    update_element::{OnEventType, PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
 };
 
 use super::Property;
@@ -77,7 +77,7 @@ impl<
         //
         this: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
     ) -> (
         //
         <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>,
@@ -97,7 +97,7 @@ impl<
         this: Self,
         renderer: &mut R,
         b: &mut BT::OfBehaviorType<R>,
-        mut state: ::core::pin::Pin<&mut <Self::PinnedRenderStateKind as crate::update_element::PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
+        mut state: ::core::pin::Pin<&mut <Self::PinnedRenderStateKind as PinnedNonReactiveRenderStateKind>::PinnedNonReactiveState<R>>,
     ) {
         if let Some(this) = this.f.into() {
             let element = <BT::OnEvent<R>>::from_mut(b);
@@ -128,7 +128,7 @@ impl<
         //
         this: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
     ) -> <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
         let node = <BT::OnEvent<R>>::from_mut(b);
         if let Some(f) = this.f.into() {
@@ -142,7 +142,7 @@ impl<
         //
         this: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
         state: &mut <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
         let node = <BT::OnEvent<R>>::from_mut(b);

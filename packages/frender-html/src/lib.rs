@@ -3,13 +3,6 @@
 pub use frender_dom as dom;
 pub use frender_dom::dom_tokens::{DomToken, DomTokenList, DomTokens};
 
-#[cfg(feature = "csr")]
-pub use update_element::{BehaviorType, UiHandleType};
-
-// TODO: some apis are unstable and should be sealed
-#[cfg(feature = "csr")]
-pub use element_types::{CsrComponent, CsrComponentNormalElement};
-
 pub use frender_form_control as form_control;
 
 use frender_common::{expand, Empty};
@@ -31,12 +24,6 @@ pub mod element_proxy_attrs;
 
 #[cfg(feature = "ElementProxyAttrs")]
 pub use element_proxy_attrs::ElementProxyAttrs;
-
-#[cfg(feature = "csr")]
-mod update_element;
-
-#[cfg(feature = "csr")]
-mod element_types;
 
 #[cfg(feature = "csr")]
 pub mod kinds;
@@ -82,6 +69,9 @@ mod utils;
 
 #[cfg(feature = "csr")]
 pub mod csr {
+    pub(crate) mod behavior_type;
+    pub(crate) mod component;
+
     pub(crate) mod element;
     pub use element::{CsrElement, RenderStateKind};
 

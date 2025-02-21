@@ -3,10 +3,9 @@ use std::marker::PhantomData;
 use frender_dom::dom_tokens::{DomTokenList, DomTokens};
 
 use crate::{
+    csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
     html::RenderHtml,
     intrinsic::AttributeState,
-    update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType,
 };
 
 use super::Property;
@@ -38,8 +37,8 @@ impl<PM: HasDomTokensDomApi<BT>, V: DomTokens, BT: BehaviorType> UnpinnedRenderW
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
-    ) -> <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+    ) -> <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
         AttributeState(_prop_marker, V::dom_tokens_render_init(value, &mut PM::dom_tokens_dom_api(b, renderer)))
     }
 
@@ -47,8 +46,8 @@ impl<PM: HasDomTokensDomApi<BT>, V: DomTokens, BT: BehaviorType> UnpinnedRenderW
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
-        AttributeState(PhantomData, state): &mut <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+        AttributeState(PhantomData, state): &mut <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
         V::dom_tokens_render_update(value, &mut PM::dom_tokens_dom_api(b, renderer), state)
     }

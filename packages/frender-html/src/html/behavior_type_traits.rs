@@ -1,15 +1,15 @@
 use super::{behaviors, event_types};
-use crate::update_element::OnEventType;
+use crate::csr::behavior_type::OnEventType;
 use frender_common::convert::IdentityAs;
 use frender_dom::csr::UiHandle;
-pub trait Node: crate::UiHandleType {
+pub trait Node: crate::csr::behavior_type::UiHandleType {
     type Node<Renderer: ?Sized + super::RenderHtml>: behaviors::Node<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait Element:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + Node
     + OnEventType<event_types::on_cancel>
     + OnEventType<event_types::on_error>
@@ -52,260 +52,260 @@ pub trait Element:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithHrefAttribute: crate::UiHandleType + Element {
+pub trait ElementWithHrefAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithHrefAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHrefAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithTargetAttribute: crate::UiHandleType + Element {
+pub trait ElementWithTargetAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithTargetAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithTargetAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithTypeAttribute: crate::UiHandleType + Element {
+pub trait ElementWithTypeAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithTypeAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithTypeAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithCiteAttribute: crate::UiHandleType + Element {
+pub trait ElementWithCiteAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithCiteAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithCiteAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithPlaceHolderAttribute: crate::UiHandleType + Element {
+pub trait ElementWithPlaceHolderAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithPlaceHolderAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithPlaceHolderAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithMaxMinLengthAttributes: crate::UiHandleType + Element {
+pub trait ElementWithMaxMinLengthAttributes: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithMaxMinLengthAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMaxMinLengthAttributes<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithHeightWidthStrAttributes: crate::UiHandleType + Element {
+pub trait ElementWithHeightWidthStrAttributes: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithHeightWidthStrAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHeightWidthStrAttributes<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithHeightWidthU32Attributes: crate::UiHandleType + Element {
+pub trait ElementWithHeightWidthU32Attributes: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithHeightWidthU32Attributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHeightWidthU32Attributes<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithMaxF64Attribute: crate::UiHandleType + Element {
+pub trait ElementWithMaxF64Attribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithMaxF64Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMaxF64Attribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithValueF64Attribute: crate::UiHandleType + Element {
+pub trait ElementWithValueF64Attribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithValueF64Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithValueF64Attribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithValueStrAttribute: crate::UiHandleType + Element {
+pub trait ElementWithValueStrAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithValueStrAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithValueStrAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithOpenAttribute: crate::UiHandleType + Element {
+pub trait ElementWithOpenAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithOpenAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithOpenAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithNameAttribute: crate::UiHandleType + Element {
+pub trait ElementWithNameAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithNameAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithNameAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithDisabledAttribute: crate::UiHandleType + Element {
+pub trait ElementWithDisabledAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithDisabledAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithDisabledAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithCrossOriginAttribute: crate::UiHandleType + Element {
+pub trait ElementWithCrossOriginAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithCrossOriginAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithCrossOriginAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithRelAttribute: crate::UiHandleType + Element {
+pub trait ElementWithRelAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithRelAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithRelAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithReferrerPolicyAttribute: crate::UiHandleType + Element {
+pub trait ElementWithReferrerPolicyAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithReferrerPolicyAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithReferrerPolicyAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithAltAttribute: crate::UiHandleType + Element {
+pub trait ElementWithAltAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithAltAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAltAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithLoadingAttribute: crate::UiHandleType + Element {
+pub trait ElementWithLoadingAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithLoadingAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithLoadingAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithAcceptAttribute: crate::UiHandleType + Element {
+pub trait ElementWithAcceptAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithAcceptAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAcceptAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithAutoCompleteAttribute: crate::UiHandleType + Element {
+pub trait ElementWithAutoCompleteAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithAutoCompleteAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAutoCompleteAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithAutoCorrectAttribute: crate::UiHandleType + Element {
+pub trait ElementWithAutoCorrectAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithAutoCorrectAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAutoCorrectAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithFormAttribute: crate::UiHandleType + Element {
+pub trait ElementWithFormAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithFormAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFormAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithFormAttributes: crate::UiHandleType + Element + ElementWithFormAttribute {
+pub trait ElementWithFormAttributes: crate::csr::behavior_type::UiHandleType + Element + ElementWithFormAttribute {
     type ElementWithFormAttributes<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFormAttributes<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithFetchPriorityAttribute: crate::UiHandleType + Element {
+pub trait ElementWithFetchPriorityAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithFetchPriorityAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithFetchPriorityAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithHrefLangAttribute: crate::UiHandleType + Element + ElementWithHrefAttribute {
+pub trait ElementWithHrefLangAttribute: crate::csr::behavior_type::UiHandleType + Element + ElementWithHrefAttribute {
     type ElementWithHrefLangAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithHrefLangAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithSizesAttribute: crate::UiHandleType + Element {
+pub trait ElementWithSizesAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithSizesAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSizesAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithUseMapAttribute: crate::UiHandleType + Element {
+pub trait ElementWithUseMapAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithUseMapAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithUseMapAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithLabelAttribute: crate::UiHandleType + Element {
+pub trait ElementWithLabelAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithLabelAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithLabelAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithForAttribute: crate::UiHandleType + Element {
+pub trait ElementWithForAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithForAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithForAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithIntegrityAttribute: crate::UiHandleType + Element {
+pub trait ElementWithIntegrityAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithIntegrityAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithIntegrityAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithBlockingAttribute: crate::UiHandleType + Element {
+pub trait ElementWithBlockingAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithBlockingAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithBlockingAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithMultipleAttribute: crate::UiHandleType + Element {
+pub trait ElementWithMultipleAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithMultipleAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMultipleAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithRequiredAttribute: crate::UiHandleType + Element {
+pub trait ElementWithRequiredAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithRequiredAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithRequiredAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithSizeU32Attribute: crate::UiHandleType + Element {
+pub trait ElementWithSizeU32Attribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithSizeU32Attribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSizeU32Attribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithSrcAttribute: crate::UiHandleType + Element {
+pub trait ElementWithSrcAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithSrcAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSrcAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithSrcsetAttribute: crate::UiHandleType + Element + ElementWithSrcAttribute {
+pub trait ElementWithSrcsetAttribute: crate::csr::behavior_type::UiHandleType + Element + ElementWithSrcAttribute {
     type ElementWithSrcsetAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithSrcsetAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithBgColorAttribute: crate::UiHandleType + Element {
+pub trait ElementWithBgColorAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithBgColorAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithBgColorAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithAlignAttribute: crate::UiHandleType + Element {
+pub trait ElementWithAlignAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithAlignAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithAlignAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithMediaAttribute: crate::UiHandleType + Element {
+pub trait ElementWithMediaAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithMediaAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithMediaAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithReadOnlyAttribute: crate::UiHandleType + Element {
+pub trait ElementWithReadOnlyAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithReadOnlyAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithReadOnlyAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait ElementWithDateTimeAttribute: crate::UiHandleType + Element {
+pub trait ElementWithDateTimeAttribute: crate::csr::behavior_type::UiHandleType + Element {
     type ElementWithDateTimeAttribute<Renderer: ?Sized + super::RenderHtml>: behaviors::ElementWithDateTimeAttribute<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + Element
     + OnEventType<event_types::on_invalid>
     + OnEventType<event_types::on_animation_cancel>
@@ -342,110 +342,110 @@ pub trait HtmlElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDataListElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlDataListElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlDataListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDataListElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDivElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlDivElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlDivElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDivElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDListElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlDListElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlDListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDListElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlHeadingElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlHeadingElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlHeadingElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHeadingElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlHeadElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlHeadElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlHeadElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHeadElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlHrElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlHrElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlHrElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHrElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlLegendElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlLegendElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlLegendElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLegendElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlMenuElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlMenuElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlMenuElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMenuElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlParagraphElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlParagraphElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlParagraphElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlParagraphElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlPictureElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlPictureElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlPictureElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlPictureElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlPreElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlPreElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlPreElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlPreElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlSpanElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlSpanElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlSpanElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSpanElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTemplateElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlTemplateElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlTemplateElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTemplateElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTitleElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlTitleElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlTitleElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTitleElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlElementWithHref: crate::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute + ElementWithReferrerPolicyAttribute + ElementWithRelAttribute {
+pub trait HtmlElementWithHref: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute + ElementWithReferrerPolicyAttribute + ElementWithRelAttribute {
     type HtmlElementWithHref<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlElementWithHref<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlAnchorElement: crate::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithTypeAttribute + ElementWithHrefLangAttribute {
+pub trait HtmlAnchorElement: crate::csr::behavior_type::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithTypeAttribute + ElementWithHrefLangAttribute {
     type HtmlAnchorElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAnchorElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlAreaElement: crate::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithAltAttribute {
+pub trait HtmlAreaElement: crate::csr::behavior_type::UiHandleType + HtmlElement + HtmlElementWithHref + ElementWithAltAttribute {
     type HtmlAreaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAreaElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlMediaElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithSrcAttribute
     + ElementWithCrossOriginAttribute
@@ -477,86 +477,88 @@ pub trait HtmlMediaElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlBaseElement: crate::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute {
+pub trait HtmlBaseElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithHrefAttribute + ElementWithTargetAttribute {
     type HtmlBaseElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBaseElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlQuoteElement: crate::UiHandleType + HtmlElement + ElementWithCiteAttribute {
+pub trait HtmlQuoteElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithCiteAttribute {
     type HtmlQuoteElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlQuoteElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlBodyElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlBodyElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlBodyElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBodyElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlBrElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlBrElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlBrElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlBrElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlButtonElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithFormAttributes + ElementWithDisabledAttribute + ElementWithNameAttribute + ElementWithValueStrAttribute {
+pub trait HtmlButtonElement:
+    crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithFormAttributes + ElementWithDisabledAttribute + ElementWithNameAttribute + ElementWithValueStrAttribute
+{
     type HtmlButtonElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlButtonElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlCanvasElement: crate::UiHandleType + HtmlElement + ElementWithHeightWidthU32Attributes {
+pub trait HtmlCanvasElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithHeightWidthU32Attributes {
     type HtmlCanvasElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlCanvasElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableCaptionElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute {
+pub trait HtmlTableCaptionElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithAlignAttribute {
     type HtmlTableCaptionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableCaptionElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDataElement: crate::UiHandleType + HtmlElement + ElementWithValueStrAttribute {
+pub trait HtmlDataElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithValueStrAttribute {
     type HtmlDataElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDataElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlModElement: crate::UiHandleType + HtmlElement + ElementWithCiteAttribute + ElementWithDateTimeAttribute {
+pub trait HtmlModElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithCiteAttribute + ElementWithDateTimeAttribute {
     type HtmlModElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlModElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDetailsElement: crate::UiHandleType + HtmlElement + ElementWithOpenAttribute {
+pub trait HtmlDetailsElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithOpenAttribute {
     type HtmlDetailsElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDetailsElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlDialogElement: crate::UiHandleType + HtmlElement + ElementWithOpenAttribute {
+pub trait HtmlDialogElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithOpenAttribute {
     type HtmlDialogElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlDialogElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlEmbedElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithSrcAttribute + ElementWithHeightWidthStrAttributes {
+pub trait HtmlEmbedElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithSrcAttribute + ElementWithHeightWidthStrAttributes {
     type HtmlEmbedElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlEmbedElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlFieldSetElement: crate::UiHandleType + HtmlElement + ElementWithFormAttribute + ElementWithDisabledAttribute + ElementWithNameAttribute {
+pub trait HtmlFieldSetElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithFormAttribute + ElementWithDisabledAttribute + ElementWithNameAttribute {
     type HtmlFieldSetElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlFieldSetElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlFormElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithTargetAttribute
     + ElementWithAutoCompleteAttribute
@@ -572,14 +574,14 @@ pub trait HtmlFormElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlHtmlElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlHtmlElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlHtmlElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlHtmlElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlIFrameElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithSrcAttribute
     + ElementWithFetchPriorityAttribute
@@ -594,7 +596,7 @@ pub trait HtmlIFrameElement:
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlImageElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithSrcsetAttribute
     + ElementWithUseMapAttribute
@@ -611,7 +613,7 @@ pub trait HtmlImageElement:
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlInputElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithReadOnlyAttribute
     + ElementWithPlaceHolderAttribute
@@ -634,20 +636,20 @@ pub trait HtmlInputElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlLabelElement: crate::UiHandleType + HtmlElement + ElementWithForAttribute {
+pub trait HtmlLabelElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithForAttribute {
     type HtmlLabelElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLabelElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlLiElement: crate::UiHandleType + HtmlElement {
+pub trait HtmlLiElement: crate::csr::behavior_type::UiHandleType + HtmlElement {
     type HtmlLiElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlLiElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlLinkElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithHrefAttribute
     + ElementWithTypeAttribute
@@ -666,62 +668,64 @@ pub trait HtmlLinkElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlMapElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
+pub trait HtmlMapElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithNameAttribute {
     type HtmlMapElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMapElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlMetaElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
+pub trait HtmlMetaElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithNameAttribute {
     type HtmlMetaElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMetaElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlMeterElement: crate::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
+pub trait HtmlMeterElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
     type HtmlMeterElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlMeterElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlObjectElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithUseMapAttribute + ElementWithFormAttribute + ElementWithNameAttribute + ElementWithHeightWidthStrAttributes {
+pub trait HtmlObjectElement:
+    crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithUseMapAttribute + ElementWithFormAttribute + ElementWithNameAttribute + ElementWithHeightWidthStrAttributes
+{
     type HtmlObjectElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlObjectElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlOListElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute {
+pub trait HtmlOListElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute {
     type HtmlOListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOListElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlOptGroupElement: crate::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute {
+pub trait HtmlOptGroupElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute {
     type HtmlOptGroupElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOptGroupElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlOptionElement: crate::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute + ElementWithValueStrAttribute {
+pub trait HtmlOptionElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithLabelAttribute + ElementWithDisabledAttribute + ElementWithValueStrAttribute {
     type HtmlOptionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOptionElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlOutputElement: crate::UiHandleType + HtmlElement + ElementWithForAttribute + ElementWithFormAttribute + ElementWithNameAttribute {
+pub trait HtmlOutputElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithForAttribute + ElementWithFormAttribute + ElementWithNameAttribute {
     type HtmlOutputElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlOutputElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlProgressElement: crate::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
+pub trait HtmlProgressElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithMaxF64Attribute + ElementWithValueF64Attribute {
     type HtmlProgressElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlProgressElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlScriptElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithTypeAttribute
     + ElementWithSrcAttribute
@@ -737,7 +741,7 @@ pub trait HtmlScriptElement:
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlSelectElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithSizeU32Attribute
     + ElementWithRequiredAttribute
@@ -752,64 +756,64 @@ pub trait HtmlSelectElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlSlotElement: crate::UiHandleType + HtmlElement + ElementWithNameAttribute {
+pub trait HtmlSlotElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithNameAttribute {
     type HtmlSlotElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSlotElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlSourceElement:
-    crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithSrcsetAttribute + ElementWithSizesAttribute + ElementWithHeightWidthU32Attributes
+    crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithSrcsetAttribute + ElementWithSizesAttribute + ElementWithHeightWidthU32Attributes
 {
     type HtmlSourceElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlSourceElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlStyleElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithBlockingAttribute {
+pub trait HtmlStyleElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute + ElementWithMediaAttribute + ElementWithBlockingAttribute {
     type HtmlStyleElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlStyleElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
+pub trait HtmlTableElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
     type HtmlTableElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableChildElement: crate::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
+pub trait HtmlTableChildElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithAlignAttribute + ElementWithBgColorAttribute {
     type HtmlTableChildElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableChildElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableSectionElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
+pub trait HtmlTableSectionElement: crate::csr::behavior_type::UiHandleType + HtmlElement + HtmlTableChildElement {
     type HtmlTableSectionElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableSectionElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableRowElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
+pub trait HtmlTableRowElement: crate::csr::behavior_type::UiHandleType + HtmlElement + HtmlTableChildElement {
     type HtmlTableRowElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableRowElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableColElement: crate::UiHandleType + HtmlElement + HtmlTableChildElement {
+pub trait HtmlTableColElement: crate::csr::behavior_type::UiHandleType + HtmlElement + HtmlTableChildElement {
     type HtmlTableColElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableColElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTableCellElement: crate::UiHandleType + HtmlElement + ElementWithHeightWidthStrAttributes + HtmlTableChildElement {
+pub trait HtmlTableCellElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithHeightWidthStrAttributes + HtmlTableChildElement {
     type HtmlTableCellElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTableCellElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
 pub trait HtmlTextAreaElement:
-    crate::UiHandleType
+    crate::csr::behavior_type::UiHandleType
     + HtmlElement
     + ElementWithReadOnlyAttribute
     + ElementWithPlaceHolderAttribute
@@ -826,31 +830,31 @@ pub trait HtmlTextAreaElement:
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTimeElement: crate::UiHandleType + HtmlElement + ElementWithDateTimeAttribute {
+pub trait HtmlTimeElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithDateTimeAttribute {
     type HtmlTimeElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTimeElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlTrackElement: crate::UiHandleType + HtmlElement + ElementWithSrcAttribute + ElementWithLabelAttribute {
+pub trait HtmlTrackElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithSrcAttribute + ElementWithLabelAttribute {
     type HtmlTrackElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlTrackElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlUListElement: crate::UiHandleType + HtmlElement + ElementWithTypeAttribute {
+pub trait HtmlUListElement: crate::csr::behavior_type::UiHandleType + HtmlElement + ElementWithTypeAttribute {
     type HtmlUListElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlUListElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlAudioElement: crate::UiHandleType + HtmlMediaElement {
+pub trait HtmlAudioElement: crate::csr::behavior_type::UiHandleType + HtmlMediaElement {
     type HtmlAudioElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlAudioElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>
         + UiHandle<Renderer, Unmounted = Self::UnmountedUiHandle<Renderer>>;
 }
-pub trait HtmlVideoElement: crate::UiHandleType + HtmlMediaElement + ElementWithHeightWidthU32Attributes {
+pub trait HtmlVideoElement: crate::csr::behavior_type::UiHandleType + HtmlMediaElement + ElementWithHeightWidthU32Attributes {
     type HtmlVideoElement<Renderer: ?Sized + super::RenderHtml>: behaviors::HtmlVideoElement<Renderer>
         + IdentityAs<Self::OfBehaviorType<Renderer>>
         + IdentityAs<Self::UiHandle<Renderer>>

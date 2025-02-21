@@ -8,6 +8,7 @@ use frender_dom::csr::behaviors::ElementWithChildren;
 
 use crate::{
     csr::{
+        behavior_type::BehaviorType,
         element::{
             PinnedRenderStateKind, PinnedStateOfKind, PinnedUiHandleOfKind, PinnedUnmountedUiHandleOfKind, RenderStateKind, UnpinnedRenderStateKind, UnpinnedStateOfKind, UnpinnedUiHandleOfKind,
             UnpinnedUnmountedUiHandleOfKind,
@@ -15,7 +16,6 @@ use crate::{
         CsrElement,
     },
     html::{behavior_type_traits, RenderHtml},
-    BehaviorType,
 };
 
 pub trait CsrComponentNormalElement: behavior_type_traits::Element {}

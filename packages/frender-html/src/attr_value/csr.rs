@@ -9,11 +9,10 @@ use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::Element as _;
 
 use crate::{
+    csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
     has_const_attr_name::HasConstAttrName,
     html::{behavior_type_traits, behaviors, RenderHtml},
     property_common::RemoveAttrOfBehaviorType,
-    update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType,
 };
 
 use super::{HasAttrValueKind, Property};

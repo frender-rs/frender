@@ -87,7 +87,7 @@ macro_rules! test {
                 // #![allow(unused_imports)]
 
                 #[cfg(feature = "csr")]
-                use crate::update_element::{UnpinnedRenderWithBehavior, PinnedRenderWithBehavior};
+                use crate::csr::behavior_type::{UnpinnedRenderWithBehavior, PinnedRenderWithBehavior};
 
                 use super::*;
             }
@@ -144,7 +144,7 @@ pub(crate) use {impl_prop, test, type_prop};
 mod test_id {
     use frender_attr_value::AttrValue;
 
-    use crate::update_element::UnpinnedRenderWithBehavior;
+    use crate::csr::behavior_type::UnpinnedRenderWithBehavior;
 
     const _: () = {
         trait Test {

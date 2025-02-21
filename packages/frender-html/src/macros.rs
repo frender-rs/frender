@@ -345,7 +345,7 @@ macro_rules! behavior_type_traits {
                 use frender_common::convert::IdentityAs;
                 use frender_dom::csr::UiHandle;
 
-                use crate::update_element::OnEventType;
+                use crate::csr::behavior_type::OnEventType;
                 use super::{event_types, behaviors};
             }
         }
@@ -377,7 +377,7 @@ macro_rules! behavior_type_traits {
             do {
                 prepend {
                     $vis trait $trait_name:
-                    crate::UiHandleType +
+                    crate::csr::behavior_type::UiHandleType +
                     $($extends +)*
                     $($($($special_super_traits +)+)?)?
                 }
@@ -620,7 +620,11 @@ macro_rules! tag_implementations {
             use frender_dom::ssr::SsrComponentNormalElement;
 
             #[cfg(feature = "csr")]
-            use crate::{csr::element::HtmlRenderContext, BehaviorType, CsrComponentNormalElement, UiHandleType};
+            use crate::csr::{
+                element::HtmlRenderContext,
+                behavior_type::{BehaviorType, UiHandleType},
+                component::CsrComponentNormalElement,
+            };
 
             #[cfg(feature = "csr")]
             use self::behavior_type_traits::*;
@@ -707,7 +711,7 @@ macro_rules! on_event_implementations {
     (expand_item $expand_item:tt) => {
         #[cfg(feature = "csr")]
         const _: () = {
-            use crate::update_element::OnEventType;
+            use crate::csr::behavior_type::OnEventType;
 
             use self::{behavior_type_traits::*, event_types::*, RenderHtml};
 

@@ -2,8 +2,8 @@ use frender_common::convert::FromMut as _;
 use frender_dom::csr::behaviors::ElementWithStyle;
 
 use crate::{
+    csr::behavior_type::BehaviorType,
     html::{behavior_type_traits, prop_markers, RenderHtml},
-    BehaviorType,
 };
 
 use super::HasStyleDomApi;

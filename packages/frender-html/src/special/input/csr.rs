@@ -14,11 +14,13 @@ use frender_form_control::{
 };
 
 use crate::{
-    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
-    element_types::RenderStateKindPollRenderWithParent,
+    csr::{
+        behavior_type::BehaviorType,
+        component::{CsrComponent, RenderStateKindPollRenderWithParent},
+        element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
+    },
     html::{components::input, RenderHtml},
     kinds::RenderInitNothing,
-    CsrComponent,
 };
 
 enum Never {}
@@ -78,7 +80,7 @@ impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlVal
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
+        parent: &mut <input::Marker as BehaviorType>::OfBehaviorType<R>,
         state: Pin<&mut element::PinnedStateOfKind<R, Self>>,
         ui_handle: &mut element::PinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
@@ -89,7 +91,7 @@ impl<ValueKind: ?Sized + InputValueKind, ValueStateKind: ?Sized + FormControlVal
     fn unpinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        parent: &mut <input::Marker as crate::BehaviorType>::OfBehaviorType<R>,
+        parent: &mut <input::Marker as BehaviorType>::OfBehaviorType<R>,
         State { value, checked, type_cache: _ }: &mut element::UnpinnedStateOfKind<R, Self>,
         ui_handle: &mut element::UnpinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,

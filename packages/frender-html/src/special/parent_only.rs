@@ -7,10 +7,12 @@ use frender_common::{
 use frender_dom::csr::{render_from::str::ValueKindForStr, StateUnmount};
 
 use crate::{
-    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
-    element_types::RenderStateKindPollRenderWithParent,
+    csr::{
+        behavior_type::BehaviorType,
+        component::RenderStateKindPollRenderWithParent,
+        element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
+    },
     html::{behavior_type_traits, RenderHtml},
-    BehaviorType,
 };
 
 pub(crate) trait RenderKind<BT: ?Sized + BehaviorType, VK: ?Sized + ValueKind> {
@@ -181,7 +183,7 @@ macro_rules! impl_parent_only {
             self,
             $children: $Children,
             _: &mut R,
-            _: &mut <Self as crate::BehaviorType>::OfBehaviorType<R>,
+            _: &mut <Self as crate::csr::behavior_type::BehaviorType>::OfBehaviorType<R>,
         ) -> (
             //
             crate::csr::element::PinnedStateOfKind<R, Self::ChildrenRenderStateKind>,
@@ -283,7 +285,7 @@ pub(crate) use impl_parent_only;
 pub enum RenderInnerTextKind {}
 
 impl<BT: behavior_type_traits::HtmlElement, VK: ?Sized + ValueKindForStr> RenderKind<BT, VK> for RenderInnerTextKind {
-    fn render<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, value: <VK as frender_common::value_kind::ValueKind>::Value<'_>) {
+    fn render<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as BehaviorType>::OfBehaviorType<R>, value: <VK as frender_common::value_kind::ValueKind>::Value<'_>) {
         use frender_common::convert::IntoMut as _;
         use frender_dom::csr::behaviors::SetInnerTextFromStr as _;
 
@@ -291,7 +293,7 @@ impl<BT: behavior_type_traits::HtmlElement, VK: ?Sized + ValueKindForStr> Render
         parent.set_inner_text_from_str(renderer, value)
     }
 
-    fn reuse<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) {
+    fn reuse<R: RenderHtml + ?Sized>(renderer: &mut R, parent: &mut <BT as BehaviorType>::OfBehaviorType<R>, provide_value: impl frender_common::reactive_value::ProvideValueOfKind<VK>) {
         // TODO: check when debug_assertions
         let _ = (renderer, parent, provide_value);
     }

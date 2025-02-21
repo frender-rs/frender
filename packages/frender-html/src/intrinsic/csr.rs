@@ -7,17 +7,16 @@ use frender_common::reactive_value::RenderInitPinned;
 use frender_dom::csr::render::RenderWithContext;
 use frender_dom::csr::StateUnmount;
 use frender_dom::csr::{UiHandle, UnmountedUiHandle};
+use frender_dom::HasIntrinsicComponentTag;
 use pin_project_lite::pin_project;
 
-use crate::dom::HasIntrinsicComponentTag;
-
+use crate::csr::behavior_type::{PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
+use crate::csr::component::{CsrComponent, RenderStateKindPollRenderWithParent};
 use crate::csr::element::{self, HtmlRenderContext, PinnedRenderStateKind, PinnedRenderStateKindPollRender, UnpinnedRenderStateKind, UnpinnedRenderStateKindPollRender};
 use crate::csr::CsrElement;
-use crate::element_types::RenderStateKindPollRenderWithParent;
+use crate::html::RenderHtml;
 use crate::html::{behavior_type_traits, behaviors};
 use crate::intrinsic::Intrinsic;
-use crate::update_element::{PinnedNonReactiveRenderStateKind, PinnedRenderWithBehavior, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior};
-use crate::{html::RenderHtml, CsrComponent};
 
 enum Never {}
 pub struct Kind<

@@ -8,9 +8,12 @@ use frender_dom::{
 };
 
 use crate::{
+    csr::{
+        behavior_type::BehaviorType,
+        component::{CsrComponent, CsrComponentNormalElement},
+    },
     html::{behavior_type_traits, RenderHtml},
     special::parent_only::{impl_parent_only, RenderKind},
-    BehaviorType, CsrComponent, CsrComponentNormalElement,
 };
 
 pub enum RenderInnerHtmlKind {}

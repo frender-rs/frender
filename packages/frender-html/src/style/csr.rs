@@ -3,9 +3,8 @@ use std::marker::PhantomData;
 use frender_style::csr::{CsrStyle, CssStyleDeclaration};
 
 use crate::{
+    csr::behavior_type::{BehaviorType, UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
     html::RenderHtml,
-    update_element::{UnpinnedNonReactiveRenderStateKind, UnpinnedRenderWithBehavior},
-    BehaviorType,
 };
 
 use super::Property;
@@ -37,8 +36,8 @@ impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBe
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
-    ) -> <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+    ) -> <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R> {
         V::csr_style_render_init(value, &mut PM::style_dom_api(b, renderer))
     }
 
@@ -46,8 +45,8 @@ impl<PM: HasStyleDomApi<BT>, V: CsrStyle, BT: BehaviorType> UnpinnedRenderWithBe
         //
         Self { _prop_marker, value }: Self,
         renderer: &mut R,
-        b: &mut <BT as crate::BehaviorType>::OfBehaviorType<R>,
-        state: &mut <Self::UnpinnedRenderStateKind as crate::update_element::UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
+        b: &mut <BT as BehaviorType>::OfBehaviorType<R>,
+        state: &mut <Self::UnpinnedRenderStateKind as UnpinnedNonReactiveRenderStateKind>::UnpinnedNonReactiveState<R>,
     ) {
         V::csr_style_render_update(value, &mut PM::style_dom_api(b, renderer), state)
     }

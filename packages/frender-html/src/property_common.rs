@@ -1,7 +1,7 @@
 use crate::{
+    csr::behavior_type::BehaviorType,
     has_const_attr_name::HasConstAttrName,
     html::{behavior_type_traits, RenderHtml},
-    BehaviorType,
 };
 
 use frender_common::convert::FromMut as _;

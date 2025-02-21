@@ -9,11 +9,13 @@ use frender_form_control::{
 
 use crate::{
     cs::textarea,
-    csr::element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
-    element_types::RenderStateKindPollRenderWithParent,
+    csr::{
+        behavior_type::BehaviorType,
+        component::{CsrComponent, RenderStateKindPollRenderWithParent},
+        element::{self, PinnedRenderStateKind, UnpinnedRenderStateKind},
+    },
     html::{behavior_type_traits, RenderHtml},
     kinds::RenderInitNothing,
-    CsrComponent,
 };
 
 enum Never {}
@@ -33,7 +35,7 @@ impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_trait
     fn pinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        parent: &mut <ET as crate::BehaviorType>::OfBehaviorType<R>,
+        parent: &mut <ET as BehaviorType>::OfBehaviorType<R>,
         state: std::pin::Pin<&mut element::PinnedStateOfKind<R, Self>>,
         ui_handle: &mut element::PinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,
@@ -51,7 +53,7 @@ impl<K: FormControlValueStateKind<KindOfValue>, ET: ?Sized + behavior_type_trait
     fn unpinned_poll_render_with_parent<R: RenderHtml + ?Sized>(
         //
         renderer: &mut R,
-        parent: &mut <ET as crate::BehaviorType>::OfBehaviorType<R>,
+        parent: &mut <ET as BehaviorType>::OfBehaviorType<R>,
         state: &mut element::UnpinnedStateOfKind<R, Self>,
         (): &mut element::UnpinnedUiHandleOfKind<R, Self>,
         cx: &mut std::task::Context<'_>,

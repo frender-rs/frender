@@ -2,8 +2,8 @@ use frender_common::reactive_value::ReactiveValueWithKind;
 use frender_dom::script::CsrScriptContent;
 
 use crate::{
+    csr::component::CsrComponent,
     special::parent_only::{impl_parent_only, RenderInnerTextKind},
-    CsrComponent,
 };
 
 impl<Children: CsrScriptContent> CsrComponent<Children> for crate::cs::script::Marker {
