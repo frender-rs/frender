@@ -8,11 +8,19 @@ use crate::{
 
 use super::{
     non_reactive::{Uncached, UncachedNonReactiveValue},
-    ReactiveValue,
+    ReactiveValue, ReactiveValueIntoElement,
 };
 
 pub trait ReactiveValueWithKind: ReactiveValue<Self::ReactiveValueKind> {
     type ReactiveValueKind: ?Sized + ValueKind;
+
+    /// You may not need this method if `Self` already implements Element
+    fn into_element(self) -> ReactiveValueIntoElement<Self>
+    where
+        Self: Sized,
+    {
+        ReactiveValueIntoElement(self)
+    }
 }
 
 pub trait UncachedNonReactiveValueWithKind:
