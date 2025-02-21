@@ -1,7 +1,5 @@
 #[cfg(feature = "csr")]
 pub mod array;
-#[cfg(feature = "csr")]
-pub mod boxed;
 #[cfg(feature = "csr")] // TODO: ssr
 pub mod either;
 #[cfg(feature = "csr")]
